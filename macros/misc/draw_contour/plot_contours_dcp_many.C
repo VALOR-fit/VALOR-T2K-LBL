@@ -8,31 +8,38 @@
 //                                                                                           
 // ------------------------------------------------------------------------------------------------
 
+#include <vector>
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
+const double CLfrac_1sigma = 0.6827;  // 1sigma% CL
+const double CLfrac_90CL   = 0.9;  // 90% CL
+const double CLfrac_95CL   = 0.95;  // 95% CL
+const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
+
 void plot_contours_dcp_many
 ( 
- const bool SaveRootFile = true,
- const string tag = "dcp_run17_react_Asimov_B",
+ const bool SaveRootFile = false,
+ const string tag = "dcp_run17_react_Data",
 
  const bool doGlobalMin  = true,
  const bool same_mh_color = true, // use same color for NH and IH
  const bool same_mh_style = false, // use same style for NH and IH
  const bool draw_preliminary = false,
 
- const bool do_fc = false,
+ const bool do_fc = true,
  const bool draw_fc_err = false,
 
- const bool do_const = true,
+ const bool do_const = false,
 
- const bool draw_1sigmaCL = false,
+ const bool draw_1sigmaCL = true,
  const bool draw_90CL     = true,
  const bool draw_2sigmaCL = true,
- const bool draw_3sigmaCL = false,
+ const bool draw_3sigmaCL = true,
  const bool draw_4sigmaCL = false,
- const bool draw_5sigmaCL = false,
+ const bool draw_5sigmaCL = true,
 
  const bool draw_reactors = false,
 
@@ -41,13 +48,17 @@ void plot_contours_dcp_many
  
  // Compare true chisq
  
+ // Asimov A best-fit (global)
+ const double truepar0 = kBadResult,
+ const string truemh0 = "normal",
+
  // // run 1-6 best-fit (global)
  // const double truepar0 = -1.8535397,
  // const string truemh0 = "normal",
 
- // Asimov A best-fit (global)
- const double truepar0 = -1.601,
- const string truemh0 = "normal",
+ // // Asimov A best-fit (global)
+ // const double truepar0 = -1.601,
+ // const string truemh0 = "normal",
 
  // // Asimov B best-fit (global)
  // const double truepar0 = -2.82743339, 
@@ -62,11 +73,61 @@ void plot_contours_dcp_many
   )
 {
 
-  // NIWG2015c Summer 2016 statistics
+ 
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fit_nh_dcpminuspi_normal_-1.571_Raj.root";
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/fit_fitmarg_fc_nh_10k_mpiover2_normal_-1.571.root";
+  const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/fit_fitmarg_fc_nh_10k_m1p759_normal_-1.759.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/fit_fitmarg_fc_nh_10k_0_normal_0.000.root";
+
   const int Nfiles = 1;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
     
+    //////////////////////////////////////////////
+    //                                          //
+    //      Run 1-7 - Data - Run 1-7 Flux       // 
+    //                                          //
+    //////////////////////////////////////////////
+
+    // deltaCP - Run 1-7 w/ reactors - Flux Run 1-7
+    {
+      "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dcp_react_nh_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
+      "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dcp_react_ih_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    },
+
+    // // dmsq - Run 1-7 w/ reactors - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dmsq_react_nh_Data_Run17_nexp_1_0.003_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dmsq_react_ih_Data_Run17_nexp_1_0.003_-999.000-job0-_0_0.root"
+    // },
+
+    // // sinsqth23 - Run 1-7 w/ reactors - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth23_react_nh_Data_Run17_nexp_1_0.528_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth23_react_ih_Data_Run17_nexp_1_0.528_-999.000-job0-_0_0.root"
+    // },
+
+    // // deltaCP - Run 1-7 T2K only - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_dcp_t2konly_nh_run17.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_dcp_t2konly_ih_run17.root"
+    // },
+
+    // // sinsqth13 - Run 1-7 T2K only - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_sinsqth13_t2konly_nh_run17.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_sinsqth13_t2konly_ih_run17.root"
+    // },
+
+
+    // // deltaCP - Run 1-7 w/ reactors - Flux Run 1-7 (CHECK)
+    //  {
+    //    "../TECH_NOTE_14_3_16/PROVA_FC/fit_fitmarg_joint_dcp_t2konly_nh_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //    "../TECH_NOTE_14_3_16/PROVA_FC/fit_fitmarg_joint_dcp_t2konly_ih_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    //  },
+
+
+
 
     //////////////////////////////////////////////
     //                                          //
@@ -92,11 +153,11 @@ void plot_contours_dcp_many
     //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
     // },
 
-    // deltaCP - Run 1-7 Asimov B w/ reactors - Flux Run 1-7
-    {
-      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root",
-      "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root"
-    },
+    // // deltaCP - Run 1-7 Asimov B w/ reactors - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root"
+    // },
   
     // // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-6
     // {
@@ -184,8 +245,8 @@ void plot_contours_dcp_many
 
     // // deltaCP - Run 1-6 Data w/ reactors
     // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
+    //   "../TECH_NOTE_14_3_16/DATA/RUN16/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH 
+    //   "../TECH_NOTE_14_3_16/DATA/RUN16/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
     //   //"fit_fitmarg_fc_50k_normal_nexp_1_-999.000_-999.000-job0-_0_0.root"
     //   //"fit_fit_marg_PROVA_dcp_nexp_1_0.000_-999.000-job0-_0_0.root",
     //   //"fit_fit_marg_PROVA_dcp_nexp_1_0.000_-999.000-job0-_0_0.root"
@@ -250,7 +311,8 @@ void plot_contours_dcp_many
   
  
   // File names of Feldman-Cousins
-  char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_p8k.root";
+  char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/FCgraphs_10k_Run17_FluxRun16.root";
+  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_p8k.root";
   //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_4k.root";
 
 
@@ -265,6 +327,7 @@ void plot_contours_dcp_many
     // {"7.00e20 FHC + 14.87e20 RHC - NH",  "7.00e20 FHC + 14.87e20 RHC - IH"}
   };
   
+
   char name[200];
   
   TFile *filein[Nfiles][Nmh];
@@ -490,12 +553,12 @@ void plot_contours_dcp_many
     gFC90CL_ih   ->SetLineColor(kBlue);
     gFC90CL_ih_p1->SetLineColor(kBlue);
     gFC90CL_ih_m1->SetLineColor(kBlue);
-    gFC2sigma_nh   ->SetLineColor(kGreen);
-    gFC2sigma_nh_p1->SetLineColor(kGreen);
-    gFC2sigma_nh_m1->SetLineColor(kGreen);
-    gFC2sigma_ih   ->SetLineColor(kGreen);
-    gFC2sigma_ih_p1->SetLineColor(kGreen);
-    gFC2sigma_ih_m1->SetLineColor(kGreen);
+    gFC2sigma_nh   ->SetLineColor(kViolet);
+    gFC2sigma_nh_p1->SetLineColor(kViolet);
+    gFC2sigma_nh_m1->SetLineColor(kViolet);
+    gFC2sigma_ih   ->SetLineColor(kViolet);
+    gFC2sigma_ih_p1->SetLineColor(kViolet);
+    gFC2sigma_ih_m1->SetLineColor(kViolet);
 
     gFC90CL_nh   ->SetMarkerColor(kBlue);
     gFC90CL_nh_p1->SetMarkerColor(kBlue);
@@ -503,12 +566,12 @@ void plot_contours_dcp_many
     gFC90CL_ih   ->SetMarkerColor(kBlue);
     gFC90CL_ih_p1->SetMarkerColor(kBlue);
     gFC90CL_ih_m1->SetMarkerColor(kBlue);
-    gFC2sigma_nh   ->SetMarkerColor(kGreen);
-    gFC2sigma_nh_p1->SetMarkerColor(kGreen);
-    gFC2sigma_nh_m1->SetMarkerColor(kGreen);
-    gFC2sigma_ih   ->SetMarkerColor(kGreen);
-    gFC2sigma_ih_p1->SetMarkerColor(kGreen);
-    gFC2sigma_ih_m1->SetMarkerColor(kGreen);
+    gFC2sigma_nh   ->SetMarkerColor(kViolet);
+    gFC2sigma_nh_p1->SetMarkerColor(kViolet);
+    gFC2sigma_nh_m1->SetMarkerColor(kViolet);
+    gFC2sigma_ih   ->SetMarkerColor(kViolet);
+    gFC2sigma_ih_p1->SetMarkerColor(kViolet);
+    gFC2sigma_ih_m1->SetMarkerColor(kViolet);
 
     gFC90CL_nh   ->SetMarkerSize(0.5);
     gFC90CL_nh_p1->SetMarkerSize(0.5);
@@ -523,12 +586,12 @@ void plot_contours_dcp_many
     gFC2sigma_ih_p1->SetMarkerSize(0.5);
     gFC2sigma_ih_m1->SetMarkerSize(0.5);
     
-    gFC90CL_nh   ->SetLineWidth(2);
-    gFC90CL_nh_p1->SetLineWidth(2);
-    gFC90CL_nh_m1->SetLineWidth(2);
-    gFC90CL_ih    ->SetLineWidth(2);
-    gFC90CL_ih_p1->SetLineWidth(2);
-    gFC90CL_ih_m1->SetLineWidth(2);
+    gFC90CL_nh     ->SetLineWidth(2);
+    gFC90CL_nh_p1  ->SetLineWidth(2);
+    gFC90CL_nh_m1  ->SetLineWidth(2);
+    gFC90CL_ih     ->SetLineWidth(2);
+    gFC90CL_ih_p1  ->SetLineWidth(2);
+    gFC90CL_ih_m1  ->SetLineWidth(2);
     gFC2sigma_nh   ->SetLineWidth(2);
     gFC2sigma_nh_p1->SetLineWidth(2);
     gFC2sigma_nh_m1->SetLineWidth(2);
@@ -536,9 +599,9 @@ void plot_contours_dcp_many
     gFC2sigma_ih_p1->SetLineWidth(2);
     gFC2sigma_ih_m1->SetLineWidth(2);
 
-    gFC90CL_ih    ->SetLineStyle(2);
-    gFC90CL_ih_p1->SetLineStyle(2);
-    gFC90CL_ih_m1->SetLineStyle(2);
+    gFC90CL_ih     ->SetLineStyle(2);
+    gFC90CL_ih_p1  ->SetLineStyle(2);
+    gFC90CL_ih_m1  ->SetLineStyle(2);
     gFC2sigma_ih   ->SetLineStyle(2);
     gFC2sigma_ih_p1->SetLineStyle(2);
     gFC2sigma_ih_m1->SetLineStyle(2);
@@ -751,44 +814,532 @@ void plot_contours_dcp_many
     f2->Close();
   }
   
-  int bfbin = -999;
-  int truebin0=-999;
-  int truebin1=-999;
-  string mh0 = "";
-  string mh1 = "";
-  int mhbin0 = -999;
-  int mhbin1 = -999;
-  
-  if(truemh0=="normal"){        
-    mhbin0 = 0;
-    mh0 = "NH";
-  }
-  else if(truemh0=="inverted"){
-    mhbin0 = 1;
-    mh0 = "IH";
+
+
+  //
+
+  if(truepar0 != kBadResult && truepar1 != kBadResult){
+
+    int bfbin = -999;
+    int truebin0=-999;
+    int truebin1=-999;
+    string mh0 = "";
+    string mh1 = "";
+    int mhbin0 = -999;
+    int mhbin1 = -999;
+    
+    if(truemh0=="normal"){        
+      mhbin0 = 0;
+      mh0 = "NH";
+    }
+    else if(truemh0=="inverted"){
+      mhbin0 = 1;
+      mh0 = "IH";
+    }
+    
+    if(truemh1=="normal"){        
+      mhbin1 = 0;
+      mh1 = "NH";
+    }
+    else if(truemh1=="inverted"){
+      mhbin1 = 1;
+      mh1 = "IH";
+    }
+    
+    truebin0 = hchisq1D[0][mhbin0]->FindBin(truepar0);
+    truebin1 = hchisq1D[0][mhbin1]->FindBin(truepar1);
+    
+    double truechisq0 = hchisq1D[0][mhbin0]->GetBinContent(truebin0);
+    double truechisq1 = hchisq1D[0][mhbin1]->GetBinContent(truebin1);
+    
+    cout << std::setprecision(10);
+    cout << "chisq(" << truepar0 << "," << mh0 << ") - " 
+	 << "chisq(" << truepar1 << "," << mh1 << ") = "
+	 << truechisq0 - truechisq1 
+	 << endl;
   }
 
-  if(truemh1=="normal"){        
-    mhbin1 = 0;
-    mh1 = "NH";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  ////////////////////////////////////////////////////
+  //                                                //
+  //             Brazilian flag plot                //
+  //                                                //
+  ////////////////////////////////////////////////////
+  
+  cout << endl;
+  cout << "Make the Brazilian plot" << endl;
+  cout << endl;
+
+  if(Nfiles!=1){
+    cerr << endl;
+    cerr << "The number of files is " << Nfiles << endl;
+    cerr << "You can make the Brazilian plot only with 1 file" << endl;
+    cerr << endl;
   }
-  else if(truemh1=="inverted"){
-    mhbin1 = 1;
-    mh1 = "IH";
+  if(Nmh!=2){
+    cerr << endl;
+    cerr << "The number of mass hierarchies is " << Nmh << endl;
+    cerr << "You can make the Brazilian plot only with both mass hierarchies" << endl;
+    cerr << endl;
   }
+
+  TFile *filetoys = new TFile(infilename_toys,"READ");
+  if(!filetoys->IsOpen()){
+    cerr << endl;
+    cerr << "File " << infilename << " is not open" << endl;
+    cerr << endl;
+  }
+  cout << endl;
+  cout << "Reading file " << infilename_toys << endl;
+  cout << endl;
+  TTree *treetoys = (TTree*)filetoys->Get("fitnt");
+  if(!treetoys){
+    cerr << endl;
+    cerr << "Tree object is empty" << endl;
+    cerr << endl;
+  }
+
+  TH1D *hdeltachisq1D_toy_nh; // take it from hchisq1D_toy_nh at each event
+  TH1D *hdeltachisq1D_toy_ih; // take it from hchisq1D_toy_nh at each event
+
+  TH1D *hchisq1D_toy_nh = new TH1D("hchisq1D_toy_nh","hchisq1D_toy_nh",1,0,1);
+  TH1D *hchisq1D_toy_ih = new TH1D("hchisq1D_toy_ih","hchisq1D_toy_ih",1,0,1);
+  treetoys->SetBranchAddress("hchisq1D_nh",     &hchisq1D_toy_nh      );
+  treetoys->SetBranchAddress("hchisq1D_ih",     &hchisq1D_toy_ih      );
+  
+  int Nentries = treetoys->GetEntries();
+
+  treetoys->GetEntry(0);
+
+  int NbinsChisq = hchisq1D_toy_nh->GetNbinsX();
+
+  vector<double> *vec_deltachisq_bin_nh = new vector<double>[NbinsChisq];
+  vector<double> *vec_deltachisq_bin_ih = new vector<double>[NbinsChisq];
+  vector<double> *vec_like_penalty = new vector<double>[NbinsChisq];
+
+  // (delta)chisq histogram for each bin of dcp and mh --> calculate the +-1,2sigma ranges
+  TH1D **hchisq1D_toy_nh_bin      = new TH1D[NbinsChisq];
+  TH1D **hchisq1D_toy_ih_bin      = new TH1D[NbinsChisq];
+  TH1D **hdeltachisq1D_toy_nh_bin = new TH1D[NbinsChisq];
+  TH1D **hdeltachisq1D_toy_ih_bin = new TH1D[NbinsChisq];
+  for(int ibin=0;ibin<NbinsChisq;ibin++){
+    hchisq1D_toy_nh_bin[ibin]      = new TH1D(Form("hchisq1D_toy_nh_bin%d",ibin),     Form("hchisq1D_toy_nh_bin%d",ibin),500000,0,500);
+    hchisq1D_toy_ih_bin[ibin]      = new TH1D(Form("hchisq1D_toy_ih_bin%d",ibin),     Form("hchisq1D_toy_ih_bin%d",ibin),500000,0,500);
+    hdeltachisq1D_toy_nh_bin[ibin] = new TH1D(Form("hdeltachisq1D_toy_nh_bin%d",ibin),Form("hdeltachisq1D_toy_nh_bin%d",ibin),500000,0,30);
+    hdeltachisq1D_toy_ih_bin[ibin] = new TH1D(Form("hdeltachisq1D_toy_ih_bin%d",ibin),Form("hdeltachisq1D_toy_ih_bin%d",ibin),500000,0,30);
+  }
+
+  // // store each (delta)chisq histogram of each toy --> just to plot
+  // TH1D **hchisq1D_toy_nh_store      = new TH1D[Nentries];
+  // TH1D **hchisq1D_toy_ih_store      = new TH1D[Nentries];
+  // TH1D **hdeltachisq1D_toy_nh_store = new TH1D[Nentries];
+  // TH1D **hdeltachisq1D_toy_ih_store = new TH1D[Nentries];
+
+  // mean sensitivity
+  TH1D *hchisq1D_nh_mean = hchisq1D_toy_nh->Clone("hchisq1D_nh_mean");
+  hchisq1D_nh_mean->Reset();
+  TH1D *hchisq1D_ih_mean = hchisq1D_toy_ih->Clone("hchisq1D_ih_mean");
+  hchisq1D_ih_mean->Reset();
+
+
+  cout << "Enter the loop of " << Nentries << " entries" << endl;
+
+  for(int ientry=0;ientry<Nentries;ientry++){
+    
+    treetoys->GetEntry(ientry);    
+    
+    if(ientry%1000==0) cout << "Entry " << ientry << endl;
+    
+    // hchisq1D_toy_nh_store[ientry]      = (TH1D*) hchisq1D_toy_nh->Clone(Form("hchisq1D_toy%d_nh_store",ientry));
+    // hchisq1D_toy_ih_store[ientry]      = (TH1D*) hchisq1D_toy_ih->Clone(Form("hchisq1D_toy%d_ih_store",ientry));    
+
+
+    // Build mean sensitivity
+    hchisq1D_nh_mean->Add(hchisq1D_toy_nh,1.);
+    hchisq1D_ih_mean->Add(hchisq1D_toy_ih,1.);
+		    
+    // Take global minimum
+    double min_glob = 0.;
+    double min_nh = hchisq1D_toy_nh->GetMinimum();
+    double min_ih = hchisq1D_toy_ih->GetMinimum();
+    if(min_nh < min_ih) min_glob = min_nh;
+    else                min_glob = min_ih;
+    
+    //cout << "Toy " << ientry << " --> " << min_glob << endl;
+
+    // Take global deltachisq and shift deltachisq of nh and ih
+    
+    hdeltachisq1D_toy_nh = (TH1D*) hchisq1D_toy_nh ->Clone("hchisq1D_toy_nh"); 
+    hdeltachisq1D_toy_ih = (TH1D*) hchisq1D_toy_ih ->Clone("hchisq1D_toy_ih");
+
+    for(int ibin=0;ibin<NbinsChisq;ibin++){
+      
+      double bincont = hdeltachisq1D_toy_nh->GetBinContent(ibin+1);
+      hdeltachisq1D_toy_nh->SetBinContent(ibin+1,bincont-min_glob);
+      bincont = hdeltachisq1D_toy_ih->GetBinContent(ibin+1);
+      hdeltachisq1D_toy_ih->SetBinContent(ibin+1,bincont-min_glob);
+    
+      // hdeltachisq1D_toy_nh_store[ientry] = (TH1D*) hdeltachisq1D_toy_nh->Clone(Form("hdeltachisq1D_toy%d_nh_store",ientry));
+      // hdeltachisq1D_toy_ih_store[ientry] = (TH1D*) hdeltachisq1D_toy_ih->Clone(Form("hdeltachisq1D_toy%d_ih_store",ientry));
+     }
+    
+    // Fill deltaCP bin histograms
+
+    for(int ibin=0;ibin<NbinsChisq;ibin++){
+      double chisqval = hchisq1D_toy_nh->GetBinContent(ibin+1);
+      hchisq1D_toy_nh_bin[ibin]->Fill(chisqval);
+      double deltachisqval = hdeltachisq1D_toy_nh->GetBinContent(ibin+1);
+      hdeltachisq1D_toy_nh_bin[ibin]->Fill(deltachisqval);
+      vec_deltachisq_bin_nh[ibin].push_back(deltachisqval);
+
+      chisqval = hchisq1D_toy_ih->GetBinContent(ibin+1);
+      hchisq1D_toy_ih_bin[ibin]->Fill(chisqval);
+      deltachisqval = hdeltachisq1D_toy_ih->GetBinContent(ibin+1);
+      hdeltachisq1D_toy_ih_bin[ibin]->Fill(deltachisqval);
+      vec_deltachisq_bin_ih[ibin].push_back(deltachisqval);
+
+      vec_like_penalty[ibin].push_back(1.); // no posterior predictive
+    }
+
+  } // end loop over events
+
+
+  // Scale mean chisq to # of toys and get mean deltachisq (global mean nh and ih)
+
+  hchisq1D_nh_mean->Scale(1./Nentries);
+  hchisq1D_ih_mean->Scale(1./Nentries);
+
+  TH1D *hdeltachisq1D_nh_mean = (TH1D*) hchisq1D_nh_mean->Clone("hdeltachisq1D_nh_mean");
+  TH1D *hdeltachisq1D_ih_mean = (TH1D*) hchisq1D_ih_mean->Clone("hdeltachisq1D_ih_mean");
+
+  double glob_min_mean = -999;
+  double min_mean_nh = hchisq1D_nh_mean->GetMinimum();
+  double min_mean_ih = hchisq1D_ih_mean->GetMinimum();
+  if(min_mean_nh < min_mean_ih) glob_min_mean = min_mean_nh;
+  else                          glob_min_mean = min_mean_ih;
+
+  for(int ibin=0;ibin<NbinsChisq;ibin++){
+    double bincont = hdeltachisq1D_nh_mean->GetBinContent(ibin+1);
+    hdeltachisq1D_nh_mean->SetBinContent(ibin+1,bincont-glob_min_mean);
+    bincont = hdeltachisq1D_ih_mean->GetBinContent(ibin+1);
+    hdeltachisq1D_ih_mean->SetBinContent(ibin+1,bincont-glob_min_mean);
+  }
+    
+  // Build the +-1,2 sigma histograms
+
+  TH1D *hchisq1D_nh_p1sigma = hchisq1D_toy_nh->Clone("hchisq1D_nh_p1sigma");
+  hchisq1D_nh_p1sigma->Reset();
+  TH1D *hchisq1D_ih_p1sigma = hchisq1D_toy_ih->Clone("hchisq1D_ih_p1sigma");
+  hchisq1D_ih_p1sigma->Reset();
+
+  TH1D *hchisq1D_nh_p2sigma = hchisq1D_toy_nh->Clone("hchisq1D_nh_p1sigma");
+  hchisq1D_nh_p2sigma->Reset();
+  TH1D *hchisq1D_ih_p2sigma = hchisq1D_toy_ih->Clone("hchisq1D_ih_p1sigma");
+  hchisq1D_ih_p2sigma->Reset();
+
+  TH1D *hdeltachisq1D_nh_p1sigma = hchisq1D_toy_nh->Clone("hdeltachisq1D_nh_p1sigma");
+  hdeltachisq1D_nh_p1sigma->Reset();
+  TH1D *hdeltachisq1D_ih_p1sigma = hchisq1D_toy_ih->Clone("hdeltachisq1D_ih_p1sigma");
+  hdeltachisq1D_ih_p1sigma->Reset();
+
+  TH1D *hdeltachisq1D_nh_p2sigma = hchisq1D_toy_nh->Clone("hdeltachisq1D_nh_p1sigma");
+  hdeltachisq1D_nh_p2sigma->Reset();
+  TH1D *hdeltachisq1D_ih_p2sigma = hchisq1D_toy_ih->Clone("hdeltachisq1D_ih_p1sigma");
+  hdeltachisq1D_ih_p2sigma->Reset();
  
-  truebin0 = hchisq1D[0][mhbin0]->FindBin(truepar0);
-  truebin1 = hchisq1D[0][mhbin1]->FindBin(truepar1);
-  
-  double truechisq0 = hchisq1D[0][mhbin0]->GetBinContent(truebin0);
-  double truechisq1 = hchisq1D[0][mhbin1]->GetBinContent(truebin1);
+  // Build p-value histograms
+  TH1D *hPvalueChisq_nh = hchisq1D_toy_nh->Clone("hPvalueChisq_nh");
+  hPvalueChisq_nh->Reset();
+  TH1D *hPvalueChisq_ih = hchisq1D_toy_ih->Clone("hPvalueChisq_ih");
+  hPvalueChisq_ih->Reset();
 
-  cout << std::setprecision(10);
-  cout << "chisq(" << truepar0 << "," << mh0 << ") - " 
-       << "chisq(" << truepar1 << "," << mh1 << ") = "
-       << truechisq0 - truechisq1 
-       << endl;
+  TH1D *hZscoreChisq_nh = hchisq1D_toy_nh->Clone("hZscoreChisq_nh");
+  hZscoreChisq_nh->Reset();
+  TH1D *hZscoreChisq_ih = hchisq1D_toy_ih->Clone("hZscoreChisq_ih");
+  hZscoreChisq_ih->Reset();
+
+  TH1D *hProbChisq_90CL_nh = hchisq1D_toy_nh->Clone("hProbChisq_90CL_nh");
+  hProbChisq_90CL_nh->Reset();
+  TH1D *hProbChisq_90CL_ih = hchisq1D_toy_nh->Clone("hProbChisq_90CL_ih");
+  hProbChisq_90CL_ih->Reset();
+
+  TH1D *hProbChisq_2sigma_nh = hchisq1D_toy_nh->Clone("hProbChisq_2sigma_nh");
+  hProbChisq_2sigma_nh->Reset();
+  TH1D *hProbChisq_2sigma_ih = hchisq1D_toy_nh->Clone("hProbChisq_2sigma_ih");
+  hProbChisq_2sigma_ih->Reset();
+
+  //
+
+  for(int ibin=0;ibin<NbinsChisq;ibin++){
+
+    // Get +1,2sigma critical values of data wrt sensitivity on 1 true point of dcp 
+    double p1sigma = CalcDLcrit_posterior(vec_deltachisq_bin_nh[ibin],vec_like_penalty[ibin],CLfrac_1sigma*100.,0.);
+    double p2sigma = CalcDLcrit_posterior(vec_deltachisq_bin_nh[ibin],vec_like_penalty[ibin],CLfrac_2sigma*100.,0.);
+    hdeltachisq1D_nh_p1sigma->SetBinContent(ibin+1,p1sigma);
+    hdeltachisq1D_nh_p2sigma->SetBinContent(ibin+1,p2sigma);  
+    
+    p1sigma = CalcDLcrit_posterior(vec_deltachisq_bin_ih[ibin],vec_like_penalty[ibin],CLfrac_1sigma*100.,0.);
+    p2sigma = CalcDLcrit_posterior(vec_deltachisq_bin_ih[ibin],vec_like_penalty[ibin],CLfrac_2sigma*100.,0.);
+    hdeltachisq1D_ih_p1sigma->SetBinContent(ibin+1,p1sigma);
+    hdeltachisq1D_ih_p2sigma->SetBinContent(ibin+1,p2sigma);  
+
+    // P-value of data wrt sensitivity on 1 true point of dcp 
+    TH1D *h_nh = (TH1D*) hdeltachisq1D_GlobMin[0][0]; // 0 --> NH
+    double chisq_data = h_nh->GetBinContent(ibin+1);
+    double pvalue = GetPvalue_rightside(vec_deltachisq_bin_nh[ibin],chisq_data);
+    hPvalueChisq_nh->SetBinContent(ibin+1,pvalue);
+    TF1 f2("f2","ROOT::Math::gaussian_quantile(1.-(x/2.),1.) ",0.,1.);
+    double zscore = f2.Eval(pvalue); 
+    hZscoreChisq_nh->SetBinContent(ibin+1,zscore);
+
+    TH1D *h_ih = (TH1D*) hdeltachisq1D_GlobMin[0][1]; // 1 --> IH
+    chisq_data = h_ih->GetBinContent(ibin+1);
+    pvalue = GetPvalue_rightside(vec_deltachisq_bin_ih[ibin],chisq_data);
+    hPvalueChisq_ih->SetBinContent(ibin+1,pvalue);
+    TF1 f2("f2","ROOT::Math::gaussian_quantile(1.-(x/2.),1.) ",0.,1.);
+    zscore = f2.Eval(pvalue); 
+    hZscoreChisq_ih->SetBinContent(ibin+1,zscore);
+
+    // Probability to have exclude dcp at 90% or 2sigma CL from sensitivity
+    double critval_pt = gFC90CL_nh->Eval(hProbChisq_90CL_nh->GetBinCenter(ibin+1));
+    double prob = GetPvalue_rightside(vec_deltachisq_bin_nh[ibin],critval_pt);
+    hProbChisq_90CL_nh->SetBinContent(ibin+1,prob);
+    critval_pt = gFC2sigma_nh->Eval(hProbChisq_2sigma_nh->GetBinCenter(ibin+1));
+    prob = GetPvalue_rightside(vec_deltachisq_bin_nh[ibin],critval_pt);
+    hProbChisq_2sigma_nh->SetBinContent(ibin+1,prob);
+
+    double critval_pt = gFC90CL_ih->Eval(hProbChisq_90CL_ih->GetBinCenter(ibin+1));
+    double prob = GetPvalue_rightside(vec_deltachisq_bin_ih[ibin],critval_pt);
+    hProbChisq_90CL_ih->SetBinContent(ibin+1,prob);
+    critval_pt = gFC2sigma_ih->Eval(hProbChisq_2sigma_ih->GetBinCenter(ibin+1));
+    prob = GetPvalue_rightside(vec_deltachisq_bin_ih[ibin],critval_pt);
+    hProbChisq_2sigma_ih->SetBinContent(ibin+1,prob);
+  }
+
+
+  // Draw histograms
+
+  // TCanvas *cchisqAll = new TCanvas("cchisqAll","cchisqAll");
+  // hchisq1D_toy_nh_store[0]->Draw();
+  // for(int itoy=0;itoy<Nentries;itoy++){
+  //   hchisq1D_toy_nh_store[itoy]->Draw("same");
+  // }
+
+  // TCanvas *cdeltachisqAll = new TCanvas("cdeltachisqAll","cdeltachisqAll");
+  // hdeltachisq1D_toy_nh_store[0]->Draw();
+  // for(int itoy=0;itoy<Nentries;itoy++){
+  //   hdeltachisq1D_toy_nh_store[itoy]->Draw("same");
+  // }
+
   
+  // Brazilian plot Normal Hierarchy
+  
+  TCanvas *cBrazilianPlot_nh = new TCanvas("cBrazilianPlot_nh","cBrazilianPlot_nh");
+  hInit->GetYaxis()->SetRangeUser(0.,18.);
+  hInit->DrawCopy();
+  hdeltachisq1D_nh_p2sigma->SetLineColor(kYellow);
+  hdeltachisq1D_nh_p2sigma->SetFillColor(kYellow);
+  hdeltachisq1D_nh_p2sigma->Draw("same");
+  hdeltachisq1D_nh_p1sigma->SetLineColor(kGreen);
+  hdeltachisq1D_nh_p1sigma->SetFillColor(kGreen);
+  hdeltachisq1D_nh_p1sigma->Draw("same");
+  hdeltachisq1D_nh_mean->SetLineWidth(2);
+  hdeltachisq1D_nh_mean->SetLineColor(kRed);
+  hdeltachisq1D_nh_mean->SetLineStyle(1);
+  hdeltachisq1D_nh_mean->Draw("same");
+  hdeltachisq1D_GlobMin[0][0]->SetLineStyle(1); // 0 --> Normal Hierarchy
+  hdeltachisq1D_GlobMin[0][0]->SetLineWidth(2);
+  hdeltachisq1D_GlobMin[0][0]->SetLineColor(1);
+  hdeltachisq1D_GlobMin[0][0]->Draw("same");
+  if(do_fc){
+    if(draw_90CL)     gFC90CL_nh->Draw("l same");
+    if(draw_2sigmaCL) gFC2sigma_nh->Draw("l same");
+  }
+  gPad->RedrawAxis();
+
+  TLegend *lBrazilianPlot_nh = new TLegend(0.6,0.1,0.8,0.65);
+  lBrazilianPlot_nh->SetFillColor(0);
+  lBrazilianPlot_nh->SetLineColor(0);
+  lBrazilianPlot_nh->SetTextFont(132);
+  lBrazilianPlot_nh->SetTextSize(0.06);
+  lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p1sigma,"1#sigma sensitivity","f");
+  lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p2sigma,"2#sigma sensitivity","f");
+  lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean sensitivity","l");
+  if(draw_90CL)
+    lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL)","l");
+  if(draw_2sigmaCL)
+    lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma)","l");
+  lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
+  lBrazilianPlot_nh->Draw();
+
+  TLatex *latNormal = new TLatex(hdeltachisq1D_nh_mean->GetXaxis()->GetBinLowEdge(5),1.1,"Normal Hierarchy");
+  latNormal->SetTextSize(0.06);
+  latNormal->Draw("same");
+
+  // Brazilian plot Inverted Hierarchy
+  
+  TCanvas *cBrazilianPlot_ih = new TCanvas("cBrazilianPlot_ih","cBrazilianPlot_ih");
+  hInit->GetYaxis()->SetRangeUser(0.,18.);
+  hInit->DrawCopy();
+  hdeltachisq1D_ih_p2sigma->SetLineColor(kYellow);
+  hdeltachisq1D_ih_p2sigma->SetFillColor(kYellow);
+  hdeltachisq1D_ih_p2sigma->Draw("same");
+  hdeltachisq1D_ih_p1sigma->SetLineColor(kGreen);
+  hdeltachisq1D_ih_p1sigma->SetFillColor(kGreen);
+  hdeltachisq1D_ih_p1sigma->Draw("same");
+  hdeltachisq1D_ih_mean->SetLineWidth(2);
+  hdeltachisq1D_ih_mean->SetLineColor(kRed);
+  hdeltachisq1D_ih_mean->SetLineStyle(1);
+  hdeltachisq1D_ih_mean->Draw("same");
+  hdeltachisq1D_GlobMin[0][1]->SetLineStyle(1); // 1 --> Inverted Hierarchy
+  hdeltachisq1D_GlobMin[0][1]->SetLineWidth(2);
+  hdeltachisq1D_GlobMin[0][1]->SetLineColor(1);
+  hdeltachisq1D_GlobMin[0][1]->Draw("same");
+  if(do_fc){
+    if(draw_90CL)     gFC90CL_ih->Draw("l same");
+    if(draw_2sigmaCL) gFC2sigma_ih->Draw("l same");
+  }
+  gPad->RedrawAxis();
+
+  TLegend *lBrazilianPlot_ih = new TLegend(0.6,0.1,0.8,0.65);
+  lBrazilianPlot_ih->SetFillColor(0);
+  lBrazilianPlot_ih->SetLineColor(0);
+  lBrazilianPlot_ih->SetTextFont(132);
+  lBrazilianPlot_ih->SetTextSize(0.06);
+  lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p1sigma,"1#sigma sensitivity","f");
+  lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p2sigma,"2#sigma sensitivity","f");
+  lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean sensitivity","l");
+  if(draw_90CL)
+    lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL)","l");
+  if(draw_2sigmaCL)
+    lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma)","l");
+  lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
+  lBrazilianPlot_ih->Draw();
+
+  TLatex *latInverted = new TLatex(hdeltachisq1D_ih_mean->GetXaxis()->GetBinLowEdge(5),1.1,"Inverted Hierarchy");
+  latInverted->SetTextSize(0.06);
+  latInverted->Draw("same");
+
+  //
+  
+  TCanvas *cPvalueChisq = new TCanvas("cPvalueChisq","cPvalueChisq");  
+  cPvalueChisq->SetLogy();
+  cPvalueChisq->SetGridx();
+  cPvalueChisq->SetGridy();
+  hInit->GetYaxis()->SetRangeUser(0.01,1.1);
+  hInit->GetYaxis()->SetTitle("P-value");
+  hInit->DrawCopy();
+  hPvalueChisq_nh->SetLineWidth(2);
+  hPvalueChisq_nh->SetLineColor(kBlack);
+  hPvalueChisq_nh->Draw("same");
+  hPvalueChisq_ih->SetLineWidth(2);
+  hPvalueChisq_ih->SetLineColor(kRed);
+  hPvalueChisq_ih->Draw("same");
+
+  TLegend *lPvalueChisq = new TLegend(0.6,0.4,0.8,0.65);
+  lPvalueChisq->SetFillColor(0);
+  lPvalueChisq->SetLineColor(0);
+  lPvalueChisq->SetTextFont(132);
+  lPvalueChisq->SetTextSize(0.06);
+  lPvalueChisq->AddEntry(hPvalueChisq_nh,"Normal Hierarchy","l");
+  lPvalueChisq->AddEntry(hPvalueChisq_ih,"Inverted Hierarchy","l");
+  lPvalueChisq->Draw();
+
+  //
+
+  TCanvas *cZscoreChisq = new TCanvas("cZscoreChisq","cZscoreChisq");  
+  cZscoreChisq->SetGridx();
+  cZscoreChisq->SetGridy();
+  hInit->GetYaxis()->SetRangeUser(0,2.5);
+  hInit->GetYaxis()->SetTitle("# of Std. Deviations");
+  hInit->DrawCopy();
+  hZscoreChisq_nh->SetLineWidth(2);
+  hZscoreChisq_nh->SetLineColor(kBlack);
+  hZscoreChisq_nh->Draw("same");
+  hZscoreChisq_ih->SetLineWidth(2);
+  hZscoreChisq_ih->SetLineColor(kRed);
+  hZscoreChisq_ih->Draw("same");
+  
+  TLegend *lZscoreChisq = new TLegend(0.6,0.4,0.8,0.65);
+  lZscoreChisq->SetFillColor(0);
+  lZscoreChisq->SetLineColor(0);
+  lZscoreChisq->SetTextFont(132);
+  lZscoreChisq->SetTextSize(0.06);
+  lZscoreChisq->AddEntry(hZscoreChisq_nh,"Normal Hierarchy","l");
+  lZscoreChisq->AddEntry(hZscoreChisq_ih,"Inverted Hierarchy","l");
+  lZscoreChisq->Draw();
+
+  //
+
+  TCanvas *cProbChisq = new TCanvas("cProbChisq","cProbChisq");
+  cProbChisq->SetLogy();
+  cProbChisq->SetGridx();
+  cProbChisq->SetGridy();
+  hInit->GetYaxis()->SetRangeUser(0.01,1.1);
+  hInit->GetYaxis()->SetTitle("Prob. to exclude #delta_{CP}");
+  hInit->DrawCopy();
+  hProbChisq_90CL_nh->SetLineWidth(2);
+  hProbChisq_90CL_nh->SetLineColor(kBlack);
+  hProbChisq_90CL_nh->SetLineStyle(1);
+  hProbChisq_90CL_nh->Draw("same");
+  hProbChisq_2sigma_nh->SetLineWidth(2);
+  hProbChisq_2sigma_nh->SetLineColor(kRed);
+  hProbChisq_2sigma_nh->SetLineStyle(1);
+  hProbChisq_2sigma_nh->Draw("same");
+  hProbChisq_90CL_ih->SetLineWidth(2);
+  hProbChisq_90CL_ih->SetLineColor(kBlack);
+  hProbChisq_90CL_ih->SetLineStyle(2);
+  hProbChisq_90CL_ih->Draw("same");
+  hProbChisq_2sigma_ih->SetLineWidth(2);
+  hProbChisq_2sigma_ih->SetLineColor(kRed);
+  hProbChisq_2sigma_ih->SetLineStyle(2);
+  hProbChisq_2sigma_ih->Draw("same");
+  
+  TLegend *lProbChisq = new TLegend(0.6,0.4,0.8,0.65);
+  lProbChisq->SetFillColor(0);
+  lProbChisq->SetLineColor(0);
+  lProbChisq->SetTextFont(132);
+  lProbChisq->SetTextSize(0.06);
+  lProbChisq->AddEntry(hProbChisq_90CL_nh,"90% CL - Normal","l");
+  lProbChisq->AddEntry(hProbChisq_90CL_ih,"90% CL - Inverted","l");
+  lProbChisq->AddEntry(hProbChisq_2sigma_nh,"2#sigma CL - Normal","l");
+  lProbChisq->AddEntry(hProbChisq_2sigma_ih,"2#sigma CL - Inverted","l");
+  lProbChisq->Draw();
+
+  //
+
+  double dcp_test = 0.;
+  int ibin = hdeltachisq1D_toy_nh_bin[0]->FindBin(0.);
+  
+  TCanvas *hdeltachisq1D_nh_bin = new TCanvas("hdeltachisq1D_nh_bin","hdeltachisq1D_nh_bin");
+  hdeltachisq1D_toy_nh_bin[ibin]->Draw();
+
+  TCanvas *hchisq1D_nh_bin = new TCanvas("hchisq1D_nh_bin","hchisq1D_nh_bin");
+  hchisq1D_toy_nh_bin[ibin]->Draw();
+ 
   return;
 }
 
@@ -1003,3 +1554,118 @@ double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin){
   //gr->SetPoint(1,X2,Y2);
   //cout << "Eval = " << gr->Eval(Xin) << endl;
  }
+
+
+double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double conflev, double sigmacl){ 
+
+  // Get error on coverage: sigmacl = sqrt(N*p*(1-p))/N
+
+  int nelem = dchisq.size();
+  
+  double *new_dchisq = new double[nelem];
+  double *new_weight = new double[nelem];
+  int *index = new int[nelem];
+  
+  // copy vector into array
+  for(int i=0;i<nelem;i++){
+    new_dchisq[i] = dchisq[i];
+    new_weight[i] = weight[i];
+    index[i] = i;
+  }
+  
+  sort(dchisq.begin(), dchisq.end());
+  
+  // store the sorted indices --> use for both dchisq and weights
+  //index = TMath::Sort(nelem,new_dchisq,index,0);
+  TMath::Sort(nelem,new_dchisq,index,0);
+
+  double tot_weight = 0.;
+  for(int i=0;i<nelem;i++) tot_weight += new_weight[index[i]]; 
+
+  //cout << "conflev = " << conflev << endl;
+  
+  double sum = 0.;
+  double critval = -999.;
+  for(int i=0;i<nelem;i++){
+    sum += new_weight[index[i]]; 
+    
+    //cout << std::setprecision(16);
+    //cout << sum << " ";
+    
+    if( sum >= (0.01 * conflev + sigmacl)*tot_weight ){
+      
+      //cout << endl;
+      //cout << "sum = " << sum << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
+      
+      critval = new_dchisq[index[i]]; 
+      break;
+    }
+  }
+    
+  return critval;
+}
+
+double CalcDLcrit(vector<double> dchisq, double conflev, double sigmacl){
+
+  // Get error on critical value: sigmacl = sqrt(N*p*(1-p))
+
+  sort(dchisq.begin(), dchisq.end()); // sort the dchisq vector   
+  vector<double>::iterator dchisqIter;
+  dchisqIter = dchisq.begin() + (int)(0.01*conflev*dchisq.size() + sigmacl);
+  double critval = (*dchisqIter);
+  return critval;
+}
+
+double CalcDLcrit(TH1D *h_delta_true,double FCfrac_CL){
+  
+  //Feldman-Cousins: Calculate chi2 value at 90%CL************************
+  double ntoys_total = 0;
+  double ntoys = 0;
+  double ntoys_frac = 0;
+  int chi2_bin = 0;
+  double chi2_val = 0;
+  double dlval = 0;
+  
+  ntoys_total = h_delta_true->Integral();
+
+  for(int ibin=0;ibin<h_delta_true->GetNbinsX();ibin++){
+    ntoys += h_delta_true->GetBinContent(ibin+1);
+    ntoys_frac = ntoys/ntoys_total;
+    
+    if(ntoys_frac>=FCfrac_CL) {
+      chi2_val = h_delta_true->GetBinCenter(ibin+1);
+      break;
+    }
+  }
+  return chi2_val;
+}
+
+
+double GetPvalue_rightside(vector<double> vec_toys,double data){
+
+  double ntot_toys = vec_toys.size();
+
+  double nfrac=0;
+  for (std::vector<double>::iterator it=vec_toys.begin(); it!=vec_toys.end(); ++it){
+    if(*it >= data) nfrac += 1.; // If toy=data include the entry in the pvalue integral range 
+  }
+  double pvalue =  nfrac / (double)ntot_toys;
+
+  return pvalue;
+}
+
+double GetPvalue_posterior_rightside(vector<double> vec_toys,vector<double> weight,double data){
+
+  double ntot_toys = vec_toys.size();
+  
+  double tot = 0.; 
+  double nfrac=0;
+  for(int i=0;i<vec_toys.size();i++){
+    tot += weight[i];
+    double cont = vec_toys[i];
+    if(cont >= data) nfrac += weight[i];
+  }
+  double pvalue =  nfrac / tot;
+
+  return pvalue;
+}
