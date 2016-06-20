@@ -43,8 +43,12 @@ void analyze_run_fc_marginalization_exe
  const bool PrintToy = false,
  
  //const char * rootfile = "data_run1to6/SKdata_Run16.root", 
- const char * rootfile = "data_run1to6/Asimov_A_Run16.root", 
+ //const char * rootfile = "data_run1to6/Asimov_A_Run16.root", 
  //const char * rootfile = "data_run1to6/Asimov_B_Run16.root", 
+
+ //const char * rootfile = "data_run1to7/SKdata_Run17.root", 
+ const char * rootfile = "data_run1to7/Asimov_A_Run17.root", 
+ //const char * rootfile = "data_run1to7/Asimov_B_Run17.root", 
 
  const bool use_posterior_predictive = false,
  const bool use_post_pred_fhc_mulike = true,
@@ -109,11 +113,19 @@ void analyze_run_fc_marginalization_exe
  char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.000.root",
  //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_1.571.root",
  
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fc_dcp_0_nh_75k_Set0.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fc_dcp_0_nh_25k_Set1.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fc_dcp_0_nh_100k_All.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fit_ih_zero_inverted_50k_0.000.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fit_ih_posterior_test_50k_inverted_-1.351.root",
+ 
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_mpiover2_normal_-1.571.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_m1p759_normal_-1.759.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_0_normal_0.000.root",
 
-
-
-
-
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_0.000.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.571.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.759.root",
  
  //string mytag = "Asimov_A_dcp_0_sinsqth23_0p65_nh",
  string mytag = "Run17",
@@ -554,7 +566,6 @@ void analyze_run_fc_marginalization_exe
   int NdiffChisq = 0;
   
   int Nentries = treein->GetEntries();
-  Nentries = 1000;
   
   cout << endl;
   cout << "Total # of toys = " << Nentries << endl;
@@ -574,11 +585,19 @@ void analyze_run_fc_marginalization_exe
     }
 
     //
+    
+    //if(deltachisq0BF_glob<2) continue;
+    //if(*MH_glob=="normal") continue; // plots a sinistra
+    //if(*MH_glob=="inverted") continue; // plots a sinistra
+    //if(bestfit0_glob > 0) continue;
+    //if(bestfit0_glob < 0) continue;
 
-    // double nevents_rhc1re = hErecoToy_RHC1Re->Integral();    
-    // double nevents_1re = hErecoToy_1Re->Integral();    
-    // double nevents_rhc1rmu = hErecoToy_RHC1Rmu->Integral();    
-    // double nevents_1rmu = hErecoToy_1Rmu->Integral();    
+    //
+
+    double nevents_rhc1re = hErecoToy_RHC1Re->Integral();    
+    double nevents_1re = hErecoToy_1Re->Integral();    
+    double nevents_rhc1rmu = hErecoToy_RHC1Rmu->Integral();    
+    double nevents_1rmu = hErecoToy_1Rmu->Integral();    
 
     // double nevents_exp_rhc1re = hErecoExp_RHC1Re->Integral();    
     // double nevents_exp_1re = hErecoExp_1Re->Integral();    
@@ -601,10 +620,10 @@ void analyze_run_fc_marginalization_exe
     //   exit(1);
     // }
     
-    //hNevents_rhc_elike->Fill(nevents_rhc1re);    
-    //hNevents_fhc_elike->Fill(nevents_1re);    
-    //hNevents_rhc_mulike->Fill(nevents_rhc1rmu);    
-    //hNevents_fhc_mulike->Fill(nevents_1rmu);
+    hNevents_rhc_elike->Fill(nevents_rhc1re);    
+    hNevents_fhc_elike->Fill(nevents_1re);    
+    hNevents_rhc_mulike->Fill(nevents_rhc1rmu);    
+    hNevents_fhc_mulike->Fill(nevents_1rmu);
 
     // hNevents_exp_rhc_elike->Fill(nevents_exp_rhc1re);    
     // hNevents_exp_fhc_elike->Fill(nevents_exp_1re);    
@@ -618,12 +637,6 @@ void analyze_run_fc_marginalization_exe
 
     if(ToyID==0) cout << "ToyID = " << ToyID << endl;
 
-
-    //if(deltachisq0BF_glob<2) continue;
-    //if(*MH_glob=="normal") continue; // plots a sinistra
-    //if(*MH_glob=="inverted") continue; // plots a sinistra
-    //if(bestfit0_glob > 0) continue;
-    //if(bestfit0_glob < 0) continue;
     
      // Print output
     
@@ -854,7 +867,7 @@ void analyze_run_fc_marginalization_exe
   // Calculate critical value
   
   double FCCritVal_1sigma = CalcDLcrit(myvector,CLfrac_1sigma*100.,0.); 
-  double FCCritVal_90CL   = CalcDLcrit(myvector,CLfrac_90CL*100.,0.); 
+  double FCCritVal_90CL   = CalcDLcrit(myvector,CLfrac_90CL*100.,0.);
   double FCCritVal_95CL   = CalcDLcrit(myvector,CLfrac_95CL*100.,0.); 
   double FCCritVal_2sigma = CalcDLcrit(myvector,CLfrac_2sigma*100.,0.); 
 
@@ -890,7 +903,7 @@ void analyze_run_fc_marginalization_exe
   double FCCritVal_posterior_90CL   = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,0.);
   double FCCritVal_posterior_95CL   = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_95CL*100.,0.);
   double FCCritVal_posterior_2sigma = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,0.);
-
+  
   double FCCritVal_posterior_1sigma_histo = CalcDLcrit(hdeltachisq_posterior,CLfrac_1sigma);
   double FCCritVal_posterior_90CL_histo   = CalcDLcrit(hdeltachisq_posterior,CLfrac_90CL);
   double FCCritVal_posterior_95CL_histo   = CalcDLcrit(hdeltachisq_posterior,CLfrac_95CL);
@@ -904,13 +917,13 @@ void analyze_run_fc_marginalization_exe
   double FCCritVal_posterior_1sigma_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_1sigma*100.,-err_1sigma);
   FCCritVal_posterior_1sigma_merr = fabs(FCCritVal_posterior_1sigma - FCCritVal_posterior_1sigma_merr);
     
-  double err_90CL = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_90CL_histo,1.-CLfrac_90CL); // pass the "p-value"
+  double err_90CL = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_90CL,1.-CLfrac_90CL); // pass the "p-value"
   double FCCritVal_posterior_90CL_perr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,+err_90CL);
   FCCritVal_posterior_90CL_perr = fabs(FCCritVal_posterior_90CL - FCCritVal_posterior_90CL_perr);
   double FCCritVal_posterior_90CL_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,-err_90CL);
   FCCritVal_posterior_90CL_merr = fabs(FCCritVal_posterior_90CL - FCCritVal_posterior_90CL_merr);
 
-  double err_2sigma = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_2sigma_histo,1.-CLfrac_2sigma); // pass the "p-value"
+  double err_2sigma = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_2sigma,1.-CLfrac_2sigma); // pass the "p-value"
   double FCCritVal_posterior_2sigma_perr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,+err_2sigma);
   FCCritVal_posterior_2sigma_perr = fabs(FCCritVal_posterior_2sigma - FCCritVal_posterior_2sigma_perr);
   double FCCritVal_posterior_2sigma_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,-err_2sigma);
@@ -1683,10 +1696,16 @@ double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double
     //cout << std::setprecision(16);
     //cout << sum << " ";
     
-    if( sum >= (0.01 * conflev + sigmacl)*tot_weight ){
-      
-      //cout << endl;
-      //cout << "sum = " << sum << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
+    double epsilon = 0.000001; // for the double precision in the break condition
+
+    if( sum >= ( (0.01 * conflev + sigmacl)*tot_weight - epsilon ) ){
+          
+      // cout << endl;
+      // cout << "sum = " << sum << endl;
+      // cout << "new_weight[index[i]] = " << new_weight[index[i]] << endl;
+      // cout << "before: sum = " << (sum - new_weight[index[i]]) << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
+      // cout << "current: sum = " << sum << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
+      // cout << "after: sum = " << (sum + new_weight[index[i]]) << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
       
       critval = new_dchisq[index[i]]; 
       break;

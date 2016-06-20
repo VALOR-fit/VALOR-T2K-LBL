@@ -520,7 +520,10 @@ double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double
     //cout << std::setprecision(16);
     //cout << sum << " ";
     
-    if( sum >= (0.01 * conflev + sigmacl)*tot_weight ){
+    double epsilon = 0.000001; // for the double precision in the break condition
+
+    if( sum >= ( (0.01 * conflev + sigmacl)*tot_weight - epsilon ) ){
+    //if( sum >= (0.01 * conflev + sigmacl)*tot_weight ){
       
       //cout << endl;
       //cout << "sum = " << sum << " - CL = " << (0.01 * conflev + sigmacl)*tot_weight << endl;
