@@ -276,11 +276,11 @@ void SensiPvalueFull_nuebar
 
   // Compute p-values
   
-  double pvalue_evt_beta0 = GetPvalue(vec_evt_toys_beta0,Ntoys_beta0,data);
-  double pvalue_01_beta0 = GetPvalue(vec_chisq_01_beta0,Ntoys_beta0,deltachisq_beta01_data);
-
-  double pvalue_evt_beta1 = GetPvalue(vec_evt_toys_beta1,Ntoys_beta1,data);
-  double pvalue_01_beta1 = GetPvalue(vec_chisq_01_beta1,Ntoys_beta1,deltachisq_beta01_data);
+//  double pvalue_evt_beta0 = GetPvalue(vec_evt_toys_beta0,Ntoys_beta0,data);
+//  double pvalue_01_beta0 = GetPvalue(vec_chisq_01_beta0,Ntoys_beta0,deltachisq_beta01_data);
+//
+//  double pvalue_evt_beta1 = GetPvalue(vec_evt_toys_beta1,Ntoys_beta1,data);
+//  double pvalue_01_beta1 = GetPvalue(vec_chisq_01_beta1,Ntoys_beta1,deltachisq_beta01_data);
   
   // Draw histograms
   
@@ -642,14 +642,14 @@ void SensiPvalueFull_nuebar
   cout << endl;
   cout << "Total # of POT = " << Npot << endl;
   cout << endl;
-  cout << "//////////////// Asimov dataset //////////////" << endl;
-  cout << "Calculate p-values (beta=0):" << endl;
-  cout << "p-value rate-only = " << pvalue_evt_beta0 << endl;
-  cout << "p-value rate+shape = " << pvalue_01_beta0 << endl;
-  cout << "Calculate p-values (beta=1):" << endl;
-  cout << "p-value rate-only = " << pvalue_evt_beta1 << endl;
-  cout << "p-value rate+shape = " << pvalue_01_beta1 << endl;
-  cout << endl;
+//  cout << "//////////////// Asimov dataset //////////////" << endl;
+//  cout << "Calculate p-values (beta=0):" << endl;
+//  cout << "p-value rate-only = " << pvalue_evt_beta0 << endl;
+//  cout << "p-value rate+shape = " << pvalue_01_beta0 << endl;
+//  cout << "Calculate p-values (beta=1):" << endl;
+//  cout << "p-value rate-only = " << pvalue_evt_beta1 << endl;
+//  cout << "p-value rate+shape = " << pvalue_01_beta1 << endl;
+//  cout << endl;
   cout << "//////////////// Toys p-value (all toys) //////////////" << endl;
   cout << endl;
   cout << "p-value rate-only:" << endl;
@@ -760,6 +760,7 @@ void SensiPvalueFull_nuebar
 
 double GetPvalue(vector<double> vec_toys,int ntoys,double data){
   double ntot_toys = ntoys;
+  /*
   if(ntot_toys != vec_toys.size()){    
     cout << endl;
     cout << "Warning:" << endl;
@@ -769,6 +770,7 @@ double GetPvalue(vector<double> vec_toys,int ntoys,double data){
     cout << "Set total number of toys to vector size: " << ntot_toys << endl;
     cout << endl;
   }
+   */
   if(ntot_toys<=0.){
     cerr << endl;
     cerr << "ntot_toys = " << ntot_toys << endl;
