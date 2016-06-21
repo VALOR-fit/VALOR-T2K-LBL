@@ -90,6 +90,9 @@ void SensiPvalueFull_nuebar
   TH1D *hPvalue_rateshape = new TH1D("hPvalue_rateshape","hPvalue_rateshape",110,0.,1.5);
   TH1D *hPvalue_rateonly  = new TH1D("hPvalue_rateonly","hPvalue_rateonly",110,0.,1.5);
 
+  TH1D *hPvalue_rateonly_Bkg = new TH1D("hPvalue_rateonly_Bkg","hPvalue_rateonly_Bkg",110,0.,1.5);
+  TH1D *hPvalue_rateshape_Bkg = new TH1D("hPvalue_rateshape_Bkg","hPvalue_rateshape_Bkg",110,0.,1.5);
+  
   TH2D *hPvalueVsNevt = new TH2D("hPvalueVsNevt","hPvalueVsNevt",110,0.,1.1,12,0,12);
 
   TH1D *hPvalue_rateonly_0p05 = new TH1D("hPvalue_rateonly_0p05","hPvalue_rateonly_0p05",110,0.,0.06); 
@@ -113,7 +116,9 @@ void SensiPvalueFull_nuebar
 
   Ntoys_beta0 = (double) Nentries; // Get # of entries for p-value calculation
 
-  for(int ientry=0;ientry<Nentries;ientry++){
+  //  for(int ientry=0;ientry<Nentries;ientry++){
+  for(int ientry=0;ientry<10;ientry++){
+
     treein->GetEntry(ientry);
     double nevents = (double)hErecoToy_RHC1Re->Integral();
     double expevents = (double)hErecoExp_RHC1Re->Integral();
@@ -150,7 +155,8 @@ void SensiPvalueFull_nuebar
   
   Ntoys_beta1 = (double) Nentries; // Get # of entries for p-value calculation
 
-  for(int ientry=0;ientry<Nentries;ientry++){
+  //  for(int ientry=0;ientry<Nentries;ientry++){
+  for(int ientry=0;ientry<10;ientry++){
     treein->GetEntry(ientry);
     if( !(ientry % 1000) ) cout << "Compute pvalues for toy " << ientry << endl;
     
