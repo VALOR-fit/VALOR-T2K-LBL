@@ -759,7 +759,7 @@ void SensiPvalueFull_nuebar
 
 
 double GetPvalue(vector<double> vec_toys,int ntoys,double data){
-  double ntot_toys = ntoys;
+  double ntot_toys = vec_toys.size();
   /*
   if(ntot_toys != vec_toys.size()){    
     cout << endl;
