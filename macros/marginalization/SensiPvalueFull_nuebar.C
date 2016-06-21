@@ -17,10 +17,11 @@ using namespace valor::conv;
 void SensiPvalueFull_nuebar
 (
  // Run 16 - Asimov A
- double expbkg = 1.718,
- double data = 3.218, // # of data events
- char infilename_beta0[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_0_100kMargToys_react_100kToys.root",
- char infilename_beta1[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_1_100kMargToys_react_100kToys.root"
+ double expbkg  = 3.22,
+ double data    = 6.6, // # of data events
+ double dchisq  = 2.8899685, // # of data events
+ char infilename_beta0[200] = "/beta0.root",
+ char infilename_beta1[200] = "/beta1.root"
 )
 {
   char name[200];
@@ -276,8 +277,8 @@ void SensiPvalueFull_nuebar
 
   // Compute p-values
   
-//  double pvalue_evt_beta0 = GetPvalue(vec_evt_toys_beta0,Ntoys_beta0,data);
-//  double pvalue_01_beta0 = GetPvalue(vec_chisq_01_beta0,Ntoys_beta0,deltachisq_beta01_data);
+  double pvalue_evt_beta0 = GetPvalue(vec_evt_toys_beta0,Ntoys_beta0,data);
+  double pvalue_01_beta0 = GetPvalue(vec_chisq_01_beta0,Ntoys_beta0,dchisq);
 //
 //  double pvalue_evt_beta1 = GetPvalue(vec_evt_toys_beta1,Ntoys_beta1,data);
 //  double pvalue_01_beta1 = GetPvalue(vec_chisq_01_beta1,Ntoys_beta1,deltachisq_beta01_data);
