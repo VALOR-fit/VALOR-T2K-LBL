@@ -481,9 +481,6 @@ void SensiPvalueFull_nuebar
   // Print results
   
   cout << std::setprecision(10);
-  cout << endl;
-  cout << "Total # of POT = " << Npot << endl;
-  cout << endl;
 //  cout << "//////////////// Asimov dataset //////////////" << endl;
 //  cout << "Calculate p-values (beta=0):" << endl;
 //  cout << "p-value rate-only = " << pvalue_evt_beta0 << endl;
