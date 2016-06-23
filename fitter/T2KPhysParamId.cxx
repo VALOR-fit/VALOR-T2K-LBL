@@ -1116,9 +1116,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
         case ( kNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh";                        break; // uncorrelated in the past
         case ( kNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh";                        break; // uncorrelated in the past
         case ( kNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth";                        break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}$";  break; // uncorrelated in the past
+        case ( kNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_{\\mu}$";  break; // uncorrelated in the past
         case ( kNuisBANFFNormNC1Gamma  ) : return "BANFF; Norm; NC 1 $\\gamma$";                break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_\\{mu}$";  break; // uncorrelated in the past
+        case ( kNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_{\\mu}$";  break; // uncorrelated in the past
         case ( kNuisBANFFMECBar        ) : return "BANFF; Norm; MECBar";                           break;
             
             //
@@ -1146,7 +1146,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
         case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
 #endif
         case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
-        case ( kNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_\\{mu}$";  break;
+        case ( kNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_{\\mu}$";  break;
 #ifndef __NUEONLY__
         case ( kNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$";  break;
 #endif
@@ -1188,9 +1188,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kNuisSKDetFSI000) :
                 case (kNuisSKDetFSI001) :
                 case (kNuisSKDetFSI002) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
                 case (kNuisSKDetFSI003) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCnQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
                 case (kNuisSKDetFSI004) :
                     nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
                 case (kNuisSKDetFSI005) :
@@ -1199,11 +1199,11 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kNuisSKDetFSI000) :
                 case (kNuisSKDetFSI001) :
                 case (kNuisSKDetFSI002) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
                 case (kNuisSKDetFSI003) :
                 case (kNuisSKDetFSI004) :
                 case (kNuisSKDetFSI005) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCnQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
                 case (kNuisSKDetFSI006) :
                 case (kNuisSKDetFSI007) :
                 case (kNuisSKDetFSI008) :
@@ -1216,7 +1216,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
 				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for 1Rmu
@@ -1279,7 +1279,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kNuisSKDetFSI009) :
                 case (kNuisSKDetFSI010) :
                 case (kNuisSKDetFSI011) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
                 case (kNuisSKDetFSI012) :
                 case (kNuisSKDetFSI013) :
                 case (kNuisSKDetFSI014) :
@@ -1296,7 +1296,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kNuisSKDetFSI015) :
                 case (kNuisSKDetFSI016) :
                 case (kNuisSKDetFSI017) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
                 case (kNuisSKDetFSI018) :
                 case (kNuisSKDetFSI019) :
                 case (kNuisSKDetFSI020) :
@@ -1309,7 +1309,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
 				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for 1Re
@@ -1356,7 +1356,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kNuisSKDetFSI007) :
                 case (kNuisSKDetFSI008) :
                 case (kNuisSKDetFSI009) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{\\mu}$)"; break;
                 case (kNuisSKDetFSI010) :
                 case (kNuisSKDetFSI011) :
                 case (kNuisSKDetFSI012) :
@@ -1371,7 +1371,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     nutypes = "all NC ($1R_{\\mu}$)"; break;
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
 				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for 1Rmu
@@ -1401,7 +1401,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kNuisSKDetFSI023) :
                 case (kNuisSKDetFSI024) :
                 case (kNuisSKDetFSI025) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
                 case (kNuisSKDetFSI026) :
                 case (kNuisSKDetFSI027) :
                 case (kNuisSKDetFSI028) :
@@ -1412,7 +1412,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     nutypes = "all NC ($1R_{e}$)"; break;
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
 				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }
@@ -1501,9 +1501,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
         case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh; RHC";                        break; // uncorrelated in the past
         case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh; RHC";                        break; // uncorrelated in the past
         case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth; RHC";                        break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_\\{mu}$; RHC";  break; // uncorrelated in the past
+        case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_{\\mu}$; RHC";  break; // uncorrelated in the past
         case ( kRHCNuisBANFFNormNC1Gamma      ) : return "BANFF; Norm; NC 1 $\\gamma$; RHC";                break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_\\{mu}$; RHC";  break; // uncorrelated in the past
+        case ( kRHCNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_{\\mu}$; RHC";  break; // uncorrelated in the past
         case ( kRHCNuisBANFFMECBar        ) : return "BANFF; Norm; MECBar; RHC";                           break;
             
             //
@@ -1531,7 +1531,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
         case ( kRHCNuisXSecNormNCcoh  ) : return "Norm, NC Coh; RHC";                    break;
 #endif
         case ( kRHCNuisXSecNormNCoth  ) : return "Norm, NC Oth; RHC";                    break;
-        case ( kRHCNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_\\{mu}$; RHC";  break;
+        case ( kRHCNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_{\\mu}$; RHC";  break;
 #ifndef __NUEONLY__
         case ( kRHCNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$; RHC";  break;
 #endif
@@ -1573,9 +1573,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kRHCNuisSKDetFSI000) :
                 case (kRHCNuisSKDetFSI001) :
                 case (kRHCNuisSKDetFSI002) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
                 case (kRHCNuisSKDetFSI003) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCnQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
                 case (kRHCNuisSKDetFSI004) :
                     nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
                 case (kRHCNuisSKDetFSI005) :
@@ -1584,11 +1584,11 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kRHCNuisSKDetFSI000) :
                 case (kRHCNuisSKDetFSI001) :
                 case (kRHCNuisSKDetFSI002) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
                 case (kRHCNuisSKDetFSI003) :
                 case (kRHCNuisSKDetFSI004) :
                 case (kRHCNuisSKDetFSI005) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCnQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
                 case (kRHCNuisSKDetFSI006) :
                 case (kRHCNuisSKDetFSI007) :
                 case (kRHCNuisSKDetFSI008) :
@@ -1601,7 +1601,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
 				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for 1Rmu
@@ -1664,7 +1664,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kRHCNuisSKDetFSI009) :
                 case (kRHCNuisSKDetFSI010) :
                 case (kRHCNuisSKDetFSI011) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
                 case (kRHCNuisSKDetFSI012) :
                 case (kRHCNuisSKDetFSI013) :
                 case (kRHCNuisSKDetFSI014) :
@@ -1681,7 +1681,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kRHCNuisSKDetFSI015) :
                 case (kRHCNuisSKDetFSI016) :
                 case (kRHCNuisSKDetFSI017) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
                 case (kRHCNuisSKDetFSI018) :
                 case (kRHCNuisSKDetFSI019) :
                 case (kRHCNuisSKDetFSI020) :
@@ -1694,7 +1694,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
 				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for 1Re
@@ -1741,7 +1741,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kRHCNuisSKDetFSI007) :
                 case (kRHCNuisSKDetFSI008) :
                 case (kRHCNuisSKDetFSI009) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{\\mu}$)"; break;
                 case (kRHCNuisSKDetFSI010) :
                 case (kRHCNuisSKDetFSI011) :
                 case (kRHCNuisSKDetFSI012) :
@@ -1756,7 +1756,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     nutypes = "all NC ($1R_{\\mu}$)"; break;
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
 				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for 1Rmu
@@ -1786,7 +1786,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kRHCNuisSKDetFSI023) :
                 case (kRHCNuisSKDetFSI024) :
                 case (kRHCNuisSKDetFSI025) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
                 case (kRHCNuisSKDetFSI026) :
                 case (kRHCNuisSKDetFSI027) :
                 case (kRHCNuisSKDetFSI028) :
@@ -1797,7 +1797,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     nutypes = "all NC ($1R_{e}$)"; break;
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; RHC",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
 				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }
@@ -1840,9 +1840,9 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kMultiRingNuisSKDetFSI000) :
                 case (kMultiRingNuisSKDetFSI001) :
                 case (kMultiRingNuisSKDetFSI002) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCQE ($MultiR_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($MultiR_{\\mu}$)"; break;
                 case (kMultiRingNuisSKDetFSI003) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCnQE ($MultiR_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($MultiR_{\\mu}$)"; break;
                 case (kMultiRingNuisSKDetFSI004) :
                     nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($MultiR_{\\mu}$)"; break;
                 case (kMultiRingNuisSKDetFSI005) :
@@ -1851,11 +1851,11 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kMultiRingNuisSKDetFSI000) :
                 case (kMultiRingNuisSKDetFSI001) :
                 case (kMultiRingNuisSKDetFSI002) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
                 case (kMultiRingNuisSKDetFSI003) :
                 case (kMultiRingNuisSKDetFSI004) :
                 case (kMultiRingNuisSKDetFSI005) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CCnQE ($1R_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
                 case (kMultiRingNuisSKDetFSI006) :
                 case (kMultiRingNuisSKDetFSI007) :
                 case (kMultiRingNuisSKDetFSI008) :
@@ -1868,7 +1868,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
 				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for MultiRmu
@@ -1931,7 +1931,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kMultiRingNuisSKDetFSI009) :
                 case (kMultiRingNuisSKDetFSI010) :
                 case (kMultiRingNuisSKDetFSI011) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($MultiR_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{e}$)"; break;
                 case (kMultiRingNuisSKDetFSI012) :
                 case (kMultiRingNuisSKDetFSI013) :
                 case (kMultiRingNuisSKDetFSI014) :
@@ -1948,7 +1948,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kMultiRingNuisSKDetFSI015) :
                 case (kMultiRingNuisSKDetFSI016) :
                 case (kMultiRingNuisSKDetFSI017) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($1R_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
                 case (kMultiRingNuisSKDetFSI018) :
                 case (kMultiRingNuisSKDetFSI019) :
                 case (kMultiRingNuisSKDetFSI020) :
@@ -1961,7 +1961,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
 				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for MultiRe
@@ -2007,7 +2007,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kMultiRingNuisSKDetFSI007) :
                 case (kMultiRingNuisSKDetFSI008) :
                 case (kMultiRingNuisSKDetFSI009) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($MultiR_{\\mu}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{\\mu}$)"; break;
                 case (kMultiRingNuisSKDetFSI010) :
                 case (kMultiRingNuisSKDetFSI011) :
                 case (kMultiRingNuisSKDetFSI012) :
@@ -2022,7 +2022,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     nutypes = "all NC ($MultiR_{\\mu}$)"; break;
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
 				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }//FSI for MultiRmu
@@ -2051,7 +2051,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                 case (kMultiRingNuisSKDetFSI023) :
                 case (kMultiRingNuisSKDetFSI024) :
                 case (kMultiRingNuisSKDetFSI025) :
-                    nutypes = "$\\nu_\\{mu}$/$\\bar{\\nu}_\\{mu}$ CC ($MultiR_{e}$)"; break;
+                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{e}$)"; break;
                 case (kMultiRingNuisSKDetFSI026) :
                 case (kMultiRingNuisSKDetFSI027) :
                 case (kMultiRingNuisSKDetFSI028) :
@@ -2062,7 +2062,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
                     nutypes = "all NC ($MultiR_{e}$)"; break;
                 default : nutypes = "--";
             }
-            return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s; MultiRing",ip,
+            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
 				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
             break;
         }
@@ -3060,7 +3060,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kNuisBANFFNormNC1Gamma  ) :     // uncorrelated in the past
             return "$f_{Norm_{NC1\\gamma}}^{banff}$";
         case ( kNuisBANFFNormNuEBarToNuMuBar  ) : // uncorrelated in the past
-            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_\\mu}}^{banff}$";
+            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}^{banff}$";
             
             //
             
@@ -3277,7 +3277,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kRHCNuisBANFFNormNC1Gamma  ) :     // uncorrelated in the past
             return "$f_{Norm_{NC1\\gamma}}^{banff} RHC$";
         case ( kRHCNuisBANFFNormNuEBarToNuMuBar  ) : // uncorrelated in the past
-            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_\\mu}}^{banff} RHC$";
+            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}^{banff} RHC$";
             
             //
             // XSec params not correlated with flux
