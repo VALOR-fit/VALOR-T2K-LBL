@@ -48,11 +48,6 @@ CorrelatedSystematics()
 #endif
 
   this->SetName("BANFF");
-  
-  LOG("BANFF",pINFO) << "Defined final BANFF matrix rows: ";
-  for (unsigned int i = 0 ; i < fNSystParameters; i++ ) {
-    LOG("BANFF",pINFO) << "\t"<<util::AsString(fSystParameters[i])<<" (default: "<<(*fDefaultValues)[i]<<")";
-  }
 
   Registry & reg = Opt::Instance()->MutableGlobalRegistry();
   reg.Set("banff", this);
@@ -62,8 +57,13 @@ CorrelatedSystematics()
     int ifhcp = irhcp - (kRHCNuisBANFFMAQE-kNuisBANFFMAQE);
     fParam2Idx[irhcp] = fParam2Idx[ifhcp];
   }
-  
   (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFShapeCCoth)] = 0;
+
+  LOG("BANFF",pINFO) << "Defined final BANFF matrix rows: ";
+  for (unsigned int i = 0 ; i < fNSystParameters; i++ ) {
+    LOG("BANFF",pINFO) << i <<" (default: "<<(*fDefaultValues)[i]<< ")" << "\t" <<util::AsString(fSystParameters[i]);
+  }
+
 }
 //________________________________________________________________________________________
 BANFF::~BANFF()
