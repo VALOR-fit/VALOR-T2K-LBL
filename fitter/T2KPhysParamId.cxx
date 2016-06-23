@@ -2363,22 +2363,22 @@ string valor::util::AsStringCompact(PhysParamId_t p)
             
 #else
 #ifndef ONEOVERMAQE
-        case ( kNuisBANFFMAQE             ) : return "f_banffmaqe";    break;
+        case ( kNuisBANFFMAQE              ) : return "f_banffmaqe";    break;
 #else
-        case ( kNuisBANFFMAQE             ) : return "f_banff1overmaqe2";  break;
+        case ( kNuisBANFFMAQE              ) : return "f_banff1overmaqe2";  break;
 #endif
-        case ( kNuisBANFFMARES            ) : return "f_banffmares";   break;
-        case ( kNuisBANFFCCQEE0           ) : return "f_banffccqee0";  break;
+        case ( kNuisBANFFMARES             ) : return "f_banffmares";   break;
+        case ( kNuisBANFFCCQEE0            ) : return "f_banffccqee0";  break;
 #if BANFF_BINS != 3
-        case ( kNuisBANFFCCQEE1           ) : return "f_banffccqee1";  break;
-        case ( kNuisBANFFCCQEE2           ) : return "f_banffccqee2";  break;
+        case ( kNuisBANFFCCQEE1            ) : return "f_banffccqee1";  break;
+        case ( kNuisBANFFCCQEE2            ) : return "f_banffccqee2";  break;
 #endif
-        case ( kNuisBANFFCC1piE0          ) : return "f_banffcc1pie0"; break;
+        case ( kNuisBANFFCC1piE0           ) : return "f_banffcc1pie0"; break;
 #if BANFF_BINS != 3
-        case ( kNuisBANFFCC1piE1          ) : return "f_banffcc1pie1"; break;
+        case ( kNuisBANFFCC1piE1           ) : return "f_banffcc1pie1"; break;
 #endif
 #if (BANFF_BINS != 2)
-        case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0";  break;
+        case ( kNuisBANFFNC1pi0            ) : return "f_banffnc1pi0";  break;
 #endif
         case ( kNuisBANFFMEC               ) : return "f_banffmec";            break;
         case ( kNuisBANFFCA5               ) : return "f_banffca5";            break;
@@ -2394,7 +2394,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh";     break; // uncorrelated in the past
         case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth";     break; // uncorrelated in the past
         case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu"; break; // uncorrelated in the past
-        case ( kNuisBANFFNormNC1Gamma     ) : return "f_banffnorm_nc1gamma"; break; // uncorrelated in the past
+        case ( kNuisBANFFNormNC1Gamma      ) : return "f_banffnorm_nc1gamma";  break; // uncorrelated in the past
         case ( kNuisBANFFNormNuEBarToNuMuBar) : return "f_banffnorm_nuebartonumubar"; break; // uncorrelated in the past
         case ( kNuisBANFFMECBar            ) : return "f_banffmecbar";            break;
             
@@ -3060,7 +3060,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kNuisBANFFNormNC1Gamma  ) :     // uncorrelated in the past
             return "$f_{Norm_{NC1\\gamma}}^{banff}$";
         case ( kNuisBANFFNormNuEBarToNuMuBar  ) : // uncorrelated in the past
-            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}^{banff}$";
+            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}}}^{banff}$";
             
             //
             
@@ -3277,7 +3277,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kRHCNuisBANFFNormNC1Gamma  ) :     // uncorrelated in the past
             return "$f_{Norm_{NC1\\gamma}}^{banff} RHC$";
         case ( kRHCNuisBANFFNormNuEBarToNuMuBar  ) : // uncorrelated in the past
-            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}^{banff} RHC$";
+            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}}}^{banff} RHC$";
             
             //
             // XSec params not correlated with flux
