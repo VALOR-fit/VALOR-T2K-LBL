@@ -4,6 +4,10 @@
 Copyright (c) 2010-2015, The VALOR group. All rights reserved.
 
 ChangeLog:
+ 
+23-06-2016 Chris
+  Added method to set the physical limits of the parameters in the FitParamList,
+  limits are now abstracted out from the framework
 
 */
 //________________________________________________________________________________________
@@ -17,6 +21,7 @@ ChangeLog:
 #include "T2KPhysicalParameterLimits.h"
 #include "Utilities.h"
 #include "Enumerations.h"
+#include "valor/Messenger/Messenger.h"
 
 using namespace valor;
 using namespace valor::conv;
@@ -179,4 +184,25 @@ void valor::T2KPhysicalParameterLimits::SetDefaults(void)
   
   
   return;
+}
+//____________________________________________________________________________
+void valor::T2KPhysicalParameterLimits::SetLimits(FitParamList * fpl)
+{
+  for (int ip = 0 ; ip < knppmax; ip++) {
+    PhysParamId_t p = (PhysParamId_t)ip;
+    if (fpl->Exists(p)){
+      map<int,double>::const_iterator it_min = fParamMinima.find(p);
+      map<int,double>::const_iterator it_max = fParamMaxima.find(p);
+      if (util::IsNormalisation(p)) {
+        // FPL set max valuex
+        LOG("T2KPhysicalParameterLimits",pDEBUG) << "Setting maxima and minima in FitParamList for parameter: \n" << util::AsString(p);
+        if (fpl->MinValue(p) < 0)
+        fpl->SetMinValue(p,it_min->second);
+        // Rely on the upper limits being set correctly
+        // fpl->SetMaxValue(p,it_max->second);
+      }
+    }
+    //    if (util::IsMixingAngle  (p)) {}
+  }
+
 }
