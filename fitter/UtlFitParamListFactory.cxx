@@ -8,6 +8,10 @@ ChangeLog:
 21-7-2014 Davide
 Added samples for multiring forward horn current
 
+23-06-2016 Chris
+Added check for parameter maxima and minima since these are decoupled from the 
+FitParamList
+
 */
 //________________________________________________________________________________________
 
@@ -31,6 +35,7 @@ Added samples for multiring forward horn current
 #include "BANFF.h"
 #include "SuperkDetectorFSI.h"
 #include "Utilities.h"
+#include "T2KPhysicalParameterLimits.h"
 
 using std::vector;
 using std::cout;
@@ -873,7 +878,7 @@ FitParamList * util::NamedParameterList(string name)
 
     //
   }
-  
+
   if (!fp) {
     cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
     util::Die(-1); return fp;
@@ -885,6 +890,8 @@ FitParamList * util::NamedParameterList(string name)
     fp->Print(/*LOG("UtlFitParamListFactory",pERROR)*/);
     util::Die(-1);
   }
+  // Make sure that the parameter limits that are set aren't in unphysical regions
+  T2KPhysicalParameterLimits::Instance()->SetLimits(fp);
   return fp;
 }
 
@@ -964,9 +971,9 @@ LOG("UtlFitParamListFactory",pINFO) << "Determine Append";
 #else // joint fit and NumuDissap
 
 #if defined(__FHC_RUNNING__) || defined(__RHC_RUNNING__)
-LOG("UtlFitParamListFactory",pINFO) << "FHC or RHC";
+
     #if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__)
-    LOG("UtlFitParamListFactory",pINFO) << "Determine Append";
+
     // fhc all + skdetfsi multiring 
     util::AppendAllCorrelatedBANFFSystematics    (fparm, start);
     util::AppendAllSuperkDetectorFSISystematics  (fparm, start+kNumOfParamsInBANFFfit);
@@ -979,7 +986,7 @@ LOG("UtlFitParamListFactory",pINFO) << "FHC or RHC";
     #endif
     
     #elif defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) 
-    LOG("UtlFitParamListFactory",pINFO) << "Determine Append";
+
       #if defined(__FULLY_CORRELATED__)
       // fhc+rhc fully correlated 
       util::AppendAllCorrelatedBANFFSystematics    (fparm, start);

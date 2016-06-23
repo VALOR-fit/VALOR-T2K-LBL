@@ -51,6 +51,7 @@ public:
   const map<int,double> & Maxima(void) const;
   
   void SetDefaults(void);
+  void SetLimits  (FitParamList * fpl);
 
 private:
 
