@@ -355,6 +355,7 @@ namespace valor {
         kMultiRingNuisSKDetFSI005,
 #endif
 #if MR_FSI_BINS != 2
+        // "Masked" the parameters here as the lowest energy bins have no entries
         //kMultiRingNuisSKDetFSI006,
         kMultiRingNuisSKDetFSI007,
         kMultiRingNuisSKDetFSI008,
@@ -1040,7 +1041,7 @@ namespace valor {
       ,
       // > 1 electron-like ring MultiRing copy
       //
-      // oscnueCC x 3 / numuCC x 3 / nueCC x 3 / NC x 3
+      // oscnueCC x 2 / numuCC x 2 / nueCC x 2 / NC x 2
       {
         { 0, 0, 1, 1,   0, 0, 0, 0 }, // kSKmNuMuCCQE
         { 0, 0, 1, 1,   0, 0, 0, 0 }, // kSKmNuMuCC1pi
@@ -1051,6 +1052,7 @@ namespace valor {
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuNC1pi0
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuNCcoh
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuNCoth
+        { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuNC1Gamma
 #    ifdef __USE_OSC_NUMU_MC_TEMPLATES__
         { 0, 0, 1, 1,   0, 0, 0, 0 }, // kSKmOscNuMuCCQE
         { 0, 0, 1, 1,   0, 0, 0, 0 }, // kSKmOscNuMuCC1pi
@@ -1067,6 +1069,7 @@ namespace valor {
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuBarNC1pi0
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuBarNCcoh
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuBarNCoth
+        { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuMuBarNC1Gamma
 #    ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
         { 0, 0, 1, 1,   0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE
         { 0, 0, 1, 1,   0, 0, 0, 0 }, // kSKmOscNuMuBarCC1pi
@@ -1083,6 +1086,7 @@ namespace valor {
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuENC1pi0
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuENCcoh
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuENCoth
+        { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuENC1Gamma
 
         { 1, 1, 0, 0,   0, 0, 0, 0 }, // kSKmOscNuECCQE
         { 1, 1, 0, 0,   0, 0, 0, 0 }, // kSKmOscNuECC1pi
@@ -1099,6 +1103,7 @@ namespace valor {
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuEBarNC1pi0
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuEBarNCcoh
         { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuEBarNCoth
+        { 0, 0, 0, 0,   0, 0, 1, 1 }, // kSKmNuEBarNC1Gamma
 
         { 1, 1, 0, 0,   0, 0, 0, 0 }, // kSKmOscNuEBarCCQE
         { 1, 1, 0, 0,   0, 0, 0, 0 }, // kSKmOscNuEBarCC1pi
@@ -1646,6 +1651,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNC1pi0
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNCcoh
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNCoth
+        {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNC1Gamma
 #    ifdef __USE_OSC_NUMU_MC_TEMPLATES__
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCCQE
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCC1pi
@@ -1662,6 +1668,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNC1pi0
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNCcoh
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNCoth
+        {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNC1Gamma        
 #    ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCC1pi
@@ -1678,6 +1685,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENC1pi0
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENCcoh
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENCoth
+        {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENC1Gamma        
 
         {  0, 0, 0, 0, 0, 0,   1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuECCQE
         {  0, 0, 0, 0, 0, 0,   1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuECC1pi
@@ -1694,6 +1702,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNC1pi0
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNCcoh
         {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNCoth
+        {  0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBar1Gamma
 
         {  0, 0, 0, 0, 0, 0,   1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuEBarCCQE
         {  0, 0, 0, 0, 0, 0,   1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuEBarCC1pi
@@ -2727,6 +2736,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNC1pi0
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNCcoh
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNCoth
+        {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuNC1Gamma
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCCQE
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuCC1pi
@@ -2743,6 +2753,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNC1pi0
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNCcoh
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNCoth
+        {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuMuBarNC1Gamma        
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCCQE
         {  0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuMuBarCC1pi
@@ -2759,6 +2770,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENC1pi0
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENCcoh
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENCoth
+        {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuENC1Gamma        
 
         {  1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuECCQE
         {  1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuECC1pi
@@ -2775,6 +2787,7 @@ namespace valor {
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNC1pi0
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNCcoh
         {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNCoth
+        {  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // kSKmNuEBarNC1Gamma        
 
         {  1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuEBarCCQE
         {  1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // kSKmOscNuEBarCC1pi
