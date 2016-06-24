@@ -10,7 +10,14 @@ using namespace valor::conv;
 
 void CompareContours()
 {
-  
+  const bool autotitle = true;
+  const double x_low = 0.3;
+  const double x_up = 0.7;
+  const double y_low = 2.;
+  const double y_up = 3.;
+  const char *title_x = "sin^{2} #theta_{23}";
+  const char *title_y = "|#Delta m^{2}_{32}| (10^{-3} eV^{2}/c^{4})";
+
   //////////////////////////// NEW VALOR contours /////////////////////
   
   // Global scan
@@ -25,23 +32,23 @@ void CompareContours()
     //                                          //
     //////////////////////////////////////////////
 
-    // // sinsqth13 Vs dcp T2K only  - Asimov A - Run 1-7
+    // // sinsqth13 Vs dcp T2K only - Run 1-7
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_t2konly_nh_contour.root",
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_t2konly_ih_contour.root",
 
-    // // dmsq Vs dcp reactors  - Asimov A - Run 1-7
+    // // dmsq Vs dcp reactors - Run 1-7
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_dmsqVsdcp/fitmarg_joint_dmsqVsdcp_Run17_Data_react_nh_contour.root",
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_dmsqVsdcp/fitmarg_joint_dmsqVsdcp_Run17_Data_react_ih_contour.root",
 
-    // // sinsqth23 Vs dmsq reactors  - Asimov A - Run 1-7
+    // // sinsqth23 Vs dmsq reactors - Run 1-7
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root",
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root",
 
-    // sinsqth23 Vs dcp reactors  - Asimov A - Run 1-7
-    "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdcp/fitmarg_joint_sinsqth23Vsdcp_Run17_Data_react_nh_contour.root",
-    "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdcp/fitmarg_joint_sinsqth23Vsdcp_Run17_Data_react_ih_contour.root",
+    // // sinsqth23 Vs dcp reactors - Run 1-7
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdcp/fitmarg_joint_sinsqth23Vsdcp_Run17_Data_react_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdcp/fitmarg_joint_sinsqth23Vsdcp_Run17_Data_react_ih_contour.root",
     
-    // // sinsqth13 Vs dcp T2K reactors  - Asimov A - Run 1-7
+    // // sinsqth13 Vs dcp T2K reactors - Run 1-7
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_nh_contour.root",
     // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_ih_contour.root",
 
@@ -61,9 +68,9 @@ void CompareContours()
     // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_nh_contour.root",
     // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_ih_contour.root",
 
-    // // sinsqth23 Vs dmsq w/ reactors - Asimov A - Run 1-7
-    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_A_reactors_nh_contour.root",
-    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_A_reactors_ih_contour.root",
+    // sinsqth23 Vs dmsq w/ reactors - Asimov A - Run 1-7
+    "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_A_reactors_nh_contour.root",
+    "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_A_reactors_ih_contour.root",
 
     // // sinsqth23 Vs dmsq w/ reactors - Asimov B - Run 1-7
     // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_B_reactors_nh_contour.root",
@@ -160,8 +167,6 @@ void CompareContours()
   const char *latexname[Nfiles] = {
     "Normal Hierarchy",
     "Inverted Hierarchy",
-    //"w/ Fit Bias",
-    //"w/o Fit Bias",
   };
   const char *chisq_name = "chisq_map_2D";
   
@@ -228,18 +233,25 @@ void CompareContours()
 
   // Init histogram
 
-  int NbinsX = hchisq_glob_valor[0]->GetNbinsX(); 
-  double lowedgeX = hchisq_glob_valor[0]->GetXaxis()->GetBinLowEdge(1);
-  double upedgeX = hchisq_glob_valor[0]->GetXaxis()->GetBinUpEdge(NbinsX);
-  int NbinsY = hchisq_glob_valor[0]->GetNbinsY();
-  double lowedgeY = hchisq_glob_valor[0]->GetYaxis()->GetBinLowEdge(1);
-  double upedgeY = hchisq_glob_valor[0]->GetYaxis()->GetBinUpEdge(NbinsY);
-  char *TitleX = hchisq_glob_valor[0]->GetXaxis()->GetTitle();
-  char *TitleY = hchisq_glob_valor[0]->GetYaxis()->GetTitle();
-  TH2D *hInit = new TH2D("hInit","hInit",NbinsX,lowedgeX,upedgeX,NbinsY,lowedgeY,upedgeY);
-  hInit->GetXaxis()->SetTitle(TitleX);
-  hInit->GetYaxis()->SetTitle(TitleY);
-
+  TH2D *hInit;
+  if(autotitle){
+    hInit = new TH2D("hInit","hInit",201,x_low,x_up,201,y_low,y_up);
+    hInit->GetXaxis()->SetTitle(title_x);
+    hInit->GetYaxis()->SetTitle(title_y);
+  }
+  else{
+    int NbinsX = hchisq_glob_valor[0]->GetNbinsX(); 
+    double lowedgeX = hchisq_glob_valor[0]->GetXaxis()->GetBinLowEdge(1);
+    double upedgeX = hchisq_glob_valor[0]->GetXaxis()->GetBinUpEdge(NbinsX);
+    int NbinsY = hchisq_glob_valor[0]->GetNbinsY();
+    double lowedgeY = hchisq_glob_valor[0]->GetYaxis()->GetBinLowEdge(1);
+    double upedgeY = hchisq_glob_valor[0]->GetYaxis()->GetBinUpEdge(NbinsY);
+    char *TitleX = hchisq_glob_valor[0]->GetXaxis()->GetTitle();
+    char *TitleY = hchisq_glob_valor[0]->GetYaxis()->GetTitle();
+    TH2D *hInit = new TH2D("hInit","hInit",NbinsX,lowedgeX,upedgeX,NbinsY,lowedgeY,upedgeY);
+    hInit->GetXaxis()->SetTitle(TitleX);
+    hInit->GetYaxis()->SetTitle(TitleY);
+  }
 
   // Get global best-fit contour
 
@@ -276,7 +288,6 @@ void CompareContours()
   
     hdeltachisq_glob_valor[ifile] = (TH2D*) hdeltachisq_glob_valor_68[ifile]->Clone(Form("hdeltachisq_glob_%d",ifile));
 
-    
     hdeltachisq_glob_valor_68[ifile]->SetContour(1);
     //hdeltachisq_glob_valor_68[ifile]->SetContourLevel(0,chisq_min+2.3);
     hdeltachisq_glob_valor_68[ifile]->SetContourLevel(0,2.3);
@@ -290,10 +301,8 @@ void CompareContours()
     hdeltachisq_glob_valor_90[ifile]->SetLineWidth(2);
     hdeltachisq_glob_valor_90[ifile]->SetLineColor(ifile+1);
     hdeltachisq_glob_valor_90[ifile]->SetLineStyle(1);
-
   }
-  
-
+ 
   
   // Draw Likelihood
   TCanvas *cLike[Nfiles];
@@ -306,15 +315,15 @@ void CompareContours()
   }
   
 
-  // Global scan contours
+  // Contours independent hierarchy
 
   TCanvas *ccontours = new TCanvas("ccontours","ccontours_independent");
   hInit->Draw();
-  //hchisq_valor[0]->Draw("same"); // to set the range
   
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int icont=0;icont<Ncont_90;icont++){
       if(g90_valor[icont][ifile]){
+	if(autotitle) ScaleGraphAxis(g90_valor[icont][ifile],1.,1000.);
         g90_valor[icont][ifile]->SetLineWidth(2);
         g90_valor[icont][ifile]->SetLineColor(ifile+1);
         g90_valor[icont][ifile]->SetLineStyle(1);
@@ -323,33 +332,49 @@ void CompareContours()
     }
     for(int icont=0;icont<Ncont_68;icont++){
       if(g68_valor[icont][ifile]){
+	if(autotitle) ScaleGraphAxis(g68_valor[icont][ifile],1.,1000.);
         g68_valor[icont][ifile]->SetLineWidth(2);
         g68_valor[icont][ifile]->SetLineColor(ifile+1);
         g68_valor[icont][ifile]->SetLineStyle(2);
         g68_valor[icont][ifile]->DrawClone("l same");
       }
     }
+    if(autotitle) ScaleMarkerAxis(gbest_fit_global[ifile],1.,1000.);
     gbest_fit_global[ifile]->Draw("same");
     gbest_fit_global[ifile]->SetMarkerColor(ifile+1);
   }
-  TLegend *lcontours = new TLegend(0.5,0.25,0.8,0.65);
+
+
+  TLegend *lcontours = new TLegend(0.5,0.5,0.8,0.65);
   lcontours->SetBorderSize(0);
   lcontours->SetFillColor(0);
   lcontours->SetLineColor(0);
-  //lcontours->SetLineColorAlpha(kWhite,0.);
   lcontours->SetFillColor(kWhite);
   lcontours->SetFillStyle(1);
   lcontours->SetTextFont(132);
   lcontours->SetTextSize(0.05);
+  lcontours->AddEntry(g68_valor[0][0],"68%CL (-2ln L_{crit} = 2.3)","l");
+  lcontours->AddEntry(g90_valor[0][0],"90%CL (-2ln L_{crit} = 4.61)","l");  
+  lcontours->AddEntry(gbest_fit_global[0],"Best-fit","p");
+  lcontours->Draw();
+
+  TLegend *lcontours2 = new TLegend(0.5,0.5,0.8,0.65);
+  lcontours2->SetBorderSize(0);
+  lcontours2->SetFillColor(0);
+  lcontours2->SetLineColor(0);
+  lcontours2->SetFillColor(kWhite);
+  lcontours2->SetFillStyle(1);
+  lcontours2->SetTextFont(132);
+  lcontours2->SetTextSize(0.05);
   for(int ifile=0;ifile<Nfiles;ifile++){
-    char name[200];
-    sprintf(name,"%s - 68%%CL",latexname[ifile]);
-    lcontours->AddEntry(g68_valor[0][ifile],name,"l");
-    sprintf(name,"%s - 90%%CL",latexname[ifile]);
-    lcontours->AddEntry(g90_valor[0][ifile],name,"l");
-    sprintf(name,"Best-fit %s",latexname[ifile]);
-    lcontours->AddEntry(gbest_fit_global[ifile],name,"p");
+    lcontours2->AddEntry(g90_valor[0][ifile],latexname[ifile],"l");
   }
+  lcontours2->Draw();
+
+  
+
+
+
   
   // Draw reactors box
   
@@ -369,56 +394,53 @@ void CompareContours()
   TBox *breactors = new TBox(X1,Y1,X2,Y2);
   breactors->SetFillColor(kYellow+1);
   breactors->SetLineColor(kYellow+1);
-  //breactors->SetFillColorAlpha(kYellow+1,0.5);
   if(draw_reactor_band) breactors->Draw("");
-  
-  lcontours->Draw();
-  
-  double posX = hchisq_valor[0]->GetXaxis()->GetBinCenter(3);
-  double posY = hchisq_valor[0]->GetYaxis()->GetBinCenter(3);
+    
+  double posX = hInit->GetXaxis()->GetBinCenter(3);
+  double posY = hInit->GetYaxis()->GetBinCenter(3);
   TLatex *latcontours = new TLatex(posX,posY,"Fixed Mass Hierarchy");
   latcontours->SetTextSize(0.06);
   latcontours->Draw("same");
   
+  
+  return;
 
 
 
 
 
-  // TCanvas *cDeltaChisq[Nfiles];
+
+  // // TCanvas *cDeltaChisq[Nfiles];
+  // // for(int ifile=0;ifile<Nfiles;ifile++){
+  // //   cDeltaChisq[ifile] = new TCanvas(Form("cDeltaChisq_%d",ifile),Form("cDeltaChisq_%d",ifile));
+  // //   if(ifile==0) hdeltachisq_glob_valor_68[ifile]->Draw("colz");
+  // //   else hdeltachisq_glob_valor_68[ifile]->Draw("colz same");
+  // //   hdeltachisq_glob_valor_90[ifile]->Draw("colz same");
+  // // }
+
+  // TCanvas *cContGlobMin = new TCanvas("cContGlobMin","cContGlobMin_global");
+  // hInit->Draw();
   // for(int ifile=0;ifile<Nfiles;ifile++){
-  //   cDeltaChisq[ifile] = new TCanvas(Form("cDeltaChisq_%d",ifile),Form("cDeltaChisq_%d",ifile));
-  //   if(ifile==0) hdeltachisq_glob_valor_68[ifile]->Draw("colz");
-  //   else hdeltachisq_glob_valor_68[ifile]->Draw("colz same");
-  //   hdeltachisq_glob_valor_90[ifile]->Draw("colz same");
+  //   hdeltachisq_glob_valor_68[ifile]->Draw("cont3 same");
+  //   hdeltachisq_glob_valor_90[ifile]->Draw("cont3 same");
+  //   gbest_fit_global[ifile]->Draw("same");
+  //   gbest_fit_global[ifile]->SetMarkerColor(ifile+1);
   // }
-
-
-
-  TCanvas *cContGlobMin = new TCanvas("cContGlobMin","cContGlobMin_global");
-  hInit->Draw();
-  for(int ifile=0;ifile<Nfiles;ifile++){
-    hdeltachisq_glob_valor_68[ifile]->Draw("cont3 same");
-    hdeltachisq_glob_valor_90[ifile]->Draw("cont3 same");
-
-    gbest_fit_global[ifile]->Draw("same");
-    gbest_fit_global[ifile]->SetMarkerColor(ifile+1);
-  }
-  if(draw_reactor_band) breactors->Draw("");
-  lcontours->Draw();
+  // if(draw_reactor_band) breactors->Draw("");
+  // lcontours->Draw();
   
 
-  // Print
+  // // Print
+  // cout << endl;
+  // cout << "The global best-fit is" << endl;
+  // for(int ifile=0;ifile<Nfiles;ifile++){
+  //   cout << " - " << latexname[ifile] << endl;
+  //   cout << "   bf_x = " << gbest_fit_global[ifile]->GetX() << endl;
+  //   cout << "   bf_y = " << gbest_fit_global[ifile]->GetY() << endl;
+  //   cout << "   chisq = " << chisq_min[ifile] << endl;
+  // }
+  // cout << endl;
 
-  cout << endl;
-  cout << "The global best-fit is" << endl;
-  for(int ifile=0;ifile<Nfiles;ifile++){
-    cout << " - " << latexname[ifile] << endl;
-    cout << "   bf_x = " << gbest_fit_global[ifile]->GetX() << endl;
-    cout << "   bf_y = " << gbest_fit_global[ifile]->GetY() << endl;
-    cout << "   chisq = " << chisq_min[ifile] << endl;
-  }
-  cout << endl;
   return;
 }
 
@@ -476,5 +498,27 @@ void SwapXY(TMarker *graph){
   graph->SetX(y);
   graph->SetY(x);
   
+  return;
+}
+
+void ScaleMarkerAxis(TMarker *marker,double scale_x,double scale_y){
+  double x = marker->GetX();
+  double y = marker->GetY();
+  double x_new = x * scale_x;
+  double y_new = y * scale_y;
+  marker->SetX(x_new);
+  marker->SetY(y_new);
+  return;
+}
+void ScaleGraphAxis(TGraph *graph,double scale_x,double scale_y){
+  for(int ipt=0;ipt<graph->GetN();ipt++){
+    double x = 0.;
+    double y = 0.;
+    graph->GetPoint(ipt,x,y);
+    double x_new = x * scale_x;
+    double y_new = y * scale_y;
+    graph->RemovePoint(ipt);
+    graph->SetPoint(ipt,x_new,y_new);
+  }
   return;
 }

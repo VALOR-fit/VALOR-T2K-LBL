@@ -15,7 +15,7 @@ void CompareNewOldT2K_th23Vsdmsq()
   const double y_up = 3.;
 
   const char *title_x = "sin^{2} #theta_{23}";
-  const char *title_y = "#Delta m^{2}_{32} (10^{-3} eV^{2}/c^{4})";
+  const char *title_y = "|#Delta m^{2}_{32}| (10^{-3} eV^{2}/c^{4})";
 
   //////////////////////////// VALOR contours /////////////////////
   
@@ -40,8 +40,8 @@ void CompareNewOldT2K_th23Vsdmsq()
 
   //////////////////////////// Run 1-4 contours /////////////////////
  
-  const char *inname_run14_nh = "../../../inputs/OfficialContours/T2K/Run14/data_fit_joint_final_reactor_nh_dcp_abs23.root"; // bf = NH
-  const char *inname_run14_ih = "../../../inputs/OfficialContours/T2K/Run14/"; // bf = IH
+  const char *inname_run14_nh = "../../../inputs/OfficialContours/T2K/Run14/data_final_reactor_abs23_nh_contours_common_bf.root"; // bf = NH
+  const char *inname_run14_ih = "../../../inputs/OfficialContours/T2K/Run14/data_final_reactor_abs23_nh_contours_common_bf.root"; // bf = IH
   const int colorRun14 = kRed;
 
   ///////////////////////////////////////////////////////////////////

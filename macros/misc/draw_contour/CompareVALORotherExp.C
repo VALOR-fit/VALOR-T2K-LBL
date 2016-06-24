@@ -4,8 +4,6 @@
 
 //#define SwapXY // Swap x and y axis of contours // does this to the chisq2d, contour and the TMarker!
 
-#include <fstream>
-
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
@@ -20,7 +18,7 @@ void CompareVALORotherExp()
   const double y_up = 3.6;
 
   const char *title_x = "sin^{2} #theta_{23}";
-  const char *title_y = "#Delta m^{2}_{32} (10^{-3} eV^{2}/c^{4})";
+  const char *title_y = "|#Delta m^{2}_{32}| (10^{-3} eV^{2}/c^{4})";
 
   //////////////////////////// VALOR contours /////////////////////
   
@@ -274,7 +272,7 @@ void CompareVALORotherExp()
   latSK->SetTextSize(0.06);
   latSK->SetTextColor(colorSK);
   latSK->Draw("same");
-  TLatex *latNOvA = new TLatex(posX,posY,"NOvA");
+  TLatex *latNOvA = new TLatex(posX,posY,"NOvA (2015)");
   latNOvA->SetTextSize(0.06);
   latNOvA->SetTextColor(colorNOvA);
   latNOvA->Draw("same");
