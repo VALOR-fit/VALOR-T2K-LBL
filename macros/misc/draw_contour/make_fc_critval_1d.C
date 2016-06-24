@@ -21,6 +21,7 @@ const double CLfrac_1sigma = 0.6827;  // 1sigma% CL
 const double CLfrac_90CL   = 0.9;  // 90% CL
 const double CLfrac_95CL   = 0.95;  // 95% CL
 const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
+const double CLfrac_3sigma = 0.9973;  // 3sigma% CL
 
 void make_fc_critval_1d(){
 
@@ -30,7 +31,8 @@ void make_fc_critval_1d(){
   // string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/";  
   // string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/";
 
-  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/";  
+  //string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/";  
+  string path_fc_nh = "";  
   string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/Raj_inverted/";
   //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/My_inverted/";
 
@@ -83,21 +85,21 @@ void make_fc_critval_1d(){
     // {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_2.356.root"},
     // {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
 
-    ///////////////////////
-    //                   //
-    //      Run 1-7      //
-    //                   //
-    ///////////////////////
+    //////////////////////////////////////////
+    //                                      //
+    //      Run 1-7 (Run 1-6 flux tuning)    //
+    //                                      //
+    //////////////////////////////////////////
 
-    // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7) 
-    {"fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","inverted_-2.356.root"},
-    {"fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","inverted_-1.571.root"},
-    {"fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","inverted_-0.785.root"},
-    {"fit_fitmarg_fc_nh_10k_All_normal_0.000.root" ,"inverted_0.000.root"},	
-    {"fit_fitmarg_fc_nh_10k_All_normal_0.785.root" ,"inverted_0.785.root"},
-    {"fit_fitmarg_fc_nh_10k_All_normal_1.571.root" ,"inverted_1.571.root"} 	
-    {"fit_fitmarg_fc_nh_10k_All_normal_2.356.root" ,"inverted_2.356.root"},
-    {"fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"inverted_3.142.root"}, // +-pi
+    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7) 
+    // {"fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","inverted_-2.356.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","inverted_-1.571.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","inverted_-0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_0.000.root" ,"inverted_0.000.root"},	
+    // {"fit_fitmarg_fc_nh_10k_All_normal_0.785.root" ,"inverted_0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_1.571.root" ,"inverted_1.571.root"} 	
+    // {"fit_fitmarg_fc_nh_10k_All_normal_2.356.root" ,"inverted_2.356.root"},
+    // {"fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"inverted_3.142.root"}, // +-pi
 
     // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~5k Toys - My inverted (Run 1-7) 
     // {"fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","fit_fitmarg_fc_ih_5k_Set0_inverted_-2.356.root"},
@@ -109,6 +111,23 @@ void make_fc_critval_1d(){
     // {"fit_fitmarg_fc_nh_10k_All_normal_2.356.root" ,"fit_fitmarg_fc_ih_5k_Set0_inverted_2.356.root"},
     // {"fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"fit_fitmarg_fc_ih_5k_Set0_inverted_3.142.root"}, // +-pu
   
+    ////////////////////////////////////////////////////
+    //                                                //
+    //      Run 1-7 (Run 1-6 + Run 1-7 flux tuning)    //
+    //                                                //
+    ////////////////////////////////////////////////////
+
+    // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7) 
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","inverted_-2.356.root"},
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","inverted_-1.571.root"},
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","inverted_-0.785.root"},
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.000.root" ,"inverted_0.000.root"},	
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_0.785_All.root" ,"inverted_0.785.root"}, // merged run16 - run17 flux tuning
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_1.571_All.root" ,"inverted_1.571.root"}, // merged run16 - run17 flux tuning	
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_2.356_All.root" ,"inverted_2.356.root"}, // merged run16 - run17 flux tuning
+    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"inverted_3.142.root"}, // +-pi
+
+
   };
 
   const int nptcpy = 1;
@@ -155,6 +174,26 @@ void make_fc_critval_1d(){
   TGraph *gFC2sigma_ih_m1 = new TGraph();
   gFC2sigma_ih_m1->SetName("gFC2sigma_ih_m1");
   gFC2sigma_ih_m1->SetTitle("gFC2sigma_ih_m1");
+
+  TGraph *gFC3sigma_nh = new TGraph();
+  gFC3sigma_nh->SetName("gFC3sigma_nh");
+  gFC3sigma_nh->SetTitle("gFC3sigma_nh");
+  TGraph *gFC3sigma_nh_p1 = new TGraph();
+  gFC3sigma_nh_p1->SetName("gFC3sigma_nh_p1");
+  gFC3sigma_nh_p1->SetTitle("gFC3sigma_nh_p1");
+  TGraph *gFC3sigma_nh_m1 = new TGraph();
+  gFC3sigma_nh_m1->SetName("gFC3sigma_nh_m1");
+  gFC3sigma_nh_m1->SetTitle("gFC3sigma_nh_m1");
+
+  TGraph *gFC3sigma_ih = new TGraph();
+  gFC3sigma_ih->SetName("gFC3sigma_ih");
+  gFC3sigma_ih->SetTitle("gFC3sigma_ih");
+  TGraph *gFC3sigma_ih_p1 = new TGraph();
+  gFC3sigma_ih_p1->SetName("gFC3sigma_ih_p1");
+  gFC3sigma_ih_p1->SetTitle("gFC3sigma_ih_p1");
+  TGraph *gFC3sigma_ih_m1 = new TGraph();
+  gFC3sigma_ih_m1->SetName("gFC3sigma_ih_m1");
+  gFC3sigma_ih_m1->SetTitle("gFC3sigma_ih_m1");
   
   TFile *filein_fc[NFCpts][Nmh];
   TTree *treein_fc[NFCpts][Nmh];
@@ -242,6 +281,7 @@ void make_fc_critval_1d(){
       double err_90CL   = sqrt(Nentries * CLfrac_90CL   * (1.-CLfrac_90CL) );
       double err_95CL   = sqrt(Nentries * CLfrac_95CL   * (1.-CLfrac_95CL) );
       double err_2sigma = sqrt(Nentries * CLfrac_2sigma * (1.-CLfrac_2sigma) );
+      double err_3sigma = sqrt(Nentries * CLfrac_3sigma * (1.-CLfrac_3sigma) );
 
 
       //CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,0.);
@@ -264,6 +304,10 @@ void make_fc_critval_1d(){
       double FCCritVal_post_2sigma_p1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,+err_2sigma / Nentries );
       double FCCritVal_post_2sigma_m1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,-err_2sigma / Nentries );
 
+      double FCCritVal_post_3sigma    = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_3sigma*100.,0.);
+      double FCCritVal_post_3sigma_p1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_3sigma*100.,+err_3sigma / Nentries );
+      double FCCritVal_post_3sigma_m1 = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_3sigma*100.,-err_3sigma / Nentries );
+
       double FCCritVal_1sigma    = CalcDLcrit(myvector,CLfrac_1sigma*100.,0.); 
       double FCCritVal_1sigma_p1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,+err_1sigma); 
       double FCCritVal_1sigma_m1 = CalcDLcrit(myvector,CLfrac_1sigma*100.,-err_1sigma); 
@@ -280,6 +324,10 @@ void make_fc_critval_1d(){
       double FCCritVal_2sigma_p1 = CalcDLcrit(myvector,CLfrac_2sigma*100.,+err_2sigma); 
       double FCCritVal_2sigma_m1 = CalcDLcrit(myvector,CLfrac_2sigma*100.,-err_2sigma); 
 
+      double FCCritVal_3sigma    = CalcDLcrit(myvector,CLfrac_3sigma*100.,0.); 
+      double FCCritVal_3sigma_p1 = CalcDLcrit(myvector,CLfrac_3sigma*100.,+err_3sigma); 
+      double FCCritVal_3sigma_m1 = CalcDLcrit(myvector,CLfrac_3sigma*100.,-err_3sigma); 
+
       if(*trueMH=="normal"){
       	gFC90CL_nh   ->SetPoint(gFC90CL_nh   ->GetN(),truepar0,FCCritVal_post_90CL);
       	gFC90CL_nh_p1->SetPoint(gFC90CL_nh_p1->GetN(),truepar0,FCCritVal_post_90CL_p1);
@@ -288,6 +336,10 @@ void make_fc_critval_1d(){
       	gFC2sigma_nh   ->SetPoint(gFC2sigma_nh   ->GetN(),truepar0,FCCritVal_post_2sigma);
       	gFC2sigma_nh_p1->SetPoint(gFC2sigma_nh_p1->GetN(),truepar0,FCCritVal_post_2sigma_p1);
       	gFC2sigma_nh_m1->SetPoint(gFC2sigma_nh_m1->GetN(),truepar0,FCCritVal_post_2sigma_m1);
+
+      	gFC3sigma_nh   ->SetPoint(gFC3sigma_nh   ->GetN(),truepar0,FCCritVal_post_3sigma);
+      	gFC3sigma_nh_p1->SetPoint(gFC3sigma_nh_p1->GetN(),truepar0,FCCritVal_post_3sigma_p1);
+      	gFC3sigma_nh_m1->SetPoint(gFC3sigma_nh_m1->GetN(),truepar0,FCCritVal_post_3sigma_m1);
       }
       else if(*trueMH=="inverted"){
       	gFC90CL_ih   ->SetPoint(gFC90CL_ih   ->GetN(),truepar0,FCCritVal_post_90CL);
@@ -297,6 +349,10 @@ void make_fc_critval_1d(){
       	gFC2sigma_ih   ->SetPoint(gFC2sigma_ih   ->GetN(),truepar0,FCCritVal_post_2sigma);
       	gFC2sigma_ih_p1->SetPoint(gFC2sigma_ih_p1->GetN(),truepar0,FCCritVal_post_2sigma_p1);
       	gFC2sigma_ih_m1->SetPoint(gFC2sigma_ih_m1->GetN(),truepar0,FCCritVal_post_2sigma_m1);
+
+      	gFC3sigma_ih   ->SetPoint(gFC3sigma_ih   ->GetN(),truepar0,FCCritVal_post_3sigma);
+      	gFC3sigma_ih_p1->SetPoint(gFC3sigma_ih_p1->GetN(),truepar0,FCCritVal_post_3sigma_p1);
+      	gFC3sigma_ih_m1->SetPoint(gFC3sigma_ih_m1->GetN(),truepar0,FCCritVal_post_3sigma_m1);
       }
       else {
 	cerr << endl;
@@ -325,8 +381,12 @@ void make_fc_critval_1d(){
 	   << " + " << fabs(FCCritVal_2sigma-FCCritVal_2sigma_p1)
 	   << " - " << fabs(FCCritVal_2sigma-FCCritVal_2sigma_m1)
 	   << endl;
+      cout << " - 3sigma = " << FCCritVal_3sigma
+	   << " + " << fabs(FCCritVal_3sigma-FCCritVal_3sigma_p1)
+	   << " - " << fabs(FCCritVal_3sigma-FCCritVal_3sigma_m1)
+	   << endl;
 
-     cout << "Critical values posterior-like weight=1 (Used):"<< endl;
+      cout << "Critical values posterior-like weight=1 (Used):"<< endl;
       cout << " - 1sigma = " << FCCritVal_post_1sigma 
 	   << " + " << fabs(FCCritVal_post_1sigma-FCCritVal_post_1sigma_p1)
 	   << " - " << fabs(FCCritVal_post_1sigma-FCCritVal_post_1sigma_m1)
@@ -343,7 +403,11 @@ void make_fc_critval_1d(){
 	   << " + " << fabs(FCCritVal_post_2sigma-FCCritVal_post_2sigma_p1)
 	   << " - " << fabs(FCCritVal_post_2sigma-FCCritVal_post_2sigma_m1)
 	   << endl;
-
+      cout << " - 3sigma = " << FCCritVal_post_3sigma
+	   << " + " << fabs(FCCritVal_post_3sigma-FCCritVal_post_3sigma_p1)
+	   << " - " << fabs(FCCritVal_post_3sigma-FCCritVal_post_3sigma_m1)
+	   << endl;
+      
     } // loop over ifc
   } // loop over imh
 
@@ -366,6 +430,12 @@ void make_fc_critval_1d(){
     double x_2sigma_ih,    y_2sigma_ih=0;
     double x_2sigma_ih_p1, y_2sigma_ih_p1=0;
     double x_2sigma_ih_m1, y_2sigma_ih_m1=0;
+    double x_3sigma_nh,    y_3sigma_nh=0;
+    double x_3sigma_nh_p1, y_3sigma_nh_p1=0;
+    double x_3sigma_nh_m1, y_3sigma_nh_m1=0;
+    double x_3sigma_ih,    y_3sigma_ih=0;
+    double x_3sigma_ih_p1, y_3sigma_ih_p1=0;
+    double x_3sigma_ih_m1, y_3sigma_ih_m1=0;
     
     gFC90CL_nh->GetPoint(ipt, x_90CL_nh, y_90CL_nh);
     gFC90CL_nh_p1->GetPoint(ipt, x_90CL_nh_p1, y_90CL_nh_p1);
@@ -379,6 +449,12 @@ void make_fc_critval_1d(){
     gFC2sigma_ih->GetPoint(ipt, x_2sigma_ih, y_2sigma_ih);
     gFC2sigma_ih_p1->GetPoint(ipt, x_2sigma_ih_p1, y_2sigma_ih_p1);
     gFC2sigma_ih_m1->GetPoint(ipt, x_2sigma_ih_m1, y_2sigma_ih_m1);
+    gFC3sigma_nh->GetPoint(ipt, x_3sigma_nh, y_3sigma_nh);
+    gFC3sigma_nh_p1->GetPoint(ipt, x_3sigma_nh_p1, y_3sigma_nh_p1);
+    gFC3sigma_nh_m1->GetPoint(ipt, x_3sigma_nh_m1, y_3sigma_nh_m1);
+    gFC3sigma_ih->GetPoint(ipt, x_3sigma_ih, y_3sigma_ih);
+    gFC3sigma_ih_p1->GetPoint(ipt, x_3sigma_ih_p1, y_3sigma_ih_p1);
+    gFC3sigma_ih_m1->GetPoint(ipt, x_3sigma_ih_m1, y_3sigma_ih_m1);
     
     for(int iptcpy=0;iptcpy<nptcpy;iptcpy++){      
       if( fabs( x_90CL_nh - copypt[iptcpy][0] ) < 0.0001 ){
@@ -399,6 +475,12 @@ void make_fc_critval_1d(){
 	gFC2sigma_ih   ->SetPoint(gFC2sigma_ih   ->GetN(),copypt[iptcpy][1],y_2sigma_ih);
 	gFC2sigma_ih_p1->SetPoint(gFC2sigma_ih_p1->GetN(),copypt[iptcpy][1],y_2sigma_ih_p1);
 	gFC2sigma_ih_m1->SetPoint(gFC2sigma_ih_m1->GetN(),copypt[iptcpy][1],y_2sigma_ih_m1);
+ 	gFC3sigma_nh   ->SetPoint(gFC3sigma_nh   ->GetN(),copypt[iptcpy][1],y_3sigma_nh);
+ 	gFC3sigma_nh_p1->SetPoint(gFC3sigma_nh_p1->GetN(),copypt[iptcpy][1],y_3sigma_nh_p1);
+ 	gFC3sigma_nh_m1->SetPoint(gFC3sigma_nh_m1->GetN(),copypt[iptcpy][1],y_3sigma_nh_m1);
+	gFC3sigma_ih   ->SetPoint(gFC3sigma_ih   ->GetN(),copypt[iptcpy][1],y_3sigma_ih);
+	gFC3sigma_ih_p1->SetPoint(gFC3sigma_ih_p1->GetN(),copypt[iptcpy][1],y_3sigma_ih_p1);
+	gFC3sigma_ih_m1->SetPoint(gFC3sigma_ih_m1->GetN(),copypt[iptcpy][1],y_3sigma_ih_m1);
       }
     }
   }
@@ -417,6 +499,12 @@ void make_fc_critval_1d(){
   gFC2sigma_ih   ->Sort();
   gFC2sigma_ih_p1->Sort();
   gFC2sigma_ih_m1->Sort();
+  gFC3sigma_nh   ->Sort();
+  gFC3sigma_nh_p1->Sort();
+  gFC3sigma_nh_m1->Sort();
+  gFC3sigma_ih   ->Sort();
+  gFC3sigma_ih_p1->Sort();
+  gFC3sigma_ih_m1->Sort();
 
   gFC90CL_nh   ->SetLineColor(kRed);
   gFC90CL_nh_p1->SetLineColor(kRed);
@@ -430,6 +518,12 @@ void make_fc_critval_1d(){
   gFC2sigma_ih   ->SetLineColor(kBlue);
   gFC2sigma_ih_p1->SetLineColor(kBlue);
   gFC2sigma_ih_m1->SetLineColor(kBlue);
+  gFC3sigma_nh   ->SetLineColor(kGreen);
+  gFC3sigma_nh_p1->SetLineColor(kGreen);
+  gFC3sigma_nh_m1->SetLineColor(kGreen);
+  gFC3sigma_ih   ->SetLineColor(kGreen);
+  gFC3sigma_ih_p1->SetLineColor(kGreen);
+  gFC3sigma_ih_m1->SetLineColor(kGreen);
 
   gFC90CL_ih   ->SetLineStyle(2);
   gFC90CL_ih_p1->SetLineStyle(2);
@@ -437,6 +531,9 @@ void make_fc_critval_1d(){
   gFC2sigma_ih   ->SetLineStyle(2);
   gFC2sigma_ih_p1->SetLineStyle(2);
   gFC2sigma_ih_m1->SetLineStyle(2);
+  gFC3sigma_ih   ->SetLineStyle(2);
+  gFC3sigma_ih_p1->SetLineStyle(2);
+  gFC3sigma_ih_m1->SetLineStyle(2);
   
   TCanvas *cDeltaChisq = new TCanvas("cDeltaChisq","cDeltaChisq");
   gFC90CL_nh->GetXaxis()->SetTitle("#delta_{CP}");
@@ -447,12 +544,18 @@ void make_fc_critval_1d(){
   gFC2sigma_nh   ->Draw("pl same");
   gFC2sigma_nh_p1->Draw("pl same");
   gFC2sigma_nh_m1->Draw("pl same");
+  gFC3sigma_nh   ->Draw("pl same");
+  gFC3sigma_nh_p1->Draw("pl same");
+  gFC3sigma_nh_m1->Draw("pl same");
   gFC90CL_ih   ->Draw("pl same");
   gFC90CL_ih_p1->Draw("pl same");
   gFC90CL_ih_m1->Draw("pl same");
   gFC2sigma_ih   ->Draw("pl same");
   gFC2sigma_ih_p1->Draw("pl same");
   gFC2sigma_ih_m1->Draw("pl same");
+  gFC3sigma_ih   ->Draw("pl same");
+  gFC3sigma_ih_p1->Draw("pl same");
+  gFC3sigma_ih_m1->Draw("pl same");
 
   TFile *fileout_fc = new TFile("FCgraphs.root","RECREATE");
   gFC90CL_nh    ->Write();
@@ -467,6 +570,12 @@ void make_fc_critval_1d(){
   gFC2sigma_ih   ->Write();
   gFC2sigma_ih_p1->Write();
   gFC2sigma_ih_m1->Write();  
+  gFC3sigma_nh   ->Write();
+  gFC3sigma_nh_p1->Write();
+  gFC3sigma_nh_m1->Write();  
+  gFC3sigma_ih   ->Write();
+  gFC3sigma_ih_p1->Write();
+  gFC3sigma_ih_m1->Write();  
   fileout_fc->Close();
   
   return;

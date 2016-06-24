@@ -21,6 +21,34 @@ void CompareContours()
 
     //////////////////////////////////////////////
     //                                          //
+    //      Run 1-7 - Data - Run 1-7 Flux       // 
+    //                                          //
+    //////////////////////////////////////////////
+
+    // // sinsqth13 Vs dcp T2K only  - Asimov A - Run 1-7
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_t2konly_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_t2konly_ih_contour.root",
+
+    // // dmsq Vs dcp reactors  - Asimov A - Run 1-7
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_dmsqVsdcp/fitmarg_joint_dmsqVsdcp_Run17_Data_react_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_dmsqVsdcp/fitmarg_joint_dmsqVsdcp_Run17_Data_react_ih_contour.root",
+
+    // // sinsqth23 Vs dmsq reactors  - Asimov A - Run 1-7
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root",
+
+    // sinsqth23 Vs dcp reactors  - Asimov A - Run 1-7
+    "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdcp/fitmarg_joint_sinsqth23Vsdcp_Run17_Data_react_nh_contour.root",
+    "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdcp/fitmarg_joint_sinsqth23Vsdcp_Run17_Data_react_ih_contour.root",
+    
+    // // sinsqth13 Vs dcp T2K reactors  - Asimov A - Run 1-7
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_ih_contour.root",
+
+    
+  
+    //////////////////////////////////////////////
+    //                                          //
     //      Run 1-7 -Asimov - Run 1-7 Flux      // 
     //                                          //
     //////////////////////////////////////////////
@@ -29,9 +57,25 @@ void CompareContours()
     // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_A_reactors_nh_contour.root",
     // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_A_reactors_ih_contour.root",
 
-    // sinsqth13 Vs dcp w/ reactors - Asimov B - Run 1-7
-    "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_nh_contour.root",
-    "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_ih_contour.root",
+    // // sinsqth13 Vs dcp w/ reactors - Asimov B - Run 1-7
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_reactors_ih_contour.root",
+
+    // // sinsqth23 Vs dmsq w/ reactors - Asimov A - Run 1-7
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_A_reactors_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_A_reactors_ih_contour.root",
+
+    // // sinsqth23 Vs dmsq w/ reactors - Asimov B - Run 1-7
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_B_reactors_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17_Asimov_B_reactors_ih_contour.root",
+
+    // // sinsqth13 Vs dcp T2K only  - Asimov A - Run 1-7
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_t2konly/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_A_t2konly_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_t2konly/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_A_t2konly_ih_contour.root",
+
+    // // sinsqth13 Vs dcp T2K only  - Asimov B - Run 1-7
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_t2konly/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_t2konly_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/contours_sinsqth13Vsdcp_t2konly/fitmarg_joint_sinsqth13Vsdcp_Run17_Asimov_B_t2konly_ih_contour.root",
  
 
     //////////////////////////////
@@ -125,8 +169,6 @@ void CompareContours()
   
   bool draw_reactor_band = false;
   
-  bool shiftglobal = false;
-
 
   ////////////////////////////////////////////////////////////////////////
   
@@ -138,6 +180,7 @@ void CompareContours()
   TGraph *g90_valor[Ncont_90][Nfiles] = {0};
   TH2D *hchisq_valor[Nfiles] = {0};
   TH2D *hchisq_glob_valor[Nfiles] = {0};
+  TH2D *hdeltachisq_glob_valor[Nfiles] = {0};
   TH2D *hdeltachisq_glob_valor_68[Nfiles] = {0};
   TH2D *hdeltachisq_glob_valor_90[Nfiles] = {0};
   TMarker *gbest_fit_global[Nfiles] = {0};
@@ -216,8 +259,8 @@ void CompareContours()
   
   for(int ifile=0;ifile<Nfiles;ifile++){
     
-    hdeltachisq_glob_valor_68[ifile] = (TH2D*) hchisq_glob_valor[ifile]->Clone(Form("hchisq_glob_68_%d",ifile));
-    hdeltachisq_glob_valor_90[ifile] = (TH2D*) hchisq_glob_valor[ifile]->Clone(Form("hchisq_glob_90_%d",ifile));
+    hdeltachisq_glob_valor_68[ifile] = (TH2D*) hchisq_glob_valor[ifile]->Clone(Form("hdeltachisq_glob_68_%d",ifile));
+    hdeltachisq_glob_valor_90[ifile] = (TH2D*) hchisq_glob_valor[ifile]->Clone(Form("hdeltachisq_glob_90_%d",ifile));
     
     for(int i=0;i<hchisq_glob_valor[ifile]->GetNbinsX();i++){
       for(int j=0;j<hchisq_glob_valor[ifile]->GetNbinsY();j++){
@@ -230,6 +273,8 @@ void CompareContours()
 	//cout << "cont = " << cont << endl;
       }
     }
+  
+    hdeltachisq_glob_valor[ifile] = (TH2D*) hdeltachisq_glob_valor_68[ifile]->Clone(Form("hdeltachisq_glob_%d",ifile));
 
     
     hdeltachisq_glob_valor_68[ifile]->SetContour(1);
@@ -250,13 +295,22 @@ void CompareContours()
   
 
   
-
-
+  // Draw Likelihood
+  TCanvas *cLike[Nfiles];
+  for(int ifile=0;ifile<Nfiles;ifile++){
+    cLike[ifile] = new TCanvas(Form("cLike_file_%d",ifile),Form("cLike_file_%d",ifile));
+    cLike[ifile]->cd();
+    //hdeltachisq_glob_valor_90[ifile]->Draw("colz");
+    hchisq_glob_valor[ifile]->Draw("colz");
+    hdeltachisq_glob_valor[ifile]->Draw("colz");
+  }
+  
 
   // Global scan contours
 
-  TCanvas *ccontours = new TCanvas("ccontours","ccontours");
-  hchisq_valor[0]->Draw(); // to set the range
+  TCanvas *ccontours = new TCanvas("ccontours","ccontours_independent");
+  hInit->Draw();
+  //hchisq_valor[0]->Draw("same"); // to set the range
   
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int icont=0;icont<Ncont_90;icont++){
@@ -293,6 +347,8 @@ void CompareContours()
     lcontours->AddEntry(g68_valor[0][ifile],name,"l");
     sprintf(name,"%s - 90%%CL",latexname[ifile]);
     lcontours->AddEntry(g90_valor[0][ifile],name,"l");
+    sprintf(name,"Best-fit %s",latexname[ifile]);
+    lcontours->AddEntry(gbest_fit_global[ifile],name,"p");
   }
   
   // Draw reactors box
@@ -318,9 +374,11 @@ void CompareContours()
   
   lcontours->Draw();
   
-  //  TLatex *latcontours = new TLatex(0.075,2.,"Global scan");
-  //  latcontours->SetTextSize(0.07);
-  //  latcontours->Draw("same");
+  double posX = hchisq_valor[0]->GetXaxis()->GetBinCenter(3);
+  double posY = hchisq_valor[0]->GetYaxis()->GetBinCenter(3);
+  TLatex *latcontours = new TLatex(posX,posY,"Fixed Mass Hierarchy");
+  latcontours->SetTextSize(0.06);
+  latcontours->Draw("same");
   
 
 
@@ -337,7 +395,7 @@ void CompareContours()
 
 
 
-  TCanvas *cContGlobMin = new TCanvas("cContGlobMin","cContGlobMin");
+  TCanvas *cContGlobMin = new TCanvas("cContGlobMin","cContGlobMin_global");
   hInit->Draw();
   for(int ifile=0;ifile<Nfiles;ifile++){
     hdeltachisq_glob_valor_68[ifile]->Draw("cont3 same");
@@ -350,8 +408,17 @@ void CompareContours()
   lcontours->Draw();
   
 
+  // Print
 
-
+  cout << endl;
+  cout << "The global best-fit is" << endl;
+  for(int ifile=0;ifile<Nfiles;ifile++){
+    cout << " - " << latexname[ifile] << endl;
+    cout << "   bf_x = " << gbest_fit_global[ifile]->GetX() << endl;
+    cout << "   bf_y = " << gbest_fit_global[ifile]->GetY() << endl;
+    cout << "   chisq = " << chisq_min[ifile] << endl;
+  }
+  cout << endl;
   return;
 }
 
