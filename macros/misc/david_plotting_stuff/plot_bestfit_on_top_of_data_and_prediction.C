@@ -17,33 +17,39 @@ using namespace valor::conv;
 
 void plot_bestfit_on_top_of_data_and_prediction
 (
+ const bool draw_preliminary = false,
+
  const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+
+ // RUN 1-7
  
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_1Re.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_RHC1Rmu.root",
+ const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_RHC1Re.root",
+ 
+ const char * datafile = "data_run1to7/SKdata_Run17.root",
+
+ // RUN 1-6
  //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Rmu.root",
- const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Re_2d.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Re_2d.root",
  //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_1Re_2d.root",
  //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_1Rmu.root",
- 
- const char * datafile = "data_run1to6/SKdata_Run16.root",
-
- //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/BETABAR/spectrum_bestfit_fitmarg_betabar1.root", 
- //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root", 
- //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/NEW_VARRAY_TH1D/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root",  
- //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcp0.root",  
-  
- const bool draw_preliminary = false
- 
+ //const char * datafile = "data_run1to6/SKdata_Run16.root", 
  )
 { 
-  const int NBestFitFiles = 2; 
+  const int NBestFitFiles = 1; 
   const char * bestfitfile[NBestFitFiles] = {
-    "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcp0.root",
-    "../TECH_NOTE_14_3_16/BESTFIT/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcpPi.root",
+    //"../TECH_NOTE_14_3_16/BESTFIT/RUN16/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcp0.root",
+    //"../TECH_NOTE_14_3_16/BESTFIT/RUN16/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcpPi.root",
+
+    "../TECH_NOTE_14_3_16/BESTFIT/RUN17/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Run17.root",
   };
   
   const char * bestfitlatex[NBestFitFiles] = {
-    "#delta_{CP} = 0",
-    "#delta_{CP} = #pi"
+    "Best-fit"
+    //"#delta_{CP} = 0",
+    //"#delta_{CP} = #pi"
   };
 
 
@@ -136,7 +142,7 @@ void plot_bestfit_on_top_of_data_and_prediction
   hErecoExp->SetLineWidth(2);
   hErecoExp->DrawCopy("histo");  
   for(int ifile=0;ifile<NBestFitFiles;ifile++){
-    hBestFit[ifile]->SetLineColor(1+ifile);
+    hBestFit[ifile]->SetLineColor(2+ifile);
     hBestFit[ifile]->SetLineWidth(2);
     hBestFit[ifile]->Draw("same");
   }
@@ -145,7 +151,7 @@ void plot_bestfit_on_top_of_data_and_prediction
   TLegend *leg_Ereco = new TLegend(0.6, 0.4, 0.9, 0.7);
   leg_Ereco->SetFillColor(0);
   leg_Ereco->SetBorderSize(0);
-  leg_Ereco->AddEntry(hErecoExp,"Expected","L");
+  leg_Ereco->AddEntry(hErecoExp,"No oscillation","L");
   leg_Ereco->AddEntry(hErecoData,"Data","P");
   for(int ifile=0;ifile<NBestFitFiles;ifile++){
     leg_Ereco->AddEntry(hBestFit[ifile],bestfitlatex[ifile],"L");
