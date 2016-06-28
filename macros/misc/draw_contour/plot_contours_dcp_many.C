@@ -24,28 +24,28 @@ void plot_contours_dcp_many
  const bool SaveRootFile = false,
  const string tag = "dcp_run17_react_Data_ErecoOnly",
 
- const bool doBrazilian = true,
+ const bool doBrazilian = false,
 
  const bool doGlobalMin  = true,
- const bool same_mh_color = true, // use same color for NH and IH
- const bool same_mh_style = false, // use same style for NH and IH
+ const bool same_mh_color = false, // use same color for NH and IH
+ const bool same_mh_style = true, // use same style for NH and IH
  const bool draw_preliminary = false,
 
  const bool do_fc = true,
- const bool draw_fc_err = true,
+ const bool draw_fc_err = false,
 
  const bool do_const = false,
 
  const bool draw_1sigmaCL = false,
  const bool draw_90CL     = true,
- const bool draw_2sigmaCL = true,
- const bool draw_3sigmaCL = true,
+ const bool draw_2sigmaCL = false,
+ const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
 
  const bool draw_reactors = false,
-
- const bool do_range_1sigma = true,
+ 
+ const bool do_range_1sigma = false,
  const double critval = 1.,
  
  // Compare true chisq
@@ -82,10 +82,10 @@ void plot_contours_dcp_many
   //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_0_normal_0.000.root";
   //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_ih_10k_mpiover2_inverted_-1.571.root";
   
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_0.000.root";  
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.571.root";  
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.759.root ";    
-  const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_ih_10k_fullchisq_run17fluxtun_-1.571.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_0.000.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.571.root";  
+  const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.759.root ";    
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_ih_10k_fullchisq_run17fluxtun_-1.571.root";  
  
   const int Nfiles = 1;
   const int Nmh = 2;
@@ -522,9 +522,8 @@ void plot_contours_dcp_many
     }
     cout << "Delta Chisq = " << chisqMH[ifile][0] - chisqMH[ifile][1] << endl;
   }
-  cout << endl;
-
-
+  cout << endl; 
+  
   // Init histogram
 
   int NbinsX = hdeltachisq1D_GlobMin[0][0]->GetNbinsX(); 
@@ -611,7 +610,6 @@ void plot_contours_dcp_many
     gFC2sigma_ih_p1->SetMarkerColor(kOrange-4);
     gFC2sigma_ih_m1->SetMarkerColor(kOrange-4);
 
-
     gFC90CL_nh   ->SetMarkerSize(0.5);
     gFC90CL_nh_p1->SetMarkerSize(0.5);
     gFC90CL_nh_m1->SetMarkerSize(0.5);
@@ -648,8 +646,153 @@ void plot_contours_dcp_many
 
 
 
-  // Draw histograms
+
+
+
+
+
+
+
+
+
+  //
+  // Compute CL intervals at 90%CL
+  //
   
+  TLine *min90CL_nh;
+  TLine *max90CL_nh;
+  TLine *min90CL_ih;
+  TLine *max90CL_ih;
+  TBox *hatch_min90CL_nh;
+  TBox *hatch_max90CL_nh;
+  TBox *hatch_min90CL_ih;
+  TBox *hatch_max90CL_ih;
+
+  if(do_fc){
+    
+    cout << endl;
+    cout << "/////////// Compute confidence intervals w/ Feldman-Cousins at 90%CL ///////////" << endl;
+    
+    TH1D *hdeltachisq1D_shifted_fc[Nfiles][Nmh]; // shifted wrt Feldman-Cousins critical values
+    double lim_min_nh = 0;
+    double lim_max_nh = 0;
+    double lim_min_ih = 0;
+    double lim_max_ih = 0;
+
+    // Normal Hierarchy interval
+    
+    cout << endl;
+    cout << "Normal hierarchy" << endl;
+    cout << endl;
+    
+    hdeltachisq1D_shifted_fc[0][0] = (TH1D*)hdeltachisq1D_GlobMin[0][0]->Clone(TString::Format("hdeltachisq1D_shifted_fc_file0_mh0"));
+    
+    for(int ibin=0;ibin<hdeltachisq1D_shifted_fc[0][0]->GetNbinsX();ibin++){
+      double bincenter = hdeltachisq1D_shifted_fc[0][0]->GetBinCenter(ibin+1);
+      double bincont = hdeltachisq1D_shifted_fc[0][0]->GetBinContent(ibin+1);
+      double bincont_new = bincont - gFC90CL_nh->Eval(bincenter); // bincont=0 --> boundary of CL
+      hdeltachisq1D_shifted_fc[0][0]->SetBinContent(ibin+1,bincont_new);
+    }
+    
+    //int bin_bf = hdeltachisq1D_GlobMin[0][0]->GetMinimumBin();
+    //double dcp_bestfit = hdeltachisq1D_GlobMin[0][0]->GetBinCenter(bin_bf);
+    //double dcp_bestfit_cont = hdeltachisq1D_GlobMin[0][0]->GetBinContent(bin_bf);
+    int bin_bf = hdeltachisq1D_shifted_fc[0][0]->GetMinimumBin();
+    double dcp_bestfit = hdeltachisq1D_shifted_fc[0][0]->GetBinCenter(bin_bf);
+    double dcp_bestfit_cont = hdeltachisq1D_shifted_fc[0][0]->GetBinContent(bin_bf);
+    //cout << "dcp_bestfit = " << dcp_bestfit << endl;
+    //cout << "dcp_bestfit_cont = " << dcp_bestfit_cont << endl;
+    
+    double Status_range = CalcBestFitErrorsMINOS_FC(hdeltachisq1D_shifted_fc[0][0],0.,dcp_bestfit,lim_min_nh,lim_max_nh);
+    if(Status_range==conv::kBadResult){
+      cout << "Range not found" << endl;
+    }
+
+    //cout << "lim_min_nh = " << lim_min_nh << endl;
+    //cout << "lim_max_nh = " << lim_max_nh << endl;
+
+
+    // Inverted Hierarchy interval
+    
+    cout << endl;
+    cout << "Inverted hierarchy" << endl;
+    cout << endl;
+    
+    hdeltachisq1D_shifted_fc[0][1] = (TH1D*)hdeltachisq1D_GlobMin[0][1]->Clone(TString::Format("hdeltachisq1D_shifted_fc_file0_mh1"));
+    
+    for(int ibin=0;ibin<hdeltachisq1D_shifted_fc[0][1]->GetNbinsX();ibin++){
+      double bincenter = hdeltachisq1D_shifted_fc[0][1]->GetBinCenter(ibin+1);
+      double bincont = hdeltachisq1D_shifted_fc[0][1]->GetBinContent(ibin+1);
+      double bincont_new = bincont - gFC90CL_ih->Eval(bincenter); // bincont=0 --> boundary of CL
+      hdeltachisq1D_shifted_fc[0][1]->SetBinContent(ibin+1,bincont_new);
+    }
+    
+    //int bin_bf = hdeltachisq1D_GlobMin[0][1]->GetMinimumBin();
+    //double dcp_bestfit = hdeltachisq1D_GlobMin[0][1]->GetBinCenter(bin_bf);
+    //double dcp_bestfit_cont = hdeltachisq1D_GlobMin[0][1]->GetBinContent(bin_bf);
+    int bin_bf = hdeltachisq1D_shifted_fc[0][1]->GetMinimumBin();
+    double dcp_bestfit = hdeltachisq1D_shifted_fc[0][1]->GetBinCenter(bin_bf);
+    double dcp_bestfit_cont = hdeltachisq1D_shifted_fc[0][1]->GetBinContent(bin_bf);
+    //cout << "dcp_bestfit = " << dcp_bestfit << endl;
+    //cout << "dcp_bestfit_cont = " << dcp_bestfit_cont << endl;
+    
+    double Status_range = CalcBestFitErrorsMINOS_FC(hdeltachisq1D_shifted_fc[0][1],0.,dcp_bestfit,lim_min_ih,lim_max_ih);
+    if(Status_range==conv::kBadResult){
+      cout << "Range not found" << endl;
+    }
+
+    //cout << "lim_min_ih = " << lim_min_ih << endl;
+    //cout << "lim_max_ih = " << lim_max_ih << endl;
+
+
+    // // 
+    // // Useful to check whether the method is correct
+    // //
+    // TCanvas *cdeltachisq1D_shifted_fc_nh = new TCanvas("cdeltachisq1D_shifted_fc_nh","cdeltachisq1D_shifted_fc_nh");
+    // hdeltachisq1D_shifted_fc[0][0]->Draw("histo text");
+    // TLine *prova_interp = new TLine(-3.04734487,0.111296385,-3.01592895,-0.00225649251); // bins before and after y=0
+    // TLine *prova_0 = new TLine(-3.14,0.,+3.14,0.); // line at y=0
+    // TLine *prova_limit = new TLine(lim_min_nh,-10.,lim_min_nh,10.); // interval limit
+    // prova_interp->Draw();
+    // prova_0->Draw();
+    // prova_limit->Draw();
+
+
+    min90CL_nh = new TLine(lim_min_nh,0.,lim_min_nh,20);
+    max90CL_nh = new TLine(lim_max_nh,0.,lim_max_nh,20);
+    min90CL_ih = new TLine(lim_min_ih,0.,lim_min_ih,20);
+    max90CL_ih = new TLine(lim_max_ih,0.,lim_max_ih,20);
+
+    double min_box = lim_min_nh-0.5;
+    if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
+    hatch_min90CL_nh = new TBox(min_box,0.,lim_min_nh,20);
+    double max_box = lim_max_nh+0.5;
+    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
+    hatch_max90CL_nh = new TBox(lim_max_nh,0.,max_box,20);
+
+    min_box = lim_min_ih-0.5;
+    if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
+    hatch_min90CL_ih = new TBox(min_box,0.,lim_min_ih,20);
+    double max_box = lim_max_ih+0.5;
+    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
+    hatch_max90CL_ih = new TBox(lim_max_ih,0.,max_box,20);
+
+  }
+  
+
+
+
+
+
+
+
+  /////////////////////////////////////////////
+  //                                         //
+  //            Draw histograms              //
+  //                                         //
+  /////////////////////////////////////////////
+
+
   // Chisq
   double Max_chisq = 0.;
   for(int ifile=0;ifile<Nfiles;ifile++){
@@ -688,7 +831,6 @@ void plot_contours_dcp_many
   lchisq->Draw();
 
 
-  
   // Delta Chisq 
 
   double Max_deltachisq = 0.;
@@ -703,6 +845,7 @@ void plot_contours_dcp_many
   cDeltaChisq = new TCanvas(name,name);
 
   hInit->SetMaximum(Max_deltachisq*1.2);
+  hInit->GetYaxis()->SetTitle("-2lnL");
   hInit->DrawCopy();
 
   // Draw reactors box
@@ -726,11 +869,17 @@ void plot_contours_dcp_many
       hdeltachisq1D_GlobMin[ifile][imh]->SetLineWidth(2);
       if(same_mh_color) hdeltachisq1D_GlobMin[ifile][imh]->SetLineColor(ifile+1);
       else hdeltachisq1D_GlobMin[ifile][imh]->SetLineColor(ifile+imh+1);
-      if((ifile+imh)==0) hdeltachisq1D_GlobMin[ifile][imh]->Draw("same");
-      else hdeltachisq1D_GlobMin[ifile][imh]->Draw("same");
+      if((ifile+imh)==0){ 
+	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("same");
+	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
+      }
+      else{
+	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("same");
+	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
+      }
     }
   }
-
+  
   TLegend *ldeltachisq = new TLegend(0.6,0.45,0.8,0.6);
   ldeltachisq->SetFillColor(0);
   ldeltachisq->SetLineColor(0);
@@ -754,6 +903,54 @@ void plot_contours_dcp_many
 	gFC90CL_ih_p1->Draw("l same");
 	gFC90CL_ih_m1->Draw("l same");
       }
+
+      min90CL_nh->SetLineWidth(2);
+      min90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+      min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+      min90CL_nh->Draw();
+ 
+      // hatch_min90CL_nh->SetLineWidth(1);
+      // hatch_min90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+      // hatch_min90CL_nh->SetFillStyle(3004);
+      // hatch_min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+      // hatch_min90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+      // hatch_min90CL_nh->Draw();
+
+      max90CL_nh->SetLineWidth(2);
+      max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+      max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+      max90CL_nh->Draw();
+ 
+      // hatch_max90CL_nh->SetLineWidth(1);
+      // hatch_max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+      // hatch_max90CL_nh->SetFillStyle(3005);
+      // hatch_max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+      // hatch_max90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+      // hatch_max90CL_nh->Draw();
+
+      min90CL_ih->SetLineWidth(2);
+      min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+      min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+      min90CL_ih->Draw();
+ 
+      // hatch_min90CL_ih->SetLineWidth(1);
+      // hatch_min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+      // hatch_min90CL_ih->SetFillStyle(3004);
+      // hatch_min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+      // hatch_min90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+      // hatch_min90CL_ih->Draw();
+
+      max90CL_ih->SetLineWidth(2);
+      max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+      max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+      max90CL_ih->Draw();
+      
+      // hatch_max90CL_ih->SetLineWidth(1);
+      // hatch_max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+      // hatch_max90CL_ih->SetFillStyle(3005);
+      // hatch_max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+      // hatch_max90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+      // hatch_max90CL_ih->Draw();      
     }
     if(draw_2sigmaCL){
       gFC2sigma_nh   ->Draw("l same");
@@ -764,6 +961,7 @@ void plot_contours_dcp_many
 	gFC2sigma_ih_p1->Draw("l same");
 	gFC2sigma_ih_m1->Draw("l same");
       }
+
     }
   }
 
@@ -774,12 +972,14 @@ void plot_contours_dcp_many
   lcritval->SetTextSize(0.05);
   if(do_fc){
     if(draw_90CL){
-      lcritval->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL) - NH","l");
-      lcritval->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL) - IH","l");
+      //lcritval->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL) - NH","l");
+      //lcritval->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL) - IH","l");
+      lcritval->AddEntry(gFC90CL_nh,"-2lnL_{crit} (90% CL)","l");
     }
     if(draw_2sigmaCL){
-      lcritval->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma) - NH","l");
-      lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
+      //lcritval->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma) - NH","l");
+      //lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
+      lcritval->AddEntry(gFC2sigma_nh,"-2lnL_{crit} (2#sigma CL)","l");
     }
     lcritval->Draw();
   }
@@ -1331,11 +1531,15 @@ void plot_contours_dcp_many
     //lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p2sigma,"Exp. #Delta #chi^{2} 2#sigma spread","f");
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p1sigma,"68.27\% of toys MC","f");
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p2sigma,"95.45\% of toys MC","f");
-    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. #Delta #chi^{2}","l");
-    if(draw_90CL)
-      lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90% CL)","l");
-    if(draw_2sigmaCL)
-      lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma CL)","l");
+    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. -2lnL","l");
+    //lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. #Delta #chi^{2}","l");
+    if(draw_90CL){
+      lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"-2lnL_{crit} (90% CL)","l");
+      //lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90% CL)","l");
+    }
+    if(draw_2sigmaCL){
+      lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"-2lnL_{crit} (2#sigma CL)","l");
+    }
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
     lBrazilianPlot_nh->Draw();
 
@@ -1377,11 +1581,12 @@ void plot_contours_dcp_many
     //lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p2sigma,"Exp. #Delta #chi^{2} 2#sigma spread","f");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p1sigma,"68.27\% of toys MC","f");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p2sigma,"95.45\% of toys MC","f");
-    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. #Delta #chi^{2}","l");
+    //lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. #Delta #chi^{2}","l");
+    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. -2lnL","l");
     if(draw_90CL)
-      lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90% CL)","l");
+      lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"-2lnL_{crit} (90% CL)","l");
     if(draw_2sigmaCL)
-      lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma CL)","l");
+      lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"-2lnL_{crit} (2#sigma CL)","l");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
     lBrazilianPlot_ih->Draw();
 
@@ -1479,7 +1684,8 @@ void plot_contours_dcp_many
 
     TCanvas *cdcp_Vs_deltachisq_nh = new TCanvas("cdcp_Vs_deltachisq_nh","cdcp_Vs_deltachisq_nh");
     hdcp_Vs_deltachisq_nh->GetXaxis()->SetTitle("#delta_{CP}");
-    hdcp_Vs_deltachisq_nh->GetYaxis()->SetTitle("#Delta #chi^{2}");
+    hdcp_Vs_deltachisq_nh->GetYaxis()->SetTitle("-2lnL");
+    //hdcp_Vs_deltachisq_nh->GetYaxis()->SetTitle("#Delta #chi^{2}");
     hdcp_Vs_deltachisq_nh->Draw("colz");
     TLatex *latNormal_dcp_dchisq = new TLatex(hdeltachisq1D_nh_mean->GetXaxis()->GetBinLowEdge(5),1.1,"Normal Hierarchy");
     latNormal_dcp_dchisq->SetTextSize(0.06);
@@ -1487,7 +1693,8 @@ void plot_contours_dcp_many
     
     TCanvas *cdcp_Vs_deltachisq_ih = new TCanvas("cdcp_Vs_deltachisq_ih","cdcp_Vs_deltachisq_ih");
     hdcp_Vs_deltachisq_ih->GetXaxis()->SetTitle("#delta_{CP}");
-    hdcp_Vs_deltachisq_ih->GetYaxis()->SetTitle("#Delta #chi^{2}");
+    hdcp_Vs_deltachisq_ih->GetYaxis()->SetTitle("-2lnL");
+    //hdcp_Vs_deltachisq_ih->GetYaxis()->SetTitle("#Delta #chi^{2}");
     hdcp_Vs_deltachisq_ih->Draw("colz");
     TLatex *latInverted_dcp_dchisq = new TLatex(hdeltachisq1D_ih_mean->GetXaxis()->GetBinLowEdge(5),1.1,"Inverted Hierarchy");
     latInverted_dcp_dchisq->SetTextSize(0.06);
@@ -1614,13 +1821,13 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
   for(int ibin=bin_bf;ibin>=0;ibin--){ // histogram convention     
     
     double bincont = histo->GetBinContent(ibin);
-    if(bincont<0.){
-      cerr << endl;
-      cerr << "CalcBestFitErrorsMINOS" << endl;
-      cerr << "Bin content is negative!" << endl;
-      cerr << "bincont = " << bincont << endl;
-      cerr << endl;
-    }
+    // if(bincont<0.){
+    //   cerr << endl;
+    //   cerr << "CalcBestFitErrorsMINOS" << endl;
+    //   cerr << "Bin content is negative!" << endl;
+    //   cerr << "bincont = " << bincont << endl;
+    //   cerr << endl;
+    // }
     
     // cout << "ibin = " << ibin 
     // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(ibin)
@@ -1632,15 +1839,15 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
       bin_negsigma_a = bin_negsigma_b+1; 
       break;
     }
-    else if(bincont<0.){
-      cerr << endl;
-      cerr << "CalcBestFitErrorsMINOS" << endl;
-      cerr << "Negative DeltaChisq 1D:" << endl;
-      cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
-      cerr << endl;
-      //exit(1);
-      return conv::kBadResult;
-    }
+    // else if(bincont<0.){
+    //   cerr << endl;
+    //   cerr << "CalcBestFitErrorsMINOS" << endl;
+    //   cerr << "Negative DeltaChisq 1D:" << endl;
+    //   cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
+    //   cerr << endl;
+    //   //exit(1);
+    //   return conv::kBadResult;
+    // }
         
   }
   
@@ -1653,15 +1860,15 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
   
   for(int ibin=bin_bf;ibin<=histo->GetNbinsX();ibin++){ // histogram convention 
     double bincont = histo->GetBinContent(ibin);
-    if(bincont<0.){
-      cerr << endl;
-      cerr << "CalcBestFitErrorsMINOS" << endl;
-      cerr << "Negative DeltaChisq 1D:" << endl;
-      cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
-      cerr << endl;
-      //exit(1);
-      return conv::kBadResult;
-    }
+    // if(bincont<0.){
+    //   cerr << endl;
+    //   cerr << "CalcBestFitErrorsMINOS" << endl;
+    //   cerr << "Negative DeltaChisq 1D:" << endl;
+    //   cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
+    //   cerr << endl;
+    //   //exit(1);
+    //   return conv::kBadResult;
+    // }
     
     // cout << "ibin = " << ibin
     // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(ibin)
@@ -1749,8 +1956,223 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
 }
  
 
+double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,double &lim_x_min, double &lim_x_max){ 
+  
+  cout << endl;
+  cout << "Feldman-Cousins confidence intervals" << endl;
+  cout << endl;
+
+  //double error = conv::kBadResult;
+  const double CritChisq_1D = CritVal;
+  
+  // Find 68.27% CL contour (1sigma)
+  
+  double errneg = conv::kBadResult;
+  double errpos = conv::kBadResult;
+
+  int bin_bf = conv::kBadResult;        // best-fit bin
+  double chisq_min = conv::kBadResult;  // best-fit chisq
+
+  if(val_bf==conv::kBadResult){
+    chisq_min = histo->GetMinimum();
+    bin_bf = histo->GetMinimumBin();
+    val_bf = histo->GetBinCenter(bin_bf);
+
+    //cout << endl;
+    cout << "Find the global minimum:" << endl;
+    cout << "best-fit value = " << val_bf << endl;
+    cout << "best-fit chisq = " << chisq_min << endl;
+    //cout << endl;
+  }
+  else{    
+    bin_bf = histo->FindBin(val_bf);             // best-fit bin
+    chisq_min = histo->GetBinContent(bin_bf); // best-fit chisq
+
+    //cout << endl;
+    cout << "Find the global minimum:" << endl;
+    cout << "best-fit value = " << val_bf << endl;
+    cout << "best-fit chisq = " << chisq_min << endl;
+    //cout << endl;
+  }
+
+
+  // cout << endl;
+  // cout << "val_bf = " << val_bf << endl;
+  // cout << "bin_bf = " << bin_bf << endl;
+  // cout << "chisq_min = " << chisq_min << endl;
+  // cout << endl;
+
+  // Bins before (b) and after (a) the intersection with critical value
+  int bin_negsigma_a = conv::kBadResult; 
+  int bin_negsigma_b = conv::kBadResult;
+  int bin_possigma_a = conv::kBadResult;
+  int bin_possigma_b = conv::kBadResult;
+  
+  // Find param value at DeltaChisq=1 (negative error)
+  
+  for(int ibin=bin_bf;ibin>=0;ibin--){ // histogram convention     
+    
+    double bincont = histo->GetBinContent(ibin);
+    // if(bincont<0.){
+    //   cerr << endl;
+    //   cerr << "CalcBestFitErrorsMINOS" << endl;
+    //   cerr << "Bin content is negative!" << endl;
+    //   cerr << "bincont = " << bincont << endl;
+    //   cerr << endl;
+    // }
+    
+    //
+    // Useful for checks
+    //
+    // cout << "ibin = " << ibin 
+    // 	   << " - X = " << histo->GetXaxis()->GetBinCenter(ibin)
+    // 	   << " - bincont = " << bincont << endl;
+    
+    
+    if(bincont>CritChisq_1D){
+      // bins before (b) and after (a) DeltaChisq=1 (following x direction)
+      bin_negsigma_b = ibin; 
+      bin_negsigma_a = bin_negsigma_b+1; 
+      break;
+    }
+    // else if(bincont<0.){
+    //   cerr << endl;
+    //   cerr << "CalcBestFitErrorsMINOS" << endl;
+    //   cerr << "Negative DeltaChisq 1D:" << endl;
+    //   cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
+    //   cerr << endl;
+    //   //exit(1);
+    //   return conv::kBadResult;
+    // }
+        
+  }
+  
+  
+  //
+  // Useful for checks
+  //
+  // double x1 = histo->GetBinCenter(bin_negsigma_b);
+  // double y1 = histo->GetBinContent(bin_negsigma_b);
+  // double x2 = histo->GetBinCenter(bin_negsigma_a);
+  // double y2 = histo->GetBinContent(bin_negsigma_a);
+  // cout << "x1 = " << x1 << ", y1 = " << y1 << endl;
+  // cout << "x2 = " << x2 << ", y2 = " << y2 << endl;
+  // cout << " - interpolation = " << GetInterpolationX(x1,y1,x2,y2,0.) << endl;
+
+
+
+   
+  // Positive error
+  
+  // cout << endl;
+  // cout << "Positive error" << endl;
+  // cout << endl;
+  
+  for(int ibin=bin_bf;ibin<=histo->GetNbinsX();ibin++){ // histogram convention 
+    double bincont = histo->GetBinContent(ibin);
+    // if(bincont<0.){
+    //   cerr << endl;
+    //   cerr << "CalcBestFitErrorsMINOS" << endl;
+    //   cerr << "Negative DeltaChisq 1D:" << endl;
+    //   cerr << "DeltaChisq_1D = " << histo->GetBinContent(ibin) << endl;
+    //   cerr << endl;
+    //   //exit(1);
+    //   return conv::kBadResult;
+    // }
+    
+    // cout << "ibin = " << ibin
+    // 	   << " - X = " << fhdeltachisq_marg_1D->GetXaxis()->GetBinCenter(ibin)
+    //  	   << " - bincont = " << bincont << endl;
+    
+    if(bincont>CritChisq_1D){
+      // bins before (b) and after (a) DeltaChisq=1
+      bin_possigma_a = ibin; 
+      bin_possigma_b = bin_possigma_a-1; 
+      break;
+    }
+  }
+  //cout << "bin_possigma_b = " << bin_possigma_b << endl;
+  //cout << "bin_possigma_a = " << bin_possigma_a << endl;
+  
+  
+  // If no bin is found it means the 1sigma bin is outside the physical region
+  // and bin variables are still set to default value.
+  // If so set left extreme to 1 (first bin of the histogram) and right extreme
+  // to Nbins (last bin of the histogram)
+  
+  if(bin_negsigma_a == conv::kBadResult){
+    bin_negsigma_a = 1;
+    bin_negsigma_b = 1;
+  }
+  if(bin_possigma_b == conv::kBadResult){
+    bin_possigma_a = histo->GetNbinsX();
+    bin_possigma_b = histo->GetNbinsX();
+  }
+  
+  // Check if the interval bins are correctly found
+  if(bin_negsigma_a > bin_possigma_b){
+    cerr << endl;
+    cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
+    cerr << "Left extreme bin is higher than right extreme bin" << endl;
+    cerr << "The 1sigma error interval is messed up:" << endl;
+    cerr << "bin_possigma_b = " << bin_possigma_b << endl;
+    cerr << "bin_negsigma_a = " << bin_negsigma_a << endl;
+    cerr << endl;      
+    //exit(1);
+    return conv::kBadResult;
+  }
+  
+  double X1 = conv::kBadResult;
+  double Y1 = conv::kBadResult;
+  double X2 = conv::kBadResult;
+  double Y2 = conv::kBadResult;
+  double Xout = conv::kBadResult;
+  
+  // Extrapolation (left extreme). Do it only if 1sigma bin is in the physical region
+  if(bin_negsigma_a>1){
+    X1 = histo->GetXaxis()->GetBinCenter(bin_negsigma_b);
+    Y1 = histo->GetBinContent(bin_negsigma_b);
+    X2 = histo->GetXaxis()->GetBinCenter(bin_negsigma_a);
+    Y2 = histo->GetBinContent(bin_negsigma_a);
+    Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+  }
+  else{
+    Xout = histo->GetBinCenter(bin_negsigma_a);
+  }
+
+  errneg = fabs(val_bf - Xout); 
+  //cout << "fparam_bf_errneg[0] = " << fparam_bf_errneg[0] << endl;
+  
+  // Extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
+  if(bin_possigma_b < histo->GetNbinsX()){
+    X1 = histo->GetXaxis()->GetBinCenter(bin_possigma_b);
+    Y1 = histo->GetBinContent(bin_possigma_b);
+    X2 = histo->GetXaxis()->GetBinCenter(bin_possigma_a);
+    Y2 = histo->GetBinContent(bin_possigma_a);
+    Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+  }
+  else{
+    Xout = histo->GetBinCenter(bin_possigma_b);
+  }
+  errpos[0] = fabs(val_bf - Xout); 
+  //cout << "fparam_bf_errpos[0] = " << fparam_bf_errpos[0] << endl;
+  
+  cout << endl;
+  cout << "Best-fit = " << val_bf << " + " << errpos << " - " << errneg << endl;
+  cout << endl;
+  cout << "The confidence interval is:"<< endl;
+  cout << "[ " << val_bf - errneg << " ; " << val_bf + errpos << " ] " << endl;
+  cout << endl;
+
+  lim_x_min = val_bf - errneg;
+  lim_x_max = val_bf + errpos;
+  
+}
+ 
+
 
 double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin){
+  
   double slope = (Y2-Y1)/(X2-X1);
   double Xout = (Yin-Y1)/slope + X1;
   return Xout;
@@ -1763,11 +2185,13 @@ double GetInterpolationX(double X1,double Y1,double X2, double Y2,double Yin){
   // double Xin = Xout;
   // Yin = (Y2-Y1)/(X2-X1)*(Xin-X1) + Y1;
   // cout << "Yin = " << Yin << endl;
-  //TGraph *gr = new TGraph();
-  //gr->SetPoint(0,X1,Y1);
-  //gr->SetPoint(1,X2,Y2);
-  //cout << "Eval = " << gr->Eval(Xin) << endl;
- }
+ 
+  // TGraph *gr = new TGraph();
+  // gr->SetPoint(0,X1,Y1);
+  // gr->SetPoint(1,X2,Y2);
+  // cout << "Eval = " << gr->Eval(Xin) << endl;
+  // return gr->Eval(Xin);
+}
 
 
 double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double conflev, double sigmacl){ 
