@@ -89,20 +89,20 @@ except:
 
   
 
-def main(sample,unoscillated_input_filename, oscillated_input_filename,useaverage,doprefit):
+def main(sample,unoscillated_input_filename, oscillated_input_filename,usemedian,doprefit,tag):
   
   f_unosc = ROOT.TFile(unoscillated_input_filename)
   if not f_unosc:
     raise T2KAnaError("Could not open unoscillated input file")
-  pre_and_postfit_envelope(sample,f_unosc,"unoscillated",useaverage,doprefit)
+  pre_and_postfit_envelope(sample,f_unosc,"unoscillated",usemedian,doprefit,tag)
   
   f_osc   = ROOT.TFile(oscillated_input_filename)
   if not f_unosc:
     raise T2KAnaError("Could not open oscillated input file")
-  pre_and_postfit_envelope(sample,f_osc  ,"oscillated", useaverage, doprefit)
+  pre_and_postfit_envelope(sample,f_osc  ,"oscillated", usemedian, doprefit,tag)
   
 
-def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
+def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
   
   assert(rootfile)
 
@@ -216,9 +216,9 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
 
     if doprefit==True :
 
-      if useaverage==False :
+      if usemedian==False :
         hname = sample+"_"+par_set+"prefit"+"_envpluserr"
-      elif useaverage==True :
+      elif usemedian==True :
         #hname = sample+"_"+par_set+"prefit"+"_up_average"
         hname = sample+"_"+par_set+"prefit"+"_up_median"
         h = rootfile.Get(hname)
@@ -226,9 +226,9 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
           print "Failed to get histogram: ",hname ; exit()
         hplus_prefit     = ROOT.TH1D( h )
     
-        if useaverage==False :
+        if usemedian==False :
           hname = sample+"_"+par_set+"prefit"+"_envminuserr"
-        elif useaverage==True :
+        elif usemedian==True :
           #hname = sample+"_"+par_set+"prefit"+"_down_average"
           hname = sample+"_"+par_set+"prefit"+"_down_median"
           h = rootfile.Get(hname)
@@ -236,9 +236,9 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
             print "Failed to get histogram: ",hname ; exit()
           hminus_prefit     = ROOT.TH1D( h )
     
-    if useaverage==False :
+    if usemedian==False :
       hname = sample+"_"+par_set+"_envpluserr"
-    elif useaverage==True :
+    elif usemedian==True :
       #hname = sample+"_"+par_set+"_up_average"
       hname = sample+"_"+par_set+"_up_median"
     h = rootfile.Get(hname)
@@ -246,9 +246,9 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
       print "Failed to get histogram: ",hname ; exit()
     hplus_postfit     = ROOT.TH1D( h )
     
-    if useaverage==False :
+    if usemedian==False :
       hname = sample+"_"+par_set+"_envminuserr"
-    elif useaverage==True :
+    elif usemedian==True :
       #hname = sample+"_"+par_set+"_down_average"
       hname = sample+"_"+par_set+"_down_median"
     h = rootfile.Get(hname)
@@ -282,10 +282,10 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
       h.GetXaxis().SetRangeUser(0.,max_energy)
       print h.GetTitle(),h.GetLineWidth()
       
-    legend = ROOT.TLegend(0.7,0.6,0.9,0.9);
+    legend = ROOT.TLegend(0.65,0.6,0.8,0.9);
     legend.SetFillStyle(0);
     legend.SetBorderSize(0);
-    legend.SetTextSize(0.04);
+    legend.SetTextSize(0.05);
   
     limit = max([abs(h.GetMinimum()) for h in par_hists] + [abs(h.GetMaximum()) for h in par_hists])
     
@@ -365,14 +365,14 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
       all_hists.extend([legend_postfit])
 
     
-    if doprefit==True : legend.AddEntry(legend_prefit   ,"Prefit" ,"FL")
-    legend.AddEntry(legend_postfit  ,"Postfit","FL")
+    if doprefit==True : legend.AddEntry(legend_prefit   ,"Nominal error" ,"FL")
+    legend.AddEntry(legend_postfit  ,"#pm 1#sigma error","FL")
     
     if is_constrained[par_set]: legend.Draw()
     
     canv.Update()
 
-    canv.Print(sample+name+"_"+par_set+"_envelope.eps")
+    canv.Print(tag+"_"+sample+name+"_"+par_set+"_envelope.eps")
     
 
 
@@ -388,7 +388,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     # ratio_plus_postfit  = R.TH1D(hplus_postfit)
     # ratio_minus_postfit = R.TH1D(hminus_postfit)
  
-    # if useaverage==True:
+    # if usemedian==True:
     #   ratio_plus_prefit  .Divide(prefit_average_hist)
     #   ratio_minus_prefit .Divide(prefit_average_hist)
     #   ratio_plus_postfit .Divide(postfit_average_hist)
@@ -496,7 +496,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     ratio_plus_postfit  = R.TH1D(hplus_postfit)
     ratio_minus_postfit = R.TH1D(hminus_postfit)
  
-    if useaverage==True:
+    if usemedian==True:
       if doprefit==True :
         ratio_plus_prefit  .Divide(prefit_average_hist)
         ratio_minus_prefit .Divide(prefit_average_hist)
@@ -610,23 +610,27 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
       ratio_minus_prefit.SetMaximum(ratio_max)
       ratio_minus_prefit.SetMinimum(ratio_min)
  
+      
     if doprefit==True :
+      ratio_plus_prefit.GetYaxis().SetTitle("Fractional error")
       ratio_plus_prefit.DrawCopy("")
       ratio_minus_prefit.DrawCopy("same")
       ratio_plus_postfit.DrawCopy("same")
       ratio_minus_postfit.DrawCopy("same")
     else :
+      ratio_plus_postfit.GetYaxis().SetTitle("Fractional error")
       ratio_plus_postfit.DrawCopy("")
       ratio_minus_postfit.DrawCopy("same")
 
     ROOT.gPad.RedrawAxis();
 
-    legend2 = ROOT.TLegend(0.6,0.70,0.93,0.87);
+    legend2 = ROOT.TLegend(0.4,0.70,0.73,0.87);
+    legend2.SetTextSize(0.05);
     legend2.SetFillStyle(0);
     legend2.SetBorderSize(0);
     if doprefit==True :
-      legend2.AddEntry(ratio_plus_prefit  ,"Prefit" ,"L")
-    legend2.AddEntry(ratio_plus_postfit ,"Postfit","L")
+      legend2.AddEntry(ratio_plus_prefit  ,"Nominal error" ,"L")
+    legend2.AddEntry(ratio_plus_postfit ,"#pm 1#sigma error","L")
     legend2.Draw("same")
     
     line_at_1 = ROOT.TLine(0,1,max_energy,1)
@@ -634,7 +638,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     line_at_1.Draw("same")
     
     canv2.Update()
-    canv2.Print(sample+name+"_"+par_set+"_envelope_ratio.eps")
+    canv2.Print(tag+"_"+sample+name+"_"+par_set+"_envelope_ratio.eps")
 
     # Print out some event rates
     nom_events     = nominal_hist  .Integral()
@@ -660,9 +664,9 @@ def pre_and_postfit_envelope(sample,rootfile,name,useaverage,doprefit):
     
 
   canv_nsk_prefit.Update()
-  canv_nsk_prefit.Print(sample+"_prefit_nsk.eps")
+  canv_nsk_prefit.Print(tag+"_"+sample+"_prefit_nsk.eps")
   canv_nsk_postfit.Update()
-  canv_nsk_postfit.Print(sample+"_nsk.eps")
+  canv_nsk_postfit.Print(tag+"_"+sample+"_nsk.eps")
 
   return
 
@@ -686,12 +690,14 @@ if __name__=="__main__":
   parser.add_option('-s', dest='sample',default="RHC1Re"  ,help='The sample')
   parser.add_option('-o', dest='osc'  ,default=default_oscillated_input_file  ,help='The unoscillated input ROOT file')
   parser.add_option('-u', dest='unosc',default=default_unoscillated_input_file,help='The oscillated input ROOT file')
-  parser.add_option('-a', dest='useaverage', action='store_true' , default=False, help='Use envelopes with respect to the average histogram')
+  parser.add_option('-a', dest='usemedian', action='store_true' , default=False, help='Use envelopes with respect to the median or average histogram')
   parser.add_option('-p', dest='doprefit'  , action='store_true' , default=False, help='Draw pre-banff histograms')
+  parser.add_option('-t', dest='tag',default="test"  ,help='Tag of the output file')
+
   options,other = parser.parse_args()
   
   if other:
     print "Bad arguments: ",other
     exit(-1)
   
-  main(options.sample,options.unosc,options.osc,options.useaverage,options.doprefit)
+  main(options.sample,options.unosc,options.osc,options.usemedian,options.doprefit,options.tag)
