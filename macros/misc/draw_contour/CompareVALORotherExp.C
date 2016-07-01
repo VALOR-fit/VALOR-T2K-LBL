@@ -10,10 +10,11 @@ using namespace valor::conv;
 
 void CompareVALORotherExp()
 {
-  
-  bool draw_reactor_band = false;
+  const bool draw_preliminary = true;
+
+  const bool draw_reactor_band = false;
   const double x_low = 0.3;
-  const double x_up = 0.7;
+  const double x_up = 0.73;
   const double y_low = 1.7;
   const double y_up = 3.6;
 
@@ -59,7 +60,7 @@ void CompareVALORotherExp()
 
   //////////////////////////// IceCube contours /////////////////////////
 
-  const char *inname_icecube = "../../../inputs/OfficialContours/OtherExp/sinsqth23Vsdmsq_IceCube2015_digit_arXiv:1410.7227v2_nh.txt";
+  const char *inname_icecube = "../../../inputs/OfficialContours/OtherExp/sinsqth23Vsdmsq_IceCube2015_ORIGINAL_arXiv:1410.7227v2_nh.txt"; // taken from IceCube collaboration
   const int colorIceCube = kCyan;
 
   ////////////////////////////////////////////////////////////////////////
@@ -163,6 +164,11 @@ void CompareVALORotherExp()
   hInit->GetYaxis()->SetTitle(title_y);
   hInit->Draw();
 
+  double posX = hInit->GetXaxis()->GetBinCenter(2);
+  double posY = hInit->GetYaxis()->GetBinCenter(2);
+  TLatex *latPreliminary = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  latPreliminary->SetTextSize(0.05);
+
   
   ///////////////////////////////////
   //                               //
@@ -172,6 +178,8 @@ void CompareVALORotherExp()
 
   TCanvas *ccontours_nh = new TCanvas("ccontours_nh","ccontours_nh");
   hInit->Draw();
+
+  if(draw_preliminary) latPreliminary->Draw("same");
 
   //
   // Super-K
@@ -218,6 +226,7 @@ void CompareVALORotherExp()
   //
   // IceCube
   //
+  ScaleGraphAxis(icecube_s23m23_90CL_nh,1.,1000.);
   icecube_s23m23_90CL_nh->SetLineStyle(1);
   icecube_s23m23_90CL_nh->SetLineColor(colorIceCube);
   icecube_s23m23_90CL_nh->SetLineWidth(2);
@@ -300,6 +309,8 @@ void CompareVALORotherExp()
 
   TCanvas *ccontours_ih = new TCanvas("ccontours_ih","ccontours_ih");
   hInit->Draw();
+
+  if(draw_preliminary) latPreliminary->Draw("same");
 
   //
   // Super-K

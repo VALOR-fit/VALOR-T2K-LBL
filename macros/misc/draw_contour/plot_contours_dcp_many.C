@@ -27,18 +27,19 @@ void plot_contours_dcp_many
  const bool doBrazilian = false,
 
  const bool doGlobalMin  = true,
- const bool same_mh_color = false, // use same color for NH and IH
- const bool same_mh_style = true, // use same style for NH and IH
- const bool draw_preliminary = false,
+ const bool same_mh_color = true, // use same color for NH and IH
+ const bool same_mh_style = false, // use same style for NH and IH
+ const bool draw_preliminary = true,
 
- const bool do_fc = true,
+ const bool do_fc = false,
  const bool draw_fc_err = false,
+ const bool do_fc_conf_interv = false,
 
- const bool do_const = false,
+ const bool do_const = true,
 
  const bool draw_1sigmaCL = false,
  const bool draw_90CL     = true,
- const bool draw_2sigmaCL = false,
+ const bool draw_2sigmaCL = true,
  const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
@@ -97,11 +98,11 @@ void plot_contours_dcp_many
     //                                          //
     //////////////////////////////////////////////
 
-    // deltaCP - Run 1-7 w/ reactors - Flux Run 1-7
-    {
-      "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dcp_react_nh_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
-      "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dcp_react_ih_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    },
+    // // deltaCP - Run 1-7 w/ reactors - Flux Run 1-7
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dcp_react_nh_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dcp_react_ih_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
 
     // // dmsq - Run 1-7 w/ reactors - Flux Run 1-7
     // {
@@ -115,11 +116,11 @@ void plot_contours_dcp_many
     //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth23_react_ih_Data_Run17_nexp_1_0.528_-999.000-job0-_0_0.root"
     // },
 
-    // // deltaCP - Run 1-7 T2K only - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_dcp_t2konly_nh_run17.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_dcp_t2konly_ih_run17.root"
-    // },
+    // deltaCP - Run 1-7 T2K only - Flux Run 1-7
+    {
+      "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_dcp_t2konly_nh_run17.root",
+      "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_dcp_t2konly_ih_run17.root"
+    },
 
     // // sinsqth13 - Run 1-7 T2K only - Flux Run 1-7
     // {
@@ -127,7 +128,7 @@ void plot_contours_dcp_many
     //   "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_sinsqth13_t2konly_ih_run17.root"
     // },
 
-    // // deltaCP - Run 1-7 w/ reactors - Flux Run 1-7 (CHECK)
+    // // deltaCP - Run 1-7 T2K only - Flux Run 1-7 (CHECK)
     //  {
     //    "../TECH_NOTE_14_3_16/PROVA_FC/fit_fitmarg_joint_dcp_t2konly_nh_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
     //    "../TECH_NOTE_14_3_16/PROVA_FC/fit_fitmarg_joint_dcp_t2konly_ih_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
@@ -571,44 +572,30 @@ void plot_contours_dcp_many
     //gFC90CL_ih = (TGraph*)fin_fc_ih->Get("gFC90CL_ih");
     //gFC2sigma_ih = (TGraph*)fin_fc_ih->Get("gFC2sigma_ih");
 
-    gFC90CL_nh   ->SetLineColor(kBlue);
-    gFC90CL_nh_p1->SetLineColor(kBlue);
-    gFC90CL_nh_m1->SetLineColor(kBlue);
-    gFC90CL_ih   ->SetLineColor(kBlue);
-    gFC90CL_ih_p1->SetLineColor(kBlue);
-    gFC90CL_ih_m1->SetLineColor(kBlue);
-    // gFC2sigma_nh   ->SetLineColor(kMagenta);
-    // gFC2sigma_nh_p1->SetLineColor(kMagenta);
-    // gFC2sigma_nh_m1->SetLineColor(kMagenta);
-    // gFC2sigma_ih   ->SetLineColor(kMagenta);
-    // gFC2sigma_ih_p1->SetLineColor(kMagenta);
-    // gFC2sigma_ih_m1->SetLineColor(kMagenta);
-
+    
+    if(do_fc_conf_interv){
+      gFC90CL_nh   ->SetLineColor(kBlack);
+      gFC90CL_nh_p1->SetLineColor(kBlack);
+      gFC90CL_nh_m1->SetLineColor(kBlack);
+      gFC90CL_ih   ->SetLineColor(kRed);
+      gFC90CL_ih_p1->SetLineColor(kRed);
+      gFC90CL_ih_m1->SetLineColor(kRed);
+    }
+    else{
+      gFC90CL_nh   ->SetLineColor(kBlue);
+      gFC90CL_nh_p1->SetLineColor(kBlue);
+      gFC90CL_nh_m1->SetLineColor(kBlue);
+      gFC90CL_ih   ->SetLineColor(kBlue);
+      gFC90CL_ih_p1->SetLineColor(kBlue);
+      gFC90CL_ih_m1->SetLineColor(kBlue);
+    }
+    
     gFC2sigma_nh   ->SetLineColor(kOrange-4);
     gFC2sigma_nh_p1->SetLineColor(kOrange-4);
     gFC2sigma_nh_m1->SetLineColor(kOrange-4);
     gFC2sigma_ih   ->SetLineColor(kOrange-4);
     gFC2sigma_ih_p1->SetLineColor(kOrange-4);
     gFC2sigma_ih_m1->SetLineColor(kOrange-4);
-
-    gFC90CL_nh   ->SetMarkerColor(kBlue);
-    gFC90CL_nh_p1->SetMarkerColor(kBlue);
-    gFC90CL_nh_m1->SetMarkerColor(kBlue);
-    gFC90CL_ih   ->SetMarkerColor(kBlue);
-    gFC90CL_ih_p1->SetMarkerColor(kBlue);
-    gFC90CL_ih_m1->SetMarkerColor(kBlue);
-    // gFC2sigma_nh   ->SetMarkerColor(kMagenta);
-    // gFC2sigma_nh_p1->SetMarkerColor(kMagenta);
-    // gFC2sigma_nh_m1->SetMarkerColor(kMagenta);
-    // gFC2sigma_ih   ->SetMarkerColor(kMagenta);
-    // gFC2sigma_ih_p1->SetMarkerColor(kMagenta);
-    gFC2sigma_ih_m1->SetMarkerColor(kMagenta);
-    gFC2sigma_nh   ->SetMarkerColor(kOrange-4);
-    gFC2sigma_nh_p1->SetMarkerColor(kOrange-4);
-    gFC2sigma_nh_m1->SetMarkerColor(kOrange-4);
-    gFC2sigma_ih   ->SetMarkerColor(kOrange-4);
-    gFC2sigma_ih_p1->SetMarkerColor(kOrange-4);
-    gFC2sigma_ih_m1->SetMarkerColor(kOrange-4);
 
     gFC90CL_nh   ->SetMarkerSize(0.5);
     gFC90CL_nh_p1->SetMarkerSize(0.5);
@@ -636,20 +623,21 @@ void plot_contours_dcp_many
     gFC2sigma_ih_p1->SetLineWidth(3);
     gFC2sigma_ih_m1->SetLineWidth(3);
 
-    gFC90CL_ih     ->SetLineStyle(2);
-    gFC90CL_ih_p1  ->SetLineStyle(2);
-    gFC90CL_ih_m1  ->SetLineStyle(2);
-    gFC2sigma_ih   ->SetLineStyle(2);
-    gFC2sigma_ih_p1->SetLineStyle(2);
-    gFC2sigma_ih_m1->SetLineStyle(2);
+    if(do_fc_conf_interv){
+      gFC90CL_nh     ->SetLineStyle(2);
+      gFC90CL_nh_p1  ->SetLineStyle(2);
+      gFC90CL_ih_m1  ->SetLineStyle(2);
+      gFC2sigma_nh   ->SetLineStyle(2);
+      gFC2sigma_nh_p1->SetLineStyle(2);
+      gFC2sigma_nh_m1->SetLineStyle(2);
+      gFC90CL_ih     ->SetLineStyle(2);
+      gFC90CL_ih_p1  ->SetLineStyle(2);
+      gFC90CL_ih_m1  ->SetLineStyle(2);
+      gFC2sigma_ih   ->SetLineStyle(2);
+      gFC2sigma_ih_p1->SetLineStyle(2);
+      gFC2sigma_ih_m1->SetLineStyle(2);
+    }
   }
-
-
-
-
-
-
-
 
 
 
@@ -661,14 +649,18 @@ void plot_contours_dcp_many
   
   TLine *min90CL_nh;
   TLine *max90CL_nh;
+  TLine *min90CL_nh_2;
+  TLine *max90CL_nh_2;
   TLine *min90CL_ih;
   TLine *max90CL_ih;
   TBox *hatch_min90CL_nh;
   TBox *hatch_max90CL_nh;
+  TBox *hatch_min90CL_nh_2;
+  TBox *hatch_max90CL_nh_2;
   TBox *hatch_min90CL_ih;
   TBox *hatch_max90CL_ih;
 
-  if(do_fc){
+  if(do_fc && do_fc_conf_interv){
     
     cout << endl;
     cout << "/////////// Compute confidence intervals w/ Feldman-Cousins at 90%CL ///////////" << endl;
@@ -676,14 +668,15 @@ void plot_contours_dcp_many
     TH1D *hdeltachisq1D_shifted_fc[Nfiles][Nmh]; // shifted wrt Feldman-Cousins critical values
     double lim_min_nh = 0;
     double lim_max_nh = 0;
+    double lim_min_nh_2 = 0;
+    double lim_max_nh_2 = 0;
     double lim_min_ih = 0;
     double lim_max_ih = 0;
 
     // Normal Hierarchy interval
     
     cout << endl;
-    cout << "Normal hierarchy" << endl;
-    cout << endl;
+    cout << "Normal hierarchy:" << endl;
     
     hdeltachisq1D_shifted_fc[0][0] = (TH1D*)hdeltachisq1D_GlobMin[0][0]->Clone(TString::Format("hdeltachisq1D_shifted_fc_file0_mh0"));
     
@@ -707,15 +700,31 @@ void plot_contours_dcp_many
     if(Status_range==conv::kBadResult){
       cout << "Range not found" << endl;
     }
-
     //cout << "lim_min_nh = " << lim_min_nh << endl;
     //cout << "lim_max_nh = " << lim_max_nh << endl;
 
+ 
+    
+    // // Normal Hierarchy interval (second part)
+    // cout << endl;
+    // cout << "Normal hierarchy (second part):" << endl;
+    // bin_bf = hdeltachisq1D_shifted_fc[0][0]->FindBin(+TMath::Pi());
+    // dcp_bestfit = hdeltachisq1D_shifted_fc[0][0]->GetBinCenter(bin_bf);
+    // dcp_bestfit_cont = hdeltachisq1D_shifted_fc[0][0]->GetBinContent(bin_bf);
+    // Status_range = CalcBestFitErrorsMINOS_FC(hdeltachisq1D_shifted_fc[0][0],0.,dcp_bestfit,lim_min_nh_2,lim_max_nh_2);
+    // if(Status_range==conv::kBadResult){
+    //   cout << "Range not found" << endl;
+    // }
+    // //cout << "lim_min_nh_2 = " << lim_min_nh_2 << endl;
+    // //cout << "lim_max_nh_2 = " << lim_max_nh_2 << endl;
+
+
+   
 
     // Inverted Hierarchy interval
     
     cout << endl;
-    cout << "Inverted hierarchy" << endl;
+    cout << "Inverted hierarchy:" << endl;
     cout << endl;
     
     hdeltachisq1D_shifted_fc[0][1] = (TH1D*)hdeltachisq1D_GlobMin[0][1]->Clone(TString::Format("hdeltachisq1D_shifted_fc_file0_mh1"));
@@ -740,7 +749,6 @@ void plot_contours_dcp_many
     if(Status_range==conv::kBadResult){
       cout << "Range not found" << endl;
     }
-
     //cout << "lim_min_ih = " << lim_min_ih << endl;
     //cout << "lim_max_ih = " << lim_max_ih << endl;
 
@@ -757,26 +765,35 @@ void plot_contours_dcp_many
     // prova_0->Draw();
     // prova_limit->Draw();
 
+    double max_line_y = 25; //10; //25;
+    min90CL_nh = new TLine(lim_min_nh,0.,lim_min_nh,max_line_y);
+    max90CL_nh = new TLine(lim_max_nh,0.,lim_max_nh,max_line_y);
+    // min90CL_nh_2 = new TLine(lim_min_nh_2,0.,lim_min_nh_2,max_line_y);
+    // //max90CL_nh_2 = new TLine(lim_max_nh_2,0.,lim_max_nh_2,max_line_y);
+    min90CL_ih = new TLine(lim_min_ih,0.,lim_min_ih,max_line_y);
+    max90CL_ih = new TLine(lim_max_ih,0.,lim_max_ih,max_line_y);
 
-    min90CL_nh = new TLine(lim_min_nh,0.,lim_min_nh,20);
-    max90CL_nh = new TLine(lim_max_nh,0.,lim_max_nh,20);
-    min90CL_ih = new TLine(lim_min_ih,0.,lim_min_ih,20);
-    max90CL_ih = new TLine(lim_max_ih,0.,lim_max_ih,20);
-
-    double min_box = lim_min_nh-0.5;
+    double min_box = lim_min_nh+0.25;
     if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
-    hatch_min90CL_nh = new TBox(min_box,0.,lim_min_nh,20);
-    double max_box = lim_max_nh+0.5;
+    hatch_min90CL_nh = new TBox(lim_min_nh,0.,min_box,max_line_y);
+    double max_box = lim_max_nh-0.25;
     if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
-    hatch_max90CL_nh = new TBox(lim_max_nh,0.,max_box,20);
-
-    min_box = lim_min_ih-0.5;
+    hatch_max90CL_nh = new TBox(max_box,0.,lim_max_nh,max_line_y);
+    
+    min_box = lim_min_nh_2+0.25;
     if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
-    hatch_min90CL_ih = new TBox(min_box,0.,lim_min_ih,20);
-    double max_box = lim_max_ih+0.5;
-    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
-    hatch_max90CL_ih = new TBox(lim_max_ih,0.,max_box,20);
+    hatch_min90CL_nh_2 = new TBox(lim_min_nh_2,0.,min_box,max_line_y);
+    // max_box = lim_max_nh_2-0.25;
+    // if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
+    // hatch_max90CL_nh_2 = new TBox(max_box,0.,lim_max_nh_2,max_line_y);
 
+    min_box = lim_min_ih+0.25;
+    if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
+    hatch_min90CL_ih = new TBox(lim_min_ih,0.,min_box,max_line_y);
+    max_box = lim_max_ih-0.25;
+    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
+    hatch_max90CL_ih = new TBox(max_box,0.,lim_max_ih,max_line_y);
+    
   }
   
 
@@ -845,6 +862,7 @@ void plot_contours_dcp_many
   cDeltaChisq = new TCanvas(name,name);
 
   hInit->SetMaximum(Max_deltachisq*1.2);
+  hInit->GetXaxis()->SetTitle("#delta_{CP} (radians)");
   hInit->GetYaxis()->SetTitle("-2lnL");
   hInit->DrawCopy();
 
@@ -871,11 +889,11 @@ void plot_contours_dcp_many
       else hdeltachisq1D_GlobMin[ifile][imh]->SetLineColor(ifile+imh+1);
       if((ifile+imh)==0){ 
 	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("same");
-	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
+	if(do_fc_conf_interv) hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
       }
       else{
 	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("same");
-	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
+	if(do_fc_conf_interv) hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
       }
     }
   }
@@ -904,53 +922,74 @@ void plot_contours_dcp_many
 	gFC90CL_ih_m1->Draw("l same");
       }
 
-      min90CL_nh->SetLineWidth(2);
-      min90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-      min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-      min90CL_nh->Draw();
- 
-      // hatch_min90CL_nh->SetLineWidth(1);
-      // hatch_min90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-      // hatch_min90CL_nh->SetFillStyle(3004);
-      // hatch_min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-      // hatch_min90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-      // hatch_min90CL_nh->Draw();
+      if(do_fc_conf_interv){
+	
+	min90CL_nh->SetLineWidth(2);
+	min90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	min90CL_nh->Draw(); 
+	hatch_min90CL_nh->SetLineWidth(1);
+	hatch_min90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	hatch_min90CL_nh->SetFillStyle(3004); // 3004 3844
+	hatch_min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	hatch_min90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	hatch_min90CL_nh->Draw();
+	
+	max90CL_nh->SetLineWidth(2);
+	max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	max90CL_nh->Draw(); 
+	hatch_max90CL_nh->SetLineWidth(1);
+	hatch_max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	hatch_max90CL_nh->SetFillStyle(3004); // 3004 3844
+	hatch_max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	hatch_max90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	hatch_max90CL_nh->Draw();
+	
+	// min90CL_nh_2->SetLineWidth(2);
+	// min90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	// min90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	// min90CL_nh_2->Draw(); 
+	// hatch_min90CL_nh_2->SetLineWidth(1);
+	// hatch_min90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	// hatch_min90CL_nh_2->SetFillStyle(3004); // 3004 3844
+	// hatch_min90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	// hatch_min90CL_nh_2->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	// hatch_min90CL_nh_2->Draw();
+	
+	// // max90CL_nh_2->SetLineWidth(2);
+	// // max90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	// // max90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	// // max90CL_nh_2->Draw(); 
+	// // hatch_max90CL_nh_2->SetLineWidth(1);
+	// // hatch_max90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
+	// // hatch_max90CL_nh_2->SetFillStyle(3004); // 3004 3844
+	// // hatch_max90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	// // hatch_max90CL_nh_2->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	// // hatch_max90CL_nh_2->Draw();
 
-      max90CL_nh->SetLineWidth(2);
-      max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-      max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-      max90CL_nh->Draw();
- 
-      // hatch_max90CL_nh->SetLineWidth(1);
-      // hatch_max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-      // hatch_max90CL_nh->SetFillStyle(3005);
-      // hatch_max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-      // hatch_max90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-      // hatch_max90CL_nh->Draw();
-
-      min90CL_ih->SetLineWidth(2);
-      min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
-      min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-      min90CL_ih->Draw();
- 
-      // hatch_min90CL_ih->SetLineWidth(1);
-      // hatch_min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
-      // hatch_min90CL_ih->SetFillStyle(3004);
-      // hatch_min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-      // hatch_min90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-      // hatch_min90CL_ih->Draw();
-
-      max90CL_ih->SetLineWidth(2);
-      max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
-      max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-      max90CL_ih->Draw();
-      
-      // hatch_max90CL_ih->SetLineWidth(1);
-      // hatch_max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
-      // hatch_max90CL_ih->SetFillStyle(3005);
-      // hatch_max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-      // hatch_max90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-      // hatch_max90CL_ih->Draw();      
+	min90CL_ih->SetLineWidth(2);
+	min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+	min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	min90CL_ih->Draw(); 
+	hatch_min90CL_ih->SetLineWidth(1);
+	hatch_min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+	hatch_min90CL_ih->SetFillStyle(3004); // 3005 3844
+	hatch_min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	hatch_min90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	hatch_min90CL_ih->Draw();
+	
+	max90CL_ih->SetLineWidth(2);
+	max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+	max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	max90CL_ih->Draw();      
+	hatch_max90CL_ih->SetLineWidth(1);
+	hatch_max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
+	hatch_max90CL_ih->SetFillStyle(3004); // 3005 3844
+	hatch_max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	hatch_max90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	hatch_max90CL_ih->Draw();
+      }
     }
     if(draw_2sigmaCL){
       gFC2sigma_nh   ->Draw("l same");
@@ -1038,7 +1077,8 @@ void plot_contours_dcp_many
     if(draw_5sigmaCL) latLine5Sigma->Draw("same");
   }
 
-  TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"PRELIMINARY");
+  TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"T2K Run1-7b preliminary");
+  latPreliminary->SetTextSize(0.05);
   if(draw_preliminary) latPreliminary->Draw("same");
 
   // Store in root file
@@ -1521,6 +1561,8 @@ void plot_contours_dcp_many
       if(draw_2sigmaCL) gFC2sigma_nh->Draw("l same");
     }
     gPad->RedrawAxis();
+    
+    if(draw_preliminary) latPreliminary->Draw("same");
 
     TLegend *lBrazilianPlot_nh = new TLegend(0.6,0.1,0.8,0.65);
     lBrazilianPlot_nh->SetFillColor(0);
@@ -1547,6 +1589,7 @@ void plot_contours_dcp_many
     latNormal->SetTextSize(0.06);
     latNormal->Draw("same");
 
+
     // Brazilian plot Inverted Hierarchy
   
     TCanvas *cBrazilianPlot_ih = new TCanvas("cBrazilianPlot_ih","cBrazilianPlot_ih");
@@ -1571,6 +1614,8 @@ void plot_contours_dcp_many
       if(draw_2sigmaCL) gFC2sigma_ih->Draw("l same");
     }
     gPad->RedrawAxis();
+
+    if(draw_preliminary) latPreliminary->Draw("same");
 
     TLegend *lBrazilianPlot_ih = new TLegend(0.6,0.1,0.8,0.65);
     lBrazilianPlot_ih->SetFillColor(0);
@@ -1609,6 +1654,7 @@ void plot_contours_dcp_many
     hPvalueChisq_ih->SetLineWidth(2);
     hPvalueChisq_ih->SetLineColor(kRed);
     hPvalueChisq_ih->Draw("same");
+    if(draw_preliminary) latPreliminary->Draw("same");
 
     TLegend *lPvalueChisq = new TLegend(0.6,0.4,0.8,0.65);
     lPvalueChisq->SetFillColor(0);
@@ -1633,6 +1679,7 @@ void plot_contours_dcp_many
     hZscoreChisq_ih->SetLineWidth(2);
     hZscoreChisq_ih->SetLineColor(kRed);
     hZscoreChisq_ih->Draw("same");
+    if(draw_preliminary) latPreliminary->Draw("same");
   
     TLegend *lZscoreChisq = new TLegend(0.6,0.4,0.8,0.65);
     lZscoreChisq->SetFillColor(0);
@@ -1642,7 +1689,8 @@ void plot_contours_dcp_many
     lZscoreChisq->AddEntry(hZscoreChisq_nh,"Normal Hierarchy","l");
     lZscoreChisq->AddEntry(hZscoreChisq_ih,"Inverted Hierarchy","l");
     lZscoreChisq->Draw();
-
+    if(draw_preliminary) latPreliminary->Draw("same");
+  
     //
 
     TCanvas *cProbChisq = new TCanvas("cProbChisq","cProbChisq");
@@ -1668,6 +1716,7 @@ void plot_contours_dcp_many
     hProbChisq_2sigma_ih->SetLineColor(kRed);
     hProbChisq_2sigma_ih->SetLineStyle(2);
     hProbChisq_2sigma_ih->Draw("same");
+    if(draw_preliminary) latPreliminary->Draw("same");
   
     TLegend *lProbChisq = new TLegend(0.6,0.4,0.8,0.65);
     lProbChisq->SetFillColor(0);
