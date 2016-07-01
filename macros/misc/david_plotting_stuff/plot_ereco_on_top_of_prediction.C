@@ -17,16 +17,30 @@ using namespace valor::conv;
 
 void plot_ereco_on_top_of_prediction
 (
- const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ const bool draw_preliminary = true,
+ const int preliminary_color = kBlack,
  
- const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_1Re_2d.root",
+ const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ 
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_1Re.root",
+ const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_RHC1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_RHC1Re.root",
+ 
+ //const char * rootfile = "data_run1to6/SKdata_Run16.root",
+ const char * rootfile = "data_run1to7/SKdata_Run17.root",
 
- const char * rootfile = "data_run1to6/SKdata_Run16.root",
- //const char * rootfile = "../outputs/test/SKdata_Run16.root",
-
- const bool drawdata = false,
+ const bool drawdata = true,
 
  float myscale = 1.,
+
+ // Check Sig/Bkg ratio for this point and compare Ereco-Theta Vs Ereco only 
+ //const double pt_ereco = 0.347578,
+ //const double pt_theta = 70.9962,
+ const double pt_ereco = 0.36448,
+ const double pt_theta = 113.233,
+
+
  )
 {  
 
@@ -138,7 +152,37 @@ void plot_ereco_on_top_of_prediction
   cout << "# of observed events = " << hErecoVsQ2Data->Integral() << endl;
   cout << endl;
 
-
+  int data_erecoVstheta_bin = hErecoVsQ2_All->FindBin(pt_theta,pt_ereco); 
+  double Sig_erecoVstheta = hErecoVsQ2Mode_NumuBarToNueBar->GetBinContent(data_erecoVstheta_bin);
+  double Bkg_erecoVstheta = hErecoVsQ2_All->GetBinContent(data_erecoVstheta_bin) - Sig_erecoVstheta;
+  cout << endl;
+  cout << "Check RHC1Re template components of Ereco = " << pt_ereco << " and Theta = " << pt_theta << endl;  
+  cout << " - Ereco Vs Theta:" << endl;
+  cout << "   NumuBar -> NueBar = " << hErecoVsQ2Mode_NumuBarToNueBar->GetBinContent(data_erecoVstheta_bin) << endl; 
+  cout << "   Numu -> Nue = "       << hErecoVsQ2Mode_NumuToNue->GetBinContent(data_erecoVstheta_bin) << endl; 
+  cout << "   NC = "                << hErecoVsQ2Mode_NC->GetBinContent(data_erecoVstheta_bin) << endl;
+  cout << "   NumuBar beam = "      << hErecoVsQ2Mode_NumuBarBeam->GetBinContent(data_erecoVstheta_bin) << endl;
+  cout << "   Numu beam = "         << hErecoVsQ2Mode_NumuBeam->GetBinContent(data_erecoVstheta_bin) << endl;
+  cout << "   Nue beam = "          << hErecoVsQ2Mode_NueBeam->GetBinContent(data_erecoVstheta_bin) << endl;
+  cout << "   Signal = " << Sig_erecoVstheta << endl;
+  cout << "   Background = " << Bkg_erecoVstheta << endl;
+   cout << "   Signal / Ratio: " << Sig_erecoVstheta / Bkg_erecoVstheta << endl;
+  cout << endl;
+  int data_ereco_bin = hErecoVsQ2_All->ProjectionY()->FindBin(pt_ereco); 
+  double Sig_ereco = hErecoVsQ2Mode_NumuBarToNueBar->ProjectionY()->GetBinContent(data_ereco_bin);
+  double Bkg_ereco = hErecoVsQ2_All->ProjectionY()->GetBinContent(data_ereco_bin) - Sig_ereco;
+  cout << " - Ereco only:" << endl;
+  cout << "   NumuBar -> NueBar = " << hErecoVsQ2Mode_NumuBarToNueBar->ProjectionY()->GetBinContent(data_ereco_bin) << endl; 
+  cout << "   Numu -> Nue = "       << hErecoVsQ2Mode_NumuToNue->ProjectionY()->GetBinContent(data_ereco_bin) << endl; 
+  cout << "   NC = "                << hErecoVsQ2Mode_NC->ProjectionY()->GetBinContent(data_ereco_bin) << endl;
+  cout << "   NumuBar beam = "      << hErecoVsQ2Mode_NumuBarBeam->ProjectionY()->GetBinContent(data_ereco_bin) << endl;
+  cout << "   Numu beam = "         << hErecoVsQ2Mode_NumuBeam->ProjectionY()->GetBinContent(data_ereco_bin) << endl;
+  cout << "   Nue beam = "          << hErecoVsQ2Mode_NueBeam->ProjectionY()->GetBinContent(data_ereco_bin) << endl;
+  cout << "   Signal = " << Sig_ereco << endl;
+  cout << "   Background = " << Bkg_ereco << endl;
+  cout << "   Signal / Ratio: " << Sig_ereco / Bkg_ereco << endl;
+  cout << endl;
+  
 
   // Draw 
   
@@ -159,6 +203,12 @@ void plot_ereco_on_top_of_prediction
   leg_Ereco->AddEntry(hErecoExp,"Expected","L");
   leg_Ereco->AddEntry(hErecoData,"Data","P");
   leg_Ereco->Draw();
+  double posX = hErecoData->GetXaxis()->GetBinCenter(2);
+  double posY = hErecoData->GetMaximum()*0.7;
+  TLatex *latPreliminary_1d = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  latPreliminary_1d->SetTextSize(0.05);
+  latPreliminary_1d->SetTextColor(preliminary_color);
+  if(draw_preliminary) latPreliminary_1d->Draw("same");
 
   TCanvas *Q2_ExpVsData = new TCanvas("Q2_ExpVsData","Q2_ExpVsData");
   hQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
@@ -181,8 +231,14 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2_All->SetLineColor(kBlue);
   hErecoVsQ2_All->SetLineWidth(2);
   hErecoVsQ2_All->DrawCopy("colz");  
-  hErecoVsQ2Data->DrawCopy("p same");
-
+  if(drawdata) hErecoVsQ2Data->DrawCopy("p same");
+  posX = hErecoVsQ2Data->GetXaxis()->GetBinCenter(1);
+  posY = hErecoVsQ2Data->GetYaxis()->GetBinCenter(2);
+  TLatex *latPreliminary_2d = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  latPreliminary_2d->SetTextSize(0.05);
+  latPreliminary_2d->SetTextColor(preliminary_color);
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
+  
   TCanvas *ErecoVsQ2_NueBeam_ExpVsData = new TCanvas("ErecoVsQ2_NueBeam_ExpVsData","ErecoVsQ2_NueBeam_ExpVsData");
   hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
   hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");

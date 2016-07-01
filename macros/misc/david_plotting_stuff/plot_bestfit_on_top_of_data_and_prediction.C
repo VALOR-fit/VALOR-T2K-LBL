@@ -17,7 +17,7 @@ using namespace valor::conv;
 
 void plot_bestfit_on_top_of_data_and_prediction
 (
- const bool draw_preliminary = false,
+ const bool draw_preliminary = true,
 
  const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
 
@@ -51,6 +51,7 @@ void plot_bestfit_on_top_of_data_and_prediction
     //"#delta_{CP} = 0",
     //"#delta_{CP} = #pi"
   };
+
 
 
   // Get SK sample
@@ -151,6 +152,7 @@ void plot_bestfit_on_top_of_data_and_prediction
   TLegend *leg_Ereco = new TLegend(0.6, 0.4, 0.9, 0.7);
   leg_Ereco->SetFillColor(0);
   leg_Ereco->SetBorderSize(0);
+  leg_Ereco->SetTextSize(0.06);
   leg_Ereco->AddEntry(hErecoExp,"No oscillation","L");
   leg_Ereco->AddEntry(hErecoData,"Data","P");
   for(int ifile=0;ifile<NBestFitFiles;ifile++){
@@ -159,10 +161,11 @@ void plot_bestfit_on_top_of_data_and_prediction
   leg_Ereco->Draw();
     
 
-  TLatex *latPreliminary = new TLatex(hBestFit[0]->GetXaxis()->GetBinLowEdge(5),hBestFit[0]->GetMaximum(),"PRELIMINARY");
+  TLatex *latPreliminary = new TLatex(hBestFit[0]->GetXaxis()->GetBinLowEdge(5),hBestFit[0]->GetMaximum(),"T2K Run 1-7b preliminary");
+  latPreliminary->SetTextSize(0.06);
   if(draw_preliminary) latPreliminary->Draw("same");
 
-
+  
   // Make checks if the # of best-fit files is > 1
 
   if(NBestFitFiles>1){

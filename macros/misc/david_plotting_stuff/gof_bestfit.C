@@ -20,20 +20,20 @@ void gof_bestfit
  const int NfreePar = 3, // sinsqth23 Vs dcp Vs MH
  //const int NfreePar = 2, // sinsqth23 Vs dcp (no MH)
 
- //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/RUN17/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Run17.root",
- const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/RUN16/NEW_VARRAY_TH1D/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root",
+ const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/RUN17/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Run17.root",
+ //const char * bestfitfile = "../TECH_NOTE_14_3_16/BESTFIT/RUN16/NEW_VARRAY_TH1D/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root",
  
- //const char * datafile = "data_run1to7/SKdata_Run17.root"   // RUN 1-7  
- const char * datafile = "data_run1to6/SKdata_Run16.root" // RUN 1-6 
+ const char * datafile = "data_run1to7/SKdata_Run17.root"   // RUN 1-7  
+ //const char * datafile = "data_run1to6/SKdata_Run16.root" // RUN 1-6 
  )
 { 
 
  const int Nnewbins_1Rmu    = 5;
  const double newbinedges_1Rmu[Nnewbins_1Rmu+1]       = {0., 0.4, 0.7, 1.0, 2.0, 30.0};
- //const int Nnewbins_RHC1Rmu = 5;
- //const double newbinedges_RHC1Rmu[Nnewbins_RHC1Rmu+1] = {0., 0.4, 0.7, 1.0, 2.0, 30.0};
- const int Nnewbins_RHC1Rmu = 1;
- const double newbinedges_RHC1Rmu[Nnewbins_RHC1Rmu+1] = {0., 30.0};
+ const int Nnewbins_RHC1Rmu = 5;
+ const double newbinedges_RHC1Rmu[Nnewbins_RHC1Rmu+1] = {0., 0.4, 0.7, 1.0, 2.0, 30.0};
+ //const int Nnewbins_RHC1Rmu = 1;
+ //const double newbinedges_RHC1Rmu[Nnewbins_RHC1Rmu+1] = {0., 30.0};
  const int Nnewbins_1Re     = 1;
  const double newbinedges_1Re[Nnewbins_1Re+1]         = {0., 30.0};
  const int Nnewbins_RHC1Re  = 1;
