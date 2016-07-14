@@ -9,54 +9,80 @@
 
 void draw_contour
 (
- const char tag[200] = "fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_ih",
+ const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Run17c_Asimov_B_react_ih",
  
- //////////////////////////////////////////////
- //                                          //
- //      Run 1-7 - Data - Run 1-7 Flux       // 
- //                                          //
- //////////////////////////////////////////////
-
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Data_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", 
- const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Data_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", 
-
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_sinsqth13Vsdcp_t2konly_nh_run17.root", 
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/data_fit_sinsqth13Vsdcp_t2konly_ih_run17.root", 
-
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dmsqVsdcp_react_nh_Data_Run17_nexp_1_0.003_-1.601-job0-_0_0.root", 
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_dmsqVsdcp_react_ih_Data_Run17_nexp_1_0.003_-1.601-job0-_0_0.root", 
-
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Data_Run17_nexp_1_0.528_0.003-job0-_0_0.root", 
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Data_Run17_nexp_1_0.528_0.003-job0-_0_0.root", 
-
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Data_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", 
- //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_ih_Data_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", 
-
 
  //////////////////////////////////////////////
  //                                          //
- //      Run 1-7 -Asimov - Run 1-7 Flux      // 
+ //        Run 1-7c - Asimov - Final         // 
  //                                          //
  //////////////////////////////////////////////
 
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Asimov_A_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", // Asimov A - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Asimov_A_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", // Asimov A - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Asimov_A_Run17c_nexp_1_0.022_-1.601-job0-_0_0.root", // Asimov A - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Asimov_A_Run17c_nexp_1_0.022_-1.601-job0-_0_0.root", // Asimov A - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Asimov_B_Run17c_nexp_1_0.022_0.000-job0-_0_0.root", // Asimov B - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Asimov_B_Run17c_nexp_1_0.022_0.000-job0-_0_0.root", // Asimov B - IH - reactors
 
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Asimov_B_Run17_nexp_1_0.022_0.000-job0-_0_0.root", // Asimov B - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Asimov_B_Run17_nexp_1_0.022_0.000-job0-_0_0.root", // Asimov B - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_Run17c_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_Run17c_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_B_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - NH - reactors
+ const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_B_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - IH - reactors
+ 
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov A - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov A - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov B - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov B - IH - reactors
 
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Asimov_A_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", // Asimov A - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_ih_Asimov_A_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", // Asimov A - IH - reactors
 
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_Run17_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_Run17_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - IH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_B_Run17_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_B_Run17_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - IH - reactors
 
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_nh_a_sinsqth13Vsdcp_t2konly_run17.root", // Asimov A - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_ih_a_sinsqth13Vsdcp_t2konly_run17.root", // Asimov A - IH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_nh_b_sinsqth13Vsdcp_t2konly_run17.root", // Asimov B - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17/FluxRun17_Conference/files/asimov_fit_ih_b_sinsqth13Vsdcp_t2konly_run17.root", // Asimov B - IH - reactors
+
+
+ //////////////////////////////////////////////
+ //                                          //
+ //     Run 1-7b - Data - Run 1-7b Flux      // 
+ //                                          //
+ //////////////////////////////////////////////
+ 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Data_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Data_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", 
+
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/data_fit_sinsqth13Vsdcp_t2konly_nh_run17.root", 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/data_fit_sinsqth13Vsdcp_t2konly_ih_run17.root", 
+
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dmsqVsdcp_react_nh_Data_Run17_nexp_1_0.003_-1.601-job0-_0_0.root", 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dmsqVsdcp_react_ih_Data_Run17_nexp_1_0.003_-1.601-job0-_0_0.root", 
+
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Data_Run17_nexp_1_0.528_0.003-job0-_0_0.root", 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Data_Run17_nexp_1_0.528_0.003-job0-_0_0.root", 
+
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Data_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_ih_Data_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", 
+
+
+ //////////////////////////////////////////////
+ //                                          //
+ //     Run 1-7b -Asimov - Run 1-7b Flux     // 
+ //                                          //
+ //////////////////////////////////////////////
+
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Asimov_A_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", // Asimov A - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Asimov_A_Run17_nexp_1_0.022_-1.601-job0-_0_0.root", // Asimov A - IH - reactors
+
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Asimov_B_Run17_nexp_1_0.022_0.000-job0-_0_0.root", // Asimov B - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Asimov_B_Run17_nexp_1_0.022_0.000-job0-_0_0.root", // Asimov B - IH - reactors
+
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Asimov_A_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", // Asimov A - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_ih_Asimov_A_Run17_nexp_1_0.528_-1.601-job0-_0_0.root", // Asimov A - IH - reactors
+
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_Run17_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_Run17_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_B_Run17_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_B_Run17_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - IH - reactors
+
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_nh_a_sinsqth13Vsdcp_t2konly_run17.root", // Asimov A - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_ih_a_sinsqth13Vsdcp_t2konly_run17.root", // Asimov A - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_nh_b_sinsqth13Vsdcp_t2konly_run17.root", // Asimov B - NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_ih_b_sinsqth13Vsdcp_t2konly_run17.root", // Asimov B - IH - reactors
 
 
  /////////////////////////////////
