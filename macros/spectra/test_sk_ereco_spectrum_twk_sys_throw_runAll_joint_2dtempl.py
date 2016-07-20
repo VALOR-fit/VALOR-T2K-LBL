@@ -72,8 +72,8 @@ optionParser.add_option("--skip-osc"  , action="store_true", dest="skip_osc"  , 
 optionParser.add_option("--skip-unosc", action="store_true", dest="skip_unosc", default=False, help="If don't want to run unoscillated jobs")
 optionParser.add_option("--randomise-osc", action="store", dest="random_osc", default="ss12dmsq12ss13", help="Which params I want randomized in random osc toys")
 optionParser.add_option("--clear", action="store_true", dest="clear", default=False, help="Get rid of output of other jobs first.")
-optionParser.add_option("--config-postfit", dest="postfit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final.xml", help="Configuration file")
-optionParser.add_option("--config-prefit", dest="prefit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final_prefit.xml", help="Configuration file")
+optionParser.add_option("--config-postfit", action="store", dest="postfit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final.xml")
+optionParser.add_option("--config-prefit", action="store", dest="prefit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final_prefit.xml")
 
 optionParser.add_option("-p","--prob-nh", action="store", dest="prob_nh", default=0.5, help="Prior for Normal Hierarchy")
 optionParser.add_option("-d","--do-marg", action="store", dest="domarg", default=False, help="Flag for marginalization")
@@ -87,7 +87,8 @@ optionParser.add_option("-u","--dnovern-new-def", action="store", dest="dnovern"
 (opt, args) = optionParser.parse_args()
 
 make_summary = not opt.notable
-
+postfit_config = opt.postfit_config
+prefit_config = opt.prefit_config
 prob_nh = opt.prob_nh
 if prob_nh < 0: 
     sys.exit("Prob(NH) must be positive")
@@ -231,7 +232,7 @@ if not do_not_run_jobs:
 
       for mode in modes:
 
-          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+postfit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+str(postfit_config)+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
 
 
           print command
@@ -244,7 +245,7 @@ if not do_not_run_jobs:
           
           #repeat for the banff prefit (its a different spectrum, so erros have different effects)
           if not opt.skip_prefit:
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+prefit_config+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+str(prefit_config)+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
 
             print command
             if os.system(command) == 1:
