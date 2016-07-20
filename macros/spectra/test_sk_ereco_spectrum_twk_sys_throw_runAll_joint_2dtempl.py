@@ -27,8 +27,8 @@ It will then create the .root in the current working directory
 #
 # NEW CONFIGURATION FILES (4/6/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7 FLUX)
 #
-postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml"
-prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_prefit.xml"
+#postfit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml"
+#prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_prefit.xml"
 
 #
 # NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ AND W/O FIT BIAS)
@@ -42,7 +42,7 @@ prefit_config  = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_f
 
 prior_file = ""
 
-table_fn = "nsk_systematic_table_summary_Asimov_B.tex"
+table_fn = "nsk_systematic_table_summary_Asimov_A.tex"
 
 #osc_tag_file = "dcp_0.000" # Asimov B
 osc_tag_file = "dcp_-99.000" # Asimov A
@@ -66,12 +66,14 @@ optionParser.add_option("-f","--fitparamlist", action="store", dest="fitparamlis
 optionParser.add_option("-t","--storethrows", action="store_true", dest="storethrows", default=False, help="Store the thrown parameter values")
 optionParser.add_option("--do-not-run", action="store_true", dest="do_not_run", default=False, help="If you've already got the files and just want to use them rather than running again.")
 optionParser.add_option("--mode",action="store",dest="mode",default=None,help="If you only want to run a single mode, specify its number here")
-optionParser.add_option("--skip-prefit" , action="store_true", dest="skip_prefit" , default=False, help="If don't want to run prefit jobs")
+optionParser.add_option("--skip-prefit" , action="store_true", dest="skip_prefit" , default=True, help="If don't want to run prefit jobs")
 optionParser.add_option("--skip-postfit", action="store_true", dest="skip_postfit", default=False, help="If don't want to run postfit jobs")
 optionParser.add_option("--skip-osc"  , action="store_true", dest="skip_osc"  , default=False, help="If don't want to run oscillated jobs")
 optionParser.add_option("--skip-unosc", action="store_true", dest="skip_unosc", default=False, help="If don't want to run unoscillated jobs")
 optionParser.add_option("--randomise-osc", action="store", dest="random_osc", default="ss12dmsq12ss13", help="Which params I want randomized in random osc toys")
 optionParser.add_option("--clear", action="store_true", dest="clear", default=False, help="Get rid of output of other jobs first.")
+optionParser.add_option("-cpost", "--config-postfit", dest="postfit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final.xml", help="Configuration file")
+optionParser.add_option("-cpre", "--config-prefit", dest="prefit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final_prefit.xml", help="Configuration file")
 
 optionParser.add_option("-p","--prob-nh", action="store", dest="prob_nh", default=0.5, help="Prior for Normal Hierarchy")
 optionParser.add_option("-d","--do-marg", action="store", dest="domarg", default=False, help="Flag for marginalization")
@@ -174,9 +176,9 @@ modes.append(12)
 name_modes.append("NueNumu") 
 latex_name_modes.append("XSec nue/numu")
 # modes = 13
-modes.append(13)
-name_modes.append("skdetfsi_banff") 
-latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
+#modes.append(13)
+#name_modes.append("skdetfsi_banff") 
+#latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
 # modes = 1
 modes.append(1)
 name_modes.append("BANFF") 
@@ -207,7 +209,7 @@ oscparams = [] #fill with oscillation parameters, in order mixing12, theta13, th
 oscparams_tag = []
 
 if not opt.skip_osc  :
-  oscparams.append([0.304, 0.0217, 0.528, -1.601, 0.0000753, 0.002509,  -99]) # use global best fits!
+  oscparams.append([0.304, 0.02172183825, 0.528, -1.601, 0.0000753, 0.002509,  -99]) # use global best fits!
   oscparams_tag.append("Toy_A")
 
 #if not opt.skip_unosc: oscparams.append([  0,   0,   0,   0,   -99,   -99,  -99]) #no oscillations!
