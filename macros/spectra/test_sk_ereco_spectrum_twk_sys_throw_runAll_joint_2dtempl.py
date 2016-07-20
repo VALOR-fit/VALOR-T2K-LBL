@@ -72,8 +72,8 @@ optionParser.add_option("--skip-osc"  , action="store_true", dest="skip_osc"  , 
 optionParser.add_option("--skip-unosc", action="store_true", dest="skip_unosc", default=False, help="If don't want to run unoscillated jobs")
 optionParser.add_option("--randomise-osc", action="store", dest="random_osc", default="ss12dmsq12ss13", help="Which params I want randomized in random osc toys")
 optionParser.add_option("--clear", action="store_true", dest="clear", default=False, help="Get rid of output of other jobs first.")
-optionParser.add_option("-cpost", "--config-postfit", dest="postfit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final.xml", help="Configuration file")
-optionParser.add_option("-cpre", "--config-prefit", dest="prefit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final_prefit.xml", help="Configuration file")
+optionParser.add_option("--config-postfit", dest="postfit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final.xml", help="Configuration file")
+optionParser.add_option("--config-prefit", dest="prefit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final_prefit.xml", help="Configuration file")
 
 optionParser.add_option("-p","--prob-nh", action="store", dest="prob_nh", default=0.5, help="Prior for Normal Hierarchy")
 optionParser.add_option("-d","--do-marg", action="store", dest="domarg", default=False, help="Flag for marginalization")
