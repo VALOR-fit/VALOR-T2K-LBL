@@ -124,7 +124,7 @@ void generate_toymc_ensemble
   bool save_in_root_format = true;
 
   // Analysis configuration file
-  const char * config = util::FormFilePath(config_file, "config");
+  TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
   // Systematic tweak mode (as string)
   string tweak_sys_str = util::SysThrowIdToString(tweak_systematics);
@@ -135,6 +135,7 @@ void generate_toymc_ensemble
   // Print out job summary
   cout << "\n[Job inputs]" << endl;
   cout << "- Job: " << tag << "/" << run << endl;
+  cout << "- Config: " << config << endl;
   cout << "- Input physics hypothesis: " << hypothesis << endl;
   cout << "- Toy-MC generation" << endl;
   cout << "   - Number of toy experiments: " << nexperiments << endl;
@@ -167,15 +168,19 @@ void generate_toymc_ensemble
 					 input_beta_bar, 
 					 input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
 					 input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
-					 input_prior_prob_nh, doMargMH);
+					 input_prior_prob_nh, doMargMH,
+          input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
+          input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+          input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
+          input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih);
 
   // Set priors of osc params to defaults, or set them to be randomised
-  util::OscParams::Instance()->SetPrior(conv::kPhypMixing23, "flat", 0.3,          0.7,         "sinsqth" );      
-  util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,   "flat", 2E-3,         3E-3,        ""        );  
-  util::OscParams::Instance()->SetPrior(conv::kPhypMixing13, "gaus", 0.093,        0.008,       "sinsq2th"); // Convert to sinsqth
-  util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      "flat", -TMath::Pi(), +TMath::Pi(),""        ); 
-  util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, "gaus", 0.846,        0.021,       "sinsq2th"); // Convert to sinsqth
-  util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   "gaus", 7.53E-5,      0.18E-5,     ""        ); 
+  util::OscParams::Instance()->SetPrior(conv::kPhypMixing23, "flat",  0.3,                                    0.7,                                "sinsqth" );
+  util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,   "flat",  2E-3,                                   3E-3,                               ""        );
+  util::OscParams::Instance()->SetPrior(conv::kPhypMixing13, "gaus",  conv::kPrior_Sinsq2th13_Used_Mean,      conv::kPrior_Sinsq2th13_Used_RMS,   "sinsq2th"); // Convert to sinsqth
+  util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      "flat",  -TMath::Pi(),                           +TMath::Pi(),                       ""        );
+  util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, "gaus",  conv::kPrior_Sinsq2th12_Used_Mean,      conv::kPrior_Sinsq2th12_Used_RMS,   "sinsq2th"); // Convert to sinsqth
+  util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   "gaus",  conv::kPrior_Dm12sq_Used_Mean,          conv::kPrior_Dm12sq_Used_RMS,       ""        );
   
 
   //util::OscParams::Instance()->Print(cout);

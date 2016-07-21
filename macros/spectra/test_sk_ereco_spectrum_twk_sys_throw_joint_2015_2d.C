@@ -580,8 +580,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   if(!update_rootfile)
     rootmode = "recreate";
 
-  TFile *fosctoyhisto = new TFile(Form("sk_osc_toy_histo_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str(),"recreate");
-  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
+  TFile *fosctoyhisto = new TFile(Form("sk_osc_toy_histo_%s-twk_sys_throw_%s_%s.root",sname,oscparams.c_str(),tag),rootmode.c_str(),"recreate");
+  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.root",sname,oscparams.c_str()),rootmode.c_str(),tag);
   
   ofstream * outfilep = 0;
   

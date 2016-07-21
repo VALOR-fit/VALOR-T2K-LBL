@@ -218,6 +218,10 @@ void plot_contours_dcp_many
     // },
   
     // // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-6
+     {
+       "toyfits_dcp_datanh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root",
+       "toyfits_dcp_dataih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"
+     },
     // {
     //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun16/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
     //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun16/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"

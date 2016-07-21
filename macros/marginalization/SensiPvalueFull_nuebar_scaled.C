@@ -21,8 +21,8 @@ void SensiPvalueFull_nuebar_scaled
  // double data = 3.218, // # of data events
  //double deltachisq_beta01_data = 1.41638, // data deltachisq 01
  // double pvalue_01_beta0 = 0.01, // data p-value 01
- char infilename_beta0[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_0_100kMargToys_react_100kToys.root",
- char infilename_beta1[200] = "/mnt/lnec/davides/VALOR/results/fit/BANFF_FITBIAS_14_3_16/NUEBAR/100k/fit_fitmarg_joint_betaBar_1_100kMargToys_react_100kToys.root",
+ char infilename_beta0[200] = "Toys.root",
+ char infilename_beta1[200] = "Data.root",
  bool draw_beta_0_distribution = 1,
  bool use_toy_weights = 0,
  bool left_side_p_value = 0

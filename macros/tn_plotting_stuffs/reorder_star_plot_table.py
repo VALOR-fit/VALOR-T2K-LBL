@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Sorts a tex file containing a star plot table
 # according to it's column's numerical values

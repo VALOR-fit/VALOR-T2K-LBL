@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Script to make plots of relative error envelope sizes
 # eg plots 9-12 in TN-183

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Plots chi-square distribution for physics parameters at T2K
 # Steve Dennis, June 2014

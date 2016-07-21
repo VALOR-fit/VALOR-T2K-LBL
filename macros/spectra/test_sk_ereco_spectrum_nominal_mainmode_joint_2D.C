@@ -15,8 +15,8 @@ using namespace valor::conv;
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
  const char * tag                  = "prova",
- const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
- const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
+ const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
  
  // // No Oscillations
  // double       input_mixing12       = 0.,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -35,7 +35,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  double       input_deltacp        = -1.601, //-99,    /* deltacp, */
  //double       input_deltacp        = +TMath::Pi()/2, //-99,    /* deltacp, */
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
+ double       input_dm23sq         = 0.002509, //-99,    /* |Dm^2_{23}| */
  double       input_betabar        = 1., //0., //-99,
 
  // // Asimov B
@@ -83,13 +83,11 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
  int          iexperiment         = 0, //4404, //4739,                       /* */
  //const char * rootfile = "data_run1to4/SKdata_Run14.root",
- const char * rootfile = "data_run1to6/SKdata_Run16.root", 
+ const char * rootfile = "data_run1to7/SKdata_Run17.root",
  const bool draw_data_spectra = true,
  const bool scale_mc = false,
 
  const bool change_banff_params = false
-
-
 )
 {
   using namespace std;
@@ -99,7 +97,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
   const char * plot_format = "eps";
 
-  double postlatex_X = 120.; // Theta
+  double postlatex_X = 110.; // Theta
   double postlatex_Y = 0.05;
   double postlatex_reac_X = 120.; 
   double postlatex_reac_Y = 0.05;
@@ -381,7 +379,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     bool using_xml_file = false;
     skobs_fakedata->Read(rootfile2.Data(),iexperiment,using_xml_file);
     h_data = (TH2D*) skobs_fakedata->TwoDSpectrum(s)->Clone("h_data");
-    h_data->SetMarkerSize(2);
+    h_data->SetMarkerSize(3);
+    h_data->SetMarkerColor(17);
 
     h_data_ereco = (TH1D*) h_data->ProjectionY()->Clone("h_data_ereco");
     scale_ereco = 
@@ -429,7 +428,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   }
 
   TCanvas *cErecoVsQ2Tot = new TCanvas("cErecoVsQ2Tot","cErecoVsQ2Tot");
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  cErecoVsQ2Tot->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Tot->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
   hErecoVsQ2Tot->Draw("colz");
   if(draw_data){
@@ -556,7 +556,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   // Draw 2D templates
 
   TCanvas *cErecoVsQ2_NumuBarBeam = new TCanvas("cErecoVsQ2_NumuBarBeam","cErecoVsQ2_NumuBarBeam"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  cErecoVsQ2_NumuBarBeam->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
   hErecoVsQ2Mode_NumuBarBeam->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -569,8 +570,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_NumuBarBeam->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuBarBeam->Draw("same");
 
-  TCanvas *cErecoVsQ2_NumuBeam = new TCanvas("cErecoVsQ2_NumuBeam","cErecoVsQ2_NumuBeam"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  TCanvas *cErecoVsQ2_NumuBeam = new TCanvas("cErecoVsQ2_NumuBeam","cErecoVsQ2_NumuBeam");
+  cErecoVsQ2_NumuBeam->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NumuBeam->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -583,7 +585,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_NumuBeam->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuBeam->Draw("same");
 
-  TCanvas *cErecoVsQ2_NueBeam = new TCanvas("cErecoVsQ2_NueBeam","cErecoVsQ2_NueBeam"); 
+  TCanvas *cErecoVsQ2_NueBeam = new TCanvas("cErecoVsQ2_NueBeam","cErecoVsQ2_NueBeam");
+  cErecoVsQ2_NueBeam->SetRightMargin(0.1876791);
   if(ErecoRangeLow!=ErecoRangeUp)   
     hErecoVsQ2Mode_NueBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NueBeam->GetXaxis()->SetTitle(titleX);
@@ -598,7 +601,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_NueBeam->Draw("same");
 
   TCanvas *cErecoVsQ2_NumuBarToNueBar = new TCanvas("cErecoVsQ2_NumuBarToNueBar","cErecoVsQ2_NumuBarToNueBar"); 
-  if(ErecoRangeLow!=ErecoRangeUp)   
+  cErecoVsQ2_NumuBarToNueBar->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NumuBarToNueBar->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -611,8 +615,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_NumuBarToNueBar->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuBarToNueBar->Draw("same");
 
-  TCanvas *cErecoVsQ2_NumuToNue = new TCanvas("cErecoVsQ2_NumuToNue","cErecoVsQ2_NumuToNue"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  TCanvas *cErecoVsQ2_NumuToNue = new TCanvas("cErecoVsQ2_NumuToNue","cErecoVsQ2_NumuToNue");
+  cErecoVsQ2_NumuToNue->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
   hErecoVsQ2Mode_NumuToNue->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -625,8 +630,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_NumuToNue->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuToNue->Draw("same");
 
-  TCanvas *cErecoVsQ2_NC = new TCanvas("cErecoVsQ2_NC","cErecoVsQ2_NC"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  TCanvas *cErecoVsQ2_NC = new TCanvas("cErecoVsQ2_NC","cErecoVsQ2_NC");
+  cErecoVsQ2_NC->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_NC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_NC->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NC->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -640,7 +646,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_NC->Draw("same");
 
   TCanvas *cErecoVsQ2_MEC = new TCanvas("cErecoVsQ2_MEC","cErecoVsQ2_MEC"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  cErecoVsQ2_MEC->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_MEC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_MEC->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_MEC->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -654,7 +661,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_MEC->Draw("same");
 
   TCanvas *cErecoVsQ2_CCQE = new TCanvas("cErecoVsQ2_CCQE","cErecoVsQ2_CCQE"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  cErecoVsQ2_CCQE->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_CCQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_CCQE->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_CCQE->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -668,7 +676,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   lErecoVsQ2Mode_CCQE->Draw("same");
 
   TCanvas *cErecoVsQ2_CCnQE = new TCanvas("cErecoVsQ2_CCnQE","cErecoVsQ2_CCnQE"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
+  cErecoVsQ2_CCnQE->SetRightMargin(0.1876791);
+  if(ErecoRangeLow!=ErecoRangeUp)
     hErecoVsQ2Mode_CCnQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
   hErecoVsQ2Mode_CCnQE->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_CCnQE->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");

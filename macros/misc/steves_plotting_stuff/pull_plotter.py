@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Plots pulls
 # Steve Dennis, 2nd June, 2014 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Script to make table of variations in systematics (tab7 in tn155)
 # Generates only body of table

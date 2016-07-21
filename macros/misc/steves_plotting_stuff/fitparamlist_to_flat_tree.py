@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Turns a TTree containing FitParamLists into an equivalent tree with the FPLs turned into flat variables
 # Keeps other tree variables unmodified

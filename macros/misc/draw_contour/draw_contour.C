@@ -144,7 +144,7 @@ void draw_contour
 
 
  //const bool doRasterScan = false,
- const char* opt = "ss23", //"cp13","ss23"
+ const char* opt = "cp13", //"cp13","ss23"
  const bool SavePDF = false
  )
 {
@@ -238,7 +238,7 @@ void draw_contour
   
   TLegend* leg = new TLegend(0.7,0.8,0.9,0.98);
   leg->AddEntry(bf,"Best fit point","p");
-  leg->AddEntry(bf2,"True asimov point","p");
+  //leg->AddEntry(bf2,"True asimov point","p");
   leg->AddEntry(h1,"68%","l");
   leg->AddEntry(h3,"90%","l");
   h2->Draw("colz");

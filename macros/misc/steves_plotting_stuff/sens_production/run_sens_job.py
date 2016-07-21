@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Runs a sensitivity job, using the config specified, on a batch system and tags results
 
