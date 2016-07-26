@@ -192,16 +192,16 @@ bool valor::util::IsNC(valor::conv::SuperkMode_t m)
         case ( kSKmNuEBarNCcoh     ) :
         case ( kSKmNuEBarNCoth     ) :
       // NC 1 gamma
-        case ( kSKmNuEBarNC1Gamma  ) :
         case ( kSKmNuMuNC1Gamma    ) :
         case ( kSKmNuMuBarNC1Gamma ) :
-        case ( kSKmNuENC1Gamma     ) :
-            
-            return true;
-            break;
-        default:
-            return false;
-            break;
+        case ( kSKmNuENC1Gamma     ) :          
+        case ( kSKmNuEBarNC1Gamma  ) :
+
+        return true;
+        break;
+     default:
+        return false;
+        break;
     }
     return false;
 }
@@ -1516,9 +1516,9 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuECCcoh     ) : return "signue_cccoh";    break;
         case ( kSKmOscNuECCoth     ) : return "signue_ccoth";    break;
             //NC 1 gamma
-        case ( kSKmNuMuNC1Gamma    ) : return "nue_nc1gamma";    break;
-        case ( kSKmNuMuBarNC1Gamma ) : return "numu_nc1gamma";   break;
-        case ( kSKmNuENC1Gamma     ) : return "numubar_nc1gamma";break;   
+        case ( kSKmNuMuNC1Gamma    ) : return "numu_nc1gamma";   break;
+        case ( kSKmNuMuBarNC1Gamma ) : return "numubar_nc1gamma";break;
+        case ( kSKmNuENC1Gamma     ) : return "nue_nc1gamma";    break;   
         case ( kSKmNuEBarNC1Gamma  ) : return "nuebar_nc1gamma"; break;
 
         default                      : return "";
