@@ -62,6 +62,15 @@
 #define __USE_RHC1RE_IN_CHISQ__
 #endif // __NUMUONLY__
 //
+#if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
+#  if defined(__MULTIRING_FHC_NUE__)
+#  define __USE_1RMU_IN_CHISQ__
+#  define __USE_RHC1RMU_IN_CHISQ__
+#  define __USE_1RE_IN_CHISQ__
+#  define __USE_RHC1RE_IN_CHISQ__
+#  define __USE_MULTIRE_IN_CHISQ__
+#  endif
+#endif
 
 #include <cassert>
 #include <cstdlib>
@@ -4968,6 +4977,11 @@ bool FitMarginalization::UseSKSample(int isksample) const
   if(s==conv::kSKsRHCFCFV1RingELike) return true;
 #endif
 
+#ifdef __USE_MULTIRE_IN_CHISQ__
+  if(s==conv::kSKsFCFVMultiRingELike) return true;
+#endif
+  
+  
   return false;
 }
 //________________________________________________________________________________________
@@ -4989,6 +5003,10 @@ bool FitMarginalization::UseSKSample(SuperkSample_t s ) const
   if(s==conv::kSKsRHCFCFV1RingELike) return true;
 #endif
 
+#ifdef __USE_MULTIRE_IN_CHISQ__
+  if(s==conv::kSKsFCFVMultiRingELike) return true;
+#endif
+  
   return false;
 }
 //

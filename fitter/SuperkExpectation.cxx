@@ -13,7 +13,7 @@ Added samples for multiring forward horn current
 //________________________________________________________________________________________
 
 #define __show_syst_reset_mesg__
-#define __show_syst_tweak_mesg__
+//#define __show_syst_tweak_mesg__
 #define __show_syst_tweak_debug__
 #define __show_physparamid__
 
@@ -361,7 +361,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   xml->FreeDoc(xmldoc);
   delete xml;
 
-  cout << "Exp >> Done configuring Superk spectrum predictor... \n\n" << endl;
+  LOG("SuperkExpectation",pINFO) << "Done configuring Superk spectrum predictor... \n\n";
   
   return true;
 }
@@ -934,7 +934,7 @@ bool SuperkExpectation::Write(
 void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
 {
 #ifdef __show_syst_reset_mesg__
-  cout << "Exp >> Reseting all systematic variations." << endl;
+  cout << "Exp >> Resetting all systematic variations." << endl;
 #endif
 
   // SKDetFSI
@@ -1083,7 +1083,8 @@ void SuperkExpectation::TweakAllBANFFSystematics(void)
     cout << "Exp >> Generating random variations of all BANFF systematic params (correlated)" << endl;
 #endif
     // BANFF
-    this->GetBANFF()->Tweak(false,0); // <-- Cholesky method
+    // Additon of util::IsBANFF as tweaking everything includes the energy scale
+    this->GetBANFF()->Tweak(false,0,util::IsBANFF); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
@@ -1091,8 +1092,9 @@ void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
 #ifdef __show_syst_tweak_mesg__
   cout << "Exp >> Generating random variations of all SKDET + FSI systematic params." << endl;
 #endif
-
-  this->GetSuperkDetectorFSI()->Tweak(0,0); // <-- Cholesky method
+  // Energy scale is now included in the parameters
+  // Uncorrelated Cholesky tweak should get Gaussian distributed random value
+  this->GetSuperkDetectorFSI()->Tweak(false,0); // <-- Cholesky method
 }
 //________________________________________________________________________________________
 void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)

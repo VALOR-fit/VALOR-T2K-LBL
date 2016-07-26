@@ -1,3 +1,4 @@
+
 //________________________________________________________________________________________
 /*
 
@@ -26,7 +27,6 @@
 // #define __show_skdetfsi_tweak_mesg_debug__
 // #define __show_chisqpenalty_mesg_debug__
 // #define __show_skdetfsi_applysyst_mesg_debug__
-
 // #define __use_1Rsyst_for_MultiR_sample__
 
 
@@ -174,7 +174,7 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "syst/skdetfsi");
   this->SetName("SuperkDetectorFSI");
   
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisSuperkEnergyScale)] = 0;
+  (*fDefaultValues)[this->Param2Idx(conv::kNuisSuperkEnergyScale)] = 0;//0; p-theta set to one, event discrepancies during validation 
   
   LOG("SuperkDetectorFSI",pINFO) << "Defined final SKDetFSI matrix rows: ";
   for (unsigned int i = 0 ; i < fNSystParameters; i++ ) {

@@ -130,8 +130,8 @@ static const PhysParamId_t kNuisBANFFNormNCcoh           = kNuis062;   // NC coh
 static const PhysParamId_t kNuisBANFFNormNCoth           = kNuis063;   // NC other norm
 static const PhysParamId_t kNuisBANFFNormNuEToNuMu       = kNuis064;   // nue / numu cross section
 static const PhysParamId_t kNuisBANFFNormNC1Gamma        = kNuis065;   // NC 1 gamma
-static const PhysParamId_t kNuisBANFFNormNuEBarToNuMuBar = kNuis066;   // NC 1 gamma
-static const PhysParamId_t kNuisBANFFMECBar              = kNuis067;  // MEC normalization
+static const PhysParamId_t kNuisBANFFNormNuEBarToNuMuBar = kNuis066;   // nuebar / numubar 
+static const PhysParamId_t kNuisBANFFMECBar              = kNuis067;   // MEC normalization
 
 //
 

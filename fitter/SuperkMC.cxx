@@ -20,7 +20,7 @@
 //________________________________________________________________________________________
 
 #define __show_init_mesg_info__
-#define __show_init_mesg_debug__
+//#define __show_init_mesg_debug__
 //#define __ereco_scale_debug__
 //#define __show_init_mesg_debug2__
 //#define __show_update_mesg_info__
@@ -28,7 +28,7 @@
 //#define __show_hypothesis_probabilities__
 //#define __show_banfftun_syst_var_wght_mesg_debug__
 //#define __show_syst_var_wght_mesg_debug__
-//#define __show_spectra_update_mesg_debug__
+//#define __show_spectra_update_mesg_debug__c
 //#define __show_skipped_templates__
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
@@ -63,13 +63,13 @@
 #define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
-#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
 
-//#define USE_OscBr_WEIGHTS   // use the ptheta branch with oscillation weights, for comparison purposes only
+#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
 
 #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
 #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
 
+//#define USE_OscBr_WEIGHTS   // use the ptheta branch with oscillation weights, for comparison purposes only
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
@@ -1521,7 +1521,10 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 	if(branchRPAnr){
 	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 	} else {
-	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+          // Adding the line below gives exact agreement with the output from the p-theta code, wonder about how this is treated
+          // further on in the code see that the ratio is used?
+	  //this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+          this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 	}
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 
@@ -2272,8 +2275,8 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
         const double * etrue_bin_edges = util::EtrueBinEdges(s);
         const double * var_ereco_bin_edges = util::XsecErecoBinEdges(s);
 #ifdef __USE_2D_TEMPLATES__ //2D templates
-        const int      n_q2_bins       = kNQ2Bins[is]; // NEW 2D TEMPLATES
-        const double * q2_bin_edges    = util::Q2BinEdges(s); // NEW 2D TEMPLATES
+        const int      n_q2_bins        = kNQ2Bins[is]; // NEW 2D TEMPLATES
+        const double * q2_bin_edges     = util::Q2BinEdges(s); // NEW 2D TEMPLATES
         const double * var_q2_bin_edges = util::XsecQ2BinEdges(s); // NEW 2D TEMPLATES
 #endif
         
@@ -6498,20 +6501,6 @@ bool SuperkMC::UpdateErecoVsQ2Spectra(void)
     
     return applied_negevents_condition;
 }
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //________________________________________________________________________________________
 void SuperkMC::FillEtrueSpectra(void)
@@ -6552,17 +6541,6 @@ void SuperkMC::FillEtrueSpectra(void)
     }//is
 }
 //________________________________________________________________________________________
-
-
-
-
-
-
-
-
-
-
-
 // NEW 2D TEMPLATES
 
 void SuperkMC::FillEtrueSpectra2D(void)

@@ -4212,9 +4212,10 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
     
 #endif
 #endif
-    //if(p == kNuisSuperkEnergyScale)   // still to update
-    //return true;
-    ///
+    // MultiRingNuisEnergy scale isn't used instead have 
+    if(p == kNuisSuperkEnergyScale)   
+    return true;
+    
     
     /// NEW MULTIRNG 3
     if(p == kMultiRingNuisSuperkEnergyScale)
