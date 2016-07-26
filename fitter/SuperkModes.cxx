@@ -1516,10 +1516,10 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuECCcoh     ) : return "signue_cccoh";    break;
         case ( kSKmOscNuECCoth     ) : return "signue_ccoth";    break;
             //NC 1 gamma
-        case ( kSKmNuEBarNC1Gamma  ) : return "nuebar_nc1gamma"; break;
         case ( kSKmNuMuNC1Gamma    ) : return "nue_nc1gamma";    break;
         case ( kSKmNuMuBarNC1Gamma ) : return "numu_nc1gamma";   break;
-        case ( kSKmNuENC1Gamma     ) : return "numubar_nc1gamma";break;
+        case ( kSKmNuENC1Gamma     ) : return "numubar_nc1gamma";break;   
+        case ( kSKmNuEBarNC1Gamma  ) : return "nuebar_nc1gamma"; break;
 
         default                      : return "";
     }
@@ -1586,11 +1586,11 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuEBarCCMEC  ) : return "oscillated nuebar CC MEC";          break;
         case ( kSKmOscNuEBarCCoth  ) : return "oscillated nuebar CC oth ";         break;
             //NC 1 gamma
-        case ( kSKmNuEBarNC1Gamma    ) : return "nuebar NC 1gamma";                  break;
-        case (  kSKmNuENC1Gamma      ) : return "nue NC 1gamma";                     break;
         case ( kSKmNuMuNC1Gamma      ) : return "numu NC 1gamma";                    break;
-        case ( kSKmNuMuBarNC1Gamma   ) : return "numubar NC 1gamma";                 break;
-
+        case ( kSKmNuMuBarNC1Gamma   ) : return "numubar NC 1gamma";                 break;          
+        case ( kSKmNuENC1Gamma       ) : return "nue NC 1gamma";                     break;
+        case ( kSKmNuEBarNC1Gamma    ) : return "nuebar NC 1gamma";                  break;
+          
         default                      : return "--";
     }
     return "";
@@ -1622,15 +1622,15 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuCCcoh    ) : return "Osc. $\\nu_\\mu$ CC coherent";                                   break;
         case ( kSKmOscNuMuCCMEC    ) : return "Osc. $\\nu_\\mu$ CC MEC";                                        break;
         case ( kSKmOscNuMuCCoth    ) : return "Osc. $\\nu_\\mu$ CC other";                                      break;
-        case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu}_\\mu$ CCQE";                                        break;
-        case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu}_\\mu$ CC 1$\\pi$";                                  break;
-        case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu}_\\mu$ CC coherent";                                 break;
-        case ( kSKmNuMuBarCCMEC    ) : return "$\\bar{\\nu}_\\mu$ CC MEC";                                      break;
-        case ( kSKmNuMuBarCCoth    ) : return "$\\bar{\\nu}_\\mu$ CC other";                                    break;
-        case ( kSKmNuMuBarNC1piC   ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC 1$\\pi^{+/-}$";        break;
-        case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC 1$\\pi^0$";            break;
-        case ( kSKmNuMuBarNCcoh    ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC coherent";             break;
-        case ( kSKmNuMuBarNCoth    ) : return "$\\bar{\\nu}_\\mu$/$\\bar{\\nu}_\\tau$ NC other";                break;
+        case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu}_{\\mu}$ CCQE";                                        break;
+        case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu}_{\\mu}$ CC 1$\\pi$";                                  break;
+        case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu}_{\\mu}$ CC coherent";                                 break;
+        case ( kSKmNuMuBarCCMEC    ) : return "$\\bar{\\nu}_{\\mu}$ CC MEC";                                      break;
+        case ( kSKmNuMuBarCCoth    ) : return "$\\bar{\\nu}_{\\mu}$ CC other";                                    break;
+        case ( kSKmNuMuBarNC1piC   ) : return "$\\bar{\\nu}_{\\mu}$/$\\bar{\\nu}_{\\tau}$ NC 1$\\pi^{+/-}$";        break;
+        case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu}_{\\mu}$/$\\bar{\\nu}_{\\tau}$ NC 1$\\pi^0$";            break;
+        case ( kSKmNuMuBarNCcoh    ) : return "$\\bar{\\nu}_{\\mu}$/$\\bar{\\nu}_{\\tau}$ NC coherent";             break;
+        case ( kSKmNuMuBarNCoth    ) : return "$\\bar{\\nu}_{\\mu}$/$\\bar{\\nu}_{\\tau}$ NC other";                break;
         case ( kSKmOscNuMuBarCCQE  ) : return "Osc. $\\bar{\\nu}_\\mu$ CCQE";                                   break;
         case ( kSKmOscNuMuBarCC1pi ) : return "Osc. $\\bar{\\nu}_\\mu$ CC 1$\\pi$";                             break;
         case ( kSKmOscNuMuBarCCcoh ) : return "Osc. $\\bar{\\nu}_\\mu$ CC coherent";                            break;
@@ -1665,10 +1665,10 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuEBarCCMEC  ) : return "Osc. $\\bar{\\nu}_e$ CC MEC";                                    break;
         case ( kSKmOscNuEBarCCoth  ) : return "Osc. $\\bar{\\nu}_e$ CC other";                                  break;
        // NC 1 gamma
+        case ( kSKmNuMuNC1Gamma    ) : return "$\\nu_{\\mu}$ NC 1$\\gamma$";                                    break;
+        case ( kSKmNuMuBarNC1Gamma ) : return "$\\bar{\\nu}_\\mu$ NC 1$\\gamma$";                               break;
+        case ( kSKmNuENC1Gamma     ) : return "$\\nu_e$ NC 1$\\gamma$";                                         break;          
         case ( kSKmNuEBarNC1Gamma  ) : return "$\\bar{\\nu}_e$ NC 1$\\gamma$";                                  break;
-        case ( kSKmNuMuNC1Gamma    ) : return "$\\nu_e$ NC 1$\\gamma$";                                         break;
-        case ( kSKmNuMuBarNC1Gamma ) : return "$\\nu_\\mu$ NC 1$\\gamma$";                                      break;
-        case ( kSKmNuENC1Gamma     ) : return "$\\bar{\\nu}_\\mu$ NC 1$\\gamma$";                               break;
 
         default                      : return "--";
     }
@@ -1737,10 +1737,10 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuEBarCCMEC  ) : return "oscnuebarccmec";    break;
         case ( kSKmOscNuEBarCCoth  ) : return "oscnuebarccoth";    break;
     // NC 1 gamma
-        case ( kSKmNuEBarNC1Gamma  ) : return "nuebarnc1gamma"; break;
-        case ( kSKmNuMuNC1Gamma    ) : return "nuenc1gamma";    break;
-        case ( kSKmNuMuBarNC1Gamma ) : return "numunc1gamma";   break;
-        case ( kSKmNuENC1Gamma     ) : return "numubarnc1gamma";break;
+        case ( kSKmNuMuNC1Gamma    ) : return "numunc1gamma";      break;  
+        case ( kSKmNuMuBarNC1Gamma ) : return "numubarnc1gamma";   break;
+        case ( kSKmNuENC1Gamma     ) : return "nuenc1gamma";       break;
+        case ( kSKmNuEBarNC1Gamma  ) : return "nuebarnc1gamma";    break;
 
         default                      : return "";
     }
