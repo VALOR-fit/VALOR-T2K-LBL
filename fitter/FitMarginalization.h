@@ -544,7 +544,8 @@ private:
   TTree *treetoys;
   TFile *filetreetoys;
   //
-
+  
+  ClassDef(FitMarginalization,9)
 };
  
 } // valor
