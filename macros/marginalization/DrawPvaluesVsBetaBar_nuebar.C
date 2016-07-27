@@ -1,8 +1,9 @@
 
 void DrawPvaluesVsBetaBar_nuebar
 (
- const char *path = "../TECH_NOTE_14_3_16/BETABAR/PVALUES",
-
+ //const char *path = "../TECH_NOTE_14_3_16/BETABAR/PVALUES",
+ const char *path = "../TECH_NOTE_14_3_16/BETABAR/100k",
+ 
  const double Asimov = 3.2183084
 )
 {
@@ -10,11 +11,20 @@ void DrawPvaluesVsBetaBar_nuebar
 
   const int Nfiles = 5; //7;
   TString file[Nfiles] = {
-    "pvalue_Asimov_A_betabar_0p5.root",
-    "pvalue_Asimov_A_betabar_1p0.root",
-    "pvalue_Asimov_A_betabar_1p5.root",
-    "pvalue_Asimov_A_betabar_2p0.root",
-    "pvalue_Asimov_A_betabar_2p5.root"    
+    
+    // 10k marg toys
+    // "pvalue_Asimov_A_betabar_0p5.root",
+    // "pvalue_Asimov_A_betabar_1p0.root",
+    // "pvalue_Asimov_A_betabar_1p5.root",
+    // "pvalue_Asimov_A_betabar_2p0.root",
+    // "pvalue_Asimov_A_betabar_2p5.root"   
+
+    // 100k marg toys
+    "pvalue_Asimov_A_Marg100k_Toys100k_betabar_0p5.root", 
+    "pvalue_Asimov_A_Marg100k_Toys100k_betabar_1p0.root",
+    "pvalue_Asimov_A_Marg100k_Toys100k_betabar_1p5.root", 
+    "pvalue_Asimov_A_Marg100k_Toys100k_betabar_2p0.root", 
+    "pvalue_Asimov_A_Marg100k_Toys100k_betabar_2p5.root" 
   };
   
   double betabar[Nfiles] = {0.5, 1., 1.5, 2., 2.5}; //{0., 0.5, 1., 1.5, 2., 2.5}; //, 3.};
@@ -74,7 +84,7 @@ void DrawPvaluesVsBetaBar_nuebar
   //gPvalueEvt_Vs_betabar->SetLineWidth(2);
   gPvalue01_Vs_betabar->Draw("alp");
   //gPvalueEvt_Vs_betabar->Draw("lp same");  
-  TLine *lAsimov_betabar = new TLine(1,0.,1,0.6);
+  TLine *lAsimov_betabar = new TLine(1,0.,1,0.25);
   lAsimov_betabar->SetLineColor(kRed);
   lAsimov_betabar->SetLineWidth(2);
   lAsimov_betabar->Draw();
@@ -109,7 +119,7 @@ void DrawPvaluesVsBetaBar_nuebar
   //gPvalueEvt_Vs_nevents->SetLineWidth(2);
   gPvalue01_Vs_nevents->Draw("alp");
   //gPvalueEvt_Vs_nevents->Draw("lp same");
-  TLine *lAsimov_nevents = new TLine(Asimov,0.,Asimov,0.6);
+  TLine *lAsimov_nevents = new TLine(Asimov,0.,Asimov,0.25);
   lAsimov_nevents->SetLineColor(kRed);
   lAsimov_nevents->SetLineWidth(2);
   lAsimov_nevents->Draw();  

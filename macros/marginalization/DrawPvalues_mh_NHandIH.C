@@ -45,9 +45,9 @@ void DrawPvalues_mh_NHandIH
  //char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_NH_100kToys_Asimov_A.root",
  //char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_IH_100kToys_Asimov_A.root"
 
- // Asimov B
- char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_NH_100kToys_Asimov_B.root",
- char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_IH_100kToys_Asimov_B.root"
+ // // Asimov B
+ // char *infilename_nh = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_NH_100kToys_Asimov_B.root",
+ // char *infilename_ih = "../TECH_NOTE_14_3_16/MASSHIERARCHY/PVALUE/50k/Pvalue_IH_100kToys_Asimov_B.root"
 
  
 

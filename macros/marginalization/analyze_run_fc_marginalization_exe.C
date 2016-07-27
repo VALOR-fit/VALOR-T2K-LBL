@@ -4,7 +4,7 @@
 //
 // Read and analyze the output from run_fit_marginalization_readbinary_*.C
 //
-// Davide Sgalaberna                                                                                              
+// Davide Sgalaberna                                                                                             
 //                                                                                           
 // ------------------------------------------------------------------------------------------------
 
@@ -21,16 +21,19 @@ const double CLfrac_1sigma = 0.6827;  // 1sigma% CL
 const double CLfrac_90CL   = 0.9;  // 90% CL
 const double CLfrac_95CL   = 0.95;  // 95% CL
 const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
+const double CLfrac_3sigma = 0.9973;  // 3sigma% CL
 
 const double CRITVAL_1SIGMA_1D = 1.;
 const double CRITVAL_90CL_1D =  2.71;
 const double CRITVAL_95CL_1D = 3.84;
 const double CRITVAL_2SIGMA_1D = 4.;
+const double CRITVAL_3SIGMA_1D = 9.;
 
 const double CRITVAL_1SIGMA_2D = 2.3;
 const double CRITVAL_90CL_2D = 4.61;
 const double CRITVAL_95CL_2D = 5.99;
 const double CRITVAL_2SIGMA_2D = 6.18;
+const double CRITVAL_3SIGMA_2D = 11.83;
 
 void analyze_run_fc_marginalization_exe
 ( 
@@ -46,9 +49,13 @@ void analyze_run_fc_marginalization_exe
  //const char * rootfile = "data_run1to6/Asimov_A_Run16.root", 
  //const char * rootfile = "data_run1to6/Asimov_B_Run16.root", 
 
- //const char * rootfile = "data_run1to7/SKdata_Run17.root", 
- const char * rootfile = "data_run1to7/Asimov_A_Run17.root", 
- //const char * rootfile = "data_run1to7/Asimov_B_Run17.root", 
+ //const char * rootfile = "data_run1to7b/SKdata_Run17.root", 
+ //const char * rootfile = "data_run1to7b/Asimov_A_Run17.root", 
+ //const char * rootfile = "data_run1to7b/Asimov_B_Run17.root", 
+
+ //const char * rootfile = "data_run1to7c/SKdata_Run17c.root", 
+ //const char * rootfile = "data_run1to7c/Asimov_A_Run17c.root", 
+ const char * rootfile = "data_run1to7c/Asimov_B_Run17c.root", 
 
  const bool use_posterior_predictive = false,
  const bool use_post_pred_fhc_mulike = true,
@@ -105,13 +112,14 @@ void analyze_run_fc_marginalization_exe
 
  //////////////////////
  //                  //
- //      Run 1-7     //
+ //      Run 1-7b     //
  //                  //
  //////////////////////
  
  //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-1.571.root",
- char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.000.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.000.root",
  //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_1.571.root",
+ //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.785.root",
  
  //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fc_dcp_0_nh_75k_Set0.root",
  //char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fc_dcp_0_nh_25k_Set1.root",
@@ -127,8 +135,27 @@ void analyze_run_fc_marginalization_exe
  //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.571.root",
  //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.759.root",
  
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/NH/fit_fitmarg_fc_nh_10k_run17fluxtun_0.785_All.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/NH/fit_fitmarg_fc_nh_10k_run17fluxtun_1.571_All.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/NH/fit_fitmarg_fc_nh_10k_run17fluxtun_2.356_All.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/IH/fit_fitmarg_fc_ih_10k_run17fluxtun_0.785_All.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/IH/fit_fitmarg_fc_ih_10k_run17fluxtun_1.571_All.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/IH/fit_fitmarg_fc_ih_10k_run17fluxtun_2.356_All.root",
+
+ //////////////////////
+ //                  //
+ //     Run 1-7c     //
+ //                  //
+ //////////////////////
+ 
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/Raj/fit_fc_17c_inverted_nexp_1.571.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/NH/fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-1.571.root",
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/posterior/fit_fc_17c_normal_nexp_50k_0.000_Raj.root", // 50k
+ //const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/posterior/fit_fc_17c_inverted_nexp_50k_0.000_Raj.root", // 50k
+ const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/posterior/fit_fitmarg_fc_nh_50k_run17c_final_inverted_-1.351.root", // 50k
+ 
  //string mytag = "Asimov_A_dcp_0_sinsqth23_0p65_nh",
- string mytag = "Run17",
+ string mytag = "Run17c_Asimov_A_final",
  
  const double mydeltachisq = -999 // Don't draw data deltachisq
 
@@ -480,7 +507,7 @@ void analyze_run_fc_marginalization_exe
     h_data_1re     = (TH2D*) skobs_fakedata->TwoDSpectrum(s_1re)    ->Clone("h_data_1re");
     h_data_rhc1rmu = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1rmu)->Clone("h_data_rhc1rmu");
     h_data_rhc1re  = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1re) ->Clone("h_data_rhc1re"); 
-
+    
     cout << "# of events 1Rmu = "    << h_data_1rmu->Integral()    << endl;
     cout << "# of events 1Re = "     << h_data_1re->Integral()     << endl;
     cout << "# of events RHC1Rmu = " << h_data_rhc1rmu->Integral() << endl;
@@ -552,21 +579,25 @@ void analyze_run_fc_marginalization_exe
   int Nin_90CL   = 0;
   int Nin_95CL   = 0;
   int Nin_2sigma = 0;
+  int Nin_3sigma = 0;
 
   int Nin_1sigma_nh = 0;
   int Nin_90CL_nh   = 0;
   int Nin_95CL_nh   = 0;
   int Nin_2sigma_nh = 0;
+  int Nin_3sigma_nh = 0;
   
   int Nin_1sigma_ih = 0;
   int Nin_90CL_ih   = 0;
   int Nin_95CL_ih   = 0;
   int Nin_2sigma_ih = 0;
+  int Nin_3sigma_ih = 0;
 
   int NdiffChisq = 0;
   
   int Nentries = treein->GetEntries();
-  
+  //Nentries = 5000;
+
   cout << endl;
   cout << "Total # of toys = " << Nentries << endl;
   cout << endl;
@@ -594,17 +625,17 @@ void analyze_run_fc_marginalization_exe
 
     //
 
-    double nevents_rhc1re = hErecoToy_RHC1Re->Integral();    
-    double nevents_1re = hErecoToy_1Re->Integral();    
-    double nevents_rhc1rmu = hErecoToy_RHC1Rmu->Integral();    
-    double nevents_1rmu = hErecoToy_1Rmu->Integral();    
+    // double nevents_rhc1re = hErecoToy_RHC1Re->Integral();    
+    // double nevents_1re = hErecoToy_1Re->Integral();    
+    // double nevents_rhc1rmu = hErecoToy_RHC1Rmu->Integral();    
+    // double nevents_1rmu = hErecoToy_1Rmu->Integral();    
 
     // double nevents_exp_rhc1re = hErecoExp_RHC1Re->Integral();    
     // double nevents_exp_1re = hErecoExp_1Re->Integral();    
     // double nevents_exp_rhc1rmu = hErecoExp_RHC1Rmu->Integral();    
     // double nevents_exp_1rmu = hErecoExp_1Rmu->Integral();    
     
-     // if(
+    //  if(
     //    (nevents_rhc1re<0) ||
     //    (nevents_1re<0) ||
     //    (nevents_rhc1rmu<0) ||
@@ -620,10 +651,10 @@ void analyze_run_fc_marginalization_exe
     //   exit(1);
     // }
     
-    hNevents_rhc_elike->Fill(nevents_rhc1re);    
-    hNevents_fhc_elike->Fill(nevents_1re);    
-    hNevents_rhc_mulike->Fill(nevents_rhc1rmu);    
-    hNevents_fhc_mulike->Fill(nevents_1rmu);
+    // hNevents_rhc_elike->Fill(nevents_rhc1re);    
+    // hNevents_fhc_elike->Fill(nevents_1re);    
+    // hNevents_rhc_mulike->Fill(nevents_rhc1rmu);    
+    // hNevents_fhc_mulike->Fill(nevents_1rmu);
 
     // hNevents_exp_rhc_elike->Fill(nevents_exp_rhc1re);    
     // hNevents_exp_fhc_elike->Fill(nevents_exp_1re);    
@@ -729,6 +760,7 @@ void analyze_run_fc_marginalization_exe
       if(deltachisq0BF_nh <= CRITVAL_90CL_1D   ) Nin_90CL_nh++;
       if(deltachisq0BF_nh <= CRITVAL_95CL_1D   ) Nin_95CL_nh++;
       if(deltachisq0BF_nh <= CRITVAL_2SIGMA_1D ) Nin_2sigma_nh++;
+      if(deltachisq0BF_nh <= CRITVAL_3SIGMA_1D ) Nin_3sigma_nh++;
     }
     else if(*trueMH=="inverted"){
       deltachisq0BF_ih = chisqtrue0 - chisqmin_ih;
@@ -741,6 +773,7 @@ void analyze_run_fc_marginalization_exe
       if(deltachisq0BF_ih <= CRITVAL_90CL_1D   ) Nin_90CL_ih++;
       if(deltachisq0BF_ih <= CRITVAL_95CL_1D   ) Nin_95CL_ih++;
       if(deltachisq0BF_ih <= CRITVAL_2SIGMA_1D ) Nin_2sigma_ih++;
+      if(deltachisq0BF_ih <= CRITVAL_3SIGMA_1D ) Nin_3sigma_ih++;
     }
     else{
       cout << "WARNING:" << endl;
@@ -762,6 +795,7 @@ void analyze_run_fc_marginalization_exe
     if(deltachisq0BF_used <= CRITVAL_90CL_1D   ) Nin_90CL++;
     if(deltachisq0BF_used <= CRITVAL_95CL_1D   ) Nin_95CL++;
     if(deltachisq0BF_used <= CRITVAL_2SIGMA_1D ) Nin_2sigma++;
+    if(deltachisq0BF_used <= CRITVAL_3SIGMA_1D ) Nin_3sigma++;
         
     // Get Likelihood weights --> penalty term
     long double toy_weight = 1.;
@@ -848,16 +882,19 @@ void analyze_run_fc_marginalization_exe
   double FracIn_90CL   = (double) Nin_90CL   / (double) Nentries;
   double FracIn_95CL   = (double) Nin_95CL   / (double) Nentries;
   double FracIn_2sigma = (double) Nin_2sigma / (double) Nentries;  
+  double FracIn_3sigma = (double) Nin_3sigma / (double) Nentries;  
 
   double FracIn_1sigma_nh = (double) Nin_1sigma_nh / (double) Nentries;
   double FracIn_90CL_nh   = (double) Nin_90CL_nh   / (double) Nentries;
   double FracIn_95CL_nh   = (double) Nin_95CL_nh   / (double) Nentries;
   double FracIn_2sigma_nh = (double) Nin_2sigma_nh / (double) Nentries;  
+  double FracIn_3sigma_nh = (double) Nin_3sigma_nh / (double) Nentries;  
 
   double FracIn_1sigma_ih = (double) Nin_1sigma_ih / (double) Nentries;
   double FracIn_90CL_ih   = (double) Nin_90CL_ih   / (double) Nentries;
   double FracIn_95CL_ih   = (double) Nin_95CL_ih   / (double) Nentries;
   double FracIn_2sigma_ih = (double) Nin_2sigma_ih / (double) Nentries;  
+  double FracIn_3sigma_ih = (double) Nin_3sigma_ih / (double) Nentries;  
   
   // Calculate p-value and quantile (p-value = gauss area of both tails --> divide by 2)
   double pvalue = GetPvalue_rightside(myvector,mydeltachisq);  
@@ -870,27 +907,32 @@ void analyze_run_fc_marginalization_exe
   double FCCritVal_90CL   = CalcDLcrit(myvector,CLfrac_90CL*100.,0.);
   double FCCritVal_95CL   = CalcDLcrit(myvector,CLfrac_95CL*100.,0.); 
   double FCCritVal_2sigma = CalcDLcrit(myvector,CLfrac_2sigma*100.,0.); 
+  double FCCritVal_3sigma = CalcDLcrit(myvector,CLfrac_3sigma*100.,0.); 
 
   double FCCritVal_1sigma_nh = conv::kBadResult;
   double FCCritVal_90CL_nh = conv::kBadResult;
   double FCCritVal_95CL_nh = conv::kBadResult;
   double FCCritVal_2sigma_nh = conv::kBadResult;
+  double FCCritVal_3sigma_nh = conv::kBadResult;
   double FCCritVal_1sigma_ih = conv::kBadResult;
   double FCCritVal_90CL_ih = conv::kBadResult;
   double FCCritVal_95CL_ih = conv::kBadResult;
   double FCCritVal_2sigma_ih = conv::kBadResult;
+  double FCCritVal_3sigma_ih = conv::kBadResult;
 
   if(*trueMH=="normal"){
     FCCritVal_1sigma_nh = CalcDLcrit(myvector_nh,CLfrac_1sigma*100.,0.); 
     FCCritVal_90CL_nh   = CalcDLcrit(myvector_nh,CLfrac_90CL*100.,0.); 
     FCCritVal_95CL_nh   = CalcDLcrit(myvector_nh,CLfrac_95CL*100.,0.); 
     FCCritVal_2sigma_nh = CalcDLcrit(myvector_nh,CLfrac_2sigma*100.,0.); 
+    FCCritVal_3sigma_nh = CalcDLcrit(myvector_nh,CLfrac_3sigma*100.,0.); 
   }
   else if(*trueMH=="inverted"){
     FCCritVal_1sigma_ih = CalcDLcrit(myvector_ih,CLfrac_1sigma*100.,0.); 
     FCCritVal_90CL_ih   = CalcDLcrit(myvector_ih,CLfrac_90CL*100.,0.); 
     FCCritVal_95CL_ih   = CalcDLcrit(myvector_ih,CLfrac_95CL*100.,0.); 
     FCCritVal_2sigma_ih = CalcDLcrit(myvector_ih,CLfrac_2sigma*100.,0.); 
+    FCCritVal_3sigma_ih = CalcDLcrit(myvector_ih,CLfrac_3sigma*100.,0.); 
   }
 
   
@@ -903,11 +945,13 @@ void analyze_run_fc_marginalization_exe
   double FCCritVal_posterior_90CL   = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_90CL*100.,0.);
   double FCCritVal_posterior_95CL   = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_95CL*100.,0.);
   double FCCritVal_posterior_2sigma = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,0.);
+  double FCCritVal_posterior_3sigma = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_3sigma*100.,0.);
   
   double FCCritVal_posterior_1sigma_histo = CalcDLcrit(hdeltachisq_posterior,CLfrac_1sigma);
   double FCCritVal_posterior_90CL_histo   = CalcDLcrit(hdeltachisq_posterior,CLfrac_90CL);
   double FCCritVal_posterior_95CL_histo   = CalcDLcrit(hdeltachisq_posterior,CLfrac_95CL);
   double FCCritVal_posterior_2sigma_histo = CalcDLcrit(hdeltachisq_posterior,CLfrac_2sigma);
+  double FCCritVal_posterior_3sigma_histo = CalcDLcrit(hdeltachisq_posterior,CLfrac_3sigma);
 
   // Compute errors on the posterior predictive p-value and critical values
 
@@ -928,6 +972,12 @@ void analyze_run_fc_marginalization_exe
   FCCritVal_posterior_2sigma_perr = fabs(FCCritVal_posterior_2sigma - FCCritVal_posterior_2sigma_perr);
   double FCCritVal_posterior_2sigma_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_2sigma*100.,-err_2sigma);
   FCCritVal_posterior_2sigma_merr = fabs(FCCritVal_posterior_2sigma - FCCritVal_posterior_2sigma_merr);
+
+  double err_3sigma = get_pvalue_error_vector(myvector,vec_like_penalty,FCCritVal_posterior_3sigma,1.-CLfrac_3sigma); // pass the "p-value"
+  double FCCritVal_posterior_3sigma_perr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_3sigma*100.,+err_3sigma);
+  FCCritVal_posterior_3sigma_perr = fabs(FCCritVal_posterior_3sigma - FCCritVal_posterior_3sigma_perr);
+  double FCCritVal_posterior_3sigma_merr = CalcDLcrit_posterior(myvector,vec_like_penalty,CLfrac_3sigma*100.,-err_3sigma);
+  FCCritVal_posterior_3sigma_merr = fabs(FCCritVal_posterior_3sigma - FCCritVal_posterior_3sigma_merr);
 
   double err_pvalue = get_pvalue_error_vector(myvector,vec_like_penalty,mydeltachisq,pvalue_posterior); 
   double zscore_posterior_perr = f2.Eval(pvalue_posterior-err_pvalue); // smaller p-value gives larger significance 
@@ -1075,12 +1125,16 @@ void analyze_run_fc_marginalization_exe
   hdeltachisq->DrawClone();
   TLine *lcritval_90CL = new TLine(FCCritVal_90CL,0,FCCritVal_90CL,hdeltachisq->GetMaximum());
   TLine *lcritval_2sigma = new TLine(FCCritVal_2sigma,0,FCCritVal_2sigma,hdeltachisq->GetMaximum());
+  TLine *lcritval_3sigma = new TLine(FCCritVal_3sigma,0,FCCritVal_3sigma,hdeltachisq->GetMaximum());
   lcritval_90CL->SetLineColor(kRed);
   lcritval_2sigma->SetLineColor(kBlue);
+  lcritval_3sigma->SetLineColor(kGreen);
   lcritval_90CL->SetLineWidth(2);
   lcritval_2sigma->SetLineWidth(2);
+  lcritval_3sigma->SetLineWidth(2);
   lcritval_90CL->DrawClone();
   lcritval_2sigma->DrawClone();
+  //lcritval_3sigma->DrawClone();
   TLine *ldeltachisq_data = new TLine(mydeltachisq,0,mydeltachisq,hdeltachisq->GetMaximum());
   ldeltachisq_data->SetLineColor(kGreen);
   ldeltachisq_data->SetLineWidth(2);
@@ -1092,6 +1146,7 @@ void analyze_run_fc_marginalization_exe
   ldeltachisq->SetTextSize(0.07);
   ldeltachisq->AddEntry(lcritval_90CL,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_90CL).Data(),"l");
   ldeltachisq->AddEntry(lcritval_2sigma,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_2sigma).Data(),"l");
+  //ldeltachisq->AddEntry(lcritval_3sigma,TString::Format("#Delta #chi^{2}_{crit} (3#sigma) = %1.2f",FCCritVal_3sigma).Data(),"l");
   if(mydeltachisq>0.) ldeltachisq->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
   ldeltachisq->DrawClone();
   TLatex *latPvalue = new TLatex(hdeltachisq->GetXaxis()->GetBinLowEdge(50),hdeltachisq->GetMaximum()*0.3, TString::Format("P-value = %1.3f",pvalue).Data() );
@@ -1106,13 +1161,17 @@ void analyze_run_fc_marginalization_exe
   hdeltachisq_nh->DrawClone();
   TLine *lcritval_90CL_nh;
   TLine *lcritval_2sigma_nh;
+  TLine *lcritval_3sigma_nh;
   if(*trueMH=="normal"){
     lcritval_90CL_nh = new TLine(FCCritVal_90CL_nh,0,FCCritVal_90CL_nh,hdeltachisq_nh->GetMaximum());
     lcritval_2sigma_nh = new TLine(FCCritVal_2sigma_nh,0,FCCritVal_2sigma_nh,hdeltachisq_nh->GetMaximum());
+    lcritval_3sigma_nh = new TLine(FCCritVal_3sigma_nh,0,FCCritVal_3sigma_nh,hdeltachisq_nh->GetMaximum());
     lcritval_90CL_nh->SetLineColor(kRed);
     lcritval_2sigma_nh->SetLineColor(kBlue);
+    lcritval_3sigma_nh->SetLineColor(kGreen);
     lcritval_90CL_nh->DrawClone();
     lcritval_2sigma_nh->DrawClone();
+    //lcritval_3sigma_nh->DrawClone();
   }
   if(mydeltachisq>0.) ldeltachisq_data->DrawClone();
   TLegend *ldeltachisq_nh = new TLegend(0.6,0.45,0.8,0.75);
@@ -1122,6 +1181,7 @@ void analyze_run_fc_marginalization_exe
   ldeltachisq_nh->SetTextSize(0.07);
   ldeltachisq_nh->AddEntry(lcritval_90CL_nh,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_90CL_nh).Data(),"l");
   ldeltachisq_nh->AddEntry(lcritval_2sigma_nh,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_2sigma_nh).Data(),"l");
+  //ldeltachisq_nh->AddEntry(lcritval_3sigma_nh,TString::Format("#Delta #chi^{2}_{crit} (3#sigma) = %1.2f",FCCritVal_3sigma_nh).Data(),"l");
   if(mydeltachisq>0.) ldeltachisq_nh->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
   ldeltachisq_nh->DrawClone();
 
@@ -1132,13 +1192,17 @@ void analyze_run_fc_marginalization_exe
   hdeltachisq_ih->DrawClone();
   TLine *lcritval_90CL_ih;
   TLine *lcritval_2sigma_ih;
+  TLine *lcritval_3sigma_ih;
   if(*trueMH=="inverted"){
     lcritval_90CL_ih = new TLine(FCCritVal_90CL_ih,0,FCCritVal_90CL_ih,hdeltachisq_ih->GetMaximum());
     lcritval_2sigma_ih = new TLine(FCCritVal_2sigma_ih,0,FCCritVal_2sigma_ih,hdeltachisq_ih->GetMaximum());
+    lcritval_3sigma_ih = new TLine(FCCritVal_3sigma_ih,0,FCCritVal_3sigma_ih,hdeltachisq_ih->GetMaximum());
     lcritval_90CL_ih->SetLineColor(kRed);
     lcritval_2sigma_ih->SetLineColor(kBlue);
+    lcritval_3sigma_ih->SetLineColor(kGreen);
     lcritval_90CL_ih->DrawClone();
-    lcritval_2sigma_ih->DrawClone();
+    //lcritval_2sigma_ih->DrawClone();
+    lcritval_3sigma_ih->DrawClone();
   }
   if(mydeltachisq>0.) ldeltachisq_data->DrawClone();
   TLegend *ldeltachisq_ih = new TLegend(0.6,0.45,0.8,0.75);
@@ -1148,6 +1212,7 @@ void analyze_run_fc_marginalization_exe
   ldeltachisq_ih->SetTextSize(0.07);
   ldeltachisq_ih->AddEntry(lcritval_90CL_ih,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_90CL_ih).Data(),"l");
   ldeltachisq_ih->AddEntry(lcritval_2sigma_ih,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_2sigma_ih).Data(),"l");
+  //ldeltachisq_ih->AddEntry(lcritval_3sigma_ih,TString::Format("#Delta #chi^{2}_{crit} (3#sigma) = %1.2f",FCCritVal_3sigma_ih).Data(),"l");
   if(mydeltachisq>0.) ldeltachisq_ih->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
   ldeltachisq_ih->DrawClone();
 
@@ -1165,12 +1230,16 @@ void analyze_run_fc_marginalization_exe
   TLine *lcritval_1sigma_post = new TLine(FCCritVal_posterior_1sigma,0,FCCritVal_posterior_1sigma,hdeltachisq_posterior->GetMaximum());
   TLine *lcritval_90CL_post = new TLine(FCCritVal_posterior_90CL,0,FCCritVal_posterior_90CL,hdeltachisq_posterior->GetMaximum());
   TLine *lcritval_2sigma_post = new TLine(FCCritVal_posterior_2sigma,0,FCCritVal_posterior_2sigma,hdeltachisq_posterior->GetMaximum());
+  TLine *lcritval_3sigma_post = new TLine(FCCritVal_posterior_3sigma,0,FCCritVal_posterior_3sigma,hdeltachisq_posterior->GetMaximum());
   lcritval_90CL_post->SetLineColor(kRed);
   lcritval_2sigma_post->SetLineColor(kBlue);
+  lcritval_3sigma_post->SetLineColor(kGreen);
   lcritval_90CL_post->SetLineWidth(2);
   lcritval_2sigma_post->SetLineWidth(2);
+  lcritval_3sigma_post->SetLineWidth(2);
   lcritval_90CL_post->DrawClone();
   lcritval_2sigma_post->DrawClone();
+  //lcritval_3sigma_post->DrawClone();
 
   ldeltachisq_data->SetLineColor(kGreen);
   ldeltachisq_data->SetLineWidth(2);
@@ -1183,6 +1252,7 @@ void analyze_run_fc_marginalization_exe
   ldeltachisq_post->SetTextSize(0.07);
   ldeltachisq_post->AddEntry(lcritval_90CL_post,TString::Format("#Delta #chi^{2}_{crit}(90%%CL) = %1.2f",FCCritVal_posterior_90CL).Data(),"l");
   ldeltachisq_post->AddEntry(lcritval_2sigma_post,TString::Format("#Delta #chi^{2}_{crit} (2#sigma) = %1.2f",FCCritVal_posterior_2sigma).Data(),"l");
+  //ldeltachisq_post->AddEntry(lcritval_3sigma_post,TString::Format("#Delta #chi^{2}_{crit} (3#sigma) = %1.2f",FCCritVal_posterior_3sigma).Data(),"l");
   if(mydeltachisq>0.) ldeltachisq_post->AddEntry(ldeltachisq_data,TString::Format("#Delta #chi^{2}_{data} = %1.3f",mydeltachisq).Data(),"l");
   ldeltachisq_post->DrawClone();
   TLatex *latPvalue_post = new TLatex(hdeltachisq_posterior->GetXaxis()->GetBinLowEdge(120),hdeltachisq_posterior->GetMaximum()*0.3, TString::Format("P-value = %1.3f",pvalue_posterior).Data() );
@@ -1444,12 +1514,14 @@ void analyze_run_fc_marginalization_exe
   cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL   << endl;
   cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL   << endl;
   cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma << endl;
+  cout << "     Fraction of toys inside 3sigma = " << FracIn_3sigma << endl;
   cout << endl;
   cout << " - Feldman-Cousins critical values:" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_1sigma << endl; 
   cout << "     Crit Value 90%CL   = " << FCCritVal_90CL << endl; 
   cout << "     Crit Value 95%CL   = " << FCCritVal_95CL << endl; 
   cout << "     Crit Value 2sigma = " << FCCritVal_2sigma << endl; 
+  cout << "     Crit Value 3sigma = " << FCCritVal_3sigma << endl; 
   cout << endl;
 
   cout << "/// Posterior predictive ///" << endl;
@@ -1471,6 +1543,7 @@ void analyze_run_fc_marginalization_exe
   //cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL   << endl;
   //cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL   << endl;
   //cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma << endl;
+  //cout << "     Fraction of toys inside 3sigma = " << FracIn_3sigma << endl;
   cout << endl;
   cout << " - Feldman-Cousins critical values:" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_posterior_1sigma 
@@ -1486,11 +1559,16 @@ void analyze_run_fc_marginalization_exe
        << " + " << FCCritVal_posterior_2sigma_perr
        << " - " << FCCritVal_posterior_2sigma_merr
        << endl;
+  cout << "     Crit Value 3sigma = " << FCCritVal_posterior_3sigma
+       << " + " << FCCritVal_posterior_3sigma_perr
+       << " - " << FCCritVal_posterior_3sigma_merr
+       << endl;
   cout << " - Feldman-Cousins critical values (histo):" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_posterior_1sigma_histo << endl; 
   cout << "     Crit Value 90%CL   = " << FCCritVal_posterior_90CL_histo << endl; 
   cout << "     Crit Value 95%CL   = " << FCCritVal_posterior_95CL_histo << endl; 
   cout << "     Crit Value 2sigma = " << FCCritVal_posterior_2sigma_histo << endl; 
+  cout << "     Crit Value 3sigma = " << FCCritVal_posterior_3sigma_histo << endl; 
   cout << endl;
 
   cout << "/// Normal Hierarchy Result ///" << endl;
@@ -1499,12 +1577,14 @@ void analyze_run_fc_marginalization_exe
   cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL_nh   << endl;
   cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL_nh   << endl;
   cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma_nh << endl;
+  cout << "     Fraction of toys inside 3sigma = " << FracIn_3sigma_nh << endl;
   cout << endl;
   cout << " - Feldman-Cousins critical values:" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_1sigma_nh << endl; 
   cout << "     Crit Value 90%CL = "   << FCCritVal_90CL_nh << endl; 
   cout << "     Crit Value 95%CL = "   << FCCritVal_95CL_nh << endl; 
   cout << "     Crit Value 2sigma = " << FCCritVal_2sigma_nh << endl; 
+  cout << "     Crit Value 3sigma = " << FCCritVal_3sigma_nh << endl; 
   cout << endl;
   cout << "/// Inverted Hierarchy Result ///" << endl;
   cout << " - Coverage:" << endl;
@@ -1512,12 +1592,14 @@ void analyze_run_fc_marginalization_exe
   cout << "     Fraction of toys inside 90%CL   = " << FracIn_90CL_ih   << endl;
   cout << "     Fraction of toys inside 95%CL   = " << FracIn_95CL_ih   << endl;
   cout << "     Fraction of toys inside 2sigma = " << FracIn_2sigma_ih << endl;
+  cout << "     Fraction of toys inside 3sigma = " << FracIn_3sigma_ih << endl;
   cout << endl;
   cout << " - Feldman-Cousins critical values:" << endl;
   cout << "     Crit Value 1sigma = " << FCCritVal_1sigma_ih << endl; 
   cout << "     Crit Value 90%CL   = " << FCCritVal_90CL_ih << endl; 
   cout << "     Crit Value 95%CL   = " << FCCritVal_95CL_ih << endl; 
   cout << "     Crit Value 2sigma = " << FCCritVal_2sigma_ih << endl; 
+  cout << "     Crit Value 3sigma = " << FCCritVal_3sigma_ih << endl; 
   cout << endl;
   
   
@@ -1536,22 +1618,26 @@ inline double GetConstChisq(bool Fit2D,string CL){
   const double CRITVAL_90CL_1D =  2.71;
   const double CRITVAL_95CL_1D = 3.84;
   const double CRITVAL_2SIGMA_1D = 4.;
+  const double CRITVAL_3SIGMA_1D = 9.;
 
   const double CRITVAL_1SIGMA_2D = 2.3;
   const double CRITVAL_90CL_2D = 4.61;
   const double CRITVAL_95CL_2D = 5.99;
   const double CRITVAL_2SIGMA_2D = 6.18;
+  const double CRITVAL_3SIGMA_2D = 11.83;
 
   const string CL1sigma = "1sigma";
   const string CL90 = "90CL";
   const string CL95 = "95CL";
   const string CL2sigma = "2sigma";
+  const string CL3sigma = "3sigma";
   
   if(!Fit2D){ // 1D fit
     if(CL==CL1sigma) return CRITVAL_1SIGMA_1D;
     if(CL==CL90)     return CRITVAL_90CL_1D;
     if(CL==CL95)     return CRITVAL_95CL_1D;
     if(CL==CL2sigma) return CRITVAL_2SIGMA_1D;
+    if(CL==CL3sigma) return CRITVAL_3SIGMA_1D;
     else{
       cerr << endl;
       cerr << "The critical value for " << string << " is not available" << endl;
@@ -1560,6 +1646,7 @@ inline double GetConstChisq(bool Fit2D,string CL){
       cerr << CL90 << endl;
       cerr << CL95 << endl;
       cerr << CL2sigma << endl;
+      cerr << CL3sigma << endl;
       cerr << endl;
       exit(1);
     }
@@ -1569,6 +1656,7 @@ inline double GetConstChisq(bool Fit2D,string CL){
     if(CL==CL90)     return CRITVAL_90CL_2D;
     if(CL==CL95)     return CRITVAL_95CL_2D;
     if(CL==CL2sigma) return CRITVAL_2SIGMA_2D;
+    if(CL==CL3sigma) return CRITVAL_3SIGMA_2D;
     else{
       cerr << endl;
       cerr << "The critical value for " << string << " is not available" << endl;
@@ -1577,6 +1665,7 @@ inline double GetConstChisq(bool Fit2D,string CL){
       cerr << CL90 << endl;
       cerr << CL95 << endl;
       cerr << CL2sigma << endl;
+      cerr << CL3sigma << endl;
       cerr << endl;
       exit(1);
     }

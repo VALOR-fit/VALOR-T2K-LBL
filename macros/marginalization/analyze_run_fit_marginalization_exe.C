@@ -86,11 +86,11 @@ void analyze_run_fit_marginalization_exe
   double deltachisq0BF=conv::kALargeNum;
   double deltachisq01=conv::kALargeNum;
 
-  TH2F *hchisq2D_out = new TH2F("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
+  TH2D *hchisq2D_out = new TH2D("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
   TH1D *hchisq1D_out = new TH1D("hchisq1D_out","hchisq1D_out",1,0,1);
-  TH2F *hdeltachisq2D_out = new TH2F("hdeltachisq2D_out","hdeltachisq2D_out",1,0,1,1,0,1);
+  TH2D *hdeltachisq2D_out = new TH2D("hdeltachisq2D_out","hdeltachisq2D_out",1,0,1,1,0,1);
   TH1D *hdeltachisq1D_out = new TH1D("hdeltachisq1D_out","hdeltachisq1D_out",1,0,1);
-  TH2F *hstep2D_out = new TH2F("hstep2D_out","hstep2D_out",1,0,1,1,0,1);
+  TH2D *hstep2D_out = new TH2D("hstep2D_out","hstep2D_out",1,0,1,1,0,1);
   TH1D *hstep1D_out = new TH1D("hstep1D_out","hstep1D_out",1,0,1);
 
   double bestfit0=-999;

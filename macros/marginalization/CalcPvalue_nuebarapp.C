@@ -17,7 +17,7 @@ using namespace valor;
 using namespace valor::conv;
 
 void CalcPvalue_nuebarapp
-(const
+(
  // Run 1-6 (beta=0) --> Asimov A
  TString tag = "pvalue_Asimov_A_Marg100k_Toys100k_betabar_1",
  double data = 3.218, // # of data events
