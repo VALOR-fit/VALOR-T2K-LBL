@@ -95,18 +95,27 @@ foreach (@ARGV) {
 
 $resource        = "interactive"               unless defined $resource;
 
-#$tag             = "joint_betaBar_niwg2015c_react_MargMH_NoNueBar_10kToys"         unless defined $tag;
-#$tag             = "joint_deltaCP_niwg2015c_react_IH_10kToys"            unless defined $tag;
-#$tag             = "joint_sinsqth23_niwg2015c_react_IH_10kToys"            unless defined $tag;
-#$tag             = "joint_dmsq_niwg2015c_react_IH_10kToys"            unless defined $tag;
+#$tag             = "joint_betaBar_niwg2015c_react_IH_100kToys_2"         unless defined $tag;
+#$tag             = "joint_deltaCP_run17c_react_NH_10kToys"            unless defined $tag;
+#$tag             = "joint_sinsqth23_run17_react_IH_10kToys"            unless defined $tag;
+#$tag             = "joint_dmsq_run17_react_NH_10kToys"            unless defined $tag;
 #$tag             = "joint_sinsqth13_niwg2015c_t2konly_IH_10kToys"            unless defined $tag;
-#$tag             = "joint_sinsqth23Vsdmsq_StatOnly_niwg2015c_react_NH_10kToys"            unless defined $tag;
-#$tag             = "joint_sinsqth13Vsdcp_niwg2015c_react_IH_10kToys"            unless defined $tag;
+#$tag             = "joint_sinsqth23Vsdmsq_run17_react_IH_10kToys"            unless defined $tag;
+$tag             = "joint_sinsqth23Vsdmsq_run17_t2konly_IH_10kToys"            unless defined $tag;
+#$tag             = "joint_sinsqth13Vsdcp_run17_react_NH_10kToys"            unless defined $tag;
 #$tag             = "joint_betabar_niwg2015c_react_MargMH_50kToys" unless defined $tag;
-#$tag             = "joint_sinsqth23Vsdcp_niwg2015c_react_IH_10kToys" unless defined $tag;
-$tag             = "joint_dmsqVsdcp_niwg2015c_react_IH_10kToys" unless defined $tag;
+#$tag             = "joint_sinsqth23Vsdcp_run17c_react_IH_10kToys" unless defined $tag;
+#$tag             = "joint_dmsqVsdcp_run17_react_IH_10kToys" unless defined $tag;
 
-$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
+$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17c_final.xml"  unless defined $config_file;
+#$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_AddRun7c.xml"  unless defined $config_file;
+#$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml"  unless defined $config_file;
+#$config_file     = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml"  unless defined $config_file;
+
+#$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17.xml"  unless defined $config_file; 
+#$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
+#$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml"  unless defined $config_file;
+#$config_file     = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
 
 #$fitparamlist   = "nuosc3f"    unless defined $fitparamlist;  # standard joint fit
 $fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
@@ -216,15 +225,15 @@ $betaBar         = 1.                       unless defined $betaBar;
 # $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value
 # $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-# # 2D fit - sinsqth23 Vs dmsq32
-# $freepar0               = "mixing23"                 unless defined $freepar0;
-# $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
-# $maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value
-# $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
-# $freepar1               = "dmsq23"                   unless defined $freepar1;
-# $minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
-# $maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value
-# $npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
+# 2D fit - sinsqth23 Vs dmsq32
+$freepar0               = "mixing23"                 unless defined $freepar0;
+$minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value
+$npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
+$freepar1               = "dmsq23"                   unless defined $freepar1;
+$minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value
+$npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 # # 2D fit - sinsqth23 Vs dcp
 # $freepar0               = "mixing23"                 unless defined $freepar0;
@@ -236,17 +245,18 @@ $betaBar         = 1.                       unless defined $betaBar;
 # $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value
 # $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
 
-# 2D fit - dmsq Vs dcp
-$freepar0               = "dmsq23"                   unless defined $freepar0;
-$minfreepar0            = 2.E-3                      unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 3.E-3                      unless defined $maxfreepar0;     # Maximum free parameter allowed value
-$npt_freepar0           = 21                         unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1               = "deltacp"                  unless defined $freepar1;
-$minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
-$maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value
-$npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
+# # 2D fit - dmsq Vs dcp
+# $freepar0               = "dmsq23"                   unless defined $freepar0;
+# $minfreepar0            = 2.E-3                      unless defined $minfreepar0;     # Minimum free parameter allowed value
+# $maxfreepar0            = 3.E-3                      unless defined $maxfreepar0;     # Maximum free parameter allowed value
+# $npt_freepar0           = 21                         unless defined $npt_freepar0;    # of free parameter points to scan
+# $freepar1               = "deltacp"                  unless defined $freepar1;
+# $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+# $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value
+# $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 
+#$nexpts_marg            = 100000                    unless defined $nexpts_marg;     # of toys
 $nexpts_marg            = 10000                    unless defined $nexpts_marg;     # of toys
 #$nexpts_marg            = 100                    unless defined $nexpts_marg;     # of toys
 
@@ -258,17 +268,17 @@ $nexpts_marg            = 10000                    unless defined $nexpts_marg; 
 # $step_freepar0          = 1                  unless defined $step_freepar0;   # of points for each job param0
 # $step_freepar1          = 1                    unless defined $step_freepar1;   # of points for each job param1
 
-# 2D fits - sinsqth13 Vs dcp (or sinsqth23 Vs dcp or dmsq Vs dcp)
-$step_freepar0          = 2                  unless defined $step_freepar0;   # of points for each job param0
-$step_freepar1          = 4                   unless defined $step_freepar1;   # of points for each job param1
+# # 2D fits - sinsqth13 Vs dcp (or sinsqth23 Vs dcp or dmsq Vs dcp)
+# $step_freepar0          = 2                  unless defined $step_freepar0;   # of points for each job param0
+# $step_freepar1          = 4                   unless defined $step_freepar1;   # of points for each job param1
 
 # # 2D fits - sinsqth13 Vs dcp (bins x 2)
 # $step_freepar0          = 4                  unless defined $step_freepar0;   # of points for each job param0
 # $step_freepar1          = 2                   unless defined $step_freepar1;   # of points for each job param1
 
-# # 2D fits - sinsqth23 Vs dmsq
-# $step_freepar0          = 4                   unless defined $step_freepar0;   # of points for each job param0
-# $step_freepar1          = 1                   unless defined $step_freepar1;   # of points for each job param1
+# 2D fits - sinsqth23 Vs dmsq
+$step_freepar0          = 4                   unless defined $step_freepar0;   # of points for each job param0
+$step_freepar1          = 1                   unless defined $step_freepar1;   # of points for each job param1
 
 $tweak_systematics      = 1                    unless defined $tweak_systematics; # 0-->Osc.Param only, 1-->AllSyst, 5-->AllSyst+FixMEC
 $marg_hierarchy         = 0                    unless defined $marg_hierarchy;
@@ -282,12 +292,12 @@ $file_prior             = "" unless defined $file_prior;
 $job_dir                = "."                  unless defined $job_dir;
 $softw_dir              = $ENV{'T2KOSCANA'}    unless defined $softw_dir;
 $fmwk_dir               = $ENV{'VALOR_FMWK'}   unless defined $fmwk_dir;
-$dmsqscheme             = "auto"              unless defined $dmsqscheme;
-$masshierarchy          = "inverted"          unless defined $masshierarchy;
+$dmsqscheme             = "auto"               unless defined $dmsqscheme;
+$masshierarchy          = "inverted"           unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"         unless defined $mixparamchoice;
 $mixparamoctant         = "two"                unless defined $mixparamoctant;
 
-$use_reactors           = 1                    unless defined $use_reactors;
+$use_reactors           = 0                    unless defined $use_reactors;
 $queue                  = 0                    unless defined $queue;
 
 if( !defined $cput ) {
@@ -360,12 +370,12 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
     # ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
     #
     if($resource eq "ETH-Monch") {
-      open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
+      open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$fileid.sbatch") or die("Can not create the sbatch script");
       print PBS "#!/bin/bash -l  \n";
       #print PBS "#SBATCH --partition=dphys_compute_wk  \n";
       #print PBS "#SBATCH --partition=dphys_compute  \n";
-      #print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=2000  \n"; # in MB. Same as dphys_largemem default RAM
-      print PBS "#SBATCH --partition=dphys_largemem --mem-per-cpu=2000  \n";
+      print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=2000  \n"; # in MB. Same as dphys_largemem default RAM
+      #print PBS "#SBATCH --partition=dphys_largemem --mem-per-cpu=2000  \n";
       print PBS "#SBATCH --nodes=1  \n";
       print PBS "#SBATCH --ntasks-per-node=1  \n";
       print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
@@ -373,12 +383,12 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
       #print PBS "#SBATCH --exclusive \n";
       print PBS "$command \n";
       close(PBS);
-      #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-      #`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
-      #`sbatch -t 09:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`; # 2D sinsqth13 Vs dcp 2x4 steps
-      `sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`; # not enough for 2D sinsqth13 Vs dcp 2x4 steps
-      #`sbatch -t 01:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`; # 1D
-      #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+      #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$fileid.sbatch`;
+      #`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$fileid.sbatch`;
+      `sbatch -t 09:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$fileid.sbatch`; # 2D sinsqth13 Vs dcp 2x4 steps
+      #`sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$fileid.sbatch`; # not enough for 2D sinsqth13 Vs dcp 2x4 steps
+      #`sbatch -t 01:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$fileid.sbatch`; # 1D
+      #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$fileid.sbatch`;
     }
     
     #
@@ -387,10 +397,10 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
     if($resource eq "ETH-Brutus") {
       open(PBS, ">$job_dir/$tag-$ijob.sh") or die("Can not create the PBS batch script");
       print PBS "#!/bin/bash \n";
-      #print PBS "#PBS -N $tag-$irun \n";
+      #print PBS "#PBS -N $tag-$fileid \n";
       #print PBS "#PBS -l cput=$cput \n";
-      #print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-      #print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+      #print PBS "#PBS -o $job_dir/$tag-$fileid.pbs.out \n";
+      #print PBS "#PBS -e $job_dir/$tag-$fileid.pbs.err \n";
       #print PBS "#PBS -q prod \n";
       #print PBS "#PBS -l walltime=$cput \n";
       #print PBS "cd $job_dir \n";
