@@ -475,8 +475,7 @@ void DrawSpectraBestFit_All
    
   } // end loop over sk samples
   
-  
-  
+   
   // Draw bin histograms
 
   TCanvas **c_bin[conv::kns];
