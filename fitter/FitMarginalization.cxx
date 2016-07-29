@@ -3370,13 +3370,13 @@ void FitMarginalization::MinimizeHisto(){
   cout << endl;
 
   if(!fIsFit2D){
-    fchisq_bf = fhchisq_marg_1D->GetMinimum();
+    fchisq_bf = fhchisq_marg_1D->GetBinContent(fhchisq_marg_1D->GetMinimumBin());
     minbin = fhchisq_marg_1D->GetMinimumBin();
     fparam_bf[0] = fhchisq_marg_1D->GetBinCenter(minbin);
     fparam_bf[1] = conv::kBadResult;
   }
   else{
-    fchisq_bf = fhchisq_marg_2D->GetMinimum();
+    fchisq_bf = fhchisq_marg_2D->GetBinContent(fhchisq_marg_2D->GetMinimumBin());
     fhchisq_marg_2D->GetMinimumBin(minbinX,minbinY,minbinZ);
     fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(minbinX);
     fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(minbinY);
@@ -3388,7 +3388,7 @@ void FitMarginalization::MinimizeHisto(TH1D *hInChisqMarg){ // NEW PRECISION
   
   int minbin = conv::kBadResult;
   
-  fchisq_bf = hInChisqMarg->GetMinimum();
+  fchisq_bf = hInChisqMarg->GetBinContent(hInChisqMarg->GetMinimumBin());
   minbin = hInChisqMarg->GetMinimumBin();
   fparam_bf[0] = hInChisqMarg->GetBinCenter(minbin);
   fparam_bf[1] = conv::kBadResult;
@@ -3400,7 +3400,7 @@ void FitMarginalization::MinimizeHisto(TH2D *hInChisqMarg){ // NEW PRECISION
   
   int minbin = conv::kBadResult;
   
-  fchisq_bf = hInChisqMarg->GetMinimum();
+  fchisq_bf = hInChisqMarg->GetBinContent(hInChisqMarg->GetMinimumBin());
   minbin = hInChisqMarg->GetMinimumBin();
   fparam_bf[0] = hInChisqMarg->GetXaxis()->GetBinCenter(minbin);
   fparam_bf[1] = hInChisqMarg->GetYaxis()->GetBinCenter(minbin);
