@@ -25,8 +25,8 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
   //const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root";
   //const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root";
 
-  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdcp_react/fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_nh_contour.root";
-  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdcp_react/fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_ih_contour.root";
+  const char *inname_nh = "fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_nh_contour.root";
+  const char *inname_ih = "fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_ih_contour.root";
 
   const int Ncont_68 = 2;
   const char *contour_68_name[Ncont_68] = { // different graph for each contour (+-)
@@ -133,20 +133,16 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
   
   // Convert from dcp/pi to dcp
 
-  TMultiGraph *gnova_contour_68CL_nh = (TMultiGraph*) get_contour("68CL_nova",nova_ssth23_vs_delta_68CL_nh); 
-  TMultiGraph *gnova_contour_90CL_nh = (TMultiGraph*) get_contour("90CL_nova",nova_ssth23_vs_delta_90CL_nh); 
+  TMultiGraph *gnova_contour_68CL_nh = (TMultiGraph*) (get_contour("68CL_nova",nova_ssth23_vs_delta_68CL_nh))->Clone();//->Clone("ciao");
+  TMultiGraph *gnova_contour_90CL_nh = (TMultiGraph*) (get_contour("90CL_nova",nova_ssth23_vs_delta_90CL_nh))->Clone();//->Clone("ciao2");
   
   TCanvas *c = new TCanvas("c","c");
-  gnova_contour_68CL_nh->Draw("al");
-  //gnova_contour_90CL_nh->Draw("al");
- 
-  return;
-
-  //TMultiGraph *gnova_contour_68CL_nh = new TMultiGraph();
-  //get_contour(nova_ssth23_vs_delta_68CL_nh,gnova_contour_68CL_nh,"68CL_nova"); 
-  //TMultiGraph *gnova_contour_90CL_nh = new TMultiGraph();
-  //get_contour(nova_ssth23_vs_delta_90CL_nh,gnova_contour_90CL_nh,"90CL_nova"); 
- 
+  
+  assert(gnova_contour_68CL_nh);
+  assert(gnova_contour_90CL_nh);
+  gnova_contour_68CL_nh->Draw("alp");
+  gnova_contour_90CL_nh->Draw("l");
+  
   //nova_ssth23_vs_delta_68CL_nh->Draw("colz same");
   //gnova_contour_68CL_nh->Draw("l same");
   //gnova_contour_90CL_nh->Draw("l same");
@@ -437,14 +433,13 @@ TMultiGraph * get_contour(char *tag,TH2F* h3=0){//,TMultiGraph *multig){
       it++;
     }
   
-  // c2 = 0;
-  // contours = 0;
-  // list90 = 0;
-  // g = 0;
-  // delete c2;
-  // delete contours;
-  // delete list90;
-  // delete g;
-
+//  c2 = 0;
+//  contours = 0;
+//  list90 = 0;
+//  g = 0;
+//  delete c2;
+//  delete contours;
+//  delete list90;
+//  delete g;
   return multig;
 }
