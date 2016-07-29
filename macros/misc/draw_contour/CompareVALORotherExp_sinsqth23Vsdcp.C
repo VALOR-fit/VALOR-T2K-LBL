@@ -113,18 +113,48 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
 #endif
  
 
-
+  
   // READ NOvA CONTOURS (only normal hierarchy)
+  
   TFile * infile_nova_nh = new TFile(inname_nova_nh,"READ");
-  TH1F *nova_ssth23_vs_delta_68CL_nh = (TH1F*) infile_nova_nh->Get("nue_ssth23_vs_delta_nh"); 
-  nova_ssth23_vs_delta_90CL_nh = (TH1F*) nova_ssth23_vs_delta_68CL_nh->Clone("nova_ssth23_vs_delta_nh_90CL");
-  TH1F *nova_ssth23_vs_delta_68CL_ih = (TH1F*) infile_nova_nh->Get("nue_ssth23_vs_delta_ih"); 
-  nova_ssth23_vs_delta_90CL_ih = (TH1F*) nova_ssth23_vs_delta_68CL_ih->Clone("nova_ssth23_vs_delta_ih_90CL");
-  double chisq_min = nova_ssth23_vs_delta_68CL_nh->GetBinContent(nova_ssth23_vs_delta_68CL_nh->GetMinimumBin());
+  
+  TH2F *nova_ssth23_vs_delta_68CL_nh = (TH2F*) infile_nova_nh->Get("nue_ssth23_vs_delta_nh"); 
+  nova_ssth23_vs_delta_68CL_nh->SetName("nova_ssth23_vs_delta_68CL_nh");
+  nova_ssth23_vs_delta_68CL_nh->SetTitle("nova_ssth23_vs_delta_68CL_nh");
+
+  double chisq_min = nova_ssth23_vs_delta_68CL_nh->GetMinimum();
   nova_ssth23_vs_delta_68CL_nh->SetContour(1);
   nova_ssth23_vs_delta_68CL_nh->SetContourLevel(0,chisq_min+2.3);
+  
+  TH2F *nova_ssth23_vs_delta_90CL_nh = (TH2F*) nova_ssth23_vs_delta_68CL_nh->Clone("nova_ssth23_vs_delta_nh_90CL");
+  nova_ssth23_vs_delta_90CL_nh->SetName("nova_ssth23_vs_delta_90CL_nh");
+  nova_ssth23_vs_delta_90CL_nh->SetTitle("nova_ssth23_vs_delta_90CL_nh");
+
   nova_ssth23_vs_delta_90CL_nh->SetContour(1);
   nova_ssth23_vs_delta_90CL_nh->SetContourLevel(0,chisq_min+4.61);
+  
+  // Convert from dcp/pi to dcp
+  //TMultiGraph *gnova_contour_68CL_nh = (TMultiGraph*) get_contour(nova_ssth23_vs_delta_68CL_nh); 
+  //TMultiGraph *gnova_contour_90CL_nh = (TMultiGraph*) get_contour(nova_ssth23_vs_delta_90CL_nh); 
+
+  TMultiGraph *gnova_contour_68CL_nh = (TMultiGraph*) get_contour(nova_ssth23_vs_delta_68CL_nh);//->Clone("ciao"); 
+  TMultiGraph *gnova_contour_90CL_nh = (TMultiGraph*) get_contour(nova_ssth23_vs_delta_90CL_nh);//->Clone("ciao2"); 
+
+  
+
+  
+  TCanvas *c = new TCanvas("c","c");
+  gnova_contour_68CL_nh->Draw("al");
+  //gnova_contour_90CL_nh->Draw("al");
+  
+  //nova_ssth23_vs_delta_68CL_nh->Draw("colz same");
+  //gnova_contour_68CL_nh->Draw("l same");
+  //gnova_contour_90CL_nh->Draw("l same");
+
+  return;
+
+
+
   
   // Init histogram
   int NbinsX = hchisq_valor_nh->GetNbinsX();
@@ -375,4 +405,46 @@ void SwapXY(TMarker *graph){
   graph->SetY(x);
   
   return;
+}
+
+
+TMultiGraph * get_contour(TH2F* h3=0){
+  TMultiGraph *multig = new TMultiGraph();
+  TCanvas* c2 = new TCanvas("c2","c",0,0,900,600);
+  h3->Draw("CONT LIST");
+  c2->Update();
+  TObjArray *contours = 0;
+  contours = (TObjArray *)gROOT->GetListOfSpecials()->FindObject("contours");
+ 
+  TList *list90 = (TList*)contours->At(0);
+ 
+  TGraph *g;
+  int it=0;
+  TIter next(list90);
+
+
+  return multig;
+
+  while ((g = (TGraph*)next()))
+    {
+      char name[200];
+      sprintf(name, "g90_nova_%d",it);
+      g->SetLineWidth(2);
+      g->SetLineStyle(1);
+      g->SetLineColor(kRed);
+      multig->Add(g);
+      
+      it++;
+    }
+  
+  c2 = 0;
+  contours = 0;
+  list90 = 0;
+  g = 0;
+  delete c2;
+  delete contours;
+  delete list90;
+  delete g;
+
+  return multig;
 }
