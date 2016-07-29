@@ -111,7 +111,7 @@ void compare_contours_dcp_with_Mach3_hierarchy
     filein_ptheta[ifile] = new TFile(infilename_ptheta[ifile],"READ");
     hchisq1D_ptheta_1[ifile] = (TH1D*)filein_ptheta[ifile]->Get("SA_dcp"); 
     
-    double min_histo = hchisq1D_ptheta_1[ifile]->GetMinimum();
+    double min_histo = hchisq1D_ptheta_1[ifile]->GetBinContent(hchisq1D_ptheta_1[ifile]->GetMinimumBin());
     if(min_histo < min_ptheta) min_ptheta = min_histo;
     //cout << "min_histo = " << min_histo << endl;
   }
@@ -134,7 +134,7 @@ void compare_contours_dcp_with_Mach3_hierarchy
     hchisq1D_Mach3_1[ifile] = (TH1D*)filein_Mach3[ifile]->Get("h_dcp_chi2"); 
     hchisq1D_Mach3_1[ifile]->SetFillColor(0);
 
-    double min_histo = hchisq1D_Mach3_1[ifile]->GetMinimum();
+    double min_histo = hchisq1D_Mach3_1[ifile]->GetBinContent(hchisq1D_Mach3_1[ifile]->GetMinimumBin());
     if(min_histo < min_mach3) min_mach3 = min_histo;
     //cout << "min_histo = " << min_histo << endl;
   }
@@ -162,10 +162,10 @@ void compare_contours_dcp_with_Mach3_hierarchy
     sprintf(name,"hchisq1D_%d",ifile);
     hchisq1D_1[ifile] = (TH1D*)histo_chisq->Clone(name);
   
-    double min_histo = hchisq1D_1[ifile]->GetMinimum();
+    double min_histo = hchisq1D_1[ifile]->GetBinContent(hchisq1D_1[ifile]->GetMinimumBin());
     if(min_histo < min_valor) min_valor = min_histo;
   }
-  //min_valor = hchisq1D_1[0]->GetMinimum();
+  //min_valor = hchisq1D_1[0]->GetBinContent(hchisq1D_1[0]->GetMinimumBin());
   
   for(int ifile=0;ifile<Nfiles; ifile++){
     for(int ibin=0;ibin<hchisq1D_1[ifile]->GetNbinsX();ibin++){
@@ -173,7 +173,7 @@ void compare_contours_dcp_with_Mach3_hierarchy
       double bincont = hchisq1D_1[ifile]->GetBinContent(ibin+1);
       hchisq1D_1[ifile]->SetBinContent(ibin+1,bincont-min_valor);
       
-      //double min = hchisq1D_1[ifile]->GetMinimum();
+      //double min = hchisq1D_1[ifile]->GetBinContent(hchisq1D_1[ifile]->GetMinimumBin());
       //cout << min << endl;
       // cout << "bincont = " << bincont 
       // 	   << " - min = " << min_valor 

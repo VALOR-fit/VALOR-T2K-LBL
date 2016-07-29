@@ -28,14 +28,21 @@ void make_fc_critval_1d(){
   const int Nmh = 2;
   const int NFCpts = 8; // # of points of Feldman-Cousins
 
-  // string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/";  
-  // string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/";
+  // RUN 1-6
+  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/";  
+  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/";
 
-  //string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/";  
-  string path_fc_nh = "";  
-  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/Raj_inverted/";
-  //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/My_inverted/";
+  // // RUN 1-7b
+  // string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/";  
+  // //string path_fc_nh = "";  
+  // string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/Raj_inverted/";
+  // //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/My_inverted/";
 
+  // // RUN 1-7c
+  // string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/NH/";
+  // //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/IH/";
+  // string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/Raj/";
+      
   const char * infilename_fc[NFCpts][Nmh] = {
     
     ///////////////////////
@@ -75,15 +82,15 @@ void make_fc_critval_1d(){
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root",
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" // +-pi
 
-    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys (Run 1-6) 
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root", "total_tree_-2.356.root"},
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root", "total_tree_mhalfpi.root"},
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root" , "total_tree_zero.root"},
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.785.root" , "total_tree_0.785.root"},
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root" , "total_tree_halfpi.root"},
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_2.356.root"},
-    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
+    // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys (Run 1-6) 
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root", "total_tree_-2.356.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root", "total_tree_mhalfpi.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root" , "total_tree_zero.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.785.root" , "total_tree_0.785.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root" , "total_tree_halfpi.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_2.356.root"},
+    {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
 
     //////////////////////////////////////////
     //                                      //
@@ -91,7 +98,7 @@ void make_fc_critval_1d(){
     //                                      //
     //////////////////////////////////////////
 
-    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7) 
+    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7)  (USED FOR OFFICIAL PLOTS)
     // {"fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","inverted_-2.356.root"},
     // {"fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","inverted_-1.571.root"},
     // {"fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","inverted_-0.785.root"},
@@ -117,16 +124,43 @@ void make_fc_critval_1d(){
     //                                                //
     ////////////////////////////////////////////////////
 
-    // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7) 
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","inverted_-2.356.root"},
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","inverted_-1.571.root"},
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","inverted_-0.785.root"},
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.000.root" ,"inverted_0.000.root"},	
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_0.785_All.root" ,"inverted_0.785.root"}, // merged run16 - run17 flux tuning
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_1.571_All.root" ,"inverted_1.571.root"}, // merged run16 - run17 flux tuning	
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_2.356_All.root" ,"inverted_2.356.root"}, // merged run16 - run17 flux tuning
-    {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"inverted_3.142.root"}, // +-pi
+    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys - Raj inverted (Run 1-7) 
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-2.356.root","inverted_-2.356.root"},
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-1.571.root","inverted_-1.571.root"},
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_-0.785.root","inverted_-0.785.root"},
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_0.000.root" ,"inverted_0.000.root"},	
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_0.785_All.root" ,"inverted_0.785.root"}, // merged run16 - run17 flux tuning
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_1.571_All.root" ,"inverted_1.571.root"}, // merged run16 - run17 flux tuning	
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXMERGE/NH/fit_fitmarg_fc_nh_10k_MergeFluxTun_2.356_All.root" ,"inverted_2.356.root"}, // merged run16 - run17 flux tuning
+    // {"../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/fit_fitmarg_fc_nh_10k_All_normal_3.142.root" ,"inverted_3.142.root"}, // +-pi
 
+
+    ////////////////////////////////////////////////////
+    //                                                //
+    //         Run 1-7c (Run 1-7b flux tuning)        //
+    //                                                //
+    ////////////////////////////////////////////////////
+
+    // // Normal Hierarhcy ~11k Toys - Inverted Hierarchy ~10k Toys (Raj) (USED FOR OFFICIAL PLOTS)
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-2.356.root","fit_fc_17c_inverted_nexp_-2.356.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-1.571.root","fit_fc_17c_inverted_nexp_-1.571.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-0.785.root","fit_fc_17c_inverted_nexp_-0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.000.root","fit_fc_17c_inverted_nexp_0.000.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.785.root","fit_fc_17c_inverted_nexp_0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_1.571.root","fit_fc_17c_inverted_nexp_1.571.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_2.356.root","fit_fc_17c_inverted_nexp_2.356.root"},
+    // //{"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_3.142.root","fit_fc_17c_inverted_nexp_3.142.root"}, // +pi
+    // {"../../RUN17c_FLUXMERGE/fit_fitmarg_fc_nh_10k_run17c_fluxmerge_normal_3.142.root","fit_fc_17c_inverted_nexp_3.142.root"}, // +pi
+    
+    // // Normal Hierarhcy ~11k Toys - Inverted Hierarchy ~10k Toys (Raj) 
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-2.356.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_-2.356.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-1.571.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_-1.571.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-0.785.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_-0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.000.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_0.000.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.785.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_0.785.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_1.571.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_1.571.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_2.356.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_2.356.root"},
+    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_3.142.root","fit_fitmarg_fc_ih_5k_run17c_oldflux_inverted_3.142.root"}, // +pi
 
   };
 
@@ -256,7 +290,6 @@ void make_fc_critval_1d(){
       vector<double> vec_like_penalty; // vector of penalty weights
 
       int Nentries = treein_fc[ifc][imh]->GetEntries();
-      
       cout << "Tot # of entries = " << Nentries << endl;
 
       for(int ientry=0;ientry<Nentries;ientry++){ // Loop over toy experiments

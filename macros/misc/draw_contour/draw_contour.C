@@ -9,7 +9,31 @@
 
 void draw_contour
 (
- const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Run17c_Asimov_B_react_ih",
+ //const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC12p482_RHC12p271_react_ih",
+ //const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC14p882_RHC9p871_react_ih",
+ const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC17p282_RHC7p471_react_ih",
+ 
+
+ //////////////////////////////////////////////
+ //                                          //
+ //         Run 1-7c - Data - Final          // 
+ //                                          //
+ //////////////////////////////////////////////
+
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Data_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Data_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // IH - reactors
+ 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Data_Run17c_nexp_1_0.022_0.000-job0-_0_0.root", // NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Data_Run17c_nexp_1_0.022_0.000-job0-_0_0.root", // IH - reactors 
+ 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Data_Run17c_nexp_1_0.450_0.000-job0-_0_0.root", // NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdcp_react_ih_Data_Run17c_nexp_1_0.450_0.000-job0-_0_0.root", // IH - reactors
+ 
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dmsqVsdcp_react_nh_Data_Run17c_nexp_1_0.003_0.000-job0-_0_0.root", // NH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dmsqVsdcp_react_ih_Data_Run17c_nexp_1_0.003_0.000-job0-_0_0.root", // IH - reactors
+
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/cp13/data_fit_nh_a-_0_0.root", // NH - T2K only
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/cp13/data_fit_ih_a-_0_0.root", // IH - T2K only
  
 
  //////////////////////////////////////////////
@@ -26,16 +50,14 @@ void draw_contour
  //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_Run17c_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - NH - reactors
  //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_Run17c_nexp_1_0.528_0.003-job0-_0_0.root", // Asimov A - IH - reactors
  //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_B_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - NH - reactors
- const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_B_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - IH - reactors
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_B_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // Asimov B - IH - reactors
  
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov A - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov A - IH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov B - NH - reactors
- //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/", // Asimov B - IH - reactors
-
-
-
-
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_FHC12p482_RHC12p271_nexp_1_0.528_0.003-job0-_0_0.root", // 
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC12p482_RHC12p271_nexp_1_0.528_0.003-job0-_0_0.root", // 
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_FHC14p882_RHC9p871_nexp_1_0.528_0.003-job0-_0_0.root", // 
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC14p882_RHC9p871_nexp_1_0.528_0.003-job0-_0_0.root", // 
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_FHC17p282_RHC7p471_nexp_1_0.528_0.003-job0-_0_0.root", //  
+ const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC17p282_RHC7p471_nexp_1_0.528_0.003-job0-_0_0.root", // 
 
  //////////////////////////////////////////////
  //                                          //
@@ -140,7 +162,9 @@ void draw_contour
  //const char* filename = "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dmsqVsdcp_react_nh_Data_Run16_nexp_1_0.003_-1.601-job0-_0_0.root", // NH - reactors
  //const char* filename = "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dmsqVsdcp_react_ih_Data_Run16_nexp_1_0.003_-1.601-job0-_0_0.root", // NH - reactors
 
-
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN16/run_16_datafit_Raj/cp13/datafit_dcp_nh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH - T2K only
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN16/run_16_datafit_Raj/cp13/datafit_dcp_ih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // IH - T2K only
+ 
 
 
  //const bool doRasterScan = false,
@@ -199,7 +223,7 @@ void draw_contour
   h2 = (TH2D*)h1->Clone();
   h4 = (TH2D*)h1->Clone();
   //h1_rasterscan = (TH2D*)h1->Clone("h1_rasterscan");
-  double chisq_min = h1->GetMinimum();
+  double chisq_min = h1->GetBinContent(h1->GetMinimumBin());
 
   cout << "chisq_min = " << chisq_min << endl;
 

@@ -10,6 +10,7 @@ using namespace valor::conv;
 void CompareNewOldVALOR_th23Vsdmsq()
 {
   const bool draw_preliminary = true;
+  const string str_preliminary = "T2K Run1-7c preliminary";
 
   const double x_low = 0.3;
   const double x_up = 0.7;
@@ -21,8 +22,11 @@ void CompareNewOldVALOR_th23Vsdmsq()
 
   //////////////////////////// VALOR contours /////////////////////
   
-  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root";
-  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root";
+  //const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17b/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root";
+  //const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17b/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root";
+
+  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Data_react_nh_contour.root";
+  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Data_react_ih_contour.root";
 
   const int Ncont_68 = 2;
   const char *contour_68_name[Ncont_68] = { // different graph for each contour (+-)
@@ -140,7 +144,7 @@ void CompareNewOldVALOR_th23Vsdmsq()
 
   double posX = hInit->GetXaxis()->GetBinCenter(2);
   double posY = hInit->GetYaxis()->GetBinCenter(2);
-  TLatex *latPreliminary = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  TLatex *latPreliminary = new TLatex(posX,posY,str_preliminary.c_str());
   latPreliminary->SetTextSize(0.05);
 
 
@@ -207,7 +211,7 @@ void CompareNewOldVALOR_th23Vsdmsq()
   lcontours_nh->SetTextFont(132);
   lcontours_nh->SetTextSize(0.05);
   char name[200];
-  lcontours_nh->AddEntry(g68_valor_nh[0],"68%CL (-2ln L_{crit} = 2.3)","l");
+  lcontours_nh->AddEntry(g68_valor_nh[0],"68%.27CL (-2ln L_{crit} = 2.3)","l");
   lcontours_nh->AddEntry(g90_valor_nh[0],"90%CL (-2ln L_{crit} = 4.61)","l");
   lcontours_nh->AddEntry(gbest_fit_global_nh,"Best-fit","p");
   lcontours_nh->Draw();
@@ -295,7 +299,7 @@ void CompareNewOldVALOR_th23Vsdmsq()
   lcontours_ih->SetTextFont(132);
   lcontours_ih->SetTextSize(0.05);
   char name[200];
-  lcontours_ih->AddEntry(g68_valor_ih[0],"68%CL (-2ln L_{crit} = 2.3)","l");
+  lcontours_ih->AddEntry(g68_valor_ih[0],"68.27%CL (-2ln L_{crit} = 2.3)","l");
   lcontours_ih->AddEntry(g90_valor_ih[0],"90%CL (-2ln L_{crit} = 4.61)","l");
   lcontours_ih->AddEntry(gbest_fit_global_ih,"Best-fit","p");
   lcontours_ih->Draw();

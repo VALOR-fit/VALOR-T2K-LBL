@@ -21,17 +21,24 @@ const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
 
 void plot_contours_dcp_many
 ( 
- const bool SaveRootFile = false,
- const string tag = "dcp_run17_react_Data_ErecoOnly",
+ const bool SaveRootFile = true,
+ const string tag = "dcp_run17c_react_Data",
+
+ TString titleX = "#delta_{CP} (radians)",
+ //TString titleX = "sin^{2}#theta_{23}",
+ //TString titleX = "sin^{2}#theta_{13}",
+ TString titleY = "-2lnL",
 
  const bool doBrazilian = false,
  
  const bool doGlobalMin  = true,
- const bool same_mh_color = false, // use same color for NH and IH
+ const bool same_mh_color = true, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
- const bool draw_preliminary = false,
+ 
+ const bool draw_preliminary = true,
+ TString str_preliminary = "T2K Run1-7c preliminary",
 
- const bool do_fc = false,
+ const bool do_fc = true,
  const bool draw_fc_err = false,
  const bool do_fc_conf_interv = false,
 
@@ -40,7 +47,7 @@ void plot_contours_dcp_many
  const bool draw_1sigmaCL = false,
  const bool draw_90CL     = true,
  const bool draw_2sigmaCL = true,
- const bool draw_3sigmaCL = false,
+ const bool draw_3sigmaCL = true,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
 
@@ -76,22 +83,87 @@ void plot_contours_dcp_many
   )
 {
 
- 
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/Raj/fit_nh_dcpminuspi_normal_-1.571_Raj.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_mpiover2_normal_-1.571.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_m1p759_normal_-1.759.root";  
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_0_normal_0.000.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_ih_10k_mpiover2_inverted_-1.571.root";
   
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_0.000.root";  
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.571.root";  
-  const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.759.root ";    
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_ih_10k_fullchisq_run17fluxtun_-1.571.root";  
- 
+  //
+  // Run 1-7b
+  //
+
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN16/Raj/fit_nh_dcpminuspi_normal_-1.571_Raj.root";
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_mpiover2_normal_-1.571.root";
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_m1p759_normal_-1.759.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_0_normal_0.000.root";
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_ih_10k_mpiover2_inverted_-1.571.root";
+  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_0.000.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.571.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.759.root ";    
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_ih_10k_fullchisq_run17fluxtun_-1.571.root";  
+
+  //
+  // Run 1-7c
+  //
+  const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/fullchisq/fit_fitmarg_fc_nh_10k_run17c_final_FullChisq_normal_-1.571.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/fullchisq/fit_fitmarg_fc_nh_10k_run17c_final_FullChisq_normal_-1.791.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/fullchisq/fit_fitmarg_fc_nh_10k_run17c_final_FullChisq_normal_0.000.root";  
+  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/fullchisq/fit_fitmarg_fc_nh_10k_run17c_final_FullChisq_inverted_-1.571.root";  
+
   const int Nfiles = 1;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
     
+
+
+    //////////////////////////////////////////////
+    //                                          //
+    //         Run 1-7c - Data - Final          // 
+    //                                          //
+    //////////////////////////////////////////////
+
+    // deltaCP - Run 1-7c w/ reactors - Final
+    {
+      "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dcp_react_nh_Data_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root",
+      "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dcp_react_ih_Data_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root"
+    },
+
+    // // dmsq - Run 1-7c w/ reactors - Final
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dmsq_react_nh_Data_Run17c_nexp_1_0.003_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dmsq_react_ih_Data_Run17c_nexp_1_0.003_-999.000-job0-_0_0.root"
+    // },
+
+    // // sinsqth23 - Run 1-7c w/ reactors - Final
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23_react_nh_Data_Run17c_nexp_1_0.450_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23_react_ih_Data_Run17c_nexp_1_0.450_-999.000-job0-_0_0.root"
+    // },
+
+    // // deltaCP - Run 1-7c T2K only - Final
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/dcp/data_fit_nh_a-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/dcp/data_fit_ih_a-_0_0.root"
+    // },
+
+    // // sinsqth13 - Run 1-7c T2K only - Final
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/ss13/data_fit_nh_a-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/ss13/data_fit_ih_a-_0_0.root"
+    // },
+    
+    // // deltaCP - Run 1-7c w/ reactors - Ereco only - Final
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/"
+    // },
+
+    // // deltaCP - Run 1-7c w/ T2K only - Ereco only - Final
+    // {
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/",
+    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/
+    // },                           
+
+
+
+
 
     //////////////////////////////////////////////
     //                                          //
@@ -105,28 +177,48 @@ void plot_contours_dcp_many
     //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17c_nexp_1_-1.601_-999.000-job0-_0_0.root"
     // },
 
-    // deltaCP - Run 1-7 Asimov B w/ reactors - final
-    {
-      "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root",
-      "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root"
-    },
+    // // deltaCP - Run 1-7 Asimov B w/ reactors - final
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root"
+    // },
 
     // // deltaCP - Run 1-7 Asimov A T2K only - final
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files"
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_nh_a.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_ih_a.root"
     // },
 
     // // deltaCP - Run 1-7 Asimov B T2K only - final
     // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files"
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_nh_b.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_ih_b.root"
     // },
   
+    
+    // // deltaCP - FHC: 14.882 x 10^20 POT, RHC: 9.871 x 10^20 POT - Asimov A w/ reactors - final
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_nh_Asimov_A_FHC14p882_RHC9p871_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_ih_Asimov_A_FHC14p882_RHC9p871_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
+    // // deltaCP - FHC: 12.482 x 10^20 POT, RHC: 12.271 x 10^20 POT - Asimov A w/ reactors - final
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_nh_Asimov_A_FHC12p482_RHC12p271_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_ih_Asimov_A_FHC12p482_RHC12p271_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
+    // // deltaCP - FHC: 17.282 x 10^20 POT, RHC: 7.471 x 10^20 POT - Asimov A w/ reactors - final
+    // {
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_nh_Asimov_A_FHC17p282_RHC7p471_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_ih_Asimov_A_FHC17p282_RHC7p471_nexp_1_-1.601_-999.000-job0-_0_0.root"
+    // },
+
+
+
+
+
+
 
  
-
-
 
 
 
@@ -380,23 +472,32 @@ void plot_contours_dcp_many
   
  
   // File names of Feldman-Cousins
-  char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/FCgraphs_10k_Run17_FluxRun16.root";
-  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_p8k.root";
+  char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXMERGE/FCgraphs_fluxmerge_dcp_3p142.root";
+  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/FCgraphs_Run17c_fluxRun17b.root";
+  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/FCgraphs_10k_Run17_FluxRun16.root";
+  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/FCgraphs_p8k.root";
   //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_4k.root";
 
+  //char *fcname = "FCgraphs.root";
 
   char *latexname[Nfiles][Nmh] = {
     {"Normal Hierarchy","Inverted Hierarchy"},
         
     //{"Run 1-7c - NH", "Run 1-7c - IH"},
-    //{"Run 1-7b - NH", "Run 1-7b - IH"},
+    // {"Run 1-7b - NH", "Run 1-7b - IH"},
 
     // {"E_{reco} Vs #theta - NH", "E_{reco} Vs #theta - IH"},
     // {"E_{reco} only - NH", "E_{reco} only - IH"},
     
-    // {"14.4e20 FHC + 7.47e20 RHC - NH",   "14.4e20 FHC + 7.47e20 RHC - IH"},
-    // {"10.07e20 FHC + 11.17e20 RHC - NH", "10.07e20 FHC + 11.17e20 RHC - IH"},
-    // {"7.00e20 FHC + 14.87e20 RHC - NH",  "7.00e20 FHC + 14.87e20 RHC - IH"}
+    // {"#nu: 7.48e20  +  #bar{#nu}: 7.47e20 (Run 1-7c)", "IH"},
+    // {"#nu: 14.9e20  +  #bar{#nu}: 9.9e20 ", "IH"},
+    // {"#nu: 12.5e20  +  #bar{#nu}: 12.3e20","IH"},
+    // {"#nu: 17.3e20  +  #bar{#nu}: 7.5e20 ", "IH"}
+    
+    // {"Run 1-7c - NH"},
+    // {"14.882e20 FHC + 9.871e20 RHC - NH"}, 
+    // {"12.482e20 FHC + 12.271e20 RHC - NH"}, 
+    // {"17.282e20 FHC + 7.471e20 RHC - NH"}, 
   };
   
 
@@ -466,10 +567,11 @@ void plot_contours_dcp_many
     
     // Shift the chisq wrt to the global minimum
     
-    double ChisqMin_0 = hchisq1D[ifile][0]->GetMinimum();
+    double ChisqMin_0 = hchisq1D[ifile][0]->GetBinContent(hchisq1D[ifile][0]->GetMinimumBin());
 
     double ChisqMin_1 = 999999;
-    if(hchisq1D[ifile][1]) ChisqMin_1 = hchisq1D[ifile][1]->GetMinimum();
+    //if(hchisq1D[ifile][1]) 
+    ChisqMin_1 = hchisq1D[ifile][1]->GetBinContent(hchisq1D[ifile][1]->GetMinimumBin());
     double ChisqMin_Glob = ChisqMin_0; 
     if( ChisqMin_1 < ChisqMin_Glob ) ChisqMin_Glob = ChisqMin_1;
     
@@ -505,17 +607,24 @@ void plot_contours_dcp_many
     
     
     for(int imh=0;imh<Nmh;imh++){      
-      double ChisqMin_Curr = hchisq1D[ifile][imh]->GetMinimum();
+      double ChisqMin_Curr = hchisq1D[ifile][imh]->GetBinContent(hchisq1D[ifile][imh]->GetMinimumBin());
       for(int i=0;i<hdeltachisq1D_GlobMin[ifile][imh]->GetNbinsX();i++){
 	double cont = hchisq1D[ifile][imh]->GetBinContent(i+1); 
 	if(doGlobalMin) hdeltachisq1D_GlobMin[ifile][imh]->SetBinContent(i+1,cont-ChisqMin_Glob);
 	else            hdeltachisq1D_GlobMin[ifile][imh]->SetBinContent(i+1,cont-ChisqMin_Curr);
       }
+  
+      // for(int i=0;i<hdeltachisq1D_GlobMin[ifile][imh]->GetNbinsX();i++){
+      // 	cout << hdeltachisq1D_GlobMin[ifile][imh]->GetBinContent(i+1) << " ";
+      // }
+      // cout << endl;
+
     }
 
   } // end loop Nfiles
   
 
+  
 
 
   // Calculate 1 sigma ranges
@@ -899,8 +1008,8 @@ void plot_contours_dcp_many
   double Max_deltachisq = 0.;
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
-      if(hdeltachisq1D[ifile][imh]->GetMaximum()>Max_deltachisq) 
-	Max_deltachisq = hdeltachisq1D[ifile][imh]->GetMaximum();
+      if(hdeltachisq1D_GlobMin[ifile][imh]->GetMaximum()>Max_deltachisq) 
+	Max_deltachisq = hdeltachisq1D_GlobMin[ifile][imh]->GetMaximum();
     }
   }
 
@@ -908,8 +1017,8 @@ void plot_contours_dcp_many
   cDeltaChisq = new TCanvas(name,name);
 
   hInit->SetMaximum(Max_deltachisq*1.2);
-  hInit->GetXaxis()->SetTitle("#delta_{CP} (radians)");
-  hInit->GetYaxis()->SetTitle("-2lnL");
+  hInit->GetXaxis()->SetTitle(titleX);
+  hInit->GetYaxis()->SetTitle(titleY);
   hInit->DrawCopy();
 
   // Draw reactors box
@@ -917,7 +1026,7 @@ void plot_contours_dcp_many
   const double sinsqth13_err = 0.0012;
   double X1 = sinsqth13_nom - sinsqth13_err;
   double X2 = sinsqth13_nom + sinsqth13_err;
-  double Y1 = hInit->GetMinimum();
+  double Y1 = hInit->GetBinContent(hInit->GetMinimumBin());
   //double Y2 = hInit->GetMaximum();
   double Y2 = 45.;
   TBox *breactors = new TBox(X1,Y1,X2,Y2);
@@ -1123,7 +1232,7 @@ void plot_contours_dcp_many
     if(draw_5sigmaCL) latLine5Sigma->Draw("same");
   }
 
-  TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,"T2K Run1-7b preliminary");
+  TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,str_preliminary);
   latPreliminary->SetTextSize(0.05);
   if(draw_preliminary) latPreliminary->Draw("same");
 
@@ -1334,8 +1443,8 @@ void plot_contours_dcp_many
 		    
       // Take global minimum
       double min_glob = 0.;
-      double min_nh = hchisq1D_toy_nh->GetMinimum();
-      double min_ih = hchisq1D_toy_ih->GetMinimum();
+      double min_nh = hchisq1D_toy_nh->GetBinContent(hchisq1D_toy_nh->GetMinimumBin());
+      double min_ih = hchisq1D_toy_ih->GetBinContent(hchisq1D_toy_ih->GetMinimumBin());
       if(min_nh < min_ih){
 	min_glob = min_nh;
 	//continue;
@@ -1443,8 +1552,8 @@ void plot_contours_dcp_many
     TH1D *hdeltachisq1D_ih_mean = (TH1D*) hchisq1D_ih_mean->Clone("hdeltachisq1D_ih_mean");
 
     double glob_min_mean = -999;
-    double min_mean_nh = hchisq1D_nh_mean->GetMinimum();
-    double min_mean_ih = hchisq1D_ih_mean->GetMinimum();
+    double min_mean_nh = hchisq1D_nh_mean->GetBinContent(hchisq1D_nh_mean->GetMinimumBin());
+    double min_mean_ih = hchisq1D_ih_mean->GetBinContent(hchisq1D_ih_mean->GetMinimumBin());
     if(min_mean_nh < min_mean_ih) glob_min_mean = min_mean_nh;
     else                          glob_min_mean = min_mean_ih;
 
@@ -1877,7 +1986,7 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
   double chisq_min = conv::kBadResult;  // best-fit chisq
 
   if(val_bf==conv::kBadResult){
-    chisq_min = histo->GetMinimum();
+    chisq_min = histo->GetBinContent(histo->GetMinimumBin());
     bin_bf = histo->GetMinimumBin();
     val_bf = histo->GetBinCenter(bin_bf);
 
@@ -2069,7 +2178,7 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
   double chisq_min = conv::kBadResult;  // best-fit chisq
 
   if(val_bf==conv::kBadResult){
-    chisq_min = histo->GetMinimum();
+    chisq_min = histo->GetBinContent(histo->GetMinimumBin());
     bin_bf = histo->GetMinimumBin();
     val_bf = histo->GetBinCenter(bin_bf);
 

@@ -11,6 +11,8 @@ void CompareNewOldVALOR_th13Vsdcp
 ( 
  ) 
 {
+  const bool draw_preliminary = true;
+  const string str_preliminary = "T2K Run1-7c preliminary";
 
   const double x_low = 0.06;
   const double x_up = 0.2;
@@ -20,12 +22,14 @@ void CompareNewOldVALOR_th13Vsdcp
   const char *title_x = "sin^{2} 2#theta_{13}";
   const char *title_y = "#delta_{CP} (radians)";
 
-  const bool draw_preliminary = true;
 
   //////////////////////////// VALOR contours /////////////////////
   
-  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_nh_contour.root";
-  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_ih_contour.root";
+  //const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17b/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_nh_contour.root";
+  //const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17b/contours_sinsqth13Vsdcp/fitmarg_joint_sinsqth13Vsdcp_Run17_Data_react_ih_contour.root";
+
+  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17c_Data_react_nh_contour.root";
+  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17c_Data_react_ih_contour.root";
 
   const int Ncont_68 = 2;
   const char *contour_68_name[Ncont_68] = { // different graph for each contour (+-)
@@ -151,7 +155,7 @@ void CompareNewOldVALOR_th13Vsdcp
 
   double posX = hInit->GetXaxis()->GetBinCenter(2);
   double posY = hInit->GetYaxis()->GetBinCenter(2);
-  TLatex *latPreliminary = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  TLatex *latPreliminary = new TLatex(posX,posY,str_preliminary.c_str());
   latPreliminary->SetTextSize(0.05);
 
   ///////////////////////////////////
@@ -228,7 +232,7 @@ void CompareNewOldVALOR_th13Vsdcp
   lcontours_nh->SetTextFont(132);
   lcontours_nh->SetTextSize(0.05);
   char name[200];
-  lcontours_nh->AddEntry(g68_valor_nh[0],"68%CL (-2ln L_{crit} = 2.3)","l");
+  lcontours_nh->AddEntry(g68_valor_nh[0],"68.27%CL (-2ln L_{crit} = 2.3)","l");
   lcontours_nh->AddEntry(g90_valor_nh[0],"90%CL (-2ln L_{crit} = 4.61)","l");
   lcontours_nh->AddEntry(gbest_fit_global_nh,"Best-fit","p");
   lcontours_nh->Draw();
@@ -241,7 +245,7 @@ void CompareNewOldVALOR_th13Vsdcp
   lcontours2_nh->SetFillStyle(1);
   lcontours2_nh->SetTextFont(132);
   lcontours2_nh->SetTextSize(0.05);
-  lcontours2_nh->AddEntry(g90_valor_nh[0],"T2K Run 1-7","l");
+  lcontours2_nh->AddEntry(g90_valor_nh[0],"T2K Run 1-7c","l");
   lcontours2_nh->AddEntry(run14_NH_S23M23_90CL_A,"T2K Run 1-4","l");
   lcontours2_nh->Draw();
   
@@ -323,7 +327,7 @@ void CompareNewOldVALOR_th13Vsdcp
   lcontours_ih->SetTextFont(132);
   lcontours_ih->SetTextSize(0.05);
   char name[200];
-  lcontours_ih->AddEntry(g68_valor_ih[0],"68%CL (-2ln L_{crit} = 2.3)","l");
+  lcontours_ih->AddEntry(g68_valor_ih[0],"68.27%CL (-2ln L_{crit} = 2.3)","l");
   lcontours_ih->AddEntry(g90_valor_ih[0],"90%CL (-2ln L_{crit} = 4.61)","l");
   lcontours_ih->AddEntry(gbest_fit_global_ih,"Best-fit","p");
   lcontours_ih->Draw();
@@ -336,7 +340,7 @@ void CompareNewOldVALOR_th13Vsdcp
   lcontours2_ih->SetFillStyle(1);
   lcontours2_ih->SetTextFont(132);
   lcontours2_ih->SetTextSize(0.05);
-  lcontours2_ih->AddEntry(g90_valor_ih[0],"T2K Run 1-7","l");
+  lcontours2_ih->AddEntry(g90_valor_ih[0],"T2K Run 1-7c","l");
   lcontours2_ih->AddEntry(run14_IH_S23M23_90CL_A,"T2K Run 1-4","l");
   lcontours2_ih->Draw();
   

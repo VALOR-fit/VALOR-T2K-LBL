@@ -11,7 +11,8 @@ using namespace valor::conv;
 void CompareVALORotherExp()
 {
   const bool draw_preliminary = true;
-
+  TString str_preliminary = "T2K Run1-7c preliminary";
+  
   const bool draw_reactor_band = false;
   const double x_low = 0.3;
   const double x_up = 0.73;
@@ -23,8 +24,11 @@ void CompareVALORotherExp()
 
   //////////////////////////// VALOR contours /////////////////////
   
-  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root";
-  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root";
+  //const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root";
+  //const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root";
+
+  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Data_react_nh_contour.root";
+  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Data_react_ih_contour.root";
 
   const int Ncont_68 = 2;
   const char *contour_68_name[Ncont_68] = { // different graph for each contour (+-)
@@ -50,7 +54,8 @@ void CompareVALORotherExp()
 
   //////////////////////////// NOvA contours /////////////////////////
 
-  const char *inname_nova_nh = "../../../inputs/OfficialContours/OtherExp/NOvAFAResults.root";
+  //const char *inname_nova_nh = "../../../inputs/OfficialContours/OtherExp/NOvAFAResults.root";
+  const char *inname_nova_nh = "../../../inputs/OfficialContours/OtherExp/nova_surfaces_neutrino2016.root";
   const int colorNOvA = kGreen+1;
 
   //////////////////////////// MINOS contours /////////////////////////
@@ -61,8 +66,9 @@ void CompareVALORotherExp()
   //////////////////////////// IceCube contours /////////////////////////
 
   const char *inname_icecube = "../../../inputs/OfficialContours/OtherExp/sinsqth23Vsdmsq_IceCube2015_ORIGINAL_arXiv:1410.7227v2_nh.txt"; // taken from IceCube collaboration
-  const int colorIceCube = kCyan;
-
+  //const int colorIceCube = kCyan;
+  const int colorIceCube = kOrange;
+  
   ////////////////////////////////////////////////////////////////////////
 
 
@@ -142,9 +148,18 @@ void CompareVALORotherExp()
   
   // READ NOvA CONTOURS (only normal hierarchy)
   TFile * infile_nova_nh = new TFile(inname_nova_nh,"READ");
-  TGraph *nova_s23m23_68CL_nh = (TGraph*) infile_nova_nh->Get("FC68percentCL");
-  TGraph *nova_s23m23_90CL_nh = (TGraph*) infile_nova_nh->Get("FC90percentCL");
-
+  TH1F *nova_s23m23_68CL_nh = (TH1F*) infile_nova_nh->Get("numu_dmsq32_vs_ssth23_nh"); 
+  nova_s23m23_90CL_nh = (TH1F*) nova_s23m23_68CL_nh->Clone("nova_s23m23_nh_90CL");
+  TH1F *nova_s23m23_68CL_ih = (TH1F*) infile_nova_nh->Get("numu_dmsq32_vs_ssth23_ih"); 
+  nova_s23m23_90CL_ih = (TH1F*) nova_s23m23_68CL_ih->Clone("nova_s23m23_ih_90CL");
+  //TGraph *nova_s23m23_68CL_nh = (TGraph*) infile_nova_nh->Get("FC68percentCL");
+  //TGraph *nova_s23m23_90CL_nh = (TGraph*) infile_nova_nh->Get("FC90percentCL");
+  double chisq_min = nova_s23m23_68CL_nh->GetBinContent(nova_s23m23_68CL_nh->GetMinimumBin());
+  nova_s23m23_68CL_nh->SetContour(1);
+  nova_s23m23_68CL_nh->SetContourLevel(0,chisq_min+2.3);
+  nova_s23m23_90CL_nh->SetContour(1);
+  nova_s23m23_90CL_nh->SetContourLevel(0,chisq_min+4.61);
+  
   // READ MINOS CONTOURS
   TFile * infile_minos = new TFile(inname_minos,"READ");
   TGraph *minos_s23m23_68CL_nh = (TGraph*) infile_minos->Get("minosPlus_nu2014_prelim_contour_sinsq23_dmsq32_normal_68CL");
@@ -166,7 +181,8 @@ void CompareVALORotherExp()
 
   double posX = hInit->GetXaxis()->GetBinCenter(2);
   double posY = hInit->GetYaxis()->GetBinCenter(2);
-  TLatex *latPreliminary = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  
+  TLatex *latPreliminary = new TLatex(posX,posY,str_preliminary);
   latPreliminary->SetTextSize(0.05);
 
   
@@ -198,8 +214,8 @@ void CompareVALORotherExp()
   //
   // NOvA
   //
-  //ScaleGraphAxis(nova_s23m23_90CL,1.,1000.);
-  //ScaleGraphAxis(nova_s23m23_68CL,1.,1000.);
+  // //ScaleGraphAxis(nova_s23m23_90CL,1.,1000.);
+  // //ScaleGraphAxis(nova_s23m23_68CL,1.,1000.);
   nova_s23m23_90CL_nh->SetLineStyle(1);
   nova_s23m23_90CL_nh->SetLineColor(colorNOvA);
   nova_s23m23_90CL_nh->SetLineWidth(2);
@@ -207,7 +223,9 @@ void CompareVALORotherExp()
   nova_s23m23_68CL_nh->SetLineColor(colorNOvA);
   nova_s23m23_68CL_nh->SetLineWidth(2);
   //nova_s23m23_68CL_nh->Draw("l same");
-  nova_s23m23_90CL_nh->Draw("l same");
+  //nova_s23m23_90CL_nh->Draw("l same");
+  nova_s23m23_68CL_nh->Draw("cont3 same");
+  nova_s23m23_90CL_nh->Draw("cont3 same");
   
   //
   // MINOS
@@ -281,7 +299,7 @@ void CompareVALORotherExp()
   latSK->SetTextSize(0.06);
   latSK->SetTextColor(colorSK);
   latSK->Draw("same");
-  TLatex *latNOvA = new TLatex(posX,posY,"NOvA (2015)");
+  TLatex *latNOvA = new TLatex(posX,posY,"NOvA (2016)");
   latNOvA->SetTextSize(0.06);
   latNOvA->SetTextColor(colorNOvA);
   latNOvA->Draw("same");

@@ -2,7 +2,7 @@
 // Produce VALOR contours with macros/misc/draw_contours.C
 // and read the output files
 
-//#define SwapXY // Swap x and y axis of contours // does this to the chisq2d, contour and the TMarker!
+#define SwapXY // Swap x and y axis of contours // does this to the chisq2d, contour and the TMarker!
 
 using namespace std;
 using namespace valor;
@@ -11,17 +11,17 @@ using namespace valor::conv;
 void CompareContours()
 {
   const bool scalegraphX = false; // scale axis of graphs (e.g. dmsq x 10+3)
-  const bool scalegraphY = true; // scale axis of graphs (e.g. dmsq x 10+3)
+  const bool scalegraphY = false; // scale axis of graphs (e.g. dmsq x 10+3)
 
   const bool setinit = true; // true --> set init histo by hand, false --> use already defined set up
   
-  // sinsqth23 Vs dmsq
-  const double x_low = 0.3;
-  const double x_up = 0.7;
-  const double y_low = 1.95;
-  const double y_up = 3.05;
-  const char *title_x = "sin^{2} #theta_{23}";
-  const char *title_y = "|#Delta m^{2}_{32}| (10^{-3} eV^{2}/c^{4})";
+  // // sinsqth23 Vs dmsq
+  // const double x_low = 0.3;
+  // const double x_up = 0.7;
+  // const double y_low = 1.95;
+  // const double y_up = 3.05;
+  // const char *title_x = "sin^{2} #theta_{23}";
+  // const char *title_y = "|#Delta m^{2}_{32}| (10^{-3} eV^{2}/c^{4})";
   
   // // sinsqth23 Vs dcp (reactors)
   // const double x_low = 0.3;
@@ -47,13 +47,13 @@ void CompareContours()
   // const char *title_x = "|#Delta m^{2}_{32}| (10^{-3} eV^{2}/c^{4})";
   // const char *title_y = "#delta_{CP} (radians)";
 
-  // // sinsqth13 Vs dcp (t2k only)
-  // const double x_low = 0.;
-  // const double x_up = 0.105;
-  // const double y_low = -TMath::Pi();
-  // const double y_up = +TMath::Pi();
-  // const char *title_x = "sin^{2} #theta_{13}";
-  // const char *title_y = "#delta_{CP} (radians)";
+  // sinsqth13 Vs dcp (t2k only)
+  const double x_low = 0.;
+  const double x_up = 0.105;
+  const double y_low = -TMath::Pi();
+  const double y_up = +TMath::Pi();
+  const char *title_x = "sin^{2} #theta_{13}";
+  const char *title_y = "#delta_{CP} (radians)";
 
   const bool draw_preliminary = false;
   TString str_preliminary = "T2K Run1-7c preliminary";
@@ -108,32 +108,39 @@ void CompareContours()
     // // sinsqth13 Vs dcp w/ reactors - Asimov B - Run 1-7c
     // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17c_Asimov_B_react_nh_contour.root",
     // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_sinsqth13Vsdcp_react/fitmarg_joint_sinsqth13Vsdcp_Run17c_Asimov_B_react_ih_contour.root",
-
+    
     // // sinsqth23 Vs dmsq w/ reactors - Asimov A - Run 1-7c
     //"../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Asimov_A_react_nh_contour.root",
-    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Asimov_A_react_ih_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Asimov_A_react_ih_contour.root",
     
     // // sinsqth23 Vs dmsq w/ reactors - Asimov B - Run 1-7c
     // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Asimov_B_react_nh_contour.root",
     // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_sinsqth23Vsdmsq_react/fitmarg_joint_sinsqth23Vsdmsq_Run17c_Asimov_B_react_ih_contour.root",
 
     // // sinsqth13 Vs dcp T2K only  - Asimov A - Run 1-7c
-    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/cp13/asimov_fit_nh_a-_0_0_contour.root",
-    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/cp13/asimov_fit_ih_a-_0_0_contour.root",
+    //"../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/cp13/asimov_fit_nh_a-_0_0_contour.root",
+    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/cp13/asimov_fit_ih_a-_0_0_contour.root",
 
     // // sinsqth13 Vs dcp T2K only  - Asimov B - Run 1-7c
     // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/cp13/asimov_fit_nh_b-_0_0_contour.root",
     // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/cp13/asimov_fit_ih_b-_0_0_contour.root",
 
+    // High Stat (sensi)
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC12p482_RHC12p271_react_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC14p882_RHC9p871_react_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC17p282_RHC7p471_react_nh_contour.root",
 
-    //"../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC12p482_RHC12p271_react_nh_contour.root",
-    //"../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC14p882_RHC9p871_react_nh_contour.root",
-    //"../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC17p282_RHC7p471_react_nh_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC12p482_RHC12p271_react_ih_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC14p882_RHC9p871_react_ih_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC17p282_RHC7p471_react_ih_contour.root",
 
-    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC12p482_RHC12p271_react_ih_contour.root",
-    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC14p882_RHC9p871_react_ih_contour.root",
-    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC17p282_RHC7p471_react_ih_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/ss13Vsdcp_t2konly/asimov_fit_12_12_nh-_0_0_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/ss13Vsdcp_t2konly/asimov_fit_14_9_nh-_0_0_contour.root",
+    // "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/ss13Vsdcp_t2konly/asimov_fit_17_7_nh-_0_0_contour.root",
 
+    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/ss13Vsdcp_t2konly/asimov_fit_12_12_ih-_0_0_contour.root",
+    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/ss13Vsdcp_t2konly/asimov_fit_14_9_ih-_0_0_contour.root",
+    "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/contours_highstat/ss13Vsdcp_t2konly/asimov_fit_17_7_ih-_0_0_contour.root",
 
     //////////////////////////////////////////////
     //                                          //
@@ -285,10 +292,11 @@ void CompareContours()
   const char *latexname[Nfiles] = {
     //"Normal Hierarchy",
     //"Inverted Hierarchy",
-    "Run 1-7c",
-    "12.482e20 FHC + 12.271e20 RHC",
-    "14.882e20 FHC + 9.871e20 RHC", 
-    "17.282e20 FHC + 7.471e20 RHC"
+    //"Run 1-7c",
+    "#nu: 7.48e20 + #bar{#nu}: 7.47e20 (Run 1-7c)",
+    "#nu: 12.5e20 + #bar{#nu}: 12.3e20",
+    "#nu: 14.9e20 + #bar{#nu}: 9.9e20", 
+    "#nu: 17.3e20 + #bar{#nu}: 7.5e20"
   };
   const char *chisq_name = "chisq_map_2D";
   
@@ -390,7 +398,7 @@ void CompareContours()
   double chisq_min_glob = 99999999.;
   double chisq_min[Nfiles] = 0.;
   for(int ifile=0;ifile<Nfiles;ifile++){
-    chisq_min[ifile] = hchisq_glob_valor[ifile]->GetMinimum();
+    chisq_min[ifile] = hchisq_glob_valor[ifile]->GetBinContent(hchisq_glob_valor[ifile]->GetMinimumBin());
     if(chisq_min[ifile] < chisq_min_glob) chisq_min_glob = chisq_min[ifile];
 
     cout << "File " << inname[ifile] << " :" << endl;
