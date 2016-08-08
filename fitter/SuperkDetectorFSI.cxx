@@ -249,7 +249,7 @@ void SuperkDetectorFSI::CheckERange(int nparams, const PhysParamId_t * params, c
     if(TMath::Abs(this_lo - prev_hi) > 1E-6) {
       if(TMath::Abs(prev_hi - 30) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok! (numu modes valid 0-30)
       else if(TMath::Abs(prev_hi - 1.25) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok! (nue modes valid 0-1.25)
-      else if(TMath::Abs(prev_hi - 1.25 ) < 1E-6 && TMath::Abs(this_lo - 0.35) < 1E-6) {} // allow gaps in energy bins for the CC nue 1pi sample
+      else if(TMath::Abs(prev_hi - 1.25 ) < 1E-6 && TMath::Abs(this_lo - 0.3) < 1E-6) {} // allow gaps in energy bins for the CC nue 1pi sample
       else {
 	LOG("SuperkDetectorFSI",pERROR) <<  "Wrong energy range " << "\n"
 			       << vname << "[" << ix-1 << "] = " << prev << " " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << "\n"
@@ -415,9 +415,9 @@ bool SuperkDetectorFSI::ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSam
 
 
 #ifdef __show_skdetfsi_applysyst_mesg_debug__
-  string applystr;
-  applystr = apply ? "Applies" : "DoesNotApply";
-  LOG("",pINFO) << applystr << " " << util::AsString(p) << " " << util::AsString(s) << " " << util::AsString(m);
+  // string applystr;
+  // applystr = apply ? "Applies" : "DoesNotApply";
+  // LOG("",pINFO) << applystr << " " << util::AsString(p) << " " << util::AsString(s) << " " << util::AsString(m);
 #endif
   return apply;
 }
@@ -430,13 +430,16 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
   
   bool isRHC = util::IsRHCSystematic(p);
   bool isFHC = util::IsFHCSystematic(p);
+  bool isMRE = false;
 
   if(isRHC)
     idx = arr_index->RHCSKDetFSISystIdx(p);
   else if(isFHC)
     idx = arr_index->SKDetFSISystIdx(p);
-  else
+  else{
     idx = arr_index->MultiRingSKDetFSISystIdx(p);
+    isMRE = true;
+  }
   ///
 
   if (idx == -1) return false;
@@ -455,9 +458,11 @@ bool SuperkDetectorFSI::ApplySystToEnergyBin(conv::PhysParamId_t p, double Ereco
   ///
 
 #ifdef __show_skdetfsi_applysyst_mesg_debug__
+  if (Ereco < 0.4 && isMRE){
   string applystr;
   applystr = apply ? "SysBinPassed" : "SysBinFailed";
   LOG("SuperkDetectorFSI",pINFO) << applystr << "\t" << util::AsString(p) << "\t" << Ereco;
+  }
 #endif
   return apply;
 }

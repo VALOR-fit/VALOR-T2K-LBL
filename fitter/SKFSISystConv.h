@@ -505,17 +505,24 @@ namespace valor {
         { 0.0,  30.0 }, // FSI005
 #endif
 #if MR_FSI_BINS != 2
+        // Extended second bin to the threshold for Delta resonance production ~340 MeV
+        // lowest energy bins to allow for the low stats event
+        // Edge is at 0.3 GeV to correspond with Ereco binning
         //{ 0.0,  0.35 }, // FSI1Re000
-        { 0.35,  0.8 }, // FSI1Re001
+        //{ 0.35,  0.8 }, // FSI1Re001
+        { 0.3,  0.8 }, // FSI1Re001
         { 0.8,  1.25 }, // FSI1Re002
         //{ 0.0,  0.35 }, // FSI1Re003
-        { 0.35,  0.8 }, // FSI1Re004
+        //{ 0.35,  0.8 }, // FSI1Re004
+        { 0.3,  0.8 }, // FSI1Re004
         { 0.8,  1.25 }, // FSI1Re005
         //{ 0.0,  0.35 }, // FSI1Re006
-        { 0.35,  0.8 }, // FSI1Re007
+        //{ 0.35,  0.8 }, // FSI1Re007
+        { 0.3,  0.8 }, // FSI1Re007
         { 0.8,  1.25 }, // FSI1Re008
         //{ 0.0,  0.35 }, // FSI1Re009
-        { 0.35,  0.8 }, // FSI1Re010
+        //{ 0.35,  0.8 }, // FSI1Re010
+        { 0.3,  0.8 }, // FSI1Re010
         { 0.8,  1.25 }  // FSI1Re011
 #endif
 #endif
