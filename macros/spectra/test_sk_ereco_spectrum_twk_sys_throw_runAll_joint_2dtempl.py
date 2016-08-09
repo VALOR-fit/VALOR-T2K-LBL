@@ -9,7 +9,7 @@ import logging
 import glob
 
 """
-This script will run the macro test_sk_ereco_spectrum_twk_sys_throw_nuebar.C for all systematic possiblities, producing
+This script will run the macro test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C for all systematic possiblities, producing
 a ROOT file with the outputs. Things you can change are:
  - postfit_config - configuration file for BANFF postfit
  - prefit_config - configuration file for BANFF prefit
@@ -29,8 +29,11 @@ It will then create the .root in the current working directory
 
 # 1 bin theta
 #postfit_config  = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml"
-postfit_config  = "analysis_configuration_test_theta_1bin_NIWG2015c.xml"
-prefit_config  = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml"
+# postfit_config = "analysis_configuration_test_theta_1bin_NIWG2015c.xml"
+# prefit_config  = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml"
+
+prefit_config  = "analysis_configuration_Run1-7POT_prefit.xml"
+postfit_config = "analysis_configuration_Run1-7POT.xml"
 
 prior_file = ""
 
@@ -49,7 +52,7 @@ optionParser.add_option("-a","--all", action="store_true", dest="do_all", defaul
 optionParser.add_option("-i","--important", action="store_true", dest="do_imp", default=False, help="If set, will run the spline/osc param indiviudal systematics, as well as the categories")
 optionParser.add_option("-n","--nexp", action="store", dest="nexp", type="int", default=-1, help="How many experiments to generate at each point. Required")
 optionParser.add_option("--no-table", action="store_true", dest="notable", default=False, help="Don't make a table summarising the results for a tech note")
-optionParser.add_option("-s","--sksample", action="store", dest="sksample", type="string", default="1Rmu", help="Choose the SK sample: 1Rmu, 1Re, RHC1Rmu, RHC1Re")
+optionParser.add_option("-s","--sksample", action="store", dest="sksample", type="string", default="1Rmu", help="Choose the SK sample: 1Rmu, 1Re, RHC1Rmu, RHC1Re, MultiRe")
 optionParser.add_option("-e","--hierarchy", action="store", dest="hierarchy", type="string", default="normal", help="Mass Hierarchy: normal, inverted")
 optionParser.add_option("-m","--mixparamchoice", action="store", dest="mixparamchoice", type="string", default="sinsqtheta", help="Mixing param choice: sinsqtheta")
 optionParser.add_option("-f","--fitparamlist", action="store", dest="fitparamlist", type="string", default="nuosc3f_12fix+nuisance", help="Mixing param choice: sinsqtheta")
@@ -215,6 +218,7 @@ latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
 name_modes.append("BANFF") 
 latex_name_modes.append("BANFF Tot")
 # modes = 1 (prefit)
+
 name_modes.append("BANFFprefit") 
 latex_name_modes.append("BANFF Tot (prefit)")
 # modes = 11
@@ -243,7 +247,7 @@ if not opt.skip_osc  : oscparams.append([-999, -999, -99, -99, -999, -99, -99]) 
 
 update = "true"
 
-if not do_not_run_jobs:
+if not do_not_run_jobs:f
   for osc in oscparams:
 
       if opt.clear: update = "false"

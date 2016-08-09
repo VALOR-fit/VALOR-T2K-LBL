@@ -14,7 +14,7 @@ using namespace valor::conv;
 
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
- const char * tag                  = "prova",
+ const char * tag                  = "tamesu",
  const char * sk_sample            = "MultiRe",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu", "MultiRe" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
@@ -54,10 +54,10 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  // double       input_dm23sq         = 2.49E-3, //-99,    /* |Dm^2_{23}| */
  // double       input_betabar        = -99,
  
- bool         disable_banff_tuning = false,                          /* */
+ bool         disable_banff_tuning = true,                          /* */
  
  //
- // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
+ // NEW CONFIGUR.ATION FILES (4/3/16 BANFF RELEASE)
  //
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
@@ -73,7 +73,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file    = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_mrmc_test.xml",
  // const char * config_file    = "analysis_configuration.xml",
- const char * config_file     = "analysis_configuration_prefit.xml",
+ const char * config_file     = "analysis_configuration.xml",
  //const char * config_file    = "analysis_configuration_dummy_multiring.xml",
  //const char * config_file  = "analysis_configuration_test_theta_elike_RFGRPA.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
@@ -182,7 +182,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  
   PhysHypothesis ph(hypothesis);
   if(ph.Hypothesis() == conv::kHypNuMuDisapp2F) {
-    ph.SetCurrValue(conv::kPhypMixing23,  input_mixing23);
+    ph.SetCurr
     ph.SetCurrValue(conv::kPhypDm23sq,    input_dm23sq);
   } else
   if(ph.Hypothesis() == conv::kHypOsc3F) {
@@ -310,13 +310,12 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     cout << "- Retrieving spectrum prediction for mode: " << util::AsString(m) << endl;
     TH2D * h = skexp.CurrPredictedErecoVsQ2Spectrum(s, m);  
     assert(h);
-    hErecoVsQ2Mode[im] = new TH2D(*h);
-    if (get_all_1dmodes) hErecoMode[im] =  (TH1D*)h->ProjectionY()->Clone(util::AsStringCompact(s).c_str());
+    hErecoVsQ2Modes[im] = new TH2D(*h);
     if (plot_per_50MeV) {
-      hErecoVsQ2Mode_draw[im] = spectrum_to_per_50mev(hErecoVsQ2Mode[im]);
+      hErecoVsQ2Mode_draw[im] = spectrum_to_per_50mev(hErecoVsQ2Modes[im]);
     }
     else {
-      hErecoVsQ2Mode_draw[im] = hErecoVsQ2Mode[im];
+      hErecoVsQ2Mode_draw[im] = hErecoVsQ2Modes[im];
     }      
   }
   
@@ -451,35 +450,43 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
       cout << "No modes!!!" << endl;
       exit(1);
     }
-    cout << endl;
     
     // Fill by flavor/mode    
     if(util::IsNC(m))    
-      hErecoVsQ2Mode_NC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NC
-    else if(util::IsOscNuEBar(m))
-      hErecoVsQ2Mode_NumuBarToNueBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar->NueBar
-    else if(util::IsOscNuE(m))
-      hErecoVsQ2Mode_NumuToNue->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu->Nue
-      
-    else if( util::IsNuMuBar(m))
-      hErecoVsQ2Mode_NumuBarBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar Beam
+      //hErecoVsQ2Mode_NC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NC
+      hErecoVsQ2Mode_NC->Add(hErecoVsQ2Modes[im]); // NC
+    else if( util::IsOscNuEBar(m) )
+      //hErecoVsQ2Mode_NumuBarToNueBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar->NueBar
+      hErecoVsQ2Mode_NumuBarToNueBar->Add(hErecoVsQ2Modes[im]); // NumuBar->NueBar
+    else if( util::IsOscNuE(m) )
+      //hErecoVsQ2Mode_NumuToNue->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu->Nue
+      hErecoVsQ2Mode_NumuToNue->Add(hErecoVsQ2Modes[im]); // Numu->Nue
+    
+    else if( util::IsNuMuBar(m) )
+      //hErecoVsQ2Mode_NumuBarBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar Beam
+      hErecoVsQ2Mode_NumuBarBeam->Add(hErecoVsQ2Modes[im]); // NumuBar Beam
     else if( util::IsNuMu(m))
-      hErecoVsQ2Mode_NumuBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu Beam
+      //hErecoVsQ2Mode_NumuBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Numu Beam
+      hErecoVsQ2Mode_NumuBeam->Add(hErecoVsQ2Modes[im]); // Numu Beam
     else if( util::IsNuE(m) || util::IsNuEBar(m) )
-      hErecoVsQ2Mode_NueBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Nue & NueBar Beam
+      //hErecoVsQ2Mode_NueBeam->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // Nue & NueBar Beam
+      hErecoVsQ2Mode_NueBeam->Add(hErecoVsQ2Modes[im]); // Nue & NueBar Beam
     else{
       cout << modestr << endl;
       cout << "No mode / flavors are selected!!!" << endl;
       exit(1);
     }
 
-    if(util::IsCCQE(m))    
-      hErecoVsQ2Mode_CCQE->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // CCQE
-    else if(util::IsMEC(m))    
-      hErecoVsQ2Mode_MEC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // MEC
-    else if(util::IsCCnQE(m))    
-      hErecoVsQ2Mode_CCnQE->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // CCnQE
-    else if(util::IsNC(m)){} // already filled
+    if( util::IsCCQE(m) )    
+      //hErecoVsQ2Mode_CCQE->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // CCQE
+      hErecoVsQ2Mode_CCQE->Add(hErecoVsQ2Modes[im]); // CCQE
+    else if( util::IsMEC(m) )    
+      //hErecoVsQ2Mode_MEC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // MEC {2p-2h}
+      hErecoVsQ2Mode_MEC->Add(hErecoVsQ2Modes[im]); // MEC {2p-2h}
+    else if( util::IsCCnQE(m) )    
+      //hErecoVsQ2Mode_CCnQE->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // CCnQE
+      hErecoVsQ2Mode_CCnQE->Add(hErecoVsQ2Modes[im]); // CCnQE
+    else if( util::IsNC(m) ){} // already filled
     else{
       cout << modestr << endl;
       cout << "No mode / flavors are selected!!!" << endl;
@@ -766,7 +773,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   gStyle->SetOptStat(0);
 
   TLegend *legY = new TLegend(0.6, 0.4, 0.9, 0.9);
-  legY->SetFillColor(0);
+  //legY->SetFillColor(0);
+  legY->SetFillStyle(0);
   legY->SetBorderSize(0);
   legY->AddEntry(hErecoMode_NumuBarToNueBar,"Total","L");
   legY->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","F");
@@ -798,7 +806,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   gStyle->SetOptStat(0);
 
   TLegend *legY_reac = new TLegend(0.6, 0.4, 0.9, 0.9);
-  legY_reac->SetFillColor(0);
+  //legY_reac->SetFillColor(0);
+  legY_reac->SetFillStyle(0);
   legY_reac->SetBorderSize(0);
   legY_reac->AddEntry(hErecoMode_NC,"NC","F");
   legY_reac->AddEntry(hErecoMode_MEC,"MEC","F");
@@ -860,7 +869,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
 
   TLegend *legY_reac = new TLegend(0.6, 0.4, 0.9, 0.9);
-  legY_reac->SetFillColor(0);
+  //legY_reac->SetFillColor(0);
+  legY_reac->SetFillStyle(0);
   legY_reac->SetBorderSize(0);
   legY_reac->AddEntry(hErecoMode_NC,"NC","F");
   legY_reac->AddEntry(hErecoMode_MEC,"MEC","F");
@@ -898,7 +908,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   gStyle->SetOptStat(0);
 
   TLegend *legY = new TLegend(0.6, 0.4, 0.9, 0.9);
-  legY->SetFillColor(0);
+  //legY->SetFillColor(0);
+  legY->SetFillStyle(0);
   legY->SetBorderSize(0);
   legY->AddEntry(hErecoMode_NumuBarToNueBar,"Total","L");
   legY->AddEntry(hErecoMode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","F");
@@ -1022,7 +1033,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   cQ2TotFlavMode->Modified();
   gStyle->SetOptStat(0);
 
-  legX->SetFillColor(0);
+  //legX->SetFillColor(0);
+  legX->SetFillStyle(0);
   legX->SetBorderSize(0);
   legX->AddEntry(hQ2Mode_NumuBarToNueBar,"Total","L");
   legX->AddEntry(hQ2Mode_NumuBarToNueBar,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}","F");
@@ -1054,7 +1066,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   cQ2TotReac->Modified();
   gStyle->SetOptStat(0);
 
-  legX_reac->SetFillColor(0);
+  //legX_reac->SetFillColor(0);
+  legX_reac->SetFillStyle(0);
   legX_reac->SetBorderSize(0);
   legX_reac->AddEntry(hQ2Mode_NC,"NC","F");
   legX_reac->AddEntry(hQ2Mode_MEC,"MEC","F");
@@ -1280,7 +1293,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     sprintf(name,"%s_%s.pdf","cErecoTotFlavMode_rebin",sk_sample);    
     cErecoTotFlavMode_rebin ->Print(name);
   }
-  
+
+  cout << "test_sk_ereco_spectrum_nominal_mainmode_joint_2D.C finished!" << endl;
   return;
 }
 

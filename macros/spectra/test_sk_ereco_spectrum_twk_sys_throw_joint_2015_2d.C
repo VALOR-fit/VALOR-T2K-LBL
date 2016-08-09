@@ -128,17 +128,17 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 11, //650, //11,                                         /* options: see above */
+ int          mode                     = 0, //650, //11,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample                = "1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample                = "MultiRe",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRe" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // Asimov data set A
- double       input_mixing12       = -999,    
- double       input_mixing13       = -999,    
+ double       input_mixing12       = 0.304,//-99,    
+ double       input_mixing13       = 0.0217, //-99,    
  double       input_mixing23       = 0.528,    
  double       input_deltacp        = -1.601,   
- double       input_dm12sq         = -999,   
+ double       input_dm12sq         = 7.53E-5,   
  double       input_dm23sq         = 2.509E-3,     
  double       input_betabar        = 1,
 
@@ -154,15 +154,15 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
  bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
  bool         save_throws              = false,                                        /* save the thrown parameter values*/
  
- const char * config_file      = "analysis_configuration.xml",
+ const char * config_file      = "analysis_configuration_prefit.xml",
 
- const int    nexp                     = 100,                                          /* number of experiments to make */
+ const int    nexp                     = 10000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
  const char * mixparamoctant           = "two",       
  bool         reject_unphysical_throws = true    ,
- bool         use_new_definition_of_dn_over_n = false,
+ bool         use_new_definition_of_dn_over_n = true,
  
  const bool   doMargMH             = false,      // marginalize Mass Hierarchy
  const double PriorProbNH          = 0.5, //0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
@@ -224,69 +224,39 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       //~ char fsibins[40] = "";
       //~ sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
       //~ modetitle = fsibins; break;
-    case 5:
-      modetitle = "BANFF_unconstrained"; break;
-    case 6:
-      modetitle = "BANFF_constrained"; break;
-    case 7:
-      modetitle = "BANFF_flux"; break;
-    case 8:
-      modetitle = "BANFF_xsec"; break;
-    case 9:
-      modetitle = "SKDet_FSI"; break;
-    case 10:
-      modetitle = "BANFF_unconstrained_xsec"; break;
-    case 11:
-      modetitle = "Osc_param"; break;
-    case 12:
-      modetitle = "NueNumu"; break;
-    case 13:
-      modetitle = "skdetfsi_banff"; break;
-    case 14:
-      modetitle = "FSIonly"; break;
-    case 15:
-      modetitle = "SKDetonly"; break;
-    case 16:
-      modetitle = "Escale_SK"; break;
+    case 5 : modetitle = "BANFF_unconstrained";      break;
+    case 6 : modetitle = "BANFF_constrained";        break;
+    case 7 : modetitle = "BANFF_flux";               break;
+    case 8 : modetitle = "BANFF_xsec";               break;
+    case 9 : modetitle = "SKDet_FSI";                break;
+    case 10: modetitle = "BANFF_unconstrained_xsec"; break;
+    case 11: modetitle = "Osc_param";                break;
+    case 12: modetitle = "NueNumu";                  break;
+    case 13: modetitle = "skdetfsi_banff";           break;
+    case 14: modetitle = "FSIonly";                  break;
+    case 15: modetitle = "SKDetonly";                break;
+    case 16: modetitle = "Escale_SK";                break;
 
-    case 200:
-      modetitle = "pfermi"; break;
-    case 201:
-      modetitle = "specfunc"; break;
-    case 202:
-      modetitle = "wshape"; break;
-    case 203:
-      modetitle = "shapeCoth"; break;
-    case 204:
-      modetitle = "pilessdelta"; break;
-    case 205:
-      modetitle = "norm_cccoh"; break;
-    case 206:
-      modetitle = "norm_nc1piC"; break;
-    case 207:
-      modetitle = "norm_ncoth";
-      break;
-    case 208:
-      modetitle = "norm_nuetonumu"; break;
-    case 209:
-      modetitle = "norm_antinutonu"; break;
-    case 210:
-      modetitle = "bindE"; break;
+    case 200: modetitle = "pfermi";          break;
+    case 201: modetitle = "specfunc";        break;
+    case 202: modetitle = "wshape";          break;
+    case 203: modetitle = "shapeCoth";       break;
+    case 204: modetitle = "pilessdelta";     break;
+    case 205: modetitle = "norm_cccoh";      break;
+    case 206: modetitle = "norm_nc1piC";     break;
+    case 207: modetitle = "norm_ncoth";      break;
+    case 208: modetitle = "norm_nuetonumu";  break;
+    case 209: modetitle = "norm_antinutonu"; break;
+    case 210: modetitle = "bindE";           break;
 
-    case 211:
-      modetitle = "rpa"; break;
+    case 211: modetitle = "rpa"; break;
       
-    case 700:
-      modetitle = "mixing13"; break;
-    case 701:
-      modetitle = "mixing12"; break;
-    case 702:
-      modetitle = "dm12sq"; break;
-    case 703:
-      modetitle = "deltacp"; break;
+    case 700: modetitle = "mixing13"; break;
+    case 701: modetitle = "mixing12"; break;
+    case 702: modetitle = "dm12sq";   break;
+    case 703: modetitle = "deltacp";  break;
 
-    case 999:
-      modetitle = "statonly"; break;
+    case 999: modetitle = "statonly"; break;
 
     default:
 
@@ -341,7 +311,12 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   // 1Rmu
   else if(s==conv::kSKsFCFV1RingMuLike){
     hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);      
-  } 
+  }
+  // MultiRe
+  else if(s==conv::kSKsFCFVMultiRingELike){
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+  }
+
 
   for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
     char name[200];
@@ -370,7 +345,13 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       h_bin[ibin] = new TH1D(name,name,20000,0,50);
       sprintf(name,"h_bin_coarse_%d",ibin);
       h_bin_coarse[ibin] = new TH1D(name,name,200,0,50);
-    } 
+    }
+    // MultiRe
+    else if(s==conv::kSKsFCFVMultiRingELike){
+      h_bin[ibin] = new TH1D(name,name,20000,0,10);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,200,0,10);
+    }
   }
 
   TH1D* hErecoAverage = new TH1D("hErecoAverage","hErecoAverage",util::NumErecoBins(s),util::ErecoBinEdges(s));
@@ -506,7 +487,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   skexp->Read(sconfig);
   
   const SuperkDetectorFSI * skdet = skexp->GetSuperkDetectorFSI();
-  int n_total_skdetfsi_parameters = skdet->GetNumberOfActiveParameters();
+  int n_total_skdetfsi_parameters = skdet->Size();
   
   SuperkObservation skobs;
   
@@ -636,7 +617,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 
       // BANFF
       if(mode == 1) {
-        skexp->TweakAllSampleBANFFSystematics();
+        //cout << "Tweaking all BANFF systematics" << endl;
+        skexp->TweakAllBANFFSystematics();
       }
 
       // Uncorrelated XSec
@@ -647,21 +629,21 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       //BANFF (unconstrained only)
       if(mode == 5) {
-        skexp->GetBANFF()->TweakSampleConstrainedOnly(false,0,true); // cholesky w/ full unconstrained matrix
+        skexp->GetBANFF()->Tweak(false,0,util::IsBANFFUnconstrained); // cholesky w/ full unconstrained matrix
       }
       //BANFF (constrained only)
       if(mode == 6) {
-        skexp->GetBANFF()->TweakSampleConstrainedOnly(false,0, false); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->Tweak(false,0,util::IsBANFFNotUnconstrained); // cholesky w/ full matrix
       }
       
       //BANFF (flux only)
       if(mode == 7) {
-        skexp->GetBANFF()->TweakSampleFluxOnly(false,0); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->Tweak(false,0,util::IsFlux); // cholesky w/ full cov matrix
       }
 
       //BANFF (xsec only)
       if(mode == 8) {
-        skexp->GetBANFF()->TweakSampleXSecOnly(false,0); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->Tweak(false,0,util::IsXSec); // cholesky w/ full cov matrix
       }
 
       //SK det + FSI, FSI only or SKDet only
@@ -678,26 +660,26 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       //sigma nue/numu (nu and nubar) xsec (they are correlated)
       if(mode == 12) {
-        skexp->GetBANFF()->TweakSampleXSecNumuNueOnly(false,0); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->Tweak(false,0,util::IsXSecNumuNue); // cholesky w/ full cov matrix
       }
       
-      // All expect oscillations
+      // All except oscillations
       if(mode == 13) {
         skexp->TweakAllSystematics();
       }
       
       // Energy Scale
       if(mode == 16){
-        skexp->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+        skexp->GetSuperkDetectorFSI()->Tweak(false,0,util::IsEScale);
       }
       
-      //oscillations parameters
+      //oscillation parameters
       if(mode == 11 || mode == 0) {
-        	
+
         // Randomize specified osc params for current toy MC expt
         util::OscParams::Instance()->Randomize();
         
-        //util::OscParams::Instance()->Print(cout);
+        util::OscParams::Instance()->Print(cout);
         
         // Set the mass hierarchy
         //valor::util::SetMassHierarchy(skexp);
@@ -801,29 +783,29 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
           // banff fhc only
           if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
             TVectorD v(conv::kNumOfParamsInBANFFfit);
-            v = skexp->GetBANFF()->BestFitValues();
+            v = skexp->GetBANFF()->InitialValues();
             int ib = mode - 400;
-            v[ib] = skexp->GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
-            skexp->GetBANFF()->TweakSample(true,&v);
+            v[ib] = skexp->GetBANFF()->InitialValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
+            skexp->GetBANFF()->Tweak(true,&v);
             break;
           }
           // banff rhc
           else if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
             TVectorD v(conv::kNumOfRHCParamsInBANFFfit);
-            v = skexp->GetBANFF()->RHCBestFitValues();
+            v = skexp->GetBANFF()->InitialValues();
             int ib = mode - 500;
-            v[ib] = skexp->GetBANFF()->RHCBestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->RHCCovMatrix()[ib][ib]));
-            skexp->GetBANFF()->TweakSample(true,&v);
+            v[ib] = skexp->GetBANFF()->InitalValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
+            skexp->GetBANFF()->Tweak(true,&v);
             break;
           }
           // banff fhc+rhc
           else if(mode >= 600 && mode < 600+conv::kNumOfFHCpRHCParamsInBANFFfit) {
             TVectorD v(conv::kNumOfFHCpRHCParamsInBANFFfit);
-            v = skexp->GetBANFF()->FHCpRHCBestFitValues();
+            v = skexp->GetBANFF()->InitialValues();
             int ib = mode - 600;
-            v[ib] = skexp->GetBANFF()->FHCpRHCBestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib]));
+            v[ib] = skexp->GetBANFF()->InitialValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
             //cout << "Single Param Variance = " << skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib] << endl;
-            skexp->GetBANFF()->TweakSample(true,&v);
+            skexp->GetBANFF()->Tweak(true,&v);
                   break;
                 }
         
@@ -951,7 +933,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
         
         if(util::IsBANFF(p)){
           if(RHCFlag)
-            hSysThrown[ip]->Fill(skexp->GetBANFF()->RHCCurrentValue(p));
+            hSysThrown[ip]->Fill(skexp->GetBANFF()->CurrentValue(p));
           else 
             hSysThrown[ip]->Fill(skexp->GetBANFF()->CurrentValue(p));
         }

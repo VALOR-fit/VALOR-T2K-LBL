@@ -26,28 +26,28 @@ void SetRatio(TH1D* hnom,TH1D* htweak,TH1D* hratio){
 
 void test_systematic_error_propagation_all_2015_joint_2dtempl
 (
- int          mode               = 1,              /* options: see the macro   */
+ // int          mode               = 1,              /* options: see the macro   */
  bool         update_rootfile    = false,          /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "MultiRe",      /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample          = "MultiRe",      /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu, MultiRe" */
  const char * hypothesis         = "3f_osc",       /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" , "nuosc_3f+nuisance"*/
 
- // double       input_mixing12     = -99,         /* */
- // double       input_mixing13     = -99,         /* */
- // double       input_mixing23     = -99,         /* */
- // double       input_deltacp      = -99,         /* */
- // double       input_dm12sq       = -99,         /* */
- // double       input_dm23sq       = -99,         /* */
-
  double       input_mixing12       = 0.304,//-99,    
- double       input_mixing13       = 0.,//0.0217, //-99,    
+ double       input_mixing13       = 0.0217, //-99,    
  double       input_mixing23       = 0.528,    
  double       input_deltacp        = -1.601,   
  double       input_dm12sq         = 7.53E-5,   
  double       input_dm23sq         = 2.509E-3,     
 
+ // double       input_mixing12       = 0.,    
+ // double       input_mixing13       = 0.,    
+ // double       input_mixing23       = 0.,
+ // double       input_deltacp        = 0.,
+ // double       input_dm12sq         = 7.53E-5,   
+ // double       input_dm23sq         = 2.509E-3,     
+ 
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration.xml",
+ const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT.xml",
  const char * fit_param_list     = "nuosc3f+nuisance",
  
  const char * mixparamchoice     = "sinsqtheta",
@@ -55,10 +55,10 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  
  int    tablesyst_idx            = -999,   /* -999 --> full table merged modes, 
                                               0-Nsyst --> mode table, -99 --> Document with all the mode table */
- string tablesyst_name           = "f_test", //"f_banff17", /* follow util::AsStringCompact() convention */
+ string tablesyst_name           = "f_tamesu", //"f_banff17", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
  const bool   per_mode           = true,
- const char*  tag                = "ssq13"
+ const char*  tag                = "_tamesu_prebanff_asimovA_lowEevt"
  ){
   using namespace std;
   using namespace valor;
@@ -92,7 +92,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
   string sample_name = util::AsStringCompact(s);
   const char * sname = sample_name.c_str();
-    
+
   cout << endl;
   cout << "Running sample: " << util::AsString(s) << endl;
   cout << endl;
@@ -176,6 +176,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   TH1D *hErecoTun;
   TH1D *hErecoTunMode[conv::knm];
+  THStack *hErecoTunCheck;
+  
   TH1D *hRatioTun;
   TH1D *hRatioTunMode[conv::knm];
   TH1D *hErecoNom;
@@ -235,32 +237,24 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   // central parameter vectors --> to restore the nominal MC for skdetfsi
   TVectorD *vcentral_skdetfsi = new TVectorD(nskdetfsi);
   for(int ip = 0; ip < nskdetfsi; ip++)
-    (*vcentral_skdetfsi)[ip] = 1.;
+    (*vcentral_skdetfsi)[ip] = 1.;    
+
+
+  // Get tuned MC - with BANFF tuning
   
-  TVectorD *vcentral_skdetfsi = new TVectorD(nskdetfsi);
-  for(int ip = 0; ip < nskdetfsi; ip++)
-    (*vcentral_skdetfsi)[ip] = 1.;
-    
-    
-    
-  // Get tuned MC - with BANFF tuning ?
-    
-  //skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
   skexp.GetBANFF()->Tweak(0,0,"untuned");
-  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-  // skexp.TweakSystematic("sk_e_scale",0.);
-  // skexp.TweakSystematic("sk_e_scale",0.);
   skexp.ResetSystematics();
   skexp.Generate(ph);
   hErecoTun = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
   //hErecoTun = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
-  hErecoTun->SetName("hErecoTun");    
+  hErecoTun->SetName("hErecoTun");
   cout << endl;
   cout << "Tot # of events tuned (integral)   = " << hErecoTun->Integral() << endl;
   cout << "Tot # of events tuned (getentries) = " << hErecoTun->GetEntries() << endl;
   cout << endl;
 
+  hErecoTunCheck = new THStack("sum", "sum of modes");
+  
   for (int im = 0; im < conv::knm; im++) {
     conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
     if(m == conv::kSKmUndefined) continue;
@@ -272,7 +266,10 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     char name[200];
     sprintf(name,"hErecoTun_%s",modestr.c_str());
     hErecoTunMode[im]->SetName(name);
+    hErecoTunCheck->Add(hErecoTunMode[im]);
   }
+
+  hErecoTunCheck->SetName("hErecoTunCheck");    
     
   // Get tweaked ratio histograms - with BANFF tuning
   char name[200];
@@ -282,12 +279,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 
   // Get nominal MC - No BANFF tuning
   skexp.ResetSystematics();
-  // skexp.GetBANFF()->RestoreFHCpRHCNominalMC();
   skexp.GetBANFF()->Tweak(0,0,"untuned");
-  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-  // skexp.TweakSystematic("sk_e_scale",0.);
-  // skexp.TweakSystematic("sk_e_scale",0.);
   skexp.Generate(ph);
   
   hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
@@ -360,15 +352,10 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     double bestfit=0.;
         
     if(util::IsSKDetFSI(p)){
-          
-            
-      // int idx_old = util::ArrIdx::Instance()->FHCpRHCpMRSKDetFSISystIdx(p);
+             
       idx = skexp.GetSuperkDetectorFSI()->Param2Idx(p);
-      // cout << "Index difference " << idx_old - idx << endl;
-      // SuperkDetectorFSI * skdetfsi = skexp.GetSuperkDetectorFSI();
-      // idx = skdetfsi->Param2Idx(p);
       cout << "idx\t" << idx << endl;
-      if(idx>=0 || sysstr=="f_sk_e_scale"){
+      if(true){
         bestfit = 1.;
 
         tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
@@ -381,56 +368,29 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
         cout << "idx\t" << idx << endl;
         tweak_p3 = bestfit + (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
         tweak_m3 = bestfit - (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
-        //tweak_p3 = TMath::Max(tweak_p3,0.);
-        //tweak_m3 = TMath::Max(tweak_m3,0.);
         vp3sigma_skdetfsi[ip_skdetfsi] = tweak_p3;
         vm3sigma_skdetfsi[ip_skdetfsi] = tweak_m3;
                 
         ip_skdetfsi++;
       }
-      // else if(sysstr=="f_sk_e_scale_rhc" && (idx<0)){
-      else if(sysstr=="f_sk_e_scale_rhc"){
-        double bestfit = 0.;
-        //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        tweak_p1 = bestfit + 1;
-        tweak_m1 = bestfit - 1;
-        //tweak_p1 = TMath::Max(tweak_p1,0.);
-        //tweak_m1 = TMath::Max(tweak_m1,0.);
-        vp1sigma_skescale_rhc = tweak_p1;
-        vm1sigma_skescale_rhc = tweak_m1;
+      // else if(p == conv::kNuisSuperkEnergyScale){
+      //   bestfit = 1.;
+      //   tweak_p1 = bestfit + 1;
+      //   tweak_m1 = bestfit - 1;
+      //   //tweak_p1 = TMath::Max(tweak_p1,0.);
+      //   //tweak_m1 = TMath::Max(tweak_m1,0.);
+        
+      //   vp1sigma_skdetfsi[ip_skdetfsi] = tweak_p1;
+      //   vm1sigma_skdetfsi[ip_skdetfsi] = tweak_m1;
+      //   cout << "idx\t" << idx << endl;
+      //   tweak_p3 = bestfit + 3;
+      //   tweak_m3 = bestfit - 3;
+
+      //   vp3sigma_skdetfsi[ip_skdetfsi] = tweak_p3;
+      //   vm3sigma_skdetfsi[ip_skdetfsi] = tweak_m3;
                 
-        //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        tweak_p3 = bestfit + 3;
-        tweak_m3 = bestfit - 3;
-        //tweak_p3 = TMath::Max(tweak_p3,0.);
-        //tweak_m3 = TMath::Max(tweak_m3,0.);
-        vp3sigma_skescale_rhc = tweak_p3;
-        vm3sigma_skescale_rhc = tweak_m3;
-      }
-      // Not needed any more escale treated in the same way as the rest of the parameters      
-      // else if(sysstr=="f_sk_e_scale" && (idx<0)){
-      else if(sysstr=="f_sk_e_scale"){
-        //tweak_p1 = bestfit + (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        //tweak_m1 = bestfit - (1 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        tweak_p1 = bestfit + 1;
-        tweak_m1 = bestfit - 1;
-        //tweak_p1 = TMath::Max(tweak_p1,0.);
-        //tweak_m1 = TMath::Max(tweak_m1,0.);
-        vp1sigma_skescale = tweak_p1;
-        vm1sigma_skescale = tweak_m1;
-                
-        //tweak_p3 = bestfit + (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        //tweak_m3 = bestfit - (3 * skexp.GetSuperkDetectorFSI()->EnergyScaleRelErr(s,kSKmNuMuCCQE));
-        tweak_p3 = bestfit + 3;
-        tweak_m3 = bestfit - 3;
-        //tweak_p3 = TMath::Max(tweak_p3,0.);
-        //tweak_m3 = TMath::Max(tweak_m3,0.);
-        vp3sigma_skescale = tweak_p3;
-        vm3sigma_skescale = tweak_m3;
-      }
-       
+      //   ip_skdetfsi++; 
+      // }
             
     }
     else if(util::IsBANFF(p)){
@@ -483,12 +443,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // Get the tweaked spectrum histograms
     
     // +1 sigma tweak systematic
-    //skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
     skexp.GetBANFF()->Tweak(0,0,"untuned");
-    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-    // skexp.TweakSystematic("sk_e_scale",0.);
-    // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
     cout << "Twk p1\t" << sysstr << "\t" << tweak_p1 << endl; 
     if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->CurrentValue(p)       << endl;
@@ -554,12 +509,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     }
     
     // -1 sigma tweak systematic
-    //skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
     skexp.GetBANFF()->Tweak(1,0,"");
-    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-    // skexp.TweakSystematic("sk_e_scale",0.);
-    // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
     cout << "Twk m1\t" << sysstr << "\t" << tweak_m1 << endl;
     if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->CurrentValue(p)       << endl;
@@ -625,12 +575,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     }
     
     // +3 sigma tweak systematic
-    // skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
     skexp.GetBANFF()->Tweak(1,0,"");
-    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-    // skexp.TweakSystematic("sk_e_scale",0.);
-    // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
     cout << "Twk p3\t" << sysstr << "\t" << tweak_p3 << endl;
     if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->CurrentValue(p)       << endl;
@@ -698,10 +643,6 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // -3 sigma tweak systematic
     // skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
     skexp.GetBANFF()->Tweak(1,0,"");
-    // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-    // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-    // skexp.TweakSystematic("sk_e_scale",0.);
-    // skexp.TweakSystematic("sk_e_scale",0.);
     skexp.ResetSystematics();
     cout << "Twk m3\t" << sysstr << "\t" << tweak_m3 << endl;
     if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->CurrentValue(p)       << endl;
@@ -770,18 +711,14 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   } // end loop over systematics
 
+  cout << "\n\n#########################################\n" << endl;
   cout << "Ended loop over the systematic parameters" << endl;
   cout << endl;
   cout << endl;
-    
+  
   // Get total +1 sigma tweak (all parameters)
     
-  //skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
   skexp.GetBANFF()->Tweak(1,0,"");
-  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-  // skexp.TweakSystematic("sk_e_scale",0.);
-  // skexp.TweakSystematic("sk_e_scale",0.);
   skexp.ResetSystematics();
     
   TVectorD *twkv_banff_p1sigma;
@@ -789,34 +726,39 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   twkv_banff_p1sigma    = new TVectorD(nbanff,vp1sigma_banff);
   twkv_skdetfsi_p1sigma = new TVectorD(nskdetfsi+1,vp1sigma_skdetfsi);
-  // skexp.GetBANFF()->TweakFHCpRHC(true,twkv_banff_p1sigma);
-  // skexp.GetSuperkDetectorFSI()->TweakFHCpRHC(true,twkv_skdetfsi_p1sigma);
-
   skexp.GetBANFF()->Tweak(1,twkv_banff_p1sigma,"");
   skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_p1sigma,"");
-  
-  // skexp.TweakSystematic("sk_e_scale",vp1sigma_skescale);
-  // skexp.TweakSystematic("sk_e_scale_rhc",vp1sigma_skescale);
   skexp.Generate(ph);    
     
   hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  //hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
   char name[200];
   sprintf(name,"hErecoTun_p1sigma_all");
   hErecoTun_p1sigma_all->SetName(name);
+
+  // Get total +3 sigma tweak (all parameters)
     
-  // skexp.GetBANFF()->PrintRHCSystematicVariations();
-  // skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();
-  // return;
+  skexp.GetBANFF()->Tweak(1,0,"");
+  skexp.ResetSystematics();
+    
+  TVectorD *twkv_banff_p3sigma;
+  TVectorD *twkv_skdetfsi_p3sigma;    
+    
+  twkv_banff_p3sigma    = new TVectorD(nbanff,vp3sigma_banff);
+  twkv_skdetfsi_p3sigma = new TVectorD(nskdetfsi+1,vp3sigma_skdetfsi);
+  skexp.GetBANFF()->Tweak(1,twkv_banff_p3sigma,"");
+  skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_p3sigma,"");
+  skexp.Generate(ph);    
+    
+  hErecoTun_p3sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  char name[200];
+  sprintf(name,"hErecoTun_p3sigma_all");
+  hErecoTun_p3sigma_all->SetName(name);
+  
     
   // Get total -1 sigma tweak (all parameters)
     
   //  skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
   skexp.GetBANFF()->Tweak(1,0,"");
-  // skexp.GetSuperkDetectorFSI()->Tweak(true,vcentral_skdetfsi);
-  // skexp.GetSuperkDetectorFSI()->TweakRHC(true,vcentral_skdetfsi);
-  // skexp.TweakSystematic("sk_e_scale",.0);
-  // skexp.TweakSystematic("sk_e_scale",.0);
   skexp.ResetSystematics();
     
   TVectorD *twkv_banff_m1sigma;
@@ -825,28 +767,34 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   twkv_banff_m1sigma    = new TVectorD(nbanff,vm1sigma_banff);
   twkv_skdetfsi_m1sigma = new TVectorD(nskdetfsi+1,vm1sigma_skdetfsi);
-  // skexp.GetBANFF()->TweakFHCpRHC(true,twkv_banff_m1sigma);
-  // skexp.GetSuperkDetectorFSI()->TweakFHCpRHC(true,twkv_skdetfsi_m1sigma);
   skexp.GetBANFF()->Tweak(1,twkv_banff_m1sigma,"");
   skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_m1sigma,"");
-
-
-  skexp.TweakSystematic("sk_e_scale",vm1sigma_skescale);
-  skexp.TweakSystematic("sk_e_scale_rhc",vm1sigma_skescale);
   skexp.Generate(ph);
     
-    
   hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-  //hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
   char name[200];
   sprintf(name,"hErecoTun_m1sigma_all");
   hErecoTun_m1sigma_all->SetName(name);
     
-  //skexp.GetBANFF()->PrintRHCSystematicVariations();
-  //skexp.GetSuperkDetectorFSI()->PrintRHCSystematicVariations();
-  //return;
+  // Get total -3 sigma tweak (all parameters)
     
+  skexp.GetBANFF()->Tweak(1,0,"");
+  skexp.ResetSystematics();
     
+  TVectorD *twkv_banff_m3sigma;
+  TVectorD *twkv_skdetfsi_m3sigma;    
+    
+  twkv_banff_m3sigma    = new TVectorD(nbanff,vm3sigma_banff);
+  twkv_skdetfsi_m3sigma = new TVectorD(nskdetfsi+1,vm3sigma_skdetfsi);
+  skexp.GetBANFF()->Tweak(1,twkv_banff_m3sigma,"");
+  skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_m3sigma,"");
+  skexp.Generate(ph);    
+    
+  hErecoTun_m3sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  char name[200];
+  sprintf(name,"hErecoTun_m3sigma_all");
+  hErecoTun_m3sigma_all->SetName(name);
+  
   if(drawplots){
       
     // Draw +-1 sigma and +-3 sigma plots
@@ -1006,6 +954,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   TFile * output_rootfile = new TFile(Form("systematic_variations%s_%s.root",tag,sname),file_mode.c_str());
   output_rootfile->cd();
   hErecoTun->Write(Form("Spectrum_%s_nominal",sname));
+  hErecoTunCheck->Write(Form("Spectrum_%s_nominal_check",sname));
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(!fparm->IsNuisance(p)) continue;
@@ -1134,7 +1083,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 
   // Write the table
 
-  string pctsymbol  = " \\% " ;
+  //string pctsymbol  = " \\% " ;
+  string pctsymbol  = " {(\\si{\\percent})} " ;
   string endcolumn  = " & "   ;
   string endrow     = " \\\\ ";
 
@@ -1149,45 +1099,57 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     string output_file (Form("systematic_tables%s-%s-%s.tex",tag,oscparams.c_str(),sk_sample));
     ofstream outfile (output_file.c_str());
     string f;
-    f += "\\documentclass[10pt,a4paper]{article}\n";
+    //f += "\\documentclass[10pt,a4paper]{article}\n";
+    f += "\\documentclass{standalone}\n";
     f += ("\\usepackage{amsmath}\n");
-    
+    f += ("\\usepackage{booktabs}\n");
+    f += ("\\usepackage{siunitx}\n");
+    f += ("\\sisetup{round-mode=places,round-precision=5}\n");
+    f += ("\\usepackage[table]{xcolor}\n");
     f += ("\\usepackage{graphicx}\n");
     f += ("\\usepackage{dcolumn}\n");
-    f += ("\\usepackage[cm]{fullpage}\n");
+    //    f += ("\\usepackage[cm]{fullpage}\n");
     f += ("\\begin{document}\n");
     outfile.write (f.c_str(),f.size());
     outfile.close();
     
     stringstream streamer;
-    //    streamer << "\\begin{table}"   << endl;
-    streamer << "\\tiny" << endl;
-    streamer << "\\center" << endl;
-    streamer << "\\begin{tabular}{| l | r | r | c | r | r  r | r  r | r |} " << endl;
-    streamer << "\\hline \\hline" << endl;
-    streamer << "{\\bf Parameter} &  "
-             // << "{\\bf Nominal}   &  "
-             // << "{\\bf BANFF tuned} &  "
-             << "{\\bf Sigma value} &  "
-             << "{\\bf BANFF -3$\\sigma$}  & "
-             << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } &  "
-             << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
-             << "{\\bf BANFF tuned +3$\\sigma$}  \\\\  "
+    // streamer << "\\begin{table}"   << endl;
+    // streamer << "\\footnotesize" << endl;
+    // streamer << "\\center" << endl;
+    // streamer << "\\begin{tabular}{| l | r | r | c | r | r  r | r  r | r |} " << endl;
+    streamer << "\\rowcolors{2}{gray!10}{white} " << endl;
+    streamer << "\\begin{tabular}{| l | S | S  S | S  S | S  S | S  S | } " << endl; // [input-symbols=()]
+    // streamer << "\\hline \\hline" << endl;
+    streamer << "\\toprule" << endl;
+    streamer << "{\\textbf{ Parameter }} &  "
+             // << "{\\textbf{ Nominal}}   &  "
+             // << "{\\textbf{ BANFF tuned}} &  "
+             << "\\multicolumn {1}{|c|}{\\textbf{ 1 $\\sigma$ value}} &  "
+             << "\\multicolumn {2}{S|} { {\\textbf{ BANFF -3$\\sigma$}} } & "
+             << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned -1$\\sigma$}} } &  "
+             << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned +1$\\sigma$}} } &  "
+             << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned +3$\\sigma$}} } \\\\  "
              << endl;
-    streamer << "\\hline" << endl;
+    streamer << "\\midrule" << endl;
     
     // double totnom = hErecoNom->Integral();
     // double tot    = hErecoTun->Integral();    
     // double tot_all_p = hErecoTun_p1sigma_all->Integral();
     // double tot_all_m = hErecoTun_m1sigma_all->Integral();
     double totnom = hErecoNom->GetEntries();
-    double tot    = hErecoTun->GetEntries();    
-    double tot_all_p = hErecoTun_p1sigma_all->GetEntries();
-    double tot_all_m = hErecoTun_m1sigma_all->GetEntries();
-    // double tot_p3    = hErecoTunMode_p3sigma_all->GetEntries();
-    // double tot_m3    = hErecoTunMode_m3sigma_all->GetEntries();
-    double frac_all_p = (tot_all_p - tot)/tot * 100;
-    double frac_all_m = (tot_all_m - tot)/tot * 100;
+    double tot    = hErecoTun->GetEntries();
+    
+    double tot_all_p  = hErecoTun_p1sigma_all->GetEntries();
+    double tot_all_m  = hErecoTun_m1sigma_all->GetEntries();
+    double tot_all_p3 = hErecoTun_p3sigma_all->GetEntries();
+    double tot_all_m3 = hErecoTun_m3sigma_all->GetEntries();
+
+    double frac_all_p  = (tot_all_p - tot)/tot * 100;
+    double frac_all_m  = (tot_all_m - tot)/tot * 100;
+    double frac_all_p3 = (tot_all_p3 - tot)/tot * 100;
+    double frac_all_m3 = (tot_all_m3 - tot)/tot * 100;
+    
     
     streamer   << setw(ncol1)  << setfill(' ')
                << "All syst"
@@ -1198,20 +1160,24 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
                // << endcolumn
                << setw(ncolnev)  << setfill(' ') << setprecision(5) << ""
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(6) << ""
+               << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_m3
+               << endcolumn
+               << setw(ncolnev)  << setfill(' ') << setprecision(6) << frac_all_m3  << pctsymbol
                << endcolumn     
                << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_m
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(5) << "(" << frac_all_m << pctsymbol << ")"
+               << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_m  << pctsymbol
                << endcolumn
                << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot_all_p
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(5) << "(" << frac_all_p << pctsymbol  << ")"
+               << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_all_p << pctsymbol 
                << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(6) << "" 
+               << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_p3
+               << endcolumn
+               << setw(ncolnev)  << setfill(' ') << setprecision(6) << frac_all_p3 << pctsymbol
                << endrow
                << endl;
-    streamer << "\\hline" << endl;
+    streamer << "\\cmidrule(lr){1-1} \\cmidrule(lr){2-2} \\cmidrule(lr){3-4} \\cmidrule(lr){5-6} \\cmidrule(lr){7-8} \\cmidrule(lr){9-10}" << endl;
     
     
     for(int ip = 0; ip < np; ip++) {
@@ -1253,28 +1219,32 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
                  << setw(ncolnev)  << setfill(' ') << setprecision(6) << sigma_val
                  << endcolumn
                  << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m3
+                 << endcolumn 
+                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << frac_m3
                  << endcolumn
                  << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m1
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m1 << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_m1 
                  << endcolumn
                  << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_p1
                  << endcolumn
-                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p1 << pctsymbol
+                 << setw(ncolnev)  << setfill(' ') << setprecision(5) << frac_p1 
                  << endcolumn
                  << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_p3
+                 << endcolumn
+                 << setw(ncolnev)  << setfill(' ') << setprecision(6) << frac_p3
                  << endrow
                  << endl;
         
       if(sysstr=="f_banffnorm_nuetonumu")
-        streamer << "\\hline" << endl;
+        streamer << "\\midrule[0.02em]" << endl;
     }
-    streamer << "\\hline" << endl;
+    streamer << "\\bottomrule" << endl;
     streamer << "\\end{tabular}" << endl;
-    streamer << "\\caption{$\\pm 1,3 \\sigma$ effect of the systematic parameters on the total number of events.}"
-             << endl;
-    streamer << "\\end{table}" << endl;
-    streamer << "\\clearpage" << endl;
+    // streamer << "\\caption{$\\pm 1,3 \\sigma$ effect of the systematic parameters on the total number of events.}"
+    //          << endl;
+    // streamer << "\\end{table}" << endl;
+    //streamer << "\\clearpage" << endl;
     cout << streamer.str() << endl;
     
     // get size of file
@@ -1343,13 +1313,13 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       streamer << "\\center" << endl;
       streamer << "\\begin{tabular}{| l | r | r | r | r  r | r  r | r |}" << endl;
       streamer << "\\hline \\hline" << endl;
-      streamer << "{\\bf Component} &  "
-               << "{\\bf Nominal}   &  "
-               << "{\\bf BANFF tuned} &  "
-               << "{\\bf BANFF tuned -3$\\sigma$}  &  "
-               << "\\multicolumn {2}{c|} { {\\bf BANFF tuned -1$\\sigma$} } &  "
-               << "\\multicolumn {2}{c|} { {\\bf BANFF tuned +1$\\sigma$} } &  "
-               << "{\\bf BANFF tuned +3$\\sigma$}  \\\\  "
+      streamer << "{\\textbf{ Component }} &  "
+               << "{\\textbf{ Nominal }}   &  "
+               << "{\\textbf{ BANFF tuned }} &  "
+               << "{\\textbf{ BANFF tuned -3$\\sigma$ }}  &  "
+               << "\\multicolumn {2}{c|} { {\\textbf{ BANFF tuned -1$\\sigma$}} } &  "
+               << "\\multicolumn {2}{c|} { {\\textbf{ BANFF tuned +1$\\sigma$}} } &  "
+               << "{\\textbf{ BANFF tuned +3$\\sigma$}}  \\\\  "
                << endl;
       streamer << "\\hline" << endl;
         
