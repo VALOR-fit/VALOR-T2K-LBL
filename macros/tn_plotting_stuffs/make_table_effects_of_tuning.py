@@ -33,10 +33,12 @@ col_width = 20
 line_width = 1
 
 to3dp = "{0:.3f}"
+to6dp = "{0:.6f}"
 
 #______________________________________________________________________________________________________________________________
 
 def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
+
   
   nominal_modes        = dict()
   NA61_flux_modes      = dict()
@@ -71,7 +73,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   fparm_unosc,fparm_osc = make_fit_param_lists()
   print fparm_osc.GetParListName()
   skexp.Generate(fparm_unosc)
-  nominal_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  nominal_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   nominal_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
@@ -79,7 +81,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     nominal_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
     
   skexp.Generate(fparm_osc)
-  osc_nominal_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  osc_nominal_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   osc_nominal_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
@@ -103,7 +105,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   fparm_unosc,fparm_osc = make_fit_param_lists()
   
   skexp.Generate(fparm_unosc)
-  NA61_flux_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  NA61_flux_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   flux_tuned_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
@@ -111,7 +113,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     NA61_flux_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral()
     
   skexp.Generate(fparm_osc)
-  osc_NA61_flux_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  osc_NA61_flux_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   osc_flux_tuned_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
@@ -126,14 +128,14 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   fparm_unosc,fparm_osc = make_fit_param_lists()
   
   skexp.Generate(fparm_unosc)
-  prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
     prefit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
     
   skexp.Generate(fparm_osc)
-  osc_prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  osc_prefit_tuned_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
@@ -148,7 +150,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   fparm_unosc,fparm_osc = make_fit_param_lists()
   
   skexp.Generate(fparm_unosc)
-  postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   postfit_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
@@ -156,7 +158,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
     postfit_tuned_modes[m] = skexp.CurrPredictedErecoSpectrum(sample,m).Integral("")
     
   skexp.Generate(fparm_osc)
-  osc_postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVArray(sample).Integral()
+  osc_postfit_tuned_modes["total"] = skexp.CurrPredictedErecoVsQ2VArray(sample).Integral()
   osc_postfit_hist = hist_to_50MeV(skexp.CurrPredictedErecoSpectrum(sample))
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
@@ -195,7 +197,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
-  cols = ["Total"] + [to3dp.format(d["total"]) for d in all_dicts_unosc]
+  cols = ["Total"] + [to6dp.format(d["total"]) for d in all_dicts_unosc]
   entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   tex_output.write("\\hline \n")
@@ -203,7 +205,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
-    cols = [util.ModeAsStringTex(m)] + [to3dp.format(d[m]) for d in all_dicts_unosc]
+    cols = [util.ModeAsStringTex(m)] + [to6dp.format(d[m]) for d in all_dicts_unosc]
     entries = [x.ljust(w) for x,w in zip(cols,widths)]
     tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
@@ -224,7 +226,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
-  cols = ["Total"] + [to3dp.format(d["total"]) for d in all_dicts_osc]
+  cols = ["Total"] + [to6dp.format(d["total"]) for d in all_dicts_osc]
   entries = [x.ljust(w) for x,w in zip(cols,widths)]
   tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   tex_output.write("\\hline \n")
@@ -232,7 +234,7 @@ def main(sample,output_file,config_file,config_file_noflux,config_file_prefit):
   for im in xrange(conv.knm):
     m = util.GetMode(sample,im)
     if m == conv.kSKmUndefined or m > conv.knm: continue
-    cols = [util.ModeAsStringTex(m)] + [to3dp.format(d[m]) for d in all_dicts_osc]
+    cols = [util.ModeAsStringTex(m)] + [to6dp.format(d[m]) for d in all_dicts_osc]
     entries = [x.ljust(w) for x,w in zip(cols,widths)]
     tex_output.write("& ".join(entries) + " \\\\ \\hline \n")
   
@@ -417,7 +419,7 @@ def  make_fit_param_lists():
   fparm_osc = util.NamedParameterList("nuosc3f+nuisance")
   
   fparm_osc.SetInitValue(conv.kPhypMixing12,  0.306);
-  fparm_osc.SetInitValue(conv.kPhypMixing13,  0.025);
+  fparm_osc.SetInitValue(conv.kPhypMixing13,  0.0217);
   fparm_osc.SetInitValue(conv.kPhypMixing23,  0.528);
   fparm_osc.SetInitValue(conv.kPhypCPV     ,  -1.601);
   fparm_osc.SetInitValue(conv.kPhypDm12sq  ,  7.5E-5);
@@ -442,8 +444,7 @@ def hist_to_list(h):
 if __name__=="__main__":
   
   import optparse
-  parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of applied systematics")
-  
+  parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of applied systematics")  
   parser.add_option('-f', '--file', dest='output_file', default="effects_of_tuning.tex", help="Name for output TeX file.")
   
   parser.add_option('-s', '--sample' , dest='sample', default="1Rmu", help="Sample (1Rmu, 1Re, RHC1Rmu, RHC1Re, MultiRmu, MultiRe)")

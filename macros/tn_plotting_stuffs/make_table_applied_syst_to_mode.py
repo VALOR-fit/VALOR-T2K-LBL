@@ -164,6 +164,7 @@ def main(sample=conv.kSKsFCFV1RingMuLike,output_file="syst_applied_table.tex", s
       else:
         entries.append("".ljust(coln_width))
     if row: tex_output.write("& ".join(entries) + " \\\\ \hline \n")
+    if not row: continue
     
   tex_output.write("\n\\end{tabular}\n")
   tex_output.write("\\end{table}\n}\n")

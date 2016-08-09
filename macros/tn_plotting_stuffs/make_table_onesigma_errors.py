@@ -25,7 +25,7 @@ env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
-samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
+samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re","MultiRe"]
 
 col_width = 30
 banff_col_widths  = [12,60,8,12]
