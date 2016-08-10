@@ -109,8 +109,8 @@ $deltacp         = -1.601                      unless defined $deltacp;
 $dm12sq          = 7.53E-5                     unless defined $dm12sq;
 $dm23sq          = 2.509E-3                    unless defined $dm23sq;
 
-$mix23Bar           = 0.528                       unless defined $mix23;
-$dm23sqBar          = 2.509E-3                    unless defined $dm23sq;
+$mix23Bar           = 0.528                       unless defined $mix23Bar;
+$dm23sqBar          = 2.509E-3                    unless defined $dm23sqBar;
 
 # # Mach3, T2K Run1-4 + reactors best fit - dcp=0 (B)
 # $mix12           = 0.304                       unless defined $mix12;
@@ -226,7 +226,7 @@ while($irun < $nruns) {
     
     $program = "root2k ";
         
-    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint_2d.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix23Bar,$dm23sqBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$masshierarchy_marg\",\"$type_error\",$draw_full_chisq,$store_like,\"$test_stat\",$constrain_reactor)\'";
+    $arguments = " -l -b -q \'$softw_dir/macros/marginalization/run_fit_marginalization_readbinary_joint_2d.C(\"$tag\",$ifile_first,$ifile_last,\"$xml_file\",\"$root_file\",$using_xml_file,$dotoys,$mix12,$mix13,$mix23,$deltacp,$dm12sq,$dm23sq,$mix23Bar,$dm23sqBar,\"$config_file\",$stat_fluct,$tweak_systematics,\"$fitparamlist\",\"$dmsqscheme\",\"$mixparamchoice\",\"$masshierarchy\",\"$mixparamoctant\",\"$marg_file\",$nfiles_marg,$nexpts_marg,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$marg_hierarchy,\"$masshierarchy_marg\",\"$type_error\",$draw_full_chisq,$store_like)\'";
 
     $command = "$program $arguments";
     print "$command \n";

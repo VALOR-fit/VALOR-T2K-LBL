@@ -84,7 +84,7 @@ foreach (@ARGV) {
   elsif($_ eq '--file-prior'             ) { $file_prior            = $ARGV[$iarg+1]; }
 
   elsif($_ eq '--fmwk-dir'               ) { $fmwk_dir              = $ARGV[$iarg+1]; }
-  
+  elsif($_ eq '--queue'                  ) { $queue                 = $ARGV[$iarg+1]; }
   
   else {
       print "Unrecognised argument ".$_."\n"; exit;
@@ -256,10 +256,10 @@ $mixparamchoice         = "sinsqtheta"         unless defined $mixparamchoice;
 $mixparamoctant         = "two"                unless defined $mixparamoctant;
 
 $use_reactors           = 1                    unless defined $use_reactors;
-
+$queue                  = 0                    unless defined $use_reactors;
 if( !defined $cput ) {
-    #takes approx 0.03 sec per spectra
-    $sec = int ( $step_freepar0 *  $step_freepar1 * $nexpts_marg * 0.04 );
+    #takes approx 0.04 sec per sample
+    $sec = int ( $step_freepar0 *  $step_freepar1 * $nexpts_marg * 0.22 );
     $sec_mins = $sec % 3600;
     $seconds = $sec % 60;
     $minutes = int($sec_mins/60);
@@ -383,7 +383,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	# ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
 	#
 	if($resource eq "ETH-Monch") {
-	    open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch") or die("Can not create the sbatch script");
+	    open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$ijob.sbatch") or die("Can not create the sbatch script");
 	    print PBS "#!/bin/bash -l  \n";
 	    #print PBS "#SBATCH --partition=dphys_compute_wk  \n";
 	    #print PBS "#SBATCH --partition=dphys_compute  \n";    	    
@@ -410,10 +410,10 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	if($resource eq "ETH-Brutus") {
 	    open(PBS, ">$job_dir/$tag-$ijob.sh") or die("Can not create the PBS batch script");
 	    print PBS "#!/bin/bash \n";
-	    #print PBS "#PBS -N $tag-$irun \n";
+	    #print PBS "#PBS -N $tag-$ijob \n";
 	    #print PBS "#PBS -l cput=$cput \n";
-	    #print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-	    #print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+	    #print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+	    #print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
 	    #print PBS "#PBS -q prod \n";
 	    #print PBS "#PBS -l walltime=$cput \n";
 	    #print PBS "cd $job_dir \n";
@@ -454,39 +454,44 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	# RAL (SL5)
 	#
 	if($resource eq "OLDRAL") {
-	    open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+	    open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
 	    print PBS "#!/bin/bash \n";
-	    print PBS "#PBS -N $tag-$irun \n";
+	    print PBS "#PBS -N $tag-$ijob \n";
 	    print PBS "#PBS -l cput=$cput \n";
-	    print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-	    print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+	    print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+	    print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
 	    print PBS "#PBS -q prod \n";
 	    print PBS "#PBS -l walltime=$cput \n";
 	    print PBS "cd $job_dir \n";
 	    print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
 	    print PBS "$command \n";
 	    close(PBS);
-	    #`qsub -q prod $job_dir/$tag-$irun.pbs`;
+	    #`qsub -q prod $job_dir/$tag-$ijob.pbs`;
 	}
 	
 	#
 	# Oxford
 	#
 	if($resource eq "Oxford") {
-	    open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+	    open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
 	    print PBS "#!/bin/bash \n";
-	    print PBS "#PBS -N $tag-$irun \n";
+	    print PBS "#PBS -N $tag-$ijob \n";
 	    print PBS "#PBS -l cput=$cput \n";
-	    print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
-	    print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+	    print PBS "#PBS -l walltime=$cput \n";
+	    print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+	    print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
+	    if($queue eq "outofhours")
+	    {
+		print PBS "#PBS -q outofhours \n";
+	    }
 	    print PBS "cd $job_dir \n";
-	    print PBS "source $fmwk_dir/setup/setup_at_oxford.sh $fmwk_dir\n";
-	    print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
-	    print PBS "source $fmwk_dir/setup_at_oxford.sh $fmwk_dir\n";
-	    print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir\n";
+	    #  print PBS "source $fmwk_dir/setup_at_oxford.sh $fmwk_dir\n";
+	    print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir $fmwk_dir\n";
 	    print PBS "$command \n";
 	    close(PBS);
-	    `qsub $job_dir/$tag-$irun.pbs`;
+	    `qsub  $job_dir/$tag-$ijob.pbs`;
+	    `sleep 0.0001`;
+	    $ijob++;
 	}
 	
 	#

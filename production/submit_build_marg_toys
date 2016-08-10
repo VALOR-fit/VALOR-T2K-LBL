@@ -128,7 +128,7 @@ $minfreepar1            = 0.                   unless defined $minfreepar1;     
 $maxfreepar1            = 0.                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 $npt_freepar1           = 1                    unless defined $npt_freepar1;    # of free parameter points to scan
 
-$nexpts_marg            = 10                unless defined $nexpts_marg;    # of toys
+$nexpts_marg            = 10                unless defined $nexpts_marg;    # of toy
 
 $step_freepar0          = 1                  unless defined $step_freepar0;   # of points for each job param0
 $step_freepar1          = 1                  unless defined $step_freepar1;   # of points for each job param1
