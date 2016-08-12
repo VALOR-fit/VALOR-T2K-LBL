@@ -128,7 +128,7 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 13, //13,                                          /* options: see above */
+ int          mode                     = 0, //13,                                          /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
  const char * sk_sample                = "1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
@@ -581,7 +581,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     rootmode = "recreate";
 
   TFile *fosctoyhisto = new TFile(Form("sk_osc_toy_histo_%s-twk_sys_throw_%s_%s.root",sname,oscparams.c_str(),tag),rootmode.c_str(),"recreate");
-  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.root",sname,oscparams.c_str()),rootmode.c_str(),tag);
+  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.root",sname,oscparams.c_str(),tag),rootmode.c_str());
   
   ofstream * outfilep = 0;
   
