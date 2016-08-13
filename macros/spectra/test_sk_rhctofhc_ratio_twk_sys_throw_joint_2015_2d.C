@@ -345,8 +345,8 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   // TH1D * hNsk_1Rmu = new TH1D(Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),100,0,300);      
  
 
-  TH1D * hRatio_FHCtoRHC_elike  = new TH1D(Form("%s_ratio","Re"),Form("%s_nsk","Re"),200,5.,12.);      
-  TH1D * hRatio_FHCtoRHC_mulike = new TH1D(Form("%s_ratio","Rmu"),Form("%s_nsk","Rmu"),200,3.,5.);      
+  TH1D * hRatio_FHCtoRHC_elike  = new TH1D(Form("%s_ratio","Re"),Form("%s_nsk","Re"),200,0,20);
+  TH1D * hRatio_FHCtoRHC_mulike = new TH1D(Form("%s_ratio","Rmu"),Form("%s_nsk","Rmu"),200,0,20);
       
   cout << endl;
   cout << "Systematic mode (" << mode << ") --> " << modetitle << endl;
@@ -802,12 +802,6 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
     double nskint_1Rmu    = spectrum_1Rmu   ->Integral();
     double nskint_1Re     = spectrum_1Re    ->Integral();
     
-    // cout << "nskint RHC1Rmu = " << nskint_RHC1Rmu << endl;
-    // cout << "nskint RHC1Re  = " << nskint_RHC1Re  << endl;
-    // cout << "nskint_1Rmu    = " << nskint_1Rmu    << endl;
-    // cout << "nskint_1Re     = " << nskint_1Re     << endl;
-    // cout << endl;
-
     hNsk_RHC1Re ->Fill(nskint_RHC1Re);
     hNsk_RHC1Rmu->Fill(nskint_RHC1Rmu);
     hNsk_1Re    ->Fill(nskint_1Re);
