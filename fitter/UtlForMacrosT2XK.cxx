@@ -903,6 +903,46 @@ void valor::util::MargFit_1D_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,S
 
 }
 //____________________________________________________________________________
+void valor::util::MargFit_1D_dmsq32bar(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
+  
+  // Fit 1
+  
+  cout << endl;
+  cout << "################# Fit 1 (dmsq32 = conv::kUsed_Dm23sq) #################" << endl;
+  
+  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+  
+  int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
+  double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
+  double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
+  
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.,true);
+  fitmarg->SetStartBin(conv::kUsed_Dm23sq,0.);
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
+  
+  
+  double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_1 = fitmarg->GetParamBestFit(0);
+  double bestfit1_1 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_1 = fitmarg->GetParamBestFit(1);
+  int nfits_1 = fitmarg->GetNumFit();
+  int fitstatus_1 = fitmarg->GetFitStatus();
+  int niterations_1 = fitmarg->GetNumIterations();
+  if(chisqmin_1<chisqmin){
+    chisqmin = chisqmin_1;
+    bestfit0 = bestfit0_1;
+    bestfit1 = bestfit1_1;
+    nfits = nfits_1;
+    fitstatus = fitstatus_1;
+    niterations = niterations_1;
+  }
+  
+}
+//____________________________________________________________________________
 void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
 {
 
