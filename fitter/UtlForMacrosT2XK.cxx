@@ -548,13 +548,19 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
     else if(runopt->Freeparname0()=="mixing23" && runopt->Freeparname1()==""){
       util::MargFit_1D_sinsqth23(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
     }
+    else if(runopt->Freeparname0()=="mixing23Bar" && runopt->Freeparname1()==""){
+      util::MargFit_1D_sinsqth23bar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
+
     //
     // 1D dmsq32 fit
     //
     else if(runopt->Freeparname0()=="dmsq23" && runopt->Freeparname1()==""){
       util::MargFit_1D_dmsq32(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
     }
-    
+    else if(runopt->Freeparname0()=="dmsq23Bar" && runopt->Freeparname1()==""){
+      util::MargFit_1D_dmsq32bar(runopt,fitmarg,skobs_fakedata,chisqmin,bestfit0,bestfit1,nfits,fitstatus,niterations);
+    }
     else{
       cout << endl;
       cout << "/////////////////////////////////////////////////////////////" << endl;
@@ -824,7 +830,45 @@ void valor::util::MargFit_1D_sinsqth23(RunOpt *runopt,FitMarginalization *fitmar
   }
 
 }
-
+//____________________________________________________________________________
+void valor::util::MargFit_1D_sinsqth23bar(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
+{
+  
+  // Fit 1
+  
+  cout << endl;
+  cout << "################# Fit 1 (sinsqth23 = conv::kUsed_SinsqTheta23) #################" << endl;
+  
+  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+  
+  int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
+  double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
+  double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
+  
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.,true);
+  fitmarg->SetStartBin(conv::kUsed_SinsqTheta23,0.);
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
+  
+  double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
+  double bestfit0_1 = fitmarg->GetParamBestFit(0);
+  double bestfit1_1 = -999.;
+  if(fitmarg->IsFit2D()) bestfit1_1 = fitmarg->GetParamBestFit(1);
+  int nfits_1 = fitmarg->GetNumFit();
+  int fitstatus_1 = fitmarg->GetFitStatus();
+  int niterations_1 = fitmarg->GetNumIterations();
+  if(chisqmin_1<chisqmin){
+    chisqmin = chisqmin_1;
+    bestfit0 = bestfit0_1;
+    bestfit1 = bestfit1_1;
+    nfits = nfits_1;
+    fitstatus = fitstatus_1;
+    niterations = niterations_1;
+  }
+  
+}
 //____________________________________________________________________________
 void valor::util::MargFit_1D_dmsq32(RunOpt *runopt,FitMarginalization *fitmarg,SuperkObservation *skobs_fakedata,double &chisqmin,double &bestfit0, double &bestfit1,int nfits,int fitstatus,int niterations)
 {
@@ -866,14 +910,20 @@ void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,
 
   cout << endl;
   cout << "################# Fit #################" << endl;
-    
-  fitmarg->SetMinimIntervalRead(0,1.,0.,0.,true);
-  fitmarg->SetStartBin(0.,1.); 
-  fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(0.,1.,0.,0.);
-  fitmarg->SetExtractStartPt("Single");  
-  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);  
   
+  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
+  
+  int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
+  double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
+  double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
+  
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.,true);
+  fitmarg->SetStartBin(0.,1.);
+  fitmarg->SetNumStartBin(1,1);
+  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.);
+  fitmarg->SetExtractStartPt("Single");
+  fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);
+
   double chisqmin_1 = (double)fitmarg->GetChisqBestFit();
   double bestfit0_1 = fitmarg->GetParamBestFit(0);
   double bestfit1_1 = -999.;
