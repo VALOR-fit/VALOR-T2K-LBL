@@ -226,32 +226,40 @@ int main(int argc, char ** argv)
   TH1F *hErecoToy_1Re = new TH1F("hErecoToy_1Re","hErecoToy_1Re",1,0,1);
   TH1F *hErecoToy_RHC1Rmu = new TH1F("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1);
   TH1F *hErecoToy_RHC1Re = new TH1F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1);
+  TH1F *hErecoToy_MultiRe = new TH1F("hErecoToy_MultiRe","hErecoToy_MultiRe",1,0,1);
   TH1F *hErecoToy_sample[conv::kns] = {};
   TH1F *hErecoExp_1Rmu = new TH1F("hErecoExp_1Rmu","hErecoExp_1Rmu",1,0,1);
   TH1F *hErecoExp_1Re = new TH1F("hErecoExp_1Re","hErecoExp_1Re",1,0,1);
   TH1F *hErecoExp_RHC1Rmu = new TH1F("hErecoExp_RHC1Rmu","hErecoExp_RHC1Rmu",1,0,1);
   TH1F *hErecoExp_RHC1Re = new TH1F("hErecoExp_RHC1Re","hErecoExp_RHC1Re",1,0,1);
+  TH1F *hErecoExp_MultiRe = new TH1F("hErecoExp_MultiRe","hErecoExp_MultiRe",1,0,1);
   TH1F *hErecoExp_sample[conv::kns] = {};
 #else
   TH2F *hErecoToy_1Rmu = new TH2F("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1,1,0,1);
   TH2F *hErecoToy_1Re = new TH2F("hErecoToy_1Re","hErecoToy_1Re",1,0,1,1,0,1);
   TH2F *hErecoToy_RHC1Rmu = new TH2F("hErecoToy_RHC1Rmu","hErecoToy_RHC1Rmu",1,0,1,1,0,1);
   TH2F *hErecoToy_RHC1Re = new TH2F("hErecoToy_RHC1Re","hErecoToy_RHC1Re",1,0,1,1,0,1);
+  TH2F *hErecoToy_MultiRe = new TH2F("hErecoToy_MultiRe","hErecoToy_MultiRe",1,0,1,1,0,1);
   TH2F *hErecoToy_sample[conv::kns] = {};
   TH2F *hErecoExp_1Rmu = new TH2F("hErecoExp2D_1Rmu","hErecoExp2D_1Rmu",1,0,1,1,0,1);
   TH2F *hErecoExp_1Re = new TH2F("hErecoExp2D_1Re","hErecoExp2D_1Re",1,0,1,1,0,1);
   TH2F *hErecoExp_RHC1Rmu = new TH2F("hErecoExp2D_RHC1Rmu","hErecoExp2D_RHC1Rmu",1,0,1,1,0,1);
-  TH2F *hErecoExp_RHC1Re = new TH2F("hErecoExp2D_RHC1Re","hErecoExp2D_RHC1Re",1,0,1,1,0,1); 
+  TH2F *hErecoExp_RHC1Re = new TH2F("hErecoExp2D_RHC1Re","hErecoExp2D_RHC1Re",1,0,1,1,0,1);
+  TH2F *hErecoExp_MultiRe = new TH2F("hErecoExp_MultiRe","hErecoExp_MultiRe",1,0,1,1,0,1);
+
   TH2F *hErecoExp_sample[conv::kns] = {};
 #endif
   hErecoToy_sample[conv::kSKsFCFV1RingMuLike   ] = hErecoToy_1Rmu;
   hErecoToy_sample[conv::kSKsFCFV1RingELike    ] = hErecoToy_1Re ;
   hErecoToy_sample[conv::kSKsRHCFCFV1RingMuLike] = hErecoToy_RHC1Rmu;
   hErecoToy_sample[conv::kSKsRHCFCFV1RingELike ] = hErecoToy_RHC1Re ;
+  hErecoToy_sample[conv::kSKsFCFVMultiRingELike] = hErecoToy_MultiRe ;
+  
   hErecoExp_sample[conv::kSKsFCFV1RingMuLike   ] = hErecoExp_1Rmu;
   hErecoExp_sample[conv::kSKsFCFV1RingELike    ] = hErecoExp_1Re ;
   hErecoExp_sample[conv::kSKsRHCFCFV1RingMuLike] = hErecoExp_RHC1Rmu;
   hErecoExp_sample[conv::kSKsRHCFCFV1RingELike ] = hErecoExp_RHC1Re ;
+  hErecoExp_sample[conv::kSKsFCFVMultiRingELike ] = hErecoExp_MultiRe ;
  
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
@@ -313,19 +321,24 @@ int main(int argc, char ** argv)
   fitnt->Branch("hErecoToy_1Re",      "TH1F",&hErecoToy_1Re,      32000,0);
   fitnt->Branch("hErecoToy_RHC1Rmu",  "TH1F",&hErecoToy_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoToy_RHC1Re",   "TH1F",&hErecoToy_RHC1Re,   32000,0);
+  fitnt->Branch("hErecoToy_MultiRe",   "TH1F",&hErecoToy_MultiRe, 32000,0);
   fitnt->Branch("hErecoExp_1Rmu",     "TH1F",&hErecoExp_1Rmu,     32000,0);
   fitnt->Branch("hErecoExp_1Re",      "TH1F",&hErecoExp_1Re,      32000,0);
   fitnt->Branch("hErecoExp_RHC1Rmu",  "TH1F",&hErecoExp_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoExp_RHC1Re",   "TH1F",&hErecoExp_RHC1Re,   32000,0);
-#else  
+  fitnt->Branch("hErecoExp_MultiRe",   "TH1F",&hErecoExp_MultiRe, 32000,0);
+
+#else
   fitnt->Branch("hErecoToy_1Rmu",     "TH2F",&hErecoToy_1Rmu,     32000,0);
   fitnt->Branch("hErecoToy_1Re",      "TH2F",&hErecoToy_1Re,      32000,0);
   fitnt->Branch("hErecoToy_RHC1Rmu",  "TH2F",&hErecoToy_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoToy_RHC1Re",   "TH2F",&hErecoToy_RHC1Re,   32000,0);
+  fitnt->Branch("hErecoToy_MultiRe",  "TH2F",&hErecoToy_MultiRe,  32000,0);
   fitnt->Branch("hErecoExp_1Rmu",     "TH2F",&hErecoExp_1Rmu,     32000,0);
   fitnt->Branch("hErecoExp_1Re",      "TH2F",&hErecoExp_1Re,      32000,0);
   fitnt->Branch("hErecoExp_RHC1Rmu",  "TH2F",&hErecoExp_RHC1Rmu,  32000,0);
   fitnt->Branch("hErecoExp_RHC1Re",   "TH2F",&hErecoExp_RHC1Re,   32000,0);
+  fitnt->Branch("hErecoExp_MultiRe",  "TH2F",&hErecoExp_MultiRe,  32000,0);
 #endif
  
   // Update physics fitparamlist with chosen value of oscillation parameters
@@ -589,6 +602,7 @@ int main(int argc, char ** argv)
        TH2F * hspec_obs = (TH2F*)skobs_fakedata->TwoDSpectrum(s);
        TH2F * hspec_exp = (TH2F*)skexp->CurrPredictedErecoVsQ2Spectrum(s);  
 #endif
+       std::cout << "Debug L592 >> SuperkSample: " << util::AsString(s) << std::endl;
        hspec_obs->Copy(*(hErecoToy_sample[s]));
        hspec_exp->Copy(*(hErecoExp_sample[s]));
        delete hspec_obs;
@@ -753,10 +767,12 @@ int main(int argc, char ** argv)
   delete hErecoToy_1Re;
   delete hErecoToy_RHC1Rmu;
   delete hErecoToy_RHC1Re;
+  delete hErecoToy_MultiRe;
   delete hErecoExp_1Rmu;
   delete hErecoExp_1Re;
   delete hErecoExp_RHC1Rmu;
   delete hErecoExp_RHC1Re;
+  delete hErecoExp_MultiRe;
 
   delete hchisq2D_out;
   delete hdeltachisq2D_out;
