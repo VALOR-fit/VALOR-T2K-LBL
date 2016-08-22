@@ -144,13 +144,14 @@ $resource        = "interactive"               unless defined $resource;
 #$tag             = "fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC17p282_RHC7p471"  unless defined $tag;  
 #$tag             = "fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC14p882_RHC9p871"  unless defined $tag;
 
-#$tag             = "fitmarg_joint_sinsqth13Vsdcp_react_ih_Data_Run17c"  unless defined $tag;
+#$tag              = "fitmarg_joint_dcp_react_ih_Asimov_E"  unless defined $tag; 
+$tag             = "fitmarg_joint_sinsqth13Vsdcp_react_nh_Asimov_D_Run17c"  unless defined $tag;
 #$tag             = "fitmarg_joint_sinsqth23Vsdcp_react_ih_Data_Run17c"  unless defined $tag;
 #$tag             = "fitmarg_joint_sinsqth23Vsdmsq_react_ih_Data_Run17c"  unless defined $tag;  
 #$tag             = "fitmarg_joint_sinsqth23_react_ih_Data_Run17c"  unless defined $tag;
 #$tag             = "fitmarg_joint_dmsq_react_ih_Data_Run17c"  unless defined $tag;
 #$tag             = "fitmarg_joint_dmsqVsdcp_react_ih_Data_Run17c"  unless defined $tag;   
-$tag             = "fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Data_Run17c"  unless defined $tag;  
+#$tag             = "fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Data_Run17c"  unless defined $tag;  
 
 #$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
 #$nruns           = 100                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
@@ -239,11 +240,11 @@ $betaBar         = 1.0                          unless defined $betaBar;
 # $mix23           = 0.528                        unless defined $mix23;
 # $mix13           = 0.0217                        unless defined $mix13; # PDG 2015                                                                                        
 # $mix12           = 0.304                        unless defined $mix12;
-# $deltacp         = 3.141593                  unless defined $deltacp;
+# $deltacp         = 3.14159265                  unless defined $deltacp;
 # $betaBar         = 1.0                          unless defined $betaBar;
 
 #
-# ASIMOV E (Asimov A + dcp=+pi/2
+# ASIMOV E (Asimov A + dcp=+pi/2)
 #
 # $dmsq23          = 2.509E-3                        unless defined $dmsq23;
 # $dmsq12          = 7.53E-5                        unless defined $dmsq12;
@@ -276,7 +277,7 @@ if( !defined $cput ) {
 ############################ Toy generation ################################
 $hypothesis             = "3f_osc"             unless defined $hypothesis;  
 #$hypothesis             = "3f_osc_normbar"      unless defined $hypothesis;  
-$do_toys                = 0                    unless defined $do_toys;
+$do_toys                = 1                    unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
 #$fakedata_root_file = "inputs/data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
 $fakedata_root_file = "/mnt/lnec/davides/VALOR/inputs_2d_new/data_run1to7c/SKdata_Run17c.root" unless defined $fakedata_root_file;
@@ -316,11 +317,11 @@ $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist; # s
 #$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sinsqth23Vsdcp_react_NH_10kToys/joint_sinsqth23Vsdcp_run17c_react_NH_10kToys" unless defined $file_margtoys;
 #$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sinsqth23Vsdcp_react_IH_10kToys/joint_sinsqth23Vsdcp_run17c_react_IH_10kToys" unless defined $file_margtoys;
 #$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sinsqth13Vsdcp_react_NH_10kToys/joint_sinsqth13Vsdcp_run17_react_NH_10kToys" unless defined $file_margtoys;
-#$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sinsqth13Vsdcp_react_IH_10kToys/joint_sinsqth13Vsdcp_run17_react_IH_10kToys" unless defined $file_margtoys;
+$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sinsqth13Vsdcp_react_IH_10kToys/joint_sinsqth13Vsdcp_run17_react_IH_10kToys" unless defined $file_margtoys;
 #$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sisqth23Vsdmsq_react_NH_10kToys/joint_sinsqth23Vsdmsq_run17_react_NH_10kToys" unless defined $file_margtoys;
 #$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sisqth23Vsdmsq_react_IH_10kToys/joint_sinsqth23Vsdmsq_run17_react_IH_10kToys" unless defined $file_margtoys;
 #$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sisqth23Vsdmsq_t2konly_NH_10kToys/joint_sinsqth23Vsdmsq_run17_t2konly_NH_10kToys" unless defined $file_margtoys; 
-$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sisqth23Vsdmsq_t2konly_IH_10kToys/joint_sinsqth23Vsdmsq_run17_t2konly_IH_10kToys" unless defined $file_margtoys;
+#$file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_sisqth23Vsdmsq_t2konly_IH_10kToys/joint_sinsqth23Vsdmsq_run17_t2konly_IH_10kToys" unless defined $file_margtoys;
  
 #
 # NEW MARGINALIZATION FILES (BANFF RELEASE 5/7/16 WITH FIT BIAS, RUN17c BANFF and RUN17b FLUX) 
@@ -394,8 +395,8 @@ $file_margtoys = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_1
 #$nfiles_margtoys   = 2           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 201           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 546            unless defined $nfiles_margtoys; # of marginalization files        
-#$nfiles_margtoys   = 533            unless defined $nfiles_margtoys; # of marginalization files      
-$nfiles_margtoys   = 441            unless defined $nfiles_margtoys; # of marginalization files
+$nfiles_margtoys   = 533            unless defined $nfiles_margtoys; # of marginalization files      
+#$nfiles_margtoys   = 441            unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 143            unless defined $nfiles_margtoys; # of marginalization files
 
 $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
@@ -463,25 +464,25 @@ $masshierarchy_marg       = "inverted"     unless defined $masshierarchy_marg;  
 # $maxfreepar1         = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 # $npt_freepar1        = 51                          unless defined $npt_freepar1;    # of free parameter points to scan
 
-# # 2D fit - sinsqth13 Vs dcp (t2k reactors)
-# $freepar0          = "mixing13"                 unless defined $freepar0;
-# $minfreepar0       = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
-# $maxfreepar0       = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-# $npt_freepar0      = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
-# $freepar1          = "deltacp"                  unless defined $freepar1;
-# $minfreepar1       = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
-# $maxfreepar1       = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-# $npt_freepar1      = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
-
-# 2D fit - sinsqth23 Vs dmsq
-$freepar0          = "mixing23"                 unless defined $freepar0;
-$minfreepar0       = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0       = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# 2D fit - sinsqth13 Vs dcp (t2k reactors)
+$freepar0          = "mixing13"                 unless defined $freepar0;
+$minfreepar0       = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
+$maxfreepar0       = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
 $npt_freepar0      = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1          = "dmsq23"                   unless defined $freepar1;
-$minfreepar1       = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
-$maxfreepar1       = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1      = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
+$freepar1          = "deltacp"                  unless defined $freepar1;
+$minfreepar1       = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+$maxfreepar1       = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+$npt_freepar1      = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
+
+# # 2D fit - sinsqth23 Vs dmsq
+# $freepar0          = "mixing23"                 unless defined $freepar0;
+# $minfreepar0       = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+# $maxfreepar0       = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+# $npt_freepar0      = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
+# $freepar1          = "dmsq23"                   unless defined $freepar1;
+# $minfreepar1       = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
+# $maxfreepar1       = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+# $npt_freepar1      = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
 
 # # 2D fit - sinsqth23 Vs dcp
 # $freepar0               = "mixing23"                 unless defined $freepar0;    
@@ -510,7 +511,7 @@ $test_stat         = "rate+shape"   unless defined $test_stat;     # "rate-only"
 
 $store_like_weights = 0             unless defined $store_like_weights;  # set to 1 only if 1 fit is run
 
-$penalty_freepar0 = 0               unless defined $penalty_freepar0;
+$penalty_freepar0 = 1               unless defined $penalty_freepar0;
 $penalty_freepar1 = 0               unless defined $penalty_freepar1;
 $read_skexp       = 0               unless defined $read_skexp;
 $queue            = 0               unless defined $queue;
