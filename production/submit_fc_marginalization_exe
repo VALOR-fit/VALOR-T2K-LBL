@@ -132,7 +132,14 @@ foreach (@ARGV) {
 # @array_freepar1_user = (-1,0); # run only on these points. If empty run on all the grid points
 # @array_freepar1_user = (); # run only on these points. If empty run on all the grid points
 
-@array_freepar0_skip = (-3.14159265358979312, -1.5707963267949, 0., 1.5707963267949, 3.14159265358979312);
+#@array_freepar0_skip = (-3.14159265358979312, -2.35619449019234, -1.5707963267949, -0.785398163397448, 0., +0.785398163397448, +1.5707963267949, +2.35619449019234);
+#@array_freepar0_skip = (-3.14159265358979312, -2.35619449019234, -1.5707963267949, -0.785398163397448, 0., +0.785398163397448, +2.35619449019234, +3.14159265358979312);
+#@array_freepar0_skip = (-3.14159265358979312, -2.35619449019234, -1.5707963267949, -0.785398163397448, 0., +0.785398163397448, +1.5707963267949, +3.14159265358979312);   
+#@array_freepar0_skip = (-3.14159265358979312, -2.35619449019234, -1.5707963267949, -0.785398163397448, 0., +1.5707963267949, +2.35619449019234, +3.14159265358979312);   
+#@array_freepar0_skip = (-3.14159265358979312, -2.35619449019234, -1.5707963267949, -0.785398163397448, 0., +3.14159265358979312);
+#@array_freepar0_skip = (-3.14159265358979312, -2.35619449019234, -1.5707963267949, -0.785398163397448, 0.); 
+#@array_freepar0_skip = (-3.14159265358979312, -2.35619449019234, -0.785398163397448, +0.785398163397448, +2.35619449019234);  
+@array_freepar0_skip = (-3.14159265358979312 );
 @array_freepar1_skip = ();
 $run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 --> run many grid points
 
@@ -143,33 +150,56 @@ $run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 -
 
 $resource        = "interactive"               unless defined $resource;
 
-$tag             = "fitmarg_fc_dcp"  unless defined $tag;
+#$tag             = "fitmarg_fc_nh_10k_run17c_oldflux_Set0"  unless defined $tag;
+$tag             = "fitmarg_fc_nh_50k_run17c_final_Set3"  unless defined $tag;
 
-#$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
-#$nruns           = 250                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
-$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+$nruns           = 800                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D)  POSTERIOR
+#$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D)  POSTERIOR
+#$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+#$nruns           = 70                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) USED 
+#$nruns           = 80                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) USED  
+#$nruns           = 160                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) FIX sinsqth23 and dmsq
+#$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 
-#
+# NEW CONFIGURATION FILES (13/7/16 BANFF WITH FIT BIAS AND RUN17c FINAL) 
+$config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17c_final.xml"  unless defined $config_file;
+
+# NEW CONFIGURATION FILES (5/7/16 BANFF WITH FIT BIAS AND RUN17c FLUX AND RUN17b FLUX TUNING) 
+# $config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_AddRun7c.xml"  unless defined $config_file;
+
+# NEW CONFIGURATION FILES (4/6/16 BANFF WITH FIT BIAS AND RUN17b FLUX)
+#$config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml"  unless defined $config_file;
+
+# NEW CONFIGURATION FILES (1/6/16 BANFF WITH FIT BIAS AND RUN16 FLUX)
+# $config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17.xml"  unless defined $config_file;
+
 # NEW CONFIGURATION FILES (14/3/16 BANFF WITH FIT BIAS)
-#
-$config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
+#$config_file    = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml"  unless defined $config_file;
 
 #$nexpts          = 10000  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
-#$nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
-$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
+#$nexpts          = 35  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) FIX sinsqth23 and dmsq
+$nexpts          = 70  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) USED 
+#$nexpts          = 20  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D)  
+#$nexpts          = 100  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) POSTERIOR
+#$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D)
 
-$first_expt      = 0   unless defined $first_expt; # first toy experiment id 
+$first_expt      = 0   unless defined $first_exp; # first toy experiment id 
 
 $dmsq23          = -999                    unless defined $dmsq23;
+#$dmsq23          = 2.5E-3                    unless defined $dmsq23;
 $dmsq12          = -999                     unless defined $dmsq12;
 $mix23           = -999                       unless defined $mix23;
+#$mix23           = 0.65                       unless defined $mix23;
 $mix13           = -999                      unless defined $mix13;
 #$mix13           = 0.028                     unless defined $mix13;
 $mix12           = -999                       unless defined $mix12;      
-#$deltacp         = 0.                      unless defined $deltacp;
-#$deltacp         = 1.570796                      unless defined $deltacp;
+#$deltacp         = -999                      unless defined $deltacp;
+#$deltacp         = 0.                      unless defined $deltacp; 
+$deltacp         = -1.351                      unless defined $deltacp;
+#$deltacp         = -1.791                      unless defined $deltacp;
 #$deltacp         = -1.570796                      unless defined $deltacp;
-$deltacp         = 3.141                      unless defined $deltacp;
+#$deltacp         = +1.570796                      unless defined $deltacp;
+#$deltacp         = 3.14159265358979312            unless defined $deltacp;
 $betaBar         = 1.                          unless defined $betaBar;
 
 #
@@ -195,7 +225,7 @@ $betaBar         = 1.                          unless defined $betaBar;
 # $betaBar         = 1.                            unless defined $betaBar;
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # toys for mass hierarchy in fake data sets
-$masshierarchy   = "normal"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
+$masshierarchy   = "inverted"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
 
 $dmsqscheme      = "auto"                      unless defined $dmsqscheme;
 $mixparamscheme  = "sinsqtheta"                unless defined $mixparamscheme;
@@ -217,10 +247,12 @@ if( !defined $cput ) {
 ############################ Toy generation ################################
 $hypothesis             = "3f_osc"             unless defined $hypothesis;  
 #$hypothesis            = "3f_osc_normbar"     unless defined $hypothesis;
-$do_toys                = 0                   unless defined $do_toys;
+$do_toys                = 1                   unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-$fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
-#$fakedata_root_file    = "../outputs/test/PROVA/SKAsimov_A_Run16.root" unless defined $fakedata_root_file;
+$fakedata_root_file     = "data_run1to7/SKdata_Run17.root" unless defined $fakedata_root_file;
+#$fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
+#$fakedata_root_file    = "data_run1to6/Asimov_A_Run16.root" unless defined $fakedata_root_file;
+#$fakedata_root_file    = "data_run1to6/Asimov_B_Run16.root" unless defined $fakedata_root_file;
 $fakedata_xml_file      = ""                   unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
@@ -243,13 +275,36 @@ $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist; # s
 #$fitparamlist   = "nuosc3f_normbar+nuisance"  unless defined $fitparamlist; # nuebar appearance analysis  /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
 
 #
+# NEW MARGINALIZATION FILES (BANFF RELEASE 13/7/16 WITH FIT BIAS, RUN17c FINAL)
+#
+$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_dcp_react_NH_10kToys/joint_deltaCP_run17c_react_NH_10kToys" unless defined $file_margtoys_nh;
+$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FINAL_13_7_16/joint_dcp_react_IH_10kToys/joint_deltaCP_run17c_react_IH_10kToys" unless defined $file_margtoys_ih;  
+
+#
+# NEW MARGINALIZATION FILES (BANFF RELEASE 5/7/16 WITH FIT BIAS, RUN17c BANFF and RUN17b FLUX)
+#
+#$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FLUXRUN17b_5_7_16/joint_dcp_react_NH_10kToys/joint_deltaCP_run17c_react_NH_10kToys" unless defined $file_margtoys_nh;
+#$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17c_FLUXRUN17b_5_7_16/joint_dcp_react_IH_10kToys/joint_deltaCP_run17c_react_IH_10kToys" unless defined $file_margtoys_ih; 
+
+#
+# NEW MARGINALIZATION FILES (BANFF RELEASE 1/6/16 WITH FIT BIAS AND RUN17b FLUX)  
+#
+#$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17_NEWFLUX_4_6_16/joint_dcp_react_NH_10kToys/joint_deltaCP_run17_react_NH_elike_10kToys" unless defined $file_margtoys_nh;
+#$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17_NEWFLUX_4_6_16/joint_dcp_react_IH_10kToys/joint_deltaCP_run17_react_IH_elike_10kToys" unless defined $file_margtoys_ih;
+
+#
+# NEW MARGINALIZATION FILES (BANFF RELEASE 1/6/16 WITH FIT BIAS AND RUN16 FLUX)  
+#
+#$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17_OLDFLUX_1_6_16/joint_dcp_react_NH_10kToys/joint_deltaCP_run17_react_NH_elike_10kToys" unless defined $file_margtoys_nh;
+#$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/2D_FITBIAS_RUN17_OLDFLUX_1_6_16/joint_dcp_react_IH_10kToys/joint_deltaCP_run17_react_IH_elike_10kToys" unless defined $file_margtoys_ih;
+
+#
 # NEW MARGINALIZATION FILES (BANFF RELEASE 14/3/16 WITH FIT BIAS)
 #
-
 #$file_margtoys_nh = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys_nh;
 #$file_margtoys_ih = "/mnt/lnec/davides/VALOR/results/Template2D_BANFF_FITBIAS_14_3_16/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $file_margtoys_ih;
-$file_margtoys_nh = "../TECH_NOTE_14_3_16/MARGTOYS/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys_nh;
-$file_margtoys_ih = "../TECH_NOTE_14_3_16/MARGTOYS/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $file_margtoys_ih;
+#$file_margtoys_nh = "../TECH_NOTE_14_3_16/MARGTOYS/joint_dcp_react_NH_10kToys/joint_deltaCP_niwg2015c_react_NH_10kToys" unless defined $file_margtoys_nh;
+#$file_margtoys_ih = "../TECH_NOTE_14_3_16/MARGTOYS/joint_dcp_react_IH_10kToys/joint_deltaCP_niwg2015c_react_IH_10kToys" unless defined $file_margtoys_ih;
 
 #$nfiles_margtoys   = 1           unless defined $nfiles_margtoys; # of marginalization files
 #$nfiles_margtoys   = 2           unless defined $nfiles_margtoys; # of marginalization files
@@ -737,7 +792,9 @@ while($i_freepar1 < $n_freepar1) {
 		print PBS "#!/bin/bash -l  \n";
 		#print PBS "#SBATCH --partition=dphys_compute_wk  \n";
 		#print PBS "#SBATCH --partition=dphys_compute  \n";
-		print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=2000  \n"; # in MB. Same as dphys_largemem default RAM    
+		print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=3000  \n"; # in MB. More than dphys_largemem default RAM to get less jobs in the same node    
+		#print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=2000  \n"; # in MB. Same as dphys_largemem default RAM  
+		#print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=2000 --exclusive  \n"; # in MB. Same as dphys_largemem default RAM (EXCLUSIVE MODE)    
 		#print PBS "#SBATCH --partition=dphys_largemem  \n";
 		#print PBS "#SBATCH --partition=dphys_largemem --mem-per-cpu=4000  \n";
 		print PBS "#SBATCH --nodes=1  \n";
@@ -749,8 +806,8 @@ while($i_freepar1 < $n_freepar1) {
 		close(PBS);
 		#`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 1-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
-		#`sbatch -t 10:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
-		`sbatch -t 07:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
+		`sbatch -t 10:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
+		#`sbatch -t 07:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`; # Feldman-Cousins dcp Vs MH
 		#`sbatch -t 05:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
 		#`sbatch -t 00:15:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fc-$irun.sbatch`;
