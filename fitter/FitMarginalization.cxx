@@ -51,26 +51,7 @@
 //#define __USE_PRIOR_SINSQ2TH23__  // We don't use PDG
 //
 
-// NEW FHC+RHC JOINT
-#ifdef __NUMUONLY__
-#define __USE_1RMU_IN_CHISQ__
-#define __USE_RHC1RMU_IN_CHISQ__
-#else // Joint fit and NuEApp
-#define __USE_1RMU_IN_CHISQ__
-#define __USE_RHC1RMU_IN_CHISQ__
-#define __USE_1RE_IN_CHISQ__
-#define __USE_RHC1RE_IN_CHISQ__
-#endif // __NUMUONLY__
-//
-#if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
-#  if defined(__MULTIRING_FHC_NUE__)
-#  define __USE_1RMU_IN_CHISQ__
-#  define __USE_RHC1RMU_IN_CHISQ__
-#  define __USE_1RE_IN_CHISQ__
-#  define __USE_RHC1RE_IN_CHISQ__
-#  define __USE_MULTIRE_IN_CHISQ__
-#  endif
-#endif
+
 
 #include <cassert>
 #include <cstdlib>
@@ -107,6 +88,23 @@
 #include "FitMarginalization.h"
 
 #include <TSystemDirectory.h>
+
+// NEW FHC+RHC JOINT
+#if defined(__MULTIRING_FHC_RUNNING__) && defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__) && defined(__MULTIRING_FHC_NUE__)
+//CCPi fit
+#define __USE_1RMU_IN_CHISQ__
+#define __USE_RHC1RMU_IN_CHISQ__
+#define __USE_1RE_IN_CHISQ__
+#define __USE_RHC1RE_IN_CHISQ__
+#define __USE_MULTIRE_IN_CHISQ__
+#else //JointFit
+#define __USE_1RMU_IN_CHISQ__
+#define __USE_RHC1RMU_IN_CHISQ__
+#define __USE_1RE_IN_CHISQ__
+#define __USE_RHC1RE_IN_CHISQ__
+#endif
+
+
 
 using std::cout;
 using std::cerr;
@@ -2215,10 +2213,10 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 
 
     
-#ifdef __print_array_toy_fillchisq__
-    cout << "chisq = " << chisq << " - like = " << like << endl; 
-    cout << endl;
-#endif
+//#ifdef __print_array_toy_fillchisq__
+//    cout << "chisq = " << chisq << " - like = " << like << endl; 
+//    cout << endl;
+//#endif
 
     vec_chisq_toy.push_back(chisq); // NEW PRECISION
     
@@ -2629,10 +2627,17 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
   os_toys.write( (char*)&NDim       ,sizeof(int));
   os_toys.write( (char*) this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->GetDimensions() ,sizeof(int)*6); // Max # of dimensions is 6 for VALORArray
   os_toys.write( (char*) this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->GetArray(), Size*sizeof(float) ); // It's a VALORArrayF
-  os_toys.close();
+
+  // FHC MuliRing e-like
+  NDim = this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetNDim();
+  Size = this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetSize(-1);
+  os_toys.write( (char*)&NDim       ,sizeof(int));
+  os_toys.write( (char*) this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetDimensions() ,sizeof(int)*6); // Max # of dimensions is 6 for VALORArray
+  os_toys.write( (char*) this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetArray(), Size*sizeof(float) ); // It's a VALORArrayF
 
   //
-  
+  os_toys.close();
+
   
   cout << " - Toy for marginalization are stored in " << soutname << endl;
 
@@ -2837,6 +2842,15 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
   os_toys.write( (char*)&NDim       ,sizeof(int));
   os_toys.write( (char*) this->GetToyMargVArraySample_Clone(kSKsRHCFCFV1RingMuLike)->GetDimensions() ,sizeof(int)*6); // Max # of dimensions is 6 for VALORArray
   os_toys.write( (char*) this->GetToyMargVArraySample_Clone(kSKsRHCFCFV1RingMuLike)->GetArray(), Size*sizeof(float) ); // It's a VALORArrayF
+  
+  // FHC Multi Ring e-like
+  NDim = this->GetToyMargVArraySample_Clone(kSKsFCFVMultiRingELike)->GetNDim();
+  Size = this->GetToyMargVArraySample_Clone(kSKsFCFVMultiRingELike)->GetSize(-1);
+  os_toys.write( (char*)&NDim       ,sizeof(int));
+  os_toys.write( (char*) this->GetToyMargVArraySample_Clone(kSKsFCFVMultiRingELike)->GetDimensions() ,sizeof(int)*6); // Max # of dimensions is 6 for VALORArray
+  os_toys.write( (char*) this->GetToyMargVArraySample_Clone(kSKsFCFVMultiRingELike)->GetArray(), Size*sizeof(float) ); // It's a VALORArrayF
+  
+
   os_toys.close();
 
   //
@@ -3066,9 +3080,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   Size = this->GetToyMargVArraySample(kSKsFCFV1RingELike)->GetSize(-1);  
   is_toys.read( (char*)GetToyMargVArraySample(kSKsFCFV1RingELike)->GetArray(),Size*sizeof(float));
 
+  
   // 1Rmu
-  //cout << "1Rmu" << endl;
-#ifndef __USE_2D_TEMPLATES__  
+#ifndef __USE_2D_TEMPLATES__
   this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->Resize(1,1,1,1);
 #else
   this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->Resize(1,1,1,1,1);
@@ -3083,7 +3097,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   is_toys.read( (char*)GetToyMargVArraySample(kSKsFCFV1RingMuLike)->GetArray(),Size*sizeof(float));
   
   // RHC1Re
-#ifndef __USE_2D_TEMPLATES__  
+#ifndef __USE_2D_TEMPLATES__
   this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->Resize(1,1,1,1);
 #else
   this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->Resize(1,1,1,1,1);
@@ -3098,7 +3112,7 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   is_toys.read( (char*)GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->GetArray(),Size*sizeof(float));
   
   // RHC1Rmu
-#ifndef __USE_2D_TEMPLATES__  
+#ifndef __USE_2D_TEMPLATES__
   this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->Resize(1,1,1,1);
 #else
   this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->Resize(1,1,1,1,1);
@@ -3112,8 +3126,26 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   Size = this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->GetSize(-1);  
   is_toys.read( (char*)GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->GetArray(),Size*sizeof(float));
   
+  //FHC MultiRing E
+//  cout << "MultiRe" << endl;
+#ifndef __USE_2D_TEMPLATES__
+  this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->Resize(1,1,1,1);
+#else
+  this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->Resize(1,1,1,1,1);
+#endif
+  int ndim_MultiRe = 0;
+  int dims_MultiRe[6] = {};
+  is_toys.read( (char*)&ndim_MultiRe  ,sizeof(int));
+  is_toys.read( (char*)dims_MultiRe   ,sizeof(int)*6);
+  fToyMargVArray_MultiRe = new VALORArrayF(ndim_MultiRe,dims_MultiRe);
+  NDim = this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetNDim();
+  Size = this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetSize(-1);
+  is_toys.read( (char*)GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetArray(),Size*sizeof(float));
+
+
   is_toys.close();
 
+  
   //
 
 
@@ -4685,12 +4717,12 @@ void FitMarginalization::MergeInputFiles(){
     fToyMargVArray_Clone_1Rmu    = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Rmu,    nbins_q2_1Rmu);
     fToyMargVArray_Clone_RHC1Re  = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Re,  nbins_q2_RHC1Re);
     fToyMargVArray_Clone_RHC1Rmu = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Rmu, nbins_q2_RHC1Rmu);
-    fToyMargVArray_Clone_MultiRe = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_MultiRe,     nbins_q2_MultiRe);
+    fToyMargVArray_Clone_MultiRe = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_MultiRe, nbins_q2_MultiRe);
     
-    fToyMargVArray_Clone_1Re    ->SetAll(-1.);
-    fToyMargVArray_Clone_1Rmu   ->SetAll(-1.);
-    fToyMargVArray_Clone_RHC1Re ->SetAll(-1.);
-    fToyMargVArray_Clone_RHC1Rmu->SetAll(-1.);
+    fToyMargVArray_Clone_1Re     ->SetAll(-1.);
+    fToyMargVArray_Clone_1Rmu    ->SetAll(-1.);
+    fToyMargVArray_Clone_RHC1Re  ->SetAll(-1.);
+    fToyMargVArray_Clone_RHC1Rmu ->SetAll(-1.);
     fToyMargVArray_Clone_MultiRe ->SetAll(-1.);
 #endif
 
