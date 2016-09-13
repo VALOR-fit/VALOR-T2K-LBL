@@ -4038,10 +4038,10 @@ static const int kRHCnwspl1Re = kNumOfRHCXSecSystWghtSpl1Re; // as above - short
 
 
 /// NEW MULTIRING
-static const int kNumOfXSecSystWghtSplMultiRmu = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBinsMultiRmu * kXsNEtrueBins;
+static const int kNumOfXSecSystWghtSplMultiRmu = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBinsMultiRmu * kXsNEtrueBins * kXsNQ2BinsMultiRmu;
 static const int knwsplMultiRmu = kNumOfXSecSystWghtSplMultiRmu; // as above - shorter name                                                                            
 
-static const int kNumOfXSecSystWghtSplMultiRe = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBinsMultiRe * kXsNEtrueBins;
+static const int kNumOfXSecSystWghtSplMultiRe = kNSuperkModes * kNumOfXSecSyst * kXsNErecoBinsMultiRe * kXsNEtrueBins * kXsNQ2BinsMultiRe;
 static const int knwsplMultiRe = kNumOfXSecSystWghtSplMultiRe; // as above - shorter name
 ////
 
