@@ -82,63 +82,68 @@ parameters = [
 
 ]
 
-modes = [
-  ( ''                , ''                  ) ,
-  ( '_numuccqe'        , "_sm_numu_ccqe"      ) ,  
-  ( '_numucc1pi'       , "_sm_numu_cc1pi"     ) ,
-  ( '_numucccoh'       , "_sm_numu_cccoh"     ) ,
-  ( '_numuccmec'       , "_sm_numu_mec"       ) ,
-  ( '_numuccoth'       , "_sm_numu_ccoth"     ) ,
-  ( '_numunc1piC'      , "_sm_numu_ncpipm"    ) ,
-  ( '_numunc1pi0'      , "_sm_numu_ncpi0"     ) ,
-  ( '_numunccoh'       , "_sm_numu_nccoh"     ) ,
-  ( '_numuncoth'       , "_sm_numu_ncoth"     ) ,
-  ( '_numunc1gamma'    , "_sm_numu_nc1gamma"  ) , # Adding missing NC 1gamma
+if single :
+  modes = [
+           ( ''                 , ''                  )
+           ]
+else :
+  modes = [
+           ( ''                , ''                  ) ,
+		  ( '_numuccqe'        , "_sm_numu_ccqe"      ) ,  
+		  ( '_numucc1pi'       , "_sm_numu_cc1pi"     ) ,
+		  ( '_numucccoh'       , "_sm_numu_cccoh"     ) ,
+		  ( '_numuccmec'       , "_sm_numu_mec"       ) ,
+		  ( '_numuccoth'       , "_sm_numu_ccoth"     ) ,
+		  ( '_numunc1piC'      , "_sm_numu_ncpipm"    ) ,
+		  ( '_numunc1pi0'      , "_sm_numu_ncpi0"     ) ,
+		  ( '_numunccoh'       , "_sm_numu_nccoh"     ) ,
+		  ( '_numuncoth'       , "_sm_numu_ncoth"     ) ,
+		  ( '_numunc1gamma'    , "_sm_numu_nc1gamma"  ) , # Adding missing NC 1gamma
 
-  ( '_numubarccqe'     , "_sm_numub_ccqe"     ) ,
-  ( '_numubarcc1pi'    , "_sm_numub_cc1pi"    ) ,
-  ( '_numubarcccoh'    , "_sm_numub_cccoh"    ) ,
-  ( '_numubarccmec'    , "_sm_numub_mec"      ) ,
-  ( '_numubarccoth'    , "_sm_numub_ccoth"    ) ,
-  ( '_numubarnc1piC'   , "_sm_numub_ncpipm"   ) ,
-  ( '_numubarnc1pi0'   , "_sm_numub_ncpi0"    ) ,
-  ( '_numubarnccoh'    , "_sm_numub_nccoh"    ) ,
-  ( '_numubarncoth'    , "_sm_numub_ncoth"    ) ,
-  ( '_numubarnc1gamma' , "_sm_numub_nc1gamma" ) , # Adding missing NC 1gamma  
+		  ( '_numubarccqe'     , "_sm_numub_ccqe"     ) ,
+		  ( '_numubarcc1pi'    , "_sm_numub_cc1pi"    ) ,
+		  ( '_numubarcccoh'    , "_sm_numub_cccoh"    ) ,
+		  ( '_numubarccmec'    , "_sm_numub_mec"      ) ,
+		  ( '_numubarccoth'    , "_sm_numub_ccoth"    ) ,
+		  ( '_numubarnc1piC'   , "_sm_numub_ncpipm"   ) ,
+		  ( '_numubarnc1pi0'   , "_sm_numub_ncpi0"    ) ,
+		  ( '_numubarnccoh'    , "_sm_numub_nccoh"    ) ,
+		  ( '_numubarncoth'    , "_sm_numub_ncoth"    ) ,
+		  ( '_numubarnc1gamma' , "_sm_numub_nc1gamma" ) , # Adding missing NC 1gamma  
 
-  ( '_nueccqe'         , "_sm_nue_ccqe"       ) ,
-  ( '_nuecc1pi'        , "_sm_nue_cc1pi"      ) ,
-  ( '_nuecccoh'        , "_sm_nue_cccoh"      ) ,
-  ( '_nueccmec'        , "_sm_nue_mec"        ) ,
-  ( '_nueccoth'        , "_sm_nue_ccoth"      ) ,
-  ( '_nuenc1piC'       , "_sm_nue_ncpipm"     ) ,
-  ( '_nuenc1pi0'       , "_sm_nue_ncpi0"      ) ,
-  ( '_nuenccoh'        , "_sm_nue_nccoh"      ) ,
-  ( '_nuencoth'        , "_sm_nue_ncoth"      ) ,
-  ( '_nuenc1gamma'     , "_sm_nue_nc1gamma"   ) , # Adding missing NC 1gamma  
+		  ( '_nueccqe'         , "_sm_nue_ccqe"       ) ,
+		  ( '_nuecc1pi'        , "_sm_nue_cc1pi"      ) ,
+		  ( '_nuecccoh'        , "_sm_nue_cccoh"      ) ,
+		  ( '_nueccmec'        , "_sm_nue_mec"        ) ,
+		  ( '_nueccoth'        , "_sm_nue_ccoth"      ) ,
+		  ( '_nuenc1piC'       , "_sm_nue_ncpipm"     ) ,
+		  ( '_nuenc1pi0'       , "_sm_nue_ncpi0"      ) ,
+		  ( '_nuenccoh'        , "_sm_nue_nccoh"      ) ,
+		  ( '_nuencoth'        , "_sm_nue_ncoth"      ) ,
+		  ( '_nuenc1gamma'     , "_sm_nue_nc1gamma"   ) , # Adding missing NC 1gamma  
 
-  ( '_oscnueccqe'      , "_sm_signue_ccqe"    ) ,
-  ( '_oscnuecc1pi'     , "_sm_signue_cc1pi"   ) ,
-  ( '_oscnuecccoh'     , "_sm_signue_cccoh"   ) ,
-  ( '_oscnueccmec'     , "_sm_signue_mec"     ) ,
-  ( '_oscnueccoth'     , "_sm_signue_ccoth"   ) ,
+		  ( '_oscnueccqe'      , "_sm_signue_ccqe"    ) ,
+		  ( '_oscnuecc1pi'     , "_sm_signue_cc1pi"   ) ,
+		  ( '_oscnuecccoh'     , "_sm_signue_cccoh"   ) ,
+		  ( '_oscnueccmec'     , "_sm_signue_mec"     ) ,
+		  ( '_oscnueccoth'     , "_sm_signue_ccoth"   ) ,
 
-  ( '_nuebarccqe'      , "_sm_nueb_ccqe"      ) ,
-  ( '_nuebarcc1pi'     , "_sm_nueb_cc1pi"     ) ,
-  ( '_nuebarcccoh'     , "_sm_nueb_cccoh"     ) ,
-  ( '_nuebarccmec'     , "_sm_nueb_mec"       ) ,
-  ( '_nuebarccoth'     , "_sm_nueb_ccoth"     ) ,
-  ( '_nuebarnc1piC'    , "_sm_nueb_ncpipm"    ) ,
-  ( '_nuebarnc1pi0'    , "_sm_nueb_ncpi0"     ) ,
-  ( '_nuebarnccoh'     , "_sm_nueb_nccoh"     ) ,
-  ( '_nuebarncoth'     , "_sm_nueb_ncoth"     ) ,
-  ( '_nuebarnc1gamma'  , "_sm_nueb_nc1gamma"  ) , # Adding missing NC 1gamma  
+		  ( '_nuebarccqe'      , "_sm_nueb_ccqe"      ) ,
+		  ( '_nuebarcc1pi'     , "_sm_nueb_cc1pi"     ) ,
+		  ( '_nuebarcccoh'     , "_sm_nueb_cccoh"     ) ,
+		  ( '_nuebarccmec'     , "_sm_nueb_mec"       ) ,
+		  ( '_nuebarccoth'     , "_sm_nueb_ccoth"     ) ,
+		  ( '_nuebarnc1piC'    , "_sm_nueb_ncpipm"    ) ,
+		  ( '_nuebarnc1pi0'    , "_sm_nueb_ncpi0"     ) ,
+		  ( '_nuebarnccoh'     , "_sm_nueb_nccoh"     ) ,
+		  ( '_nuebarncoth'     , "_sm_nueb_ncoth"     ) ,
+		  ( '_nuebarnc1gamma'  , "_sm_nueb_nc1gamma"  ) , # Adding missing NC 1gamma  
 
-  ( '_oscnuebarccqe'   , "_sm_signueb_ccqe"   ) ,
-  ( '_oscnuebarcc1pi'  , "_sm_signueb_cc1pi"  ) ,
-  ( '_oscnuebarcccoh'  , "_sm_signueb_cccoh"  ) ,
-  ( '_oscnuebarccmec'  , "_sm_signueb_mec"    ) ,
-  ( '_oscnuebarccoth'  , "_sm_signueb_ccoth"  ) ]
+		  ( '_oscnuebarccqe'   , "_sm_signueb_ccqe"   ) ,
+		  ( '_oscnuebarcc1pi'  , "_sm_signueb_cc1pi"  ) ,
+		  ( '_oscnuebarcccoh'  , "_sm_signueb_cccoh"  ) ,
+		  ( '_oscnuebarccmec'  , "_sm_signueb_mec"    ) ,
+		  ( '_oscnuebarccoth'  , "_sm_signueb_ccoth"  ) ]
 
 line_colors = dict()
 line_colors["m1"] = ROOT.kViolet
@@ -379,6 +384,7 @@ if __name__=="__main__":
 
   parser.add_argument('-t', '--tag', dest='tag', help='oscillated or unoscillated')
   parser.add_argument('-r', '--valor-sample', dest='sample', help='valor sample')
+  parser.add_argument('-f', '--full-spectrum', dest='single', help='only draw full spectrum comparison')
   
   args = parser.parse_args()
 
