@@ -27,8 +27,9 @@
 #include "valor/Oscillation/OscParams.h"
 #include "valor/CmdLine/RunOpt_TO_DELETE.h"
 #include "valor/Utilities/Env.h"
-#include "valor/Conventions/PhysHypothesisId.h"
+#include "Conventions/PhysHypothesisId.h"
 
+#include "TMath.h"
 #include "TROOT.h"
 #include "TRandom3.h"
 #include "TSystem.h"
@@ -51,6 +52,8 @@ public:
     Print(cout);
   }
   ~MyRunOpt() {}
+
+
   void   Print (ostream & stream, const int w = 40) const {
     RunOpt::Print(stream, w);
     stream << "Macro-specific running options:" << endl
@@ -67,8 +70,17 @@ public:
       if (s == conv::kSKsUndefined) continue;
       stream << " - " << setw(w) << Form("Add extra points to %s:", util::AsStringCompact(s).c_str()) << (fExtra[is].empty() ? "NONE" : fExtra[is].c_str()) << endl;
     }
+    stream << "Super-K samples to calculate the likelihood weights (penalty term):" << endl;
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s == conv::kSKsUndefined) continue;
+      stream << " - " << setw(w) << "Use " << util::AsStringCompact(s) << ": " << (fUseSKsampleWeight[is] ? "YES" : "NO") << endl;
+    }
     stream << endl;
+
   }
+
+
   int      ToySeed        () { return fToySeed; }
   bool     SaveAsROOT     () { return fSaveAsROOT; }
   bool     SaveAsXML      () { return fSaveAsXML; }
@@ -76,6 +88,7 @@ public:
   string   XMLExtraFile   () { return fXMLExtra; }
   int      XMLExtraId     () { return fXMLExtraId; }
   string ExtraPoints(int is) { return fExtra[is]; }
+  bool   UseSKsampleWeight(int is){ return fUseSKsampleWeight[is]; }
 private:
   int    fToySeed;
   bool   fSaveAsROOT;
@@ -84,7 +97,8 @@ private:
   string fXMLExtra;
   int    fXMLExtraId;
   string fExtra[kns];
-
+  bool   fUseSKsampleWeight[kns];
+  
   void Init() {
     RunOpt::Init();
     fToySeed        = 0;
@@ -93,11 +107,14 @@ private:
     fSaveFluctInXML = true;
     fXMLExtra       = "";
     fXMLExtraId     = 0;
-    for(int is = 0; is < kns; is++)
+    for(int is = 0; is < kns; is++){
       fExtra[is] = "";
+      fUseSKsampleWeight[is] = false;
+    }
   }
   void ReadFromCommandLine(int argc, char ** argv, int parseopt) {
     RunOpt::ReadFromCommandLine(argc, argv, parseopt);
+
     if(fParser->OptionExists("toy-random-seed"))
       fToySeed = fParser->ArgAsInt("toy-random-seed");
     if(fParser->OptionExists("enable-save-as-root"))
@@ -110,8 +127,10 @@ private:
       fSaveAsXML = false;
     if(fParser->OptionExists("enable-save-fluct-in-xml"))
       fSaveFluctInXML= true;
+
     else if(fParser->OptionExists("disable-save-fluct-in-xml"))
       fSaveFluctInXML= false;
+
     if(fParser->OptionExists("xml-file-to-add"))
       fXMLExtra = util::FormFilePath(fParser->ArgAsString("xml-file-to-add").c_str(), "data");
     if(fParser->OptionExists("xml-to-add-dataset-id"))
@@ -122,6 +141,19 @@ private:
       if(fParser->OptionExists(Form("--points-to-add-%s:", util::AsStringCompact(s).c_str())))
 	fExtra[is] = fParser->ArgAsString(Form("--points-to-add-%s:", util::AsStringCompact(s).c_str()));
     }//is
+
+
+    
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s == conv::kSKsUndefined) continue;
+      string parse_option = Form("calc-weight-%s", util::AsStringCompact(s).c_str());
+      if(fParser->OptionExists(parse_option)){
+	fUseSKsampleWeight[is] = true; //
+	//cout << util::AsStringCompact(s) << endl;
+      }
+    }//is
+
   }
   void Usage(const int w = 40) {
     RunOpt::Usage(w);
@@ -139,9 +171,36 @@ private:
       if (s == conv::kSKsUndefined) continue;
       cout << " " << setw(w) << Form("--points-to-add-%s:", util::AsStringCompact(s).c_str()) << "List of data-points to add eg. E1:q1,E2:q2,E3:q3" << endl;
     }
+
+    cout << "Super-K samples to calculate the likelihood weights (penalty term):" << endl;
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s == conv::kSKsUndefined) continue;
+      cout << " - " << setw(w) << "Use " << util::AsStringCompact(s) << ": " << (fUseSKsampleWeight[is] ? "YES" : "NO") << endl;
+    }
+
     cout << endl;
   }
 };
+
+
+double calc_chisq(TH2D* hobs, TH2D* hexp){
+  int nbins_x = hobs->GetNbinsX();
+  int nbins_y = hobs->GetNbinsY();
+  double chisq = 0;
+  
+  for(int i=1;i<= nbins_x;i++)
+    {
+      for(int j=1;j<= nbins_y;j++)
+	{
+	  double obs = hobs->GetBinContent(i,j);
+	  double exp = hexp->GetBinContent(i,j);
+	  chisq += valor::util::ChisqPoisson(obs,exp);
+	}
+    } 
+  return chisq;
+}
+
 
 int main(int argc, char ** argv)
 {
@@ -150,8 +209,10 @@ int main(int argc, char ** argv)
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
-  MyRunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParse3FOscParams);
+  MyRunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParse3FOscParams );
 
+  //
+  
   TRandom3 rand(runopt.ToySeed()); //random number to see where inside a bin a toy is generated
 
   // Extra points to add to the toy dataset(s)
@@ -214,10 +275,70 @@ int main(int argc, char ** argv)
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(runopt.ConfigFile().c_str());
 
+
+
+  // Initialize likelihood weight histogram (used as penalty term) 
+  
+  TH1D *hChisqWeight = new TH1D("hChisqWeight","hChisqWeight",4000,0,400);
+  //TH1D *hLikeWeight = new TH1D("hLikeWeight","hLikeWeight",4000,0,0.000000000001);
+  
+  // Data files
+  
+  TH2D *h_data_1rmu;
+  TH2D *h_data_1re;
+  TH2D *h_data_rhc1rmu;
+  TH2D *h_data_rhc1re;
+  
+  string rootfile = runopt.PathFileData();
+  TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile.c_str()));
+  SuperkObservation * skobs_fakedata = new SuperkObservation;
+  TFile *infile;
+  cout << endl;
+  cout << " - use root file" << rootfile2 << endl;
+  cout << endl;
+  infile = new TFile(rootfile2.Data(),"READ");
+  if(!infile->IsOpen()){
+    cout << endl;
+    cout << "The data root file doesn't exist: don't draw data spectra" << endl;
+    cout << endl;
+    infile->Close();
+  }
+  conv::SuperkSample_t s_1rmu    = util::SKSampleFromString("1Rmu"); 
+  conv::SuperkSample_t s_1re     = util::SKSampleFromString("1Re"); 
+  conv::SuperkSample_t s_rhc1rmu = util::SKSampleFromString("RHC1Rmu"); 
+  conv::SuperkSample_t s_rhc1re  = util::SKSampleFromString("RHC1Re"); 
+  
+  //int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
+  bool using_xml_file = false;
+  int exp_id = 0;
+  skobs_fakedata->Read(rootfile2.Data(),exp_id,using_xml_file);
+  h_data_1rmu    = (TH2D*) skobs_fakedata->TwoDSpectrum(s_1rmu)   ->Clone("h_data_1rmu");
+  h_data_1re     = (TH2D*) skobs_fakedata->TwoDSpectrum(s_1re)    ->Clone("h_data_1re");
+  h_data_rhc1rmu = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1rmu)->Clone("h_data_rhc1rmu");
+  h_data_rhc1re  = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1re) ->Clone("h_data_rhc1re"); 
+  
+  cout << endl;
+  cout << "Take data set from: " << runopt.PathFileData() << endl;
+  cout << "# of events of Super-K samples:" << endl;
+  cout << " - 1Rmu: "    << h_data_1rmu->Integral() << endl;
+  cout << " - 1Re: "     << h_data_1re->Integral() << endl;
+  cout << " - RHC1Rmu: " << h_data_rhc1rmu->Integral() << endl;
+  cout << " - RHC1Re: "  << h_data_rhc1re->Integral() << endl;
+  cout << endl;
+  
+  //
+ 
+
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
-  for(int iexperiment = runopt.FirstExperiment(), last_experiment = runopt.LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
-     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
+  
+  //for(int iexperiment = runopt.FirstExperiment(), last_experiment = runopt.LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
+  
+  int iexperiment = runopt.FirstExperiment();
+  int last_experiment = runopt.LastExperiment();
+  while( iexperiment <= last_experiment ){
+    
+    cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
 
      // Generate mock data
      cout << "- Generating toy-MC..." << endl;
@@ -261,27 +382,89 @@ int main(int argc, char ** argv)
 
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, runopt.StatFluctuations());
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
-       if(applied_negevents_condition)
-	 weird_applied_neg++;
+       if(applied_negevents_condition) weird_applied_neg++;
      }//applied_negevents_condition
+
 
      //Get the spectra
 #ifndef __USE_2D_TEMPLATES__ //1D templates
      TH1D * mock_data[kns];
+     TH1D * mock_exp_data[kns];
+     TH1D * data_real[kns];
 #else
      TH2D * mock_data[kns];
+     TH2D * mock_exp [kns];
+     TH2D * data_real[kns];
+#endif
+    //Get exp data
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+    TH1D * exp_data[kns];
+#else
+    TH2D * exp_data[kns];
 #endif
      for (int is = 0 ; is < conv::kns ; is++) {
        SuperkSample_t s = conv::kSKSamples[is];
        if (s == conv::kSKsUndefined) continue;
 #ifndef __USE_2D_TEMPLATES__ //1D templates
        mock_data[is] = skobs->ErecoSpectrum(s);
+       mock_exp[is]  = skexp->CurrPredictedErecoSpectrum(s);
 #else
        mock_data[is] = skobs->TwoDSpectrum(s);
+       mock_exp[is]  = skexp->CurrPredictedErecoVsQ2Spectrum(s);
 #endif
+#ifndef __USE_2D_TEMPLATES__
+       exp_data[is] = skexp->CurrPredictedErecoSpectrum(s);
+#else
+       exp_data[is] = skexp->CurrPredictedErecoVsQ2Spectrum(s);
+#endif
+       exp_data[is]->SetDirectory(0);
        mock_data[is]->SetDirectory(0);
-     }//is
-      
+       mock_exp[is] ->SetDirectory(0);
+     }
+     
+     // Get the data
+     data_real[s_1rmu]    = h_data_1rmu;
+     data_real[s_1re]     = h_data_1re;
+     data_real[s_rhc1rmu] = h_data_rhc1rmu;
+     data_real[s_rhc1re]  = h_data_rhc1re;
+
+     
+     // Calculate likelihood weights based on the real data set
+  
+     double toy_weight = 1.;
+     double toy_chisq = 0.;
+     
+     for (int is = 0 ; is < conv::kns ; is++) {
+       SuperkSample_t s = conv::kSKSamples[is];
+       if (s == conv::kSKsUndefined) continue;
+
+
+       if(runopt.UseSKsampleWeight(is)){
+	 toy_chisq += calc_chisq(data_real[is],mock_exp[is]);    
+	 
+	 // cout << util::AsString(s) << ": " 
+	 //      << data_real[is]->Integral() << " - "
+	 //      << mock_data[is]->Integral() << " - "
+	 //      << mock_exp[is]->Integral() << endl;
+	 // cout << "chisq = " << calc_chisq(data_real[is],mock_exp[is]) << endl;
+       }
+     }
+     toy_weight = TMath::Exp(-1*toy_chisq/2);
+
+     double unif_weight = rand.Uniform(0,1);
+     
+     if(toy_weight<unif_weight){
+       
+       cout << "like_unif = " << unif_weight << " > " << "like_weight = " << toy_weight << " --> reject toy" << endl;
+ 
+       continue; // if like_fakedata < like_rndm --> reject the toy
+     }
+
+     //cout << "toy_chisq = " << toy_chisq << endl;
+     //cout << "toy_weight = " << toy_weight << endl;
+
+     hChisqWeight->Fill(toy_chisq);
+     
      // If an XML file was specified, add an entry
      if(runopt.SaveAsXML()) {
 
@@ -316,12 +499,14 @@ int main(int argc, char ** argv)
        f->cd();
 
        for (int is = 0 ; is < conv::kns ; is++) {
-	 SuperkSample_t s = conv::kSKSamples[is];
-	 if (s == conv::kSKsUndefined) continue;
-	 mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
-	 delete mock_data[is];
+         SuperkSample_t s = conv::kSKSamples[is];
+         if (s == conv::kSKsUndefined) continue;
+         mock_data[is]->Write(Form("mock_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+         delete mock_data[is];
+         exp_data[is]->Write(Form("exp_data_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+         delete exp_data[is];
        }//is
-            
+       
        // Object for storing input oscillation and nuisance params in each toy-MC
        PhysParamList * iparm = new PhysParamList;
        iparm->Clear();
@@ -336,7 +521,13 @@ int main(int argc, char ** argv)
        delete iparm;
      }//save to ROOT file
 
+     iexperiment++;
+
   }//iexperiment
+
+
+  hChisqWeight->Write();
+
 
   //
   // Close files
@@ -363,5 +554,6 @@ int main(int argc, char ** argv)
   sw.Stop();
   sw.Print();
 }
+
 
 
