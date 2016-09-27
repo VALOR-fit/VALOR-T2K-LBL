@@ -27,7 +27,7 @@
 #include "valor/Oscillation/OscParams.h"
 #include "valor/CmdLine/RunOpt_TO_DELETE.h"
 #include "valor/Utilities/Env.h"
-#include "Conventions/PhysHypothesisId.h"
+#include "valor/Conventions/PhysHypothesisId.h"
 
 #include "TMath.h"
 #include "TROOT.h"
@@ -342,7 +342,7 @@ int main(int argc, char ** argv)
 
      // Generate mock data
      cout << "- Generating toy-MC..." << endl;
-     SuperkObservation * skobs = new SuperkObservation;
+     SuperkObservation * skobs = new SuperkObservation();
      PhysHypothesis ph(runopt.Hypothesis());
 
 

@@ -56,11 +56,11 @@
 #include "AnalysisOptions.h"
 #include "FitMarginalization.h"
 
-#include "Utilities/UtlForMacros.h"
-#include "Utilities/OscParams.h"
-#include "Utilities/RunOpt.h"
-#include "Utilities/Env.h"
-#include "Conventions/PhysHypothesisId.h"
+#include "valor/Utilities/UtlForMacros.h"
+#include "valor/Oscillation/OscParams.h"
+#include "valor/CmdLine/RunOpt_TO_DELETE.h"
+#include "valor/Utilities/Env.h"
+#include "valor/Conventions/PhysHypothesisId.h"
 
 #include "TROOT.h"
 #include "TRandom3.h"
@@ -468,7 +468,7 @@ int main(int argc, char ** argv)
     
     // Generate mock data
      cout << "- Generating toy-MC..." << endl;
-     SuperkObservation * skobs_fakedata = new SuperkObservation;
+     SuperkObservation * skobs_fakedata = new SuperkObservation();
      PhysHypothesis ph(runopt->Hypothesis());
 
      util::OscParams::Instance()->Print(cout);

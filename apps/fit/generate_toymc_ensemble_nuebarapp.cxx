@@ -26,12 +26,12 @@
 #include "Build.h"
 #include "UtlForMacrosT2XK.h"
 
-#include "Utilities/UtlForMacros.h"
-#include "Utilities/OscParams.h"
-#include "Utilities/RunOpt.h"
-#include "Utilities/Env.h"
-#include "Utilities/Rnd.h"
-#include "Conventions/PhysHypothesisId.h"
+#include "valor/Utilities/UtlForMacros.h"
+#include "valor/Oscillation/OscParams.h"
+#include "valor/CmdLine/RunOpt_TO_DELETE.h"
+#include "valor/Utilities/Env.h"
+#include "valor/Utilities/Rnd.h"
+#include "valor/Conventions/PhysHypothesisId.h"
 
 #include "TROOT.h"
 #include "TRandom3.h"
@@ -244,7 +244,7 @@ int main(int argc, char ** argv)
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(runopt->ConfigFile().c_str());
   
-  SuperkObservation * skobs_data = new SuperkObservation;
+  SuperkObservation * skobs_data = new SuperkObservation();
   
   if(!runopt->DoToys()){
     for (int is = 0 ; is < conv::kns ; is++) {
@@ -283,7 +283,7 @@ int main(int argc, char ** argv)
     
     // Generate mock data
     cout << "- Generating toy-MC..." << endl;
-    SuperkObservation * skobs = new SuperkObservation;
+    SuperkObservation * skobs = new SuperkObservation();
     PhysHypothesis ph(runopt->Hypothesis());
     
     
