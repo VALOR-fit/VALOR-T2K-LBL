@@ -65,6 +65,7 @@ public:
   
   //  *** T2K LEGACY INTERFACE ***
   bool Read(string config_file, int data_set_id, bool is_xml = true);
+  bool ReadSample(string config_file, int data_set_id, bool is_xml = true, valor::conv::SuperkSample_t readsample = conv::kSKsUndefined);
 
   // Create mock data
   bool CreateMockData(SuperkExpectation & exp, const FitParamList & fp,   bool fluctuate=true) {return Generate(&exp,fp,fluctuate);};

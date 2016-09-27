@@ -336,6 +336,214 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
   return true;
 }
 //________________________________________________________________________________________
+bool SuperkObservation::ReadSample(string config_file, int data_set_id, bool is_xml, valor::conv::SuperkSample_t readsample)
+{
+  std::cout << "Obs >> " << "Reading data file: " << config_file << " for sample "
+  << util::AsString(readsample) << std::endl;
+  
+  if(is_xml) {
+    // Parse the input configuration file
+    TXMLEngine* xml = new TXMLEngine;
+    XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
+    if (xmldoc==0) {
+      cerr << "SKObs/Read >> " << "Can not parse input: " << config_file << endl;
+      delete xml;
+      exit(1);
+    }
+    XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+    
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s==kSKsUndefined || s!= readsample) continue;
+#ifdef __show_read_events_mesg_debug__
+      cout << "Obs >> Read: Reading events for sample: " << util::AsString(s) << endl;
+#endif
+      ostringstream datanode;
+      datanode << "superk/observation";
+      datanode << "/data_set_" << data_set_id;
+      datanode << "/"<<util::GetXMLDatasetName(s);
+      
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+      datanode << "/"<<util::GetXMLDatasetParamsName();
+      
+      if(util::NodeExists(xml,root_node,datanode.str())) {
+        TH1D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s));
+        h.SetDirectory(0);
+        vector<double> values = util::XML2DblArray(xml,root_node,datanode.str());
+        vector<double>::const_iterator value_iter = values.begin();
+        for( ; value_iter != values.end(); ++value_iter) {
+          double Ereco = *value_iter;
+          h.Fill(Ereco);
+        }
+        cout << "Obs >> Read: " << h.Integral()
+        << " " << util::AsString(s) << " events." << endl;
+        for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+          double nobs = h.GetBinContent(ibin);
+          fErDistrArray[is]->GetArray()[ibin-1] = nobs;
+        }
+      }
+      else {
+        cerr << "Obs >> Node " << datanode.str() << " does not exist!" << endl;
+      }
+#else //2D templates
+      //first get the number of events
+      int nevents = 0;
+      {
+        ostringstream datanodetmp;
+        datanodetmp << datanode.str();
+        datanodetmp << "/nevents";
+        if(util::NodeExists(xml,root_node,datanodetmp.str())) {
+          nevents = util::XML2Int(xml,root_node,datanodetmp.str());
+        }
+        else {
+          cerr << "Obs >> Node " << datanodetmp.str() << " does not exist!" << endl;
+        }
+      }
+      //now get each event
+      datanode << "/"<<util::GetXMLDatasetParamsName();
+      TH2D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s), util::NumQ2Bins(s), util::Q2BinEdges(s));
+      h.SetDirectory(0);
+      for(int iev = 0; iev < nevents; iev++) {
+        ostringstream datanodetmp;
+        datanodetmp << datanode.str();
+        datanodetmp << "/ev" << iev;
+        if(util::NodeExists(xml,root_node,datanodetmp.str())) {
+          pair<double,double> values = util::XML2DblDblPair(xml,root_node,datanodetmp.str());
+          double Ereco = values.first;
+          double Q2    = values.second;
+#ifdef __show_read_events_mesg_debug__
+          cout << "Obs >> Read: event " << iev
+          << " " << f2DDistrArray[is]->GetDimensionName(0) << " = " << Ereco
+          << " " << f2DDistrArray[is]->GetDimensionName(1) << " = " << Q2
+          << endl;
+#endif
+          h.Fill(Ereco, Q2);
+        }
+        else {
+          cerr << "Obs >> Node " << datanodetmp.str() << " does not exist!" << endl;
+        }
+      }//iev
+      cout << "Obs >> Read: " << h.Integral()
+      << " " << util::AsString(s) << " events." << endl;
+      for(int ibinx = 1; ibinx <= util::NumErecoBins(s); ibinx++) {
+        for(int ibiny = 1; ibiny <= util::NumQ2Bins(s); ibiny++) {
+          double nobs = h.GetBinContent(ibinx, ibiny);
+          f2DDistrArray[is]->SetEntry(nobs, ibinx-1, ibiny-1);
+        }//ibinx
+      }//ibiny
+#endif //__USE_2D_TEMPLATES__
+      
+    } // is
+    
+    // Release memory
+    xml->FreeDoc(xmldoc);
+    delete xml;
+  }//is_xml
+  
+  else {
+    
+    TFile f(config_file.c_str());
+    
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+    TH1D * hist = 0;
+#else
+    TH2D * hist = 0;
+#endif
+    
+    if(!f.IsOpen()){
+      cerr << endl;
+      cerr << "File " << config_file.c_str() << " is not defined" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      
+      //select which histograms to read in
+#if !defined(__FHC_RUNNING__)
+      //skip the FHC samples
+      if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike) continue;
+#endif
+#if !defined(__RHC_RUNNING__)
+      //skip the RHC samples
+      if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike) continue;
+#endif
+#if defined(__NUEONLY__)
+      //skip the mu-like samples
+      if(s == kSKsFCFV1RingMuLike || s == kSKsRHCFCFV1RingMuLike) continue;
+#endif
+#if defined(__NUMUONLY__)
+      //skip the e-like samples
+      if(s == kSKsFCFV1RingELike || s == kSKsRHCFCFV1RingELike) continue;
+#endif
+      
+      if (s==kSKsUndefined || s!= readsample) continue;
+      
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+      else if(s == conv::kSKsRHCFCFV1RingMuLike) hist = (TH1D*) f.Get(Form("mock_data_RHC1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsRHCFCFV1RingELike)	 hist = (TH1D*) f.Get(Form("mock_data_RHC1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingELike)   	 hist = (TH1D*) f.Get(Form("mock_data_1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingMuLike)	 hist = (TH1D*) f.Get(Form("mock_data_1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsFCFVMultiRingELike)	 hist = (TH1D*) f.Get(Form("mock_data_MultiRe_%d",data_set_id));
+#else //2D templates
+      else if(s == conv::kSKsRHCFCFV1RingMuLike) hist = (TH2D*) f.Get(Form("mock_data_RHC1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsRHCFCFV1RingELike)	 hist = (TH2D*) f.Get(Form("mock_data_RHC1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingELike)	 hist = (TH2D*) f.Get(Form("mock_data_1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingMuLike) 	 hist = (TH2D*) f.Get(Form("mock_data_1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsFCFVMultiRingELike)	 hist = (TH2D*) f.Get(Form("mock_data_MultiRe_%d",data_set_id));
+
+#endif
+      else {
+        cerr << endl;
+        cerr << "Used SK sample " << util::AsString(s) << " not available" << endl;
+        cerr << endl;
+        exit(1);
+      }
+      
+      if(!hist) {
+        cerr << "Obs >> Histogram for " << util::AsString(s) << " does not exist!" << endl;
+        if(s == conv::kSKsFCFV1RingMuLike)
+        cerr << "Obs >> Need histogram name " << Form("mock_data_1Rmu_%d",data_set_id) << endl;
+        else if(s == conv::kSKsRHCFCFV1RingMuLike)
+        cerr << "Obs >> Need histogram name " << Form("mock_data_RHC1Rmu_%d",data_set_id) << endl;
+        else if(s == conv::kSKsFCFV1RingELike)
+        cerr << "Obs >> Need histogram name " << Form("mock_data_1Re_%d",data_set_id) << endl;
+        else if(s == conv::kSKsRHCFCFV1RingELike)
+        cerr << "Obs >> Need histogram name " << Form("mock_data_RHC1Re_%d",data_set_id) << endl;
+        else if(s == conv::kSKsFCFVMultiRingELike)
+        cerr << "Obs >> Need histogram name " << Form("mock_data_MultiRe_%d",data_set_id) << endl;
+        else{
+          cerr << "Obs >> Histogram sample not defined" << endl;
+          exit(1);
+        }
+        exit(1);
+      }
+      
+      
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+      for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+        double nobs = hist->GetBinContent(ibin);
+        fErDistrArray[is]->GetArray()[ibin-1] = nobs;
+      }
+#else //2D templates
+      
+      for(int ibinx = 1; ibinx <= util::NumErecoBins(s); ibinx++) {
+        for(int ibiny = 1; ibiny <= util::NumQ2Bins(s); ibiny++) {
+          // histogram convention (Q2,Ereco) is opposite of VALORArray's one (Ereco,Q2)
+          double nobs = hist->GetBinContent(ibiny, ibinx);
+          f2DDistrArray[is]->SetEntry(nobs, ibinx-1, ibiny-1);
+        }//ibiny
+      }//ibinx
+      
+#endif //__USE_2D_TEMPLATES__
+      
+    }//is
+  }//!is_xml
+  
+  return true;
+}
+//________________________________________________________________________________________
 double SuperkObservation::NumOfEvents(SuperkSample_t s) const
 {
   double nev = 0;
