@@ -6,26 +6,27 @@
 */
 //________________________________________________________________________________________
 
-//#define __print_oscparam_all__ // print extracted osc param for both NH and IH
+#define __print_oscparam_all__ // print extracted osc param for both NH and IH
 //#define __print_oscparam_all_verbose__ // print extracted osc param used in osc prob
 //#define __print_masshierarchy__
 //#define __print_oscparam_marginalized__
 //#define __print_build_map_fileid__
 //#define __print_array_toy_maketoys__
 //#define __print_array_toy_maketoys_verbose__
-//#define __print_like_toy_fillchisq__
-//#define __print_array_toy_fillchisq__
-//#define __print_array_toy_fillchisq_verbose__
+// #define __print_like_toy_fillchisq__
+// #define __print_array_toy_fillchisq__
+// #define __print_array_toy_fillchisq_verbose__
 //#define __print_array_toy_merge__
 //#define __print_systematic_variations__
 //#define __print_chisqmarg__
 //#define __print_chisqmarg_ptval__
 //#define __print_chisqmarg_tstopwatch__
 //#define __print_chisqmarg_changebinary__
-//#define __readtoys_debug__
+// #define __readtoys_debug__
 //#define __print_minimization_steps__ //
 //#define __print_hesseerror__
 //#define __print_hesseerror_verbose__
+//#define __show_each_experiment__
 
 //#define FILL_TREE_OSCPARAM_TOYS
 
@@ -271,6 +272,12 @@ FitMarginalization::FitMarginalization()
   fhPriorMH = 0;
   fhToyMH = 0;
   
+  //NuEBarAppHisto
+  for(int i = 0;i<2;i++){
+      fNuEAppHisto[i] = 0;
+      fNuEAppHistoUnscaled[i] = 0;
+  }
+  
   // NEW PENALTY TERM
   fpenalty_mean0 = 0.;
   fpenalty_mean1 = 0.;
@@ -497,8 +504,8 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
 
   // NEW PRECISION
   fhchisq_marg_2D = new TH2D("hchisq_marg_2D","hchisq_marg_2D",
-                             fnbins_param[0],fmin_param[0]-fstep_param[0]/2.,fmax_param[0]+fstep_param[0]/2.,
-                             fnbins_param[1],fmin_param[1]-fstep_param[1]/2.,fmax_param[1]+fstep_param[1]/2. );
+			     fnbins_param[0],fmin_param[0]-fstep_param[0]/2.,fmax_param[0]+fstep_param[0]/2.,
+			     fnbins_param[1],fmin_param[1]-fstep_param[1]/2.,fmax_param[1]+fstep_param[1]/2. );
   // 
   fhchisq_marg_2D->GetXaxis()->SetTitle(Xtitle);
   fhchisq_marg_2D->GetYaxis()->SetTitle(Ytitle);
@@ -510,13 +517,37 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   cout << "Y: BinCenter(1) = " << fhchisq_marg_2D->GetYaxis()->GetBinCenter(1) << endl;
   cout << "Y: BinCenter(Nbins) = " << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fnbins_param[1]) << endl;
   
-  fhdeltachisq_marg_1D = 0;
-  fhdeltachisq_marg_2D = 0; 
+  
+  //fhdeltachisq_marg_1D = 0;
+  //fhdeltachisq_marg_2D = 0; 
+  fhdeltachisq_marg_1D = (TH1D*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D"); 
+  fhdeltachisq_marg_1D->Reset(); 
+  fhdeltachisq_marg_1D->SetName("fhdeltachisq_marg_1D");
+  fhdeltachisq_marg_1D->SetTitle("fhdeltachisq_marg_1D");
+  fhdeltachisq_marg_2D = (TH2D*) fhchisq_marg_2D->Clone("fhdeltachisq_marg_2D"); 
+  fhdeltachisq_marg_2D->Reset(); 
+  fhdeltachisq_marg_2D->SetName("fhdeltachisq_marg_2D");
+  fhdeltachisq_marg_2D->SetTitle("fhdeltachisq_marg_2D");
 
+  fhchisq_marg_1D_Step = (TH1D*)fhchisq_marg_1D->Clone("hchisq_marg_1D_Step"); 
+  fhchisq_marg_1D_Step->Reset();
+  fhchisq_marg_1D_Step->SetName("hchisq_marg_1D_Step");
+  fhchisq_marg_1D_Step->SetTitle("hchisq_marg_1D_Step");
+  fhchisq_marg_2D_Step = (TH2D*)fhchisq_marg_2D->Clone("hchisq_marg_2D_Step"); 
+  fhchisq_marg_2D_Step->Reset();
+  fhchisq_marg_2D_Step->SetName("hchisq_marg_2D_Step");
+  fhchisq_marg_2D_Step->SetTitle("hchisq_marg_2D_Step");
 
   // NEW PENALTY TERM
   fhpenaltyterm_1D = (TH1D*) fhchisq_marg_1D->Clone("hpenaltyterm_1D");
+  fhpenaltyterm_1D->Reset();
+  fhpenaltyterm_1D->SetName("hpenaltyterm_1D");
+  fhpenaltyterm_1D->SetTitle("hpenaltyterm_1D");
   fhpenaltyterm_2D = (TH2D*) fhchisq_marg_2D->Clone("hpenaltyterm_2D");
+  fhpenaltyterm_2D->Reset();
+  fhpenaltyterm_2D->SetName("hpenaltyterm_2D");
+  fhpenaltyterm_2D->SetTitle("hpenaltyterm_2D");
+
   //
 
 
@@ -534,11 +565,11 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   for(int is=0;is<fNSKsamples;is++){
     SuperkSample_t s = this->GetSKSamples(is);
     cout << "   - " << util::AsStringCompact(s) 
-         << " - # bins ereco = " << this->fnerecobins->GetEntry(is)
+	 << " - # bins ereco = " << this->fnerecobins->GetEntry(is)
 #ifdef __USE_2D_TEMPLATES__
-         << " - # bins q2 = " << this->fnq2bins->GetEntry(is) // NEW 2D TEMPLATES
+	 << " - # bins q2 = " << this->fnq2bins->GetEntry(is) // NEW 2D TEMPLATES
 #endif
-         << endl;
+	 << endl;
   }
   cout << "Max # of Ereco bins = " << fMaxSampleErecoBins << endl;
 #ifdef __USE_2D_TEMPLATES__
@@ -611,8 +642,14 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   fLastMinimBin_Y = fhchisq_marg_2D->GetNbinsY();
 
   // Set the default map
-  fhmap_chisqrange_fileid_1D = (TH1I*) fhchisq_marg_1D->Clone("hmap_chisqrange_fileid_1D");
-  fhmap_chisqrange_fileid_2D = (TH2I*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
+  fhmap_chisqrange_fileid_1D = (TH1D*) fhchisq_marg_1D->Clone("hmap_chisqrange_fileid_1D");
+  fhmap_chisqrange_fileid_1D->Reset();
+  fhmap_chisqrange_fileid_1D->SetName("hmap_chisqrange_fileid_1D");
+  fhmap_chisqrange_fileid_1D->SetTitle("hmap_chisqrange_fileid_1D");
+  fhmap_chisqrange_fileid_2D = (TH2D*) fhchisq_marg_2D->Clone("hmap_chisqrange_fileid_2D");
+  fhmap_chisqrange_fileid_2D->Reset();
+  fhmap_chisqrange_fileid_2D->SetName("hmap_chisqrange_fileid_2D");
+  fhmap_chisqrange_fileid_2D->SetTitle("hmap_chisqrange_fileid_2D");
 
   fCurrentFileIDminim = conv::kBadResult; // current file ID during the chisq minimization process
 
@@ -637,7 +674,16 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   
   fhToyMH = new TH1D("hToyMH","Toy MH: bin 1 --> NH, bin 2 --> IH",2,0,2);
 
-  fStoreLikeWeights = false; // don't store the full likelihood befault
+  fStoreLikeWeights = false; // don't store the full likelihood by default
+  
+  //NuEApp Raj
+    for(int i = 0;i<2;i++){
+      if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined){
+      fNuEAppHisto[i] = new TH1D(Form("NuEBarAppHisto_%d",i),Form("Expected NuEBar Events; BetaBar bin %d",i),25000,0,25);
+      fNuEAppHistoUnscaled[i] = new TH1D(Form("NuEBarAppHistoUnscaled_%d",i),Form("Expected NuEBar Events Unscaled; BetaBar bin %d",i),25000,0,25);
+      }
+    }
+  
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetStoreLikeWeights(bool doStoreLikeWeights){
@@ -721,6 +767,18 @@ void FitMarginalization::CleanUp(void){
   if (treetoys                         ) { delete treetoys                         ; treetoys                = 0;}  // NEW OSC TREE
   if (filetreetoys                     ) { delete filetreetoys                     ; filetreetoys            = 0;}  // NEW OSC TREE
 #endif
+  
+  //NuEBarApp
+  for(int i=0;i<2;i++){
+      if(fNuEAppHisto[i]){
+      delete fNuEAppHisto[i];
+      fNuEAppHisto[i] = 0;
+      }
+      if(fNuEAppHistoUnscaled[i]){
+      delete fNuEAppHistoUnscaled[i];
+      fNuEAppHistoUnscaled[i] = 0;
+      }
+    }
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetFullRange(){
@@ -1214,9 +1272,9 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     for(int ip = 0; ip < np_print; ip++) {
       conv::PhysParamId_t p = fparm_ih->WhichParam(ip);
       if(util::IsSystematic(p)) continue; // not oscillation parameters 
-                                                                        
+									
       // NEW FHC+RHC JOINT
-       //cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->InitValue(p) << endl;
+      //cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->InitValue(p) << endl;
       cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->CurrValue(p) << endl;
       //
     }
@@ -1863,8 +1921,9 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
     } // ipar0 (free parameter)
   }
 
-  NtoysTot = fntoys_marg * 2;
-
+  NtoysTot = fntoys_marg;
+  //NtoysTot = fntoys_marg * 2; // Used when MH was hard-coded set with prior of 0.5
+  
   cout << endl;
   cout << "# of scanned free parameters 0: " << NparTot0 << endl; 
   cout << "# of scanned free parameters 1: " << NparTot1 << endl; 
@@ -1907,6 +1966,16 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
   //
   
   fNCallsCalcChisqMargPt++;
+  
+  
+  if(fPhysParamFree[0] == kPhypBetaBar && fPhysParamFree[1] == kPhypUndefined && fteststatistic == "rate-only")
+  {
+    double bincont =  this->FillExpectedNuEBarAppHisto(skobs_data, iterpar0, readbinary);
+    if(bincont<kAVerySmallNum)bincont = kAVerySmallNum;
+    fChisqMargVArray->SetEntry(bincont,iterpar0,iterpar1);
+    if(!fIsFit2D) fhchisq_marg_1D->SetBinContent(iterpar0+1,bincont);
+    return bincont;
+  }
   
   // Read binary file
   if(readbinary){ 
@@ -2122,28 +2191,29 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 
 #ifndef __USE_2D_TEMPLATES__
       for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-        
-        // NEW 2D TEMPLATES (VARRAY)
-        //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ib);
-        double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ib);
-        //
-        
-        cout << bincont * (double)fNormPOT[is] << " "; 
-        nexp += bincont;
+	
+	// NEW 2D TEMPLATES (VARRAY)
+	//double bincont = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ib);
+	double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ib);
+	//
+	
+	cout << bincont * (double)fNormPOT[is] << " "; 
+	nexp += bincont * (double)fNormPOT[is];
       }
 #else
       // NEW 2D TEMPLATES
       for(int ibEreco = 0; ibEreco < util::NumErecoBins(s); ibEreco++){
-        for(int ibQ2 = 0; ibQ2 < util::NumQ2Bins(s); ibQ2++){
-          
-          // NEW 2D TEMPLATES (VARRAY)
-          //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibEreco,ibQ2);
-          double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibEreco,ibQ2);
-          //
-          
-          cout << bincont * (double)fNormPOT[is] << " "; 
-          nexp += bincont;
-        }
+	for(int ibQ2 = 0; ibQ2 < util::NumQ2Bins(s); ibQ2++){
+	  
+	  // NEW 2D TEMPLATES (VARRAY)
+	  //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibEreco,ibQ2);
+	  double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibEreco,ibQ2);
+	  //
+	  
+	  cout << bincont * (double)fNormPOT[is] << " "; 
+	  nexp += bincont * (double)fNormPOT[is];
+	}
+	cout << endl;
       }
       //
 #endif
@@ -2172,6 +2242,8 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
     if(this->fStoreLikeWeights){
       flikeToyVArray->AddToEntry(liketoy,iterpar0,iterpar1,iexperiment); // this is correct if binary files differ only for free param sub-ranges
     }
+
+
 
 
 #ifdef __print_like_toy_fillchisq__
@@ -2213,10 +2285,10 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 
 
     
-//#ifdef __print_array_toy_fillchisq__
-//    cout << "chisq = " << chisq << " - like = " << like << endl; 
-//    cout << endl;
-//#endif
+#ifdef __print_array_toy_fillchisq__
+    cout << "chisq = " << chisq << " - like = " << liketoy << endl; 
+    cout << endl;
+#endif
 
     vec_chisq_toy.push_back(chisq); // NEW PRECISION
     
@@ -3345,13 +3417,13 @@ void FitMarginalization::MinimizeHisto(){
   cout << endl;
 
   if(!fIsFit2D){
-    fchisq_bf = fhchisq_marg_1D->GetMinimum();
+    fchisq_bf = fhchisq_marg_1D->GetBinContent(fhchisq_marg_1D->GetMinimumBin());
     minbin = fhchisq_marg_1D->GetMinimumBin();
     fparam_bf[0] = fhchisq_marg_1D->GetBinCenter(minbin);
     fparam_bf[1] = conv::kBadResult;
   }
   else{
-    fchisq_bf = fhchisq_marg_2D->GetMinimum();
+    fchisq_bf = fhchisq_marg_2D->GetBinContent(fhchisq_marg_2D->GetMinimumBin());
     fhchisq_marg_2D->GetMinimumBin(minbinX,minbinY,minbinZ);
     fparam_bf[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(minbinX);
     fparam_bf[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(minbinY);
@@ -3363,10 +3435,11 @@ void FitMarginalization::MinimizeHisto(TH1D *hInChisqMarg){ // NEW PRECISION
   
   int minbin = conv::kBadResult;
   
-  fchisq_bf = hInChisqMarg->GetMinimum();
+  fchisq_bf = hInChisqMarg->GetBinContent(hInChisqMarg->GetMinimumBin());
   minbin = hInChisqMarg->GetMinimumBin();
   fparam_bf[0] = hInChisqMarg->GetBinCenter(minbin);
-  
+  fparam_bf[1] = conv::kBadResult;
+
   return;
 }
 //________________________________________________________________________________________
@@ -3374,7 +3447,7 @@ void FitMarginalization::MinimizeHisto(TH2D *hInChisqMarg){ // NEW PRECISION
   
   int minbin = conv::kBadResult;
   
-  fchisq_bf = hInChisqMarg->GetMinimum();
+  fchisq_bf = hInChisqMarg->GetBinContent(hInChisqMarg->GetMinimumBin());
   minbin = hInChisqMarg->GetMinimumBin();
   fparam_bf[0] = hInChisqMarg->GetXaxis()->GetBinCenter(minbin);
   fparam_bf[1] = hInChisqMarg->GetYaxis()->GetBinCenter(minbin);
@@ -3597,10 +3670,16 @@ void FitMarginalization::BuildDeltaChisqMarg()
   
   // 1D
   if(!fIsFit2D){
-    fhdeltachisq_marg_1D = (TH1D*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D"); // NEW PRECISION
-    
+    // fhdeltachisq_marg_1D = (TH1D*) fhchisq_marg_1D->Clone("fhdeltachisq_marg_1D"); // NEW PRECISION
+    // //fhdeltachisq_marg_1D->Reset(); // don't reset because must contain all the values of hchisq
+    // fhdeltachisq_marg_1D->SetName("fhdeltachisq_marg_1D");
+    // fhdeltachisq_marg_1D->SetTitle("fhdeltachisq_marg_1D");
+
     for(int ibin=0;ibin<fhdeltachisq_marg_1D->GetNbinsX();ibin++){
-      double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin+1);
+      
+      //double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin+1);
+      double bincont = fhchisq_marg_1D->GetBinContent(ibin+1);
+      
       if(bincont>0.){
         bincont -= this->GetChisqBestFit();
       }
@@ -3625,7 +3704,8 @@ void FitMarginalization::BuildDeltaChisqMarg()
     for(int ibinX=0;ibinX<fhdeltachisq_marg_2D->GetNbinsX();ibinX++){
       for(int ibinY=0;ibinY<fhdeltachisq_marg_2D->GetNbinsY();ibinY++){
 
-        double bincont = fhdeltachisq_marg_2D->GetBinContent(ibinX+1,ibinY+1);
+        //double bincont = fhdeltachisq_marg_2D->GetBinContent(ibinX+1,ibinY+1);
+        double bincont = fhchisq_marg_2D->GetBinContent(ibinX+1,ibinY+1);
         if(bincont>0.){
           bincont -= this->GetChisqBestFit();
         }
@@ -4105,18 +4185,18 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm)
     //bool fdoMarginalize = true;
     
     if(p!=fPhysParamFree[0]) 
-      infparm->SetDoMarg(fPhysParamFree[0],true); 
+      infparm->SetDoMarg(p,true); 
     else{
-      infparm->SetDoMarg(fPhysParamFree[0],false);  // Do not marginalize if free parameter 
+      infparm->SetDoMarg(p,false);  // Do not marginalize if free parameter 
       continue; 
     }
     
     if(fIsFit2D){
       if(p!=fPhysParamFree[1]) 
-        infparm->SetDoMarg(fPhysParamFree[1],true); 
+	infparm->SetDoMarg(p,true); 
       else{
-        infparm->SetDoMarg(fPhysParamFree[1],false);  // Do not marginalize if free parameter
-        continue; 
+	infparm->SetDoMarg(p,false);  // Do not marginalize if free parameter
+	continue; 
       }
     }
 
@@ -4887,7 +4967,7 @@ void FitMarginalization::MergeInputFiles(){
 
             // NEW 2D TEMPLATES (VARRAY)
             //double bincont = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ib);
-            double bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ib);
+            float bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ib);
             //
             
             cout << bincont << " "; 
@@ -4899,7 +4979,7 @@ void FitMarginalization::MergeInputFiles(){
 
               // NEW 2D TEMPLATES (VARRAY)
               //double bincont = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ibEreco,ibQ2);
-              double bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ibEreco,ibQ2);
+              float bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ibEreco,ibQ2);
               //
 
               cout << bincont << " "; 
@@ -5226,18 +5306,25 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
   double bigvalueUOflow = 99999999.;  // NEW PRECISION
 
   // 1D
-  fhchisq_marg_1D_Step = (TH1D*)fhchisq_marg_1D->Clone("hchisq_marg_1D_Step"); // NEW PRECISION
+  // fhchisq_marg_1D_Step = (TH1D*)fhchisq_marg_1D->Clone("hchisq_marg_1D_Step"); // NEW PRECISION
+  // fhchisq_marg_1D_Step->Reset();
+  // fhchisq_marg_1D_Step->SetName("hchisq_marg_1D_Step");
+  // fhchisq_marg_1D_Step->SetTitle("hchisq_marg_1D_Step");
+  fhchisq_marg_1D_Step->Reset();
   for(int ibinX=0;ibinX<fhchisq_marg_1D_Step->GetNbinsX();ibinX++){
     fhchisq_marg_1D_Step->SetBinContent(ibinX+1,0.);
   }
   // Set under and over flow of X to very high value
-  for(int ibinX=0;ibinX<fhchisq_marg_1D->GetNbinsX();ibinX++){    
-    fhchisq_marg_1D->SetBinContent(0,bigvalueUOflow);
-    fhchisq_marg_1D->SetBinContent(fhchisq_marg_2D->GetNbinsX()+1,bigvalueUOflow);
-  }
+  fhchisq_marg_1D->SetBinContent(0,bigvalueUOflow);
+  fhchisq_marg_1D->SetBinContent(fhchisq_marg_1D->GetNbinsX()+1,bigvalueUOflow); // FIX
+  
 
   // 2D
-  fhchisq_marg_2D_Step = (TH2D*)fhchisq_marg_2D->Clone("hchisq_marg_2D_Step"); // NEW PRECISION
+  // fhchisq_marg_2D_Step = (TH2D*)fhchisq_marg_2D->Clone("hchisq_marg_2D_Step"); // NEW PRECISION
+  // fhchisq_marg_2D_Step->Reset();
+  // fhchisq_marg_2D_Step->SetName("hchisq_marg_2D_Step");
+  // fhchisq_marg_2D_Step->SetTitle("hchisq_marg_2D_Step");
+  fhchisq_marg_2D_Step->Reset();
   for(int ibinX=0;ibinX<fhchisq_marg_2D_Step->GetNbinsX();ibinX++){
     for(int ibinY=0;ibinY<fhchisq_marg_2D_Step->GetNbinsY();ibinY++){
       fhchisq_marg_2D_Step->SetBinContent(ibinX+1,ibinY+1,0.);
@@ -5995,18 +6082,24 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
   double bigvalueUOflow = 99999999.; // NEW PRECISION
 
   // 1D
-  fhchisq_marg_1D_Step = (TH1D*)fhchisq_marg_1D->Clone("hchisq_marg_1D_Step"); // NEW PRECISION
+  // fhchisq_marg_1D_Step = (TH1D*)fhchisq_marg_1D->Clone("hchisq_marg_1D_Step"); // NEW PRECISION
+  // fhchisq_marg_1D_Step->Reset();
+  // fhchisq_marg_1D_Step->SetName("hchisq_marg_1D_Step");
+  // fhchisq_marg_1D_Step->SetTitle("hchisq_marg_1D_Step");
+  fhchisq_marg_1D_Step->Reset();
   for(int ibinX=0;ibinX<fhchisq_marg_1D_Step->GetNbinsX();ibinX++){
     fhchisq_marg_1D_Step->SetBinContent(ibinX+1,0.);
   }
   // Set under and over flow of X to very high value
-  for(int ibinX=0;ibinX<fhchisq_marg_1D->GetNbinsX();ibinX++){    
-    fhchisq_marg_1D->SetBinContent(0,bigvalueUOflow);
-    fhchisq_marg_1D->SetBinContent(fhchisq_marg_2D->GetNbinsX()+1,bigvalueUOflow);
-  }
+  fhchisq_marg_1D->SetBinContent(0,bigvalueUOflow);
+  fhchisq_marg_1D->SetBinContent(fhchisq_marg_1D->GetNbinsX()+1,bigvalueUOflow); 
 
   // 2D
-  fhchisq_marg_2D_Step = (TH2D*)fhchisq_marg_2D->Clone("hchisq_marg_2D_Step"); // NEW PRECISION
+  // fhchisq_marg_2D_Step = (TH2D*)fhchisq_marg_2D->Clone("hchisq_marg_2D_Step"); // NEW PRECISION
+  // fhchisq_marg_2D_Step->Reset();
+  // fhchisq_marg_2D_Step->SetName("hchisq_marg_2D_Step");
+  // fhchisq_marg_2D_Step->SetTitle("hchisq_marg_2D_Step");
+  fhchisq_marg_2D_Step->Reset();
   for(int ibinX=0;ibinX<fhchisq_marg_2D_Step->GetNbinsX();ibinX++){
     for(int ibinY=0;ibinY<fhchisq_marg_2D_Step->GetNbinsY();ibinY++){
       fhchisq_marg_2D_Step->SetBinContent(ibinX+1,ibinY+1,0.);
@@ -7203,7 +7296,7 @@ void FitMarginalization::SetTagFileName(const char *tag){
 void FitMarginalization::SetFileID(int nfiles){
 
   cout << endl;
-  cout << "Build the map between the binary file ID and the free parameters sub-range" << endl;
+  cout << "Build the ma[p between the binary file ID and the free parameters sub-range" << endl;
   cout << endl;
   
   char namemh[256];
@@ -7513,7 +7606,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
       cerr << "Left extreme bin is higher than right extreme bin" << endl;
       cerr << "The 1sigma error interval is messed up:" << endl;
-      cerr << "bin_possigma_a = " << bin_possigma_a << endl;
+      cerr << "bin_possigma_b = " << bin_possigma_b << endl;
       cerr << "bin_negsigma_a = " << bin_negsigma_a << endl;
       cerr << endl;      
       util::Die(1);
@@ -8421,4 +8514,234 @@ double FitMarginalization::OscPhysicalRegion(conv::PhysParamId_t p,double oscval
   }
   
   return conv::kBadResult;
+}
+
+//NueBarapp RAJ
+double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_data,int iterpar0,bool readbinary){ // NEW PRECISION
+  
+#ifdef __print_chisqmarg_tstopwatch__
+  TStopwatch sw;
+#endif
+  if(fNuEAppHisto[iterpar0]->GetEntries()!=0){
+    std::cerr << "FitMarginalization/FillExpectedNuEBarAppHisto >> Histogram for beta bin: " << iterpar0
+              << " already filled. Reseting histograms."
+    << std::endl;
+    fNuEAppHisto[iterpar0]->Reset();
+    fNuEAppHistoUnscaled[iterpar0]->Reset();
+
+  }
+  
+  if(fPhysParamFree[0] != kPhypBetaBar || fPhysParamFree[1] != kPhypUndefined || fteststatistic != "rate-only")
+  {
+    std::cerr <<  "FitMarg::FillExpectedNuEBarAppHisto >> Par0 is not BetaBar or Par1 is not undefined. "
+    <<  "Can't deal with this" << std::endl;
+  }
+  
+  int iterpar1 = 0;
+  
+  // NEW SPECTRA MARG
+  // Set to 0 in case it has been already calculated before, for example when fabs(chisq)<1.E-8.
+  //flikeVArray->SetEntry(0.,iterpar0,iterpar1); // not used
+  //
+  
+  fNCallsCalcChisqMargPt++;
+  
+  // Read binary file
+  if(readbinary){
+    
+    // Get file ID corresponding to the input free parameters
+    
+    int fileid = GetFileIDRead(iterpar0,iterpar1);
+    const char *tag = ftagfile.c_str();
+    
+    if( (fCurrentFileIDminim==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
+      //if( (fileid==conv::kBadResult) || (fCurrentFileIDminim!=fileid) ){
+      
+#ifdef __print_chisqmarg_changebinary__
+      cout << endl;
+      cout << "Change binary file from " << fCurrentFileIDminim << " to " << fileid << endl;
+#endif
+      
+      fCurrentFileIDminim = fileid;
+      this->ReadToysFromBinary(fileid,tag);
+    }
+  }
+  
+  
+  for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
+    //cout << "toy=" << iexperiment << " - iterpar0 = " << iterpar0 << " - iterpar1 = " << iterpar1 << endl;
+    
+#ifdef __print_array_toy_fillchisq__
+    cout << endl;
+    cout << "Toy " << iexperiment << endl;
+    cout << endl;
+#endif
+    
+    // compute the likelihood for a single marginalization toy
+    double chisq = 0.;
+    
+    // Loop over the used SK samples
+    int iscount=0;
+    //for(int is = 0; is < kns; is++) {
+    //SuperkSample_t s = kSKSamples[is];
+    //if(s == kSKsUndefined) continue;
+    double NuEAppEvents= 0;
+    for(int is=0;is<fNSKsamples;is++){
+      SuperkSample_t s = this->GetSKSamples(is);
+      
+      
+      // NEW FHC+RHC JOINT
+      // Skip the sk samples which shouldn't be used in the chisq computation
+      bool usesample = this->UseSKSample(is);
+      if(!usesample){
+        iscount++; // Increase the sk-sample counter, otherwise at the next iteration it takes the wrong sample
+        continue;
+      }
+      //
+      if( fteststatistic=="rate-only"){
+        
+#ifdef __print_array_toy_fillchisq__
+        cout << util::AsString(s) << " --> # Ereco bins = " << util::NumErecoBins(s) << endl;
+#ifdef __USE_2D_TEMPLATES__
+        // NEW 2D TEMPLATES
+        cout << util::AsString(s) << " --> # Q2 bins = " << util::NumQ2Bins(s) << endl;
+        //
+#endif
+        double nobs_sample = 0.;
+        double chisq_sample = 0.;
+#endif
+        double nexp_sample = 0.;
+  
+        
+#ifndef __USE_2D_TEMPLATES__
+        
+        for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+          
+          // NEW PRECISION
+          
+          // NEW 2D TEMPLATES (VARRAY)
+          //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
+          double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibin);
+          //
+          
+          nexp *= (double)fNormPOT[is];
+          double nobs = (double)skobs_data->ErecoSpectrumArray(s)[ibin];
+          if(s != kSKsRHCFCFV1RingELike)
+            chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+          else
+            nexp_sample += nexp;                                                         //
+          
+#ifdef __print_array_toy_fillchisq__
+          nexp_sample += nexp;
+          nobs_sample += nobs;	  
+          chisq_sample += valor::util::ChisqPoisson(nobs,nexp);
+#endif
+
+        } // loop over ereco bins
+
+        
+        
+#else // __USE_2D_TEMPLATES__
+        
+        // NEW 2D TEMPLATES
+        
+        for(int ibinEreco=0;ibinEreco<util::NumErecoBins(s);ibinEreco++){
+          for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
+            
+            // NEW 2D TEMPLATES (VARRAY)
+            //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibinEreco,ibinQ2);
+            double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibinEreco,ibinQ2);
+            //
+            
+            nexp *= (double)fNormPOT[is];
+            double nobs = (double)skobs_data->TwoDSpectrumVArray(s)->GetEntry(ibinEreco,ibinQ2); // Maybe it's slower than the simple array --> TO CHECK
+            if(s != kSKsRHCFCFV1RingELike)
+              chisq += valor::util::ChisqPoisson(nobs,nexp); // penalty term is a simple constant --> not needed
+            else{
+              nexp_sample += nexp;
+            }
+#ifdef __print_array_toy_fillchisq__
+            nobs_sample += nobs;
+            chisq_sample += valor::util::ChisqPoisson(nobs,nexp);
+#endif
+          } // loop over q2 bins
+        } // loop over ereco bins
+          //
+#endif // __USE_2D_TEMPLATES__
+        
+#ifdef __print_array_toy_fillchisq__
+        cout << "# exp sample = " << nexp_sample << " - # obs sample = " << nobs_sample << " --> chisq sample = " << chisq_sample << " --> chisq tot = " << chisq << endl;
+#endif
+        if(s == kSKsRHCFCFV1RingELike)
+          NuEAppEvents = nexp_sample;
+
+      } // rate+shape
+      else{
+        cerr << endl;
+        cerr << "FitMarginalization::FillExpectedNuEBarAppHisto" << endl;
+        cerr << "The test statistic is not available here: " << fteststatistic << endl;
+        cerr << endl;
+        exit(1);
+      }
+      
+      iscount++;
+    } // loop SK samples
+    
+    for(int nuebarextraction_int=0;nuebarextraction_int < 10000;nuebarextraction_int++)
+    {
+    int NuEAppEvents_fill = Rnd::Instance()->RndToyMCstat().Poisson(NuEAppEvents);
+    fNuEAppHisto[iterpar0]->Fill(NuEAppEvents_fill,exp(-chisq/2.));
+    fNuEAppHistoUnscaled[iterpar0]->Fill(NuEAppEvents_fill);
+    }
+  } // iexperiment
+  
+  //Calculate data p-value
+  
+  SuperkSample_t s = kSKsRHCFCFV1RingELike;
+  double nobs_sample = 0;
+#ifndef __USE_2D_TEMPLATES__
+  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
+    
+    double nobs = (double)skobs_data->ErecoSpectrumArray(s)[ibin];
+    nobs_sample += nobs;
+    
+  } // loop over ereco bins
+#else // __USE_2D_TEMPLATES__
+  
+  // NEW 2D TEMPLATES
+  
+  for(int ibinEreco=0;ibinEreco<util::NumErecoBins(s);ibinEreco++){
+    for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
+      double nobs = (double)skobs_data->TwoDSpectrumVArray(s)->GetEntry(ibinEreco,ibinQ2); // Maybe it's slower than the simple array --> TO CHECK
+      nobs_sample += nobs;
+    } // loop over q2 bins
+  } // loop over ereco bins
+    //
+#endif // __USE_2D_TEMPLATES__
+  
+#ifdef __print_array_toy_fillchisq__
+  std::cout <<"FitMarg/FillExpectedNuEBarApp>> " << util::AsString(s) <<" - # obs  = " << nobs_sample << std::endl;
+#endif
+  
+  int obs_bin = fNuEAppHisto[iterpar0]->FindBin(nobs_sample);
+  
+  double p_value_tail = 0;
+  if(iterpar0 == 0){//Right tailed p value for beta=0 null hypothesis
+    p_value_tail =   fNuEAppHisto[iterpar0]->Integral(obs_bin,fNuEAppHisto[iterpar0]->GetNbinsX());
+  }
+  else{  //Use left tailed p value for beta=1 null hypothesis
+    p_value_tail =   fNuEAppHisto[iterpar0]->Integral(1,obs_bin);
+  }
+  
+  double p_value_integral = fNuEAppHisto[iterpar0]->Integral();
+  double p_value = p_value_tail/p_value_integral;
+  
+
+#ifdef __print_rate_only_pvalue__
+  std::cout << "FitMarg/FillExpectedNuEBarApp>> " << util::AsString(s) <<" Nevents: " << nobs_sample <<" P-Value: " << p_value
+            << " tail: " << p_value_tail << " integral: " << p_value_integral
+            << std::endl;
+#endif
+  return p_value;
+  
 }
