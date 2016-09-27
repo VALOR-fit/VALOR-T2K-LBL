@@ -6,7 +6,7 @@
 */
 //________________________________________________________________________________________
 
-#define __print_oscparam_all__ // print extracted osc param for both NH and IH
+//#define __print_oscparam_all__ // print extracted osc param for both NH and IH
 //#define __print_oscparam_all_verbose__ // print extracted osc param used in osc prob
 //#define __print_masshierarchy__
 //#define __print_oscparam_marginalized__

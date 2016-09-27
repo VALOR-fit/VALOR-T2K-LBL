@@ -392,8 +392,6 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   fitmarg->SetMaxIterationSingleFit(2);  // Max # of iterations per fit
   fitmarg->SetMaxFitNumber(3); // Max # of fits max # of iterations
   
-  fitmarg->SetTagFileName(runopt->Infilename().c_str());
-  fitmarg->SetFileID(runopt->Nfiles());
 
   ////// NEW FC
   if(masshier==""){
