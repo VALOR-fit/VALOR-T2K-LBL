@@ -280,11 +280,13 @@ bool SuperkObservation::Read(string config_file, int data_set_id, bool is_xml)
       else if(s == conv::kSKsRHCFCFV1RingELike)  hist = (TH1D*) f.Get(Form("mock_data_RHC1Re_%d",data_set_id));
       else if(s == conv::kSKsFCFV1RingELike)     hist = (TH1D*) f.Get(Form("mock_data_1Re_%d",data_set_id));
       else if(s == conv::kSKsFCFV1RingMuLike)    hist = (TH1D*) f.Get(Form("mock_data_1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsFCFVMultiRingELike) hist = (TH1D*) f.Get(Form("mock_data_MultiRe_%d",data_set_id));
 #else //2D templates
       else if(s == conv::kSKsRHCFCFV1RingMuLike) hist = (TH2D*) f.Get(Form("mock_data_RHC1Rmu_%d",data_set_id));
       else if(s == conv::kSKsRHCFCFV1RingELike)  hist = (TH2D*) f.Get(Form("mock_data_RHC1Re_%d",data_set_id));
       else if(s == conv::kSKsFCFV1RingELike)     hist = (TH2D*) f.Get(Form("mock_data_1Re_%d",data_set_id));
       else if(s == conv::kSKsFCFV1RingMuLike)    hist = (TH2D*) f.Get(Form("mock_data_1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsFCFVMultiRingELike) hist = (TH2D*) f.Get(Form("mock_data_MultiRe_%d",data_set_id));
 #endif
       else {
         cerr << endl;

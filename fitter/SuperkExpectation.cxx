@@ -366,6 +366,222 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   return true;
 }
 //________________________________________________________________________________________
+//Config file means data file here. Function reads dataset. Copied from SKObs
+//________________________________________________________________________________________
+bool SuperkExpectation::Read(string config_file, int data_set_id, bool is_xml)
+{
+  if (T2KOpt::Instance()->ReadXmlPath(config_file)) {
+    cerr << "SKExp/Read >> Unable to access data file: " << config_file << endl;
+    return false;
+  }
+  
+  cout << "Exp >> " << "Reading data file: " << config_file << endl;
+  
+  if(is_xml) {
+    // Parse the input configuration file
+    TXMLEngine* xml = new TXMLEngine;
+    XMLDocPointer_t xmldoc = xml->ParseFile(config_file.c_str());
+    if (xmldoc==0) {
+      cerr << "SKExp/Read >> " << "Can not parse input: " << config_file << endl;
+      delete xml;
+      exit(1);
+    }
+    XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
+    
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s==kSKsUndefined) continue;
+#ifdef __show_read_events_mesg_debug__
+      cout << "Exp >> Read: Reading events for sample: " << util::AsString(s) << endl;
+#endif
+      std::ostringstream datanode;
+      datanode << "superk/observation";
+      datanode << "/exp_data_" << data_set_id;
+      datanode << "/"<<util::GetXMLDatasetName(s);
+      
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+      datanode << "/"<<util::GetXMLDatasetParamsName();
+      
+      if(util::NodeExists(xml,root_node,datanode.str())) {
+        TH1D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s));
+        h.SetDirectory(0);
+        vector<double> values = util::XML2DblArray(xml,root_node,datanode.str());
+        vector<double>::const_iterator value_iter = values.begin();
+        for( ; value_iter != values.end(); ++value_iter) {
+          double Ereco = *value_iter;
+          h.Fill(Ereco);
+        }
+        cout << "Exp >> Read: " << h.Integral()
+        << " " << util::AsString(s) << " events." << endl;
+        for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+          double nexp = h.GetBinContent(ibin);
+          fPredictErecoSpectrumArrayTot[is]->GetArray()[ibin-1] = nexp;
+        }
+      }
+      else {
+        cerr << "Exp >> Node " << datanode.str() << " does not exist!" << endl;
+      }
+#else //2D templates
+      //first get the number of events
+      int nevents = 0;
+      {
+        std::ostringstream datanodetmp;
+        datanodetmp << datanode.str();
+        datanodetmp << "/nevents";
+        if(util::NodeExists(xml,root_node,datanodetmp.str())) {
+          nevents = util::XML2Int(xml,root_node,datanodetmp.str());
+        }
+        else {
+          cerr << "Exp >> Node " << datanodetmp.str() << " does not exist!" << endl;
+        }
+      }
+      //now get each event
+      datanode << "/"<<util::GetXMLDatasetParamsName();
+      TH2D h("", "", util::NumErecoBins(s), util::ErecoBinEdges(s), util::NumQ2Bins(s), util::Q2BinEdges(s));
+      h.SetDirectory(0);
+      for(int iev = 0; iev < nevents; iev++) {
+        std::ostringstream datanodetmp;
+        datanodetmp << datanode.str();
+        datanodetmp << "/ev" << iev;
+        if(util::NodeExists(xml,root_node,datanodetmp.str())) {
+          pair<double,double> values = util::XML2DblDblPair(xml,root_node,datanodetmp.str());
+          double Ereco = values.first;
+          double Q2    = values.second;
+#ifdef __show_read_events_mesg_debug__
+          cout << "Exp >> Read: event " << iev
+          << " " << fPredictErecoVsQ2SpectrumArrayTot[is]->GetDimensionName(0) << " = " << Ereco
+          << " " << fPredictErecoVsQ2SpectrumArrayTot[is]->GetDimensionName(1) << " = " << Q2
+          << endl;
+#endif
+          h.Fill(Ereco, Q2);
+        }
+        else {
+          cerr << "Exp >> Node " << datanodetmp.str() << " does not exist!" << endl;
+        }
+      }//iev
+      cout << "Exp >> Read: " << h.Integral()
+      << " " << util::AsString(s) << " events." << endl;
+      for(int ibinx = 1; ibinx <= util::NumErecoBins(s); ibinx++) {
+        for(int ibiny = 1; ibiny <= util::NumQ2Bins(s); ibiny++) {
+          double nExp = h.GetBinContent(ibinx, ibiny);
+          fPredictErecoVsQ2SpectrumArrayTot[is]->SetEntry(nExp, ibinx-1, ibiny-1);
+        }//ibinx
+      }//ibiny
+#endif //__USE_2D_TEMPLATES__
+      
+    } // is
+    
+    // Release memory
+    xml->FreeDoc(xmldoc);
+    delete xml;
+  }//is_xml
+  
+  else {
+    
+    TFile f(config_file.c_str());
+    
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+    TH1D * hist = 0;
+#else
+    TH2D * hist = 0;
+#endif
+    
+    if(!f.IsOpen()){
+      cerr << endl;
+      cerr << "File " << config_file.c_str() << " is not defined" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    for (int is = 0 ; is < conv::kns ; is++) {
+      SuperkSample_t s = conv::kSKSamples[is];
+      
+      //select which histograms to read in
+#if !defined(__FHC_RUNNING__)
+      //skip the FHC samples
+      if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike) continue;
+#endif
+#if !defined(__RHC_RUNNING__)
+      //skip the RHC samples
+      if(s == kSKsRHCFCFV1RingMuLike || s == kSKsRHCFCFV1RingELike) continue;
+#endif
+#if defined(__NUEONLY__)
+      //skip the mu-like samples
+      if(s == kSKsFCFV1RingMuLike || s == kSKsRHCFCFV1RingMuLike) continue;
+#endif
+#if defined(__NUMUONLY__)
+      //skip the e-like samples
+      if(s == kSKsFCFV1RingELike || s == kSKsRHCFCFV1RingELike) continue;
+#endif
+      
+      if (s == conv::kSKsUndefined) continue;
+      
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+      else if(s == conv::kSKsRHCFCFV1RingMuLike) hist = (TH1D*) f.Get(Form("exp_data_RHC1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsRHCFCFV1RingELike)	 hist = (TH1D*) f.Get(Form("exp_data_RHC1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingELike)   	 hist = (TH1D*) f.Get(Form("exp_data_1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingMuLike)	   hist = (TH1D*) f.Get(Form("exp_data_1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsFCFVMultiRingELike) hist = (TH1D*) f.Get(Form("exp_data_MultiRe_%d",data_set_id));
+#else //2D templates
+      else if(s == conv::kSKsRHCFCFV1RingMuLike) hist = (TH2D*) f.Get(Form("exp_data_RHC1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsRHCFCFV1RingELike)	 hist = (TH2D*) f.Get(Form("exp_data_RHC1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingELike)	   hist = (TH2D*) f.Get(Form("exp_data_1Re_%d",data_set_id));
+      else if(s == conv::kSKsFCFV1RingMuLike) 	 hist = (TH2D*) f.Get(Form("exp_data_1Rmu_%d",data_set_id));
+      else if(s == conv::kSKsFCFVMultiRingELike) hist = (TH2D*) f.Get(Form("exp_data_MultiRe_%d",data_set_id));
+#endif
+      else {
+        cerr << endl;
+        cerr << "Used SK sample " << util::AsString(s) << " not available" << endl;
+        cerr << endl;
+        exit(1);
+      }
+      
+      if(!hist) {
+        cerr << "Exp >> Histogram for " << util::AsString(s) << " does not exist!" << endl;
+        if(s == conv::kSKsFCFV1RingMuLike)
+        cerr << "Exp >> Need histogram name " << Form("exp_data_1Rmu_%d",data_set_id) << endl;
+        else if(s == conv::kSKsRHCFCFV1RingMuLike)
+        cerr << "Exp >> Need histogram name " << Form("exp_data_RHC1Rmu_%d",data_set_id) << endl;
+        else if(s == conv::kSKsFCFV1RingELike)
+        cerr << "Exp >> Need histogram name " << Form("exp_data_1Re_%d",data_set_id) << endl;
+        else if(s == conv::kSKsRHCFCFV1RingELike)
+        cerr << "Exp >> Need histogram name " << Form("exp_data_RHC1Re_%d",data_set_id) << endl;
+        else if(s == conv::kSKsFCFVMultiRingELike)
+        cerr << "Exp >> Need histogram name " << Form("mock_data_MultiRe_%d",data_set_id) << endl;
+        else{
+          cerr << "Exp >> Histogram sample not defined" << endl;
+          exit(1);
+        }
+        exit(1);
+      }
+      
+      
+#ifndef __USE_2D_TEMPLATES__ //1D templates
+      for(int ibin = 1; ibin <= util::NumErecoBins(s); ibin++) {
+        double nExp = hist->GetBinContent(ibin);
+        fPredictErecoSpectrumArrayTot[is]->GetArray()[ibin-1] = nExp;
+      }
+#else //2D templates
+#ifdef __show_read_events_mesg_debug__
+      cout << "Exp >> Read: " << hist->Integral()
+      << " " << util::AsString(s) << " events." << endl;
+#endif
+      for(int ibinx = 1; ibinx <= util::NumErecoBins(s); ibinx++) {
+        for(int ibiny = 1; ibiny <= util::NumQ2Bins(s); ibiny++) {
+          // histogram convention (Q2,Ereco) is opposite of VALORArray's one (Ereco,Q2)
+          double nExp = hist->GetBinContent(ibiny, ibinx);
+          fPredictErecoVsQ2SpectrumArrayTot[is]->SetEntry(nExp, ibinx-1, ibiny-1);
+        }//ibiny
+      }//ibinx
+      
+#endif //__USE_2D_TEMPLATES__
+      
+    }//is
+  }//!is_xml
+  
+  return true;
+}
+//________________________________________________________________________________________
 bool SuperkExpectation::Generate(const PhysHypothesis & ph, Option_t * /*opt*/)
 {
 

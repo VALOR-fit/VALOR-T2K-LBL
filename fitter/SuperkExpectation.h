@@ -60,10 +60,12 @@ public:
   // *** FitModelABC Interface ***
   string Name(void) const;
   
-  // Read inputs from input XML file
+  // Read inputs from input XML file and root file
   bool Read(string config_file, Option_t * opt = 0);
+  bool Read(string config_file, int data_set_id, bool is_xml = true);
 
-  // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence) 
+
+  // Methods to generate SuperK spectra for a physics hypothesis (oscillations,decay,decoherence)
   // and tweak systematics (tweak the p.d.fs used for generating the SuperK spectra).
   bool Generate             (const PhysHypothesis & ph, Option_t * opt = 0);
   void RandomizeSystematics (Option_t * opt = 0); ///< random variation of all systematics
