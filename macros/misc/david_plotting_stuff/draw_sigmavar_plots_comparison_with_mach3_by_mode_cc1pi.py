@@ -2,148 +2,13 @@
 import sys
 import ROOT
 import os
+import re
 
 env_var = "T2KOSCANA"
 
-parameters = [
-
-  # VALOR parameter name T2KPhysParamId , MaCh3 Parameter names NEUT/NIWG 2015c
-  
-  ( 'f_banffmaqe_fhc_rhc'          ,  'xsec_par_0'  ) ,    #   0: MaQE                               
-  #(                                ,  'xsec_par_1'  ) ,    #   1: pF (C)                               
-  #(                                ,  'xsec_par_2'  ) ,    #   2: MEC (C)                            
-  #(                                ,  'xsec_par_3'  ) ,    #   3: Eb (C)                                                                                                         
-  ( 'f_banffpfermi_fhc_rhc'        ,  'xsec_par_4'  ) ,    #   4: pF (O)                             
-  ( 'f_banffmec_fhc_rhc'           ,  'xsec_par_5'  ) ,    #   5: MEC (O)                            
-  ( 'f_banffbindE_fhc_rhc'         ,  'xsec_par_6'  ) ,    #   6: Eb (O)
-  ( 'f_banffmecbar_fhc_rhc'        ,  'xsec_par_7'  ) ,    #   7: $\bar{\nu}$ MEC (O)                
-  ( 'f_banffca5_fhc_rhc'           ,  'xsec_par_8'  ) ,    #   8: CA5                                   
-  ( 'f_banffmares_fhc_rhc'         ,  'xsec_par_9'  ) ,    #   9: MaRES                              
-  ( 'f_banffbgres_fhc_rhc'         ,  'xsec_par_10' ) ,    #  10: Isospin Bkg.                       
-  ( 'f_banffnorm_nuetonumu_fhc_rhc',  'xsec_par_11' ) ,    #  11: $\nu_{e}/\nu_{\mu}$                
-  ( 'f_banffnorm_nuebartonumubar_fhc_rhc'  ,  'xsec_par_12' ) ,    #  12: $\bar{\nu_{e}}/\bar{\nu_{\mu}}$                                                                              
-  ( 'f_banffshapeCCoth_fhc_rhc'    ,  'xsec_par_13' ) ,    #  13: CC Oth Shape                                                                                                                                                                           
-  #(     ,  'xsec_par_14' ) ,    #  14: CC Coh (C)
-  ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_15' ) ,    #  15: CC Coh (O)                                            
-  ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_16' ) ,    #  16: NC Coh                                                
-  ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_17' ) ,    #  17: NC 1 Gamma
-  #(                                ,  'xsec_par_18' ) ,    #  18: NC Oth Near                                           
-  ( 'f_banffnorm_ncoth_fhc_rhc'     ,  'xsec_par_19' ) ,    #  19: NC Oth Far                                            
-  #(                                ,  'xsec_par_20' ) ,    #  20: FSI Inel. Low E                                       
-  #(                                ,  'xsec_par_21' ) ,    #  21: FSI Inel. High E                                      
-  #(                                ,  'xsec_par_22' ) ,    #  22: FSI Pion Prod.                                        
-  #(                                ,  'xsec_par_23' ) ,    #  23: FSI Pion Abs.                                         
-  #(                                ,  'xsec_par_24' ) ,    #  24: FSI Ch. Exch. Low E                                   
-  #(                                ,  'xsec_par_25' ) ,    #  25: FSI Ch. Exch. High E                                  
-  
-  ( 'f_banff00' ,  'flux_par_50' ) ,
-  ( 'f_banff01' ,  'flux_par_51' ) ,
-  ( 'f_banff02' ,  'flux_par_52' ) ,
-  ( 'f_banff03' ,  'flux_par_53' ) ,
-  ( 'f_banff04' ,  'flux_par_54' ) ,
-  ( 'f_banff05' ,  'flux_par_55' ) ,
-  ( 'f_banff06' ,  'flux_par_56' ) ,
-  ( 'f_banff07' ,  'flux_par_57' ) ,
-  ( 'f_banff08' ,  'flux_par_58' ) ,
-  ( 'f_banff09' ,  'flux_par_59' ) ,
-  ( 'f_banff10' ,  'flux_par_60' ) ,
-  ( 'f_banff11' ,  'flux_par_61' ) ,
-  ( 'f_banff12' ,  'flux_par_62' ) ,
-  ( 'f_banff13' ,  'flux_par_63' ) ,
-  ( 'f_banff14' ,  'flux_par_64' ) ,
-  ( 'f_banff15' ,  'flux_par_65' ) ,
-  ( 'f_banff16' ,  'flux_par_66' ) ,
-  ( 'f_banff17' ,  'flux_par_67' ) ,
-  ( 'f_banff18' ,  'flux_par_68' ) ,
-  ( 'f_banff19' ,  'flux_par_69' ) ,
-  ( 'f_banff20' ,  'flux_par_70' ) ,
-  ( 'f_banff21' ,  'flux_par_71' ) ,
-  ( 'f_banff22' ,  'flux_par_72' ) ,
-  ( 'f_banff23' ,  'flux_par_73' ) ,
-  ( 'f_banff24' ,  'flux_par_74' ) ,
-
-  # Have no entries in lowest energy bins see SKFSISystConv.h
-  # kListOfMultiRingSKDetFSIParams
-  
-  #( 'f_skdetfsi006_multiring',  '') , 
-  ( 'f_skdetfsi007_multiring',  'skdet_par_36') ,
-  ( 'f_skdetfsi008_multiring',  'skdet_par_37') ,
-  #( 'f_skdetfsi009_multiring',  '') ,
-  ( 'f_skdetfsi010_multiring',  'skdet_par_38') ,
-  ( 'f_skdetfsi011_multiring',  'skdet_par_39') ,
-  #( 'f_skdetfsi012_multiring',  '') ,
-  ( 'f_skdetfsi013_multiring',  'skdet_par_40') ,
-  ( 'f_skdetfsi014_multiring',  'skdet_par_41') ,
-  #( 'f_skdetfsi015_multiring',  '') ,
-  ( 'f_skdetfsi016_multiring',  'skdet_par_42') ,
-  ( 'f_skdetfsi017_multiring',  'skdet_par_43') ,
-
-  ( 'f_sk_e_scale' ,  'skdet_par_44'),
-
-]
-
-if single :
-  modes = [
-           ( ''                 , ''                  )
-           ]
-else :
-  modes = [
-           ( ''                , ''                  ) ,
-		  ( '_numuccqe'        , "_sm_numu_ccqe"      ) ,  
-		  ( '_numucc1pi'       , "_sm_numu_cc1pi"     ) ,
-		  ( '_numucccoh'       , "_sm_numu_cccoh"     ) ,
-		  ( '_numuccmec'       , "_sm_numu_mec"       ) ,
-		  ( '_numuccoth'       , "_sm_numu_ccoth"     ) ,
-		  ( '_numunc1piC'      , "_sm_numu_ncpipm"    ) ,
-		  ( '_numunc1pi0'      , "_sm_numu_ncpi0"     ) ,
-		  ( '_numunccoh'       , "_sm_numu_nccoh"     ) ,
-		  ( '_numuncoth'       , "_sm_numu_ncoth"     ) ,
-		  ( '_numunc1gamma'    , "_sm_numu_nc1gamma"  ) , # Adding missing NC 1gamma
-
-		  ( '_numubarccqe'     , "_sm_numub_ccqe"     ) ,
-		  ( '_numubarcc1pi'    , "_sm_numub_cc1pi"    ) ,
-		  ( '_numubarcccoh'    , "_sm_numub_cccoh"    ) ,
-		  ( '_numubarccmec'    , "_sm_numub_mec"      ) ,
-		  ( '_numubarccoth'    , "_sm_numub_ccoth"    ) ,
-		  ( '_numubarnc1piC'   , "_sm_numub_ncpipm"   ) ,
-		  ( '_numubarnc1pi0'   , "_sm_numub_ncpi0"    ) ,
-		  ( '_numubarnccoh'    , "_sm_numub_nccoh"    ) ,
-		  ( '_numubarncoth'    , "_sm_numub_ncoth"    ) ,
-		  ( '_numubarnc1gamma' , "_sm_numub_nc1gamma" ) , # Adding missing NC 1gamma  
-
-		  ( '_nueccqe'         , "_sm_nue_ccqe"       ) ,
-		  ( '_nuecc1pi'        , "_sm_nue_cc1pi"      ) ,
-		  ( '_nuecccoh'        , "_sm_nue_cccoh"      ) ,
-		  ( '_nueccmec'        , "_sm_nue_mec"        ) ,
-		  ( '_nueccoth'        , "_sm_nue_ccoth"      ) ,
-		  ( '_nuenc1piC'       , "_sm_nue_ncpipm"     ) ,
-		  ( '_nuenc1pi0'       , "_sm_nue_ncpi0"      ) ,
-		  ( '_nuenccoh'        , "_sm_nue_nccoh"      ) ,
-		  ( '_nuencoth'        , "_sm_nue_ncoth"      ) ,
-		  ( '_nuenc1gamma'     , "_sm_nue_nc1gamma"   ) , # Adding missing NC 1gamma  
-
-		  ( '_oscnueccqe'      , "_sm_signue_ccqe"    ) ,
-		  ( '_oscnuecc1pi'     , "_sm_signue_cc1pi"   ) ,
-		  ( '_oscnuecccoh'     , "_sm_signue_cccoh"   ) ,
-		  ( '_oscnueccmec'     , "_sm_signue_mec"     ) ,
-		  ( '_oscnueccoth'     , "_sm_signue_ccoth"   ) ,
-
-		  ( '_nuebarccqe'      , "_sm_nueb_ccqe"      ) ,
-		  ( '_nuebarcc1pi'     , "_sm_nueb_cc1pi"     ) ,
-		  ( '_nuebarcccoh'     , "_sm_nueb_cccoh"     ) ,
-		  ( '_nuebarccmec'     , "_sm_nueb_mec"       ) ,
-		  ( '_nuebarccoth'     , "_sm_nueb_ccoth"     ) ,
-		  ( '_nuebarnc1piC'    , "_sm_nueb_ncpipm"    ) ,
-		  ( '_nuebarnc1pi0'    , "_sm_nueb_ncpi0"     ) ,
-		  ( '_nuebarnccoh'     , "_sm_nueb_nccoh"     ) ,
-		  ( '_nuebarncoth'     , "_sm_nueb_ncoth"     ) ,
-		  ( '_nuebarnc1gamma'  , "_sm_nueb_nc1gamma"  ) , # Adding missing NC 1gamma  
-
-		  ( '_oscnuebarccqe'   , "_sm_signueb_ccqe"   ) ,
-		  ( '_oscnuebarcc1pi'  , "_sm_signueb_cc1pi"  ) ,
-		  ( '_oscnuebarcccoh'  , "_sm_signueb_cccoh"  ) ,
-		  ( '_oscnuebarccmec'  , "_sm_signueb_mec"    ) ,
-		  ( '_oscnuebarccoth'  , "_sm_signueb_ccoth"  ) ]
+# See end of file for arguments that need to be parsed
+# List of parameters and/or modes are read in from files e.g. valor_mach3_param_list.arg valor_mach3_modes.arg
+# For a comparison with no modes, supply the *no_modes.arg file ('','')
 
 line_colors = dict()
 line_colors["m1"] = ROOT.kViolet
@@ -151,7 +16,10 @@ line_colors["p1"] = ROOT.kCyan
 line_colors["m3"] = ROOT.kRed
 line_colors["p3"] = ROOT.kBlue
 
-def main(mach3_filename,valor_filename,mach3_selection,tag,sample):
+def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_filename,mode_filename):
+
+  modes      = list_of_tuples(mode_filename)
+  parameters = list_of_tuples(parameter_filename)
 
   mach3_nom_pattern = "[CURRENT][SELECTION][MODE]_nom"
   mach3_pattern     = "[CURRENT][SELECTION]_[PARAM][MODE]_sig_[VAR]"
@@ -167,7 +35,7 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample):
                  ("m3","n3") ]
 
   mach3_current = "" #"anu_" # only looking at the FHC current samples, and are not labelled in the current round
-  mach3_selection_1 = mach3_selection # nue CC 1pi sample "sknue1pi" "sknumu"
+  mach3_selection_1 = mach3_selection # nue CC 1pi sample "sknue1pi" ( "sknumu" "sknue" )
   
   ROOT.gROOT.SetBatch(1)
   ROOT.gStyle.SetOptStat(0)
@@ -190,14 +58,11 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample):
   mach3_nom_hists_binno   = dict() # only valor names will be used as keys
   
   valor_hists             = dict() # only valor names will be used as keys
-
   mach3_hists             = dict() # only valor names will be used as keys
   mach3_ratio_hists       = dict() # only valor names will be used as keys
-
   valor_hists_binno       = dict() # only valor names will be used as keys
   mach3_hists_binno       = dict() # only valor names will be used as keys
   mach3_ratio_hists_binno = dict() # only valor names will be used as keys
-
   canvases                = dict()
 
   pdf_printing = [""]*(len(parameters)*len(modes))
@@ -314,7 +179,7 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample):
       canvases[canv_name].SetLeftMargin(0.125)   
       canvases[canv_name].SetBottomMargin(0.125)          
       canvases[canv_name].Update()
-      canvases[canv_name].Print("syst_var_mode_ereco"+tag+sample+".pdf"+next(pdf_printing_iter_ereco))
+      canvases[canv_name].Print("syst_var_mode_ereco_"+tag+"_"+sample+".pdf"+next(pdf_printing_iter_ereco))
 
       canv_name_binno = canv_name+"_binno"
 
@@ -330,8 +195,10 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample):
         option = "same"
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
 
+      canvases[canv_name].SetLeftMargin(0.125)   
+      canvases[canv_name].SetBottomMargin(0.125)  
       canvases[canv_name_binno].Update()
-      canvases[canv_name_binno].Print("syst_var_mode_binno"+tag+sample+".pdf"+next(pdf_printing_iter_binno))
+      canvases[canv_name_binno].Print("syst_var_mode_binno_"+tag+"_"+sample+".pdf"+next(pdf_printing_iter_binno))
 
   print "Done!"
   return
@@ -373,6 +240,16 @@ def hist_to_list(h):
   nbins = h.GetXaxis().GetNbins()
   return [h.GetBinContent(ibin) for ibin in xrange(1,nbins+1)]
 
+def list_of_tuples(filename):
+  tuplelist = []
+  with open(filename) as file:
+    for line in file:
+      filtered = re.sub('[\"\'\(]|(\)\s*\,)|[\)]|(#.*$)|^\s*$|\s', '', line)
+      if re.match(r'^\s*$', filtered):
+        continue
+      tuplelist.append(tuple(filtered.split(',')))
+
+  return tuplelist
 
 if __name__=="__main__":
 
@@ -384,10 +261,11 @@ if __name__=="__main__":
 
   parser.add_argument('-t', '--tag', dest='tag', help='oscillated or unoscillated')
   parser.add_argument('-r', '--valor-sample', dest='sample', help='valor sample')
-  parser.add_argument('-f', '--full-spectrum', dest='single', help='only draw full spectrum comparison')
+  parser.add_argument('-p', '--parameter-file', dest='parameter_filename', help="file containing parameter mappings")
+  parser.add_argument('-o', '--mode-file', dest='mode_filename', help="file containing mode mappings")
   
   args = parser.parse_args()
 
-  main(args.mach3filename,args.valorfilename,args.mach3selection,args.tag,args.sample)
+  main(args.mach3filename,args.valorfilename,args.mach3selection,args.tag,args.sample,args.parameter_filename,args.mode_filename)
 
 
