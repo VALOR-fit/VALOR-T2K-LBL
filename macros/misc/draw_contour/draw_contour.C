@@ -11,7 +11,8 @@ void draw_contour
 (
  //const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC12p482_RHC12p271_react_ih",
  //const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC14p882_RHC9p871_react_ih",
- const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC17p282_RHC7p471_react_ih",
+ //const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Asimov_A_FHC17p282_RHC7p471_react_ih",
+ const char tag[200] = "fitmarg_joint_sinsqth23Vsdmsq_Run17c_t2konly_nh",
  
 
  //////////////////////////////////////////////
@@ -22,6 +23,9 @@ void draw_contour
 
  //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Data_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // NH - reactors
  //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Data_Run17c_nexp_1_0.450_0.003-job0-_0_0.root", // IH - reactors
+
+ const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_nh_Data_Run17c_nexp_1_0.528_0.003-job0-_0_0.root", // NH - T2K only
+ //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23Vsdmsq_t2konly_ih_Data_Run17c_nexp_1_0.528_0.003-job0-_0_0.root", // IH - T2K only
  
  //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_nh_Data_Run17c_nexp_1_0.022_0.000-job0-_0_0.root", // NH - reactors
  //const char* filename = "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth13Vsdcp_react_ih_Data_Run17c_nexp_1_0.022_0.000-job0-_0_0.root", // IH - reactors 
@@ -57,7 +61,7 @@ void draw_contour
  //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_FHC14p882_RHC9p871_nexp_1_0.528_0.003-job0-_0_0.root", // 
  //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC14p882_RHC9p871_nexp_1_0.528_0.003-job0-_0_0.root", // 
  //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_nh_Asimov_A_FHC17p282_RHC7p471_nexp_1_0.528_0.003-job0-_0_0.root", //  
- const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC17p282_RHC7p471_nexp_1_0.528_0.003-job0-_0_0.root", // 
+ //const char* filename = "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_sinsqth23Vsdmsq_react_ih_Asimov_A_FHC17p282_RHC7p471_nexp_1_0.528_0.003-job0-_0_0.root", // 
 
  //////////////////////////////////////////////
  //                                          //

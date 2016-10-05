@@ -18,17 +18,23 @@ using namespace valor::conv;
 void plot_bestfit_on_top_of_data_and_prediction
 (
  const bool draw_preliminary = true,
+ TString str_preliminary = "T2K Run 1-7c preliminary",
 
- const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "MultiRmu" */
+ const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re", "MultiRmu" */
 
- // RUN 1-7
- 
- //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_1Rmu.root",
- //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_1Re.root",
- //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_RHC1Rmu.root",
- const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_NoOsc_RHC1Re.root",
- 
- const char * datafile = "data_run1to7/SKdata_Run17.root",
+ // RUN 1-7c
+ const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_NoOsc_1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_NoOsc_1Re.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_NoOsc_RHC1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_NoOsc_RHC1Re.root",
+ const char * datafile = "data_run1to7c/SKdata_Run17c.root",
+
+ // RUN 1-7b
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17b/files/ErecoVsTheta_Run17_NoOsc_1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17b/files/ErecoVsTheta_Run17_NoOsc_1Re.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17b/files/ErecoVsTheta_Run17_NoOsc_RHC1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17b/files/ErecoVsTheta_Run17_NoOsc_RHC1Re.root", 
+ //const char * datafile = "data_run1to7b/SKdata_Run17.root",
 
  // RUN 1-6
  //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/files/spectra_NoOsc_RHC1Rmu.root",
@@ -42,8 +48,7 @@ void plot_bestfit_on_top_of_data_and_prediction
   const char * bestfitfile[NBestFitFiles] = {
     //"../TECH_NOTE_14_3_16/BESTFIT/RUN16/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcp0.root",
     //"../TECH_NOTE_14_3_16/BESTFIT/RUN16/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_dcpPi.root",
-
-    "../TECH_NOTE_14_3_16/BESTFIT/RUN17/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh_Run17.root",
+    "../TECH_NOTE_14_3_16/BESTFIT/RUN17c/spectrum_bestfit_fitmarg_joint_sinsqth23Vsdcp_react_nh.root",
   };
   
   const char * bestfitlatex[NBestFitFiles] = {
@@ -160,8 +165,7 @@ void plot_bestfit_on_top_of_data_and_prediction
   }
   leg_Ereco->Draw();
     
-
-  TLatex *latPreliminary = new TLatex(hBestFit[0]->GetXaxis()->GetBinLowEdge(5),hBestFit[0]->GetMaximum(),"T2K Run 1-7b preliminary");
+  TLatex *latPreliminary = new TLatex(hBestFit[0]->GetXaxis()->GetBinLowEdge(5),hBestFit[0]->GetMaximum(),str_preliminary);
   latPreliminary->SetTextSize(0.06);
   if(draw_preliminary) latPreliminary->Draw("same");
 

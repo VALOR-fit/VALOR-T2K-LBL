@@ -622,15 +622,20 @@ void SwapXY(TGraph *graph){
 }
 
 TH2D* SwapXY(TH2D *graph){
-  
+   
   int nbinsX = graph->GetNbinsX();
   int nbinsY = graph->GetNbinsY();
   double xmin = graph->GetXaxis()->GetXmin();
   double xmax = graph->GetXaxis()->GetXmax();
   double ymin = graph->GetYaxis()->GetXmin();
   double ymax = graph->GetYaxis()->GetXmax();
-  
+ 
   TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
+ 
+  //TArrayD *arrayx = graph->GetXaxis()->GetXbins();
+  //TArrayD *arrayy = graph->GetYaxis()->GetXbins();
+  //TH2D* graph_out = new TH2D("h_temp","",nbinsY,arrayy->GetArray(),nbinsX,arrayx->GetArray());
+
   graph_out->GetXaxis()->SetTitle(graph->GetYaxis()->GetTitle());
   graph_out->GetYaxis()->SetTitle(graph->GetXaxis()->GetTitle());
   
@@ -639,9 +644,9 @@ TH2D* SwapXY(TH2D *graph){
       double bincont = graph->GetBinContent(j+1,i+1);
       graph_out->SetBinContent(i+1,j+1,bincont);
     }
-  }
-  
+  }  
   return graph_out;
+
 }
 
 void SwapXY(TMarker *graph){

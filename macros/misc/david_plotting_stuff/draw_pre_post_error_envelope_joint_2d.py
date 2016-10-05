@@ -101,9 +101,22 @@ def main(sample,unoscillated_input_filename, oscillated_input_filename,usemedian
     raise T2KAnaError("Could not open oscillated input file")
   pre_and_postfit_envelope(sample,f_osc  ,"oscillated", usemedian, doprefit,tag)
   
+  
 
 def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
   
+
+  data_input_filename = "../../../inputs/data_run1to7c/SKdata_Run17c.root"
+  f_data  = ROOT.TFile(data_input_filename)
+  if not f_data:
+    raise T2KAnaError("Could not open data input file")
+ 
+  assert(f_data)
+  data_2d = f_data.Get("mock_data_"+sample+"_0")
+  data = data_2d.ProjectionY().Clone("data_1d")
+  
+  print "Integral data = ",data_2d.Integral(),"\n";
+
   assert(rootfile)
 
   if sample=="RHC1Re" or sample=="1Re" :
@@ -115,7 +128,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
   nominal_hist = ROOT.TH1D(nh)
   nominal_hist.SetTitle("")
   nominal_hist.GetXaxis().SetRangeUser(0.,max_energy)
-  nominal_hist.GetXaxis().SetTitle("E_{reco} (GeV)")
+  nominal_hist.GetXaxis().SetTitle("Reconstructed Neutrino Energy (GeV)")
   nominal_hist.GetYaxis().SetTitle("Events per bin")
   nominal_hist.GetYaxis().SetTitleOffset(title_offset)
   nominal_hist.SetLineColor(ROOT.kBlack)
@@ -170,6 +183,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
         prefit_nsk_hist.DrawCopy()
       else :
         prefit_nsk_hist.DrawCopy("same")
+      data.DrawCopy("pe same")
       all_hists_nsk_prefit.append(prefit_nsk_hist)
       legend_nsk_prefit.AddEntry(all_hists_nsk_prefit[ii],readable[par_set],"L")
       legend_nsk_prefit.Draw()
@@ -187,6 +201,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
       postfit_nsk_hist.DrawCopy()
     else :
       postfit_nsk_hist.DrawCopy("same")
+    data.DrawCopy("pe same")
     all_hists_nsk_postfit.append(postfit_nsk_hist)
     legend_nsk_postfit.AddEntry(all_hists_nsk_postfit[ii],readable[par_set],"L")
     legend_nsk_postfit.Draw()
@@ -275,17 +290,18 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
         if not is_constrained[par_set]:
           h.SetLineStyle(0) # Don't draw prefit lines for unconstrained parameters
           h.SetLineWidth(0) # Don't draw prefit lines for unconstrained parameters
-        
+
     for h in [hplus_postfit,hminus_postfit]:
       h.SetLineStyle(1)
       h.SetLineWidth(0)
       h.GetXaxis().SetRangeUser(0.,max_energy)
       print h.GetTitle(),h.GetLineWidth()
       
-    legend = ROOT.TLegend(0.65,0.6,0.8,0.9);
+    #legend = ROOT.TLegend(0.65,0.6,0.8,0.9);
+    legend = ROOT.TLegend(0.62,0.7,0.75,0.9);
     legend.SetFillStyle(0);
     legend.SetBorderSize(0);
-    legend.SetTextSize(0.05);
+    legend.SetTextSize(0.045);
   
     limit = max([abs(h.GetMinimum()) for h in par_hists] + [abs(h.GetMaximum()) for h in par_hists])
     
@@ -297,14 +313,15 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
     
     for h in par_hists:
       h.SetMinimum(0.)
-      h.SetMaximum(1.05*limit)
+      #h.SetMaximum(1.05*limit)
+      h.SetMaximum(10.)
       
     if doprefit==True :
       hplus_prefit.SetLineColor(ROOT.kBlue)
       hplus_prefit.GetYaxis().SetTitleOffset(0.8)
       hplus_prefit.SetTitle("")
       hplus_prefit.GetXaxis().SetRangeUser(0.,max_energy)
-      hplus_prefit.GetXaxis().SetTitle("E_{reco} (GeV)")
+      hplus_prefit.GetXaxis().SetTitle("Reconstructed Neutrino Energy (GeV)")
       hplus_prefit.GetYaxis().SetTitle("Events per bin")
       hplus_prefit.GetYaxis().SetTitleOffset(title_offset)
       #hplus_prefit.SetLineStyle(1)
@@ -313,7 +330,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
     hplus_postfit.GetYaxis().SetTitleOffset(0.8)
     hplus_postfit.SetTitle("")
     hplus_postfit.GetXaxis().SetRangeUser(0.,max_energy)
-    hplus_postfit.GetXaxis().SetTitle("E_{reco} (GeV)")
+    hplus_postfit.GetXaxis().SetTitle("Reconstructed Neutrino Energy (GeV)")
     hplus_postfit.GetYaxis().SetTitle("Events per bin")
     hplus_postfit.GetYaxis().SetTitleOffset(title_offset)
 
@@ -346,6 +363,8 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
     if doprefit==True : 
       hplus_prefit.DrawCopy("same")
     
+    data.DrawCopy("pe same")
+
     ROOT.gPad.RedrawAxis();
 
     if doprefit==True :
@@ -365,7 +384,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
       all_hists.extend([legend_postfit])
 
     
-    if doprefit==True : legend.AddEntry(legend_prefit   ,"Nominal error" ,"FL")
+    if doprefit==True : legend.AddEntry(legend_prefit   ,"#pm 1#sigma error (w/o ND280)" ,"FL")
     legend.AddEntry(legend_postfit  ,"#pm 1#sigma error","FL")
     
     if is_constrained[par_set]: legend.Draw()
@@ -373,6 +392,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
     canv.Update()
 
     canv.Print(tag+"_"+sample+name+"_"+par_set+"_envelope.eps")
+    canv.Print(tag+"_"+sample+name+"_"+par_set+"_envelope.root")
     
 
 
@@ -629,7 +649,7 @@ def pre_and_postfit_envelope(sample,rootfile,name,usemedian,doprefit,tag):
     legend2.SetFillStyle(0);
     legend2.SetBorderSize(0);
     if doprefit==True :
-      legend2.AddEntry(ratio_plus_prefit  ,"Nominal error" ,"L")
+      legend2.AddEntry(ratio_plus_prefit  ,"#pm 1#sigma error (w/o ND280)" ,"L")
     legend2.AddEntry(ratio_plus_postfit ,"#pm 1#sigma error","L")
     legend2.Draw("same")
     

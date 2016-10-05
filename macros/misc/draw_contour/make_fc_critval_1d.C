@@ -25,23 +25,23 @@ const double CLfrac_3sigma = 0.9973;  // 3sigma% CL
 
 void make_fc_critval_1d(){
 
-  const int Nmh = 2;
+  const int Nmh = 2; 
   const int NFCpts = 8; // # of points of Feldman-Cousins
 
-  // RUN 1-6
-  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/";  
-  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/";
-
+  // // RUN 1-6
+  //string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/NH/";  
+  //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/IH/";
+  
   // // RUN 1-7b
   // string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/NH/";  
   // //string path_fc_nh = "";  
   // string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/Raj_inverted/";
   // //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/IH/My_inverted/";
 
-  // // RUN 1-7c
-  // string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/NH/";
-  // //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/IH/";
-  // string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/Raj/";
+  // RUN 1-7c
+  string path_fc_nh = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/NH/";
+  //string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/IH/";
+  string path_fc_ih = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/Raj/";
       
   const char * infilename_fc[NFCpts][Nmh] = {
     
@@ -82,15 +82,15 @@ void make_fc_critval_1d(){
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root",
     // "fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" // +-pi
 
-    // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys (Run 1-6) 
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root", "total_tree_-2.356.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root", "total_tree_mhalfpi.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root" , "total_tree_zero.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.785.root" , "total_tree_0.785.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root" , "total_tree_halfpi.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_2.356.root"},
-    {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
+    // // Normal Hierarhcy 10k Toys - Inverted Hierarchy ~10k Toys (Run 1-6) 
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-2.356.root", "total_tree_-2.356.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-1.571.root", "total_tree_mhalfpi.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_-0.785.root", "total_tree_-0.785.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.000.root" , "total_tree_zero.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_0.785.root" , "total_tree_0.785.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_1.571.root" , "total_tree_halfpi.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_2.356.root" , "total_tree_2.356.root"},
+    // {"fit_fitmarg_fc_dcp_normal_nexp_10k_3.142.root" , "total_tree_pi.root"} // +-pi
 
     //////////////////////////////////////////
     //                                      //
@@ -141,16 +141,16 @@ void make_fc_critval_1d(){
     //                                                //
     ////////////////////////////////////////////////////
 
-    // // Normal Hierarhcy ~11k Toys - Inverted Hierarchy ~10k Toys (Raj) (USED FOR OFFICIAL PLOTS)
-    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-2.356.root","fit_fc_17c_inverted_nexp_-2.356.root"},
-    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-1.571.root","fit_fc_17c_inverted_nexp_-1.571.root"},
-    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-0.785.root","fit_fc_17c_inverted_nexp_-0.785.root"},
-    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.000.root","fit_fc_17c_inverted_nexp_0.000.root"},
-    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.785.root","fit_fc_17c_inverted_nexp_0.785.root"},
-    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_1.571.root","fit_fc_17c_inverted_nexp_1.571.root"},
-    // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_2.356.root","fit_fc_17c_inverted_nexp_2.356.root"},
-    // //{"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_3.142.root","fit_fc_17c_inverted_nexp_3.142.root"}, // +pi
-    // {"../../RUN17c_FLUXMERGE/fit_fitmarg_fc_nh_10k_run17c_fluxmerge_normal_3.142.root","fit_fc_17c_inverted_nexp_3.142.root"}, // +pi
+    // Normal Hierarhcy ~11k Toys - Inverted Hierarchy ~10k Toys (Raj) (USED FOR OFFICIAL PLOTS)
+    {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-2.356.root","fit_fc_17c_inverted_nexp_-2.356.root"},
+    {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-1.571.root","fit_fc_17c_inverted_nexp_-1.571.root"},
+    {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-0.785.root","fit_fc_17c_inverted_nexp_-0.785.root"},
+    {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.000.root","fit_fc_17c_inverted_nexp_0.000.root"},
+    {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_0.785.root","fit_fc_17c_inverted_nexp_0.785.root"},
+    {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_1.571.root","fit_fc_17c_inverted_nexp_1.571.root"},
+    {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_2.356.root","fit_fc_17c_inverted_nexp_2.356.root"},
+    //{"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_3.142.root","fit_fc_17c_inverted_nexp_3.142.root"}, // +pi
+    {"../../RUN17c_FLUXMERGE/fit_fitmarg_fc_nh_10k_run17c_fluxmerge_normal_3.142.root","fit_fc_17c_inverted_nexp_3.142.root"}, // +pi
     
     // // Normal Hierarhcy ~11k Toys - Inverted Hierarchy ~10k Toys (Raj) 
     // {"fit_fitmarg_fc_nh_10k_run17c_oldflux_normal_-2.356.root","fit_fitmarg_fc_ih_10k_run17c_oldflux_inverted_-2.356.root"},
@@ -301,9 +301,16 @@ void make_fc_critval_1d(){
 	double deltachisq0BF_used = deltachisq0BF_glob;
 	myvector.push_back(deltachisq0BF_used);
 	
+	// if(chisqtrue0>500){
+	//   cout << "chisqtrue0 = " << chisqtrue0 << endl;
+	//   cout << "deltachisq0BF = " << deltachisq0BF_used << endl;
+	//   exit(1);
+	// }
+
 	double weight = 1.;
 	vec_like_penalty.push_back(weight);
 	
+	//cout << deltachisq0BF_glob << endl;
 
       } // loop over ientry
             

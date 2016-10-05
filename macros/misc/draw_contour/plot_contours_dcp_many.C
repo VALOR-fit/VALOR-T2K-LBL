@@ -32,7 +32,7 @@ void plot_contours_dcp_many
  const bool doBrazilian = false,
  
  const bool doGlobalMin  = true,
- const bool same_mh_color = true, // use same color for NH and IH
+ const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
  
  const bool draw_preliminary = true,
@@ -40,13 +40,13 @@ void plot_contours_dcp_many
 
  const bool do_fc = true,
  const bool draw_fc_err = false,
- const bool do_fc_conf_interv = false,
+ const bool do_fc_conf_interv = true,
 
  const bool do_const = false,
 
  const bool draw_1sigmaCL = false,
  const bool draw_90CL     = true,
- const bool draw_2sigmaCL = true,
+ const bool draw_2sigmaCL = false,
  const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
@@ -58,8 +58,8 @@ void plot_contours_dcp_many
  
  // Compare true chisq
  
- // Asimov A best-fit (global)
- const double truepar0 = kBadResult,
+ // Run 1-7c best-fit (global)
+ const double truepar0 = -1.791, //kBadResult,
  const string truemh0 = "normal",
 
  // // run 1-6 best-fit (global)
@@ -75,7 +75,8 @@ void plot_contours_dcp_many
  // const string truemh0 = "inverted",
 
  // True point
- const double truepar1 = 0., //0., //-1.351,
+ //const double truepar1 = 0., //0., //-1.351,
+ const double truepar1 = TMath::Pi(), //0., //-1.351,
  const string truemh1 = "normal", //"inverted",
  
  //double mybestfit = 3.14, 
@@ -676,7 +677,7 @@ void plot_contours_dcp_many
       cout << "    chisq = " << chisqMH[ifile][imh] << endl;
 
     }
-    cout << "Delta Chisq = " << chisqMH[ifile][0] - chisqMH[ifile][1] << endl;
+    cout << " - Delta Chisq = " << chisqMH[ifile][0] - chisqMH[ifile][1] << endl;
   }
   cout << endl; 
   
@@ -923,7 +924,7 @@ void plot_contours_dcp_many
     double max_line_y = 25; //10; //25;
     min90CL_nh = new TLine(lim_min_nh,0.,lim_min_nh,max_line_y);
     max90CL_nh = new TLine(lim_max_nh,0.,lim_max_nh,max_line_y);
-    // min90CL_nh_2 = new TLine(lim_min_nh_2,0.,lim_min_nh_2,max_line_y);
+    //min90CL_nh_2 = new TLine(lim_min_nh_2,0.,lim_min_nh_2,max_line_y);
     // //max90CL_nh_2 = new TLine(lim_max_nh_2,0.,lim_max_nh_2,max_line_y);
     min90CL_ih = new TLine(lim_min_ih,0.,lim_min_ih,max_line_y);
     max90CL_ih = new TLine(lim_max_ih,0.,lim_max_ih,max_line_y);
@@ -938,9 +939,9 @@ void plot_contours_dcp_many
     min_box = lim_min_nh_2+0.25;
     if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
     hatch_min90CL_nh_2 = new TBox(lim_min_nh_2,0.,min_box,max_line_y);
-    // max_box = lim_max_nh_2-0.25;
-    // if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
-    // hatch_max90CL_nh_2 = new TBox(max_box,0.,lim_max_nh_2,max_line_y);
+    max_box = lim_max_nh_2-0.25;
+    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
+    hatch_max90CL_nh_2 = new TBox(max_box,0.,lim_max_nh_2,max_line_y);
 
     min_box = lim_min_ih+0.25;
     if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
@@ -1250,7 +1251,7 @@ void plot_contours_dcp_many
   
 
 
-  //
+  // Calculate deltachisq between two true points
 
   if(truepar0 != kBadResult && truepar1 != kBadResult){
 

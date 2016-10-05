@@ -22,11 +22,11 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
 
   //////////////////////////// VALOR contours /////////////////////
   
-  //const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root";
-  //const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root";
+  //const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17b/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_nh_contour.root";
+  //const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17b/contours_sinsqth23Vsdmsq/fitmarg_joint_sinsqth23Vsdmsq_Run17_Data_react_ih_contour.root";
 
-  const char *inname_nh = "fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_nh_contour.root";
-  const char *inname_ih = "fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_ih_contour.root";
+  const char *inname_nh = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdcp_react/fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_nh_contour.root";
+  const char *inname_ih = "../TECH_NOTE_14_3_16/DATA/RUN17c/contours_sinsqth23Vsdcp_react/fitmarg_joint_sinsqth23Vsdcp_Run17c_Data_react_ih_contour.root";
 
   const int Ncont_68 = 2;
   const char *contour_68_name[Ncont_68] = { // different graph for each contour (+-)
@@ -130,19 +130,30 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
   nova_ssth23_vs_delta_68CL_nh->SetContourLevel(0,chisq_min+2.3);
   nova_ssth23_vs_delta_90CL_nh->SetContour(1);
   nova_ssth23_vs_delta_90CL_nh->SetContourLevel(0,chisq_min+4.61);
-  
-  // Convert from dcp/pi to dcp
 
-  TMultiGraph *gnova_contour_68CL_nh = (TMultiGraph*) (get_contour("68CL_nova",nova_ssth23_vs_delta_68CL_nh))->Clone();//->Clone("ciao");
-  TMultiGraph *gnova_contour_90CL_nh = (TMultiGraph*) (get_contour("90CL_nova",nova_ssth23_vs_delta_90CL_nh))->Clone();//->Clone("ciao2");
-  
-  TCanvas *c = new TCanvas("c","c");
-  
+  // Take graphs of the contours
+
+  TMultiGraph *gnova_contour_68CL_nh = (TMultiGraph*) (get_contour("68CL_nova",nova_ssth23_vs_delta_68CL_nh))->Clone();
+  TMultiGraph *gnova_contour_90CL_nh = (TMultiGraph*) (get_contour("90CL_nova",nova_ssth23_vs_delta_90CL_nh))->Clone();
   assert(gnova_contour_68CL_nh);
   assert(gnova_contour_90CL_nh);
-  gnova_contour_68CL_nh->Draw("alp");
-  gnova_contour_90CL_nh->Draw("l");
   
+  // Convert from dcp/pi to dcp
+  ConvertHistoFromDcpOverPiToDcp(gnova_contour_68CL_nh);
+  ConvertHistoFromDcpOverPiToDcp(gnova_contour_90CL_nh);
+  
+  // Swap dcp with sinsqth23
+  SwapXY(gnova_contour_68CL_nh);
+  SwapXY(gnova_contour_90CL_nh);
+  
+  TCanvas *cNova = new TCanvas("cNova","cNova");
+  
+ 
+  gnova_contour_68CL_nh->Draw("ac");
+  gnova_contour_90CL_nh->Draw("c");
+  
+  return;
+
   //nova_ssth23_vs_delta_68CL_nh->Draw("colz same");
   //gnova_contour_68CL_nh->Draw("l same");
   //gnova_contour_90CL_nh->Draw("l same");
@@ -359,6 +370,54 @@ void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
   return;
 }
 
+void ConvertHistoFromDcpOverPiToDcp(TMultiGraph *mg){
+
+  TList* grlist;
+  grlist = mg->GetListOfGraphs();
+  printf("This multi-graph contains %d graphs\n",grlist->GetSize());
+  TIter next(grlist);
+  TObject *obj;
+  TGraph *graph;
+  
+  while ((obj = next())) {
+    graph=(TGraph*)obj;
+   
+    for(int ipt=0;ipt<graph->GetN();ipt++){
+      double x = 0.;
+      double y = 0.;
+      graph->GetPoint(ipt,x,y);
+      double dcp = x * TMath::Pi() - TMath::Pi();
+      graph->RemovePoint(ipt);
+      graph->SetPoint(ipt,dcp,y);
+    }
+  }
+
+  return;
+}
+
+void SwapXY(TMultiGraph *mg){
+
+  TList* grlist;
+  grlist = mg->GetListOfGraphs();
+  printf("This multi-graph contains %d graphs\n",grlist->GetSize());
+  TIter next(grlist);
+  TObject *obj;
+  TGraph *graph;
+  
+  while ((obj = next())) {
+    graph=(TGraph*)obj;
+    
+    for(int ipt=0;ipt<graph->GetN();ipt++){
+      double x = 0.;
+      double y = 0.;
+      graph->GetPoint(ipt,x,y);
+      graph->RemovePoint(ipt);
+      graph->SetPoint(ipt,y,x);
+    }
+  }
+  return;
+}
+
 void SwapXY(TGraph *graph){
   for(int ipt=0;ipt<graph->GetN();ipt++){
     double x = 0.;
@@ -378,8 +437,13 @@ TH2D* SwapXY(TH2D *graph){
   double xmax = graph->GetXaxis()->GetXmax();
   double ymin = graph->GetYaxis()->GetXmin();
   double ymax = graph->GetYaxis()->GetXmax();
-  
-  TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
+ 
+  //TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
+ 
+  TArrayD *arrayx = graph->GetXaxis()->GetXbins();
+  TArrayD *arrayy = graph->GetYaxis()->GetXbins();
+  TH2D* graph_out = new TH2D("h_temp","",nbinsY,arrayy->GetArray(),nbinsX,arrayx->GetArray());
+
   graph_out->GetXaxis()->SetTitle(graph->GetYaxis()->GetTitle());
   graph_out->GetYaxis()->SetTitle(graph->GetXaxis()->GetTitle());
   
@@ -393,6 +457,7 @@ TH2D* SwapXY(TH2D *graph){
   return graph_out;
 }
 
+
 void SwapXY(TMarker *graph){
   double x = graph->GetX();
   double y = graph->GetY();
@@ -405,7 +470,7 @@ void SwapXY(TMarker *graph){
 
 TMultiGraph * get_contour(char *tag,TH2F* h3=0){//,TMultiGraph *multig){
   
-  TCanvas* c2 = new TCanvas("c2","c",0,0,900,600);
+  TCanvas* c2 = new TCanvas("c2","c2",0,0,900,600);
   h3->Draw("CONT LIST");
   c2->Update();
   TObjArray *contours = 0;
@@ -414,32 +479,41 @@ TMultiGraph * get_contour(char *tag,TH2F* h3=0){//,TMultiGraph *multig){
   TList *list90 = (TList*)contours->At(0);
  
   TMultiGraph *multig = new TMultiGraph();
+  char multigname[200];
+  sprintf(multigname, "multig%s_%d");
+  multig->SetTitle(multigname);
+  multig->SetName(multigname);
+  
   TGraph *g;
   int it=0;
   TIter next(list90);
 
   while ((g = (TGraph*)next()))
     {
-      char name[200];
-      sprintf(name, "g%s_%d",tag,it);
-      //cout << name << endl;
+      char gname[200];
+      sprintf(gname, "g%s_%d",tag,it);
+       
       g->SetLineWidth(2);
       g->SetLineStyle(1);
       g->SetLineColor(kRed);
+      g->SetTitle(gname);
+      g->SetName(gname);
+
       multig->Add(g);
-      multig->SetTitle(name);
-      multig->SetName(name);
+      
+      //cout << "it = " << it << endl;
 
       it++;
     }
   
-//  c2 = 0;
-//  contours = 0;
-//  list90 = 0;
-//  g = 0;
-//  delete c2;
-//  delete contours;
-//  delete list90;
-//  delete g;
+  //  c2 = 0;
+  //  contours = 0;
+  //  list90 = 0;
+  //  g = 0;
+  //  delete c2;
+  //  delete contours;
+  //  delete list90;
+  //  delete g;
+  
   return multig;
 }

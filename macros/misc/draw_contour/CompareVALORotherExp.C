@@ -477,8 +477,13 @@ TH2D* SwapXY(TH2D *graph){
   double xmax = graph->GetXaxis()->GetXmax();
   double ymin = graph->GetYaxis()->GetXmin();
   double ymax = graph->GetYaxis()->GetXmax();
-  
-  TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
+ 
+  //TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
+ 
+  TArrayD *arrayx = graph->GetXaxis()->GetXbins();
+  TArrayD *arrayy = graph->GetYaxis()->GetXbins();
+  TH2D* graph_out = new TH2D("h_temp","",nbinsY,arrayy->GetArray(),nbinsX,arrayx->GetArray());
+
   graph_out->GetXaxis()->SetTitle(graph->GetYaxis()->GetTitle());
   graph_out->GetYaxis()->SetTitle(graph->GetXaxis()->GetTitle());
   

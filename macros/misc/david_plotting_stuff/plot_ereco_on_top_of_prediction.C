@@ -1,4 +1,6 @@
 
+#define SwapXY // Swap x and y axis of contours // does this to the chisq2d, contour and the TMarker!
+
 //example of macro illustrating how to superimpose two histograms
 #include "TCanvas.h"
 #include "TStyle.h"
@@ -18,22 +20,23 @@ using namespace valor::conv;
 void plot_ereco_on_top_of_prediction
 (
  const bool draw_preliminary = true,
- const int preliminary_color = kBlack,
+ const int preliminary_color = kYellow,
+ TString str_preliminary = "T2K Run1-7c preliminary",
  
- const char * sk_sample            = "RHC1Rmu",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  
- //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_1Rmu.root",
- //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_1Re.root",
- const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_RHC1Rmu.root",
- //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17/files/ErecoVsTheta_Run17_Asimov_A_RHC1Re.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_Asimov_A_1Rmu.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_Asimov_A_1Re.root",
+ //const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_Asimov_A_RHC1Rmu.root",
+ const char * expfile = "../TECH_NOTE_14_3_16/SPECTRA/RUN17c/files/ErecoVsTheta_Run17c_Asimov_A_RHC1Re.root",
  
  //const char * rootfile = "data_run1to6/SKdata_Run16.root",
- const char * rootfile = "data_run1to7/SKdata_Run17.root",
+ const char * rootfile = "data_run1to7c/SKdata_Run17c.root",
 
  const bool drawdata = true,
 
  float myscale = 1.,
-
+ 
  // Check Sig/Bkg ratio for this point and compare Ereco-Theta Vs Ereco only 
  //const double pt_ereco = 0.347578,
  //const double pt_theta = 70.9962,
@@ -43,6 +46,11 @@ void plot_ereco_on_top_of_prediction
 
  )
 {  
+
+  //#ifdef SwapXY
+  //hchisq_valor[ifile] = SwapXY(hchisq_valor[ifile]);
+  //hchisq_glob_valor[ifile] = SwapXY(hchisq_glob_valor[ifile]);
+  //#endif
 
 
   // Get Expectation
@@ -89,7 +97,8 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2_All->Add(hErecoVsQ2Mode_NueBeam);
   hErecoVsQ2_All->Add(hErecoVsQ2Mode_NumuToNue);
   hErecoVsQ2_All->Add(hErecoVsQ2Mode_NumuBarToNueBar);
-
+  
+  
   // Normalized histograms
 
   TH1D *hEreco_AllBkg_norm = (TH1D*) hEreco_AllBkg->Clone("hEreco_AllBkg_norm");
@@ -117,7 +126,7 @@ void plot_ereco_on_top_of_prediction
 
   SuperkObservation * skobs_fakedata = new SuperkObservation;
   skobs_fakedata->Read(rootfile2.Data(),0,false);
-
+  
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
     cerr << "** Undefined sample!" << endl;
@@ -128,7 +137,24 @@ void plot_ereco_on_top_of_prediction
 
   TH1D *hQ2Data = (TH1D*)hErecoVsQ2Data->ProjectionX()->Clone("hQ2Data");
   TH1D *hErecoData = (TH1D*)hErecoVsQ2Data->ProjectionY()->Clone("hErecoData");
+ 
+
+  // Swap XY in all the 2D histograms
+#ifdef SwapXY
+  hErecoVsQ2Mode_NueBeam = SwapXY(hErecoVsQ2Mode_NueBeam);
+  hErecoVsQ2Mode_NumuBeam = SwapXY(hErecoVsQ2Mode_NumuBeam);
+  hErecoVsQ2Mode_NumuBarBeam = SwapXY(hErecoVsQ2Mode_NumuBarBeam);
+  hErecoVsQ2Mode_NumuBarToNueBar = SwapXY(hErecoVsQ2Mode_NumuBarToNueBar);
+  hErecoVsQ2Mode_NumuToNue = SwapXY(hErecoVsQ2Mode_NumuToNue);
+  hErecoVsQ2Mode_NC = SwapXY(hErecoVsQ2Mode_NC);
+  hErecoVsQ2_AllBkg = SwapXY(hErecoVsQ2_AllBkg);
+  hErecoVsQ2_All = SwapXY(hErecoVsQ2_All);
+  hErecoVsQ2Data = SwapXY(hErecoVsQ2Data);
+#endif
+
   
+
+
   
   // Print # of events
   
@@ -152,9 +178,15 @@ void plot_ereco_on_top_of_prediction
   cout << "# of observed events = " << hErecoVsQ2Data->Integral() << endl;
   cout << endl;
 
+#ifdef SwapXY
+  int data_erecoVstheta_bin = hErecoVsQ2_All->FindBin(pt_ereco,pt_theta); 
+  double Sig_erecoVstheta = hErecoVsQ2Mode_NumuBarToNueBar->GetBinContent(data_erecoVstheta_bin);
+  double Bkg_erecoVstheta = hErecoVsQ2_All->GetBinContent(data_erecoVstheta_bin) - Sig_erecoVstheta;
+#else
   int data_erecoVstheta_bin = hErecoVsQ2_All->FindBin(pt_theta,pt_ereco); 
   double Sig_erecoVstheta = hErecoVsQ2Mode_NumuBarToNueBar->GetBinContent(data_erecoVstheta_bin);
   double Bkg_erecoVstheta = hErecoVsQ2_All->GetBinContent(data_erecoVstheta_bin) - Sig_erecoVstheta;
+#endif
   cout << endl;
   cout << "Check RHC1Re template components of Ereco = " << pt_ereco << " and Theta = " << pt_theta << endl;  
   cout << " - Ereco Vs Theta:" << endl;
@@ -205,7 +237,7 @@ void plot_ereco_on_top_of_prediction
   leg_Ereco->Draw();
   double posX = hErecoData->GetXaxis()->GetBinCenter(2);
   double posY = hErecoData->GetMaximum()*0.7;
-  TLatex *latPreliminary_1d = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  TLatex *latPreliminary_1d = new TLatex(posX,posY,str_preliminary);
   latPreliminary_1d->SetTextSize(0.05);
   latPreliminary_1d->SetTextColor(preliminary_color);
   if(draw_preliminary) latPreliminary_1d->Draw("same");
@@ -231,10 +263,11 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2_All->SetLineColor(kBlue);
   hErecoVsQ2_All->SetLineWidth(2);
   hErecoVsQ2_All->DrawCopy("colz");  
-  if(drawdata) hErecoVsQ2Data->DrawCopy("p same");
+  if(drawdata) hErecoVsQ2Data->DrawCopy("same");
+  //if(drawdata) hErecoVsQ2Data->DrawCopy("p same");
   posX = hErecoVsQ2Data->GetXaxis()->GetBinCenter(1);
   posY = hErecoVsQ2Data->GetYaxis()->GetBinCenter(2);
-  TLatex *latPreliminary_2d = new TLatex(posX,posY,"T2K Run1-7b preliminary");
+  TLatex *latPreliminary_2d = new TLatex(posX,posY,str_preliminary);
   latPreliminary_2d->SetTextSize(0.05);
   latPreliminary_2d->SetTextColor(preliminary_color);
   if(draw_preliminary) latPreliminary_2d->Draw("same");
@@ -247,6 +280,7 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2Mode_NueBeam->SetLineWidth(2);
   hErecoVsQ2Mode_NueBeam->DrawCopy("colz");  
   hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
 
   TCanvas *ErecoVsQ2_NumuBeam_ExpVsData = new TCanvas("ErecoVsQ2_NumuBeam_ExpVsData","ErecoVsQ2_NumuBeam_ExpVsData");
   hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
@@ -256,6 +290,7 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2Mode_NumuBeam->SetLineWidth(2);
   hErecoVsQ2Mode_NumuBeam->DrawCopy("colz");  
   hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
 
   TCanvas *ErecoVsQ2_NumuBarBeam_ExpVsData = new TCanvas("ErecoVsQ2_NumuBarBeam_ExpVsData","ErecoVsQ2_NumuBarBeam_ExpVsData");
   hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
@@ -265,6 +300,7 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2Mode_NumuBarBeam->SetLineWidth(2);
   hErecoVsQ2Mode_NumuBarBeam->DrawCopy("colz");  
   hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
 
   TCanvas *ErecoVsQ2_NumuBarToNueBar_ExpVsData = new TCanvas("ErecoVsQ2_NumuBarToNueBar_ExpVsData","ErecoVsQ2_NumuBarToNueBar_ExpVsData");
   hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
@@ -274,6 +310,7 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2Mode_NumuBarToNueBar->SetLineWidth(2);
   hErecoVsQ2Mode_NumuBarToNueBar->DrawCopy("colz");  
   hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
 
   TCanvas *ErecoVsQ2_NumuToNue_ExpVsData = new TCanvas("ErecoVsQ2_NumuToNue_ExpVsData","ErecoVsQ2_NumuToNue_ExpVsData");
   hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
@@ -283,6 +320,7 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2Mode_NumuToNue->SetLineWidth(2);
   hErecoVsQ2Mode_NumuToNue->DrawCopy("colz");  
   hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
 
   TCanvas *ErecoVsQ2_NC_ExpVsData = new TCanvas("ErecoVsQ2_NC_ExpVsData","ErecoVsQ2_NC_ExpVsData");
   hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
@@ -292,6 +330,17 @@ void plot_ereco_on_top_of_prediction
   hErecoVsQ2Mode_NC->SetLineWidth(2);
   hErecoVsQ2Mode_NC->DrawCopy("colz");  
   hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
+
+  TCanvas *ErecoVsQ2_AllBkg_ExpVsData = new TCanvas("ErecoVsQ2_AllBkg_ExpVsData","ErecoVsQ2_AllBkg_ExpVsData");
+  hErecoVsQ2Data->GetYaxis()->SetTitle("Reconstructed Neutrino Energy (GeV)");
+  hErecoVsQ2Data->GetXaxis()->SetTitle("#theta (degrees)");
+  hErecoVsQ2Data->GetZaxis()->SetTitle("Number of events");  
+  hErecoVsQ2_AllBkg->SetLineColor(kBlue);
+  hErecoVsQ2_AllBkg->SetLineWidth(2);
+  hErecoVsQ2_AllBkg->DrawCopy("colz");  
+  hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
   
   TCanvas *ErecoVsQ2_Components_ExpVsData = new TCanvas("ErecoVsQ2_Components_ExpVsData","ErecoVsQ2_Components_ExpVsData");
   hErecoVsQ2Data->SetMarkerSize(1.5);
@@ -314,16 +363,9 @@ void plot_ereco_on_top_of_prediction
   ErecoVsQ2_Components_ExpVsData->cd(6);
   hErecoVsQ2Mode_NumuBarBeam->Draw("colz");
   hErecoVsQ2Data->DrawCopy("p same");
+  if(draw_preliminary) latPreliminary_2d->Draw("same");
 
   
-
-
-
-
-
-
-
-
 
   
   TCanvas *cEreco_ExpVsData_Component = new TCanvas("cEreco_ExpVsData_Component","cEreco_ExpVsData_Component");
@@ -367,4 +409,53 @@ void plot_ereco_on_top_of_prediction
   return;
 
 
+}
+
+
+void SwapXY(TGraph *graph){
+  for(int ipt=0;ipt<graph->GetN();ipt++){
+    double x = 0.;
+    double y = 0.;
+    graph->GetPoint(ipt,x,y);
+    graph->RemovePoint(ipt);
+    graph->SetPoint(ipt,y,x);
+  }
+  return;
+}
+
+TH2D* SwapXY(TH2D *graph){
+  
+  int nbinsX = graph->GetNbinsX();
+  int nbinsY = graph->GetNbinsY();
+  double xmin = graph->GetXaxis()->GetXmin();
+  double xmax = graph->GetXaxis()->GetXmax();
+  double ymin = graph->GetYaxis()->GetXmin();
+  double ymax = graph->GetYaxis()->GetXmax();
+ 
+  //TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
+ 
+  TArrayD *arrayx = graph->GetXaxis()->GetXbins();
+  TArrayD *arrayy = graph->GetYaxis()->GetXbins();
+  TH2D* graph_out = new TH2D("h_temp","",nbinsY,arrayy->GetArray(),nbinsX,arrayx->GetArray());
+
+  graph_out->GetXaxis()->SetTitle(graph->GetYaxis()->GetTitle());
+  graph_out->GetYaxis()->SetTitle(graph->GetXaxis()->GetTitle());
+  
+  for(int i=0;i<graph_out->GetNbinsX();i++){
+    for(int j=0;j<graph_out->GetNbinsY();j++){  
+      double bincont = graph->GetBinContent(j+1,i+1);
+      graph_out->SetBinContent(i+1,j+1,bincont);
+    }
+  }
+  
+  return graph_out;
+}
+
+void SwapXY(TMarker *graph){
+  double x = graph->GetX();
+  double y = graph->GetY();
+  graph->SetX(y);
+  graph->SetY(x);
+  
+  return;
 }
