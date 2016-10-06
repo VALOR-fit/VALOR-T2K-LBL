@@ -3,6 +3,8 @@
 // Produce 1D chisq Vs dcp --> plot_contours_dcp.C (both NH and IH)
 // Produce 2D chisq Vs dcp Vs sinsqth13 --> draw_contour.C 
 
+//#define SwapXY
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
@@ -81,14 +83,14 @@ void CompareNewOldVALOR_th13Vsdcp
     g68_valor_nh[icont] = (TGraph*)filein_nh->Get(contour_68_name[icont]);
 #ifdef SwapXY
     if(g68_valor_nh[icont] != NULL)
-      SwapXY(g68_valor_nh[icont]);
+      g68_valor_nh[icont] = SwapXY(g68_valor_nh[icont]);
 #endif
   }
   for(int icont=0;icont<Ncont_90;icont++){
     g90_valor_nh[icont] = (TGraph*)filein_nh->Get(contour_90_name[icont]);
 #ifdef SwapXY
     if(g90_valor_nh[icont] != NULL)
-      SwapXY(g90_valor_nh[icont]);
+      g90_valor_nh[icont] = SwapXY(g90_valor_nh[icont]);
 #endif
   }
   hchisq_valor_nh = (TH2D*) filein_nh->Get(chisq_name);
@@ -106,14 +108,14 @@ void CompareNewOldVALOR_th13Vsdcp
     g68_valor_ih[icont] = (TGraph*)filein_ih->Get(contour_68_name[icont]);
 #ifdef SwapXY
     if(g68_valor_ih[icont] != NULL)
-      SwapXY(g68_valor_ih[icont]);
+      g68_valor_ih[icont] = SwapXY(g68_valor_ih[icont]);
 #endif
   }
   for(int icont=0;icont<Ncont_90;icont++){
     g90_valor_ih[icont] = (TGraph*)filein_ih->Get(contour_90_name[icont]);
 #ifdef SwapXY
     if(g90_valor_ih[icont] != NULL)
-      SwapXY(g90_valor_ih[icont]);
+      g90_valor_ih[icont] = SwapXY(g90_valor_ih[icont]);
 #endif
   }
   gbest_fit_global_ih = (TMarker*)filein_ih->Get(bestfitpt_name);
@@ -398,16 +400,27 @@ void ConvertMarkerFromSinsqthToSinsq2th(TMarker *marker){
   return;
 }
 
-void SwapXY(TGraph *graph){
+TGraph *SwapXY(TGraph *graph){
+  TGraph *graph_swap = new TGraph();
   for(int ipt=0;ipt<graph->GetN();ipt++){
     double x = 0.;
     double y = 0.;
-    graph->GetPoint(ipt,x,y);
-    graph->RemovePoint(ipt);
-    graph->SetPoint(ipt,y,x);
-  }
-  return;
+    graph->GetPoint(ipt,x,y);   
+    graph_swap->SetPoint(ipt,y,x);
+   }
+  return graph_swap;
 }
+
+// void SwapXY(TGraph *graph){
+//   for(int ipt=0;ipt<graph->GetN();ipt++){
+//     double x = 0.;
+//     double y = 0.;
+//     graph->GetPoint(ipt,x,y);
+//     graph->RemovePoint(ipt);
+//     graph->SetPoint(ipt,y,x);
+//   }
+//   return;
+// }
 
 TH2D* SwapXY(TH2D *graph){
   

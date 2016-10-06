@@ -72,14 +72,14 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
     g68_valor_nh[icont] = (TGraph*)filein_nh->Get(contour_68_name[icont]);
 #ifdef SwapXY
     if(g68_valor_nh[icont] != NULL)
-      SwapXY(g68_valor_nh[icont]);
+      g68_valor_nh[icont] = SwapXY(g68_valor_nh[icont]);
 #endif
   }
   for(int icont=0;icont<Ncont_90;icont++){
     g90_valor_nh[icont] = (TGraph*)filein_nh->Get(contour_90_name[icont]);
 #ifdef SwapXY
     if(g90_valor_nh[icont] != NULL)
-      SwapXY(g90_valor_nh[icont]);
+      g90_valor_nh[icont] = SwapXY(g90_valor_nh[icont]);
 #endif
   }
   hchisq_valor_nh = (TH2D*) filein_nh->Get(chisq_name);
@@ -97,14 +97,14 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
     g68_valor_ih[icont] = (TGraph*)filein_ih->Get(contour_68_name[icont]);
 #ifdef SwapXY
     if(g68_valor_ih[icont] != NULL)
-      SwapXY(g68_valor_ih[icont]);
+      g68_valor_ih[icont] = SwapXY(g68_valor_ih[icont]);
 #endif
   }
   for(int icont=0;icont<Ncont_90;icont++){
     g90_valor_ih[icont] = (TGraph*)filein_ih->Get(contour_90_name[icont]);
 #ifdef SwapXY
     if(g90_valor_ih[icont] != NULL)
-      SwapXY(g90_valor_ih[icont]);
+      g90_valor_ih[icont] = SwapXY(g90_valor_ih[icont]);
 #endif
   }
   gbest_fit_global_ih = (TMarker*)filein_ih->Get(bestfitpt_name);
@@ -146,13 +146,21 @@ void CompareVALORotherExp_sinsqth23Vsdcp()
   SwapXY(gnova_contour_68CL_nh);
   SwapXY(gnova_contour_90CL_nh);
   
-  TCanvas *cNova = new TCanvas("cNova","cNova");
-  
- 
+  TCanvas *cNova = new TCanvas("cNova","cNova"); 
   gnova_contour_68CL_nh->Draw("ac");
   gnova_contour_90CL_nh->Draw("c");
   
+
+  cout << endl;
+  cout << "TO DEBUG IT!!!" << endl;
+  cout << " - SwapXY function for TMultiGraph" << endl;
+  cout << " - Contour limits" << endl;
+  cout << endl;
+
   return;
+
+
+
 
   //nova_ssth23_vs_delta_68CL_nh->Draw("colz same");
   //gnova_contour_68CL_nh->Draw("l same");
@@ -407,27 +415,49 @@ void SwapXY(TMultiGraph *mg){
   while ((obj = next())) {
     graph=(TGraph*)obj;
     
-    for(int ipt=0;ipt<graph->GetN();ipt++){
-      double x = 0.;
-      double y = 0.;
-      graph->GetPoint(ipt,x,y);
-      graph->RemovePoint(ipt);
-      graph->SetPoint(ipt,y,x);
-    }
+    //
+    // THIS PIECE OF CODE DOESN'T WORK
+    // IT REMOVES HALF OF THE POINTS OF A TGRAPH
+    //
+    // for(int ipt=0;ipt<graph->GetN();ipt++){
+    //   double x = 0.;
+    //   double y = 0.;
+    //   graph->GetPoint(ipt,x,y);
+    //   graph->RemovePoint(ipt);
+    //   graph->SetPoint(ipt,y,x);
+    // }
+    //
+    
+    //mg->RecursiveRemove(obj);
+    //graph = SwapXY(graph);
+    //mg->Add(graph);
   }
   return;
 }
 
-void SwapXY(TGraph *graph){
+
+TGraph *SwapXY(TGraph *graph){
+  TGraph *graph_swap = new TGraph();
   for(int ipt=0;ipt<graph->GetN();ipt++){
     double x = 0.;
     double y = 0.;
-    graph->GetPoint(ipt,x,y);
-    graph->RemovePoint(ipt);
-    graph->SetPoint(ipt,y,x);
-  }
-  return;
+    graph->GetPoint(ipt,x,y);   
+    graph_swap->SetPoint(ipt,y,x);
+   }
+  return graph_swap;
 }
+
+
+// void SwapXY(TGraph *graph){
+//   for(int ipt=0;ipt<graph->GetN();ipt++){
+//     double x = 0.;
+//     double y = 0.;
+//     graph->GetPoint(ipt,x,y);
+//     graph->RemovePoint(ipt);
+//     graph->SetPoint(ipt,y,x);
+//   }
+//   return;
+// }
 
 TH2D* SwapXY(TH2D *graph){
   

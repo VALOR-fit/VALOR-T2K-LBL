@@ -327,14 +327,16 @@ void CompareContours()
       g68_valor[icont][ifile] = (TGraph*)filein[ifile]->Get(contour_68_name[icont]);
 #ifdef SwapXY
       if(g68_valor[icont][ifile] != NULL)
-      SwapXY(g68_valor[icont][ifile]);
+	g68_valor[icont][ifile] = SwapXY(g68_valor[icont][ifile]);
+	//SwapXY(g68_valor[icont][ifile]);
 #endif
     }
     for(int icont=0;icont<Ncont_90;icont++){
       g90_valor[icont][ifile] = (TGraph*)filein[ifile]->Get(contour_90_name[icont]);
 #ifdef SwapXY
       if(g90_valor[icont][ifile] != NULL)
-      SwapXY(g90_valor[icont][ifile]);
+	g90_valor[icont][ifile] = SwapXY(g90_valor[icont][ifile]);
+	//SwapXY(g90_valor[icont][ifile]);
 #endif
     }
     hchisq_valor[ifile] = (TH2D*) filein[ifile]->Get(chisq_name);
@@ -360,7 +362,7 @@ void CompareContours()
 
 
   // Init histogram
-
+  
   TH2D *hInit;
   if(setinit){
     hInit = new TH2D("hInit","hInit",201,x_low,x_up,201,y_low,y_up);
@@ -610,15 +612,28 @@ void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
   return;
 }
 
-void SwapXY(TGraph *graph){
+// void SwapXY(TGraph *graph){
+//   cout << "# of points = " << graph->GetN() << endl;
+//   for(int ipt=0;ipt<graph->GetN();ipt++){
+//     double x = 0.;
+//     double y = 0.;
+//     graph->GetPoint(ipt,x,y);
+//     graph->RemovePoint(ipt);
+//     graph->SetPoint(ipt,y,x);
+//     cout << "# of points = " << graph->GetN() << endl;
+//   }
+//   return;
+// }
+
+TGraph *SwapXY(TGraph *graph){
+  TGraph *graph_swap = new TGraph();
   for(int ipt=0;ipt<graph->GetN();ipt++){
     double x = 0.;
     double y = 0.;
-    graph->GetPoint(ipt,x,y);
-    graph->RemovePoint(ipt);
-    graph->SetPoint(ipt,y,x);
-  }
-  return;
+    graph->GetPoint(ipt,x,y);   
+    graph_swap->SetPoint(ipt,y,x);
+   }
+  return graph_swap;
 }
 
 TH2D* SwapXY(TH2D *graph){
@@ -629,12 +644,12 @@ TH2D* SwapXY(TH2D *graph){
   double xmax = graph->GetXaxis()->GetXmax();
   double ymin = graph->GetYaxis()->GetXmin();
   double ymax = graph->GetYaxis()->GetXmax();
- 
-  TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
- 
-  //TArrayD *arrayx = graph->GetXaxis()->GetXbins();
-  //TArrayD *arrayy = graph->GetYaxis()->GetXbins();
-  //TH2D* graph_out = new TH2D("h_temp","",nbinsY,arrayy->GetArray(),nbinsX,arrayx->GetArray());
+
+  //TH2D* graph_out = new TH2D("h_temp","",nbinsY,ymin,ymax,nbinsX,xmin,xmax);
+  
+  TArrayD *arrayx = graph->GetXaxis()->GetXbins();
+  TArrayD *arrayy = graph->GetYaxis()->GetXbins();
+  TH2D* graph_out = new TH2D("h_temp","",nbinsY,arrayy->GetArray(),nbinsX,arrayx->GetArray());
 
   graph_out->GetXaxis()->SetTitle(graph->GetYaxis()->GetTitle());
   graph_out->GetYaxis()->SetTitle(graph->GetXaxis()->GetTitle());
