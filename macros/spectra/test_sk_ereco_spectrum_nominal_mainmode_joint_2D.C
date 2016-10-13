@@ -57,7 +57,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  bool         disable_banff_tuning = true,                          /* */
  
  //
- // NEW CONFIGUR.ATION FILES (4/3/16 BANFF RELEASE)
+ // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
  //
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
@@ -73,7 +73,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file    = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_mrmc_test.xml",
  // const char * config_file    = "analysis_configuration.xml",
- const char * config_file     = "analysis_configuration.xml",
+ const char * config_file     = "analysis_configuration_Run1-7cPOT_theta.xml",    //"analysis_configuration.xml",
  //const char * config_file    = "analysis_configuration_dummy_multiring.xml",
  //const char * config_file  = "analysis_configuration_test_theta_elike_RFGRPA.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
@@ -86,32 +86,29 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
  //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
  
- bool         store_spectrum      = true,
- bool         print_spectrum      = true,                          /* */
- const char * mixparamchoice      = "sinsqtheta",
- const char * hierarchy           = "normal"   ,
- const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
+ bool         store_spectrum     = true,
+ bool         print_spectrum     = true,                          /* */
+ const char * mixparamchoice     = "sinsqtheta",
+ const char * hierarchy          = "normal"   ,
+ const char * dmsqscheme         = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
+ const char * mixparamoctant     = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
 
- bool plot_per_50MeV = false,
- double ErecoRangeLow = 0.,
- double ErecoRangeUp = 30.,
-
-
+ bool plot_per_50MeV             = false,
+ double ErecoRangeLow            = 0.,
+ double ErecoRangeUp             = 30.,
 
  int          iexperiment         = 0, //4404, //4739,                       /* */
  //const char * rootfile = "data_run1to4/SKdata_Run14.root",
- const char * rootfile = "data_run1to6/SKdata_Run16.root", 
+ // const char * rootfile = "data_run1to6/SKdata_Run16.root",
+ const char * rootfile = "", 
  const bool draw_data_spectra = false
-
-
 )
 {
   using namespace std;
   using namespace valor;
 
   char name[200];
-
+  
   const char * plot_format = "eps";
 
   double postlatex_X = 120.; // Theta
