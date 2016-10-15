@@ -128,72 +128,89 @@ TH1D * spectrum_to_per_50mev(TH1D * h) {
 
 void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
- int          mode                     = 0, //650, //11,                                         /* options: see above */
+ int          mode                     = 12, //13,                                          /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample                = "MultiRe",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRe" */
+ const char * sk_sample                = "1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // Asimov data set A
- double       input_mixing12       = 0.304,//-99,    
- double       input_mixing13       = 0.0217, //-99,    
- double       input_mixing23       = 0.528,    
- double       input_deltacp        = -1.601,   
- double       input_dm12sq         = 7.53E-5,   
- double       input_dm23sq         = 2.509E-3,     
+ double       input_mixing12       = 0.304,//-99,
+ double       input_mixing13       = 0.0217, //-99,
+ double       input_mixing23       = 0.528,
+ double       input_deltacp        = -1.601,
+ double       input_dm12sq         = 7.53E-5,
+ double       input_dm23sq         = 2.509E-3,
  double       input_betabar        = 1,
-
+ 
  // // Asimov data set B
- // double       input_mixing12       = 0.304,    
- // double       input_mixing13       = 0.0217,  
- // double       input_mixing23       = 0.45,    
- // double       input_deltacp        = 0.,   
- // double       input_dm12sq         = 7.53E-5,   
- // double       input_dm23sq         = 2.509E-3,     
+ // double       input_mixing12       = 0.304,
+ // double       input_mixing13       = 0.0217,
+ // double       input_mixing23       = 0.45,
+ // double       input_deltacp        = 0.,
+ // double       input_dm12sq         = 7.53E-5,
+ // double       input_dm23sq         = 2.509E-3,
  // double       input_betabar        = 1,
  
  bool         save_toy_expts           = false,                                       /* save the ereco spectra? */
  bool         save_throws              = false,                                        /* save the thrown parameter values*/
  
- const char * config_file      = "analysis_configuration_prefit.xml",
-
- const int    nexp                     = 10000,                                          /* number of experiments to make */
+ //
+ // NEW CONFIGURATION FILES (4/6/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7 FLUX)
+ //
+ const char * config_file      = "analysis_configuration_Run1-7cPOT_theta.xml", // Run 5-7 flux tuning for RHC
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17.xml", // Run 1-6 flux tuning
+ 
+ //
+ // NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ FIT BIAS)
+ //
+ //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml",
+ //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml",
+ 
+ const int    nexp                     = 100,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
- const char * mixparamoctant           = "two",       
+ const char * mixparamoctant           = "two",
  bool         reject_unphysical_throws = true    ,
- bool         use_new_definition_of_dn_over_n = true,
+ bool         use_new_definition_of_dn_over_n = false,
  
  const bool   doMargMH             = false,      // marginalize Mass Hierarchy
  const double PriorProbNH          = 0.5, //0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
- TString file_priors = "" // Set to "" if no user priors are used (VALOR) 
+ TString file_priors = "", // Set to "" if no user priors are used (VALOR)
+ const char*  tag                      = "nom",
+ 
+ //TString       randomised_osc          = "ss23-ss13-dcp-ss12-dmsq23-dmsq12"
+ TString       randomised_osc          = ""
  )
 {
   using namespace std;
   using namespace valor;
   using namespace valor::conv;
-
+  
   //
-
+  
   TH1D *hMEC = new TH1D("hMEC","hMEC",200,-5,5);
-
+  
   // Take prior distributions
- 
+  
   TH2D *hToy_th13_dcp_nh;
   TH2D *hToy_th13_dcp_ih;
   TH2D *hToy_23_nh;
   TH2D *hToy_23_ih;
   TH1D *hToy_MH = new TH1D("hToy_MH","0-->NH, 1-->IH",2,0,2);
-
+  
   TString str_sk_sample(sk_sample);
   bool RHCFlag = str_sk_sample.Contains("RHC");
-
+  
   conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
   if(s == conv::kSKsUndefined) {
     cerr << "** Undefined sample!" << endl;
     return;
   }
-
+  
   // Global options
   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
   Opt::Instance()->gOscDmsqScheme        = util::DmsqSchemeFromString(dmsqscheme);
@@ -205,10 +222,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     exit(1);
   }
   Opt::Instance()->SetDefaultParameterValues();
-
+  
   string sample_name = util::AsStringCompact(s);
   const char * sname = sample_name.c_str();
-
+  
   //Check if the mode is valid
   string modetitle = "";
   switch(mode) {
@@ -224,42 +241,78 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       //~ char fsibins[40] = "";
       //~ sprintf(fsibins, "fsi_%d", conv::kNumOfFSIParams);
       //~ modetitle = fsibins; break;
-    case 5 : modetitle = "BANFF_unconstrained";      break;
-    case 6 : modetitle = "BANFF_constrained";        break;
-    case 7 : modetitle = "BANFF_flux";               break;
-    case 8 : modetitle = "BANFF_xsec";               break;
-    case 9 : modetitle = "SKDet_FSI";                break;
-    case 10: modetitle = "BANFF_unconstrained_xsec"; break;
-    case 11: modetitle = "Osc_param";                break;
-    case 12: modetitle = "NueNumu";                  break;
-    case 13: modetitle = "skdetfsi_banff";           break;
-    case 14: modetitle = "FSIonly";                  break;
-    case 15: modetitle = "SKDetonly";                break;
-    case 16: modetitle = "Escale_SK";                break;
-
-    case 200: modetitle = "pfermi";          break;
-    case 201: modetitle = "specfunc";        break;
-    case 202: modetitle = "wshape";          break;
-    case 203: modetitle = "shapeCoth";       break;
-    case 204: modetitle = "pilessdelta";     break;
-    case 205: modetitle = "norm_cccoh";      break;
-    case 206: modetitle = "norm_nc1piC";     break;
-    case 207: modetitle = "norm_ncoth";      break;
-    case 208: modetitle = "norm_nuetonumu";  break;
-    case 209: modetitle = "norm_antinutonu"; break;
-    case 210: modetitle = "bindE";           break;
-
-    case 211: modetitle = "rpa"; break;
+    case 5:
+      modetitle = "BANFF_unconstrained"; break;
+    case 6:
+      modetitle = "BANFF_constrained"; break;
+    case 7:
+      modetitle = "BANFF_flux"; break;
+    case 8:
+      modetitle = "BANFF_xsec"; break;
+    case 9:
+      modetitle = "SKDet_FSI"; break;
+    case 10:
+      modetitle = "BANFF_unconstrained_xsec"; break;
+    case 11:
+      modetitle = "Osc_param"; break;
+    case 12:
+      modetitle = "NueNumu"; break;
+    case 13:
+      modetitle = "skdetfsi_banff"; break;
+    case 14:
+      modetitle = "FSIonly"; break;
+    case 15:
+      modetitle = "SKDetonly"; break;
+    case 16:
+      modetitle = "Escale_SK"; break;
+    case 650:
+      modetitle = "MEC"; break;
+    case 666:
+      modetitle = "MECBar"; break;
+    case 664:
+      modetitle = "NCGamma"; break;
       
-    case 700: modetitle = "mixing13"; break;
-    case 701: modetitle = "mixing12"; break;
-    case 702: modetitle = "dm12sq";   break;
-    case 703: modetitle = "deltacp";  break;
-
-    case 999: modetitle = "statonly"; break;
-
+    case 200:
+      modetitle = "pfermi"; break;
+    case 201:
+      modetitle = "specfunc"; break;
+    case 202:
+      modetitle = "wshape"; break;
+    case 203:
+      modetitle = "shapeCoth"; break;
+    case 204:
+      modetitle = "pilessdelta"; break;
+    case 205:
+      modetitle = "norm_cccoh"; break;
+    case 206:
+      modetitle = "norm_nc1piC"; break;
+    case 207:
+      modetitle = "norm_ncoth";
+      break;
+    case 208:
+      modetitle = "norm_nuetonumu"; break;
+    case 209:
+      modetitle = "norm_antinutonu"; break;
+    case 210:
+      modetitle = "bindE"; break;
+      
+    case 211:
+      modetitle = "rpa"; break;
+      
+    case 700:
+      modetitle = "mixing13"; break;
+    case 701:
+      modetitle = "mixing12"; break;
+    case 702:
+      modetitle = "dm12sq"; break;
+    case 703:
+      modetitle = "deltacp"; break;
+      
+    case 999:
+      modetitle = "statonly"; break;
+      
     default:
-
+      
       // banff fhc
       if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
         modetitle = Form("banff%02d",mode-400); break;
@@ -279,7 +332,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       cout << "Unknown mode " << mode << endl; exit(1); break;
   }//switch mode
   
-
+  
   //
   
   TString config_str(config_file);
@@ -287,15 +340,15 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   if(isprefit) {
     modetitle += "prefit";
   }
-
+  
   //
-
+  
   TH1D * hErecoNominal = 0;
-  TH1D * hNsk; 
+  TH1D * hNsk;
   TH1D* h_nominal;
   TH1D** h_bin = new TH1D*[util::NumErecoBins(s)];
   TH1D** h_bin_coarse = new TH1D*[util::NumErecoBins(s)];
-
+  
   // RHC1Re
   if(s==conv::kSKsRHCFCFV1RingELike){
     hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
@@ -310,18 +363,16 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   }
   // 1Rmu
   else if(s==conv::kSKsFCFV1RingMuLike){
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);      
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
   }
-  // MultiRe
-  else if(s==conv::kSKsFCFVMultiRingELike){
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+  else{
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
   }
-
-
-  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
+  
+  for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
     char name[200];
     sprintf(name,"h_bin_%d",ibin);
-
+    
     // RHC1Re
     if(s==conv::kSKsRHCFCFV1RingELike){
       h_bin[ibin] = new TH1D(name,name,20000,0,3);
@@ -346,160 +397,162 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       sprintf(name,"h_bin_coarse_%d",ibin);
       h_bin_coarse[ibin] = new TH1D(name,name,200,0,50);
     }
-    // MultiRe
-    else if(s==conv::kSKsFCFVMultiRingELike){
-      h_bin[ibin] = new TH1D(name,name,20000,0,10);
-      sprintf(name,"h_bin_coarse_%d",ibin);
-      h_bin_coarse[ibin] = new TH1D(name,name,200,0,10);
-    }
   }
-
+  
   TH1D* hErecoAverage = new TH1D("hErecoAverage","hErecoAverage",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_up = new TH1D("h_up","h_up",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_down = new TH1D("h_down","h_down",util::NumErecoBins(s),util::ErecoBinEdges(s));
-
-  TH1D* hErecoMedian = new TH1D("hErecoMedian","hErecoMedian",util::NumErecoBins(s),util::ErecoBinEdges(s)); 
+  
+  TH1D* hErecoMedian = new TH1D("hErecoMedian","hErecoMedian",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_up_Median = new TH1D("h_up_Median","h_up_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
   TH1D* h_down_Median = new TH1D("h_down_Median","h_down_Median",util::NumErecoBins(s),util::ErecoBinEdges(s));
-
+  
   //
-
+  
   int syst_nsigma = util::GetSystNSigma();
-
+  
   cout << endl;
   cout << "Systematic mode (" << mode << ") --> " << modetitle << endl;
   cout << endl;
-
+  
   // Analysis configuration
   TString config  = TString::Format("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
-  string sconfig(config.Data());  
-  T2KOpt::Instance()->ReadXmlPath(sconfig);    
-
+  string sconfig(config.Data());
+  T2KOpt::Instance()->ReadXmlPath(sconfig);
+  
   // Check whether some osc. params need to be randomized
-
-  bool randomize_mixing12   = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
-  bool randomize_mixing13   = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
-  bool randomize_mixing23   = (TMath::Abs(input_mixing23 + 999) < kASmallNum);
-  bool randomize_deltacp    = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
-  bool randomize_dm12sq     = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
-  bool randomize_dm23sq     = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
+  
+  bool randomize_mixing12   = randomised_osc.Contains("ss12");
+  bool randomize_mixing13   = randomised_osc.Contains("ss13");
+  bool randomize_mixing23   = randomised_osc.Contains("ss23");
+  bool randomize_deltacp    = randomised_osc.Contains("dcp");
+  bool randomize_dm12sq     = randomised_osc.Contains("dmsq12");
+  bool randomize_dm23sq     = randomised_osc.Contains("dmsq23");
   
   // Set Physics Hypothesis
   PhysHypothesis ph(hypothesis);
-
+  
   // Set oscillation parameter values and priors
-
+  
   // util::OscParams::Instance()->SetValues(input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
   //  input_betabar,
   //  input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
   //  PriorProbNH, doMargMH
   //  );
-
-  // Use same values for Nu and NuBar oscillation parameters 
+  
+  // Use same values for Nu and NuBar oscillation parameters
   util::OscParams::Instance()->SetValues(input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-    input_betabar,
-    input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-    PriorProbNH, doMargMH,
-    input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
-    input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq
-    );
+                                         input_betabar,
+                                         input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+                                         PriorProbNH, doMargMH,
+                                         input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq,
+                                         input_mixing12, input_mixing13, input_mixing23, input_deltacp, input_dm12sq, input_dm23sq
+                                         );
   
   bool MargMixing12        = true;
-  string PriorMixing12       = "gaus";   
+  string PriorMixing12       = "gaus";
   double PriorParMixing12[2];
-  PriorParMixing12[0] = conv::kPrior_Sinsq2th12_Used_Mean; 
-  PriorParMixing12[1] = conv::kPrior_Sinsq2th12_Used_RMS;  
+  PriorParMixing12[0] = conv::kPrior_Sinsq2th12_Used_Mean;
+  PriorParMixing12[1] = conv::kPrior_Sinsq2th12_Used_RMS;
   string MixModeMixing12     = "sinsq2th";
   
   bool MargMixing13        = true;
-  string PriorMixing13       = "gaus";   
+  string PriorMixing13       = "gaus";
   double PriorParMixing13[2];
-  PriorParMixing13[0] = conv::kPrior_Sinsq2th13_Used_Mean; 
-  PriorParMixing13[1] = conv::kPrior_Sinsq2th13_Used_RMS; 
+  PriorParMixing13[0] = conv::kPrior_Sinsq2th13_Used_Mean;
+  PriorParMixing13[1] = conv::kPrior_Sinsq2th13_Used_RMS;
   string MixModeMixing13     = "sinsq2th";
   
   bool MargMixing23        = true;
-  string PriorMixing23       = "flat";   
+  string PriorMixing23       = "flat";
   double PriorParMixing23[2];
-  PriorParMixing23[0] = conv::kPrior_Sinsq2th23_Flat_Low; 
-  PriorParMixing23[1] = conv::kPrior_Sinsq2th23_Flat_Up;  
+  PriorParMixing23[0] = conv::kPrior_Sinsq2th23_Flat_Low;
+  PriorParMixing23[1] = conv::kPrior_Sinsq2th23_Flat_Up;
   string MixModeMixing23     = "sinsqth";
   
   bool MargDm23sq          = true;
-  string PriorDm23sq         = "flat";   
+  string PriorDm23sq         = "flat";
   double PriorParDm23sq[2];
-  PriorParDm23sq[0]   = conv::kPrior_Dm23sq_Flat_Low; 
-  PriorParDm23sq[1]   = conv::kPrior_Dm23sq_Flat_Up;  
+  PriorParDm23sq[0]   = conv::kPrior_Dm23sq_Flat_Low;
+  PriorParDm23sq[1]   = conv::kPrior_Dm23sq_Flat_Up;
   
   bool MargDm12sq          = true;
-  string PriorDm12sq         = "gaus";   
+  string PriorDm12sq         = "gaus";
   double PriorParDm12sq[2];
-  PriorParDm12sq[0]   = conv::kPrior_Dm12sq_Used_Mean; 
-  PriorParDm12sq[1]   = conv::kPrior_Dm12sq_Used_RMS;  
+  PriorParDm12sq[0]   = conv::kPrior_Dm12sq_Used_Mean;
+  PriorParDm12sq[1]   = conv::kPrior_Dm12sq_Used_RMS;
   
   bool MargDeltaCP         = true;
-  string PriorDeltaCP        = "flat";   
+  string PriorDeltaCP        = "flat";
   double PriorParDeltaCP[2];
-  PriorParDeltaCP[0]  = conv::kPrior_deltaCP_Flat_Low; 
-  PriorParDeltaCP[1]  = conv::kPrior_deltaCP_Flat_Up;  
+  PriorParDeltaCP[0]  = conv::kPrior_deltaCP_Flat_Low;
+  PriorParDeltaCP[1]  = conv::kPrior_deltaCP_Flat_Up;
   
-  if(randomize_mixing23){ 
-    util::OscParams::Instance()->SetPrior(conv::kPhypMixing23,    PriorMixing23, PriorParMixing23[0], PriorParMixing23[1], MixModeMixing23);      
+  util::OscParams::Instance()->SetRandomize(0);
+  
+  if(randomize_mixing23){
+    util::OscParams::Instance()->SetPrior(conv::kPhypMixing23,    PriorMixing23, PriorParMixing23[0], PriorParMixing23[1], MixModeMixing23);
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing23,1);
   }
-  if(randomize_dm23sq){   
-    util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,    PriorDm23sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              );  
+  if(randomize_dm23sq){
+    util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,    PriorDm23sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              );
+    util::OscParams::Instance()->SetRandomize(conv::kPhypDm23sq,1);
   }
-  if(randomize_mixing13){ 
+  if(randomize_mixing13){
     util::OscParams::Instance()->SetPrior(conv::kPhypMixing13,    PriorMixing13, PriorParMixing13[0], PriorParMixing13[1], MixModeMixing13); // Convert to sinsqth
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing13,1);
   }
-  if(randomize_deltacp){  
-    util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      PriorDeltaCP,  PriorParDeltaCP[0],  PriorParDeltaCP[1],  ""              ); 
+  if(randomize_deltacp){
+    util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      PriorDeltaCP,  PriorParDeltaCP[0],  PriorParDeltaCP[1],  ""              );
+    util::OscParams::Instance()->SetRandomize(conv::kPhypCPV,1);
   }
-  if(randomize_mixing12){ 
+  if(randomize_mixing12){
     util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, PriorMixing12, PriorParMixing12[0], PriorParMixing12[1], MixModeMixing12); // Convert to sinsqth
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing12,1);
   }
-  if(randomize_dm12sq){   
-    util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              ); 
+  if(randomize_dm12sq){
+    util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              );
+    util::OscParams::Instance()->SetRandomize(conv::kPhypDm12sq,1);
   }
-
+  
   // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
   util::OscParams::Instance()->UpdatePhysHypothesis(ph);
   
   //return if tweaking osc params & there are no oscillations
   if(mode >= 700 && mode <= 799
-     && input_mixing23 < conv::kASmallNum 
+     && input_mixing23 < conv::kASmallNum
      && input_mixing13 < conv::kASmallNum
      && input_mixing12 < conv::kASmallNum
      && input_deltacp  < conv::kASmallNum
      && input_dm12sq   < conv::kASmallNum
      && input_dm23sq   < conv::kASmallNum)
     return;
-
+  
   // Print options
   cout << "\n[Job inputs]" << endl;
   cout << "- Reading analysis configuration from: " << config << endl;
   cout << "- Physics hypothesis: \n" << ph << endl;
   cout << *Opt::Instance() << endl;
-
+  
   // Create & config superk spectrum predictor
   //SuperkExpectation *skexp;
   SuperkExpectation *skexp = new SuperkExpectation;
   skexp->Read(sconfig);
   
   const SuperkDetectorFSI * skdet = skexp->GetSuperkDetectorFSI();
-  int n_total_skdetfsi_parameters = skdet->Size();
+  int n_total_skdetfsi_parameters = kNumOfSKDetFSIParams;
   
   SuperkObservation skobs;
   
   //string oscparams = util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar);
   string oscparams = util::AsString(ph.Hypothesis(),
-    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
-
+                                    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
+  
   cout << "input_deltacp = " << input_deltacp << endl;
   cout << oscparams << endl;
   
-
-
+  
+  
   // Output histograms
   //TH1D * hErecoNominal = 0;
   VALORArray * obsEreco[nexp];
@@ -509,21 +562,21 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   int nbanff;
   if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
   else        nbanff = conv::kNumOfParamsInBANFFfit;
-
+  
   int nxsecuncorr;
   if(RHCFlag) nxsecuncorr = conv::kNumOfRHCXSecSyst;
   else        nxsecuncorr = conv::kNumOfXSecSyst;
-
+  
   const int sys = nbanff + n_total_skdetfsi_parameters + nxsecuncorr;
-
-  FitParamList * fparm = util::NamedParameterList("nuosc3f+nuisance"); 
+  
+  FitParamList * fparm = util::NamedParameterList("nuosc3f+nuisance");
   const int np = fparm->GetNumberParameters();
   TH1D * hSysThrown[np];
   
   if (save_throws) {
     for(int ip = 0; ip < np; ip++) {
       conv::PhysParamId_t p = fparm->WhichParam(ip);
-      //if(!fparm->IsNuisance(p)) continue; 
+      //if(!fparm->IsNuisance(p)) continue;
       
       string sysstr = util::AsStringCompact(p);
       //cout << sysstr << endl;
@@ -532,22 +585,22 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       hSysThrown[ip]->SetDirectory(0);
     }
   }
-
+  
   // Open output files
   string rootmode = "update";
   if(!update_rootfile)
     rootmode = "recreate";
-
-  TFile *fosctoyhisto = new TFile(Form("sk_osc_toy_histo_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str(),"recreate");
-  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.root",sname,oscparams.c_str()),rootmode.c_str());
+  
+  TFile *fosctoyhisto = new TFile(Form("sk_osc_toy_histo_%s-twk_sys_throw_%s_%s.root",sname,oscparams.c_str(),tag),rootmode.c_str(),"recreate");
+  TFile f(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.root",sname,oscparams.c_str(),tag),rootmode.c_str());
   
   ofstream * outfilep = 0;
   
   if(!update_rootfile){
-    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::trunc);
+    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.txt",sname,oscparams.c_str(),tag),ios_base::trunc);
   }
   else {
-    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s.txt",sname,oscparams.c_str()),ios_base::app);
+    outfilep = new ofstream(Form("sk_ereco_spectrum_%s-twk_sys_throw_%s_%s.txt",sname,oscparams.c_str(),tag),ios_base::app);
   }
   
   ofstream & outfile = *outfilep;
@@ -556,7 +609,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   while(oscparams.find_first_of("[]") != string::npos) {
     oscparams.erase(oscparams.find_first_of("[]"), 1);
   }
-
+  
   // Get the nominal
   skexp->Generate(ph);
   hErecoNominal = (TH1D*) skexp->CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()->Clone("hErecoNominal");
@@ -565,19 +618,19 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoNominal->GetXaxis()->SetTitle("E_{reco} (GeV)");
   hErecoNominal->GetYaxis()->SetTitle("Events per bin");
   hErecoNominal->SetLineWidth(2);
- 
+  
   if (modetitle.find("prefit")==string::npos) {
     hErecoNominal->Write(Form("%s_nominal",sname));
   }
   else {
     hErecoNominal->Write(Form("%s_nominalprefit",sname));
   }
-
+  
   double nominal_total_nsk = hErecoNominal->Integral();
   
   TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
   hErecoNominal_per50MeV->Write(Form("%s_nominal_per_50MeV",sname));
-
+  
   TStopwatch w;
   w.Start();
   TStopwatch w2;
@@ -596,31 +649,30 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   
   PhysParamList pparm;
   
-
+  
   // Tweak!
   int iskip = 0;
   for(int iexp = 0; iexp < nexp; iexp++) {
-
+    
     if((iexp % 100) == 0 && (!done_print)) {
       done_print = true;
       cout << endl << "Experiment " << iexp << " for systematics: " << modetitle << endl;
       cout << "Last 100 experiments took "<<w2.RealTime()<<" seconds"<<endl;
       w2.Start();
     }
-
+    
     if(mode < 100) {
       
       // All
       if(mode == 0) {
         skexp->TweakAllSystematics();
       }
-
+      
       // BANFF
       if(mode == 1) {
-        //cout << "Tweaking all BANFF systematics" << endl;
         skexp->TweakAllBANFFSystematics();
       }
-
+      
       // Uncorrelated XSec
       if(mode == 2) {
         skexp->TweakAllUncorrelatedXSecSystematics();
@@ -629,23 +681,24 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       //BANFF (unconstrained only)
       if(mode == 5) {
-        skexp->GetBANFF()->Tweak(false,0,util::IsBANFFUnconstrained); // cholesky w/ full unconstrained matrix
+        skexp->GetBANFF()->TweakSampleConstrainedOnly(false,0,true); // cholesky w/ full unconstrained matrix
       }
       //BANFF (constrained only)
       if(mode == 6) {
-        skexp->GetBANFF()->Tweak(false,0,util::IsBANFFNotUnconstrained); // cholesky w/ full matrix
+        skexp->GetBANFF()->TweakSampleConstrainedOnly(false,0, false); // cholesky w/ full cov matrix
       }
       
       //BANFF (flux only)
       if(mode == 7) {
-        skexp->GetBANFF()->Tweak(false,0,util::IsFlux); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->TweakSampleFluxOnly(false,0); // cholesky w/ full cov matrix
       }
-
+      
       //BANFF (xsec only)
       if(mode == 8) {
-        skexp->GetBANFF()->Tweak(false,0,util::IsXSec); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->TweakSampleXSecOnly(false,0); // cholesky w/ full cov matrix
       }
-
+      
+      
       //SK det + FSI, FSI only or SKDet only
       if(mode == 9 || mode == 14 || mode == 15) {
         skexp->TweakAllSKDetectorFSISystematics();
@@ -660,31 +713,31 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       //sigma nue/numu (nu and nubar) xsec (they are correlated)
       if(mode == 12) {
-        skexp->GetBANFF()->Tweak(false,0,util::IsXSecNumuNue); // cholesky w/ full cov matrix
+        skexp->GetBANFF()->TweakSampleXSecNumuNueOnly(false,0); // cholesky w/ full cov matrix
       }
       
-      // All except oscillations
+      // All expect oscillations
       if(mode == 13) {
         skexp->TweakAllSystematics();
       }
       
       // Energy Scale
       if(mode == 16){
-        skexp->GetSuperkDetectorFSI()->Tweak(false,0,util::IsEScale);
+        // skexp->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
       }
       
-      //oscillation parameters
+      //oscillations parameters
       if(mode == 11 || mode == 0) {
-
+        
         // Randomize specified osc params for current toy MC expt
         util::OscParams::Instance()->Randomize();
         
-        util::OscParams::Instance()->Print(cout);
+        //util::OscParams::Instance()->Print(cout);
         
         // Set the mass hierarchy
         //valor::util::SetMassHierarchy(skexp);
         util::SetMassHierarchy(skexp);
-
+        
         // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
         bool print = false;
         util::OscParams::Instance()->UpdatePhysHypothesis(ph,print);
@@ -695,80 +748,96 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
         util::OscParams::Instance()->FillOscToyHisto(ph);
         
       } // mode 11 (osc param)
-
+      
     }//mode<100
-
+    else if (mode > 600 && mode < 700)
+    {
+      //BANFF (MEC only)
+      if(mode == 650) {
+        skexp->GetBANFF()->TweakSampleMEC(false,0); // cholesky w/ full cov matrix
+      }
+      
+      //BANFF (MECBar only)
+      if(mode == 664) {
+        skexp->GetBANFF()->TweakSampleNCGamma(false,0); // cholesky w/ full cov matrix
+      }
+      
+      //BANFF (MECBar only)
+      if(mode == 666) {
+        skexp->GetBANFF()->TweakSampleMECBar(false,0); // cholesky w/ full cov matrix
+      }
+    }
     else if(mode < 999) {//everything else but the stat
       
       double tweak = rand.Gaus(0.,1.);
-
+      
       switch(mode) {
         case 200:
-          if( !util::IsXSec(util::PhysParamIdFromString("pfermi")) ) break; 
-          skexp->TweakSystematic("pfermi",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("pfermi")) ) break;
+          skexp->TweakSystematic("pfermi",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 201:
-          if( !util::IsXSec(util::PhysParamIdFromString("specfunc")) ) break; 
-          skexp->TweakSystematic("specfunc",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("specfunc")) ) break;
+          skexp->TweakSystematic("specfunc",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 202:
-          if( !util::IsXSec(util::PhysParamIdFromString("wshape")) ) break; 
-          skexp->TweakSystematic("wshape",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("wshape")) ) break;
+          skexp->TweakSystematic("wshape",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 203:
-          if( !util::IsXSec(util::PhysParamIdFromString("shapeCCoth")) ) break; 
-          skexp->TweakSystematic("shapeCCoth",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("shapeCCoth")) ) break;
+          skexp->TweakSystematic("shapeCCoth",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 204:
-          if( !util::IsXSec(util::PhysParamIdFromString("pilessdelta")) ) break; 
-          skexp->TweakSystematic("pilessdelta",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("pilessdelta")) ) break;
+          skexp->TweakSystematic("pilessdelta",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 205:
-          if( !util::IsXSec(util::PhysParamIdFromString("norm_cccoh")) ) break; 
-          skexp->TweakSystematic("norm_cccoh",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_cccoh")) ) break;
+          skexp->TweakSystematic("norm_cccoh",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 206:
-          if( !util::IsXSec(util::PhysParamIdFromString("norm_nc1piC")) ) break; 
-          skexp->TweakSystematic("norm_nc1piC",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_nc1piC")) ) break;
+          skexp->TweakSystematic("norm_nc1piC",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 207:
-          if( !util::IsXSec(util::PhysParamIdFromString("norm_ncoth")) ) break; 
-          skexp->TweakSystematic("norm_ncoth",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_ncoth")) ) break;
+          skexp->TweakSystematic("norm_ncoth",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 208:
-          if( !util::IsXSec(util::PhysParamIdFromString("norm_nuetonumu")) ) break; 
-          skexp->TweakSystematic("norm_nuetonumu",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_nuetonumu")) ) break;
+          skexp->TweakSystematic("norm_nuetonumu",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 209:
-          if( !util::IsXSec(util::PhysParamIdFromString("norm_antinutonu")) ) break; 
-          skexp->TweakSystematic("norm_antinutonu",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("norm_antinutonu")) ) break;
+          skexp->TweakSystematic("norm_antinutonu",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
         case 210:
-          if( !util::IsXSec(util::PhysParamIdFromString("bindE")) ) break; 
-          skexp->TweakSystematic("bindE",tweak); 
+          if( !util::IsXSec(util::PhysParamIdFromString("bindE")) ) break;
+          skexp->TweakSystematic("bindE",tweak);
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
-
+          
         case 211:
-          if( !util::IsXSec(util::PhysParamIdFromString("rpa")) ) break; 
+          if( !util::IsXSec(util::PhysParamIdFromString("rpa")) ) break;
           tweak = rand.Uniform(0.,1.);
           skexp->TweakSystematic("rpa",tweak); // Automatically set at 0 or 1 in the Tweak
           skexp->GetNuXSec()->SyncRHCToFHCSystematics(); // need to synchronize FHC and RHC syst
           break;
-
+          
         case 300:
           skexp->TweakSystematic("sk_e_scale",tweak); break;
-    
+          
         case 700:
           ph.SetCurrValue(conv::kPhypMixing13,  util::RandomizeMixing13()); break;
         case 701:
@@ -777,25 +846,25 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
           ph.SetCurrValue(conv::kPhypDm12sq,    util::RandomizeDm12sq()); break;
         case 703:
           ph.SetCurrValue(conv::kPhypCPV    ,   util::RandomizeCPV()); break;
-
+          
         default:
           
           // banff fhc only
           if(mode >= 400 && mode < 400+conv::kNumOfParamsInBANFFfit) {
             TVectorD v(conv::kNumOfParamsInBANFFfit);
-            v = skexp->GetBANFF()->InitialValues();
+            v = skexp->GetBANFF()->BestFitValues();
             int ib = mode - 400;
-            v[ib] = skexp->GetBANFF()->InitialValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
-            skexp->GetBANFF()->Tweak(true,&v);
+            v[ib] = skexp->GetBANFF()->BestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
+            skexp->GetBANFF()->TweakSample(true,&v);
             break;
           }
           // banff rhc
           else if(mode >= 500 && mode < 500+conv::kNumOfRHCParamsInBANFFfit) {
             TVectorD v(conv::kNumOfRHCParamsInBANFFfit);
-            v = skexp->GetBANFF()->InitialValues();
+            v = skexp->GetBANFF()->RHCBestFitValues();
             int ib = mode - 500;
-            v[ib] = skexp->GetBANFF()->InitalValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
-            skexp->GetBANFF()->Tweak(true,&v);
+            v[ib] = skexp->GetBANFF()->RHCBestFitValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->RHCCovMatrix()[ib][ib]));
+            skexp->GetBANFF()->TweakSample(true,&v);
             break;
           }
           // banff fhc+rhc
@@ -803,12 +872,12 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
             TVectorD v(conv::kNumOfFHCpRHCParamsInBANFFfit);
             v = skexp->GetBANFF()->InitialValues();
             int ib = mode - 600;
-            v[ib] = skexp->GetBANFF()->InitialValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->CovMatrix()[ib][ib]));
+            v[ib] = skexp->GetBANFF()->InitialValues()[ib] + (tweak * sqrt(skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib]));
             //cout << "Single Param Variance = " << skexp->GetBANFF()->FHCpRHCCovMatrix()[ib][ib] << endl;
-            skexp->GetBANFF()->Tweak(true,&v);
-                  break;
-                }
-        
+            skexp->GetBANFF()->TweakSample(true,&v);
+            break;
+          }
+          
           // skdetfsi fhc
           else if(mode >= 800 && mode < 900) {
             TVectorD v(n_total_skdetfsi_parameters);
@@ -821,13 +890,13 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
             skdet->Tweak(true,&v);
             break;
           }
-
+          
           cout << "Unknown mode " << mode << endl; exit(1); break;
       }//switch(mode)
     }//mode>=100
     
     skexp->CopyTweaksTo(pparm);
-   
+    
     if (reject_unphysical_throws) {
       bool within_limits = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(pparm);
       if (!within_limits) {
@@ -842,7 +911,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     
     
     if(mode==425) hMEC->Fill(v[25]);
-
+    
     // generate predictions
     bool applied_negevents_condition = skexp->Generate(ph);
     if(applied_negevents_condition) {
@@ -851,14 +920,14 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       iexp--;
       continue;
     }
-
+    
     if(mode == 999) {
       bool fluctuate = true;
       skobs.CreateMockData(skexp,ph,fluctuate);
     }
     
     VALORArray * spectrum = 0;
-
+    
     //store spectrum
     if (save_toy_expts) {
       if(mode == 999 ) {
@@ -883,43 +952,43 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
         spectrum = skexp->CurrPredictedErecoVsQ2VArray(s);
       }
     }
-  
+    
     //store Nsk
     double nskint = spectrum->Integral();
- 
+    
     //cout << "nskint = " << nskint << endl;
-
+    
     hNsk->Fill(nskint);
     nsk_per_toy_arr[iexp] = nskint;
     
     //double ntot = 0.;
-
+    
     // Store tweaks.
     for (int ibin = 0 ; ibin < n_ereco_bins ; ibin++) {
       
       double N=0.;
       for (int ibinQ2 = 0 ; ibinQ2 < n_q2_bins ; ibinQ2++) {
-        N += spectrum->GetEntry(ibin,ibinQ2); 
+        N += spectrum->GetEntry(ibin,ibinQ2);
       }
       //double N = spectrum->GetArray()[ibin]; // TO CHANGE
-
+      
       double nom   = hErecoNominal->GetBinContent(ibin+1);
       
       //cout << "nom = " << nom << " - N = " << N << endl;
-
+      
       sumsq_per_bin[ibin] += (N-nom)*(N-nom);
-
+      
       //h_2d->Fill(h_2d->GetXaxis()->GetBinCenter(ibin+1),N);
-
+      
       h_bin[ibin]->Fill(N);
       h_bin_coarse[ibin]->Fill(N);
-
+      
       //ntot += N;
     }
-     
+    
     //cout << "ntot = " << ntot << endl;
     //cout << endl;
-  
+    
     if (save_toy_expts) { delete spectrum; }
     
     //store thrown parameter values
@@ -927,14 +996,14 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     if (save_throws) {
       for(int ip = 0; ip < np; ip++) {
         conv::PhysParamId_t p = fparm->WhichParam(ip);
-        //if(!fparm->IsNuisance(p)) continue; 
+        //if(!fparm->IsNuisance(p)) continue;
         
         string sysstr = util::AsStringCompact(p);
         
         if(util::IsBANFF(p)){
           if(RHCFlag)
-            hSysThrown[ip]->Fill(skexp->GetBANFF()->CurrentValue(p));
-          else 
+            hSysThrown[ip]->Fill(skexp->GetBANFF()->RHCCurrentValue(p));
+          else
             hSysThrown[ip]->Fill(skexp->GetBANFF()->CurrentValue(p));
         }
         else if(util::IsXSec(p)){
@@ -950,12 +1019,12 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   
   w.Stop();
   cout << iskip << " experiments skipped due to limits" << endl;
-
+  
   //save some histograms
   if (save_throws) {
     for(int ip = 0; ip < np; ip++) {
       conv::PhysParamId_t p = fparm->WhichParam(ip);
-      //if(!fparm->IsNuisance(p)) continue; 
+      //if(!fparm->IsNuisance(p)) continue;
       hSysThrown[ip]->Write();
     }
   }
@@ -994,7 +1063,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoMin   ->Write(Form("%s_%s_minuserr",sname,modetitle.c_str()));
   hErecoMaxEnv->Write(Form("%s_%s_envpluserr" ,sname,modetitle.c_str()));
   hErecoMinEnv->Write(Form("%s_%s_envminuserr",sname,modetitle.c_str()));
-
+  
   //Draw & save
   TCanvas * c = new TCanvas();
   hNsk->Draw();
@@ -1024,7 +1093,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoMaxEnv_per50MeV->Draw();
   hErecoMinEnv_per50MeV->Draw("same");
   hErecoNominal_per50MeV->Draw("same");
-  c2->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));  
+  c2->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   c2->cd();
   double max_limit = 1.1*TMath::Max(hErecoMax->GetMaximum(),hErecoMin->GetMaximum());
@@ -1038,7 +1107,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   c2->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   // Assume symmetric errors wrt the average (not nominal)
-
+  
   for(int i=0;i<util::NumErecoBins(s);i++){
     
     // wrt average
@@ -1046,15 +1115,15 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     double rms = h_bin[i]->GetRMS();
     hErecoAverage->SetBinContent(i+1,average);
     h_up->SetBinContent(i+1,average+rms);
-    h_down->SetBinContent(i+1,average-rms);  
-
+    h_down->SetBinContent(i+1,average-rms);
+    
     // wrt median
     int medianbin = GetMedianStatBin(h_bin[i],0.5); // median
     double medianstat = h_bin[i]->GetBinLowEdge(medianbin);
     int median_p1sigma_bin = GetMedianStatBin(h_bin[i],0.5+0.34); // median +1sigma
-    double medianstat_p1sigma = h_bin[i]->GetBinLowEdge(median_p1sigma_bin); 
+    double medianstat_p1sigma = h_bin[i]->GetBinLowEdge(median_p1sigma_bin);
     int medianstat_m1sigma_int = GetMedianStatBin(h_bin[i],0.5-0.34); // median -1sigma
-    double medianstat_m1sigma = h_bin[i]->GetBinCenter(medianstat_m1sigma_int); 
+    double medianstat_m1sigma = h_bin[i]->GetBinCenter(medianstat_m1sigma_int);
     hErecoMedian->SetBinContent(i+1,medianstat);
     h_up_Median->SetBinContent(i+1,medianstat_p1sigma);
     h_down_Median->SetBinContent(i+1,medianstat_m1sigma);
@@ -1063,7 +1132,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoAverage->Write(Form("%s_%s_average",sname,modetitle.c_str()));
   h_up   ->Write(Form("%s_%s_up_average" ,sname,modetitle.c_str()));
   h_down ->Write(Form("%s_%s_down_average",sname,modetitle.c_str()));
-
+  
   hErecoMedian->Write(Form("%s_%s_median",sname,modetitle.c_str()));
   h_up_Median   ->Write(Form("%s_%s_up_median" ,sname,modetitle.c_str()));
   h_down_Median ->Write(Form("%s_%s_down_median",sname,modetitle.c_str()));
@@ -1141,11 +1210,11 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hNsk->GetXaxis()->SetTitle("# of SK events");
   TLine *lNom = new TLine(hErecoNominal->Integral(),0,hErecoNominal->Integral(),hNsk->GetMaximum());
   lNom->SetLineColor(kRed);
-  lNom->Draw();  
-
+  lNom->Draw();
+  
   TCanvas **c4 = new TCanvas*[util::NumErecoBins(s)];
   for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-
+    
     //if(ibin+1!=10) continue;
     
     char name[200];
@@ -1155,81 +1224,81 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     TLine *lNom_bin = new TLine(hErecoNominal->GetBinContent(ibin+1),0,hErecoNominal->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
     lNom_bin->SetLineColor(kRed);
     lNom_bin->Draw();
-
+    
     TLine *lNom_bin_up = new TLine(h_up->GetBinContent(ibin+1),0,h_up->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
     lNom_bin_up->SetLineColor(kBlue);
     lNom_bin_up->Draw();
-
+    
     TLine *lNom_bin_down = new TLine(h_down->GetBinContent(ibin+1),0,h_down->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
     lNom_bin_down->SetLineColor(kBlue);
     lNom_bin_down->Draw();
-
+    
     TLine *lMedian_bin = new TLine(hErecoMedian->GetBinContent(ibin+1),0,hErecoMedian->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
     lMedian_bin->SetLineColor(kViolet);
     lMedian_bin->Draw();
-
+    
     TLine *lNom_bin_up_Median = new TLine(h_up_Median->GetBinContent(ibin+1),0,h_up_Median->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
     lNom_bin_up_Median->SetLineColor(kGreen);
     lNom_bin_up_Median->Draw();
-
+    
     TLine *lNom_bin_down_Median = new TLine(h_down_Median->GetBinContent(ibin+1),0,h_down_Median->GetBinContent(ibin+1),h_bin_coarse[ibin]->GetMaximum());
     lNom_bin_down_Median->SetLineColor(kGreen);
     lNom_bin_down_Median->Draw();
     
-    //   cout << "bin " << ibin << " : " 
-    // 	 << endl 
+    //   cout << "bin " << ibin << " : "
+    // 	 << endl
     // 	 << " - nominal = " << hErecoNominal->GetBinContent(ibin+1)
     // 	 << endl
-    // 	 // << " - mean = " 
+    // 	 // << " - mean = "
     // 	 // << hErecoAverage->GetBinContent(ibin+1)
     // 	 // << " +" << h_up->GetBinContent(ibin+1) - hErecoAverage->GetBinContent(ibin+1)
     // 	 // << " -" << hErecoAverage->GetBinContent(ibin+1) - h_down->GetBinContent(ibin+1)
     // 	 // << endl
-    //     	 // << " - median = " 
-    // 	 // << hErecoMedian->GetBinContent(ibin+1) 
-    // 	 // << " +" << h_up_Median->GetBinContent(ibin+1) - hErecoMedian->GetBinContent(ibin+1) 
+    //     	 // << " - median = "
+    // 	 // << hErecoMedian->GetBinContent(ibin+1)
+    // 	 // << " +" << h_up_Median->GetBinContent(ibin+1) - hErecoMedian->GetBinContent(ibin+1)
     // 	 // << " -" << hErecoMedian->GetBinContent(ibin+1) - h_down_Median->GetBinContent(ibin+1)
     // 	 // << endl;
-    // 	 << " - mean = " 
+    // 	 << " - mean = "
     // 	 << hErecoAverage->GetBinContent(ibin+1) << " - "
     // 	 << h_up->GetBinContent(ibin+1) << " - "
-    // 	 << h_down->GetBinContent(ibin+1) 
+    // 	 << h_down->GetBinContent(ibin+1)
     // 	 << endl
-    //     	 << " - median = " 
+    //     	 << " - median = "
     // 	 << hErecoMedian->GetBinContent(ibin+1) << " - "
     // 	 << h_up_Median->GetBinContent(ibin+1) << " - "
     // 	 << h_down_Median->GetBinContent(ibin+1)
     // 	 << endl;
   }
   cout << endl;
- 
+  
   TCanvas *c5 = new TCanvas("c5","c5");
   hMEC->Draw();
-
+  
   //
-
+  
   if (save_throws) {
     TCanvas * csys = new TCanvas();
     csys->Divide(ceil(sqrt(np)),ceil(sqrt(np)));
     for(int ip=0; ip < np; ip++) {
-      //if(!fparm->IsNuisance(p)) continue; 
+      //if(!fparm->IsNuisance(p)) continue;
       csys->cd(ip+1);
       hSysThrown[ip]->Draw();
       cout << ip << "\t" << hSysThrown[ip]->GetTitle() << endl;
     }
     delete csys;
   }
- 
+  
   delete c2;
-
-
+  
+  
   // Store extracted osc param toy histos
   fosctoyhisto->cd();
   util::OscParams::Instance()->Write(fosctoyhisto); // store the toy osc param histograms
   
   fosctoyhisto->Close();
   f->Close();
-
+  
   // format info to write
   stringstream streamer;
   if(!update_rootfile) {
@@ -1237,19 +1306,19 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     streamer << "\\begin{tabular}{| c | c c |}" << endl;
     streamer << "\\hline" << endl;
     streamer << "Nsk RMS/Mean & "
-             << "BANFF pre & "
-             << "BANFF post "
-             << endl;
+    << "BANFF pre & "
+    << "BANFF post "
+    << endl;
     streamer << "\\hline" << endl;
   }
   string banffpre = "-";
   if(mode == 0 || mode == 1)
     banffpre = "?";
-    
+  
   double dn_over_n = hNsk->GetRMS() / hNsk->GetMean();
   
   cout << "RMS / Mean = " << dn_over_n << endl;
-
+  
   if (use_new_definition_of_dn_over_n) {
     double sum_nsk = 0;
     for (int iexp = 0 ; iexp < nexp; iexp++) {
@@ -1272,16 +1341,16 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     cout << "Use the following:" << endl;
     cout << "RMS / Nominal = " << dn_over_n << endl;
   }
-      
+  
   if (isprefit) {
     streamer << modetitle << " & & " << dn_over_n << " \\\\ \\hline" << endl;
   }
   else {
     streamer << modetitle << " & & " << dn_over_n << " \\\\ \\hline" << endl;
   }
-    
+  
   cout << streamer.str() << endl;
-
+  
   // get size of file
   long size;
   streamer.seekg(0,ifstream::end);
@@ -1290,14 +1359,14 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   // write to outfile
   outfile.write (streamer.str().c_str(),size);
   outfile.close();
-
-  cout << "Tweaks performed in " 
-       << w.CpuTime() << " sec." << endl;
-
-
-
-
-
+  
+  cout << "Tweaks performed in "
+  << w.CpuTime() << " sec." << endl;
+  
+  
+  
+  
+  
   // Draw histograms
   
   // TCanvas *cToy_th13_dcp_nh = new TCanvas("cToy_th13_dcp_nh","cToy_th13_dcp_nh");
@@ -1336,12 +1405,12 @@ int main()
 //   for(int i=1; i<=h1->GetNbinsX();i++){
 //     avg += h1->GetBinCenter(i)*h1->GetBinContent(i);
 //   }
-//   avg = avg/h1->GetEntries();  
+//   avg = avg/h1->GetEntries();
 //   return avg;
 // }
 
 // double rms(TH1D* h1,double avg){
-//   double rms(0);  
+//   double rms(0);
 //   for(int i=1; i<=h1->GetNbinsX();i++){
 //     rms += ((h1->GetBinCenter(i) - avg) **2) * (h1->GetBinContent(i));
 //   }
@@ -1363,7 +1432,7 @@ double GetMedianStatBin(TH1D *h,double frac){
   
   int binmedian = -999;
   double totevents=h->Integral();
-
+  
   double currevt=0;
   
   for(int ibin=0;ibin<h->GetNbinsX();ibin++){
@@ -1375,7 +1444,7 @@ double GetMedianStatBin(TH1D *h,double frac){
       break;
     }
   }
-
+  
   //double median = h->GetBinCenter(binmedian);
   
   return binmedian;
