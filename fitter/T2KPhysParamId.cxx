@@ -3958,7 +3958,59 @@ bool valor::util::IsXSec(PhysParamId_t p)
 #elif defined(__USE_NIWG2015__)
     if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
         return true;
+  
 #endif
+
+  switch(p) {
+            
+        case (kNuisBANFFMEC              ): return true;
+        case (kNuisBANFFMECBar           ): return true;
+        case (kNuisBANFFCA5              ): return true;
+        case (kNuisBANFFBgRES            ): return true;
+        case (kNuisBANFFMAQE             ): return true;
+        case (kNuisBANFFMARES            ): return true;
+#if (BANFF_BINS != 2)
+        case (kNuisBANFFSCCA             ): return true;
+        case (kNuisBANFFSCCV             ): return true;
+#endif
+        case (kNuisBANFFFermiMom         ): return true;
+        case (kNuisBANFFShapeCCoth       ): return true;
+        case (kNuisBANFFBindE            ): return true;
+        case (kNuisBANFFNormCCcoh        ): return true;
+        case (kNuisBANFFNormNCcoh        ): return true;
+        case (kNuisBANFFNormNCoth        ): return true;
+        case (kNuisBANFFNormNC1Gamma     ): return true;
+
+        case (kNuisBANFFNormNuEToNuMu      ): return true;
+        case (kNuisBANFFNormNuEBarToNuMuBar): return true;
+    //case (kNuisBANFFNormNuEToNuMu    ): return true;
+    //case (kNuisBANFFNormNuEBarToNuMuBar): return true;
+    
+        case (kRHCNuisBANFFMECBar        ): return true;
+        case (kRHCNuisBANFFMEC           ): return true;
+        case (kRHCNuisBANFFCA5           ): return true;
+        case (kRHCNuisBANFFBgRES         ): return true;
+        case (kRHCNuisBANFFMAQE          ): return true;
+        case (kRHCNuisBANFFMARES         ): return true;
+#if (BANFF_BINS != 2)
+        case (kRHCNuisBANFFSCCA          ): return true;
+        case (kRHCNuisBANFFSCCV          ): return true;
+#endif
+        case (kRHCNuisBANFFFermiMom      ): return true;
+        case (kRHCNuisBANFFShapeCCoth    ): return true;
+        case (kRHCNuisBANFFBindE         ): return true;
+        case (kRHCNuisBANFFNormCCcoh     ): return true;
+        case (kRHCNuisBANFFNormNCcoh     ): return true;
+        case (kRHCNuisBANFFNormNCoth     ): return true;
+        case (kRHCNuisBANFFNormNuEToNuMu ): return true;
+        case (kRHCNuisBANFFNormNuEBarToNuMuBar): return true;
+        case (kRHCNuisBANFFNormNC1Gamma  ): return true;
+            
+            
+        default                           : return false;
+    }
+
+
     
     return false;
 }

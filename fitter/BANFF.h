@@ -32,7 +32,15 @@ class BANFF: public CorrelatedSystematics
 public:
   BANFF();   
  ~BANFF();
- 
+  void TweakSampleConstrainedOnly  (bool force_inputs = false, TVectorD * input_vec = 0, bool unconstrainted=false);
+  void TweakSampleFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSampleXSecOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSampleXSecNumuNueOnly     (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSampleMEC  (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSampleMECBar  (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSampleNCGamma  (bool force_inputs = false, TVectorD * input_vec = 0);
+
+  
  // The old interface is gone. It never needed to exist anyway.
  // Here's what to replace your calls with:
  // Read*               -> Read

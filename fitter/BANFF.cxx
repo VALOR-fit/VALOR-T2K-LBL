@@ -66,6 +66,103 @@ CorrelatedSystematics()
 
 }
 //________________________________________________________________________________________
+//________________________________________________________________________________________
+void BANFF::TweakSampleConstrainedOnly  (bool force_inputs, TVectorD * input_vec, bool unconstrained)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+  
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (unconstrained!=util::IsBANFFUnconstrained(p)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+  }
+  return;
+}
+//________________________________________________________________________________________
+void BANFF::TweakSampleFluxOnly  (bool force_inputs, TVectorD * input_vec)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (!util::IsFlux(p)) {
+      (*fCurrentValues)[ip]=(*fInitialValues)[ip];
+    };
+  }
+  return;
+}
+//________________________________________________________________________________________
+void BANFF::TweakSampleXSecOnly  (bool force_inputs, TVectorD * input_vec)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+  
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (!util::IsXSec(p)) {
+      (*fCurrentValues)[ip]=(*fInitialValues)[ip];
+    };
+  }
+  return;
+}
+//________________________________________________________________________________________
+void BANFF::TweakSampleXSecNumuNueOnly  (bool force_inputs, TVectorD * input_vec)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+  
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (!( p == kNuisBANFFNormNuEBarToNuMuBar   ||
+          p == kRHCNuisBANFFNormNuEBarToNuMuBar ||
+          p == kNuisBANFFNormNuEToNuMu   ||
+          p == kRHCNuisBANFFNormNuEToNuMu
+        ))
+    {
+      (*fCurrentValues)[ip]=(*fInitialValues)[ip];
+    };
+  }
+  return;
+}
+
+//________________________________________________________________________________________
+void BANFF::TweakSampleMEC  (bool force_inputs, TVectorD * input_vec)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+  
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (!( p == kNuisBANFFMEC || p == kRHCNuisBANFFMEC)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+  }
+  return;
+}
+//________________________________________________________________________________________
+void BANFF::TweakSampleMECBar  (bool force_inputs, TVectorD * input_vec)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+  
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (!( p == kNuisBANFFMECBar || p == kRHCNuisBANFFMECBar)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+  }
+  return;
+}
+//________________________________________________________________________________________
+void BANFF::TweakSampleNCGamma  (bool force_inputs, TVectorD * input_vec)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+  
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (!( p == kNuisBANFFNormNC1Gamma || p == kRHCNuisBANFFNormNC1Gamma)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+  }
+  return;
+}
+//________________________________________________________________________________________
 BANFF::~BANFF()
 {
   
