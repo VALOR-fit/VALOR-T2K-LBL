@@ -130,7 +130,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 (
  int          mode                     = 12, //13,                                          /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample                = "1Re",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample                = "MultiRe",                                   /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // Asimov data set A
@@ -365,6 +365,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   else if(s==conv::kSKsFCFV1RingMuLike){
     hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
   }
+  // MultiRe
+  else if(s==conv::kSKsFCFVMultiRingELike){
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+  }
   else{
     hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
   }
@@ -396,6 +400,11 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       h_bin[ibin] = new TH1D(name,name,20000,0,50);
       sprintf(name,"h_bin_coarse_%d",ibin);
       h_bin_coarse[ibin] = new TH1D(name,name,200,0,50);
+    }
+    else if(s==conv::kSKsFCFVMultiRingELike){
+      h_bin[ibin] = new TH1D(name,name,20000,0,10);
+      sprintf(name,"h_bin_coarse_%d",ibin);
+      h_bin_coarse[ibin] = new TH1D(name,name,200,0,10);
     }
   }
   
