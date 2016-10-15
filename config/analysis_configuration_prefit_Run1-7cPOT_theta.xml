@@ -506,7 +506,7 @@
       </one_mu_ring>
       <one_e_ring>
         <filename>
-          official/2015/xsec/2d_splines/theta/elike/SFRPA/splines_v5_1Re.root
+          official/2015/xsec/2d_splines/theta/SFRPA/splines_v5_1Re.root
         </filename>
       </one_e_ring>
 
@@ -517,7 +517,7 @@
       </one_mu_ring_rhc>
       <one_e_ring_rhc>
         <filename>
-          official/2015/xsec/2d_splines/theta/elike/SFRPA/splines_v5_RHC1Re.root
+          official/2015/xsec/2d_splines/theta/SFRPA/splines_v5_RHC1Re.root
         </filename>
       </one_e_ring_rhc>
 
