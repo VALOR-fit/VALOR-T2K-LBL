@@ -235,10 +235,10 @@ if not do_not_run_jobs:
 
           print command
           if not opt.skip_postfit:
-              if os.system(command) == 1:
-                sys.exit(1)
+            if os.system(command) == 1:
+              sys.exit(1)
             if update == "false":
-                update = "true"
+              update = "true"
         
           
           #repeat for the banff prefit (its a different spectrum, so erros have different effects)
@@ -246,8 +246,8 @@ if not do_not_run_jobs:
             command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+',"'+str(prefit_config)+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
 
             print command
-               if os.system(command) == 1:
-                sys.exit(1)
+            if os.system(command) == 1:
+              sys.exit(1)
 
 
 if make_summary:
