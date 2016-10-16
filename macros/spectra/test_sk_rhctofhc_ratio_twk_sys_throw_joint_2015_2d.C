@@ -134,7 +134,6 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
 (
  int          mode                     = 0, //650, //11,                                         /* options: see above */
  bool         update_rootfile          = true,                                        /* "update" ROOT output file? If false, will "recreate" */
- 
  const char * hypothesis               = "3f_osc",                                    /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" */
  
  // double       input_mixing12       = 0.304,
@@ -170,7 +169,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
- const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
+ const char * config_file      = "analysis_configuration_Run1-7cPOT_theta.xml",
  
  //
  // OLD CONFIGURATION FILES
@@ -188,7 +187,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
  //const char *config_file       = "analysis_configuration_test_theta_1bin_RFGRPA_NIWG2015c.xml",
  
- const int    nexp                     = 10000,                                          /* number of experiments to make */
+ const int    nexp                     = 100,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
@@ -198,7 +197,10 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
  
  const bool   doMargMH             = false,      // marginalize Mass Hierarchy
  const double PriorProbNH          = 0.5, //0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
- TString file_priors = "" // Set to "" if no user priors are used (VALOR)
+ TString file_priors = "", // Set to "" if no user priors are used (VALOR)
+ const char*  tag                      = "nom",
+ TString       randomised_osc          = ""
+
 )
 {
   using namespace std;
@@ -356,8 +358,8 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   // TH1D * hNsk_RHC1Rmu = new TH1D(Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_RHC1Rmu,modetitle.c_str()),100,0,100);
   // TH1D * hNsk_1Rmu = new TH1D(Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),Form("%s_%s_nsk",sname_1Rmu,modetitle.c_str()),100,0,300);
   
-  TH1D * hRatio_FHCtoRHC_elike  = new TH1D(Form("%s_ratio","Re"),Form("%s_nsk","Re"),200,5.,12.);
-  TH1D * hRatio_FHCtoRHC_mulike = new TH1D(Form("%s_ratio","Rmu"),Form("%s_nsk","Rmu"),200,3.,5.);
+  TH1D * hRatio_FHCtoRHC_elike  = new TH1D(Form("%s_ratio","Re"),Form("%s_nsk","Re"),200,1,12.);
+  TH1D * hRatio_FHCtoRHC_mulike = new TH1D(Form("%s_ratio","Rmu"),Form("%s_nsk","Rmu"),200,1,5.);
   
   cout << endl;
   cout << "Systematic mode (" << mode << ") --> " << modetitle << endl;
@@ -370,12 +372,12 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
   // Check whether some osc. params need to be randomized
   
-  bool randomize_mixing12   = (TMath::Abs(input_mixing12 + 999) < kASmallNum);
-  bool randomize_mixing13   = (TMath::Abs(input_mixing13 + 999) < kASmallNum);
-  bool randomize_mixing23   = (TMath::Abs(input_mixing23 + 999) < kASmallNum);
-  bool randomize_deltacp    = (TMath::Abs(input_deltacp  + 999) < kASmallNum);
-  bool randomize_dm12sq     = (TMath::Abs(input_dm12sq   + 999) < kASmallNum);
-  bool randomize_dm23sq     = (TMath::Abs(input_dm23sq   + 999) < kASmallNum);
+  bool randomize_mixing12   = randomised_osc.Contains("ss12");
+  bool randomize_mixing13   = randomised_osc.Contains("ss13");
+  bool randomize_mixing23   = randomised_osc.Contains("ss23");
+  bool randomize_deltacp    = randomised_osc.Contains("dcp");
+  bool randomize_dm12sq     = randomised_osc.Contains("dmsq12");
+  bool randomize_dm23sq     = randomised_osc.Contains("dmsq23");
   
   // Set Physics Hypothesis
   PhysHypothesis ph(hypothesis);
@@ -486,12 +488,16 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   
   ofstream * outfilep = 0;
   if(!update_rootfile){
-    outfilep = new ofstream(Form("sk_rhctofhc_ratio-twk_sys_throw_%s_%s.txt",oscparams.c_str(),modetitle.c_str()),ios_base::trunc);
+    outfilep = new ofstream(Form("sk_rhctofhc_ratio_1Re-twk_sys_throw_%s_%s.txt",oscparams.c_str(),tag),ios_base::trunc);
+    outfilep2 = new ofstream(Form("sk_rhctofhc_ratio_1Rmu-twk_sys_throw_%s_%s.txt",oscparams.c_str(),tag),ios_base::trunc);
+
   }
   else {
-    outfilep = new ofstream(Form("sk_rhctofhc_ratio-twk_sys_throw_%s_%s.txt",oscparams.c_str(),modetitle.c_str()),ios_base::app);
+    outfilep = new ofstream(Form("sk_rhctofhc_ratio_1Re-twk_sys_throw_%s_%s.txt",oscparams.c_str(),tag),ios_base::app);
+    outfilep2 = new ofstream(Form("sk_rhctofhc_ratio_1Rmu-twk_sys_throw_%s_%s.txt",oscparams.c_str(),tag),ios_base::app);
   }
   ofstream & outfile = *outfilep;
+  ofstream & outfile2 = *outfilep2;
   
   //remove the [] so can use it in SaveAs
   while(oscparams.find_first_of("[]") != string::npos) {
@@ -560,7 +566,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
       
       //SK det + FSI, FSI only or SKDet only
       if(mode == 9 || mode == 14 || mode == 15) {
-        skexp->TweakAllSampleSKDetectorFSISystematics();
+        skexp->TweakAllSKDetectorFSISystematics();
       }
       
       //unconstrained xsec + BANFF
@@ -583,8 +589,8 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
       // Energy Scale
       if(mode == 16){
         // Same as done in SuperkExpectation::TweakAllFHCpRHCSKDetectorFSISystematics()
-        skexp->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-        skexp->GetSuperkDetectorFSI()->TweakRHCEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+//        skexp->GetSuperkDetectorFSI()->TweakEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
+//        skexp->GetSuperkDetectorFSI()->TweakRHCEnergyScale(Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
         
         // cout << "FHC Escale = " << skexp->GetSuperkDetectorFSI()->FHCpRHCCurrentValue(kNuisSuperkEnergyScale) << endl;
         // cout << "FHC Escale = " << skexp->GetSuperkDetectorFSI()->CurrentValue(kNuisSuperkEnergyScale) << endl;
@@ -616,7 +622,7 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
       } // mode 11 (osc param)
       
     }//mode<100
-    else if (mode >> 600 && mode < 700)
+    else if (mode > 600 && mode < 700)
     {
       //BANFF (MEC only)
       if(mode == 650) {
@@ -879,13 +885,39 @@ void test_sk_rhctofhc_ratio_twk_sys_throw_joint_2015_2d
   cout << "mu-like FHC / RHC RMS/Mean = " << hRatio_FHCtoRHC_mulike->GetRMS() / hRatio_FHCtoRHC_mulike->GetMean() << endl;
   cout << endl;
   
-  outfile << "mulike Mean = " << hRatio_FHCtoRHC_mulike->GetMean() << endl;
-  outfile << "mulike RMS = " << hRatio_FHCtoRHC_mulike->GetRMS()  << endl;
-  outfile << "mulike RMS/Mean = " << hRatio_FHCtoRHC_mulike->GetRMS() / hRatio_FHCtoRHC_mulike->GetMean()  << endl;
-  outfile << "elike Mean = " << hRatio_FHCtoRHC_elike->GetMean() << endl;
-  outfile << "elike RMS = " << hRatio_FHCtoRHC_elike->GetRMS()  << endl;
-  outfile << "elike RMS/Mean = " << hRatio_FHCtoRHC_elike->GetRMS() / hRatio_FHCtoRHC_elike->GetMean()  << endl;
+
+  
+  stringstream streamer;
+  {
+    streamer << modetitle << " & & " << hRatio_FHCtoRHC_elike->GetRMS() / hRatio_FHCtoRHC_elike->GetMean()  << " \\\\ \\hline" << endl;
+  }
+  
+  cout << streamer.str() << endl;
+  
+  // get size of file
+  long size;
+  streamer.seekg(0,ifstream::end);
+  size=streamer.tellg();
+  streamer.seekg(0);
+  // write to outfile
+  outfile.write (streamer.str().c_str(),size);
   outfile.close();
+  
+  stringstream streamer2;
+  {
+    streamer2 << modetitle << " & & " << hRatio_FHCtoRHC_mulike->GetRMS() / hRatio_FHCtoRHC_mulike->GetMean()  << " \\\\ \\hline" << endl;
+  }
+  
+  cout << streamer2.str() << endl;
+  
+  // get size of file
+  streamer2.seekg(0,ifstream::end);
+  size=streamer2.tellg();
+  streamer2.seekg(0);
+  // write to outfile
+  outfile2.write (streamer2.str().c_str(),size);
+  outfile2.close();
+  
   
   TCanvas *cNsk_1Rmu = new TCanvas("cNsk_1Rmu","cNsk_1Rmu");
   hNsk_1Rmu->Draw();
