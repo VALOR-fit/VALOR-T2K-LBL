@@ -21,14 +21,14 @@ void Check_toys_marginalization_readbinary
  //const char * config_file      = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
  //const char * config_file      = "analysis_configuration_run1to4_joint_Nu6.57E20POT.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_Nu6.57E20POT.xml",
- const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_ExpSummer2016_75_25.xml",
+ const char * config_file      = "analysis_configuration_Run1-7cPOT_theta.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_FullStat.xml",
 
- const char * fit_param_list        = "nuosc3fbar_numudissap_allsyst", // dcp
+ const char * fit_param_list        = "nuosc3f+nuisance", // dcp
 
- const char * sk_sample = "1Rmu",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * sk_sample = "RHC1Rmu",   /* "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
 
- const char * hypothesis           = "3f_oscbar_dissap",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
+ const char * hypothesis           = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_oscbar_normbar, 3f_osc_normbar" */
 
  double       input_mixing12       = 0.304,                         
  double       input_mixing13       = 0.0243,                         
@@ -54,31 +54,31 @@ void Check_toys_marginalization_readbinary
  //const char * infilename = "submit_prova",
  //const char * infilename = "PROVA_SystAll",
  //const char * infilename = "submit_prova_TemplVArray_2d",
- const char * infilename = "/Users/rajs/work/studies/numudissap_sensi/toys/Run14",
+ const char * infilename = "/data/t2k/raj/studies/final_2015_joint/toys/ccpi/dcp/nh/Final_ccpi",
 
- const int    nfiles               = 1, //101, //201, 21, 1        // # of files to read
+ const int    nfiles               = 21, //101, //201, 21, 1        // # of files to read
 
- const int    NtoysMarg            = 10, //100, //10000, //1,  // # toys marginalization
+ const int    NtoysMarg            = 10000, //100, //10000, //1,  // # toys marginalization
  
-// const char * freeparname0        = "deltacp",  // free parameter
-// const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
-// const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
-// const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ const char * freeparname0        = "deltacp",  // free parameter
+ const double freeparmin0         = -3.14159265358979312e+00,         // minimum value of free parameter
+ const double freeparmax0         = +3.14159265358979312e+00, // 10., 1         // maxinum value of free parameter
+ const int    NptScan0            = 201, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
 // 
-// const char * freeparname1        = "",  // free parameter
-// const double freeparmin1         = 0., // minimum value of free parameter
-// const double freeparmax1         = 0., // maxinum value of free parameter
-// const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
+ const char * freeparname1        = "",  // free parameter
+ const double freeparmin1         = 0., // minimum value of free parameter
+ const double freeparmax1         = 0., // maxinum value of free parameter
+ const int    NptScan1            = 1, //201, //21,      // # pts of free parameter to scan
 
-  const char * freeparname0        = "mixing23Bar",  // free parameter
-  const double freeparmin0         = 0.25,         // minimum value of free parameter
-  const double freeparmax0         = 0.75, // 10., 1         // maxinum value of free parameter
-  const int    NptScan0            = 81, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
+ //const char * freeparname0        = "mixing23Bar",  // free parameter
+ //const double freeparmin0         = 0.25,         // minimum value of free parameter
+ //const double freeparmax0         = 0.75, // 10., 1         // maxinum value of free parameter
+ //const int    NptScan0            = 81, //9, //201, //3, //21, // 801, 2          // # pts of free parameter to scan
  
-  const char * freeparname1        = "dmsq23Bar",  // free parameter
-  const double freeparmin1         = 1.8E-3, // minimum value of free parameter
-  const double freeparmax1         = 3.2E-3, // maxinum value of free parameter
-  const int    NptScan1            = 21, //201, //21,      // # pts of free parameter to scan
+ //const char * freeparname1        = "dmsq23Bar",  // free parameter
+ //const double freeparmin1         = 1.8E-3, // minimum value of free parameter
+ //const double freeparmax1         = 3.2E-3, // maxinum value of free parameter
+ //const int    NptScan1            = 21, //201, //21,      // # pts of free parameter to scan
 
  
  const bool  doMargMH             = false,     // marginalize Mass Hierarchy
