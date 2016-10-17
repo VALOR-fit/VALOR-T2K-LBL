@@ -567,7 +567,7 @@
       -->
       <covariance_matrix>
         <!-- <filename>  official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/new_fullmatrix/Erec_Matrix_withCC1pi_04052016_VALOR_Order.root </filename> -->
-        <filename>  official/2016/SK_nue_cc1pi/Erec_Matrix_withCC1pi_run1-7c_07282016_VALOR_Order.root  </filename>
+        <filename>  official/2016/SK_nue_cc1pi/Erec_Matrix_CCpi_fixed_17102016_VALOR_order.root  </filename>
         <objname>   skdetfsi    </objname>
         <objtype>   TMatrixD                                  </objtype>
       </covariance_matrix>
