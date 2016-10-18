@@ -455,8 +455,8 @@ int main(int argc, char ** argv)
   fitnt->Branch("hErecoExp_MultiRe",   "TH2D",&hErecoExp_MultiRe,   32000,0);
 #endif
   
-  valor::conv::PhysParamId_t x_penalty;
-  valor::conv::PhysParamId_t y_penalty;
+  valor::conv::PhysParamId_t x_penalty = kPhypUndefined;
+  valor::conv::PhysParamId_t y_penalty = kPhypUndefined;
   if(runopt->ToyPenaltyTerm2D()){
     x_penalty = valor::util::PhysParamIdFromString(runopt->ToyPenaltyTerm2DHistX());
     y_penalty = valor::util::PhysParamIdFromString(runopt->ToyPenaltyTerm2DHistY());
