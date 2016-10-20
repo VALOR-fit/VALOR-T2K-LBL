@@ -27,7 +27,7 @@ void plot_contours_dcp_many
  TString titleX = "#delta_{CP} (radians)",
  //TString titleX = "sin^{2}#theta_{23}",
  //TString titleX = "sin^{2}#theta_{13}",
- TString titleY = "-2lnL",
+ TString titleY = "-2 #Delta lnL",
 
  const bool doBrazilian = false,
  
@@ -478,11 +478,11 @@ void plot_contours_dcp_many
   //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/FCgraphs_10k_Run17_FluxRun16.root";
   //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/FCgraphs_p8k.root";
   //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_4k.root";
-
+  
   //char *fcname = "FCgraphs.root";
 
   char *latexname[Nfiles][Nmh] = {
-    {"Normal Hierarchy","Inverted Hierarchy"},
+    {"Normal Ordering","Inverted Ordering"},
         
     //{"Run 1-7c - NH", "Run 1-7c - IH"},
     // {"Run 1-7b - NH", "Run 1-7b - IH"},
@@ -921,7 +921,7 @@ void plot_contours_dcp_many
     // prova_0->Draw();
     // prova_limit->Draw();
 
-    double max_line_y = 25; //10; //25;
+    double max_line_y = 10; //10; //25;
     min90CL_nh = new TLine(lim_min_nh,0.,lim_min_nh,max_line_y);
     max90CL_nh = new TLine(lim_max_nh,0.,lim_max_nh,max_line_y);
     //min90CL_nh_2 = new TLine(lim_min_nh_2,0.,lim_min_nh_2,max_line_y);
@@ -1169,12 +1169,12 @@ void plot_contours_dcp_many
     if(draw_90CL){
       //lcritval->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL) - NH","l");
       //lcritval->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL) - IH","l");
-      lcritval->AddEntry(gFC90CL_nh,"-2lnL_{crit} (90% CL)","l");
+      lcritval->AddEntry(gFC90CL_nh,"-2 #Delta lnL_{crit} (90% CL)","l");
     }
     if(draw_2sigmaCL){
       //lcritval->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma) - NH","l");
       //lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
-      lcritval->AddEntry(gFC2sigma_nh,"-2lnL_{crit} (2#sigma CL)","l");
+      lcritval->AddEntry(gFC2sigma_nh,"-2 #Delta lnL_{crit} (2#sigma CL)","l");
     }
     lcritval->Draw();
   }
@@ -1729,14 +1729,14 @@ void plot_contours_dcp_many
     //lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p2sigma,"Exp. #Delta #chi^{2} 2#sigma spread","f");
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p1sigma,"68.27\% of toys MC","f");
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p2sigma,"95.45\% of toys MC","f");
-    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. -2lnL","l");
+    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. -2 #Delta lnL","l");
     //lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. #Delta #chi^{2}","l");
     if(draw_90CL){
-      lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"-2lnL_{crit} (90% CL)","l");
+      lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"-2 #Delta lnL_{crit} (90% CL)","l");
       //lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90% CL)","l");
     }
     if(draw_2sigmaCL){
-      lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"-2lnL_{crit} (2#sigma CL)","l");
+      lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"-2 #Delta lnL_{crit} (2#sigma CL)","l");
     }
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
     lBrazilianPlot_nh->Draw();
@@ -1783,11 +1783,11 @@ void plot_contours_dcp_many
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p1sigma,"68.27\% of toys MC","f");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p2sigma,"95.45\% of toys MC","f");
     //lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. #Delta #chi^{2}","l");
-    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. -2lnL","l");
+    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. -2 #Delta lnL","l");
     if(draw_90CL)
-      lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"-2lnL_{crit} (90% CL)","l");
+      lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"-2 #Delta lnL_{crit} (90% CL)","l");
     if(draw_2sigmaCL)
-      lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"-2lnL_{crit} (2#sigma CL)","l");
+      lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"-2 #Delta lnL_{crit} (2#sigma CL)","l");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
     lBrazilianPlot_ih->Draw();
 
@@ -1889,7 +1889,7 @@ void plot_contours_dcp_many
 
     TCanvas *cdcp_Vs_deltachisq_nh = new TCanvas("cdcp_Vs_deltachisq_nh","cdcp_Vs_deltachisq_nh");
     hdcp_Vs_deltachisq_nh->GetXaxis()->SetTitle("#delta_{CP}");
-    hdcp_Vs_deltachisq_nh->GetYaxis()->SetTitle("-2lnL");
+    hdcp_Vs_deltachisq_nh->GetYaxis()->SetTitle("-2 #Delta lnL");
     //hdcp_Vs_deltachisq_nh->GetYaxis()->SetTitle("#Delta #chi^{2}");
     hdcp_Vs_deltachisq_nh->Draw("colz");
     TLatex *latNormal_dcp_dchisq = new TLatex(hdeltachisq1D_nh_mean->GetXaxis()->GetBinLowEdge(5),1.1,"Normal Hierarchy");
@@ -1898,7 +1898,7 @@ void plot_contours_dcp_many
     
     TCanvas *cdcp_Vs_deltachisq_ih = new TCanvas("cdcp_Vs_deltachisq_ih","cdcp_Vs_deltachisq_ih");
     hdcp_Vs_deltachisq_ih->GetXaxis()->SetTitle("#delta_{CP}");
-    hdcp_Vs_deltachisq_ih->GetYaxis()->SetTitle("-2lnL");
+    hdcp_Vs_deltachisq_ih->GetYaxis()->SetTitle("-2 #Delta lnL");
     //hdcp_Vs_deltachisq_ih->GetYaxis()->SetTitle("#Delta #chi^{2}");
     hdcp_Vs_deltachisq_ih->Draw("colz");
     TLatex *latInverted_dcp_dchisq = new TLatex(hdeltachisq1D_ih_mean->GetXaxis()->GetBinLowEdge(5),1.1,"Inverted Hierarchy");
