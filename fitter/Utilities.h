@@ -45,6 +45,7 @@ class TAxis;
 #include "T2KOpt.h"
 
 #include "UtlT2KStyle.h"
+#include "MakeFakeData.h"
 
 #include "valor/Conventions/Opt.h"
 #include "valor/Utilities/UtlNumStat.h"

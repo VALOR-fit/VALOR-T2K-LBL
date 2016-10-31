@@ -15,6 +15,7 @@
 
 
 #pragma link C++ class valor::util::ArrIdx;
+#pragma link C++ class valor::util::UtlMakeFakeData;
 
 #pragma link C++ class valor::T2KPhysicalParameterLimits;
 #pragma link C++ class valor::T2KOpt;

@@ -45,7 +45,7 @@
 #endif
 //#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KDI 1 sigma spectra
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
-
+#define FakeDataWeightDebug //Print out fake data weights 
 // #define POTWEIGHTSAREONE
 // #define FLUXWEIGHTSAREONE
 // #define BANFFTUNEISONE
@@ -411,12 +411,12 @@ void SuperkMC::CleanUp(void)
             if( fMCVariableTempl2D  [is][im] ) delete fMCVariableTempl2D[is][im];
             //
             
-            for (int ivb = 0; ivb < fNNonEmptyVariableBins[is][im] ; ivb++) {
+            for (int ivb = 0; ivb < kMaxVarBins ; ivb++) {
                 if (fNonEmptyFixedBins[is][im][ivb]) delete[] fNonEmptyFixedBins[is][im][ivb];
             }
             
             // NEW 2D TEMPLATES
-            for (int ivb = 0; ivb < fNNonEmptyVariableBins2D[is][im] ; ivb++) {
+            for (int ivb = 0; ivb < kMaxVarBins2D ; ivb++) {
                 if (fNonEmptyFixedBins2D[is][im][ivb]) delete[] fNonEmptyFixedBins2D[is][im][ivb];
             }
             //
@@ -438,7 +438,11 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     
     // instantiate all necessary histograms
     this->Book();
-    
+  
+  if(util::UtlMakeFakeData::Instance()->IsActive()){
+    util::UtlMakeFakeData::Instance()->Read(xml,root_node);
+  }
+  
 #ifdef __show_init_mesg_info__
     cout << "Exp/SKMC >> Reading SuperK MC inputs from input XML file." << endl;
 #endif
@@ -585,7 +589,11 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         
     }
 #endif//__show_init_mesg_info__
-    
+  
+  if(util::UtlMakeFakeData::Instance()->IsActive()){
+    cout << "Exp/SKMC >> " << "Reweighting events for " << util::UtlMakeFakeData::Instance()->GetReweightStyle() << endl;
+  }
+  
     // initialise physics hypothesis
     // need to initialise as 3 flavour oscillation, otherwise ExtTuning (NA61) and FinTuning (BANFF) is not applied to nuesig modes
     fPhysHypothesis.Init(kHypOsc3F);
@@ -1131,7 +1139,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     const char * amomm_branch = "amomm"; // MeV/c
     const char * amome_branch = "amome"; // MeV/c
     const char * dir_branch   = "dir";
-    // const char * dirnu_branch = "dirnu";
+     const char * dirnu_branch = "dirnu";
     // //
 
     // SetBranchAddress?
@@ -1145,7 +1153,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     TBranch * branchAmomm   = mctree->GetBranch(amomm_branch      );
     TBranch * branchAmome   = mctree->GetBranch(amome_branch      );
     TBranch * branchDir     = mctree->GetBranch(dir_branch        );
-    // TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );
+    TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );
     // //
     
     branchEreco    -> SetAddress(&fBrEreco);
@@ -1158,7 +1166,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     branchAmomm    -> SetAddress(&fBrAmomm);
     branchAmome    -> SetAddress(&fBrAmome);
     branchDir      -> SetAddress(&fBrDir);
-    // branchDirnu    -> SetAddress(&fBrDirnu);
+    branchDirnu    -> SetAddress(&fBrDirNu);
     // //
     
     mctree->SetBranchStatus("*",0);
@@ -1172,7 +1180,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     mctree->SetBranchStatus(amomm_branch     , 1 );
     mctree->SetBranchStatus(amome_branch     , 1 );
     mctree->SetBranchStatus(dir_branch       , 1 );
-    // mctree->SetBranchStatus(dirnu_branch     , 1 );
+     mctree->SetBranchStatus(dirnu_branch     , 1 );
     // //
     
 #ifdef USE_SFRFG_WEIGHT
@@ -1203,8 +1211,9 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     branchOscWgt->SetAddress(&fBrWghtOsc);
     }
 #endif
-    
-    
+  
+    bool is_fake_data_active = util::UtlMakeFakeData::Instance()->IsActive();
+  
     double ntotevents = 0.;
     
     for(int iev = 0; iev < mctree->GetEntries(); iev++)
@@ -1475,6 +1484,17 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         }
 #endif
 
+        double fake_data_weight = 1.;
+      
+      if(is_fake_data_active){
+        util::UtlMakeFakeData::Instance()->SetEventInfo(fBrPtrue,fBrDirNu,Etrue,m,ereco_fill,s,fBrAmome,fBrAmomm);
+        fake_data_weight = util::UtlMakeFakeData::Instance()->GetWeight();
+        ereco_fill = util::UtlMakeFakeData::Instance()->GetEreco();
+#ifdef FakeDataWeightDebug
+        std::cout << "SKMC/FillTemplateHistogram >> Fake data reweight: " << fake_data_weight << endl;
+#endif
+      }
+      
 #ifndef __USE_2D_TEMPLATES__
         this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
 #else
@@ -1489,64 +1509,64 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #ifdef USE_RPA_WEIGHTS || USE_OscBr_WEIGHTS
 #  ifdef USE_RPA_WEIGHTS && !defined(USE_OscBr_WEIGHTS)       
 	if(branchRPAnr){
-	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 	} else {
-	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 	}
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 
 #  elif !defined(USE_RPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
         if (s == kSKsFCFVMultiRingELike ){
-        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         }
 #  elif defined(USE_RPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
         if (s == kSKsFCFVMultiRingELike ){
         if(branchRPAnr){
-	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
+	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
 	} else {
-	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
+	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
 	}
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
-        
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
+        }
 #  endif
 #else
-        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 #endif
 #else
         // NEW 2D TEMPLATES
 #if defined(USE_RPA_WEIGHTS) || defined(USE_OscBr_WEIGHTS)
 #  if defined(USE_RPA_WEIGHTS) && !defined(USE_OscBr_WEIGHTS)       
 	if(branchRPAnr){
-	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 	} else {
           // Adding the line below gives exact agreement with the output from the p-theta code, wonder about how this is treated
           // further on in the code see that the ratio is used?
 	  //this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
-          this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+          this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 	}
-        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 
 #  elif !defined(USE_RPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
         if (s == kSKsFCFVMultiRingELike ){
-          this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
-          this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
+          this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
+          this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         }
 #  elif defined(USE_RPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
         LOG("SuperkMC",pINFO) << "Applying RPA and Oscillation branch weights" ;
         if (s == kSKsFCFVMultiRingELike ){
         if(branchRPAnr){
-	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
+	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
 	} else {
-	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
+	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
 	}
-        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         }
 #  endif
 #else
-        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
-        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 #endif
         
 #endif // __USE_2D_TEMPLATES__
@@ -1688,7 +1708,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     const char * amomm_branch = "amomm"; // MeV/c
     const char * amome_branch = "amome"; // MeV/c
     const char * dir_branch   = "dir";
-    // const char * dirnu_branch = "dirnu";
+    const char * dirnu_branch = "dirnu";
     // //
     
     TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
@@ -1701,7 +1721,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     TBranch * branchAmomm   = mctree->GetBranch(amomm_branch      );
     TBranch * branchAmome   = mctree->GetBranch(amome_branch      );
     TBranch * branchDir     = mctree->GetBranch(dir_branch        );
-    // TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );
+    TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );
     // //
     
     branchEreco    -> SetAddress(&fBrEreco);
@@ -1714,7 +1734,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     branchAmomm    -> SetAddress(&fBrAmomm);
     branchAmome    -> SetAddress(&fBrAmome);
     branchDir      -> SetAddress(&fBrDir);
-    // branchDirnu    -> SetAddress(&fBrDirnu);
+    branchDirnu    -> SetAddress(&fBrDirNu);
     // //
     
     mctree->SetBranchStatus("*",0);
@@ -1728,7 +1748,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     mctree->SetBranchStatus(amomm_branch     , 1 );
     mctree->SetBranchStatus(amome_branch     , 1 );
     mctree->SetBranchStatus(dir_branch       , 1 );
-    // mctree->SetBranchStatus(dirnu_branch     , 1 );
+    mctree->SetBranchStatus(dirnu_branch     , 1 );
     // //
     
 #ifdef USE_SFRFG_WEIGHT
@@ -4184,6 +4204,7 @@ void SuperkMC::UpdateTemplates(void)
 #endif
 #endif
 }
+
 //________________________________________________________________________________________
 void SuperkMC::ApplySystematicsToTemplates(void)
 {
@@ -7836,7 +7857,6 @@ double SuperkMC::SmearMomentum(double fit_momentum,Option_t * option ) const
     
 }
 //
-
 
 
 

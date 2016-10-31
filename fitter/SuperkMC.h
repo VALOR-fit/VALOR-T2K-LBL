@@ -58,7 +58,7 @@ namespace valor {
     
     // Apply systematic variations + oscillations (,decay,decoherence) to MC templates
     void UpdateTemplates(void);
-    
+
     // Integrate current MC templates and get Ereco spectra (needed for fitting the data)
     bool  UpdateErecoSpectra  (void);
     TH1D* CurrErecoSpectrum   (conv::SuperkSample_t s) const; // Returns new object, mut be deleted
@@ -182,7 +182,7 @@ namespace valor {
     void FillTemplateHistogram(conv::SuperkSample_t s, conv::SuperkMode_t m);
     void FillTemplateHistogramSmeared(conv::SuperkSample_t s, conv::SuperkMode_t m);
     void FillSpecialTemplates (void);
-    
+
     
     // NEW 2D TEMPLATES
     void DrawProjectionXY(TH3D *h);  // for debugging
@@ -385,7 +385,7 @@ namespace valor {
     float      fBrAmomm[10];                  ///< branch var for reading input MC mini-DST (1 mu-like ring)
     float      fBrAmome[10];                  ///< branch var for reading input MC mini-DST (1 e-like ring)
     float      fBrDir[1][3];                    ///< branch var for reading input MC mini-DST
-                                                //float      fBrDirnu[1][3];                  ///< branch var for reading input MC mini-DST
+    float      fBrDirNu[10][3];                 ///< branch var for reading input MC mini-DST
                                                 //
     
     static const int kMaxVarBins   = 1000;
