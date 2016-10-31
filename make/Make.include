@@ -154,7 +154,7 @@ GCC_GE_4_2_1  = $(shell awk 'BEGIN {\
 ifeq ($(strip $(ARCH)),macosx) 
 ARCH_OK       = YES
 IS_MACOSX     = YES
-CXXFLAGS      = -pipe -W -Wall -Wno-long-double \
+CXXFLAGS      = -pipe -W -Wall -std=c++11 -Wno-long-double \
 		-fsigned-char -fno-common -flat_namespace \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
@@ -198,7 +198,7 @@ OSX_GE_10_9_0  = $(shell awk 'BEGIN {\
 		if($(OSXVRS_MAJ)>=10 && $(OSXVRS_MIN)>=9) print "YES"}')
 ARCH_OK       = YES
 IS_MACOSX     = YES
-CXXFLAGS      = -m64 -pipe -Wshadow -W -Wall -Wno-overloaded-virtual \
+CXXFLAGS      = -m64 -pipe -Wshadow -W -Wall -std=c++11 -Wno-overloaded-virtual \
 		-fsigned-char -fno-common \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
@@ -212,9 +212,9 @@ endif
 ifeq ($(GCC_GE_4_1_0),YES)
   ifeq ($(USING_CLANG),YES)
     ifeq ($(OSX_GE_10_9_0),YES)
-      CXXFLAGS += -stdlib=libc++ -mmacosx-version-min=10.9
+      CXXFLAGS += -stdlib=libc++  -mmacosx-version-min=10.9
     else ifeq ($(OSX_GE_10_6_0),YES)
-      CXXFLAGS += -stdlib=libstdc++ -mmacosx-version-min=10.6
+      CXXFLAGS += -stdlib=libstdc++  -mmacosx-version-min=10.6
     endif
   endif
   CXXFLAGS += -Wno-strict-aliasing
@@ -243,7 +243,7 @@ endif
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ifeq ($(strip $(ARCH)),linux) 
 ARCH_OK       = YES
-CXXFLAGS      = -Wall -fPIC \
+CXXFLAGS      = -Wall -std=c++11 -fPIC \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
 		$(OPT_WITH_CXX_USERDEF_FLAGS) \
@@ -271,7 +271,7 @@ endif
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ifeq ($(strip $(ARCH)),linuxx8664gcc) 
 ARCH_OK       = YES
-CXXFLAGS      = -Wall -fPIC \
+CXXFLAGS      = -Wall -std=c++11 -fPIC \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
 		$(OPT_WITH_CXX_OPTIMIZ_FLAG) \
 		$(OPT_WITH_CXX_USERDEF_FLAGS) \
