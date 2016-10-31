@@ -446,6 +446,52 @@
         </signal_nuebar>
       </nominal>
     </superk>
+    
+    <fake_data>
+      <martini_to_nieves_nu>
+        <filename>   test/banff_comparison_sep16/martini_nieves_ratio.root </filename>
+        <objname>    mec_ratio      </objname>
+        <objtype>    TGraph         </objtype>
+      </martini_to_nieves_nu>
+      <martini_to_nieves_nubar>
+        <filename>   test/banff_comparison_sep16/martini_nieves_ratio_nubar.root </filename>
+        <objname>    ratio          </objname>
+        <objtype>    TGraph         </objtype>
+      </martini_to_nieves_nubar>
+      <nieves_momentum_offset>
+        <filename>   test/banff_comparison_sep16/1p1h/1p_1h_Oxygen.root </filename>
+        <objname>    nieves_minus_neut_hist    </objname>
+        <objtype>    TH2D                      </objtype>
+      </nieves_momentum_offset>
+      <two_d>
+        <pdd_nu>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_skTh600.root </filename>
+          <objname>    nonPDD_ratio_hist      </objname>
+          <!--            <objname>    PDD_ratio_hist      </objname>-->
+          <objtype>    TH2D         </objtype>
+        </pdd_nu>
+        <pdd_nubar>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_skTh600.root </filename>
+          <objname>    nonPDD_ratio_hist_numubar          </objname>
+          <!--            <objname>    PDD_ratio_hist_numubar          </objname>-->
+          <objtype>    TH2D       </objtype>
+        </pdd_nubar>
+      </two_d>
+      <three_d>
+        <pdd_nu>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_3D_skTh528_dCP_90deg.root </filename>
+          <objname>    nonPDD_ratio_3D_hist      </objname>
+          <!--            <objname>    PDD_ratio_hist      </objname>-->
+          <objtype>    TH3D         </objtype>
+        </pdd_nu>
+        <pdd_nubar>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_3D_skTh528_dCP_90deg.root </filename>
+          <objname>    nonPDD_ratio_3D_hist_numubar          </objname>
+          <!--            <objname>    PDD_ratio_hist_numubar          </objname>-->
+          <objtype>    TH3D       </objtype>
+        </pdd_nubar>
+      </three_d>
+    </fake_data>
   </mc>
 
   <!--
