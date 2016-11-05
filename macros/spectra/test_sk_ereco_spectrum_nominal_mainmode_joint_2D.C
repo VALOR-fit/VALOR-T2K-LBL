@@ -53,13 +53,13 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //
  // NEW CONFIGURATION FILES (4/6/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7 FLUX)
  //
- const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
+// const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17.xml", // Run 1-6 flux tuning
  
  //
  // NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ FIT BIAS)
  // 
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
+ const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_christine_test_maqesplit.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_fhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
  //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml",

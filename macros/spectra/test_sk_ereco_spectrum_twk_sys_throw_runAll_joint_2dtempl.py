@@ -63,14 +63,15 @@ optionParser.add_option("-s","--sksample", action="store", dest="sksample", type
 optionParser.add_option("-e","--hierarchy", action="store", dest="hierarchy", type="string", default="normal", help="Mass Hierarchy: normal, inverted")
 optionParser.add_option("-m","--mixparamchoice", action="store", dest="mixparamchoice", type="string", default="sinsqtheta", help="Mixing param choice: sinsqtheta")
 optionParser.add_option("-f","--fitparamlist", action="store", dest="fitparamlist", type="string", default="nuosc3f_12fix+nuisance", help="Mixing param choice: sinsqtheta")
+optionParser.add_option("--hyp","--hypothesis", action="store", dest="hypothesis", type="string", default="3f_osc", help="Physics hypothesis")
 optionParser.add_option("-t","--storethrows", action="store_true", dest="storethrows", default=False, help="Store the thrown parameter values")
 optionParser.add_option("--do-not-run", action="store_true", dest="do_not_run", default=False, help="If you've already got the files and just want to use them rather than running again.")
 optionParser.add_option("--mode",action="store",dest="mode",default=None,help="If you only want to run a single mode, specify its number here")
-optionParser.add_option("--skip-prefit" , action="store_true", dest="skip_prefit" , default=True, help="If don't want to run prefit jobs")
+optionParser.add_option("--skip-prefit" , action="store_true", dest="skip_prefit" , default=False, help="If don't want to run prefit jobs")
 optionParser.add_option("--skip-postfit", action="store_true", dest="skip_postfit", default=False, help="If don't want to run postfit jobs")
 optionParser.add_option("--skip-osc"  , action="store_true", dest="skip_osc"  , default=False, help="If don't want to run oscillated jobs")
 optionParser.add_option("--skip-unosc", action="store_true", dest="skip_unosc", default=False, help="If don't want to run unoscillated jobs")
-optionParser.add_option("--randomise-osc", action="store", dest="random_osc", default="ss12dmsq12ss13", help="Which params I want randomized in random osc toys")
+optionParser.add_option("--randomise-osc", action="store", dest="random_osc", default="ss12-dmsq12-ss13-", help="Which params I want randomized in random osc toys, must have a - at the end!")
 optionParser.add_option("--clear", action="store_true", dest="clear", default=False, help="Get rid of output of other jobs first.")
 optionParser.add_option("--config-postfit", action="store", dest="postfit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final.xml")
 optionParser.add_option("--config-prefit", action="store", dest="prefit_config", default="analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_Run17c_final_prefit.xml")
@@ -109,6 +110,7 @@ if nexp <= 0:
 sksample = opt.sksample
 hierarchy = opt.hierarchy
 mixparamchoice = opt.mixparamchoice
+hypothesis = opt.hypothesis
 fitparamlist = opt.fitparamlist
 do_not_run_jobs = opt.do_not_run
 store_throws = "true" if opt.storethrows else "false"
@@ -232,7 +234,7 @@ if not do_not_run_jobs:
 
       for mode in modes:
 
-          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+str(postfit_config)+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
+          command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","'+hypothesis+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+str(postfit_config)+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
 
 
           print command
@@ -245,7 +247,7 @@ if not do_not_run_jobs:
           
           #repeat for the banff prefit (its a different spectrum, so erros have different effects)
           if not opt.skip_prefit:
-            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","3f_osc",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+str(prefit_config)+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
+            command = 'root2k -l -b -q \'$T2KOSCANA/macros/spectra/test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d.C('+str(mode)+','+update+',"'+sksample+'","'+hypothesis+'",'+str(osc[0])+','+str(osc[1])+','+str(osc[2])+','+str(osc[3])+','+str(osc[4])+','+str(osc[5])+','+str(osc[6])+','+save_toy_expts+','+store_throws+',"'+str(prefit_config)+'",'+str(nexp)+',"'+dmsqscheme+'","'+mixparamchoice+'","'+hierarchy+'","'+mixparamoctant+'",'+rethrow_toys+','+dnovern+','+domarg+','+str(prob_nh)+',"'+prior_file+'","'+oscparams_tag[osc_index]+'","'+random_osc+'")\''
 
             print command
             if os.system(command) == 1:

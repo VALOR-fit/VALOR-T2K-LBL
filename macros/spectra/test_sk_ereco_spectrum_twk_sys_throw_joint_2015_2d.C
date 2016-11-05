@@ -358,7 +358,10 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   // 1Rmu
   else if(s==conv::kSKsFCFV1RingMuLike){
     hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);      
-  } 
+  }
+  else{
+    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
+  }
 
   for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){    
     char name[200];
@@ -413,12 +416,18 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
 
   // Check whether some osc. params need to be randomized
 
-  bool randomize_mixing12   = randomised_osc.Contains("ss12");
-  bool randomize_mixing13   = randomised_osc.Contains("ss13");
-  bool randomize_mixing23   = randomised_osc.Contains("ss23");
-  bool randomize_deltacp    = randomised_osc.Contains("dcp");
-  bool randomize_dm12sq     = randomised_osc.Contains("dmsq12");
-  bool randomize_dm23sq     = randomised_osc.Contains("dmsq23");
+  bool randomize_mixing12   = randomised_osc.Contains("ss12-");
+  bool randomize_mixing13   = randomised_osc.Contains("ss13-");
+  bool randomize_mixing23   = randomised_osc.Contains("ss23-");
+  bool randomize_deltacp    = randomised_osc.Contains("dcp-");
+  bool randomize_dm12sq     = randomised_osc.Contains("dmsq12-");
+  bool randomize_dm23sq     = randomised_osc.Contains("dmsq23-");
+  bool randomize_mixing12bar   = randomised_osc.Contains("ss12bar-");
+  bool randomize_mixing13bar   = randomised_osc.Contains("ss13bar-");
+  bool randomize_mixing23bar   = randomised_osc.Contains("ss23bar-");
+  bool randomize_deltacpbar    = randomised_osc.Contains("dcpbar-");
+  bool randomize_dm12sqbar     = randomised_osc.Contains("dmsq12bar-");
+  bool randomize_dm23sqbar     = randomised_osc.Contains("dmsq23bar-");
   
   // Set Physics Hypothesis
   PhysHypothesis ph(hypothesis);
@@ -502,6 +511,31 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   if(randomize_dm12sq){   
     util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              ); 
     util::OscParams::Instance()->SetRandomize(conv::kPhypDm12sq,1);
+  }
+  
+  if(randomize_mixing23bar){
+    util::OscParams::Instance()->SetPrior(conv::kPhypMixing23Bar,    PriorMixing23, PriorParMixing23[0], PriorParMixing23[1], MixModeMixing23);
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing23Bar,1);
+  }
+  if(randomize_dm23sqbar){
+    util::OscParams::Instance()->SetPrior(conv::kPhypDm23sqBar,    PriorDm23sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              );
+    util::OscParams::Instance()->SetRandomize(conv::kPhypDm23sqBar,1);
+  }
+  if(randomize_mixing13bar){
+    util::OscParams::Instance()->SetPrior(conv::kPhypMixing13Bar,    PriorMixing13, PriorParMixing13[0], PriorParMixing13[1], MixModeMixing13); // Convert to sinsqth
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing13Bar,1);
+  }
+  if(randomize_deltacpbar){
+    util::OscParams::Instance()->SetPrior(conv::kPhypCPVBar,      PriorDeltaCP,  PriorParDeltaCP[0],  PriorParDeltaCP[1],  ""              );
+    util::OscParams::Instance()->SetRandomize(conv::kPhypCPVBar,1);
+  }
+  if(randomize_mixing12bar){
+    util::OscParams::Instance()->SetPrior(conv::kPhypMixing12Bar, PriorMixing12, PriorParMixing12[0], PriorParMixing12[1], MixModeMixing12); // Convert to sinsqth
+    util::OscParams::Instance()->SetRandomize(conv::kPhypMixing12Bar,1);
+  }
+  if(randomize_dm12sqbar){
+    util::OscParams::Instance()->SetPrior(conv::kPhypDm12sqBar,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              );
+    util::OscParams::Instance()->SetRandomize(conv::kPhypDm12sqBar,1);
   }
 
   // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
