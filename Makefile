@@ -4,14 +4,14 @@ MAKEFILE = Makefile
 
 include $(T2KOSCANA)/make/Make.include
 
-# define composite targets
+# define composite targets 
 #
 BUILD_TARGETS =    print-make-info     \
                    make-bin-lib-dir    \
                    copy-scripts-to-bin \
                    build-fitter        \
-                   build-test-apps     \
-                   build-fit-apps
+                   build-fit-apps      \
+                   build-test-apps     
 
 # define targets
 all:     $(BUILD_TARGETS)
@@ -43,12 +43,12 @@ make-bin-lib-dir: FORCE
 	[ -d bin ] || mkdir bin; chmod 755 bin;\
 	[ -d lib ] || mkdir lib; chmod 755 lib;
 
-build-fit-apps: make-bin-lib-dir FORCE
+build-fit-apps: make-bin-lib-dir build-fitter FORCE
 	@echo " "
 	@echo "** Building T2XK fit apps..."
 	$(MAKE) -C ${T2KOSCANA}/apps/fit/
 
-build-test-apps: make-bin-lib-dir FORCE
+build-test-apps: make-bin-lib-dir build-fitter FORCE
 	@echo " "
 	@echo "** Building T2XK test apps..."
 	$(MAKE) -C ${T2KOSCANA}/apps/test/
