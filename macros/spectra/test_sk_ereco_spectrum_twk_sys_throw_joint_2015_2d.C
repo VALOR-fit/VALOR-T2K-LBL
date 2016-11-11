@@ -512,29 +512,29 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              ); 
     util::OscParams::Instance()->SetRandomize(conv::kPhypDm12sq,1);
   }
-  
+  //Bar parameters have to set the unbarred parameter priors as there is one prior used by both
   if(randomize_mixing23bar){
-    util::OscParams::Instance()->SetPrior(conv::kPhypMixing23Bar,    PriorMixing23, PriorParMixing23[0], PriorParMixing23[1], MixModeMixing23);
+    util::OscParams::Instance()->SetPrior(conv::kPhypMixing23,    PriorMixing23, PriorParMixing23[0], PriorParMixing23[1], MixModeMixing23);
     util::OscParams::Instance()->SetRandomize(conv::kPhypMixing23Bar,1);
   }
   if(randomize_dm23sqbar){
-    util::OscParams::Instance()->SetPrior(conv::kPhypDm23sqBar,    PriorDm23sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              );
+    util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,    PriorDm23sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              );
     util::OscParams::Instance()->SetRandomize(conv::kPhypDm23sqBar,1);
   }
   if(randomize_mixing13bar){
-    util::OscParams::Instance()->SetPrior(conv::kPhypMixing13Bar,    PriorMixing13, PriorParMixing13[0], PriorParMixing13[1], MixModeMixing13); // Convert to sinsqth
+    util::OscParams::Instance()->SetPrior(conv::kPhypMixing13,    PriorMixing13, PriorParMixing13[0], PriorParMixing13[1], MixModeMixing13); // Convert to sinsqth
     util::OscParams::Instance()->SetRandomize(conv::kPhypMixing13Bar,1);
   }
   if(randomize_deltacpbar){
-    util::OscParams::Instance()->SetPrior(conv::kPhypCPVBar,      PriorDeltaCP,  PriorParDeltaCP[0],  PriorParDeltaCP[1],  ""              );
+    util::OscParams::Instance()->SetPrior(conv::kPhypCPV,      PriorDeltaCP,  PriorParDeltaCP[0],  PriorParDeltaCP[1],  ""              );
     util::OscParams::Instance()->SetRandomize(conv::kPhypCPVBar,1);
   }
   if(randomize_mixing12bar){
-    util::OscParams::Instance()->SetPrior(conv::kPhypMixing12Bar, PriorMixing12, PriorParMixing12[0], PriorParMixing12[1], MixModeMixing12); // Convert to sinsqth
+    util::OscParams::Instance()->SetPrior(conv::kPhypMixing12, PriorMixing12, PriorParMixing12[0], PriorParMixing12[1], MixModeMixing12); // Convert to sinsqth
     util::OscParams::Instance()->SetRandomize(conv::kPhypMixing12Bar,1);
   }
   if(randomize_dm12sqbar){
-    util::OscParams::Instance()->SetPrior(conv::kPhypDm12sqBar,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              );
+    util::OscParams::Instance()->SetPrior(conv::kPhypDm12sq,   PriorDm12sq,   PriorParDm12sq[0],   PriorParDm12sq[1],   ""              );
     util::OscParams::Instance()->SetRandomize(conv::kPhypDm12sqBar,1);
   }
 
