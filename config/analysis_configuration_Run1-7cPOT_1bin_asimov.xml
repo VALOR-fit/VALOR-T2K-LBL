@@ -547,7 +547,7 @@
     <weight_splines_2d>
       <one_mu_ring>
         <filename>
-          official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_1Rmu.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_1Rmu.root
         </filename>
       </one_mu_ring>
       <one_e_ring>
@@ -558,7 +558,7 @@
 
       <one_mu_ring_rhc>
         <filename>
-          official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_RHC1Rmu.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_RHC1Rmu.root
         </filename>
       </one_mu_ring_rhc>
       <one_e_ring_rhc>
@@ -570,7 +570,7 @@
       <!-- Input the single ring splines into the MultiRing samples -->
       <multi_mu_ring>
         <filename>
-          official/2015/xsec/2d_splines/theta/1bin/SFRPA/splines_v5_1Rmu.root
+          official/2015/xsec/2d_splines/theta/1bin/splines_v5_1Rmu.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
