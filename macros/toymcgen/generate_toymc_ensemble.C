@@ -1,4 +1,4 @@
-//
+ //
 // ------------------------------------------------------------------------------------------------
 // Generate / store toy-MC experiments.
 // The data can be stored in an XML and/or ROOT format.
@@ -48,7 +48,7 @@ void generate_toymc_ensemble
  const char * tag                     = "toymc",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
- double       last_experiment         = 999,
+ double       last_experiment         = 0,
  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  //-999 randomize
@@ -88,19 +88,13 @@ void generate_toymc_ensemble
  string       file_priors             = "",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
  
  
- const char * config_file             = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
+ const char * config_file             = "analysis_configuration_Run1-7cPOT_1bin_martini.xml",
 
  bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
 
- bool         stat_fluctuations       = true,                           /* include statistical fluctuation in toy MC expts? */
- int          tweak_systematics       = 1,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
+ bool         stat_fluctuations       = false,                           /* include statistical fluctuation in toy MC expts? */
+ int          tweak_systematics       = false,                              /* generate toy MC with randomized systematics? Numbers greater than 1 are special options */
 
- string       points_to_add_1Rmu      = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- string       points_to_add_1Re       = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- string       points_to_add_1Rmu_RHC  = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- string       points_to_add_1Re_RHC   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- string       points_to_add_MultiRmu  = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
- string       points_to_add_MultiRe   = "",                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
  string       xml_file_to_add         = "",           /* xml with data in for when creating hybrid data/toy-MC experiments, eg data.xml */
  const int    xml_to_add_dataset_id   = 0,            /* the dataset ID of the xml file to add values from */
 
@@ -110,22 +104,33 @@ void generate_toymc_ensemble
  const char * hierarchy               = "normal",                       /* normal or inverted */
  const char * mixparamchoice          = "sinsqtheta",                   /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant          = "one",                          /* one==kNuOctantOne two==kNuOctantTwo */
- const char * cpvphase                = "delta"                         /* delta==kNuDeltaCPPhase sindelta==kNuDeltaCPSin */
- )
+ const char * cpvphase                = "delta",                         /* delta==kNuDeltaCPPhase sindelta==kNuDeltaCPSin */
+ bool         reset_xsec_values       = false,
+ string       reweight_fake_data      = "Nieves1P1H"
+)
 {
   cout << "start" << endl;
   TStopwatch sw;
   const int randomseed = 100;
   TRandom3 rand(randomseed); //random number to see where inside a bin a toy is generated
 
+  string       points_to_add_1Rmu      = "";                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+  string       points_to_add_1Re       = "";                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+  string       points_to_add_1Rmu_RHC  = "";                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+  string       points_to_add_1Re_RHC   = "";                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+  string       points_to_add_MultiRmu  = "";                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+  string       points_to_add_MultiRe   = "";                              /* comma separated-list of data-points to add (separate multiple variables with ':'), eg when creating hybrid data/toy-MC experiments */
+
+  
   //some options set here because of CINT 40-argument limit
   bool printsystvariation = true;  /* cout the skexp tweaks */
   bool save_in_xml_format = true;  /* also save in txt format */
   bool save_in_root_format = true;
 
-  // Analysis configuration file
-  const char * config = util::FormFilePath(config_file, "config");
-
+  // Analysis configuration
+  const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+  string sconfig(config);
+  
   // Systematic tweak mode (as string)
   string tweak_sys_str = util::SysThrowIdToString(tweak_systematics);
 
@@ -163,11 +168,15 @@ void generate_toymc_ensemble
 
   // Set input osc params to defaults, or set them to be randomised
   util::OscParams::Instance()->SetValues(input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
-					 input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
-					 input_beta_bar, 
-					 input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
-					 input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
-					 input_prior_prob_nh, doMargMH);
+                                         input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+                                         input_beta_bar,
+                                         input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
+                                         input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih,
+                                         input_prior_prob_nh, doMargMH,
+                                         input_mixing12_nh, input_mixing13_nh, input_mixing23_nh,
+                                         input_deltacp_nh,  input_dm12sq_nh,   input_dm23sq_nh,
+                                         input_mixing12_ih, input_mixing13_ih, input_mixing23_ih,
+                                         input_deltacp_ih,  input_dm12sq_ih,   input_dm23sq_ih);
 
   // Set priors of osc params to defaults, or set them to be randomised
   util::OscParams::Instance()->SetPrior(conv::kPhypMixing23, "flat", 0.3,          0.7,         "sinsqth" );      
@@ -242,10 +251,16 @@ void generate_toymc_ensemble
     ftxt.open(txt_filename.str().c_str());
   }
 
+  //Making fake data reweight
+  if (reweight_fake_data.compare("")) {
+    util::UtlMakeFakeData::Instance()->SetReweightStyle(reweight_fake_data);
+    util::UtlMakeFakeData::Instance()->Activate();
+  }
+
   // Create & config superk spectrum predictor
   SuperkExpectation * skexp = new SuperkExpectation;
-  skexp->Read(config);
-
+  skexp->Read(sconfig);
+  
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
   for(int iexperiment=first_experiment; iexperiment <= last_experiment; iexperiment++) {
@@ -277,7 +292,13 @@ void generate_toymc_ensemble
      while(applied_negevents_condition || unphysical_tweak) {
 
        util::PerformSysThrow(tweak_systematics, skexp, printsystvariation);
-
+       if(reset_xsec_values)
+       {
+         //          twkv[pfo_ip] = 1 + ((225. - 225.)/225.) ;
+         skexp->GetBANFF()->SetCurrentValue(conv::kNuisBANFFMEC, 1);
+         skexp->GetBANFF()->SetCurrentValue(conv::kNuisBANFFMAQE, 1);
+         skexp->GetBANFF()->PrintSystematicVariations();
+       }
        // Rethrow unphysical parameters
        PhysParamList true_nuisance_params = skexp->Tweaks();
        if (rethrow_if_parameters_unphysical) {
@@ -291,7 +312,7 @@ void generate_toymc_ensemble
        else {
 	 unphysical_tweak = false;
        }
-
+       skexp->GetBANFF()->PrintSystematicVariations();
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
        if(applied_negevents_condition)
