@@ -181,11 +181,11 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d_fake_data
  const double PriorProbNH          = 0.5, //0.684, // Mach3  // Prior for MH --> give the prob. of NH as input
  TString file_priors = "", // Set to "" if no user priors are used (VALOR)
  const char*  tag                      = "nom",
- 
- //TString       randomised_osc          = "ss23-ss13-dcp-ss12-dmsq23-dmsq12"
- TString       randomised_osc          = "ss13-dcp-ss12-dmsq12",
  const char*  fake_data_name           = "",
- const char*  nom_data_name           = ""
+ const char*  nom_data_name           = "",
+
+ //TString       randomised_osc          = "ss23-ss13-dcp-ss12-dmsq23-dmsq12"
+ TString       randomised_osc          = "ss13-dcp-ss12-dmsq12"
 
  )
 {
