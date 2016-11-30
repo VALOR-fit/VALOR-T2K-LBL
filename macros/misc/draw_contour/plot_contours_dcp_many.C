@@ -1022,6 +1022,7 @@ void plot_contours_dcp_many
   hInit->GetYaxis()->SetTitle(titleY);
   hInit->DrawCopy();
 
+
   // Draw reactors box
   const double sinsqth13_nom = 0.0219;
   const double sinsqth13_err = 0.0012;
@@ -1033,7 +1034,7 @@ void plot_contours_dcp_many
   TBox *breactors = new TBox(X1,Y1,X2,Y2);
   breactors->SetFillColor(kYellow+1);
   if(draw_reactors) breactors->Draw("");
-
+  
 
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
@@ -1045,11 +1046,11 @@ void plot_contours_dcp_many
       else hdeltachisq1D_GlobMin[ifile][imh]->SetLineColor(ifile+imh+1);
       if((ifile+imh)==0){ 
 	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("same");
-	if(do_fc_conf_interv) hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
+	//if(do_fc_conf_interv) hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
       }
       else{
 	hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("same");
-	if(do_fc_conf_interv) hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
+	//if(do_fc_conf_interv) hdeltachisq1D_GlobMin[ifile][imh]->DrawCopy("l same");
       }
     }
   }
@@ -1249,6 +1250,8 @@ void plot_contours_dcp_many
     file->Close();
   }
   
+  return;
+
 
 
   // Calculate deltachisq between two true points

@@ -352,28 +352,24 @@ void ScaleMarkerAxis(TMarker *marker,double scale_x,double scale_y){
   marker->SetY(y_new);
   return;
 }
+
 void ScaleGraphAxis(TGraph *graph,double scale_x,double scale_y){
+  double *x = graph->GetX();
+  double *y = graph->GetY();
   for(int ipt=0;ipt<graph->GetN();ipt++){
-    double x = 0.;
-    double y = 0.;
-    graph->GetPoint(ipt,x,y);
-    double x_new = x * scale_x;
-    double y_new = y * scale_y;
-    graph->RemovePoint(ipt);
-    graph->SetPoint(ipt,x_new,y_new);
+    x[ipt] = x[ipt] * scale_x;
+    y[ipt] = y[ipt] * scale_y;
+    //cout << graph->GetN() << endl;
   }
   return;
 }
 
-
 void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
+  double *x = graph->GetX();
+  double *y = graph->GetY();
   for(int ipt=0;ipt<graph->GetN();ipt++){
-    double x = 0.;
-    double y = 0.;
-    graph->GetPoint(ipt,x,y);
     double sinsq2th = util::FromSinsqthToSinsq2th(x);
-    graph->RemovePoint(ipt);
-    graph->SetPoint(ipt,sinsq2th,y);
+    x[ipt] = sinsq2th;
   }
   return;
 }
@@ -390,13 +386,14 @@ void ConvertHistoFromDcpOverPiToDcp(TMultiGraph *mg){
   while ((obj = next())) {
     graph=(TGraph*)obj;
    
+    // TO CHECK!!!
+
+    double *x = graph->GetX();
+    double *y = graph->GetY();
     for(int ipt=0;ipt<graph->GetN();ipt++){
-      double x = 0.;
-      double y = 0.;
       graph->GetPoint(ipt,x,y);
       double dcp = x * TMath::Pi() - TMath::Pi();
-      graph->RemovePoint(ipt);
-      graph->SetPoint(ipt,dcp,y);
+      x[ipt] = dcp;
     }
   }
 
@@ -446,18 +443,6 @@ TGraph *SwapXY(TGraph *graph){
    }
   return graph_swap;
 }
-
-
-// void SwapXY(TGraph *graph){
-//   for(int ipt=0;ipt<graph->GetN();ipt++){
-//     double x = 0.;
-//     double y = 0.;
-//     graph->GetPoint(ipt,x,y);
-//     graph->RemovePoint(ipt);
-//     graph->SetPoint(ipt,y,x);
-//   }
-//   return;
-// }
 
 TH2D* SwapXY(TH2D *graph){
   

@@ -4,6 +4,8 @@
 
 //#define SwapXY // Swap x and y axis of contours // does this to the chisq2d, contour and the TMarker!
 
+//#define UseNOvA2015 // Otherwise use 2016
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
@@ -54,8 +56,11 @@ void CompareVALORotherExp_sinsqth23Vsdmsq()
 
   //////////////////////////// NOvA contours /////////////////////////
 
-  //const char *inname_nova_nh = "../../../inputs/OfficialContours/OtherExp/NOvAFAResults.root";
-  const char *inname_nova_nh = "../../../inputs/OfficialContours/OtherExp/nova_surfaces_neutrino2016.root";
+#ifdef UseNOvA2015
+  const char *inname_nova_nh = "../../../inputs/OfficialContours/OtherExp/NOvAFAResults.root"; // old 2015
+#else
+  const char *inname_nova_nh = "../../../inputs/OfficialContours/OtherExp/nova_surfaces_neutrino2016.root"; // new 2016
+#endif
   const int colorNOvA = kGreen+1;
 
   //////////////////////////// MINOS contours /////////////////////////
@@ -148,18 +153,25 @@ void CompareVALORotherExp_sinsqth23Vsdmsq()
   
   // READ NOvA CONTOURS (only normal hierarchy)
   TFile * infile_nova_nh = new TFile(inname_nova_nh,"READ");
+#ifdef UseNOvA2015
+  TGraph *nova_s23m23_68CL_nh = (TGraph*) infile_nova_nh->Get("FC68percentCL");
+  TGraph *nova_s23m23_90CL_nh = (TGraph*) infile_nova_nh->Get("FC90percentCL");
+#else
   TH2F *nova_s23m23_68CL_nh = (TH2F*) infile_nova_nh->Get("numu_dmsq32_vs_ssth23_nh"); 
   nova_s23m23_90CL_nh = (TH2F*) nova_s23m23_68CL_nh->Clone("nova_s23m23_nh_90CL");
   TH2F *nova_s23m23_68CL_ih = (TH2F*) infile_nova_nh->Get("numu_dmsq32_vs_ssth23_ih"); 
   nova_s23m23_90CL_ih = (TH2F*) nova_s23m23_68CL_ih->Clone("nova_s23m23_ih_90CL");
-  //TGraph *nova_s23m23_68CL_nh = (TGraph*) infile_nova_nh->Get("FC68percentCL");
-  //TGraph *nova_s23m23_90CL_nh = (TGraph*) infile_nova_nh->Get("FC90percentCL");
   double chisq_min = nova_s23m23_68CL_nh->GetBinContent(nova_s23m23_68CL_nh->GetMinimumBin());
   nova_s23m23_68CL_nh->SetContour(1);
   nova_s23m23_68CL_nh->SetContourLevel(0,chisq_min+2.3);
   nova_s23m23_90CL_nh->SetContour(1);
   nova_s23m23_90CL_nh->SetContourLevel(0,chisq_min+4.61);
-  
+#endif
+
+  //nova_s23m23_68CL_nh->Draw("al same");
+  //nova_s23m23_90CL_nh->Draw("l same");
+  //return;
+
   // READ MINOS CONTOURS
   TFile * infile_minos = new TFile(inname_minos,"READ");
   TGraph *minos_s23m23_68CL_nh = (TGraph*) infile_minos->Get("minosPlus_nu2014_prelim_contour_sinsq23_dmsq32_normal_68CL");
@@ -214,19 +226,20 @@ void CompareVALORotherExp_sinsqth23Vsdmsq()
   //
   // NOvA
   //
-  // //ScaleGraphAxis(nova_s23m23_90CL,1.,1000.);
-  // //ScaleGraphAxis(nova_s23m23_68CL,1.,1000.);
   nova_s23m23_90CL_nh->SetLineStyle(1);
   nova_s23m23_90CL_nh->SetLineColor(colorNOvA);
   nova_s23m23_90CL_nh->SetLineWidth(2);
   nova_s23m23_68CL_nh->SetLineStyle(2);
   nova_s23m23_68CL_nh->SetLineColor(colorNOvA);
   nova_s23m23_68CL_nh->SetLineWidth(2);
+#ifdef UseNOvA2015
   //nova_s23m23_68CL_nh->Draw("l same");
-  //nova_s23m23_90CL_nh->Draw("l same");
+  nova_s23m23_90CL_nh->Draw("l same");
+#else
   nova_s23m23_68CL_nh->Draw("cont3 same");
   nova_s23m23_90CL_nh->Draw("cont3 same");
-  
+#endif
+
   //
   // MINOS
   //
@@ -284,8 +297,8 @@ void CompareVALORotherExp_sinsqth23Vsdmsq()
   lcontours_nh->SetTextFont(132);
   lcontours_nh->SetTextSize(0.05);
   char name[200];
-  lcontours_nh->AddEntry(g68_valor_nh[0],"68%CL","l");
-  lcontours_nh->AddEntry(g90_valor_nh[0],"90%CL","l");
+  lcontours_nh->AddEntry(g68_valor_nh[0],"68%CL (-2 #Delta ln L = 2.3)","l");
+  lcontours_nh->AddEntry(g90_valor_nh[0],"90%CL (-2 #Delta ln L = 4.61)","l");
   lcontours_nh->AddEntry(gbest_fit_global_nh,"T2K best-fit","p");
   lcontours_nh->Draw();
   
@@ -299,7 +312,7 @@ void CompareVALORotherExp_sinsqth23Vsdmsq()
   latSK->SetTextSize(0.06);
   latSK->SetTextColor(colorSK);
   latSK->Draw("same");
-  TLatex *latNOvA = new TLatex(posX,posY,"NOvA (2016)");
+  TLatex *latNOvA = new TLatex(posX,posY,"NOvA");
   latNOvA->SetTextSize(0.06);
   latNOvA->SetTextColor(colorNOvA);
   latNOvA->Draw("same");
@@ -315,8 +328,6 @@ void CompareVALORotherExp_sinsqth23Vsdmsq()
   TLatex *latNormalHierarchy = new TLatex(posX,posY,"Normal Hierarchy");
   latNormalHierarchy->SetTextSize(0.06);
   latNormalHierarchy->Draw("same");
-
-
 
 
   ///////////////////////////////////
@@ -432,28 +443,47 @@ void ScaleMarkerAxis(TMarker *marker,double scale_x,double scale_y){
   marker->SetY(y_new);
   return;
 }
+
+// void ScaleGraphAxis(TGraph *graph,double scale_x,double scale_y){
+//   for(int ipt=0;ipt<graph->GetN();ipt++){
+//     double x = 0.;
+//     double y = 0.;
+//     graph->GetPoint(ipt,x,y);
+//     double x_new = x * scale_x;
+//     double y_new = y * scale_y;
+//     graph->RemovePoint(ipt);
+//     graph->SetPoint(ipt,x_new,y_new);
+//   }
+//   return;
+// }
 void ScaleGraphAxis(TGraph *graph,double scale_x,double scale_y){
+  double *x = graph->GetX();
+  double *y = graph->GetY();
   for(int ipt=0;ipt<graph->GetN();ipt++){
-    double x = 0.;
-    double y = 0.;
-    graph->GetPoint(ipt,x,y);
-    double x_new = x * scale_x;
-    double y_new = y * scale_y;
-    graph->RemovePoint(ipt);
-    graph->SetPoint(ipt,x_new,y_new);
+    x[ipt] = x[ipt] * scale_x;
+    y[ipt] = y[ipt] * scale_y;
+    //cout << graph->GetN() << endl;
   }
   return;
 }
 
-
+// void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
+//   for(int ipt=0;ipt<graph->GetN();ipt++){
+//     double x = 0.;
+//     double y = 0.;
+//     graph->GetPoint(ipt,x,y);
+//     double sinsq2th = util::FromSinsqthToSinsq2th(x);
+//     graph->RemovePoint(ipt);
+//     graph->SetPoint(ipt,sinsq2th,y);
+//   }
+//   return;
+// }
 void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
+  double *x = graph->GetX();
+  double *y = graph->GetY();
   for(int ipt=0;ipt<graph->GetN();ipt++){
-    double x = 0.;
-    double y = 0.;
-    graph->GetPoint(ipt,x,y);
     double sinsq2th = util::FromSinsqthToSinsq2th(x);
-    graph->RemovePoint(ipt);
-    graph->SetPoint(ipt,sinsq2th,y);
+    x[ipt] = sinsq2th;
   }
   return;
 }
@@ -468,8 +498,6 @@ void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
 //   }
 //   return;
 // }
-
-
 TGraph *SwapXY(TGraph *graph){
   TGraph *graph_swap = new TGraph();
   for(int ipt=0;ipt<graph->GetN();ipt++){
