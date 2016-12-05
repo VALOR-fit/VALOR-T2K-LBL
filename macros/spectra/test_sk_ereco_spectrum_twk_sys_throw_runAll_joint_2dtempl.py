@@ -149,57 +149,57 @@ modes.append(9)
 name_modes.append("SKDet_FSI") 
 latex_name_modes.append("SKDet+FSI+SI")
 # modes = 7
-modes.append(7)
-name_modes.append("BANFF_flux") 
-latex_name_modes.append("Flux")
-# modes = 8
-modes.append(8)
-name_modes.append("BANFF_xsec") 
-latex_name_modes.append("XSec")
-# modes = 650
-modes.append(650)
-name_modes.append("MEC")
-latex_name_modes.append("MEC")
-# modes = 666
-modes.append(666)
-name_modes.append("MECBar")
-latex_name_modes.append("MECbar")
-## modes = 662
-#modes.append(662)
-#name_modes.append("banff62_fhcprhc")
-#latex_name_modes.append("NC other")
-# modes = 664
-modes.append(664)
-name_modes.append("NCGamma")
-latex_name_modes.append("NC 1gamma")
-# modes = 12
-modes.append(12)
-name_modes.append("NueNumu") 
-latex_name_modes.append("XSec nue/numu")
-# modes = 13
-#modes.append(13)
-#name_modes.append("skdetfsi_banff") 
-#latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
-# modes = 1
-modes.append(1)
-name_modes.append("BANFF") 
-latex_name_modes.append("BANFF Tot")
-# modes = 1 (prefit)
-modes.append(1)
-name_modes.append("BANFFprefit") 
-latex_name_modes.append("BANFF Tot (prefit)")
-# modes = 11
-modes.append(11)
-name_modes.append("Osc_param") 
-latex_name_modes.append("Oscillations")
-# modes = 0
-modes.append(0)
-name_modes.append("all") 
-latex_name_modes.append("All")
-# modes = 0 (prefit)
-modes.append(0)
-name_modes.append("allprefit") 
-latex_name_modes.append("All (prefit)")
+#modes.append(7)
+#name_modes.append("BANFF_flux") 
+#latex_name_modes.append("Flux")
+## modes = 8
+#modes.append(8)
+#name_modes.append("BANFF_xsec") 
+#latex_name_modes.append("XSec")
+## modes = 650
+#modes.append(650)
+#name_modes.append("MEC")
+#latex_name_modes.append("MEC")
+## modes = 666
+#modes.append(666)
+#name_modes.append("MECBar")
+#latex_name_modes.append("MECbar")
+### modes = 662
+##modes.append(662)
+##name_modes.append("banff62_fhcprhc")
+##latex_name_modes.append("NC other")
+## modes = 664
+#modes.append(664)
+#name_modes.append("NCGamma")
+#latex_name_modes.append("NC 1gamma")
+## modes = 12
+#modes.append(12)
+#name_modes.append("NueNumu") 
+#latex_name_modes.append("XSec nue/numu")
+## modes = 13
+##modes.append(13)
+##name_modes.append("skdetfsi_banff") 
+##latex_name_modes.append("Flux+BANFF+SKDetFSI+SI")
+## modes = 1
+#modes.append(1)
+#name_modes.append("BANFF") 
+#latex_name_modes.append("BANFF Tot")
+## modes = 1 (prefit)
+#modes.append(1)
+#name_modes.append("BANFFprefit") 
+#latex_name_modes.append("BANFF Tot (prefit)")
+## modes = 11
+#modes.append(11)
+#name_modes.append("Osc_param") 
+#latex_name_modes.append("Oscillations")
+## modes = 0
+#modes.append(0)
+#name_modes.append("all") 
+#latex_name_modes.append("All")
+## modes = 0 (prefit)
+#modes.append(0)
+#name_modes.append("allprefit") 
+#latex_name_modes.append("All (prefit)")
 
 
 
