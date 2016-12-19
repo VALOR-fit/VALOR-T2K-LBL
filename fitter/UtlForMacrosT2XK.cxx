@@ -573,7 +573,9 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
       cout << "//                                                         //" << endl;
       cout << "/////////////////////////////////////////////////////////////" << endl;
       cout << endl;
-      cout << endl;    
+      cout << endl;
+      
+
     }
     
     //
@@ -604,7 +606,37 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
 
   }
   else{
-    cout << "Do not minimize the free parameters" << endl;
+    cout << "Do not minimize the free parameters but setup the penalty terms" << endl;
+
+    bool penalty_par0       = runopt->PenaltyTerm0();
+    bool penalty_par1       = runopt->PenaltyTerm1();
+    bool constrain          = penalty_par0 && penalty_par1;
+    double sinsq2th13_mean  = conv::kPrior_Sinsq2th13_Used_Mean; // Used (sinsq2th13)
+    double sinsq2th13_sigma = conv::kPrior_Sinsq2th13_Used_RMS; // Used (sinsq2th13)
+    
+    if(penalty_par0 && !penalty_par1){
+      cout << endl;
+      cout << "Use penalty term only for free parameter 0:" << endl;
+      cout << " sinsq2th13_mean = "  << sinsq2th13_mean  << endl;
+      cout << " sinsq2th13_sigma = " << sinsq2th13_sigma << endl;
+      cout << endl;
+    }
+    else if(!penalty_par0 && !penalty_par1){
+      cout << endl;
+      cout << "No penalty term is used" << endl;
+      cout << endl;
+    }
+    else{
+      cerr << endl;
+      cerr << "valor::util::PerformMargFit()" << endl;
+      cerr << "Penalty term for parameter 1 is not implemented yet" << endl;
+      cerr << endl;
+      exit(1);
+    }
+    
+    fitmarg->UsePenaltyTerm(penalty_par0,penalty_par1);
+    fitmarg->SetPenaltyTerm(sinsq2th13_mean, sinsq2th13_sigma); // to be used after UsePenaltyTerm()
+
   }
 
 }
@@ -1814,7 +1846,7 @@ void valor::util::MargFit_2D_sinsqth23_deltaCP(RunOpt *runopt,FitMarginalization
   cout << "/////////////// Fit 1 (mixing23=first_bin, dcp=-3.14) ////////////////" << endl;
   
   fitmarg->SetMinimIntervalRead(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y,true);
-  fitmarg->SetStartBin(start_sinsqth23_first,-TMath::Pi()); 
+  fitmarg->SetStartBin(start_sinsqth23_first,-TMath::Pi());
   fitmarg->SetNumStartBin(1,1);
   fitmarg->SetGridStartRange(valfirstbin_X+conv::kASmallNum,vallastbin_X,valfirstbin_Y,vallastbin_Y+conv::kASmallNum);
   fitmarg->SetExtractStartPt("Single");
