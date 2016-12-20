@@ -4562,3 +4562,43 @@ void valor::util::PopulateNameRegistry(void)
   return;
 }
 //____________________________________________________________________________
+string
+valor::util::AsStringOfficialAxis(valor::conv::PhysParamId_t p)
+{
+  switch(p) {
+    case conv::kPhypMixing12: return "sin^{2}(#theta_{12})";
+    case conv::kPhypMixing13: return "sin^{2}(#theta_{13})";
+    case conv::kPhypMixing23: return "sin^{2}(#theta_{23})";
+    case conv::kPhypDm12sq  : return "|#Delta m^2_{12}| (eV^{2}c^{-4})";
+    case conv::kPhypDm23sq  :
+    {
+      NuOscDmsqScheme_t omp = Opt::Instance()->GetEffectiveDmsqScheme();
+      switch(omp) {
+        case(kNuDmsqFogliLisi) :        return "|#Delta m^{2}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2| (eV^{2}c^{-4})";                  break;
+        case(kNuDmsq12andAbs23):        return "|#Delta m^{2}_{32}| (eV^{2}c^{-4})";                  break;
+        case(kNuDmsq12andAbs31):        return "|#Delta m^{2}_{31}| (eV^{2}c^{-4})";                  break;
+        default                :        return "--";                                   break;
+      }
+    }
+    case conv::kPhypCPV     : return "#delta_{CP} (Radians)";
+      
+    case conv::kPhypMixing12Bar: return "sin^{2}(#bar{#theta_{12}})";
+    case conv::kPhypMixing13Bar: return "sin^{2}(#bar{#theta_{13}})";
+    case conv::kPhypMixing23Bar: return "sin^{2}(#bar{#theta_{23}})";
+    case conv::kPhypDm12sqBar  : return "|#Delta #bar{m^2_{12}}| (eV^{2}c^{-4})";
+    case conv::kPhypDm23sqBar  :
+    {
+      NuOscDmsqScheme_t omp = Opt::Instance()->GetEffectiveDmsqScheme();
+      switch(omp) {
+        case(kNuDmsqFogliLisi) :        return "|#Delta #bar{m^{2}}| = |m^{2}_{3} - (m^{2}_{1} + m^{2}_{1})/2| (eV^{2}c^{-4})";                  break;
+        case(kNuDmsq12andAbs23):        return "|#Delta #bar{m^{2}_{32}}| (eV^{2}c^{-4})";                  break;
+        case(kNuDmsq12andAbs31):        return "|#Delta #bar{m^{2}_{31}}| (eV^{2}c^{-4})";                  break;
+        default                :        return "--";                                   break;
+      }
+    }
+    case conv::kPhypCPVBar     : return "#bar{#delta_{CP}} (Radians)";
+
+    default: return "AsStringOfficialAxisError";
+  }
+  return "AsStringOfficialAxisError";
+}

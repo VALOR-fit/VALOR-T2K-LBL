@@ -468,6 +468,7 @@ namespace util {
   string AsStringCompact_KDI        (conv::PhysParamId_t p);
   string AsStringSpline             (conv::PhysParamId_t p);
   string AsStringNIWG               (conv::PhysParamId_t p);
+  string AsStringOfficialAxis       (conv::PhysParamId_t p);
 
   bool IsSystematic  (conv::PhysParamId_t p);
   bool IsMixingAngle (conv::PhysParamId_t p);
