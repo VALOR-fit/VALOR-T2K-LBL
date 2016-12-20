@@ -169,7 +169,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d_fake_data
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml",
  //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml",
  
- const int    nexp                     = 100,                                          /* number of experiments to make */
+ const int    nexp                     = 2000,                                          /* number of experiments to make */
  const char * dmsqscheme               = "auto",
  const char * mixparamchoice           = "sinsqtheta",
  const char * hierarchy                = "normal",
@@ -1106,6 +1106,11 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d_fake_data
   
   ErecoFakeData->Write("fake_data");
   NomData->Write("nom_mc_data");
+  
+  double total_nominal        = hErecoNominal->Integral();
+  double total_plus_1_sigma   = hErecoMaxEnv->Integral();
+  double total_minus_1_sigma  = hErecoMinEnv->Integral();
+  double tot_rms              = hNsk->GetRMS();
 
   //Draw & save
   TCanvas * c = new TCanvas();

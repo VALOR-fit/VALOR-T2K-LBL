@@ -538,7 +538,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_ratio_fake_data
       
       // BANFF
       if(mode == 1) {
-        skexp.TweakAllSampleBANFFSystematics();
+        skexp.TweakAllBANFFSystematics();
       }
       
       // Uncorrelated XSec
