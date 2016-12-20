@@ -39,7 +39,7 @@ namespace valor {
       static  UtlMakeFakeData * Instance();
       bool    Read(TXMLEngine* xml, XMLNodePointer_t root_node);
       double  GetWeight();
-      void    SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _Etrue, conv::SuperkMode_t _m, double _ERec, conv::SuperkSample_t _s, float _fBrAmome[10], float _fBrAmomm[10]);
+      void    SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _fBrDir[10][3],float _Etrue, conv::SuperkMode_t _m, double _ERec, conv::SuperkSample_t _s, float _fBrAmome[10], float _fBrAmomm[10]);
       void    SetReweightStyle(string _s = "error");
       double  GetEreco();
       bool    IsActive(){return fActive;};
@@ -53,7 +53,9 @@ namespace valor {
         Martini     = 0,
         MECPDD2D    = 1,
         MECPDD3D    = 2,
-        Nieves1P1H  = 3
+        Nieves1P1H  = 3,
+        MECPDD3DFlatFlux  = 4
+
       };
       
     private:
@@ -65,11 +67,18 @@ namespace valor {
       TGraph* Martini_to_Nieves_MEC_ratio_NuBar;
       
       TH2D* NievesMomentumOffset;
+      
       TH2D* PDD_ratio_nu_2D;
       TH2D* PDD_ratio_nubar_2D;
       TH3D* PDD_ratio_nu_3D;
       TH3D* PDD_ratio_nubar_3D;
-      
+
+      TH3D* PDD_ratio_numu;
+      TH3D* PDD_ratio_numubar;
+      TH3D* PDD_ratio_nue;
+      TH3D* PDD_ratio_nuebar;
+
+      double WeightMECPDD3DFlatFlux();
       double WeightMECPDD3D();
       double WeightMECPDD2D();
       double WeightNieves1P1H();
@@ -93,6 +102,7 @@ namespace valor {
       conv::SuperkMode_t m;
       conv::SuperkSample_t s;
       float fBrDirNu[10][3];
+      float fBrDir[10][3];
       float fBrPtrue[10];
       
       
