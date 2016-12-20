@@ -45,7 +45,7 @@
 #endif
 //#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KDI 1 sigma spectra
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
-#define FakeDataWeightDebug //Print out fake data weights 
+//#define FakeDataWeightDebug //Print out fake data weights 
 // #define POTWEIGHTSAREONE
 // #define FLUXWEIGHTSAREONE
 // #define BANFFTUNEISONE
@@ -1487,19 +1487,20 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double fake_data_weight = 1.;
       
       if(is_fake_data_active){
-        util::UtlMakeFakeData::Instance()->SetEventInfo(fBrPtrue,fBrDirNu,Etrue,m,ereco_fill,s,fBrAmome,fBrAmomm);
+        util::UtlMakeFakeData::Instance()->SetEventInfo(fBrPtrue,fBrDirNu,fBrDir,Etrue,m,ereco_fill,s,fBrAmome,fBrAmomm);
         fake_data_weight = util::UtlMakeFakeData::Instance()->GetWeight();
         ereco_fill = util::UtlMakeFakeData::Instance()->GetEreco();
 #ifdef FakeDataWeightDebug
-        std::cout << "SKMC/FillTemplateHistogram >> Fake data reweight: " << fake_data_weight << endl;
+        std::cout << "SKMC/FillTemplateHistogram >> Fake data reweight: " << fake_data_weight << " Ereco: " << ereco_fill << " Sample: " << util::AsStringCompact(s)
+        << " mode: " << util::AsStringCompact(m) << endl;
 #endif
       }
       
 #ifndef __USE_2D_TEMPLATES__
-        this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight);
+        this -> Template(s,m,kSKMCtPOT) -> Fill (ereco_fill, Etrue, pot_flx_weight * fake_data_weight);
 #else
         //NEW 2D TEMPLATES
-        this -> Template2D(s,m,kSKMCtPOT) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight);
+        this -> Template2D(s,m,kSKMCtPOT) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fake_data_weight);
         //
 #endif
         
