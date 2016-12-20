@@ -2452,7 +2452,7 @@ void FitMarginalization::SetPenaltyTerm(const double mean0, const double sigma0,
   conv::PhysParamId_t parfree0 = fPhysParamFree[0];
   conv::PhysParamId_t parfree1 = fPhysParamFree[1];
 
-  if (parfree0 != conv::kPhypUndefined)
+  if (parfree0 != conv::kPhypUndefined && fusepenalty0)
   {
     bool IsPhysical0 = this->RethrowOscUnphysical(parfree0, fpenalty_mean0);
     if(IsPhysical0){
@@ -2466,7 +2466,7 @@ void FitMarginalization::SetPenaltyTerm(const double mean0, const double sigma0,
     }
   }
   
-  if (parfree1 != conv::kPhypUndefined)
+  if (parfree1 != conv::kPhypUndefined && fusepenalty1)
   {
   bool IsPhysical1 = this->RethrowOscUnphysical(parfree1, fpenalty_mean1);
   if(IsPhysical1){
