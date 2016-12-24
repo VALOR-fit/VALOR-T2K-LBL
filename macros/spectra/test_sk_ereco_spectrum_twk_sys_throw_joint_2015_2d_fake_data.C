@@ -570,11 +570,13 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d_fake_data
   VALORArray * obsEreco[nexp];
   for (int i = 0 ; i < nexp; i++) {obsEreco[i]=0;}
   //TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
-  
+  cout << oscparams << endl;
+
   int nbanff;
   if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
   else        nbanff = conv::kNumOfParamsInBANFFfit;
-  
+  cout << oscparams << endl;
+
   int nxsecuncorr;
   if(RHCFlag) nxsecuncorr = conv::kNumOfRHCXSecSyst;
   else        nxsecuncorr = conv::kNumOfXSecSyst;
@@ -584,7 +586,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d_fake_data
   FitParamList * fparm = util::NamedParameterList("nuosc3f+nuisance");
   const int np = fparm->GetNumberParameters();
   TH1D * hSysThrown[np];
-  
+  cout << oscparams << endl;
+
   if (save_throws) {
     for(int ip = 0; ip < np; ip++) {
       conv::PhysParamId_t p = fparm->WhichParam(ip);
@@ -597,31 +600,37 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d_fake_data
       hSysThrown[ip]->SetDirectory(0);
     }
   }
+  cout << oscparams << endl;
 
   TH1D* ErecoFakeData = 0;
   
   char* datname;
   if(s==conv::kSKsFCFV1RingMuLike) datname = "mock_data_1Rmu_0";
   if(s==conv::kSKsFCFV1RingELike) datname = "mock_data_1Re_0";
-  if(s==conv::kSKsRHCFCFV1RingMuLike) datname = "mock_data_1Rmu_RHC_0";
-  if(s==conv::kSKsRHCFCFV1RingELike) datname = "mock_data_1Re_RHC_0";
+  if(s==conv::kSKsRHCFCFV1RingMuLike) datname = "mock_data_RHC1Rmu_0";
+  if(s==conv::kSKsRHCFCFV1RingELike) datname = "mock_data_RHC1Re_0";
+  if(s==conv::kSKsFCFVMultiRingELike) datname = "mock_data_MultiRe_FHC_0";
+
+  cout << oscparams << endl;
 
   if (std::string(fake_data_name) != "")){
+    cout << "fakedatname: " <<  fake_data_name << "  Histo: " <<  datname <<  endl;
     TFile* fake_data_file = new TFile(fake_data_name);
     ErecoFakeData = (TH1D*)((TH2D*)fake_data_file->Get(datname))->ProjectionY();
     ErecoFakeData->SetDirectory(0);
-    cout << datname << endl;
   }
   
   TH1D* NomData = 0;
   
   if (std::string(nom_data_name) != "")){
+    cout << "nomdatname: " <<  nom_data_name << "  Histo: " <<  datname <<  endl;
     TFile* nom_data_file = new TFile(nom_data_name);
-    cout << datname << endl;
     NomData = (TH1D*)((TH2D*)nom_data_file->Get(datname))->ProjectionY();
     NomData->SetDirectory(0);
   }
-  
+
+  cout << oscparams << endl;
+
   // Open output files
   string rootmode = "update";
   if(!update_rootfile)

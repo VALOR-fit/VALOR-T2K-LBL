@@ -408,14 +408,14 @@ void test_sk_ereco_spectrum_twk_sys_throw_ratio_fake_data
 
   if(s==conv::kSKsFCFV1RingMuLike) datname = "mock_data_1Rmu_0";
   if(s==conv::kSKsFCFV1RingELike) datname = "mock_data_1Re_0";
-  if(s==conv::kSKsRHCFCFV1RingMuLike) datname = "mock_data_1Rmu_RHC_0";
-  if(s==conv::kSKsRHCFCFV1RingELike) datname = "mock_data_1Re_RHC_0";
+  if(s==conv::kSKsRHCFCFV1RingMuLike) datname = "mock_data_RHC1Rmu_0";
+  if(s==conv::kSKsRHCFCFV1RingELike) datname = "mock_data_RHC1Re_0";
 
 
   if(s2==conv::kSKsFCFV1RingMuLike) datname2 = "mock_data_1Rmu_0";
   if(s2==conv::kSKsFCFV1RingELike) datname2 = "mock_data_1Re_0";
-  if(s2==conv::kSKsRHCFCFV1RingMuLike) datname2 = "mock_data_1Rmu_RHC_0";
-  if(s2==conv::kSKsRHCFCFV1RingELike) datname2 = "mock_data_1Re_RHC_0";
+  if(s2==conv::kSKsRHCFCFV1RingMuLike) datname2 = "mock_data_RHC1Rmu_0";
+  if(s2==conv::kSKsRHCFCFV1RingELike) datname2 = "mock_data_RHC1Re_0";
 
   
   if (std::string(fake_data_name) != "")){
