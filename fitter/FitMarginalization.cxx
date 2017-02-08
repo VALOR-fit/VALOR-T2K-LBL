@@ -1357,32 +1357,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
           unphysical_tweak = false;
         }
         
-        // If we need to and haven't already save the toy param list
-        if (fShouldSaveToyParamLists && (!fSavedToyParamLists[iexperiment])) {
-          // Get Syst tweaks
-          PhysParamList * pparm = new PhysParamList (true_nuisance_params);
-          
-          // Loop over all parameters to check we have enough info
-          for (int ip = 0 ; ip < conv::knppmax ; ip++) {
-            PhysParamId_t p = (PhysParamId_t)ip;
-            if (fparm->Exists(p)) {
-              if (not pparm->Contains(p)) {
-                // Add parameters that are in fitparamlist but not physparamlist (eg Osc)
-                pparm->SetValue(p,fparm->CurrValue(p));
-              }
-              //~ if (fparm->IsFixed(p)) { // remove fixed parameters
-              //~ pparm->Remove(p);
-              //~ }
-            }
-            else { //And remove things not in the fitparamlist
-              pparm->Remove(p);
-            }
-          }
-          fSavedToyParamLists[iexperiment] = pparm;
-          //~ cerr<<*fparm<<std::endl;
-          //~ cerr<<"\n\n===\n\n"<<*pparm<<std::endl;
-          //~ exit(-1);
-        }
         
       }
       else { // no toys
@@ -1452,6 +1426,36 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
         fparm->Copy(*fparm_ih); // NEW MARG MH
       }
       
+      // If we need to and haven't already save the toy param list
+      
+      
+      if (fShouldSaveToyParamLists && (!fSavedToyParamLists[iexperiment])) {
+        // Get Syst tweaks
+        PhysParamList true_nuisance_params = skexp->Tweaks();
+        PhysParamList * pparm = new PhysParamList (true_nuisance_params);
+        
+        // Loop over all parameters to check we have enough info
+        for (int ip = 0 ; ip < conv::knppmax ; ip++) {
+          PhysParamId_t p = (PhysParamId_t)ip;
+          if (fparm->Exists(p)) {
+            if (not pparm->Contains(p)) {
+              // Add parameters that are in fitparamlist but not physparamlist (eg Osc)
+              pparm->SetValue(p,fparm->CurrValue(p));
+            }
+            //~ if (fparm->IsFixed(p)) { // remove fixed parameters
+            //~ pparm->Remove(p);
+            //~ }
+          }
+          else { //And remove things not in the fitparamlist
+            pparm->Remove(p);
+          }
+        }
+        fSavedToyParamLists[iexperiment] = pparm;
+        //~ cerr<<*fparm<<std::endl;
+        //~ cerr<<"\n\n===\n\n"<<*pparm<<std::endl;
+        //~ exit(-1);
+      }
+
       
 #ifdef __FILL_OSCPARAM_TOY_HISTO__
       
@@ -2451,19 +2455,16 @@ void FitMarginalization::SetPenaltyTerm(const double mean0, const double sigma0,
   // Check if the parameters of the penalty term are in the physical region
   conv::PhysParamId_t parfree0 = fPhysParamFree[0];
   conv::PhysParamId_t parfree1 = fPhysParamFree[1];
-
-  if (parfree0 != conv::kPhypUndefined && fusepenalty0)
-  {
-    bool IsPhysical0 = this->RethrowOscUnphysical(parfree0, fpenalty_mean0);
-    if(IsPhysical0){
-      cerr << endl;
-      cerr << "FitMarginalization::SetPenaltyTerm" << endl;
-      cerr << "Penalty term of parameter 0: " << util::AsString(parfree0) << endl;
-      cerr << "The central value is in the unphysical region: " << fpenalty_mean0 << endl;
-      cerr << "Not allowed --> Set a new value" << endl;
-      cerr << endl;
-      util::Die(1);
-    }
+  bool IsPhysical0 = this->RethrowOscUnphysical(parfree0, fpenalty_mean0);
+  bool IsPhysical1 = this->RethrowOscUnphysical(parfree1, fpenalty_mean1);
+  if(IsPhysical0){
+    cerr << endl;
+    cerr << "FitMarginalization::SetPenaltyTerm" << endl;
+    cerr << "Penalty term of parameter 0: " << util::AsString(parfree0) << endl;
+    cerr << "The central value is in the unphysical region: " << fpenalty_mean0 << endl;
+    cerr << "Not allowed --> Set a new value" << endl;
+    cerr << endl;
+    util::Die(1);
   }
   
   if (parfree1 != conv::kPhypUndefined && fusepenalty1)
@@ -2477,7 +2478,6 @@ void FitMarginalization::SetPenaltyTerm(const double mean0, const double sigma0,
     cerr << "Not allowed --> Set a new value" << endl;
     cerr << endl;
     util::Die(1);
-  }
   }
   
   // Print parameters of penalty term
@@ -8752,4 +8752,57 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
 #endif
   return p_value;
   
+}
+
+void FitMarginalization::SaveTreeOfToyParamLists(TFile *file)
+{
+  
+  if(!fShouldSaveToyParamLists)
+  {
+    std::cerr << "Marginsalistion parameter values could not be stored as they were not saved. "
+    << "Use FitMarginalization::SetSaveParamLists(bool should_save_lists)" << endl;
+    return;
+  }
+  file->cd();
+  TTree* t_pars = new TTree("marg_parameter_values","Input parameters used for marginalisation");
+  
+  //This is the only way I could make filling a tree with an array work
+  //parpoints is an array to store pointers to array objects above to allow me to fill tree :(
+
+  //conv::knppmax: large number for marginalisation parameters
+  double params[conv::knppmax];
+  double* parpoints[conv::knppmax];
+  for(int i=0;i<conv::knppmax;i++){
+    parpoints[i] = params + i;
+  }
+  
+  PhysParamList * iparm;
+  
+  //use the first list to initialise the tree
+  iparm = fSavedToyParamLists[0];
+  int counter = 0;
+  for (int cip = 0 ; cip < conv::knppmax ; cip++) {
+    PhysParamId_t pip = (PhysParamId_t)cip;
+    if (iparm->Contains(pip)) {
+      t_pars->Branch(util::AsStringSimple(pip).c_str(),  (parpoints[counter]));
+      counter++;
+    }
+  }
+  
+  for (int i = 0 ; i < fntoys_marg ; i++) {
+    iparm = fSavedToyParamLists[i];
+    int counter_2 = 0;
+    for (int cip = 0 ; cip < conv::knppmax ; cip++) {
+      PhysParamId_t pip = (PhysParamId_t)cip;
+      if (iparm->Contains(pip)) {
+        params[counter_2] = iparm->Value(pip);
+        counter_2++;
+      }
+    }
+    t_pars->Fill();
+    
+  }
+  
+  t_pars->Write();
+  delete t_pars;
 }

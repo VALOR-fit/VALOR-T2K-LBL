@@ -121,6 +121,9 @@ class FitMarginalization
   FitParamList * GetFitParamList_IH(void) {return fparm_ih;};
   //
   
+  //Store parameter variations in a root file
+  void SaveTreeOfToyParamLists(TFile* file);
+  
   const FitParamList * GetFitParamList(void) const {return fparm;};
   // NEW MARG MH
   const FitParamList * GetFitParamList_NH(void) const {return fparm_nh;};
