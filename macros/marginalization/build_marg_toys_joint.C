@@ -230,8 +230,9 @@ void build_marg_toys_joint
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);
-  fitmarg->PrintPhysHypothesis();      
-
+  fitmarg->PrintPhysHypothesis();
+  //Saving param lists test
+  fitmarg->SetSaveParamLists(1);
   //Set marginalization oscillation parameters to defaults  
 
   FitParamList *fparm    = fitmarg->GetFitParamList();
@@ -933,6 +934,10 @@ void build_marg_toys_joint
     hToyHisto_MH->SetName("hToyHisto_MH");
     hToyHisto_MH->Write();
   }
+  
+  
+  fitmarg->SaveTreeOfToyParamLists(fout);
+
   
   fout->Close();
 
