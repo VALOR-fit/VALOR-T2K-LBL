@@ -351,26 +351,26 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   
   // RHC1Re
   if(s==conv::kSKsRHCFCFV1RingELike){
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+    hNsk = new TH1D(Form("h_%s_%s_nsk",sname,modetitle.c_str()),Form("h_%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
   }
   // 1Re
   else if(s==conv::kSKsFCFV1RingELike){
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+    hNsk = new TH1D(Form("h_%s_%s_nsk",sname,modetitle.c_str()),Form("h_%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
   }
   // RHC1Rmu
   else if(s==conv::kSKsRHCFCFV1RingMuLike){
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
+    hNsk = new TH1D(Form("h_%s_%s_nsk",sname,modetitle.c_str()),Form("h_%s_%s_nsk",sname,modetitle.c_str()),100,0,100);
   }
   // 1Rmu
   else if(s==conv::kSKsFCFV1RingMuLike){
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
+    hNsk = new TH1D(Form("h_%s_%s_nsk",sname,modetitle.c_str()),Form("h_%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
   }
   // MultiRe
   else if(s==conv::kSKsFCFVMultiRingELike){
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+    hNsk = new TH1D(Form("h_%s_%s_nsk",sname,modetitle.c_str()),Form("h_%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
   }
   else{
-    hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
+    hNsk = new TH1D(Form("h_%s_%s_nsk",sname,modetitle.c_str()),Form("h_%s_%s_nsk",sname,modetitle.c_str()),100,0,300);
   }
   
   for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
@@ -502,6 +502,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   if(randomize_mixing23){
     util::OscParams::Instance()->SetPrior(conv::kPhypMixing23,    PriorMixing23, PriorParMixing23[0], PriorParMixing23[1], MixModeMixing23);
     util::OscParams::Instance()->SetRandomize(conv::kPhypMixing23,1);
+    cout << "randomised "<< endl;
   }
   if(randomize_dm23sq){
     util::OscParams::Instance()->SetPrior(conv::kPhypDm23sq,    PriorDm23sq,   PriorParDm23sq[0],   PriorParDm23sq[1],   ""              );
@@ -566,7 +567,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   //TH1D * hErecoNominal = 0;
   VALORArray * obsEreco[nexp];
   for (int i = 0 ; i < nexp; i++) {obsEreco[i]=0;}
-  //TH1D * hNsk = new TH1D(Form("%s_%s_nsk",sname,modetitle.c_str()),Form("%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
+  //TH1D * hNsk = new TH1D(Form("h_%s_%s_nsk",sname,modetitle.c_str()),Form("h_%s_%s_nsk",sname,modetitle.c_str()),100,0,10);
   
   int nbanff;
   if(RHCFlag) nbanff = conv::kNumOfRHCParamsInBANFFfit;
@@ -589,7 +590,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       
       string sysstr = util::AsStringCompact(p);
       //cout << sysstr << endl;
-      string hname(Form("%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
+      string hname(Form("h_%s_%s_tweak_throws_%s",sname,modetitle.c_str(),sysstr.c_str()));
       hSysThrown[ip] = new TH1D(hname.c_str(),hname.c_str(),1000,syst_nsigma,syst_nsigma);
       hSysThrown[ip]->SetDirectory(0);
     }
@@ -629,16 +630,16 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoNominal->SetLineWidth(2);
   
   if (modetitle.find("prefit")==string::npos) {
-    hErecoNominal->Write(Form("%s_nominal",sname));
+    hErecoNominal->Write(Form("h_%s_nominal",sname));
   }
   else {
-    hErecoNominal->Write(Form("%s_nominalprefit",sname));
+    hErecoNominal->Write(Form("h_%s_nominalprefit",sname));
   }
   
   double nominal_total_nsk = hErecoNominal->Integral();
   
   TH1D * hErecoNominal_per50MeV = spectrum_to_per_50mev(hErecoNominal);
-  hErecoNominal_per50MeV->Write(Form("%s_nominal_per_50MeV",sname));
+  hErecoNominal_per50MeV->Write(Form("h_%s_nominal_per_50MeV",sname));
   
   TStopwatch w;
   w.Start();
@@ -948,8 +949,8 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
         //spectrum = new VALORArray(*skexp->CurrPredictedErecoVArray(s));
       }
       
-      spectrum->SetTitle(Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));
-      spectrum->Write   (Form("%s_%s_exp%d",sname,modetitle.c_str(),iexp));
+      spectrum->SetTitle(Form("h_%s_%s_exp%d",sname,modetitle.c_str(),iexp));
+      spectrum->Write   (Form("h_%s_%s_exp%d",sname,modetitle.c_str(),iexp));
     }
     else {
       if(mode == 999 ) {
@@ -1068,19 +1069,19 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
       hErecoMinEnv -> SetBinContent (ibin,  min);
     }
   }//ibin
-  hErecoMax   ->Write(Form("%s_%s_pluserr" ,sname,modetitle.c_str()));
-  hErecoMin   ->Write(Form("%s_%s_minuserr",sname,modetitle.c_str()));
-  hErecoMaxEnv->Write(Form("%s_%s_envpluserr" ,sname,modetitle.c_str()));
-  hErecoMinEnv->Write(Form("%s_%s_envminuserr",sname,modetitle.c_str()));
+  hErecoMax   ->Write(Form("h_%s_%s_pluserr" ,sname,modetitle.c_str()));
+  hErecoMin   ->Write(Form("h_%s_%s_minuserr",sname,modetitle.c_str()));
+  hErecoMaxEnv->Write(Form("h_%s_%s_envpluserr" ,sname,modetitle.c_str()));
+  hErecoMinEnv->Write(Form("h_%s_%s_envminuserr",sname,modetitle.c_str()));
   
   //Draw & save
   TCanvas * c = new TCanvas();
   hNsk->Draw();
-  c->SaveAs(Form("%s_%s_nsk_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("h_%s_%s_nsk_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   hErecoMax->Draw();
-  c->SaveAs(Form("%s_%s_pluserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("h_%s_%s_pluserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   hErecoMin->Draw();
-  c->SaveAs(Form("%s_%s_minuserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("h_%s_%s_minuserr_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   hErecoMaxEnv->GetXaxis()->SetRangeUser(0,7-conv::kOneMeV);
   hErecoMaxEnv->SetLineStyle(3);
   hErecoMinEnv->SetLineStyle(3);
@@ -1093,7 +1094,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoMaxEnv->Draw();
   hErecoMinEnv->Draw("same");
   hErecoNominal->Draw("same");
-  c->SaveAs(Form("%s_%s_envelope_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c->SaveAs(Form("h_%s_%s_envelope_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   TH1D * hErecoMaxEnv_per50MeV = spectrum_to_per_50mev(hErecoMaxEnv);
   TH1D * hErecoMinEnv_per50MeV = spectrum_to_per_50mev(hErecoMinEnv);
@@ -1102,7 +1103,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoMaxEnv_per50MeV->Draw();
   hErecoMinEnv_per50MeV->Draw("same");
   hErecoNominal_per50MeV->Draw("same");
-  c2->SaveAs(Form("%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c2->SaveAs(Form("h_%s_%s_envelope_per_50MeV_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   c2->cd();
   double max_limit = 1.1*TMath::Max(hErecoMax->GetMaximum(),hErecoMin->GetMaximum());
@@ -1113,7 +1114,7 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
   hErecoMax->SetMinimum(min_limit);
   hErecoMax->Draw();
   hErecoMin->Draw("same");
-  c2->SaveAs(Form("%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
+  c2->SaveAs(Form("h_%s_%s_ratio_%s.eps",sname,modetitle.c_str(),oscparams.c_str()));
   
   // Assume symmetric errors wrt the average (not nominal)
   
@@ -1138,13 +1139,13 @@ void test_sk_ereco_spectrum_twk_sys_throw_joint_2015_2d
     h_down_Median->SetBinContent(i+1,medianstat_m1sigma);
   }
   
-  hErecoAverage->Write(Form("%s_%s_average",sname,modetitle.c_str()));
-  h_up   ->Write(Form("%s_%s_up_average" ,sname,modetitle.c_str()));
-  h_down ->Write(Form("%s_%s_down_average",sname,modetitle.c_str()));
+  hErecoAverage->Write(Form("h_%s_%s_average",sname,modetitle.c_str()));
+  h_up   ->Write(Form("h_%s_%s_up_average" ,sname,modetitle.c_str()));
+  h_down ->Write(Form("h_%s_%s_down_average",sname,modetitle.c_str()));
   
-  hErecoMedian->Write(Form("%s_%s_median",sname,modetitle.c_str()));
-  h_up_Median   ->Write(Form("%s_%s_up_median" ,sname,modetitle.c_str()));
-  h_down_Median ->Write(Form("%s_%s_down_median",sname,modetitle.c_str()));
+  hErecoMedian->Write(Form("h_%s_%s_median",sname,modetitle.c_str()));
+  h_up_Median   ->Write(Form("h_%s_%s_up_median" ,sname,modetitle.c_str()));
+  h_down_Median ->Write(Form("h_%s_%s_down_median",sname,modetitle.c_str()));
   
   TCanvas * cAverage = new TCanvas("cAverage","Wrt average");
   h_up->GetXaxis()->SetTitle("E_{reco} (GeV)");
