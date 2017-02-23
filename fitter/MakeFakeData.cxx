@@ -29,7 +29,7 @@ using namespace valor;
 double util::UtlMakeFakeData::WeightMECPDD3D()
 {
   
-  if(util::IsMEC(m))
+  if(util::Is2p2h(m))
   {
     int lepton_int = 3; //lepton is at 3 in array of particles
     
@@ -63,7 +63,7 @@ double util::UtlMakeFakeData::WeightMECPDD3D()
 double util::UtlMakeFakeData::WeightMECPDD3DFlatFlux()
 {
   
-  if(util::IsMEC(m))
+  if(util::Is2p2h(m))
   {
     int lepton_int = 3; //lepton is at 3 in array of particles
     
@@ -94,7 +94,7 @@ double util::UtlMakeFakeData::WeightMECPDD3DFlatFlux()
 double util::UtlMakeFakeData::WeightMECPDD2D()
 {
   
-  if(util::IsMEC(m))
+  if(util::Is2p2h(m))
   {
     int lepton_int = 3; //lepton is at 3 in array of particles
     double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
@@ -122,7 +122,7 @@ double util::UtlMakeFakeData::WeightMECPDD2D()
 
 double util::UtlMakeFakeData::WeightMartini()
 {
-  if(util::IsMEC(m))
+  if(util::Is2p2h(m))
   {
     double martini_nieves_weight =1;
     if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino MEC rescale
@@ -148,7 +148,7 @@ double util::UtlMakeFakeData::EReco1P1H()
   
 //Use true angle!
   int lepton_int      = 2;//reconstructed lepton angle
-  if(util::IsMEC(m))  lepton_int = 3;//3;
+  if(util::Is2p2h(m))  lepton_int = 3;//3;
   double costheta = dir_nu[0] * fBrDirNu[lepton_int][0] + dir_nu[1] * fBrDirNu[lepton_int][1] + dir_nu[2] * fBrDirNu[lepton_int][2];
  
 //  //Use recon angle

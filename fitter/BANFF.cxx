@@ -53,7 +53,7 @@ CorrelatedSystematics()
   reg.Set("banff", this);
   
   // Somewhat hacky handling of the fact that some of our code still thinks there are RHC specific BANFF-XSEC params.
-  for (int irhcp = kRHCNuisBANFFMAQE ; irhcp <= kRHCNuisBANFFMECBar; irhcp++) {
+  for (int irhcp = kRHCNuisBANFFMAQE ; irhcp <= kRHCNuisBANFF2p2hBar; irhcp++) {
     int ifhcp = irhcp - (kRHCNuisBANFFMAQE-kNuisBANFFMAQE);
     fParam2Idx[irhcp] = fParam2Idx[ifhcp];
   }
@@ -127,26 +127,26 @@ void BANFF::TweakSampleXSecNumuNueOnly  (bool force_inputs, TVectorD * input_vec
 }
 
 //________________________________________________________________________________________
-void BANFF::TweakSampleMEC  (bool force_inputs, TVectorD * input_vec)
+void BANFF::TweakSample2p2h  (bool force_inputs, TVectorD * input_vec)
 {
   
   this->Tweak(force_inputs, input_vec);
   
   for(unsigned int ip=0;ip<fNSystParameters;ip++){
     PhysParamId_t p = fSystParameters[ip];
-    if (!( p == kNuisBANFFMEC || p == kRHCNuisBANFFMEC)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+    if (!( p == kNuisBANFFNorm2p2h || p == kRHCNuisBANFF2p2h)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
   }
   return;
 }
 //________________________________________________________________________________________
-void BANFF::TweakSampleMECBar  (bool force_inputs, TVectorD * input_vec)
+void BANFF::TweakSample2p2hBar  (bool force_inputs, TVectorD * input_vec)
 {
   
   this->Tweak(force_inputs, input_vec);
   
   for(unsigned int ip=0;ip<fNSystParameters;ip++){
     PhysParamId_t p = fSystParameters[ip];
-    if (!( p == kNuisBANFFMECBar || p == kRHCNuisBANFFMECBar)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+    if (!( p == kNuisBANFFNorm2p2hBar || p == kRHCNuisBANFF2p2hBar)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
   }
   return;
 }

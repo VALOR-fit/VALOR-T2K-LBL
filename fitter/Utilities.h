@@ -98,7 +98,7 @@ namespace valor {
         
         bool IsCCQE     (int neut_reaction_mode);
         bool IsCC1pi    (int neut_reaction_mode);
-        bool IsMEC      (int neut_reaction_mode);
+        bool Is2p2h      (int neut_reaction_mode);
         bool IsCCcoh    (int neut_reaction_mode);
         bool IsCCoth    (int neut_reaction_mode); // this is a catch all. if new categories are added, please alter this method too
         //  bool IsCCoth_e  (int neut_reaction_mode);

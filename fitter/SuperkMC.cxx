@@ -158,7 +158,7 @@ void SuperkMC::Init(void)
 {
     fPOT = 0;
     fPOTRHC = 0;
-    fXMEC = -1;
+    fX2p2h = -1;
     fUnphysicalOscProb = false;
     fTemplateArraysHaveNIWGTune = true;
     
@@ -1855,7 +1855,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         // Get the true lepton momentum from the tree, position in array depends on int mode.
 
         int lepton_int =0;
-        if(util::IsMEC(m)){
+        if(util::Is2p2h(m)){
             lepton_int = 3;
         }
         else{
@@ -4327,7 +4327,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
                 wght = 1;
 #endif
                 /*
-                 if(util::IsMEC(m))
+                 if(util::Is2p2h(m))
                  cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
                  */
                 // loop over 50MeV Ereco
@@ -4508,7 +4508,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
                 wght = 1;
 #endif
                 /*
-                 if(util::IsMEC(m))
+                 if(util::Is2p2h(m))
                  cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
                  */
                 // loop over 50MeV Ereco

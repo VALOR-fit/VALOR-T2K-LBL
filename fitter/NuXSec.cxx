@@ -263,7 +263,7 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
       // this must be done by printing to screen & analyser
 #ifdef __show_xsecsystconv_check_mesg_info__
       PrintAppliesType(util::AppliesToCCQE    (first_modes_set), "CCQE"     );
-      PrintAppliesType(util::AppliesToCCMEC   (first_modes_set), "CCMEC"    );
+      PrintAppliesType(util::AppliesToCC2p2h   (first_modes_set), "CC2p2h"    );
       PrintAppliesType(util::AppliesToCCcoh   (first_modes_set), "CCcoh"    );
       PrintAppliesType(util::AppliesToCC1pi   (first_modes_set), "CC1pi"    );
       PrintAppliesType(util::AppliesToCCoth   (first_modes_set), "CCoth"    );
@@ -394,9 +394,6 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #if defined(__USE_NIWG2015__)
     spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring_rhc");
     spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring_rhc" );
-#elif defined(__USE_NIWG2013__)
-    spline_files[kSKsRHCFCFV1RingMuLike ] = spline_files[kSKsFCFV1RingMuLike];
-    spline_files[kSKsRHCFCFV1RingELike  ] = spline_files[kSKsFCFV1RingELike ];
 #endif
     
     /// NEW MULTIRING (multiring-only splines)
@@ -662,9 +659,6 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 #if defined(__USE_NIWG2015__)
     spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring_rhc");
     spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring_rhc" );
-#elif defined(__USE_NIWG2013__)
-    spline_files[kSKsRHCFCFV1RingMuLike ] = spline_files[kSKsFCFV1RingMuLike];
-    spline_files[kSKsRHCFCFV1RingELike  ] = spline_files[kSKsFCFV1RingELike ];
 #endif
     
     /// NEW MULTIRING (multiring-only splines)
@@ -1112,16 +1106,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF
     // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
     //
-    // - NIWG2013 BANFF param, M_{A}  QE
-    // - NIWG2013 BANFF param, M_{A}  RES
-    // - NIWG2013 BANFF param, CCQE   normalization, 0 - 1.5 GeV (Etrue)
-    // - NIWG2013 BANFF param, CCQE   normalization, 1.5 - 3.5 GeV (Etrue)
-    // - NIWG2013 BANFF param, CCQE   normalization, 3.5 - 30.0 GeV (Etrue)
-    // - NIWG2013 BANFF param, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
-    // - NIWG2013 BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV (Etrue)
-    //
-    //
-    // - NIWG2015 BANFF param, MEC        normalization
+    // - NIWG2015 BANFF param, 2p2h        normalization
     // - NIWG2015 BANFF param, CA5
     // - NIWG2015 BANFF param, BgRES      normalization
     // - NIWG2015 BANFF param, M_{A} QE
@@ -1155,29 +1140,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     
     // NEW XSEC NIWG
     
-#if defined(__USE_NIWG2013__)
-    //
-    // BANFF param, M_{A} QE
-    // BANFF param, M_{A} RES
-    //
-    if(p == kNuisBANFFMAQE    || p == kNuisBANFFMARES   ||
-       p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES )
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        //if(!wght_spl)
-        //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
-        assert(wght_spl);
-        if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-            tb = fBANFF->InitialValue(p);
-        else
-            tb = fBANFF->InitialValue(p);
-        wght = wght_spl->Eval(tb);
-    }
-    
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     
     // NEW XSEC
     //
@@ -1295,53 +1258,11 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // NORMALIZATION PARAMETERS
     
     // NEW XSEC NIWG
-#if defined(__USE_NIWG2013__)
-    //
-    // BANFF param, CCQE   normalization, 0 - 1.5 GeV
-    // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
-    // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
-    // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
-    // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
-    // BANFF param, NC1pi0 normalization
-    //
-    else if(p == kNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCCQEE1
-            || p == kNuisBANFFCCQEE2
-#endif
-            || p == kNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->InitialValue(p);
-    }
-    else if(p == kRHCNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCCQEE1
-            || p == kRHCNuisBANFFCCQEE2
-#endif
-            || p == kRHCNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kRHCNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->InitialValue(p);
-    }
-    
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     //
     // NEW XSEC
     //
-    // - BANFF param, MEC        normalization
+    // - BANFF param, 2p2h        normalization
     // - BANFF param, BgRES      normalization
     // - BANFF param, CCcoh      normalization
     // - BANFF param, NCcoh      normalization
@@ -1457,16 +1378,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // It handles the 4 BANFF cross-section parameters which are correlated with the BANFF
     // flux parameters. In the current incarnation of the BANFF fit, these parameters are:
     //
-    // - NIWG2013 BANFF param, M_{A}  QE
-    // - NIWG2013 BANFF param, M_{A}  RES
-    // - NIWG2013 BANFF param, CCQE   normalization, 0 - 1.5 GeV (Etrue)
-    // - NIWG2013 BANFF param, CCQE   normalization, 1.5 - 3.5 GeV (Etrue)
-    // - NIWG2013 BANFF param, CCQE   normalization, 3.5 - 30.0 GeV (Etrue)
-    // - NIWG2013 BANFF param, CC1pi  normalization, 0 - 2.5 GeV (Etrue)
-    // - NIWG2013 BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV (Etrue)
-    //
-    //
-    // - NIWG2015 BANFF param, MEC        normalization
+    // - NIWG2015 BANFF param, 2p2h        normalization
     // - NIWG2015 BANFF param, CA5
     // - NIWG2015 BANFF param, BgRES      normalization
     // - NIWG2015 BANFF param, M_{A} QE
@@ -1498,30 +1410,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     
     // RESPONSE FUNCTION PARAMETERS
     
-    // NEW XSEC NIWG
-    
-#if defined(__USE_NIWG2013__)
-    //
-    // BANFF param, M_{A} QE
-    // BANFF param, M_{A} RES
-    //
-    if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        //if(!wght_spl)
-        //cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
-        assert(wght_spl);
-        if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES)
-            tb = fBANFF->InitialValue(p);
-        else
-            tb = fBANFF->InitialValue(p);
-        wght = wght_spl->Eval(tb);
-    }
-    
-#elif defined(__USE_NIWG2015__)
+    // NEW XSEC NIWG   
+#if defined(__USE_NIWG2015__)
     
     // NEW XSEC
     //
@@ -1642,53 +1532,11 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // NORMALIZATION PARAMETERS
     
     // NEW XSEC NIWG
-#if defined(__USE_NIWG2013__)
-    //
-    // BANFF param, CCQE   normalization, 0 - 1.5 GeV
-    // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
-    // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
-    // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
-    // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
-    // BANFF param, NC1pi0 normalization
-    //
-    else if(p == kNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCCQEE1
-            || p == kNuisBANFFCCQEE2
-#endif
-            || p == kNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->InitialValue(p);
-    }
-    else if(p == kRHCNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCCQEE1
-            || p == kRHCNuisBANFFCCQEE2
-#endif
-            || p == kRHCNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kRHCNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->InitialValue(p);
-    }
-    
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     //
     // NEW XSEC
     //
-    // - BANFF param, MEC        normalization
+    // - BANFF param, 2p2h        normalization
     // - BANFF param, BgRES      normalization
     // - BANFF param, CCcoh      normalization
     // - BANFF param, NCcoh      normalization
@@ -1829,71 +1677,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     
     // NEW XSEC NIWG
     
-#if defined(__USE_NIWG2013__)
-    // BANFF param # 31, M_{A} QE
-    // BANFF param # 32, M_{A} RES
-    //
-    if(p == kNuisBANFFMAQE    || p == kNuisBANFFMARES ||
-       p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        assert(wght_spl);
-        if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-        }
-        else {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-        }
-        wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
-    }
-    
-    //
-    // BANFF param, CCQE   normalization, 0 - 1.5 GeV
-    // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
-    // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
-    // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
-    // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
-    // BANFF param, NC1pi0 normalization
-    //
-    else if(p == kNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCCQEE1
-            || p == kNuisBANFFCCQEE2
-#endif
-            || p == kNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
-    }
-    else if(p == kRHCNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCCQEE1
-            || p == kRHCNuisBANFFCCQEE2
-#endif
-            || p == kRHCNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kRHCNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
-    }
-    
-    // end NIWG2013
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     //
     // NEW XSEC
     //
@@ -2045,7 +1829,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     // BANFF param normalization:
     //
-    // - BANFF param, MEC        normalization
+    // - BANFF param, 2p2h        normalization
     // - BANFF param, BgRES      normalization
     // - BANFF param, CCcoh      normalization
     // - BANFF param, NCcoh      normalization
@@ -2058,59 +1842,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     
     // NEW XSEC NIWG
     
-#if defined(__USE_NIWG2013__)
-    //
-    // Fermi momentum
-    // spectral function on/off
-    // W-shape
-    // CC other shape
-    // Binding energy
-    //
-    else if(  (p >= kNuisXSecFermiMom && p <= kNuisXSecShapeCCoth)       ||
-               p == kNuisXSecBindE                                       ||
-              (p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecShapeCCoth) ||
-               p == kRHCNuisXSecBindE                                     )
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        assert(wght_spl);
-        tc = this->CurrentValue(p);
-        wght = wght_spl->Eval(tc);
-    }
-    // CCQE norm 1.5 - 3.5 GeV
-    // CCQE norm > 3.5 GeV
-    // CC1pi norm > 2.5 GeV
-    // CC coherent norm
-    // NC 1piC norm
-    // NC coherent norm
-    // NC other norm
-    // nue / numu cross section
-    //
-    else if((p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu)       ||
-            (p >= kRHCNuisXSecNormCCcoh && p <= kRHCNuisXSecNormAntiNuToNu) ||
-             p == kNuisRHCToFHC)
-    {
-        wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
-    }
-    //
-    // pion-less delta-decay
-    //
-    else if(p == kNuisXSecPiLessDelta || p == kRHCNuisXSecPiLessDelta)
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        assert(wght_spl);
-        tc = TMath::Max(this->CurrentValue(p), -1.);
-        wght = wght_spl->Eval(tc);
-    }
-    
-    // NEW XSEC
-    
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     //
     // RPA tuning
     //
@@ -2250,71 +1982,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     
     // NEW XSEC NIWG
-    
-#if defined(__USE_NIWG2013__)
-    // BANFF param # 31, M_{A} QE
-    // BANFF param # 32, M_{A} RES
-    //
-    if(p == kNuisBANFFMAQE || p == kNuisBANFFMARES || p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        assert(wght_spl);
-        if(p == kRHCNuisBANFFMAQE || p == kRHCNuisBANFFMARES) {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-        }
-        else {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-        }
-        wght = wght_spl->Eval(tc) / wght_spl->Eval(tb);
-    }
-    
-    //
-    // BANFF param, CCQE   normalization, 0 - 1.5 GeV
-    // BANFF param, CCQE   normalization, 1.5 - 3.5 GeV
-    // BANFF param, CCQE   normalization, 3.5 - 30.0 GeV
-    // BANFF param, CC1pi  normalization, 0 - 2.5 GeV
-    // BANFF param, CC1pi  normalization, 2.5 - 30.0 GeV
-    // BANFF param, NC1pi0 normalization
-    //
-    else if(p == kNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCCQEE1
-            || p == kNuisBANFFCCQEE2
-#endif
-            || p == kNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
-    }
-    else if(p == kRHCNuisBANFFCCQEE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCCQEE1
-            || p == kRHCNuisBANFFCCQEE2
-#endif
-            || p == kRHCNuisBANFFCC1piE0
-#if BANFF_BINS != 3
-            || p == kRHCNuisBANFFCC1piE1
-#endif
-#if (BANFF_BINS != 2)
-            || p == kRHCNuisBANFFNC1pi0
-#endif
-            )
-    {
-        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
-    }
-    
-    // end NIWG2013
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     //
     // NEW XSEC
     //
@@ -2466,7 +2134,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     // BANFF param normalization:
     //
-    // - BANFF param, MEC        normalization
+    // - BANFF param, 2p2h        normalization
     // - BANFF param, BgRES      normalization
     // - BANFF param, CCcoh      normalization
     // - BANFF param, NCcoh      normalization
@@ -2478,60 +2146,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif // NIWG2015
     
     // NEW XSEC NIWG
-    
-#if defined(__USE_NIWG2013__)
-    //
-    // Fermi momentum
-    // spectral function on/off
-    // W-shape
-    // CC other shape
-    // Binding energy
-    //
-    else if(  (p >= kNuisXSecFermiMom && p <= kNuisXSecShapeCCoth)       ||
-            p == kNuisXSecBindE                                       ||
-            (p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecShapeCCoth) ||
-            p == kRHCNuisXSecBindE                                     )
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        assert(wght_spl);
-        tc = this->CurrentValue(p);
-        wght = wght_spl->Eval(tc);
-    }
-    // CCQE norm 1.5 - 3.5 GeV
-    // CCQE norm > 3.5 GeV
-    // CC1pi norm > 2.5 GeV
-    // CC coherent norm
-    // NC 1piC norm
-    // NC coherent norm
-    // NC other norm
-    // nue / numu cross section
-    //
-    else if((p >= kNuisXSecNormCCcoh && p <= kNuisXSecNormAntiNuToNu)       ||
-            (p >= kRHCNuisXSecNormCCcoh && p <= kRHCNuisXSecNormAntiNuToNu) ||
-            p == kNuisRHCToFHC)
-    {
-        wght = 1 + (this->CurrentValue(p) * this->RelativeError(p));
-    }
-    //
-    // pion-less delta-decay
-    //
-    else if(p == kNuisXSecPiLessDelta || p == kRHCNuisXSecPiLessDelta)
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        assert(wght_spl);
-        tc = TMath::Max(this->CurrentValue(p), -1.);
-        wght = wght_spl->Eval(tc);
-    }
-    
-    // NEW XSEC
-    
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     //
     // RPA tuning
     //
@@ -2720,134 +2335,6 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
     
     return conv::kBadResult;
 }
-
-
-//________________________________________________________________________________________
-double NuXSec::RelativeError(
-#if defined(__USE_NIWG2013__)
-  PhysParamId_t p) const
-#else
-  PhysParamId_t /*p*/) const
-#endif
-{
-    // NEW XSEC --> xsec syst now in BANFF output are commented
-    //
-    // not commented any longer, but uncorrelated systematics are not used
-    //
-    
-    // NEW XSEC NIWG
-    
-#if defined(__USE_NIWG2013__)
-    switch(p) {
-        case kNuisXSecNormCCcoh:
-            return fNormCCcohRelErr;
-            break;
-        case kNuisXSecNormNC1piC:
-            return fNormNC1piCRelErr;
-            break;
-        case kNuisXSecNormNCcoh:
-            return fNormNCcohRelErr;
-            break;
-        case kNuisXSecNormNCoth:
-            return fNormNCothRelErr;
-            break;
-        case kNuisXSecNormNuEToNuMu:
-            return fNormNuEToNuMuRelErr;
-            break;
-        case kNuisXSecNormAntiNuToNu:
-            return fNormAntiNuToNuRelErr;
-            break;
-        case kRHCNuisXSecNormCCcoh:
-            return fRHCNormCCcohRelErr;
-            break;
-        case kRHCNuisXSecNormNC1piC:
-            return fRHCNormNC1piCRelErr;
-            break;
-        case kRHCNuisXSecNormNCcoh:
-            return fRHCNormNCcohRelErr;
-            break;
-        case kRHCNuisXSecNormNCoth:
-            return fRHCNormNCothRelErr;
-            break;
-        case kRHCNuisXSecNormNuEToNuMu:
-            return fRHCNormNuEToNuMuRelErr;
-            break;
-        case kRHCNuisXSecNormAntiNuToNu:
-            return fRHCNormAntiNuToNuRelErr;
-            break;
-        case kNuisRHCToFHC:
-            return fNormRHCToFHCRelErr;
-            break;
-        default:
-            cout << "Relative error is not defined for xsec parameter: " << AsString(p) << endl;
-            return 0;
-    }
-#elif defined(__USE_NIWG2015__)
-    // NEW XSEC
-    // No uncorrelated "NORMALIZATION" NIWG2015 xsec systematics
-#endif
-    return 0;
-}
-
-
-//________________________________________________________________________________________
-void NuXSec::PrintSystematicVariations(std::ostream & stream) const
-{
-    // NEW XSEC --> xsec syst now in BANFF output are commented
-    //
-    // not commented any longer, but uncorrelated systematics are not used
-    //
-    
-    stream << "Exp/XSec >> XSec parameters:"                              << endl;
-    
-#if defined(__USE_NIWG2013__)
-    stream << "         >> Fermi momentum      " << fFermiMomTwkDial      << endl;
-    stream << "         >> Spectral function   " << fSpecFuncTwkDial      << endl;
-    stream << "         >> W-shape             " << fWshapeTwkDial        << endl;
-    stream << "         >> CC-oth shape        " << fShapeCCothTwkDial    << endl;
-    stream << "         >> Pi-less delta decay " << fPiLessDeltaTwkDial   << endl;
-    stream << "         >> Binding energy      " << fBindETwkDial         << endl;
-    stream << "         >> CC-coh norm         " << fNormCCcohTwkDial     << endl;
-    stream << "         >> NC-1piC norm        " << fNormNC1piCTwkDial    << endl;
-#ifndef __NUMUONLY__
-    stream << "         >> NC-coh norm         " << fNormNCcohTwkDial     << endl;
-#endif
-    stream << "         >> NC-oth norm         " << fNormNCothTwkDial     << endl;
-    stream << "         >> NuE to NuMu norm    " << fNormNuEToNuMuTwkDial << endl;
-    stream << "         >> AntiNu to Nu norm   " << fNormAntiNuToNuTwkDial<< endl;
-#elif defined(__USE_NIWG2015__)
-    stream << "         >> RPA tuning          " << fRPATwkDial      << endl;
-#endif
-}
-//________________________________________________________________________________________
-void NuXSec::PrintRHCSystematicVariations(std::ostream & stream) const
-{
-    // NEW XSEC --> xsec syst now in BANFF output are commented
-    //
-    // not commented any longer, but uncorrelated systematics are not used
-    //
-#if defined(__USE_NIWG2013__)
-    stream << "Exp/XSec >> RHC XSec parameters:"                              << endl;
-    stream << "         >> RHC Fermi momentum      " << fRHCFermiMomTwkDial      << endl;
-    stream << "         >> RHC spectral function   " << fRHCSpecFuncTwkDial      << endl;
-    stream << "         >> RHC W-shape             " << fRHCWshapeTwkDial        << endl;
-    stream << "         >> RHC CC-oth shape        " << fRHCShapeCCothTwkDial    << endl;
-    stream << "         >> RHC pi-less delta decay " << fRHCPiLessDeltaTwkDial   << endl;
-    stream << "         >> RHC binding energy      " << fRHCBindETwkDial         << endl;
-    stream << "         >> RHC CC-coh norm         " << fRHCNormCCcohTwkDial     << endl;
-    stream << "         >> RHC NC-1piC norm        " << fRHCNormNC1piCTwkDial    << endl;
-#ifndef __NUMUONLY__
-    stream << "         >> RHC NC-coh norm         " << fRHCNormNCcohTwkDial     << endl;
-#endif
-    stream << "         >> RHC NC-oth norm         " << fRHCNormNCothTwkDial     << endl;
-    stream << "         >> RHC NuE to NuMu norm    " << fRHCNormNuEToNuMuTwkDial << endl;
-    stream << "         >> RHC antiNu to Nu norm   " << fRHCNormAntiNuToNuTwkDial<< endl;
-    stream << "         >> RHC to FHC norm         " << fNormRHCToFHCTwkDial     << endl;
-#elif defined(__USE_NIWG2015__)
-    stream << "         >> RHC RPA tuning          " << fRHCRPATwkDial      << endl;
-#endif
-}
-
 //________________________________________________________________________________________
 //
 // Cross-section weight splines
@@ -3603,134 +3090,11 @@ TH3D * NuXSec::Template2D(SuperkSample_t s, SuperkMode_t m) const
     return h;
 }
 //________________________________________________________________________________________
-double NuXSec::ChisqPenalty(bool /*all_syst*/,
-#if defined(__USE_NIWG2013__)
-  bool hk_syst) const
-#else
-  bool /*hk_syst*/) const
-#endif
-{
-    //only contains the contributions from the non-BANFF xsec parameters
-    
-    double chisq_penalty = 0;
-    
-    // NEW XSEC --> comment all because many xsec syst are now in the BANFF and the others are not used any longer
-    // --> not commented any longer
-    
-    // NEW XSEC NIWG
-    
-#if defined(__USE_NIWG2013__)
-    
-    // hack for hk
-    if(hk_syst) {
-        //#ifdef __FHC_RUNNING__
-        if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
-        if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
-        if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
-        if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
-        //#endif
-        /*
-         #ifdef __RHC_RUNNING__
-         if (fRHCNormCCcohTwkDial)      chisq_penalty += fRHCNormCCcohTwkDial*fRHCNormCCcohTwkDial;
-         if (fRHCNormNC1piCTwkDial)     chisq_penalty += fRHCNormNC1piCTwkDial*fRHCNormNC1piCTwkDial;
-         if (fRHCNormNCcohTwkDial)      chisq_penalty += fRHCNormNCcohTwkDial*fRHCNormNCcohTwkDial;
-         if (fRHCNormNCothTwkDial)      chisq_penalty += fRHCNormNCothTwkDial*fRHCNormNCothTwkDial;
-         #endif
-         */
-        return chisq_penalty;
-    }
-    //#ifdef __FHC_RUNNING__
-    
-    if (fFermiMomTwkDial)       chisq_penalty += fFermiMomTwkDial*fFermiMomTwkDial;
-    if (fSpecFuncTwkDial)       chisq_penalty += fSpecFuncTwkDial*fSpecFuncTwkDial;
-    if (fWshapeTwkDial)         chisq_penalty += fWshapeTwkDial*fWshapeTwkDial;
-    if (fShapeCCothTwkDial)     chisq_penalty += fShapeCCothTwkDial*fShapeCCothTwkDial;
-    if (fPiLessDeltaTwkDial)    chisq_penalty += fPiLessDeltaTwkDial*fPiLessDeltaTwkDial;
-#ifndef __NUEONLY__
-    if (fBindETwkDial)          chisq_penalty += fBindETwkDial*fBindETwkDial;
-#endif
-    if (fNormCCcohTwkDial)      chisq_penalty += fNormCCcohTwkDial*fNormCCcohTwkDial;
-#ifndef __NUEONLY__
-    if (fNormNC1piCTwkDial)     chisq_penalty += fNormNC1piCTwkDial*fNormNC1piCTwkDial;
-#endif
-#ifndef __NUMUONLY__
-    if (fNormNCcohTwkDial)      chisq_penalty += fNormNCcohTwkDial*fNormNCcohTwkDial;
-#endif
-    if (fNormNCothTwkDial)      chisq_penalty += fNormNCothTwkDial*fNormNCothTwkDial;
-    if (fNormNuEToNuMuTwkDial)  chisq_penalty += fNormNuEToNuMuTwkDial*fNormNuEToNuMuTwkDial;
-#ifndef __NUEONLY__
-    if (fNormAntiNuToNuTwkDial) chisq_penalty += fNormAntiNuToNuTwkDial*fNormAntiNuToNuTwkDial;
-#endif
-    if (fNormRHCToFHCTwkDial)   chisq_penalty += fNormRHCToFHCTwkDial*fNormRHCToFHCTwkDial;
-    
-    //#endif
-    /*
-     #ifdef __RHC_RUNNING__
-     if (fRHCFermiMomTwkDial)       chisq_penalty += fRHCFermiMomTwkDial*fRHCFermiMomTwkDial;
-     if (fRHCSpecFuncTwkDial)       chisq_penalty += fRHCSpecFuncTwkDial*fRHCSpecFuncTwkDial;
-     if (fRHCWshapeTwkDial)         chisq_penalty += fRHCWshapeTwkDial*fRHCWshapeTwkDial;
-     if (fRHCShapeCCothTwkDial)     chisq_penalty += fRHCShapeCCothTwkDial*fRHCShapeCCothTwkDial;
-     if (fRHCPiLessDeltaTwkDial)    chisq_penalty += fRHCPiLessDeltaTwkDial*fRHCPiLessDeltaTwkDial;
-     #ifndef __NUEONLY__
-     if (fRHCBindETwkDial)          chisq_penalty += fRHCBindETwkDial*fRHCBindETwkDial;
-     #endif
-     if (fRHCNormCCcohTwkDial)      chisq_penalty += fRHCNormCCcohTwkDial*fRHCNormCCcohTwkDial;
-     #ifndef __NUEONLY__
-     if (fRHCNormNC1piCTwkDial)     chisq_penalty += fRHCNormNC1piCTwkDial*fRHCNormNC1piCTwkDial;
-     #endif
-     #ifndef __NUMUONLY__
-     if (fRHCNormNCcohTwkDial)      chisq_penalty += fRHCNormNCcohTwkDial*fRHCNormNCcohTwkDial;
-     #endif
-     if (fRHCNormNCothTwkDial)      chisq_penalty += fRHCNormNCothTwkDial*fRHCNormNCothTwkDial;
-     if (fRHCNormNuEToNuMuTwkDial)  chisq_penalty += fRHCNormNuEToNuMuTwkDial*fRHCNormNuEToNuMuTwkDial;
-     #ifndef __NUEONLY__
-     if (fRHCNormAntiNuToNuTwkDial) chisq_penalty += fRHCNormAntiNuToNuTwkDial*fRHCNormAntiNuToNuTwkDial;
-     #endif
-     #endif
-     */
-    
-#elif defined(__USE_NIWG2015__)
-    //if (fRPATwkDial)       chisq_penalty += fRPATwkDial    * fRPATwkDial;
-    // //if (fRHCRPATwkDial)    chisq_penalty += fRHCRPATwkDial * fRHCRPATwkDial;
-#endif
-    
-    return chisq_penalty;
-}
-//________________________________________________________________________________________
 void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
 {
     // NEW XSEC --> comment all because many xsec syst are now in the BANFF and the others are not used any longer
     // -->  not commented any longer
-    
-#if defined(__USE_NIWG2013__)
-    if      (p==kNuisXSecFermiMom      ) fFermiMomTwkDial      = twkdial;
-    else if (p==kNuisXSecSpecFunc      ) fSpecFuncTwkDial      = twkdial;
-    else if (p==kNuisXSecWshape        ) fWshapeTwkDial        = twkdial;
-    else if (p==kNuisXSecShapeCCoth    ) fShapeCCothTwkDial    = twkdial;
-    else if (p==kNuisXSecPiLessDelta   ) fPiLessDeltaTwkDial   = twkdial;
-    else if (p==kNuisXSecBindE         ) fBindETwkDial         = twkdial;
-    else if (p==kNuisXSecNormCCcoh     ) fNormCCcohTwkDial     = twkdial;
-    else if (p==kNuisXSecNormNC1piC    ) fNormNC1piCTwkDial    = twkdial;
-    else if (p==kNuisXSecNormNCcoh     ) fNormNCcohTwkDial     = twkdial;
-    else if (p==kNuisXSecNormNCoth     ) fNormNCothTwkDial     = twkdial;
-    else if (p==kNuisXSecNormNuEToNuMu ) fNormNuEToNuMuTwkDial = twkdial;
-    else if (p==kNuisXSecNormAntiNuToNu) fNormAntiNuToNuTwkDial= twkdial;
-    else if (p==kRHCNuisXSecFermiMom      ) fRHCFermiMomTwkDial      = twkdial;
-    else if (p==kRHCNuisXSecSpecFunc      ) fRHCSpecFuncTwkDial      = twkdial;
-    else if (p==kRHCNuisXSecWshape        ) fRHCWshapeTwkDial        = twkdial;
-    else if (p==kRHCNuisXSecShapeCCoth    ) fRHCShapeCCothTwkDial    = twkdial;
-    else if (p==kRHCNuisXSecPiLessDelta   ) fRHCPiLessDeltaTwkDial   = twkdial;
-    else if (p==kRHCNuisXSecBindE         ) fRHCBindETwkDial         = twkdial;
-    else if (p==kRHCNuisXSecNormCCcoh     ) fRHCNormCCcohTwkDial     = twkdial;
-    else if (p==kRHCNuisXSecNormNC1piC    ) fRHCNormNC1piCTwkDial    = twkdial;
-    else if (p==kRHCNuisXSecNormNCcoh     ) fRHCNormNCcohTwkDial     = twkdial;
-    else if (p==kRHCNuisXSecNormNCoth     ) fRHCNormNCothTwkDial     = twkdial;
-    else if (p==kRHCNuisXSecNormNuEToNuMu ) fRHCNormNuEToNuMuTwkDial = twkdial;
-    else if (p==kRHCNuisXSecNormAntiNuToNu) fRHCNormAntiNuToNuTwkDial= twkdial;
-    else if (p==kNuisRHCToFHC             ) fNormRHCToFHCTwkDial     = twkdial;
-    
-    // NEW XSEC
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     // RPA is a discrete value (0 or 1)
     if      (p==kNuisXSecRPA      ){
         if( fabs(twkdial)>conv::kASmallNum && fabs(twkdial-1)>conv::kASmallNum ){
@@ -3789,13 +3153,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
   
   ostringstream splname;
   splname << "spl_";
-#if defined(__USE_NIWG2013__)
-    splname << util::AsStringCompact_splinehack(s) << "_";
-    splname << util::AsStringCompact_splinehack(m) << "_"
-    << util::AsStringCompact_splinehack(p) << "_"
-    << reco_bin << "_"
-    << true_bin;
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     splname << util::AsStringCompact(s) <<"_"
     << util::AsStringSpline(p)  <<"_"
     << util::AsStringCompact(m) <<"_"
@@ -3815,13 +3173,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 #endif 		      
     ostringstream splname;
     splname << "spl_";
-#if defined(__USE_NIWG2013__)
-    splname << util::AsStringCompact_splinehack(s) << "_";
-    splname << util::AsStringCompact_splinehack(m) << "_"
-    << util::AsStringCompact_splinehack(p) << "_"
-    << reco_bin << "_"
-    << true_bin;
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
     splname << util::AsStringCompact(s) <<"_"
     << util::AsStringSpline(p)  <<"_"
     << util::AsStringCompact(m) <<"_"

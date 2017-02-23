@@ -791,7 +791,7 @@ bool valor::util::IsCCcoh(int neut_reaction_mode)
   return neut_reaction_mode ==  16;
 }
 //___________________________________________________________________________
-bool valor::util::IsMEC(int neut_reaction_mode) 
+bool valor::util::Is2p2h(int neut_reaction_mode) 
 {
   return neut_reaction_mode ==  2;
 }
@@ -876,7 +876,7 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmNuMuCCQE         :  return ( IsCCQE    (abs_mode) && is_numu    );
     case kSKmNuMuCC1pi        :  return ( IsCC1pi   (abs_mode) && is_numu    );
     case kSKmNuMuCCcoh        :  return ( IsCCcoh   (abs_mode) && is_numu    );
-    case kSKmNuMuCCMEC        :  return ( IsMEC     (abs_mode) && is_numu    );
+    case kSKmNuMuCC2p2h        :  return ( Is2p2h     (abs_mode) && is_numu    );
     case kSKmNuMuCCoth        :  return ( IsCCoth   (abs_mode) && is_numu    );
     case kSKmNuMuNC1piC       :  return ( IsNC1piC  (abs_mode) && is_numu    );
     case kSKmNuMuNC1pi0       :  return ( IsNC1pi0  (abs_mode) && is_numu    );
@@ -887,7 +887,7 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmNuMuBarCCQE      :  return ( IsCCQE    (abs_mode) && is_numubar );
     case kSKmNuMuBarCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numubar );
     case kSKmNuMuBarCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numubar );
-    case kSKmNuMuBarCCMEC     :  return ( IsMEC     (abs_mode) && is_numubar );
+    case kSKmNuMuBarCC2p2h     :  return ( Is2p2h     (abs_mode) && is_numubar );
     case kSKmNuMuBarCCoth     :  return ( IsCCoth   (abs_mode) && is_numubar );
     case kSKmNuMuBarNC1piC    :  return ( IsNC1piC  (abs_mode) && is_numubar );
     case kSKmNuMuBarNC1pi0    :  return ( IsNC1pi0  (abs_mode) && is_numubar );
@@ -900,20 +900,20 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmOscNuMuCCQE      :  return ( IsCCQE    (abs_mode) && is_numu    );
     case kSKmOscNuMuCC1pi     :  return ( IsCC1pi   (abs_mode) && is_numu    );
     case kSKmOscNuMuCCcoh     :  return ( IsCCcoh   (abs_mode) && is_numu    );
-    case kSKmOscNuMuCCMEC     :  return ( IsMEC     (abs_mode) && is_numu    );
+    case kSKmOscNuMuCC2p2h     :  return ( Is2p2h     (abs_mode) && is_numu    );
     case kSKmOscNuMuCCoth     :  return ( IsCCoth   (abs_mode) && is_numu    );
     
     case kSKmOscNuMuBarCCQE   :  return ( IsCCQE    (abs_mode) && is_numubar );
     case kSKmOscNuMuBarCC1pi  :  return ( IsCC1pi   (abs_mode) && is_numubar );
     case kSKmOscNuMuBarCCcoh  :  return ( IsCCcoh   (abs_mode) && is_numubar );
-    case kSKmOscNuMuBarCCMEC  :  return ( IsMEC     (abs_mode) && is_numubar );
+    case kSKmOscNuMuBarCC2p2h  :  return ( Is2p2h     (abs_mode) && is_numubar );
     case kSKmOscNuMuBarCCoth  :  return ( IsCCoth   (abs_mode) && is_numubar );
     
     //NuE
     case kSKmNuECCQE          :  return ( IsCCQE    (abs_mode) && is_nue     );
     case kSKmNuECC1pi         :  return ( IsCC1pi   (abs_mode) && is_nue     );
     case kSKmNuECCcoh         :  return ( IsCCcoh   (abs_mode) && is_nue     );
-    case kSKmNuECCMEC         :  return ( IsMEC     (abs_mode) && is_nue     );
+    case kSKmNuECC2p2h         :  return ( Is2p2h     (abs_mode) && is_nue     );
     case kSKmNuECCoth         :  return ( IsCCoth   (abs_mode) && is_nue     );
     case kSKmNuENC1piC        :  return ( IsNC1piC  (abs_mode) && is_nue     );
     case kSKmNuENC1pi0        :  return ( IsNC1pi0  (abs_mode) && is_nue     );
@@ -924,7 +924,7 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmNuEBarCCQE       :  return ( IsCCQE    (abs_mode) && is_nuebar  );
     case kSKmNuEBarCC1pi      :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
     case kSKmNuEBarCCcoh      :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
-    case kSKmNuEBarCCMEC      :  return ( IsMEC     (abs_mode) && is_nuebar  );
+    case kSKmNuEBarCC2p2h      :  return ( Is2p2h     (abs_mode) && is_nuebar  );
     case kSKmNuEBarCCoth      :  return ( IsCCoth   (abs_mode) && is_nuebar  );
     case kSKmNuEBarNC1piC     :  return ( IsNC1piC  (abs_mode) && is_nuebar  );
     case kSKmNuEBarNC1pi0     :  return ( IsNC1pi0  (abs_mode) && is_nuebar  );
@@ -937,13 +937,13 @@ bool valor::util::UseEventToFillInTemplate(
     case kSKmOscNuECCQE       :  return ( IsCCQE    (abs_mode) && is_nue     );
     case kSKmOscNuECC1pi      :  return ( IsCC1pi   (abs_mode) && is_nue     );
     case kSKmOscNuECCcoh      :  return ( IsCCcoh   (abs_mode) && is_nue     );
-    case kSKmOscNuECCMEC      :  return ( IsMEC     (abs_mode) && is_nue     );
+    case kSKmOscNuECC2p2h      :  return ( Is2p2h     (abs_mode) && is_nue     );
     case kSKmOscNuECCoth      :  return ( IsCCoth   (abs_mode) && is_nue     );
                                                                              
     case kSKmOscNuEBarCCQE    :  return ( IsCCQE    (abs_mode) && is_nuebar  );
     case kSKmOscNuEBarCC1pi   :  return ( IsCC1pi   (abs_mode) && is_nuebar  );
     case kSKmOscNuEBarCCcoh   :  return ( IsCCcoh   (abs_mode) && is_nuebar  );
-    case kSKmOscNuEBarCCMEC   :  return ( IsMEC     (abs_mode) && is_nuebar  );
+    case kSKmOscNuEBarCC2p2h   :  return ( Is2p2h     (abs_mode) && is_nuebar  );
     case kSKmOscNuEBarCCoth   :  return ( IsCCoth   (abs_mode) && is_nuebar  );
     
     

@@ -149,20 +149,20 @@ bool valor::util::IsCCQE(valor::conv::SuperkMode_t m){
 }
 //____________________________________________________________________________
 bool valor::util::IsCCnQE(valor::conv::SuperkMode_t m){
-    return ( IsCC(m) && !IsCCQE(m) && !IsMEC(m) );
+    return ( IsCC(m) && !IsCCQE(m) && !Is2p2h(m) );
 }
 //____________________________________________________________________________
-bool valor::util::IsMEC(valor::conv::SuperkMode_t m)
+bool valor::util::Is2p2h(valor::conv::SuperkMode_t m)
 {
     switch(m) {
-        case ( kSKmNuMuCCMEC        ) :
-        case ( kSKmNuMuBarCCMEC     ) :
-        case ( kSKmNuECCMEC         ) :
-        case ( kSKmNuEBarCCMEC      ) :
-        case ( kSKmOscNuMuCCMEC        ) :
-        case ( kSKmOscNuMuBarCCMEC     ) :
-        case ( kSKmOscNuECCMEC         ) :
-        case ( kSKmOscNuEBarCCMEC      ) :
+        case ( kSKmNuMuCC2p2h        ) :
+        case ( kSKmNuMuBarCC2p2h     ) :
+        case ( kSKmNuECC2p2h         ) :
+        case ( kSKmNuEBarCC2p2h      ) :
+        case ( kSKmOscNuMuCC2p2h        ) :
+        case ( kSKmOscNuMuBarCC2p2h     ) :
+        case ( kSKmOscNuECC2p2h         ) :
+        case ( kSKmOscNuEBarCC2p2h      ) :
             return true;
             break;
         default:
@@ -381,177 +381,177 @@ int valor::util::AppliesToCCQE(vector<valor::conv::SuperkMode_t> modes)
   return 99;
 }
 //____________________________________________________________________________
-int valor::util::AppliesToCCMEC(vector<valor::conv::SuperkMode_t> modes)
+int valor::util::AppliesToCC2p2h(vector<valor::conv::SuperkMode_t> modes)
 {
   if(!modes.size())
     return 0;
   //no effect
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  == modes.end())
     return 0;
-  //effects all CCMEC
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+  //effects all CC2p2h
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       != modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    != modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  != modes.end())
     return 1;
   //numu+numubar
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       != modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    != modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  == modes.end())
     return 2;
   //nue+nuebar
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  != modes.end())
     return 3;
   //numu+nue
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       != modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  == modes.end())
     return 4;
   //numubar+nuebar
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    != modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  != modes.end())
     return 5;
   //numu
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       != modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       != modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  == modes.end())
     return 6;
   //numubar
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    != modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) != modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  == modes.end())
     return 7;
   //nue
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  == modes.end())
     return 8;
   //nuebar
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  != modes.end())
     return 9;
   //signue+signuebar
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  != modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  != modes.end())
     return 10;
   //non-signue+non-signuebar
-  if(find(modes.begin(), modes.end(), kSKmNuMuCCMEC)       == modes.end() &&
+  if(find(modes.begin(), modes.end(), kSKmNuMuCC2p2h)       == modes.end() &&
 #ifdef __USE_OSC_NUMU_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuCC2p2h)    == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuMuBarCCMEC)    == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuMuBarCC2p2h)    == modes.end() &&
 #ifdef __USE_OSC_NUMUBAR_MC_TEMPLATES__
-     find(modes.begin(), modes.end(), kSKmOscNuMuBarCCMEC) == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuMuBarCC2p2h) == modes.end() &&
 #endif
-     find(modes.begin(), modes.end(), kSKmNuECCMEC)        != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuECCMEC)     == modes.end() &&
-     find(modes.begin(), modes.end(), kSKmNuEBarCCMEC)     != modes.end() &&
-     find(modes.begin(), modes.end(), kSKmOscNuEBarCCMEC)  == modes.end())
+     find(modes.begin(), modes.end(), kSKmNuECC2p2h)        != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuECC2p2h)     == modes.end() &&
+     find(modes.begin(), modes.end(), kSKmNuEBarCC2p2h)     != modes.end() &&
+     find(modes.begin(), modes.end(), kSKmOscNuEBarCC2p2h)  == modes.end())
     return 11;
   return 99;
 }
@@ -1473,7 +1473,7 @@ string valor::util::AsStringCompact_KDI (valor::conv::SuperkMode_t m)
     // Compact string used for naming output histograms stored ROOT files
     // using the Japanese analysis naming convention
     //
-    // needs updating with MEC modes
+    // needs updating with 2p2h modes
     switch(m) {
         case ( kSKmNuMuCCQE        ) : return "numu_ccqe";       break;
         case ( kSKmNuMuCC1pi       ) : return "numu_ccpi";       break;
@@ -1532,7 +1532,7 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
         case ( kSKmNuMuCCQE        ) : return "numu CC QE";                        break;
         case ( kSKmNuMuCC1pi       ) : return "numu CC 1pi";                       break;
         case ( kSKmNuMuCCcoh       ) : return "numu CC coh";                       break;
-        case ( kSKmNuMuCCMEC       ) : return "numu CC MEC";                       break;
+        case ( kSKmNuMuCC2p2h       ) : return "numu CC 2p2h";                       break;
         case ( kSKmNuMuCCoth       ) : return "numu CC oth";                       break;
         case ( kSKmNuMuNC1piC      ) : return "numu NC 1piC";                      break;
         case ( kSKmNuMuNC1pi0      ) : return "numu/nutau NC 1pi0";                break;
@@ -1541,12 +1541,12 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuCCQE     ) : return "oscillated numu CC QE";             break;
         case ( kSKmOscNuMuCC1pi    ) : return "oscillated numu CC 1pi";            break;
         case ( kSKmOscNuMuCCcoh    ) : return "oscillated numu CC coh";            break;
-        case ( kSKmOscNuMuCCMEC    ) : return "oscillated numu CC MEC";            break;
+        case ( kSKmOscNuMuCC2p2h    ) : return "oscillated numu CC 2p2h";            break;
         case ( kSKmOscNuMuCCoth    ) : return "oscillated numu CC oth";            break;
         case ( kSKmNuMuBarCCQE     ) : return "numubar CC QE";                     break;
         case ( kSKmNuMuBarCC1pi    ) : return "numubar CC 1pi";                    break;
         case ( kSKmNuMuBarCCcoh    ) : return "numubar CC coh";                    break;
-        case ( kSKmNuMuBarCCMEC    ) : return "numubar CC MEC";                    break;
+        case ( kSKmNuMuBarCC2p2h    ) : return "numubar CC 2p2h";                    break;
         case ( kSKmNuMuBarCCoth    ) : return "numubar CC oth";                    break;
         case ( kSKmNuMuBarNC1piC   ) : return "numubar/nutaubar NC 1piC";          break;
         case ( kSKmNuMuBarNC1pi0   ) : return "numubar/nutaubar NC 1pi0";          break;
@@ -1555,12 +1555,12 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuBarCCQE  ) : return "oscillated numubar CC QE";          break;
         case ( kSKmOscNuMuBarCC1pi ) : return "oscillated numubar CC 1pi";         break;
         case ( kSKmOscNuMuBarCCcoh ) : return "oscillated numubar CC coh";         break;
-        case ( kSKmOscNuMuBarCCMEC ) : return "oscillated numubar CC MEC";         break;
+        case ( kSKmOscNuMuBarCC2p2h ) : return "oscillated numubar CC 2p2h";         break;
         case ( kSKmOscNuMuBarCCoth ) : return "oscillated numubar CC oth";         break;
         case ( kSKmNuECCQE         ) : return "nue CC QE";                         break;
         case ( kSKmNuECC1pi        ) : return "nue CC 1pi";                        break;
         case ( kSKmNuECCcoh        ) : return "nue CC coh";                        break;
-        case ( kSKmNuECCMEC        ) : return "nue CC MEC";                        break;
+        case ( kSKmNuECC2p2h        ) : return "nue CC 2p2h";                        break;
         case ( kSKmNuECCoth        ) : return "nue CC oth";                        break;
         case ( kSKmNuENC1piC       ) : return "nue NC 1piC";                       break;
         case ( kSKmNuENC1pi0       ) : return "nue NC 1pi0";                       break;
@@ -1569,12 +1569,12 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuECCQE      ) : return "oscillated nue CC QE";              break;
         case ( kSKmOscNuECC1pi     ) : return "oscillated nue CC 1pi";             break;
         case ( kSKmOscNuECCcoh     ) : return "oscillated nue CC coh";             break;
-        case ( kSKmOscNuECCMEC     ) : return "oscillated nue CC MEC";             break;
+        case ( kSKmOscNuECC2p2h     ) : return "oscillated nue CC 2p2h";             break;
         case ( kSKmOscNuECCoth     ) : return "oscillated nue CC oth";             break;
         case ( kSKmNuEBarCCQE      ) : return "nuebar CC QE";                      break;
         case ( kSKmNuEBarCC1pi     ) : return "nuebar CC 1pi";                     break;
         case ( kSKmNuEBarCCcoh     ) : return "nuebar CC coh";                     break;
-        case ( kSKmNuEBarCCMEC     ) : return "nuebar CC MEC";                     break;
+        case ( kSKmNuEBarCC2p2h     ) : return "nuebar CC 2p2h";                     break;
         case ( kSKmNuEBarCCoth     ) : return "nuebar CC oth";                     break;
         case ( kSKmNuEBarNC1piC    ) : return "nuebar NC 1piC";                    break;
         case ( kSKmNuEBarNC1pi0    ) : return "nuebar NC 1pi0";                    break;
@@ -1583,7 +1583,7 @@ string valor::util::AsString(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuEBarCCQE   ) : return "oscillated nuebar CC QE";           break;
         case ( kSKmOscNuEBarCC1pi  ) : return "oscillated nuebar CC 1pi";          break;
         case ( kSKmOscNuEBarCCcoh  ) : return "oscillated nuebar CC coh";          break;
-        case ( kSKmOscNuEBarCCMEC  ) : return "oscillated nuebar CC MEC";          break;
+        case ( kSKmOscNuEBarCC2p2h  ) : return "oscillated nuebar CC 2p2h";          break;
         case ( kSKmOscNuEBarCCoth  ) : return "oscillated nuebar CC oth ";         break;
             //NC 1 gamma
         case ( kSKmNuMuNC1Gamma      ) : return "numu NC 1gamma";                    break;
@@ -1611,7 +1611,7 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
         case ( kSKmNuMuCCQE        ) : return "$\\nu_\\mu$ CCQE";                                               break;
         case ( kSKmNuMuCC1pi       ) : return "$\\nu_\\mu$ CC 1$\\pi$";                                         break;
         case ( kSKmNuMuCCcoh       ) : return "$\\nu_\\mu$ CC coherent";                                        break;
-        case ( kSKmNuMuCCMEC       ) : return "$\\nu_\\mu$ CC MEC";                                             break;
+        case ( kSKmNuMuCC2p2h       ) : return "$\\nu_\\mu$ CC 2p2h";                                             break;
         case ( kSKmNuMuCCoth       ) : return "$\\nu_\\mu$ CC other";                                           break;
         case ( kSKmNuMuNC1piC      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^{+/-}$";                      break;
         case ( kSKmNuMuNC1pi0      ) : return "$\\nu_\\mu$/$\\nu_\\tau$ NC 1$\\pi^0$";                          break;
@@ -1620,12 +1620,12 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuCCQE     ) : return "Osc. $\\nu_\\mu$ CCQE";                                          break;
         case ( kSKmOscNuMuCC1pi    ) : return "Osc. $\\nu_\\mu$ CC 1$\\pi$";                                    break;
         case ( kSKmOscNuMuCCcoh    ) : return "Osc. $\\nu_\\mu$ CC coherent";                                   break;
-        case ( kSKmOscNuMuCCMEC    ) : return "Osc. $\\nu_\\mu$ CC MEC";                                        break;
+        case ( kSKmOscNuMuCC2p2h    ) : return "Osc. $\\nu_\\mu$ CC 2p2h";                                        break;
         case ( kSKmOscNuMuCCoth    ) : return "Osc. $\\nu_\\mu$ CC other";                                      break;
         case ( kSKmNuMuBarCCQE     ) : return "$\\bar{\\nu}_{\\mu}$ CCQE";                                        break;
         case ( kSKmNuMuBarCC1pi    ) : return "$\\bar{\\nu}_{\\mu}$ CC 1$\\pi$";                                  break;
         case ( kSKmNuMuBarCCcoh    ) : return "$\\bar{\\nu}_{\\mu}$ CC coherent";                                 break;
-        case ( kSKmNuMuBarCCMEC    ) : return "$\\bar{\\nu}_{\\mu}$ CC MEC";                                      break;
+        case ( kSKmNuMuBarCC2p2h    ) : return "$\\bar{\\nu}_{\\mu}$ CC 2p2h";                                      break;
         case ( kSKmNuMuBarCCoth    ) : return "$\\bar{\\nu}_{\\mu}$ CC other";                                    break;
         case ( kSKmNuMuBarNC1piC   ) : return "$\\bar{\\nu}_{\\mu}$/$\\bar{\\nu}_{\\tau}$ NC 1$\\pi^{+/-}$";        break;
         case ( kSKmNuMuBarNC1pi0   ) : return "$\\bar{\\nu}_{\\mu}$/$\\bar{\\nu}_{\\tau}$ NC 1$\\pi^0$";            break;
@@ -1634,12 +1634,12 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuBarCCQE  ) : return "Osc. $\\bar{\\nu}_\\mu$ CCQE";                                   break;
         case ( kSKmOscNuMuBarCC1pi ) : return "Osc. $\\bar{\\nu}_\\mu$ CC 1$\\pi$";                             break;
         case ( kSKmOscNuMuBarCCcoh ) : return "Osc. $\\bar{\\nu}_\\mu$ CC coherent";                            break;
-        case ( kSKmOscNuMuBarCCMEC ) : return "Osc. $\\bar{\\nu}_\\mu$ CC MEC";                                 break;
+        case ( kSKmOscNuMuBarCC2p2h ) : return "Osc. $\\bar{\\nu}_\\mu$ CC 2p2h";                                 break;
         case ( kSKmOscNuMuBarCCoth ) : return "Osc. $\\bar{\\nu}_\\mu$ CC other";                               break;
         case ( kSKmNuECCQE         ) : return "$\\nu_e$ CCQE";                                                  break;
         case ( kSKmNuECC1pi        ) : return "$\\nu_e$ CC 1$\\pi$";                                            break;
         case ( kSKmNuECCcoh        ) : return "$\\nu_e$ CC coherent";                                           break;
-        case ( kSKmNuECCMEC        ) : return "$\\nu_e$ CC MEC";                                                break;
+        case ( kSKmNuECC2p2h        ) : return "$\\nu_e$ CC 2p2h";                                                break;
         case ( kSKmNuECCoth        ) : return "$\\nu_e$ CC other";                                              break;
         case ( kSKmNuENC1piC       ) : return "$\\nu_e$ NC 1$\\pi^{+/-}$";                                      break;
         case ( kSKmNuENC1pi0       ) : return "$\\nu_e$ NC 1$\\pi^0$";                                          break;
@@ -1648,12 +1648,12 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuECCQE      ) : return "Osc. $\\nu_e$ CCQE";                                             break;
         case ( kSKmOscNuECC1pi     ) : return "Osc. $\\nu_e$ CC 1$\\pi$";                                       break;
         case ( kSKmOscNuECCcoh     ) : return "Osc. $\\nu_e$ CC coherent";                                      break;
-        case ( kSKmOscNuECCMEC     ) : return "Osc. $\\nu_e$ CC MEC";                                           break;
+        case ( kSKmOscNuECC2p2h     ) : return "Osc. $\\nu_e$ CC 2p2h";                                           break;
         case ( kSKmOscNuECCoth     ) : return "Osc. $\\nu_e$ CC other";                                         break;
         case ( kSKmNuEBarCCQE      ) : return "$\\bar{\\nu}_e$ CCQE";                                           break;
         case ( kSKmNuEBarCC1pi     ) : return "$\\bar{\\nu}_e$ CC 1$\\pi$";                                     break;
         case ( kSKmNuEBarCCcoh     ) : return "$\\bar{\\nu}_e$ CC coherent";                                    break;
-        case ( kSKmNuEBarCCMEC     ) : return "$\\bar{\\nu}_e$ CC MEC";                                         break;
+        case ( kSKmNuEBarCC2p2h     ) : return "$\\bar{\\nu}_e$ CC 2p2h";                                         break;
         case ( kSKmNuEBarCCoth     ) : return "$\\bar{\\nu}_e$ CC other";                                       break;
         case ( kSKmNuEBarNC1piC    ) : return "$\\bar{\\nu}_e$ NC 1$\\pi^{+/-}$";                               break;
         case ( kSKmNuEBarNC1pi0    ) : return "$\\bar{\\nu}_e$ NC 1$\\pi^0$";                                   break;
@@ -1662,7 +1662,7 @@ string valor::util::AsStringTex(valor::conv::SuperkMode_t m)
         case ( kSKmOscNuEBarCCQE   ) : return "Osc. $\\bar{\\nu}_e$ CCQE";                                      break;
         case ( kSKmOscNuEBarCC1pi  ) : return "Osc. $\\bar{\\nu}_e$ CC 1$\\pi$";                                break;
         case ( kSKmOscNuEBarCCcoh  ) : return "Osc. $\\bar{\\nu}_e$ CC coherent";                               break;
-        case ( kSKmOscNuEBarCCMEC  ) : return "Osc. $\\bar{\\nu}_e$ CC MEC";                                    break;
+        case ( kSKmOscNuEBarCC2p2h  ) : return "Osc. $\\bar{\\nu}_e$ CC 2p2h";                                    break;
         case ( kSKmOscNuEBarCCoth  ) : return "Osc. $\\bar{\\nu}_e$ CC other";                                  break;
        // NC 1 gamma
         case ( kSKmNuMuNC1Gamma    ) : return "$\\nu_{\\mu}$ NC 1$\\gamma$";                                    break;
@@ -1683,7 +1683,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmNuMuCCQE        ) : return "numuccqe";          break;
         case ( kSKmNuMuCC1pi       ) : return "numucc1pi";         break;
         case ( kSKmNuMuCCcoh       ) : return "numucccoh";         break;
-        case ( kSKmNuMuCCMEC       ) : return "numuccmec";         break;
+        case ( kSKmNuMuCC2p2h       ) : return "numuccmec";         break;
         case ( kSKmNuMuCCoth       ) : return "numuccoth";         break;
         case ( kSKmNuMuNC1piC      ) : return "numunc1piC";        break;
         case ( kSKmNuMuNC1pi0      ) : return "numunc1pi0";        break;
@@ -1692,12 +1692,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuCCQE     ) : return "oscnumuccqe";       break;
         case ( kSKmOscNuMuCC1pi    ) : return "oscnumucc1pi";      break;
         case ( kSKmOscNuMuCCcoh    ) : return "oscnumucccoh";      break;
-        case ( kSKmOscNuMuCCMEC    ) : return "oscnumuccmec";      break;
+        case ( kSKmOscNuMuCC2p2h    ) : return "oscnumuccmec";      break;
         case ( kSKmOscNuMuCCoth    ) : return "oscnumuccoth";      break;
         case ( kSKmNuMuBarCCQE     ) : return "numubarccqe";       break;
         case ( kSKmNuMuBarCC1pi    ) : return "numubarcc1pi";      break;
         case ( kSKmNuMuBarCCcoh    ) : return "numubarcccoh";      break;
-        case ( kSKmNuMuBarCCMEC    ) : return "numubarccmec";      break;
+        case ( kSKmNuMuBarCC2p2h    ) : return "numubarccmec";      break;
         case ( kSKmNuMuBarCCoth    ) : return "numubarccoth";      break;
         case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";     break;
         case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";     break;
@@ -1706,12 +1706,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuBarCCQE  ) : return "oscnumubarccqe";    break;
         case ( kSKmOscNuMuBarCC1pi ) : return "oscnumubarcc1pi";   break;
         case ( kSKmOscNuMuBarCCcoh ) : return "oscnumubarcccoh";   break;
-        case ( kSKmOscNuMuBarCCMEC ) : return "oscnumubarccmec";   break;
+        case ( kSKmOscNuMuBarCC2p2h ) : return "oscnumubarccmec";   break;
         case ( kSKmOscNuMuBarCCoth ) : return "oscnumubarccoth";   break;
         case ( kSKmNuECCQE         ) : return "nueccqe";           break;
         case ( kSKmNuECC1pi        ) : return "nuecc1pi";          break;
         case ( kSKmNuECCcoh        ) : return "nuecccoh";          break;
-        case ( kSKmNuECCMEC        ) : return "nueccmec";          break;
+        case ( kSKmNuECC2p2h        ) : return "nueccmec";          break;
         case ( kSKmNuECCoth        ) : return "nueccoth";          break;
         case ( kSKmNuENC1piC       ) : return "nuenc1piC";         break;
         case ( kSKmNuENC1pi0       ) : return "nuenc1pi0";         break;
@@ -1720,12 +1720,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuECCQE      ) : return "oscnueccqe";        break;
         case ( kSKmOscNuECC1pi     ) : return "oscnuecc1pi";       break;
         case ( kSKmOscNuECCcoh     ) : return "oscnuecccoh";       break;
-        case ( kSKmOscNuECCMEC     ) : return "oscnueccmec";       break;
+        case ( kSKmOscNuECC2p2h     ) : return "oscnueccmec";       break;
         case ( kSKmOscNuECCoth     ) : return "oscnueccoth";       break;
         case ( kSKmNuEBarCCQE      ) : return "nuebarccqe";        break;
         case ( kSKmNuEBarCC1pi     ) : return "nuebarcc1pi";       break;
         case ( kSKmNuEBarCCcoh     ) : return "nuebarcccoh";       break;
-        case ( kSKmNuEBarCCMEC     ) : return "nuebarccmec";       break;
+        case ( kSKmNuEBarCC2p2h     ) : return "nuebarccmec";       break;
         case ( kSKmNuEBarCCoth     ) : return "nuebarccoth";       break;
         case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1piC";      break;
         case ( kSKmNuEBarNC1pi0    ) : return "nuebarnc1pi0";      break;
@@ -1734,7 +1734,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuEBarCCQE   ) : return "oscnuebarccqe";     break;
         case ( kSKmOscNuEBarCC1pi  ) : return "oscnuebarcc1pi";    break;
         case ( kSKmOscNuEBarCCcoh  ) : return "oscnuebarcccoh";    break;
-        case ( kSKmOscNuEBarCCMEC  ) : return "oscnuebarccmec";    break;
+        case ( kSKmOscNuEBarCC2p2h  ) : return "oscnuebarccmec";    break;
         case ( kSKmOscNuEBarCCoth  ) : return "oscnuebarccoth";    break;
     // NC 1 gamma
         case ( kSKmNuMuNC1Gamma    ) : return "numunc1gamma";      break;  

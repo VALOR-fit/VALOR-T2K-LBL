@@ -86,7 +86,7 @@ static const PhysParamId_t kNuisBANFF12 = kNuis032; // # 12; different meanings 
 static const PhysParamId_t kNuisBANFF13 = kNuis033; // # 13; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF14 = kNuis034; // # 14; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF15 = kNuis035; // # 15; different meanings depending on samples defined
-#if ( !(defined(__USE_NIWG2013__) && BANFF_BINS == 2))
+#if !(BANFF_BINS == 2)
 static const PhysParamId_t kNuisBANFF16 = kNuis036; // # 16; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF17 = kNuis037; // # 17; different meanings depending on samples defined
 static const PhysParamId_t kNuisBANFF18 = kNuis038; // # 18; different meanings depending on samples defined
@@ -114,7 +114,7 @@ static const PhysParamId_t kNuisBANFFNC1pi0  = kNuis052; // # NC1pi0 normalizati
 #endif
 
 // NEW XSEC
-static const PhysParamId_t kNuisBANFFMEC      = kNuis053;  // MEC normalization
+static const PhysParamId_t kNuisBANFFNorm2p2h      = kNuis053;  // 2p2h normalization
 static const PhysParamId_t kNuisBANFFCA5      = kNuis054;  // CA5 RES 
 static const PhysParamId_t kNuisBANFFBgRES    = kNuis055;  // Isospin 1/2 normalization
 // NEW SPLIT ANA
@@ -131,7 +131,7 @@ static const PhysParamId_t kNuisBANFFNormNCoth           = kNuis063;   // NC oth
 static const PhysParamId_t kNuisBANFFNormNuEToNuMu       = kNuis064;   // nue / numu cross section
 static const PhysParamId_t kNuisBANFFNormNC1Gamma        = kNuis065;   // NC 1 gamma
 static const PhysParamId_t kNuisBANFFNormNuEBarToNuMuBar = kNuis066;   // nuebar / numubar 
-static const PhysParamId_t kNuisBANFFMECBar              = kNuis067;   // MEC normalization
+static const PhysParamId_t kNuisBANFFNorm2p2hBar         = kNuis067;   // 2p2h normalization
 
 //
 
@@ -267,7 +267,7 @@ static const PhysParamId_t kRHCNuisBANFF12 = kNuis182; // # 12; SK anti-numu (di
 static const PhysParamId_t kRHCNuisBANFF13 = kNuis183; // # 13; SK anti-numu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF14 = kNuis184; // # 14; SK anti-numu (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF15 = kNuis185; // # 15; SK anti-numu (different meanings depending on samples defined)
-#if (!(defined(__USE_NIWG2013__) && BANFF_BINS == 2))
+#if !(BANFF_BINS == 2)
 static const PhysParamId_t kRHCNuisBANFF16 = kNuis186; // # 16; SK nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF17 = kNuis187; // # 17; SK nue (different meanings depending on samples defined)
 static const PhysParamId_t kRHCNuisBANFF18 = kNuis188; // # 18; SK anti-nue (different meanings depending on samples defined)
@@ -295,7 +295,7 @@ static const PhysParamId_t kRHCNuisBANFFNC1pi0  = kNuis202; // # NC1pi0 normaliz
 #endif
 
 // NEW XSEC
-static const PhysParamId_t kRHCNuisBANFFMEC     = kNuis203;  // MEC normalization
+static const PhysParamId_t kRHCNuisBANFF2p2h     = kNuis203;  // 2p2h normalization
 static const PhysParamId_t kRHCNuisBANFFCA5     = kNuis204;  // CA5 RES 
 static const PhysParamId_t kRHCNuisBANFFBgRES   = kNuis205;  // Isospin 1/2 normalization
 // NEW SPLIT ANA
@@ -312,7 +312,7 @@ static const PhysParamId_t kRHCNuisBANFFNormNCoth           = kNuis213;   // NC 
 static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu       = kNuis214;   // nue / numu cross section
 static const PhysParamId_t kRHCNuisBANFFNormNC1Gamma        = kNuis215;   // nue / numu cross section
 static const PhysParamId_t kRHCNuisBANFFNormNuEBarToNuMuBar = kNuis216;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisBANFFMECBar              = kNuis217;  // MEC normalization
+static const PhysParamId_t kRHCNuisBANFF2p2hBar              = kNuis217;  // 2p2h normalization
 
 //
 

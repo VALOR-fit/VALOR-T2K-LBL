@@ -44,11 +44,11 @@ public:
   double SuperkFluxExtTuningWght     (int neutrino_pdg, double Etrue) const;  // wght: nominal --> ext/tuned flux
   double SuperkFluxFinTuningWght     (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned --> fin/tuned flux
   double SuperkFluxSystWght          (int neutrino_pdg, double Etrue) const;  // wght: fin/tuned flux -> current (incl. syst. variation)
-  double SuperkFluxMECSystWght       (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)
+  double SuperkFlux2p2hSystWght       (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)
   double SuperkRHCFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: nominal --> ext/tuned flux
   double SuperkRHCFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned --> fin/tuned flux
   double SuperkRHCFluxSystWght       (int neutrino_pdg, double Etrue) const;  // wght: fin/tuned flux -> current (incl. syst. variation)
-  double SuperkRHCFluxMECSystWght    (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)  
+  double SuperkRHCFlux2p2hSystWght    (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)  
 
   // ... as above, slighty different interface
   // note that these check for FHC/RHC so there is only a single copy of each

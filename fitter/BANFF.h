@@ -36,8 +36,8 @@ public:
   void TweakSampleFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleXSecOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleXSecNumuNueOnly     (bool force_inputs = false, TVectorD * input_vec = 0);
-  void TweakSampleMEC  (bool force_inputs = false, TVectorD * input_vec = 0);
-  void TweakSampleMECBar  (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSample2p2h  (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSample2p2hBar  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleNCGamma  (bool force_inputs = false, TVectorD * input_vec = 0);
 
   

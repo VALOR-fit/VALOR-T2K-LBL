@@ -1466,7 +1466,7 @@ double NuFlux::SuperkRHCFluxSystWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkFluxMECSystWght(int nu_pdg, double Etrue) const
+double NuFlux::SuperkFlux2p2hSystWght(int nu_pdg, double Etrue) const
 {
 // Weights required to re-weight ext/tuned flux to current (fin/tuned + systematic
 // variarions) flux
@@ -1481,7 +1481,7 @@ double NuFlux::SuperkFluxMECSystWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkRHCFluxMECSystWght(int nu_pdg, double Etrue) const
+double NuFlux::SuperkRHCFlux2p2hSystWght(int nu_pdg, double Etrue) const
 {
   // Weights required to re-weight ext/tuned flux to current (fin/tuned + systematic
   // variarions) flux

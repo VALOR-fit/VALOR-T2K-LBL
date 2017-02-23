@@ -49,7 +49,7 @@ Split valor::conv namespace into several smaller files
 //#define __FULLY_CORRELATED__ // fully correlated rhc-fhc samples
 #endif
 
-// NEW XSEC (either niwg2013 or niwg2015)
+// XSEC (either niwg2015 or niwg2017)
 #define __USE_NIWG2015__
 #ifndef __USE_NIWG2015__
 #define __USE_NIWG2013__
@@ -90,7 +90,7 @@ Split valor::conv namespace into several smaller files
 
 #ifndef BANFF_BINS
 #ifdef __NUMUONLY__
-#define BANFF_BINS 1 //numu disapp without MEC // keep fixed SCC parameters
+#define BANFF_BINS 1 //numu disapp without 2p2h // keep fixed SCC parameters
 #else
 #ifdef __NUEONLY__
 #define BANFF_BINS 3 //nue app

@@ -1165,30 +1165,7 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
   // --> not commented any longer
 
   // NEW XSEC NIWG
-#if defined(__USE_NIWG2013__)
-  this->GetNuXSec()->Tweak(kNuisXSecFermiMom      , 0.);
-  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc      , 0.);
-  this->GetNuXSec()->Tweak(kNuisXSecWshape        , 0.);
-  this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth    , 0.);
-  this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta   , 0.);
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecBindE         , 0.);
-  #endif
-  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh     , 0.);
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC    , 0.);
-  #endif
-  #ifndef __NUMUONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh     , 0.);
-  #endif
-  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth     , 0.);
-  this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu , 0.);
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu, 0.);
-  #endif
-  //RHC
-  this->GetNuXSec()->Tweak(kNuisRHCToFHC, 0.);
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
   this->GetNuXSec()->Tweak(kNuisXSecRPA , 1.); // NEW XSEC 
 #endif
 
@@ -1202,28 +1179,7 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
   // --> not commented any longer
 
   // NEW XSEC NIWG
-#if defined(__USE_NIWG2013__)
-  this->GetNuXSec()->Tweak(kRHCNuisXSecFermiMom      , 0.);
-  this->GetNuXSec()->Tweak(kRHCNuisXSecSpecFunc      , 0.);
-  this->GetNuXSec()->Tweak(kRHCNuisXSecWshape        , 0.);
-  this->GetNuXSec()->Tweak(kRHCNuisXSecShapeCCoth    , 0.);
-  this->GetNuXSec()->Tweak(kRHCNuisXSecPiLessDelta   , 0.);
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kRHCNuisXSecBindE         , 0.);
-  #endif
-  this->GetNuXSec()->Tweak(kRHCNuisXSecNormCCcoh     , 0.);
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNC1piC    , 0.);
-  #endif
-  #ifndef __NUMUONLY__
-  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCcoh     , 0.);
-  #endif
-  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNCoth     , 0.);
-  this->GetNuXSec()->Tweak(kRHCNuisXSecNormNuEToNuMu , 0.);
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kRHCNuisXSecNormAntiNuToNu, 0.);
-  #endif
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
   this->GetNuXSec()->Tweak(kRHCNuisXSecRPA           , 1.); // NEW XSEC
 #endif
 
@@ -1313,54 +1269,6 @@ void SuperkExpectation::TweakAllSKDetectorFSISystematics(void)
   this->GetSuperkDetectorFSI()->Tweak(false,0); // <-- Cholesky method
 }
 //________________________________________________________________________________________
-void SuperkExpectation::TweakAllUncorrelatedXSecSystematics(void)
-{
-#ifdef __show_syst_tweak_mesg__
-  cout << "Exp >> Generating random variations of all Uncorrelated XSec systematic params." << endl;
-#endif
-
-  // NEW XSEC --> comment all old non-banff xsec systematics --> not needed anylonger
-
-  // NEW XSEC NIWG
-
-#if defined(__USE_NIWG2013__)
-  this->GetNuXSec()->Tweak(kNuisXSecFermiMom       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  double tweak = 2;
-  while(tweak > 1 || tweak < 0)
-    tweak = Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.);
-  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , tweak);
-  //this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.));
-  //  this->GetNuXSec()->Tweak(kNuisXSecSpecFunc       , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecWshape         , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecShapeCCoth     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecPiLessDelta    , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecBindE          , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  #endif
-  this->GetNuXSec()->Tweak(kNuisXSecNormCCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecNormNC1piC     , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  #endif
-  #ifndef __NUMUONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecNormNCcoh      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  #endif
-  this->GetNuXSec()->Tweak(kNuisXSecNormNCoth      , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  this->GetNuXSec()->Tweak(kNuisXSecNormNuEToNuMu  , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  #ifndef __NUEONLY__
-  this->GetNuXSec()->Tweak(kNuisXSecNormAntiNuToNu , Rnd::Instance()->RndToyMCsyst().Gaus(0.,1.));
-  #endif
-
-#elif defined(__USE_NIWG2015__)
-  // NEW XSEC
-  // No longer tweak RPA
-  //~ double tweak_discr = Rnd::Instance()->RndToyMCsyst().Uniform(0.,1.);
-  //~ if(tweak_discr < 0.5) tweak_discr = 0.;
-  //~ else tweak_discr = 1.;
-  //~ this->GetNuXSec()->Tweak(kNuisXSecRPA             , tweak_discr);
-#endif
-
-}
-//________________________________________________________________________________________
 PhysParamList SuperkExpectation::Tweaks(Option_t * opt) const
 {
   PhysParamList pl;
@@ -1375,31 +1283,7 @@ void SuperkExpectation::CopyTweaksTo(PhysParamList & pl, Option_t * /*opt*/) con
   // 
   //  Uncorrelated xsec (common to FHC and RHC)
   // 
-
-  
-#if defined(__USE_NIWG2013__)
-  pl.SetValue( kNuisXSecFermiMom,        this->GetNuXSec()->CurrentValue(kNuisXSecFermiMom)       );
-  pl.SetValue( kNuisXSecSpecFunc,        this->GetNuXSec()->CurrentValue(kNuisXSecSpecFunc)       );
-  pl.SetValue( kNuisXSecWshape,          this->GetNuXSec()->CurrentValue(kNuisXSecWshape)         );
-  pl.SetValue( kNuisXSecShapeCCoth,      this->GetNuXSec()->CurrentValue(kNuisXSecShapeCCoth)     );
-  pl.SetValue( kNuisXSecPiLessDelta,     this->GetNuXSec()->CurrentValue(kNuisXSecPiLessDelta)    );
-  #ifndef __NUEONLY__
-  pl.SetValue( kNuisXSecBindE,           this->GetNuXSec()->CurrentValue(kNuisXSecBindE)          );
-  #endif
-  pl.SetValue( kNuisXSecNormCCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormCCcoh)      );
-  #ifndef __NUEONLY__
-  pl.SetValue( kNuisXSecNormNC1piC,      this->GetNuXSec()->CurrentValue(kNuisXSecNormNC1piC)     );
-  #endif
-  #ifndef __NUMUONLY__
-  pl.SetValue( kNuisXSecNormNCcoh,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCcoh)      );
-  #endif
-  pl.SetValue( kNuisXSecNormNCoth,       this->GetNuXSec()->CurrentValue(kNuisXSecNormNCoth)      );
-  pl.SetValue( kNuisXSecNormNuEToNuMu,   this->GetNuXSec()->CurrentValue(kNuisXSecNormNuEToNuMu)  );
-  #ifndef __NUEONLY__
-  pl.SetValue( kNuisXSecNormAntiNuToNu,  this->GetNuXSec()->CurrentValue(kNuisXSecNormAntiNuToNu) );
-  #endif
-
-#elif defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)
   pl.SetValue( kNuisXSecRPA,             this->GetNuXSec()->CurrentValue(kNuisXSecRPA)            ); 
 #endif
 

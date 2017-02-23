@@ -134,7 +134,7 @@ namespace valor {
     void Draw(TVirtualPad * c, Option_t * opt = "") const;
     
     // Hack for x_mec until we have a parameter we can tweak
-    void SetXMEC(double xmec)              { fXMEC = xmec; }
+    void SetX2p2h(double xmec)              { fX2p2h = xmec; }
     
     // Allow osc prob > 1 in 2 flavour oscillation?
     void SetUnphysicalOscProb(bool unphys) { fUnphysicalOscProb = unphys; }
@@ -422,7 +422,7 @@ namespace valor {
     NuOscSterile  fNuOscSterile;            ///< sterile osc. probability calculations
                                             //
     
-    double fXMEC; //hack x_mec until we have a parameter we can use
+    double fX2p2h; //hack x_mec until we have a parameter we can use
     
     bool fUnphysicalOscProb; // Allow unphysical region (probs not in range [0,1]) in 2 flavour case
     

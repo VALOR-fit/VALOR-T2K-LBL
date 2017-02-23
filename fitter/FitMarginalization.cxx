@@ -1318,23 +1318,23 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
           skexp->TweakAllSKDetectorFSISystematics();
         }
         
-        // tweak all sources of systematic error but fix MEC to its nominal value (only FHC+RHC joint fit)
+        // tweak all sources of systematic error but fix 2p2h to its nominal value (only FHC+RHC joint fit)
         if(tweak_systematics == 5) {
 #if defined(__RHC_RUNNING__) && defined(__FHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
-          //~ cout << "- Randomizing all systematic params except MEC in pdf..." << endl;
+          //~ cout << "- Randomizing all systematic params except 2p2h in pdf..." << endl;
           skexp->TweakAllSystematics();
           //skexp->PrintSystematicVariations();
           TVectorD twkv(skexp->GetBANFF()->CurrentValues());
-          double MECval = skexp->GetBANFF()->InitialValue(conv::kNuisBANFFMEC);
-          int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFMEC);
-          twkv[ip] = MECval;
-          //cout << "ip = " << ip << " --> " << MECval << endl;
+          double 2p2hval = skexp->GetBANFF()->InitialValue(conv::kNuisBANFFNorm2p2h);
+          int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFNorm2p2h);
+          twkv[ip] = 2p2hval;
+          //cout << "ip = " << ip << " --> " << 2p2hval << endl;
           skexp->GetBANFF()->Tweak(true,&twkv);
           //skexp->PrintSystematicVariations();
 #else
           cerr << endl;
           cerr << "FitMarginalization::MakeToysMarginalization" << endl;
-          cerr << "Tweaking all systematics but fixing MEC is available only for FHC+RHC not fully correlated" << endl;
+          cerr << "Tweaking all systematics but fixing 2p2h is available only for FHC+RHC not fully correlated" << endl;
           cerr << endl;
           util::Die(1);
 #endif
@@ -2467,17 +2467,17 @@ void FitMarginalization::SetPenaltyTerm(const double mean0, const double sigma0,
     util::Die(1);
   }
   
-  if (parfree1 != conv::kPhypUndefined && fusepenalty1)
-  {
-  bool IsPhysical1 = this->RethrowOscUnphysical(parfree1, fpenalty_mean1);
-  if(IsPhysical1){
-    cerr << endl;
-    cerr << "FitMarginalization::SetPenaltyTerm" << endl;
-    cerr << "Penalty term of parameter 1: " << util::AsString(parfree1) << endl;
-    cerr << "The central value is in the unphysical region: " << fpenalty_mean1 << endl;
-    cerr << "Not allowed --> Set a new value" << endl;
-    cerr << endl;
-    util::Die(1);
+  if (parfree1 != conv::kPhypUndefined && fusepenalty1) {
+    bool IsPhysical1 = this->RethrowOscUnphysical(parfree1, fpenalty_mean1);
+    if(IsPhysical1){
+      cerr << endl;
+      cerr << "FitMarginalization::SetPenaltyTerm" << endl;
+      cerr << "Penalty term of parameter 1: " << util::AsString(parfree1) << endl;
+      cerr << "The central value is in the unphysical region: " << fpenalty_mean1 << endl;
+      cerr << "Not allowed --> Set a new value" << endl;
+      cerr << endl;
+      util::Die(1);
+    }
   }
   
   // Print parameters of penalty term
