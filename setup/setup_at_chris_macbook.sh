@@ -9,7 +9,7 @@
 
 export T2KOSCANA=$1
 export VALOR_FMWK=$2
-export ROOTSYS=/Users/chrisbarry/software/root_v5.34.32_osx
+export ROOTSYS=/Users/chrisbarry/software/root_v5.34.34_osx
 export PYTHONPATH=${ROOTSYS}/lib:${ROOTSYS}/bin:${ROOTSYS}/bindings/pyroot
 
 echo -e "VALOR_FMWK: \n $VALOR_FMWK"
