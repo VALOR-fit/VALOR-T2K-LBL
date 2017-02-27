@@ -119,7 +119,7 @@ string valor::util::AsString(PhysParamId_t p)
 #endif
 
     // NEW XSEC
-  case ( kNuisBANFFNorm2p2h            ) : return "BANFF; Norm; 2p2h";                    break;
+  case ( kNuisBANFFNorm2p2h       ) : return "BANFF; Norm; 2p2h";                    break;
   case ( kNuisBANFFCA5            ) : return "BANFF; CA5 RES";                      break;
   case ( kNuisBANFFBgRES          ) : return "BANFF; BgRES Isospin 1/2";            break;
     // NEW SPLIT ANA
@@ -127,16 +127,23 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kNuisBANFFSCCA           ) : return "BANFF; Second current class axial";   break;
   case ( kNuisBANFFSCCV           ) : return "BANFF; Second current class vector";  break;
 #endif
-  case ( kNuisBANFFFermiMom       ) : return "BANFF; Fermi Momentum";               break; // uncorrelated in the past
-  case ( kNuisBANFFShapeCCoth     ) : return "BANFF; Shape; CC Oth";                break; // uncorrelated in the past
-  case ( kNuisBANFFBindE          ) : return "BANFF; Binding energy";               break; // uncorrelated in the past
-  case ( kNuisBANFFNormCCcoh      ) : return "BANFF; Norm; CC Coh";                 break; // uncorrelated in the past
-  case ( kNuisBANFFNormNCcoh      ) : return "BANFF; Norm; NC Coh";                 break; // uncorrelated in the past
-  case ( kNuisBANFFNormNCoth      ) : return "BANFF; Norm; NC Oth";                 break; // uncorrelated in the past
-  case ( kNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm; NuE To NuMu";            break; // uncorrelated in the past
-  case ( kNuisBANFFNormNC1Gamma       ) : return "BANFF; Norm; NC 1 Gamma";            break; // uncorrelated in the past
-  case ( kNuisBANFFNormNuEBarToNuMuBar  ) : return "BANFF; Norm; NuEBar To NuMuBar";            break; // uncorrelated in the past
-  case ( kNuisBANFFNorm2p2hBar         ) : return "BANFF; Norm; 2p2hBar";                    break;
+  case ( kNuisBANFFFermiMom       ) : return "BANFF; Fermi Momentum";               break; 
+  case ( kNuisBANFFShapeCCoth     ) : return "BANFF; Shape; CC Oth";                break; 
+  case ( kNuisBANFFBindE          ) : return "BANFF; Binding energy";               break; 
+  case ( kNuisBANFFNormCCcoh      ) : return "BANFF; Norm; CC Coh";                 break; 
+  case ( kNuisBANFFNormNCcoh      ) : return "BANFF; Norm; NC Coh";                 break; 
+  case ( kNuisBANFFNormNCoth      ) : return "BANFF; Norm; NC Oth";                 break; 
+  case ( kNuisBANFFNormNuEToNuMu  ) : return "BANFF; Norm; NuE To NuMu";            break; 
+  case ( kNuisBANFFNormNC1Gamma        ) : return "BANFF; Norm; NC 1 Gamma";          break; 
+  case ( kNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm; NuEBar To NuMuBar";   break; 
+  case ( kNuisBANFFNorm2p2hBar         ) : return "BANFF; Norm; 2p2hBar";             break;
+  case ( kNuisBANFFBeRPA_A       ) : return "BANFF; BeRPA A";            break;
+  case ( kNuisBANFFBeRPA_B       ) : return "BANFF; BeRPA B";            break;
+  case ( kNuisBANFFBeRPA_D       ) : return "BANFF; BeRPA D";            break;
+  case ( kNuisBANFFBeRPA_E       ) : return "BANFF; BeRPA E";            break;
+  case ( kNuisBANFFBeRPA_U       ) : return "BANFF; BeRPA U";            break;
+  case ( kNuisBANFFShape2p2h     ) : return "BANFF; Shape; 2p2h nu";     break;
+  case ( kNuisBANFFShape2p2hBar  ) : return "BANFF; Shape; 2p2h nubar";  break;
 
     //
 
@@ -502,7 +509,7 @@ string valor::util::AsString(PhysParamId_t p)
 #endif
 
     // NEW XSEC
-  case ( kRHCNuisBANFF2p2h           ) : return "BANFF; Norm; 2p2h; RHC";                    break;
+  case ( kRHCNuisBANFF2p2h           ) : return "BANFF; Norm; 2p2h; RHC";                  break;
   case ( kRHCNuisBANFFCA5           ) : return "BANFF; CA5 RES; RHC";                      break;
   case ( kRHCNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";      break;
     // NEW SPLIT ANA
@@ -510,16 +517,23 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFSCCA          ) : return "BANFF; Second current class axial; RHC";   break;
   case ( kRHCNuisBANFFSCCV          ) : return "BANFF; Second current class vector; RHC";  break;
 #endif
-  case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";               break; // uncorrelated in the past
-  case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                break; // uncorrelated in the past
-  case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";               break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm; CC Coh; RHC";                 break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm; NC Coh; RHC";                 break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm; NC Oth; RHC";                 break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm; NuE To NuMu; RHC";            break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNC1Gamma       ) : return "BANFF; Norm; NC 1 Gamma; RHC";            break; // uncorrelated in the past
-  case ( kRHCNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm; NuEBar To NuMuBar; RHC";            break; // uncorrelated in the past
-  case ( kRHCNuisBANFF2p2hBar        ) : return "BANFF; Norm; 2p2hBar; RHC";                    break;
+  case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";               break; 
+  case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                break; 
+  case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";               break; 
+  case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm; CC Coh; RHC";                 break; 
+  case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm; NC Coh; RHC";                 break; 
+  case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm; NC Oth; RHC";                 break; 
+  case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm; NuE To NuMu; RHC";            break; 
+  case ( kRHCNuisBANFFNormNC1Gamma  ) : return "BANFF; Norm; NC 1 Gamma; RHC";             break; 
+  case ( kRHCNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm; NuEBar To NuMuBar; RHC";  break; 
+  case ( kRHCNuisBANFF2p2hBar       ) : return "BANFF; Norm; 2p2hBar; RHC"; break;
+  case ( kRHCNuisBANFFBeRPA_A       ) : return "BANFF; BeRPA A; RHC";            break;
+  case ( kRHCNuisBANFFBeRPA_B       ) : return "BANFF; BeRPA B; RHC";            break;
+  case ( kRHCNuisBANFFBeRPA_D       ) : return "BANFF; BeRPA D; RHC";            break;
+  case ( kRHCNuisBANFFBeRPA_E       ) : return "BANFF; BeRPA E; RHC";            break;
+  case ( kRHCNuisBANFFBeRPA_U       ) : return "BANFF; BeRPA U; RHC";            break;
+  case ( kRHCNuisBANFFShape2p2h     ) : return "BANFF; 2p2h nu shape; RHC";      break;
+  case ( kRHCNuisBANFFShape2p2hBar  ) : return "BANFF; 2p2hbar nu shape; RHC";   break;
 
     //
 
@@ -1031,1050 +1045,1057 @@ string valor::util::AsString(PhysParamId_t p)
 //________________________________________________________________________________________
 string valor::util::AsStringTex(PhysParamId_t p)
 {
-    if (!util::IsSystematic(p)) return RawParamAsStringTex(p);
-    // Specify tex strings all ALL subscripts and superscripts in braces.
-    // Otherwise conversion to RooTex won't work.
-    switch(p) {
+  if (!util::IsSystematic(p)) return RawParamAsStringTex(p);
+  // Specify tex strings all ALL subscripts and superscripts in braces.
+  // Otherwise conversion to RooTex won't work.
+  switch(p) {
             
-            /*
-             * 2011-analysis nuisance parameters
-             */
+    /*
+     * 2011-analysis nuisance parameters
+     */
             
-            //
-            // SK detector
-            //
-        case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;
-            //
-            // BANFF flux and cross-section params
-            //
-        case ( kNuisBANFF00 ) :
-        case ( kNuisBANFF01 ) :
-        case ( kNuisBANFF02 ) :
-        case ( kNuisBANFF03 ) :
-        case ( kNuisBANFF04 ) :
-        case ( kNuisBANFF05 ) :
-        case ( kNuisBANFF06 ) :
-        case ( kNuisBANFF07 ) :
-        case ( kNuisBANFF08 ) :
-        case ( kNuisBANFF09 ) :
-        case ( kNuisBANFF10 ) :
-        case ( kNuisBANFF11 ) :
-        case ( kNuisBANFF12 ) :
-        case ( kNuisBANFF13 ) :
-        case ( kNuisBANFF14 ) :
-        case ( kNuisBANFF15 ) :
+    //
+    // SK detector
+    //
+  case ( kNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;
+    //
+    // BANFF flux and cross-section params
+    //
+  case ( kNuisBANFF00 ) :
+  case ( kNuisBANFF01 ) :
+  case ( kNuisBANFF02 ) :
+  case ( kNuisBANFF03 ) :
+  case ( kNuisBANFF04 ) :
+  case ( kNuisBANFF05 ) :
+  case ( kNuisBANFF06 ) :
+  case ( kNuisBANFF07 ) :
+  case ( kNuisBANFF08 ) :
+  case ( kNuisBANFF09 ) :
+  case ( kNuisBANFF10 ) :
+  case ( kNuisBANFF11 ) :
+  case ( kNuisBANFF12 ) :
+  case ( kNuisBANFF13 ) :
+  case ( kNuisBANFF14 ) :
+  case ( kNuisBANFF15 ) :
 #ifdef __USE_ALLFLUX__
-        case ( kNuisBANFF16 ) :
-        case ( kNuisBANFF17 ) :
-        case ( kNuisBANFF18 ) :
-        case ( kNuisBANFF19 ) :
-        case ( kNuisBANFF20 ) :
-        case ( kNuisBANFF21 ) :
-        case ( kNuisBANFF22 ) :
-        case ( kNuisBANFF23 ) :
-        case ( kNuisBANFF24 ) :
+  case ( kNuisBANFF16 ) :
+  case ( kNuisBANFF17 ) :
+  case ( kNuisBANFF18 ) :
+  case ( kNuisBANFF19 ) :
+  case ( kNuisBANFF20 ) :
+  case ( kNuisBANFF21 ) :
+  case ( kNuisBANFF22 ) :
+  case ( kNuisBANFF23 ) :
+  case ( kNuisBANFF24 ) :
 #endif
-        {
-            int ip = (int)p - (int)kNuisBANFF00;
-            return std::string(Form("BANFF %2d, SK %s flux, %.1f - %.1f GeV",
-				    ip, util::Pdg2String(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(),
-				    kEtrueRangeOfFluxParamInBANFFfit[ip][0],
-				    kEtrueRangeOfFluxParamInBANFFfit[ip][1]));
-            break;
-        }
+    {
+      int ip = (int)p - (int)kNuisBANFF00;
+      return std::string(Form("BANFF %2d, SK %s flux, %.1f - %.1f GeV",
+                              ip, util::Pdg2String(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(),
+                              kEtrueRangeOfFluxParamInBANFFfit[ip][0],
+                              kEtrueRangeOfFluxParamInBANFFfit[ip][1]));
+      break;
+    }
 #ifndef ONEOVERMAQE
-        case ( kNuisBANFFMAQE    ) : return "BANFF, Ma QE";                           break;
+  case ( kNuisBANFFMAQE    ) : return "BANFF, Ma QE";                           break;
 #else
-        case ( kNuisBANFFMAQE    ) : return "BANFF, 1 / (Ma QE)$^{2}$";                 break;
+  case ( kNuisBANFFMAQE    ) : return "BANFF, 1 / (Ma QE)$^{2}$";                 break;
 #endif
-        case ( kNuisBANFFMARES   ) : return "BANFF, Ma RES";                          break;
-        case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
+  case ( kNuisBANFFMARES   ) : return "BANFF, Ma RES";                          break;
+  case ( kNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV";      break;
 #if BANFF_BINS != 3
-        case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
-        case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
+  case ( kNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV";      break;
+  case ( kNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV";     break;
 #endif
-        case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
+  case ( kNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV";     break;
 #if BANFF_BINS != 3
-        case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
+  case ( kNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV";    break;
 #endif
 #if (BANFF_BINS != 2)
-        case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";    break;
+  case ( kNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0";    break;
 #endif
             
-            // NEW XSEC
-        case ( kNuisBANFFNorm2p2h           ) : return "BANFF; Norm; 2p2h";                           break;
-        case ( kNuisBANFFCA5           ) : return "BANFF; CA5 RES";                             break;
-        case ( kNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2";             break;
-            // NEW SPLIT ANA
+    // NEW XSEC
+  case ( kNuisBANFFNorm2p2h      ) : return "BANFF; Norm; 2p2h";                          break;
+  case ( kNuisBANFFCA5           ) : return "BANFF; CA5 RES";                             break;
+  case ( kNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2";             break;
+    // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
-        case ( kNuisBANFFSCCA          ) : return "BANFF; Second current class axial";          break;
-        case ( kNuisBANFFSCCV          ) : return "BANFF; Second current class vector";         break;
+  case ( kNuisBANFFSCCA          ) : return "BANFF; Second current class axial";          break;
+  case ( kNuisBANFFSCCV          ) : return "BANFF; Second current class vector";         break;
 #endif
-        case ( kNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum";                      break; // uncorrelated in the past
-        case ( kNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth";                       break; // uncorrelated in the past
-        case ( kNuisBANFFBindE         ) : return "BANFF; Binding energy";                      break; // uncorrelated in the past
-        case ( kNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh";                        break; // uncorrelated in the past
-        case ( kNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh";                        break; // uncorrelated in the past
-        case ( kNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth";                        break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_{\\mu}$";  break; // uncorrelated in the past
-        case ( kNuisBANFFNormNC1Gamma  ) : return "BANFF; Norm; NC 1 $\\gamma$";                break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_{\\mu}$";  break; // uncorrelated in the past
-        case ( kNuisBANFFNorm2p2hBar        ) : return "BANFF; Norm; 2p2hBar";                           break;
+  case ( kNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum";                      break; 
+  case ( kNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth";                       break; 
+  case ( kNuisBANFFBindE         ) : return "BANFF; Binding energy";                      break; 
+  case ( kNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh";                        break; 
+  case ( kNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh";                        break; 
+  case ( kNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth";                        break; 
+  case ( kNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_{\\mu}$";  break; 
+  case ( kNuisBANFFNormNC1Gamma  ) : return "BANFF; Norm; NC 1 $\\gamma$";                break; 
+  case ( kNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_{\\mu}$";  break; 
+  case ( kNuisBANFFNorm2p2hBar   ) : return "BANFF; Norm; 2p2hBar";              break;
+  case ( kNuisBANFFBeRPA_A       ) : return "BANFF; BeRPA A";                    break;
+  case ( kNuisBANFFBeRPA_B       ) : return "BANFF; BeRPA B";                    break;
+  case ( kNuisBANFFBeRPA_D       ) : return "BANFF; BeRPA D";                    break;
+  case ( kNuisBANFFBeRPA_E       ) : return "BANFF; BeRPA E";                    break;
+  case ( kNuisBANFFBeRPA_U       ) : return "BANFF; BeRPA U";                    break;
+  case ( kNuisBANFFShape2p2h     ) : return "BANFF; Shape; 2p2h $\\nu$";         break;
+  case ( kNuisBANFFShape2p2hBar  ) : return "BANFF; Shape; 2p2h $\\bar{\\nu}$";  break;
+
+    //
             
-            //
+    //
+    // XSec params not correlated with flux
+    //
             
-            //
-            // XSec params not correlated with flux
-            //
+    // NEW XSEC
+  case ( kNuisXSecRPA        ) : return "Tuning; RPA";                     break;
             
-            // NEW XSEC
-        case ( kNuisXSecRPA        ) : return "Tuning; RPA";                     break;
-            
-        case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
-        case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break;
-        case ( kNuisXSecWshape     ) : return "W-shape";                         break;
-        case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
-        case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
+  case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
+  case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break;
+  case ( kNuisXSecWshape     ) : return "W-shape";                         break;
+  case ( kNuisXSecShapeCCoth ) : return "Shape; CC Oth";                   break;
+  case ( kNuisXSecPiLessDelta) : return "Pi-less delta decay";             break;
 #ifndef __NUEONLY__
-        case ( kNuisXSecBindE      ) : return "Binding energy";                  break;
+  case ( kNuisXSecBindE      ) : return "Binding energy";                  break;
 #endif
-        case ( kNuisXSecNormCCcoh  ) : return "Norm, CC Coh";                    break;
+  case ( kNuisXSecNormCCcoh  ) : return "Norm, CC Coh";                    break;
 #ifndef __NUEONLY__
-        case ( kNuisXSecNormNC1piC ) : return "Norm, NC 1piC";                   break;
+  case ( kNuisXSecNormNC1piC ) : return "Norm, NC 1piC";                   break;
 #endif
 #ifndef __NUMUONLY__
-        case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
+  case ( kNuisXSecNormNCcoh  ) : return "Norm, NC Coh";                    break;
 #endif
-        case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
-        case ( kNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_{\\mu}$";  break;
+  case ( kNuisXSecNormNCoth  ) : return "Norm, NC Oth";                    break;
+  case ( kNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_{\\mu}$";  break;
 #ifndef __NUEONLY__
-        case ( kNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$";  break;
+  case ( kNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$";  break;
 #endif
             
-            //
-            // SKDET+FSI
-            //
-            //#ifdef SKFSITOGETHER
+    //
+    // SKDET+FSI
+    //
+    //#ifdef SKFSITOGETHER
 #ifndef SKCORRELATIONS
 #if FSI_BINS != 3
-        case ( kNuisSKDetFSI000 ) :
-        case ( kNuisSKDetFSI001 ) :
-        case ( kNuisSKDetFSI002 ) :
-        case ( kNuisSKDetFSI003 ) :
-        case ( kNuisSKDetFSI004 ) :
-        case ( kNuisSKDetFSI005 ) :
+  case ( kNuisSKDetFSI000 ) :
+  case ( kNuisSKDetFSI001 ) :
+  case ( kNuisSKDetFSI002 ) :
+  case ( kNuisSKDetFSI003 ) :
+  case ( kNuisSKDetFSI004 ) :
+  case ( kNuisSKDetFSI005 ) :
             
-            // NEW SKDETFSI
+    // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2015__)
-        case ( kNuisSKDetFSI006 ) :
-        case ( kNuisSKDetFSI007 ) :
-        case ( kNuisSKDetFSI008 ) :
-        case ( kNuisSKDetFSI009 ) :
-        case ( kNuisSKDetFSI010 ) :
-        case ( kNuisSKDetFSI011 ) :
+  case ( kNuisSKDetFSI006 ) :
+  case ( kNuisSKDetFSI007 ) :
+  case ( kNuisSKDetFSI008 ) :
+  case ( kNuisSKDetFSI009 ) :
+  case ( kNuisSKDetFSI010 ) :
+  case ( kNuisSKDetFSI011 ) :
 #endif
             
-        {
-            string nutypes = "";
+    {
+      string nutypes = "";
             
-            // NEW SKDETFSI
-            //int ip = (int)p - (int)kNuisSKDetFSI000;
-            int ip = (int)p - (int)kNuisSKDetFSI_first;
+      // NEW SKDETFSI
+      //int ip = (int)p - (int)kNuisSKDetFSI000;
+      int ip = (int)p - (int)kNuisSKDetFSI_first;
             
-            switch(p) {
+      switch(p) {
                     
-                    // NEW SKDETFSI
+        // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-                case (kNuisSKDetFSI000) :
-                case (kNuisSKDetFSI001) :
-                case (kNuisSKDetFSI002) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI003) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI004) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI005) :
-                    nutypes = "all NC ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI000) :
+      case (kNuisSKDetFSI001) :
+      case (kNuisSKDetFSI002) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI003) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI004) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI005) :
+        nutypes = "all NC ($1R_{\\mu}$)"; break;
 #elif defined(__USE_SKDETFSI2015__)
-                case (kNuisSKDetFSI000) :
-                case (kNuisSKDetFSI001) :
-                case (kNuisSKDetFSI002) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI003) :
-                case (kNuisSKDetFSI004) :
-                case (kNuisSKDetFSI005) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI006) :
-                case (kNuisSKDetFSI007) :
-                case (kNuisSKDetFSI008) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI009) :
-                case (kNuisSKDetFSI010) :
-                case (kNuisSKDetFSI011) :
-                    nutypes = "all NC ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI000) :
+      case (kNuisSKDetFSI001) :
+      case (kNuisSKDetFSI002) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI003) :
+      case (kNuisSKDetFSI004) :
+      case (kNuisSKDetFSI005) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI006) :
+      case (kNuisSKDetFSI007) :
+      case (kNuisSKDetFSI008) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI009) :
+      case (kNuisSKDetFSI010) :
+      case (kNuisSKDetFSI011) :
+        nutypes = "all NC ($1R_{\\mu}$)"; break;
 #endif
                     
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
-				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for 1Rmu
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
+                              kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for 1Rmu
 #endif
 #if FSI_BINS != 2
             
-            // NEW SKDETFSI
+  // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-        case ( kNuisSKDetFSI006 ) :
-        case ( kNuisSKDetFSI007 ) :
-        case ( kNuisSKDetFSI008 ) :
-        case ( kNuisSKDetFSI009 ) :
-        case ( kNuisSKDetFSI010 ) :
-        case ( kNuisSKDetFSI011 ) :
-        case ( kNuisSKDetFSI012 ) :
-        case ( kNuisSKDetFSI013 ) :
-        case ( kNuisSKDetFSI014 ) :
-        case ( kNuisSKDetFSI015 ) :
-        case ( kNuisSKDetFSI016 ) :
-        case ( kNuisSKDetFSI017 ) :
+  case ( kNuisSKDetFSI006 ) :
+  case ( kNuisSKDetFSI007 ) :
+  case ( kNuisSKDetFSI008 ) :
+  case ( kNuisSKDetFSI009 ) :
+  case ( kNuisSKDetFSI010 ) :
+  case ( kNuisSKDetFSI011 ) :
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
 #elif defined(__USE_SKDETFSI2015__)
-        case ( kNuisSKDetFSI012 ) :
-        case ( kNuisSKDetFSI013 ) :
-        case ( kNuisSKDetFSI014 ) :
-        case ( kNuisSKDetFSI015 ) :
-        case ( kNuisSKDetFSI016 ) :
-        case ( kNuisSKDetFSI017 ) :
-        case ( kNuisSKDetFSI018 ) :
-        case ( kNuisSKDetFSI019 ) :
-        case ( kNuisSKDetFSI020 ) :
-        case ( kNuisSKDetFSI021 ) :
-        case ( kNuisSKDetFSI022 ) :
-        case ( kNuisSKDetFSI023 ) :
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
+  case ( kNuisSKDetFSI018 ) :
+  case ( kNuisSKDetFSI019 ) :
+  case ( kNuisSKDetFSI020 ) :
+  case ( kNuisSKDetFSI021 ) :
+  case ( kNuisSKDetFSI022 ) :
+  case ( kNuisSKDetFSI023 ) :
 #endif
             
-        {
-            string nutypes = "";
+    {
+      string nutypes = "";
             
-            // #if FSI_BINS != 3
-            //       int ip = (int)p - (int)kNuisSKDetFSI000;
-            // #else
-            //       #if defined(__USE_SKDETFSI2013__)
-            //       int ip = (int)p - (int)kNuisSKDetFSI006;
-            //       #elif defined(__USE_SKDETFSI2015__)
-            //       int ip = (int)p - (int)kNuisSKDetFSI012;
-            //       #endif
-            // #endif
+      // #if FSI_BINS != 3
+      //       int ip = (int)p - (int)kNuisSKDetFSI000;
+      // #else
+      //       #if defined(__USE_SKDETFSI2013__)
+      //       int ip = (int)p - (int)kNuisSKDetFSI006;
+      //       #elif defined(__USE_SKDETFSI2015__)
+      //       int ip = (int)p - (int)kNuisSKDetFSI012;
+      //       #endif
+      // #endif
             
-            // NEW SKDETFSI
-            int ip = (int)p - (int)kNuisSKDetFSI_first;
+      // NEW SKDETFSI
+      int ip = (int)p - (int)kNuisSKDetFSI_first;
             
-            switch(p) {
+      switch(p) {
                     
-                    // NEW SKDETFSI
+        // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-                case (kNuisSKDetFSI006) :
-                case (kNuisSKDetFSI007) :
-                case (kNuisSKDetFSI008) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI009) :
-                case (kNuisSKDetFSI010) :
-                case (kNuisSKDetFSI011) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI012) :
-                case (kNuisSKDetFSI013) :
-                case (kNuisSKDetFSI014) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI015) :
-                case (kNuisSKDetFSI016) :
-                case (kNuisSKDetFSI017) :
-                    nutypes = "all NC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI006) :
+      case (kNuisSKDetFSI007) :
+      case (kNuisSKDetFSI008) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI009) :
+      case (kNuisSKDetFSI010) :
+      case (kNuisSKDetFSI011) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI012) :
+      case (kNuisSKDetFSI013) :
+      case (kNuisSKDetFSI014) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI015) :
+      case (kNuisSKDetFSI016) :
+      case (kNuisSKDetFSI017) :
+        nutypes = "all NC ($1R_{e}$)"; break;
 #elif defined(__USE_SKDETFSI2015__)
-                case (kNuisSKDetFSI012) :
-                case (kNuisSKDetFSI013) :
-                case (kNuisSKDetFSI014) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI015) :
-                case (kNuisSKDetFSI016) :
-                case (kNuisSKDetFSI017) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI018) :
-                case (kNuisSKDetFSI019) :
-                case (kNuisSKDetFSI020) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI021) :
-                case (kNuisSKDetFSI022) :
-                case (kNuisSKDetFSI023) :
-                    nutypes = "all NC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI012) :
+      case (kNuisSKDetFSI013) :
+      case (kNuisSKDetFSI014) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI015) :
+      case (kNuisSKDetFSI016) :
+      case (kNuisSKDetFSI017) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI018) :
+      case (kNuisSKDetFSI019) :
+      case (kNuisSKDetFSI020) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI021) :
+      case (kNuisSKDetFSI022) :
+      case (kNuisSKDetFSI023) :
+        nutypes = "all NC ($1R_{e}$)"; break;
 #endif
                     
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
-				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for 1Re
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
+                              kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for 1Re
 #endif
 #else
             
-            // OTHER FSI_BINS THAN 1,2,3
+  // OTHER FSI_BINS THAN 1,2,3
             
-        case ( kNuisSKDetFSI000 ) :
-        case ( kNuisSKDetFSI001 ) :
-        case ( kNuisSKDetFSI002 ) :
-        case ( kNuisSKDetFSI003 ) :
-        case ( kNuisSKDetFSI004 ) :
-        case ( kNuisSKDetFSI005 ) :
-        case ( kNuisSKDetFSI006 ) :
-        case ( kNuisSKDetFSI007 ) :
-        case ( kNuisSKDetFSI008 ) :
-        case ( kNuisSKDetFSI009 ) :
-        case ( kNuisSKDetFSI010 ) :
-        case ( kNuisSKDetFSI011 ) :
-        case ( kNuisSKDetFSI012 ) :
-        case ( kNuisSKDetFSI013 ) :
-        case ( kNuisSKDetFSI014 ) :
-        case ( kNuisSKDetFSI015 ) :
-        case ( kNuisSKDetFSI016 ) :
-        case ( kNuisSKDetFSI017 ) :
-        case ( kNuisSKDetFSI018 ) :
-        case ( kNuisSKDetFSI019 ) :
-        {
-            // NEW SKDETFSI
-            //int ip = (int)p - (int)kNuisSKDetFSI000;
-            int ip = (int)p - (int)kNuisSKDetFSI_first;
+  case ( kNuisSKDetFSI000 ) :
+  case ( kNuisSKDetFSI001 ) :
+  case ( kNuisSKDetFSI002 ) :
+  case ( kNuisSKDetFSI003 ) :
+  case ( kNuisSKDetFSI004 ) :
+  case ( kNuisSKDetFSI005 ) :
+  case ( kNuisSKDetFSI006 ) :
+  case ( kNuisSKDetFSI007 ) :
+  case ( kNuisSKDetFSI008 ) :
+  case ( kNuisSKDetFSI009 ) :
+  case ( kNuisSKDetFSI010 ) :
+  case ( kNuisSKDetFSI011 ) :
+  case ( kNuisSKDetFSI012 ) :
+  case ( kNuisSKDetFSI013 ) :
+  case ( kNuisSKDetFSI014 ) :
+  case ( kNuisSKDetFSI015 ) :
+  case ( kNuisSKDetFSI016 ) :
+  case ( kNuisSKDetFSI017 ) :
+  case ( kNuisSKDetFSI018 ) :
+  case ( kNuisSKDetFSI019 ) :
+    {
+      // NEW SKDETFSI
+      //int ip = (int)p - (int)kNuisSKDetFSI000;
+      int ip = (int)p - (int)kNuisSKDetFSI_first;
             
-            string nutypes = "";
-            switch(p) {
-                case (kNuisSKDetFSI000) :
-                case (kNuisSKDetFSI001) :
-                case (kNuisSKDetFSI002) :
-                case (kNuisSKDetFSI003) :
-                case (kNuisSKDetFSI004) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI005) :
-                case (kNuisSKDetFSI006) :
-                case (kNuisSKDetFSI007) :
-                case (kNuisSKDetFSI008) :
-                case (kNuisSKDetFSI009) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI010) :
-                case (kNuisSKDetFSI011) :
-                case (kNuisSKDetFSI012) :
-                case (kNuisSKDetFSI013) :
-                case (kNuisSKDetFSI014) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kNuisSKDetFSI015) :
-                case (kNuisSKDetFSI016) :
-                case (kNuisSKDetFSI017) :
-                case (kNuisSKDetFSI018) :
-                case (kNuisSKDetFSI019) :
-                    nutypes = "all NC ($1R_{\\mu}$)"; break;
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
-				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for 1Rmu
-        case ( kNuisSKDetFSI020 ) :
-        case ( kNuisSKDetFSI021 ) :
-        case ( kNuisSKDetFSI022 ) :
-        case ( kNuisSKDetFSI023 ) :
-        case ( kNuisSKDetFSI024 ) :
-        case ( kNuisSKDetFSI025 ) :
-        case ( kNuisSKDetFSI026 ) :
-        case ( kNuisSKDetFSI027 ) :
-        case ( kNuisSKDetFSI028 ) :
-        case ( kNuisSKDetFSI029 ) :
-        case ( kNuisSKDetFSI030 ) :
-        case ( kNuisSKDetFSI031 ) :
-        {
-            // NEW SKDETFSI
-            //int ip = (int)p - (int)kNuisSKDetFSI000;
-            int ip = (int)p - (int)kNuisSKDetFSI_first;
+      string nutypes = "";
+      switch(p) {
+      case (kNuisSKDetFSI000) :
+      case (kNuisSKDetFSI001) :
+      case (kNuisSKDetFSI002) :
+      case (kNuisSKDetFSI003) :
+      case (kNuisSKDetFSI004) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI005) :
+      case (kNuisSKDetFSI006) :
+      case (kNuisSKDetFSI007) :
+      case (kNuisSKDetFSI008) :
+      case (kNuisSKDetFSI009) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI010) :
+      case (kNuisSKDetFSI011) :
+      case (kNuisSKDetFSI012) :
+      case (kNuisSKDetFSI013) :
+      case (kNuisSKDetFSI014) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kNuisSKDetFSI015) :
+      case (kNuisSKDetFSI016) :
+      case (kNuisSKDetFSI017) :
+      case (kNuisSKDetFSI018) :
+      case (kNuisSKDetFSI019) :
+        nutypes = "all NC ($1R_{\\mu}$)"; break;
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
+                              kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for 1Rmu
+  case ( kNuisSKDetFSI020 ) :
+  case ( kNuisSKDetFSI021 ) :
+  case ( kNuisSKDetFSI022 ) :
+  case ( kNuisSKDetFSI023 ) :
+  case ( kNuisSKDetFSI024 ) :
+  case ( kNuisSKDetFSI025 ) :
+  case ( kNuisSKDetFSI026 ) :
+  case ( kNuisSKDetFSI027 ) :
+  case ( kNuisSKDetFSI028 ) :
+  case ( kNuisSKDetFSI029 ) :
+  case ( kNuisSKDetFSI030 ) :
+  case ( kNuisSKDetFSI031 ) :
+    {
+      // NEW SKDETFSI
+      //int ip = (int)p - (int)kNuisSKDetFSI000;
+      int ip = (int)p - (int)kNuisSKDetFSI_first;
             
-            string nutypes = "";
-            switch(p) {
-                case (kNuisSKDetFSI020) :
-                case (kNuisSKDetFSI021) :
-                case (kNuisSKDetFSI022) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI023) :
-                case (kNuisSKDetFSI024) :
-                case (kNuisSKDetFSI025) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI026) :
-                case (kNuisSKDetFSI027) :
-                case (kNuisSKDetFSI028) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
-                case (kNuisSKDetFSI029) :
-                case (kNuisSKDetFSI030) :
-                case (kNuisSKDetFSI031) :
-                    nutypes = "all NC ($1R_{e}$)"; break;
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
-				    kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }
+      string nutypes = "";
+      switch(p) {
+      case (kNuisSKDetFSI020) :
+      case (kNuisSKDetFSI021) :
+      case (kNuisSKDetFSI022) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI023) :
+      case (kNuisSKDetFSI024) :
+      case (kNuisSKDetFSI025) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI026) :
+      case (kNuisSKDetFSI027) :
+      case (kNuisSKDetFSI028) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
+      case (kNuisSKDetFSI029) :
+      case (kNuisSKDetFSI030) :
+      case (kNuisSKDetFSI031) :
+        nutypes = "all NC ($1R_{e}$)"; break;
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s",ip,
+                              kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }
 #endif
-            //#endif //SKDETFSITOGETHER
+  //#endif //SKDETFSITOGETHER
             
             
-            /////////////// REVERSE HORN CURRENT /////////////
+  /////////////// REVERSE HORN CURRENT /////////////
             
-        case ( kNuisRHCToFHC ) : return "RHC to FHC normalisation"; break;
+  case ( kNuisRHCToFHC ) : return "RHC to FHC normalisation"; break;
             
             
-            //
-            // SK detector
-            //
-        case ( kRHCNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;
-            //
-            // BANFF flux and cross-section params
-            //
-        case ( kRHCNuisBANFF00 ) :
-        case ( kRHCNuisBANFF01 ) :
-        case ( kRHCNuisBANFF02 ) :
-        case ( kRHCNuisBANFF03 ) :
-        case ( kRHCNuisBANFF04 ) :
-        case ( kRHCNuisBANFF05 ) :
-        case ( kRHCNuisBANFF06 ) :
-        case ( kRHCNuisBANFF07 ) :
-        case ( kRHCNuisBANFF08 ) :
-        case ( kRHCNuisBANFF09 ) :
-        case ( kRHCNuisBANFF10 ) :
-        case ( kRHCNuisBANFF11 ) :
-        case ( kRHCNuisBANFF12 ) :
-        case ( kRHCNuisBANFF13 ) :
-        case ( kRHCNuisBANFF14 ) :
-        case ( kRHCNuisBANFF15 ) :
+    //
+    // SK detector
+    //
+  case ( kRHCNuisSuperkEnergyScale     ) : return "SK energy scale";                 break;
+    //
+    // BANFF flux and cross-section params
+    //
+  case ( kRHCNuisBANFF00 ) :
+  case ( kRHCNuisBANFF01 ) :
+  case ( kRHCNuisBANFF02 ) :
+  case ( kRHCNuisBANFF03 ) :
+  case ( kRHCNuisBANFF04 ) :
+  case ( kRHCNuisBANFF05 ) :
+  case ( kRHCNuisBANFF06 ) :
+  case ( kRHCNuisBANFF07 ) :
+  case ( kRHCNuisBANFF08 ) :
+  case ( kRHCNuisBANFF09 ) :
+  case ( kRHCNuisBANFF10 ) :
+  case ( kRHCNuisBANFF11 ) :
+  case ( kRHCNuisBANFF12 ) :
+  case ( kRHCNuisBANFF13 ) :
+  case ( kRHCNuisBANFF14 ) :
+  case ( kRHCNuisBANFF15 ) :
 #ifdef __USE_ALLFLUX__
-        case ( kRHCNuisBANFF16 ) :
-        case ( kRHCNuisBANFF17 ) :
-        case ( kRHCNuisBANFF18 ) :
-        case ( kRHCNuisBANFF19 ) :
-        case ( kRHCNuisBANFF20 ) :
-        case ( kRHCNuisBANFF21 ) :
-        case ( kRHCNuisBANFF22 ) :
-        case ( kRHCNuisBANFF23 ) :
-        case ( kRHCNuisBANFF24 ) :
+  case ( kRHCNuisBANFF16 ) :
+  case ( kRHCNuisBANFF17 ) :
+  case ( kRHCNuisBANFF18 ) :
+  case ( kRHCNuisBANFF19 ) :
+  case ( kRHCNuisBANFF20 ) :
+  case ( kRHCNuisBANFF21 ) :
+  case ( kRHCNuisBANFF22 ) :
+  case ( kRHCNuisBANFF23 ) :
+  case ( kRHCNuisBANFF24 ) :
 #endif
-        {
-            int ip = (int)p - (int)kRHCNuisBANFF00;
-            return std::string(Form("BANFF %2d, SK %s flux, %.1f - %.1f GeV; RHC",
-				    ip, util::Pdg2String(kNuPdgCodeOfRHCFluxParamInBANFFfit[ip]).c_str(),
-				    kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0],
-				    kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1]));
-            break;
-        }
+    {
+      int ip = (int)p - (int)kRHCNuisBANFF00;
+      return std::string(Form("BANFF %2d, SK %s flux, %.1f - %.1f GeV; RHC",
+                              ip, util::Pdg2String(kNuPdgCodeOfRHCFluxParamInBANFFfit[ip]).c_str(),
+                              kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0],
+                              kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1]));
+      break;
+    }
 #ifndef ONEOVERMAQE
-        case ( kRHCNuisBANFFMAQE    ) : return "BANFF, Ma QE; RHC";                           break;
+  case ( kRHCNuisBANFFMAQE    ) : return "BANFF, Ma QE; RHC";                           break;
 #else
-        case ( kRHCNuisBANFFMAQE    ) : return "BANFF, 1 / (Ma QE)$^{2}; RHC$";                 break;
+  case ( kRHCNuisBANFFMAQE    ) : return "BANFF, 1 / (Ma QE)$^{2}; RHC$";                 break;
 #endif
-        case ( kRHCNuisBANFFMARES   ) : return "BANFF, Ma RES; RHC";                          break;
-        case ( kRHCNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV; RHC";      break;
+  case ( kRHCNuisBANFFMARES   ) : return "BANFF, Ma RES; RHC";                          break;
+  case ( kRHCNuisBANFFCCQEE0  ) : return "BANFF; Norm; CC QE; 0.0 - 1.5 GeV; RHC";      break;
 #if BANFF_BINS != 3
-        case ( kRHCNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV; RHC";      break;
-        case ( kRHCNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV; RHC";     break;
+  case ( kRHCNuisBANFFCCQEE1  ) : return "BANFF; Norm; CC QE; 1.5 - 3.5 GeV; RHC";      break;
+  case ( kRHCNuisBANFFCCQEE2  ) : return "BANFF; Norm; CC QE; 3.5 - 30.0 GeV; RHC";     break;
 #endif
-        case ( kRHCNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV; RHC";     break;
+  case ( kRHCNuisBANFFCC1piE0 ) : return "BANFF; Norm; CC 1pi; 0.0 - 2.5 GeV; RHC";     break;
 #if BANFF_BINS != 3
-        case ( kRHCNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV; RHC";    break;
+  case ( kRHCNuisBANFFCC1piE1 ) : return "BANFF; Norm; CC 1pi; 2.5 - 30.0 GeV; RHC";    break;
 #endif
 #if (BANFF_BINS != 2)
-        case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; RHC";    break;
+  case ( kRHCNuisBANFFNC1pi0  ) : return "BANFF; Norm; NC 1pi0; RHC";    break;
 #endif
             
-            // NEW XSEC
-        case ( kRHCNuisBANFF2p2h           ) : return "BANFF; Norm; 2p2h; RHC";                           break;
-        case ( kRHCNuisBANFFCA5           ) : return "BANFF; CA5 RES; RHC";                             break;
-        case ( kRHCNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";             break;
-            // NEW SPLIT ANA
+    // NEW XSEC
+  case ( kRHCNuisBANFF2p2h           ) : return "BANFF; Norm; 2p2h; RHC";                           break;
+  case ( kRHCNuisBANFFCA5           ) : return "BANFF; CA5 RES; RHC";                             break;
+  case ( kRHCNuisBANFFBgRES         ) : return "BANFF; Norm; BgRES Isospin 1/2; RHC";             break;
+    // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
-        case ( kRHCNuisBANFFSCCA          ) : return "BANFF; Second current class axial; RHC";          break;
-        case ( kRHCNuisBANFFSCCV          ) : return "BANFF; Second current class vector; RHC";         break;
+  case ( kRHCNuisBANFFSCCA          ) : return "BANFF; Second current class axial; RHC";          break;
+  case ( kRHCNuisBANFFSCCV          ) : return "BANFF; Second current class vector; RHC";         break;
 #endif
-        case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";                      break; // uncorrelated in the past
-        case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                       break; // uncorrelated in the past
-        case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";                      break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh; RHC";                        break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh; RHC";                        break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth; RHC";                        break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_{\\mu}$; RHC";  break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormNC1Gamma      ) : return "BANFF; Norm; NC 1 $\\gamma$; RHC";                break; // uncorrelated in the past
-        case ( kRHCNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_{\\mu}$; RHC";  break; // uncorrelated in the past
-        case ( kRHCNuisBANFF2p2hBar        ) : return "BANFF; Norm; 2p2hBar; RHC";                           break;
+  case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";                      break; // uncorrelated in the past
+  case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                       break; // uncorrelated in the past
+  case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";                      break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh; RHC";                        break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh; RHC";                        break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth; RHC";                        break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNuEToNuMu ) : return "BANFF; Norm, $\\nu_{e}$ To $\\nu_{\\mu}$; RHC";  break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNC1Gamma      ) : return "BANFF; Norm; NC 1 $\\gamma$; RHC";                break; // uncorrelated in the past
+  case ( kRHCNuisBANFFNormNuEBarToNuMuBar ) : return "BANFF; Norm, $\\bar{\\nu}_{e}$ To $\\bar{\\nu}_{\\mu}$; RHC";  break; // uncorrelated in the past
+  case ( kRHCNuisBANFF2p2hBar        ) : return "BANFF; Norm; 2p2hBar; RHC";                           break;
             
-            //
+    //
             
-            //
-            // XSec params not correlated with flux
-            //
+    //
+    // XSec params not correlated with flux
+    //
             
-            // NEW XSEC
-        case ( kRHCNuisXSecRPA        ) : return "Tuning; RPA; RHC";                     break;
+    // NEW XSEC
+  case ( kRHCNuisXSecRPA        ) : return "Tuning; RPA; RHC";                     break;
             
-        case ( kRHCNuisXSecFermiMom   ) : return "Fermi Momentum; RHC";                  break;
-        case ( kRHCNuisXSecSpecFunc   ) : return "Spectral Func; RHC";                   break;
-        case ( kRHCNuisXSecWshape     ) : return "W-shape; RHC";                         break;
-        case ( kRHCNuisXSecShapeCCoth ) : return "Shape; CC Oth; RHC";                   break;
-        case ( kRHCNuisXSecPiLessDelta) : return "Pi-less delta decay; RHC";             break;
+  case ( kRHCNuisXSecFermiMom   ) : return "Fermi Momentum; RHC";                  break;
+  case ( kRHCNuisXSecSpecFunc   ) : return "Spectral Func; RHC";                   break;
+  case ( kRHCNuisXSecWshape     ) : return "W-shape; RHC";                         break;
+  case ( kRHCNuisXSecShapeCCoth ) : return "Shape; CC Oth; RHC";                   break;
+  case ( kRHCNuisXSecPiLessDelta) : return "Pi-less delta decay; RHC";             break;
 #ifndef __NUEONLY__
-        case ( kRHCNuisXSecBindE      ) : return "Binding energy; RHC";                  break;
+  case ( kRHCNuisXSecBindE      ) : return "Binding energy; RHC";                  break;
 #endif
-        case ( kRHCNuisXSecNormCCcoh  ) : return "Norm, CC Coh; RHC";                    break;
+  case ( kRHCNuisXSecNormCCcoh  ) : return "Norm, CC Coh; RHC";                    break;
 #ifndef __NUEONLY__
-        case ( kRHCNuisXSecNormNC1piC ) : return "Norm, NC 1piC; RHC";                   break;
+  case ( kRHCNuisXSecNormNC1piC ) : return "Norm, NC 1piC; RHC";                   break;
 #endif
 #ifndef __NUMUONLY__
-        case ( kRHCNuisXSecNormNCcoh  ) : return "Norm, NC Coh; RHC";                    break;
+  case ( kRHCNuisXSecNormNCcoh  ) : return "Norm, NC Coh; RHC";                    break;
 #endif
-        case ( kRHCNuisXSecNormNCoth  ) : return "Norm, NC Oth; RHC";                    break;
-        case ( kRHCNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_{\\mu}$; RHC";  break;
+  case ( kRHCNuisXSecNormNCoth  ) : return "Norm, NC Oth; RHC";                    break;
+  case ( kRHCNuisXSecNormNuEToNuMu  ) : return "Norm, $\\nu_{e}$ To $\\nu_{\\mu}$; RHC";  break;
 #ifndef __NUEONLY__
-        case ( kRHCNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$; RHC";  break;
+  case ( kRHCNuisXSecNormAntiNuToNu ) : return "Norm, $\\bar{\\nu}$ To $\\nu$; RHC";  break;
 #endif
             
-            //
-            // SKDET+FSI
-            //
-            //#ifdef SKFSITOGETHER
+    //
+    // SKDET+FSI
+    //
+    //#ifdef SKFSITOGETHER
 #ifndef SKCORRELATIONS
 #if FSI_BINS != 3
-        case ( kRHCNuisSKDetFSI000 ) :
-        case ( kRHCNuisSKDetFSI001 ) :
-        case ( kRHCNuisSKDetFSI002 ) :
-        case ( kRHCNuisSKDetFSI003 ) :
-        case ( kRHCNuisSKDetFSI004 ) :
-        case ( kRHCNuisSKDetFSI005 ) :
+  case ( kRHCNuisSKDetFSI000 ) :
+  case ( kRHCNuisSKDetFSI001 ) :
+  case ( kRHCNuisSKDetFSI002 ) :
+  case ( kRHCNuisSKDetFSI003 ) :
+  case ( kRHCNuisSKDetFSI004 ) :
+  case ( kRHCNuisSKDetFSI005 ) :
             
-            // NEW SKDETFSI
+    // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2015__)
-        case ( kRHCNuisSKDetFSI006 ) :
-        case ( kRHCNuisSKDetFSI007 ) :
-        case ( kRHCNuisSKDetFSI008 ) :
-        case ( kRHCNuisSKDetFSI009 ) :
-        case ( kRHCNuisSKDetFSI010 ) :
-        case ( kRHCNuisSKDetFSI011 ) :
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
 #endif
             
-        {
-            string nutypes = "";
+    {
+      string nutypes = "";
             
-            // NEW SKDETFSI
-            //int ip = (int)p - (int)kRHCNuisSKDetFSI000;
-            int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
+      // NEW SKDETFSI
+      //int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+      int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
             
-            switch(p) {
+      switch(p) {
                     
-                    // NEW SKDETFSI
+        // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-                case (kRHCNuisSKDetFSI000) :
-                case (kRHCNuisSKDetFSI001) :
-                case (kRHCNuisSKDetFSI002) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI003) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI004) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI005) :
-                    nutypes = "all NC ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI000) :
+      case (kRHCNuisSKDetFSI001) :
+      case (kRHCNuisSKDetFSI002) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI003) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI004) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI005) :
+        nutypes = "all NC ($1R_{\\mu}$)"; break;
 #elif defined(__USE_SKDETFSI2015__)
-                case (kRHCNuisSKDetFSI000) :
-                case (kRHCNuisSKDetFSI001) :
-                case (kRHCNuisSKDetFSI002) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI003) :
-                case (kRHCNuisSKDetFSI004) :
-                case (kRHCNuisSKDetFSI005) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI006) :
-                case (kRHCNuisSKDetFSI007) :
-                case (kRHCNuisSKDetFSI008) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI009) :
-                case (kRHCNuisSKDetFSI010) :
-                case (kRHCNuisSKDetFSI011) :
-                    nutypes = "all NC ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI000) :
+      case (kRHCNuisSKDetFSI001) :
+      case (kRHCNuisSKDetFSI002) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI003) :
+      case (kRHCNuisSKDetFSI004) :
+      case (kRHCNuisSKDetFSI005) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI006) :
+      case (kRHCNuisSKDetFSI007) :
+      case (kRHCNuisSKDetFSI008) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI009) :
+      case (kRHCNuisSKDetFSI010) :
+      case (kRHCNuisSKDetFSI011) :
+        nutypes = "all NC ($1R_{\\mu}$)"; break;
 #endif
                     
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
-				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for 1Rmu
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
+                              kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for 1Rmu
 #endif
 #if FSI_BINS != 2
             
-            // NEW SKDETFSI
+  // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-        case ( kRHCNuisSKDetFSI006 ) :
-        case ( kRHCNuisSKDetFSI007 ) :
-        case ( kRHCNuisSKDetFSI008 ) :
-        case ( kRHCNuisSKDetFSI009 ) :
-        case ( kRHCNuisSKDetFSI010 ) :
-        case ( kRHCNuisSKDetFSI011 ) :
-        case ( kRHCNuisSKDetFSI012 ) :
-        case ( kRHCNuisSKDetFSI013 ) :
-        case ( kRHCNuisSKDetFSI014 ) :
-        case ( kRHCNuisSKDetFSI015 ) :
-        case ( kRHCNuisSKDetFSI016 ) :
-        case ( kRHCNuisSKDetFSI017 ) :
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
 #elif defined(__USE_SKDETFSI2015__)
-        case ( kRHCNuisSKDetFSI012 ) :
-        case ( kRHCNuisSKDetFSI013 ) :
-        case ( kRHCNuisSKDetFSI014 ) :
-        case ( kRHCNuisSKDetFSI015 ) :
-        case ( kRHCNuisSKDetFSI016 ) :
-        case ( kRHCNuisSKDetFSI017 ) :
-        case ( kRHCNuisSKDetFSI018 ) :
-        case ( kRHCNuisSKDetFSI019 ) :
-        case ( kRHCNuisSKDetFSI020 ) :
-        case ( kRHCNuisSKDetFSI021 ) :
-        case ( kRHCNuisSKDetFSI022 ) :
-        case ( kRHCNuisSKDetFSI023 ) :
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
+  case ( kRHCNuisSKDetFSI018 ) :
+  case ( kRHCNuisSKDetFSI019 ) :
+  case ( kRHCNuisSKDetFSI020 ) :
+  case ( kRHCNuisSKDetFSI021 ) :
+  case ( kRHCNuisSKDetFSI022 ) :
+  case ( kRHCNuisSKDetFSI023 ) :
 #endif
             
-        {
-            string nutypes = "";
+    {
+      string nutypes = "";
             
-            // #if FSI_BINS != 3
-            //       int ip = (int)p - (int)kRHCNuisSKDetFSI000;
-            // #else
-            //       #if defined(__USE_SKDETFSI2013__)
-            //       int ip = (int)p - (int)kRHCNuisSKDetFSI006;
-            //       #elif defined(__USE_SKDETFSI2015__)
-            //       int ip = (int)p - (int)kRHCNuisSKDetFSI012;
-            //       #endif
-            // #endif
+      // #if FSI_BINS != 3
+      //       int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+      // #else
+      //       #if defined(__USE_SKDETFSI2013__)
+      //       int ip = (int)p - (int)kRHCNuisSKDetFSI006;
+      //       #elif defined(__USE_SKDETFSI2015__)
+      //       int ip = (int)p - (int)kRHCNuisSKDetFSI012;
+      //       #endif
+      // #endif
             
-            // NEW SKDETFSI
-            int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
+      // NEW SKDETFSI
+      int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
             
-            switch(p) {
+      switch(p) {
                     
-                    // NEW SKDETFSI
+        // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-                case (kRHCNuisSKDetFSI006) :
-                case (kRHCNuisSKDetFSI007) :
-                case (kRHCNuisSKDetFSI008) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI009) :
-                case (kRHCNuisSKDetFSI010) :
-                case (kRHCNuisSKDetFSI011) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI012) :
-                case (kRHCNuisSKDetFSI013) :
-                case (kRHCNuisSKDetFSI014) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI015) :
-                case (kRHCNuisSKDetFSI016) :
-                case (kRHCNuisSKDetFSI017) :
-                    nutypes = "all NC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI006) :
+      case (kRHCNuisSKDetFSI007) :
+      case (kRHCNuisSKDetFSI008) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI009) :
+      case (kRHCNuisSKDetFSI010) :
+      case (kRHCNuisSKDetFSI011) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI012) :
+      case (kRHCNuisSKDetFSI013) :
+      case (kRHCNuisSKDetFSI014) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI015) :
+      case (kRHCNuisSKDetFSI016) :
+      case (kRHCNuisSKDetFSI017) :
+        nutypes = "all NC ($1R_{e}$)"; break;
 #elif defined(__USE_SKDETFSI2015__)
-                case (kRHCNuisSKDetFSI012) :
-                case (kRHCNuisSKDetFSI013) :
-                case (kRHCNuisSKDetFSI014) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI015) :
-                case (kRHCNuisSKDetFSI016) :
-                case (kRHCNuisSKDetFSI017) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI018) :
-                case (kRHCNuisSKDetFSI019) :
-                case (kRHCNuisSKDetFSI020) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI021) :
-                case (kRHCNuisSKDetFSI022) :
-                case (kRHCNuisSKDetFSI023) :
-                    nutypes = "all NC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI012) :
+      case (kRHCNuisSKDetFSI013) :
+      case (kRHCNuisSKDetFSI014) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI015) :
+      case (kRHCNuisSKDetFSI016) :
+      case (kRHCNuisSKDetFSI017) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI018) :
+      case (kRHCNuisSKDetFSI019) :
+      case (kRHCNuisSKDetFSI020) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI021) :
+      case (kRHCNuisSKDetFSI022) :
+      case (kRHCNuisSKDetFSI023) :
+        nutypes = "all NC ($1R_{e}$)"; break;
 #endif
                     
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
-				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for 1Re
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
+                              kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for 1Re
 #endif
 #else
             
-            // OTHER FSI_BINS THAN 1,2,3
+  // OTHER FSI_BINS THAN 1,2,3
             
-        case ( kRHCNuisSKDetFSI000 ) :
-        case ( kRHCNuisSKDetFSI001 ) :
-        case ( kRHCNuisSKDetFSI002 ) :
-        case ( kRHCNuisSKDetFSI003 ) :
-        case ( kRHCNuisSKDetFSI004 ) :
-        case ( kRHCNuisSKDetFSI005 ) :
-        case ( kRHCNuisSKDetFSI006 ) :
-        case ( kRHCNuisSKDetFSI007 ) :
-        case ( kRHCNuisSKDetFSI008 ) :
-        case ( kRHCNuisSKDetFSI009 ) :
-        case ( kRHCNuisSKDetFSI010 ) :
-        case ( kRHCNuisSKDetFSI011 ) :
-        case ( kRHCNuisSKDetFSI012 ) :
-        case ( kRHCNuisSKDetFSI013 ) :
-        case ( kRHCNuisSKDetFSI014 ) :
-        case ( kRHCNuisSKDetFSI015 ) :
-        case ( kRHCNuisSKDetFSI016 ) :
-        case ( kRHCNuisSKDetFSI017 ) :
-        case ( kRHCNuisSKDetFSI018 ) :
-        case ( kRHCNuisSKDetFSI019 ) :
-        {
-            // NEW SKDETFSI
-            //int ip = (int)p - (int)kRHCNuisSKDetFSI000;
-            int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
+  case ( kRHCNuisSKDetFSI000 ) :
+  case ( kRHCNuisSKDetFSI001 ) :
+  case ( kRHCNuisSKDetFSI002 ) :
+  case ( kRHCNuisSKDetFSI003 ) :
+  case ( kRHCNuisSKDetFSI004 ) :
+  case ( kRHCNuisSKDetFSI005 ) :
+  case ( kRHCNuisSKDetFSI006 ) :
+  case ( kRHCNuisSKDetFSI007 ) :
+  case ( kRHCNuisSKDetFSI008 ) :
+  case ( kRHCNuisSKDetFSI009 ) :
+  case ( kRHCNuisSKDetFSI010 ) :
+  case ( kRHCNuisSKDetFSI011 ) :
+  case ( kRHCNuisSKDetFSI012 ) :
+  case ( kRHCNuisSKDetFSI013 ) :
+  case ( kRHCNuisSKDetFSI014 ) :
+  case ( kRHCNuisSKDetFSI015 ) :
+  case ( kRHCNuisSKDetFSI016 ) :
+  case ( kRHCNuisSKDetFSI017 ) :
+  case ( kRHCNuisSKDetFSI018 ) :
+  case ( kRHCNuisSKDetFSI019 ) :
+    {
+      // NEW SKDETFSI
+      //int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+      int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
             
-            string nutypes = "";
-            switch(p) {
-                case (kRHCNuisSKDetFSI000) :
-                case (kRHCNuisSKDetFSI001) :
-                case (kRHCNuisSKDetFSI002) :
-                case (kRHCNuisSKDetFSI003) :
-                case (kRHCNuisSKDetFSI004) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI005) :
-                case (kRHCNuisSKDetFSI006) :
-                case (kRHCNuisSKDetFSI007) :
-                case (kRHCNuisSKDetFSI008) :
-                case (kRHCNuisSKDetFSI009) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI010) :
-                case (kRHCNuisSKDetFSI011) :
-                case (kRHCNuisSKDetFSI012) :
-                case (kRHCNuisSKDetFSI013) :
-                case (kRHCNuisSKDetFSI014) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kRHCNuisSKDetFSI015) :
-                case (kRHCNuisSKDetFSI016) :
-                case (kRHCNuisSKDetFSI017) :
-                case (kRHCNuisSKDetFSI018) :
-                case (kRHCNuisSKDetFSI019) :
-                    nutypes = "all NC ($1R_{\\mu}$)"; break;
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
-				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for 1Rmu
-        case ( kRHCNuisSKDetFSI020 ) :
-        case ( kRHCNuisSKDetFSI021 ) :
-        case ( kRHCNuisSKDetFSI022 ) :
-        case ( kRHCNuisSKDetFSI023 ) :
-        case ( kRHCNuisSKDetFSI024 ) :
-        case ( kRHCNuisSKDetFSI025 ) :
-        case ( kRHCNuisSKDetFSI026 ) :
-        case ( kRHCNuisSKDetFSI027 ) :
-        case ( kRHCNuisSKDetFSI028 ) :
-        case ( kRHCNuisSKDetFSI029 ) :
-        case ( kRHCNuisSKDetFSI030 ) :
-        case ( kRHCNuisSKDetFSI031 ) :
-        {
-            // NEW SKDETFSI
-            //int ip = (int)p - (int)kRHCNuisSKDetFSI000;
-            int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
+      string nutypes = "";
+      switch(p) {
+      case (kRHCNuisSKDetFSI000) :
+      case (kRHCNuisSKDetFSI001) :
+      case (kRHCNuisSKDetFSI002) :
+      case (kRHCNuisSKDetFSI003) :
+      case (kRHCNuisSKDetFSI004) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI005) :
+      case (kRHCNuisSKDetFSI006) :
+      case (kRHCNuisSKDetFSI007) :
+      case (kRHCNuisSKDetFSI008) :
+      case (kRHCNuisSKDetFSI009) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI010) :
+      case (kRHCNuisSKDetFSI011) :
+      case (kRHCNuisSKDetFSI012) :
+      case (kRHCNuisSKDetFSI013) :
+      case (kRHCNuisSKDetFSI014) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kRHCNuisSKDetFSI015) :
+      case (kRHCNuisSKDetFSI016) :
+      case (kRHCNuisSKDetFSI017) :
+      case (kRHCNuisSKDetFSI018) :
+      case (kRHCNuisSKDetFSI019) :
+        nutypes = "all NC ($1R_{\\mu}$)"; break;
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
+                              kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for 1Rmu
+  case ( kRHCNuisSKDetFSI020 ) :
+  case ( kRHCNuisSKDetFSI021 ) :
+  case ( kRHCNuisSKDetFSI022 ) :
+  case ( kRHCNuisSKDetFSI023 ) :
+  case ( kRHCNuisSKDetFSI024 ) :
+  case ( kRHCNuisSKDetFSI025 ) :
+  case ( kRHCNuisSKDetFSI026 ) :
+  case ( kRHCNuisSKDetFSI027 ) :
+  case ( kRHCNuisSKDetFSI028 ) :
+  case ( kRHCNuisSKDetFSI029 ) :
+  case ( kRHCNuisSKDetFSI030 ) :
+  case ( kRHCNuisSKDetFSI031 ) :
+    {
+      // NEW SKDETFSI
+      //int ip = (int)p - (int)kRHCNuisSKDetFSI000;
+      int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
             
-            string nutypes = "";
-            switch(p) {
-                case (kRHCNuisSKDetFSI020) :
-                case (kRHCNuisSKDetFSI021) :
-                case (kRHCNuisSKDetFSI022) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI023) :
-                case (kRHCNuisSKDetFSI024) :
-                case (kRHCNuisSKDetFSI025) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI026) :
-                case (kRHCNuisSKDetFSI027) :
-                case (kRHCNuisSKDetFSI028) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
-                case (kRHCNuisSKDetFSI029) :
-                case (kRHCNuisSKDetFSI030) :
-                case (kRHCNuisSKDetFSI031) :
-                    nutypes = "all NC ($1R_{e}$)"; break;
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
-				    kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }
+      string nutypes = "";
+      switch(p) {
+      case (kRHCNuisSKDetFSI020) :
+      case (kRHCNuisSKDetFSI021) :
+      case (kRHCNuisSKDetFSI022) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI023) :
+      case (kRHCNuisSKDetFSI024) :
+      case (kRHCNuisSKDetFSI025) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI026) :
+      case (kRHCNuisSKDetFSI027) :
+      case (kRHCNuisSKDetFSI028) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
+      case (kRHCNuisSKDetFSI029) :
+      case (kRHCNuisSKDetFSI030) :
+      case (kRHCNuisSKDetFSI031) :
+        nutypes = "all NC ($1R_{e}$)"; break;
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; RHC",ip,
+                              kRHCSKDetFSIParamsErecoCut[ip][0],kRHCSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }
 #endif
-            //#endif //SKDETFSITOGETHER
+  //#endif //SKDETFSITOGETHER
             
             
             
-            /////////////// MULTIRING FORWARD HORN CURRENT /////////////
+  /////////////// MULTIRING FORWARD HORN CURRENT /////////////
             
-            /// NEW MULTIRING 3
-        case ( kMultiRingNuisSuperkEnergyScale ) : return "SK energy scale; MultiRing"; break;
-            ///
+  /// NEW MULTIRING 3
+  case ( kMultiRingNuisSuperkEnergyScale ) : return "SK energy scale; MultiRing"; break;
+    ///
             
-            /// NEW MULTIRING 2
+    /// NEW MULTIRING 2
             
-            //
-            // SKDET+FSI
-            //
-            //#ifdef SKFSITOGETHER
+    //
+    // SKDET+FSI
+    //
+    //#ifdef SKFSITOGETHER
 #ifndef SKCORRELATIONS
 #if MR_FSI_BINS != 3
-        case ( kMultiRingNuisSKDetFSI000 ) :
-        case ( kMultiRingNuisSKDetFSI001 ) :
-        case ( kMultiRingNuisSKDetFSI002 ) :
-        case ( kMultiRingNuisSKDetFSI003 ) :
-        case ( kMultiRingNuisSKDetFSI004 ) :
-        case ( kMultiRingNuisSKDetFSI005 ) :
+  case ( kMultiRingNuisSKDetFSI000 ) :
+  case ( kMultiRingNuisSKDetFSI001 ) :
+  case ( kMultiRingNuisSKDetFSI002 ) :
+  case ( kMultiRingNuisSKDetFSI003 ) :
+  case ( kMultiRingNuisSKDetFSI004 ) :
+  case ( kMultiRingNuisSKDetFSI005 ) :
             
-        {
-            string nutypes = "";
+    {
+      string nutypes = "";
             
-            // NEW SKDETFSI
-	    int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
+      // NEW SKDETFSI
+      int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
-            switch(p) {
+      switch(p) {
                     
-                    // NEW SKDETFSI
+        // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-                case (kMultiRingNuisSKDetFSI000) :
-                case (kMultiRingNuisSKDetFSI001) :
-                case (kMultiRingNuisSKDetFSI002) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($MultiR_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI003) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($MultiR_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI004) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($MultiR_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI005) :
-                    nutypes = "all NC ($MultiR_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI000) :
+      case (kMultiRingNuisSKDetFSI001) :
+      case (kMultiRingNuisSKDetFSI002) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($MultiR_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI003) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($MultiR_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI004) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($MultiR_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI005) :
+        nutypes = "all NC ($MultiR_{\\mu}$)"; break;
 #elif defined(__USE_SKDETFSI2015__)
-                case (kMultiRingNuisSKDetFSI000) :
-                case (kMultiRingNuisSKDetFSI001) :
-                case (kMultiRingNuisSKDetFSI002) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI003) :
-                case (kMultiRingNuisSKDetFSI004) :
-                case (kMultiRingNuisSKDetFSI005) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI006) :
-                case (kMultiRingNuisSKDetFSI007) :
-                case (kMultiRingNuisSKDetFSI008) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI009) :
-                case (kMultiRingNuisSKDetFSI010) :
-                case (kMultiRingNuisSKDetFSI011) :
-                    nutypes = "all NC ($1R_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI000) :
+      case (kMultiRingNuisSKDetFSI001) :
+      case (kMultiRingNuisSKDetFSI002) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCQE ($1R_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI003) :
+      case (kMultiRingNuisSKDetFSI004) :
+      case (kMultiRingNuisSKDetFSI005) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CCnQE ($1R_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI006) :
+      case (kMultiRingNuisSKDetFSI007) :
+      case (kMultiRingNuisSKDetFSI008) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$/sig$\\nu_{e}$ CC ($1R_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI009) :
+      case (kMultiRingNuisSKDetFSI010) :
+      case (kMultiRingNuisSKDetFSI011) :
+        nutypes = "all NC ($1R_{\\mu}$)"; break;
 #endif
                     
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
-				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for MultiRmu
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
+                              kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for MultiRmu
 #endif
 #if FSI_BINS != 2
             
-            // NEW SKDETFSI
+  // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-        case ( kMultiRingNuisSKDetFSI006 ) :
-        case ( kMultiRingNuisSKDetFSI007 ) :
-        case ( kMultiRingNuisSKDetFSI008 ) :
-        case ( kMultiRingNuisSKDetFSI009 ) :
-        case ( kMultiRingNuisSKDetFSI010 ) :
-        case ( kMultiRingNuisSKDetFSI011 ) :
-        case ( kMultiRingNuisSKDetFSI012 ) :
-        case ( kMultiRingNuisSKDetFSI013 ) :
-        case ( kMultiRingNuisSKDetFSI014 ) :
-        case ( kMultiRingNuisSKDetFSI015 ) :
-        case ( kMultiRingNuisSKDetFSI016 ) :
-        case ( kMultiRingNuisSKDetFSI017 ) :
+  case ( kMultiRingNuisSKDetFSI006 ) :
+  case ( kMultiRingNuisSKDetFSI007 ) :
+  case ( kMultiRingNuisSKDetFSI008 ) :
+  case ( kMultiRingNuisSKDetFSI009 ) :
+  case ( kMultiRingNuisSKDetFSI010 ) :
+  case ( kMultiRingNuisSKDetFSI011 ) :
+  case ( kMultiRingNuisSKDetFSI012 ) :
+  case ( kMultiRingNuisSKDetFSI013 ) :
+  case ( kMultiRingNuisSKDetFSI014 ) :
+  case ( kMultiRingNuisSKDetFSI015 ) :
+  case ( kMultiRingNuisSKDetFSI016 ) :
+  case ( kMultiRingNuisSKDetFSI017 ) :
 #elif defined(__USE_SKDETFSI2015__)
-        case ( kMultiRingNuisSKDetFSI012 ) :
-        case ( kMultiRingNuisSKDetFSI013 ) :
-        case ( kMultiRingNuisSKDetFSI014 ) :
-        case ( kMultiRingNuisSKDetFSI015 ) :
-        case ( kMultiRingNuisSKDetFSI016 ) :
-        case ( kMultiRingNuisSKDetFSI017 ) :
-        case ( kMultiRingNuisSKDetFSI018 ) :
-        case ( kMultiRingNuisSKDetFSI019 ) :
-        case ( kMultiRingNuisSKDetFSI020 ) :
-        case ( kMultiRingNuisSKDetFSI021 ) :
-        case ( kMultiRingNuisSKDetFSI022 ) :
-        case ( kMultiRingNuisSKDetFSI023 ) :
+  case ( kMultiRingNuisSKDetFSI012 ) :
+  case ( kMultiRingNuisSKDetFSI013 ) :
+  case ( kMultiRingNuisSKDetFSI014 ) :
+  case ( kMultiRingNuisSKDetFSI015 ) :
+  case ( kMultiRingNuisSKDetFSI016 ) :
+  case ( kMultiRingNuisSKDetFSI017 ) :
+  case ( kMultiRingNuisSKDetFSI018 ) :
+  case ( kMultiRingNuisSKDetFSI019 ) :
+  case ( kMultiRingNuisSKDetFSI020 ) :
+  case ( kMultiRingNuisSKDetFSI021 ) :
+  case ( kMultiRingNuisSKDetFSI022 ) :
+  case ( kMultiRingNuisSKDetFSI023 ) :
 #endif
             
-        {
-            string nutypes = "";
+    {
+      string nutypes = "";
             
-            // #if FSI_BINS != 3
-            //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
-            // #else
-            //       #if defined(__USE_SKDETFSI2013__)
-            //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI006;
-            //       #elif defined(__USE_SKDETFSI2015__)
-            //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI012;
-            //       #endif
-            // #endif
+      // #if FSI_BINS != 3
+      //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI000;
+      // #else
+      //       #if defined(__USE_SKDETFSI2013__)
+      //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI006;
+      //       #elif defined(__USE_SKDETFSI2015__)
+      //       int ip = (int)p - (int)kMultiRingNuisSKDetFSI012;
+      //       #endif
+      // #endif
             
-            // NEW SKDETFSI
-	    int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
+      // NEW SKDETFSI
+      int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
-            switch(p) {
+      switch(p) {
                     
-                    // NEW SKDETFSI
+        // NEW SKDETFSI
 #if defined(__USE_SKDETFSI2013__)
-                case (kMultiRingNuisSKDetFSI006) :
-                case (kMultiRingNuisSKDetFSI007) :
-                case (kMultiRingNuisSKDetFSI008) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI009) :
-                case (kMultiRingNuisSKDetFSI010) :
-                case (kMultiRingNuisSKDetFSI011) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI012) :
-                case (kMultiRingNuisSKDetFSI013) :
-                case (kMultiRingNuisSKDetFSI014) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($MultiR_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI015) :
-                case (kMultiRingNuisSKDetFSI016) :
-                case (kMultiRingNuisSKDetFSI017) :
-                    nutypes = "all NC ($MultiR_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI006) :
+      case (kMultiRingNuisSKDetFSI007) :
+      case (kMultiRingNuisSKDetFSI008) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI009) :
+      case (kMultiRingNuisSKDetFSI010) :
+      case (kMultiRingNuisSKDetFSI011) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI012) :
+      case (kMultiRingNuisSKDetFSI013) :
+      case (kMultiRingNuisSKDetFSI014) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($MultiR_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI015) :
+      case (kMultiRingNuisSKDetFSI016) :
+      case (kMultiRingNuisSKDetFSI017) :
+        nutypes = "all NC ($MultiR_{e}$)"; break;
 #elif defined(__USE_SKDETFSI2015__)
-                case (kMultiRingNuisSKDetFSI012) :
-                case (kMultiRingNuisSKDetFSI013) :
-                case (kMultiRingNuisSKDetFSI014) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI015) :
-                case (kMultiRingNuisSKDetFSI016) :
-                case (kMultiRingNuisSKDetFSI017) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI018) :
-                case (kMultiRingNuisSKDetFSI019) :
-                case (kMultiRingNuisSKDetFSI020) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI021) :
-                case (kMultiRingNuisSKDetFSI022) :
-                case (kMultiRingNuisSKDetFSI023) :
-                    nutypes = "all NC ($1R_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI012) :
+      case (kMultiRingNuisSKDetFSI013) :
+      case (kMultiRingNuisSKDetFSI014) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($1R_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI015) :
+      case (kMultiRingNuisSKDetFSI016) :
+      case (kMultiRingNuisSKDetFSI017) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($1R_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI018) :
+      case (kMultiRingNuisSKDetFSI019) :
+      case (kMultiRingNuisSKDetFSI020) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($1R_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI021) :
+      case (kMultiRingNuisSKDetFSI022) :
+      case (kMultiRingNuisSKDetFSI023) :
+        nutypes = "all NC ($1R_{e}$)"; break;
 #endif
                     
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
-				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for MultiRe
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
+                              kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for MultiRe
 #endif
 #else
             
-            // OTHER FSI_BINS THAN 1,2,3
+  // OTHER FSI_BINS THAN 1,2,3
             
-        case ( kMultiRingNuisSKDetFSI000 ) :
-        case ( kMultiRingNuisSKDetFSI001 ) :
-        case ( kMultiRingNuisSKDetFSI002 ) :
-        case ( kMultiRingNuisSKDetFSI003 ) :
-        case ( kMultiRingNuisSKDetFSI004 ) :
-        case ( kMultiRingNuisSKDetFSI005 ) :
-        case ( kMultiRingNuisSKDetFSI006 ) :
-        case ( kMultiRingNuisSKDetFSI007 ) :
-        case ( kMultiRingNuisSKDetFSI008 ) :
-        case ( kMultiRingNuisSKDetFSI009 ) :
-        case ( kMultiRingNuisSKDetFSI010 ) :
-        case ( kMultiRingNuisSKDetFSI011 ) :
-        case ( kMultiRingNuisSKDetFSI012 ) :
-        case ( kMultiRingNuisSKDetFSI013 ) :
-        case ( kMultiRingNuisSKDetFSI014 ) :
-        case ( kMultiRingNuisSKDetFSI015 ) :
-        case ( kMultiRingNuisSKDetFSI016 ) :
-        case ( kMultiRingNuisSKDetFSI017 ) :
-        case ( kMultiRingNuisSKDetFSI018 ) :
-        case ( kMultiRingNuisSKDetFSI019 ) :
-        {
-            // NEW SKDETFSI
-	    int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
+  case ( kMultiRingNuisSKDetFSI000 ) :
+  case ( kMultiRingNuisSKDetFSI001 ) :
+  case ( kMultiRingNuisSKDetFSI002 ) :
+  case ( kMultiRingNuisSKDetFSI003 ) :
+  case ( kMultiRingNuisSKDetFSI004 ) :
+  case ( kMultiRingNuisSKDetFSI005 ) :
+  case ( kMultiRingNuisSKDetFSI006 ) :
+  case ( kMultiRingNuisSKDetFSI007 ) :
+  case ( kMultiRingNuisSKDetFSI008 ) :
+  case ( kMultiRingNuisSKDetFSI009 ) :
+  case ( kMultiRingNuisSKDetFSI010 ) :
+  case ( kMultiRingNuisSKDetFSI011 ) :
+  case ( kMultiRingNuisSKDetFSI012 ) :
+  case ( kMultiRingNuisSKDetFSI013 ) :
+  case ( kMultiRingNuisSKDetFSI014 ) :
+  case ( kMultiRingNuisSKDetFSI015 ) :
+  case ( kMultiRingNuisSKDetFSI016 ) :
+  case ( kMultiRingNuisSKDetFSI017 ) :
+  case ( kMultiRingNuisSKDetFSI018 ) :
+  case ( kMultiRingNuisSKDetFSI019 ) :
+    {
+      // NEW SKDETFSI
+      int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
-            string nutypes = "";
-            switch(p) {
-                case (kMultiRingNuisSKDetFSI000) :
-                case (kMultiRingNuisSKDetFSI001) :
-                case (kMultiRingNuisSKDetFSI002) :
-                case (kMultiRingNuisSKDetFSI003) :
-                case (kMultiRingNuisSKDetFSI004) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI005) :
-                case (kMultiRingNuisSKDetFSI006) :
-                case (kMultiRingNuisSKDetFSI007) :
-                case (kMultiRingNuisSKDetFSI008) :
-                case (kMultiRingNuisSKDetFSI009) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI010) :
-                case (kMultiRingNuisSKDetFSI011) :
-                case (kMultiRingNuisSKDetFSI012) :
-                case (kMultiRingNuisSKDetFSI013) :
-                case (kMultiRingNuisSKDetFSI014) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($MultiR_{\\mu}$)"; break;
-                case (kMultiRingNuisSKDetFSI015) :
-                case (kMultiRingNuisSKDetFSI016) :
-                case (kMultiRingNuisSKDetFSI017) :
-                case (kMultiRingNuisSKDetFSI018) :
-                case (kMultiRingNuisSKDetFSI019) :
-                    nutypes = "all NC ($MultiR_{\\mu}$)"; break;
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
-				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }//FSI for MultiRmu
-        case ( kMultiRingNuisSKDetFSI020 ) :
-        case ( kMultiRingNuisSKDetFSI021 ) :
-        case ( kMultiRingNuisSKDetFSI022 ) :
-        case ( kMultiRingNuisSKDetFSI023 ) :
-        case ( kMultiRingNuisSKDetFSI024 ) :
-        case ( kMultiRingNuisSKDetFSI025 ) :
-        case ( kMultiRingNuisSKDetFSI026 ) :
-        case ( kMultiRingNuisSKDetFSI027 ) :
-        case ( kMultiRingNuisSKDetFSI028 ) :
-        case ( kMultiRingNuisSKDetFSI029 ) :
-        case ( kMultiRingNuisSKDetFSI030 ) :
-        case ( kMultiRingNuisSKDetFSI031 ) :
-        {
-            // NEW SKDETFSI
-            int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
+      string nutypes = "";
+      switch(p) {
+      case (kMultiRingNuisSKDetFSI000) :
+      case (kMultiRingNuisSKDetFSI001) :
+      case (kMultiRingNuisSKDetFSI002) :
+      case (kMultiRingNuisSKDetFSI003) :
+      case (kMultiRingNuisSKDetFSI004) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI005) :
+      case (kMultiRingNuisSKDetFSI006) :
+      case (kMultiRingNuisSKDetFSI007) :
+      case (kMultiRingNuisSKDetFSI008) :
+      case (kMultiRingNuisSKDetFSI009) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI010) :
+      case (kMultiRingNuisSKDetFSI011) :
+      case (kMultiRingNuisSKDetFSI012) :
+      case (kMultiRingNuisSKDetFSI013) :
+      case (kMultiRingNuisSKDetFSI014) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($MultiR_{\\mu}$)"; break;
+      case (kMultiRingNuisSKDetFSI015) :
+      case (kMultiRingNuisSKDetFSI016) :
+      case (kMultiRingNuisSKDetFSI017) :
+      case (kMultiRingNuisSKDetFSI018) :
+      case (kMultiRingNuisSKDetFSI019) :
+        nutypes = "all NC ($MultiR_{\\mu}$)"; break;
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
+                              kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
+    }//FSI for MultiRmu
+  case ( kMultiRingNuisSKDetFSI020 ) :
+  case ( kMultiRingNuisSKDetFSI021 ) :
+  case ( kMultiRingNuisSKDetFSI022 ) :
+  case ( kMultiRingNuisSKDetFSI023 ) :
+  case ( kMultiRingNuisSKDetFSI024 ) :
+  case ( kMultiRingNuisSKDetFSI025 ) :
+  case ( kMultiRingNuisSKDetFSI026 ) :
+  case ( kMultiRingNuisSKDetFSI027 ) :
+  case ( kMultiRingNuisSKDetFSI028 ) :
+  case ( kMultiRingNuisSKDetFSI029 ) :
+  case ( kMultiRingNuisSKDetFSI030 ) :
+  case ( kMultiRingNuisSKDetFSI031 ) :
+    {
+      // NEW SKDETFSI
+      int ip = ArrIdx::Instance()->MultiRingSKDetFSISystIdx(p);
             
-            string nutypes = "";
-            switch(p) {
-                case (kMultiRingNuisSKDetFSI020) :
-                case (kMultiRingNuisSKDetFSI021) :
-                case (kMultiRingNuisSKDetFSI022) :
-                    nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI023) :
-                case (kMultiRingNuisSKDetFSI024) :
-                case (kMultiRingNuisSKDetFSI025) :
-                    nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI026) :
-                case (kMultiRingNuisSKDetFSI027) :
-                case (kMultiRingNuisSKDetFSI028) :
-                    nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($MultiR_{e}$)"; break;
-                case (kMultiRingNuisSKDetFSI029) :
-                case (kMultiRingNuisSKDetFSI030) :
-                case (kMultiRingNuisSKDetFSI031) :
-                    nutypes = "all NC ($MultiR_{e}$)"; break;
-                default : nutypes = "--";
-            }
-            return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
-				    kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
-            break;
-        }
-#endif
-            //#endif //SKDETFSITOGETHER
-            
-            ////
-            
-        default :
-            return "--";
+      string nutypes = "";
+      switch(p) {
+      case (kMultiRingNuisSKDetFSI020) :
+      case (kMultiRingNuisSKDetFSI021) :
+      case (kMultiRingNuisSKDetFSI022) :
+        nutypes = "Osc. $\\nu_{e}$ CC ($MultiR_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI023) :
+      case (kMultiRingNuisSKDetFSI024) :
+      case (kMultiRingNuisSKDetFSI025) :
+        nutypes = "$\\nu_{\\mu}$/$\\bar{\\nu}_{\\mu}$ CC ($MultiR_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI026) :
+      case (kMultiRingNuisSKDetFSI027) :
+      case (kMultiRingNuisSKDetFSI028) :
+        nutypes = "$\\nu_{e}$/$\\bar{\\nu}_{e}$ CC ($MultiR_{e}$)"; break;
+      case (kMultiRingNuisSKDetFSI029) :
+      case (kMultiRingNuisSKDetFSI030) :
+      case (kMultiRingNuisSKDetFSI031) :
+        nutypes = "all NC ($MultiR_{e}$)"; break;
+      default : nutypes = "--";
+      }
+      return std::string(Form("SKDet + FSI/SI %2d; $E_{reco}$( %.2f - %.2f )GeV; %s; MultiRing",ip,
+                              kMultiRingSKDetFSIParamsErecoCut[ip][0],kMultiRingSKDetFSIParamsErecoCut[ip][1],nutypes.c_str()));
+      break;
     }
+#endif
+  //#endif //SKDETFSITOGETHER
+            
+  ////
+            
+  default :
     return "--";
+  }
+  return "--";
 }
 
 
@@ -2350,16 +2371,16 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFSCCA              ) : return "f_banffscca_fhc_rhc";           break;
         case ( kNuisBANFFSCCV              ) : return "f_banffsccv_fhc_rhc";           break;
 #endif
-        case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi_fhc_rhc";         break; // uncorrelated in the past
-        case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_fhc_rhc";     break; // uncorrelated in the past
-        case ( kNuisBANFFBindE             ) : return "f_banffbindE_fhc_rhc";          break; // uncorrelated in the past
-        case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_fhc_rhc";     break; // uncorrelated in the past
-        case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_fhc_rhc";     break; // uncorrelated in the past
-        case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_fhc_rhc";     break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_fhc_rhc"; break; // uncorrelated in the past
-        case ( kNuisBANFFNormNC1Gamma     ) : return "f_banffnorm_nc1gamma_fhc_rhc"; break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEBarToNuMuBar) : return "f_banffnorm_nuebartonumubar_fhc_rhc"; break; // uncorrelated in the past
-        case ( kNuisBANFFNorm2p2hBar            ) : return "f_banffmecbar_fhc_rhc";            break;
+        case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi_fhc_rhc";         break; 
+        case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_fhc_rhc";     break; 
+        case ( kNuisBANFFBindE             ) : return "f_banffbindE_fhc_rhc";          break; 
+        case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_fhc_rhc";     break; 
+        case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_fhc_rhc";     break; 
+        case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_fhc_rhc";     break; 
+        case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_fhc_rhc"; break; 
+        case ( kNuisBANFFNormNC1Gamma      ) : return "f_banffnorm_nc1gamma_fhc_rhc";  break; 
+        case ( kNuisBANFFNormNuEBarToNuMuBar) : return "f_banffnorm_nuebartonumubar_fhc_rhc"; break; 
+        case ( kNuisBANFFNorm2p2hBar       ) : return "f_banffmecbar_fhc_rhc";         break;
             
 #else
 #ifndef ONEOVERMAQE
@@ -2380,32 +2401,33 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #if (BANFF_BINS != 2)
         case ( kNuisBANFFNC1pi0            ) : return "f_banffnc1pi0";  break;
 #endif
-        case ( kNuisBANFFNorm2p2h               ) : return "f_banffmec";            break;
+        case ( kNuisBANFFNorm2p2h          ) : return "f_banff2p2h";           break;
         case ( kNuisBANFFCA5               ) : return "f_banffca5";            break;
         case ( kNuisBANFFBgRES             ) : return "f_banffbgres";          break;
 #if (BANFF_BINS != 2)
         case ( kNuisBANFFSCCA              ) : return "f_banffscca";           break;
         case ( kNuisBANFFSCCV              ) : return "f_banffsccv";           break;
 #endif
-        case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";         break; // uncorrelated in the past
-        case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";     break; // uncorrelated in the past
-        case ( kNuisBANFFBindE             ) : return "f_banffbindE";          break; // uncorrelated in the past
-        case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh";     break; // uncorrelated in the past
-        case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh";     break; // uncorrelated in the past
-        case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth";     break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu"; break; // uncorrelated in the past
-        case ( kNuisBANFFNormNC1Gamma      ) : return "f_banffnorm_nc1gamma";  break; // uncorrelated in the past
-        case ( kNuisBANFFNormNuEBarToNuMuBar) : return "f_banffnorm_nuebartonumubar"; break; // uncorrelated in the past
-        case ( kNuisBANFFNorm2p2hBar            ) : return "f_banffmecbar";            break;
-            
+        case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";         break; 
+        case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";     break; 
+        case ( kNuisBANFFBindE             ) : return "f_banffbindE";          break; 
+        case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh";     break; 
+        case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh";     break; 
+        case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth";     break; 
+        case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu"; break; 
+        case ( kNuisBANFFNormNC1Gamma      ) : return "f_banffnorm_nc1gamma";  break; 
+        case ( kNuisBANFFNormNuEBarToNuMuBar) : return "f_banffnorm_nuebartonumubar"; break; 
+        case ( kNuisBANFFNorm2p2hBar       ) : return "f_banff2p2hbar";          break;
+        case ( kNuisBANFFBeRPA_A           ) : return "f_banffshape_berpa_A";    break;
+        case ( kNuisBANFFBeRPA_B           ) : return "f_banffshape_berpa_B";    break;
+        case ( kNuisBANFFBeRPA_D           ) : return "f_banffshape_berpa_D";    break;
+        case ( kNuisBANFFBeRPA_E           ) : return "f_banffshape_berpa_E";    break;
+        case ( kNuisBANFFBeRPA_U           ) : return "f_banffshape_berpa_U";    break;
+        case ( kNuisBANFFShape2p2h         ) : return "f_banffshape_2p2hnu";     break;
+        case ( kNuisBANFFShape2p2hBar      ) : return "f_banffshape_2p2hnubar";  break;
             //
             
 #endif //if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
-            
-            
-            
-            
-            
             
             // NEW XSEC
         case ( kNuisXSecRPA               ) : return "f_rpa";          break;
@@ -3005,10 +3027,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
             return std::string(Form("$f_{%d; t, r}^{banff}$", ip));
         }
             
-        case ( kNuisBANFFMAQE ) :
-            return "$f_{M_A^{QE}}^{banff}$";
-        case ( kNuisBANFFMARES ) :
-            return "$f_{M_A^{RES}}^{banff}$";
+        case ( kNuisBANFFMAQE ) :            return "$f_{M_A^{QE}}^{banff}$";
+        case ( kNuisBANFFMARES ) :            return "$f_{M_A^{RES}}^{banff}$";
         case ( kNuisBANFFCCQEE0 ) :
 #if BANFF_BINS != 3
         case ( kNuisBANFFCCQEE1 ) :
@@ -3023,45 +3043,34 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 	//return std::string(Form("$f_{CC1\\pi E%d}^{banff}$", p-kNuisBANFFCC1piE1)); // NEW SPLIT ANA
             
 #if (BANFF_BINS != 2)
-        case ( kNuisBANFFNC1pi0 ) :
+        case ( kNuisBANFFNC1pi0 ) :      return "$f_{NC1\\pi0}^{banff}$";
 #endif
-            return "$f_{NC1\\pi0}^{banff}$";
-            
             // NEW XSEC
-        case ( kNuisBANFFNorm2p2h   ) :
-            return "$f_{Norm_{2p2h}}^{banff}$";
-        case ( kNuisBANFFNorm2p2hBar) :
-            return "$f_{Norm_{2p2hBar}}^{banff}$";
-        case ( kNuisBANFFCA5   ) :
-            return "$f_{C^{A}_{5}}^{banff}$";
-        case ( kNuisBANFFBgRES ):
-            return "$f_{Bg_{RES}}^{banff}$";
+        case ( kNuisBANFFNorm2p2h   ) :  return "$f_{Norm_{2p2h}}^{banff}$";
+        case ( kNuisBANFFNorm2p2hBar) :  return "$f_{Norm_{2p2hBar}}^{banff}$";
+        case ( kNuisBANFFCA5   ) :       return "$f_{C^{A}_{5}}^{banff}$";
+        case ( kNuisBANFFBgRES ):        return "$f_{Bg_{RES}}^{banff}$";
             // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
-        case ( kNuisBANFFSCCA  ) :
-            return "$f_{SCCA}^{banff}$";
-        case ( kNuisBANFFSCCV  ) :
-            return "$f_{SCCV}^{banff}$";
+        case ( kNuisBANFFSCCA  ) :       return "$f_{SCCA}^{banff}$";
+        case ( kNuisBANFFSCCV  ) :       return "$f_{SCCV}^{banff}$";
 #endif
-        case ( kNuisBANFFFermiMom   ) :     // uncorrelated in the past
-            return "$f_{p_{f}}^{banff}$";
-        case ( kNuisBANFFShapeCCoth ) :     // uncorrelated in the past
-            return "$f_{Shape_{CCoth}}^{banff}$";
-        case ( kNuisBANFFBindE      ) :     // uncorrelated in the past
-            return "$f_{E_{B}}^{banff}$";
-        case ( kNuisBANFFNormCCcoh  ) :     // uncorrelated in the past
-            return "$f_{Norm_{CCcoh}}^{banff}$";
-        case ( kNuisBANFFNormNCcoh  ) :     // uncorrelated in the past
-            return "$f_{Norm_{NCcoh}}^{banff}$";
-        case ( kNuisBANFFNormNCoth  ) :     // uncorrelated in the past
-            return "$f_{Norm_{NCother}}^{banff}$";
-        case ( kNuisBANFFNormNuEToNuMu  ) : // uncorrelated in the past
-            return "$f_{Norm_{\\nu_e \\rightarrow \\nu_\\mu}}^{banff}$";
-        case ( kNuisBANFFNormNC1Gamma  ) :     // uncorrelated in the past
-            return "$f_{Norm_{NC1\\gamma}}^{banff}$";
-        case ( kNuisBANFFNormNuEBarToNuMuBar  ) : // uncorrelated in the past
-            return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}}}^{banff}$";
-            
+        case ( kNuisBANFFFermiMom   ) : return "$f_{p_{f}}^{banff}$";
+        case ( kNuisBANFFShapeCCoth ) : return "$f_{Shape_{CCoth}}^{banff}$";
+        case ( kNuisBANFFBindE      ) : return "$f_{E_{B}}^{banff}$";
+        case ( kNuisBANFFNormCCcoh  ) : return "$f_{Norm_{CCcoh}}^{banff}$";
+        case ( kNuisBANFFNormNCcoh  ) : return "$f_{Norm_{NCcoh}}^{banff}$";
+        case ( kNuisBANFFNormNCoth  ) : return "$f_{Norm_{NCother}}^{banff}$";
+        case ( kNuisBANFFNormNuEToNuMu  ) : return "$f_{Norm_{\\nu_e \\rightarrow \\nu_\\mu}}^{banff}$";
+        case ( kNuisBANFFNormNC1Gamma   ) : return "$f_{Norm_{NC1\\gamma}}^{banff}$";
+        case ( kNuisBANFFNormNuEBarToNuMuBar  ) : return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}}}^{banff}$";
+        case ( kNuisBANFFBeRPA_A      ) : return "$f_{Shape_{BeRPA_A}}^{banff}$";         break;
+        case ( kNuisBANFFBeRPA_B      ) : return "$f_{Shape_{BeRPA_B}}^{banff}$";         break;
+        case ( kNuisBANFFBeRPA_D      ) : return "$f_{Shape_{BeRPA_D}}^{banff}$";         break;
+        case ( kNuisBANFFBeRPA_E      ) : return "$f_{Shape_{BeRPA_E}}^{banff}$";         break;
+        case ( kNuisBANFFBeRPA_U      ) : return "$f_{Shape_{BeRPA_U}}^{banff}$";         break;
+        case ( kNuisBANFFShape2p2h    ) : return "$f_{Shape_{2p2h\\nu}}^{banff}$";        break;
+        case ( kNuisBANFFShape2p2hBar ) : return "$f_{Shape_{2p2h\\bar{\\nu}}}^{banff}$"; break;
             //
             
             //
@@ -3468,108 +3477,131 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 //________________________________________________________________________________________
 string valor::util::AsStringPaperTable(PhysParamId_t p)
 {
-    if (util::IsBANFF(p) && util::IsFlux(p)) {
-        if (util::IsRHCSystematic(p)) {
-            int ip = (int)p - (int)kRHCNuisBANFF00;
-            return std::string(Form("RHC %s flux normalisation, E = %.1f - %.1f GeV",
-				    util::Pdg2StringTex(kNuPdgCodeOfRHCFluxParamInBANFFfit[ip]).c_str(),
-				    kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0],
-				    kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1]));
-        }
-        else {
-            int ip = (int)p - (int)kNuisBANFF00;
-            return std::string(Form("FHC %s flux normalisation, E = %.1f - %.1f GeV",
-				    util::Pdg2StringTex(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(),
-				    kEtrueRangeOfFluxParamInBANFFfit[ip][0],
-				    kEtrueRangeOfFluxParamInBANFFfit[ip][1]));
-        }
+  if (util::IsBANFF(p) && util::IsFlux(p)) {
+    if (util::IsRHCSystematic(p)) {
+      int ip = (int)p - (int)kRHCNuisBANFF00;
+      return std::string(Form("RHC %s flux normalisation, E = %.1f - %.1f GeV",
+                              util::Pdg2StringTex(kNuPdgCodeOfRHCFluxParamInBANFFfit[ip]).c_str(),
+                              kEtrueRangeOfRHCFluxParamInBANFFfit[ip][0],
+                              kEtrueRangeOfRHCFluxParamInBANFFfit[ip][1]));
     }
-    else if (util::IsBANFF(p)) {
-        switch (p) {
-            case ( kNuisBANFFMAQE              ) :
-            case ( kRHCNuisBANFFMAQE           ) :
-                return "CCQE axial-mass scaling factor";
-            case ( kNuisBANFFMARES             ) :
-            case ( kRHCNuisBANFFMARES          ) :
-                return "Resonance-production axial-mass scaling factor";
-            case ( kNuisBANFFNorm2p2h               ) :
-            case ( kRHCNuisBANFF2p2h            ) :
-                return "Meson exchange current normalisation for $^{16}$O";
-            case ( kNuisBANFFNorm2p2hBar            ) :
-            case ( kRHCNuisBANFF2p2hBar         ) :
-                return "Antineutrino Meson exchange current normalisation for $^{16}$O";
-            case ( kNuisBANFFCA5               ) :
-            case ( kRHCNuisBANFFCA5            ) :
-                return "C$^{A}_{5}$ nucleon to $\\Delta$ transition axial form factor";
-            case ( kNuisBANFFBgRES             ) :
-            case ( kRHCNuisBANFFBgRES          ) :
-                return "Scale of isospin 1/2 nonresonant background";
-            case ( kNuisBANFFFermiMom          ) :
-            case ( kRHCNuisBANFFFermiMom       ) :
-                return "Fermi momentum for $^{16}$O";
-            case ( kNuisBANFFShapeCCoth        ) :
-            case ( kRHCNuisBANFFShapeCCoth     ) :
-                return "CC other shape";
-            case ( kNuisBANFFBindE             ) :
-            case ( kRHCNuisBANFFBindE          ) :
-                return "Binding energy for $^{16}$O";
-            case ( kNuisBANFFNormCCcoh         ) :
-            case ( kRHCNuisBANFFNormCCcoh      ) :
-                return "CC coherent for $^{16}$O normalisation";
-            case ( kNuisBANFFNormNCcoh         ) :
-            case ( kRHCNuisBANFFNormNCcoh      ) :
-                return "NC coherent normalisation";
-            case ( kNuisBANFFNormNCoth         ) :
-            case ( kRHCNuisBANFFNormNCoth      ) :
-                return "NC other normalisation";
-            case ( kNuisBANFFNormNuEToNuMu     ) :
-            case ( kRHCNuisBANFFNormNuEToNuMu  ) :
-                return "CC $\\nu_{e}$ normalisation";
-            case ( kNuisBANFFNormNC1Gamma     ) :
-            case ( kRHCNuisBANFFNormNC1Gamma  ) :
-                return "NC 1$\\gamma$ normalisation";
-            case ( kNuisBANFFNormNuEBarToNuMuBar     ) :
-            case ( kRHCNuisBANFFNormNuEBarToNuMuBar  ) :
-                return "CC $\\bar{\\nu}_{e}$ normalisation";
+    else {
+      int ip = (int)p - (int)kNuisBANFF00;
+      return std::string(Form("FHC %s flux normalisation, E = %.1f - %.1f GeV",
+                              util::Pdg2StringTex(kNuPdgCodeOfFluxParamInBANFFfit[ip]).c_str(),
+                              kEtrueRangeOfFluxParamInBANFFfit[ip][0],
+                              kEtrueRangeOfFluxParamInBANFFfit[ip][1]));
+    }
+  }
+  else if (util::IsBANFF(p)) {
+    switch (p) {
+    case ( kNuisBANFFMAQE              ) :
+    case ( kRHCNuisBANFFMAQE           ) :
+      return "CCQE axial-mass scaling factor";
+    case ( kNuisBANFFMARES             ) :
+    case ( kRHCNuisBANFFMARES          ) :
+      return "Resonance-production axial-mass scaling factor";
+    case ( kNuisBANFFNorm2p2h           ) :
+    case ( kRHCNuisBANFF2p2h            ) :
+      return "Two particle two hole normalisation for $^{16}$O";
+    case ( kNuisBANFFNorm2p2hBar        ) :
+    case ( kRHCNuisBANFF2p2hBar         ) :
+      return "Antineutrino two particle two hole normalisation for $^{16}$O";
+    case ( kNuisBANFFCA5               ) :
+    case ( kRHCNuisBANFFCA5            ) :
+      return "C$^{A}_{5}$ nucleon to $\\Delta$ transition axial form factor";
+    case ( kNuisBANFFBgRES             ) :
+    case ( kRHCNuisBANFFBgRES          ) :
+      return "Scale of isospin 1/2 nonresonant background";
+    case ( kNuisBANFFFermiMom          ) :
+    case ( kRHCNuisBANFFFermiMom       ) :
+      return "Fermi momentum for $^{16}$O";
+    case ( kNuisBANFFShapeCCoth        ) :
+    case ( kRHCNuisBANFFShapeCCoth     ) :
+      return "CC other shape";
+    case ( kNuisBANFFBindE             ) :
+    case ( kRHCNuisBANFFBindE          ) :
+      return "Binding energy for $^{16}$O";
+    case ( kNuisBANFFNormCCcoh         ) :
+    case ( kRHCNuisBANFFNormCCcoh      ) :
+      return "CC coherent for $^{16}$O normalisation";
+    case ( kNuisBANFFNormNCcoh         ) :
+    case ( kRHCNuisBANFFNormNCcoh      ) :
+      return "NC coherent normalisation";
+    case ( kNuisBANFFNormNCoth         ) :
+    case ( kRHCNuisBANFFNormNCoth      ) :
+      return "NC other normalisation";
+    case ( kNuisBANFFNormNuEToNuMu     ) :
+    case ( kRHCNuisBANFFNormNuEToNuMu  ) :
+      return "CC $\\nu_{e}$ normalisation";
+    case ( kNuisBANFFNormNC1Gamma     ) :
+    case ( kRHCNuisBANFFNormNC1Gamma  ) :
+      return "NC 1$\\gamma$ normalisation";
+    case ( kNuisBANFFNormNuEBarToNuMuBar     ) :
+    case ( kRHCNuisBANFFNormNuEBarToNuMuBar  ) :
+      return "CC $\\bar{\\nu}_{e}$ normalisation";
+
+    case ( kNuisBANFFBeRPA_A         ) : 
+    case ( kRHCNuisBANFFBeRPA_A      ) : 
+      return "Bernstein Polynomial coefficient A";    break;
+    case ( kNuisBANFFBeRPA_B         ) : 
+    case ( kRHCNuisBANFFBeRPA_B      ) : 
+      return "Bernstein Polynomial coefficient B";    break;
+    case ( kNuisBANFFBeRPA_D         ) : 
+    case ( kRHCNuisBANFFBeRPA_D      ) : 
+      return "Bernstein Polynomial coefficient D";    break;
+    case ( kNuisBANFFBeRPA_E         ) : 
+    case ( kRHCNuisBANFFBeRPA_E      ) : 
+      return "Bernstein Polynomial coefficient E";    break;
+    case ( kNuisBANFFBeRPA_U         ) : 
+    case ( kRHCNuisBANFFBeRPA_U      ) : 
+      return "Bernstein Polynomial coefficient U";    break;
+    case ( kNuisBANFFShape2p2h       ) : 
+    case ( kRHCNuisBANFFShape2p2h    ) : 
+      return "Neutrino two particle two hole shape for $^{16}$O";     break;
+    case ( kNuisBANFFShape2p2hBar    ) : 
+    case ( kRHCNuisBANFFShape2p2hBar ) : 
+      return "Antineutrino two particle two hole shape for $^{16}$O";  break;
+
                 
-            default:
-                return util::AsString(p);
-        }
+    default:
+      return util::AsString(p);
     }
-    //~ else if(util::IsSKDetFSI(p) {
-    //~ if (util::IsRHCSystematic(p)) {
-    //~ int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
-    //~ }
-    //~ return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
-    //~ kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());
-    //~ break;
-    //~ }
-    //~ return std::string(Form("RHC"));
-    //~ }
-    //~ else {
-    //~ int ip = (int)p - (int)kNuisSKDetFSI_first;
-    //~ return std::string(Form("FHC"));
-    //~ }
-    //~ }
-    return util::AsString(p);
+  }
+  //~ else if(util::IsSKDetFSI(p) {
+  //~ if (util::IsRHCSystematic(p)) {
+  //~ int ip = (int)p - (int)kRHCNuisSKDetFSI_first;
+  //~ }
+  //~ return std::string(Form("SKDet + FSI/SI %2d; Ereco range %.2f - %.2f GeV; %s",ip,
+  //~ kSKDetFSIParamsErecoCut[ip][0],kSKDetFSIParamsErecoCut[ip][1],nutypes.c_str());
+  //~ break;
+  //~ }
+  //~ return std::string(Form("RHC"));
+  //~ }
+  //~ else {
+  //~ int ip = (int)p - (int)kNuisSKDetFSI_first;
+  //~ return std::string(Form("FHC"));
+  //~ }
+  //~ }
+  return util::AsString(p);
 }
 //________________________________________________________________________________________
 //________________________________________________________________________________________
 string valor::util::AsStringPaperRooTex(PhysParamId_t p)
 {
-    string s = AsStringPaperTexNoDollar(p);
-    replace( s.begin(), s.end(), '\\', '#' ); // Make slashes hashes for RooTex
-    // Get rid of hashes preceding sin
-    size_t ind = s.find("#sin",0);
-    if (ind !=  string::npos) (s.replace(ind,4," sin"));
-    return util::TrimSpaces(s);
+  string s = AsStringPaperTexNoDollar(p);
+  replace( s.begin(), s.end(), '\\', '#' ); // Make slashes hashes for RooTex
+  // Get rid of hashes preceding sin
+  size_t ind = s.find("#sin",0);
+  if (ind !=  string::npos) (s.replace(ind,4," sin"));
+  return util::TrimSpaces(s);
 }
 //________________________________________________________________________________________
 string valor::util::AsStringPaperTexNoDollar(PhysParamId_t p)
 {
-    string s = AsStringPaperTex(p);
-    s.erase( std::remove( s.begin(), s.end(), '$'), s.end() ) ; // Remove dollar signs.
-    return s;
+  string s = AsStringPaperTex(p);
+  s.erase( std::remove( s.begin(), s.end(), '$'), s.end() ) ; // Remove dollar signs.
+  return s;
 }
 //____________________________________________________________________________
 
@@ -3945,67 +3977,71 @@ bool valor::util::IsMultiRingSystematic(PhysParamId_t p)
 //________________________________________________________________________________________
 bool valor::util::IsXSec(PhysParamId_t p)
 {
-    // N.B. Leave the old uncorrelated systematics that will not be used, since now they are all banff (kNuisBANFF*)
+  // N.B. Leave the old uncorrelated systematics that will not be used, since now they are all banff (kNuisBANFF*)
     
-    //Old uncorr xsec syst (as in the old code)
+  //Old uncorr xsec syst (as in the old code)
     
 #if defined(__USE_NIWG2015__)
-    if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
-        return true;
+  if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
+    return true;
 #endif
 
   switch(p) {
             
-        case (kNuisBANFFNorm2p2h              ): return true;
-        case (kNuisBANFFNorm2p2hBar           ): return true;
-        case (kNuisBANFFCA5              ): return true;
-        case (kNuisBANFFBgRES            ): return true;
-        case (kNuisBANFFMAQE             ): return true;
-        case (kNuisBANFFMARES            ): return true;
+  case (kNuisBANFFNorm2p2h         ): return true;
+  case (kNuisBANFFNorm2p2hBar      ): return true;
+  case (kNuisBANFFCA5              ): return true;
+  case (kNuisBANFFBgRES            ): return true;
+  case (kNuisBANFFMAQE             ): return true;
+  case (kNuisBANFFMARES            ): return true;
 #if (BANFF_BINS != 2)
-        case (kNuisBANFFSCCA             ): return true;
-        case (kNuisBANFFSCCV             ): return true;
+  case (kNuisBANFFSCCA             ): return true;
+  case (kNuisBANFFSCCV             ): return true;
 #endif
-        case (kNuisBANFFFermiMom         ): return true;
-        case (kNuisBANFFShapeCCoth       ): return true;
-        case (kNuisBANFFBindE            ): return true;
-        case (kNuisBANFFNormCCcoh        ): return true;
-        case (kNuisBANFFNormNCcoh        ): return true;
-        case (kNuisBANFFNormNCoth        ): return true;
-        case (kNuisBANFFNormNC1Gamma     ): return true;
+  case (kNuisBANFFFermiMom         ): return true;
+  case (kNuisBANFFShapeCCoth       ): return true;
+  case (kNuisBANFFBindE            ): return true;
+  case (kNuisBANFFNormCCcoh        ): return true;
+  case (kNuisBANFFNormNCcoh        ): return true;
+  case (kNuisBANFFNormNCoth        ): return true;
+  case (kNuisBANFFNormNC1Gamma     ): return true;
 
-        case (kNuisBANFFNormNuEToNuMu      ): return true;
-        case (kNuisBANFFNormNuEBarToNuMuBar): return true;
+  case (kNuisBANFFNormNuEToNuMu      ): return true;
+  case (kNuisBANFFNormNuEBarToNuMuBar): return true;
     //case (kNuisBANFFNormNuEToNuMu    ): return true;
     //case (kNuisBANFFNormNuEBarToNuMuBar): return true;
     
-        case (kRHCNuisBANFF2p2hBar        ): return true;
-        case (kRHCNuisBANFF2p2h           ): return true;
-        case (kRHCNuisBANFFCA5           ): return true;
-        case (kRHCNuisBANFFBgRES         ): return true;
-        case (kRHCNuisBANFFMAQE          ): return true;
-        case (kRHCNuisBANFFMARES         ): return true;
+  case (kRHCNuisBANFF2p2hBar       ): return true;
+  case (kRHCNuisBANFF2p2h          ): return true;
+  case (kRHCNuisBANFFCA5           ): return true;
+  case (kRHCNuisBANFFBgRES         ): return true;
+  case (kRHCNuisBANFFMAQE          ): return true;
+  case (kRHCNuisBANFFMARES         ): return true;
 #if (BANFF_BINS != 2)
-        case (kRHCNuisBANFFSCCA          ): return true;
-        case (kRHCNuisBANFFSCCV          ): return true;
+  case (kRHCNuisBANFFSCCA          ): return true;
+  case (kRHCNuisBANFFSCCV          ): return true;
 #endif
-        case (kRHCNuisBANFFFermiMom      ): return true;
-        case (kRHCNuisBANFFShapeCCoth    ): return true;
-        case (kRHCNuisBANFFBindE         ): return true;
-        case (kRHCNuisBANFFNormCCcoh     ): return true;
-        case (kRHCNuisBANFFNormNCcoh     ): return true;
-        case (kRHCNuisBANFFNormNCoth     ): return true;
-        case (kRHCNuisBANFFNormNuEToNuMu ): return true;
-        case (kRHCNuisBANFFNormNuEBarToNuMuBar): return true;
-        case (kRHCNuisBANFFNormNC1Gamma  ): return true;
-            
-            
-        default                           : return false;
-    }
+  case (kRHCNuisBANFFFermiMom      ): return true;
+  case (kRHCNuisBANFFShapeCCoth    ): return true;
+  case (kRHCNuisBANFFBindE         ): return true;
+  case (kRHCNuisBANFFNormCCcoh     ): return true;
+  case (kRHCNuisBANFFNormNCcoh     ): return true;
+  case (kRHCNuisBANFFNormNCoth     ): return true;
+  case (kRHCNuisBANFFNormNuEToNuMu ): return true;
+  case (kRHCNuisBANFFNormNuEBarToNuMuBar): return true;
+  case (kRHCNuisBANFFNormNC1Gamma  ): return true;
 
-
-    
-    return false;
+  case ( kNuisBANFFBeRPA_A        ) : return true;
+  case ( kNuisBANFFBeRPA_B        ) : return true;
+  case ( kNuisBANFFBeRPA_D        ) : return true;
+  case ( kNuisBANFFBeRPA_E        ) : return true;
+  case ( kNuisBANFFBeRPA_U        ) : return true;
+  case ( kNuisBANFFShape2p2h      ) : return true;
+  case ( kNuisBANFFShape2p2hBar   ) : return true;
+            
+  default                           : return false;
+  }
+  return false;
 }
 //________________________________________________________________________________________
 bool valor::util::IsSCC(PhysParamId_t p)
@@ -4026,9 +4062,9 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
 {
   //Determine if the BANFF nuisance parameter is normalisation
   switch (p) {
-    case( kNuisBANFFNorm2p2h                 ) : return true; break;
-    case( kNuisBANFFNorm2p2hBar              ) : return true; break;
-      //case( kNuisBANFFBgRES               ) : return true; break;
+    case( kNuisBANFFNorm2p2h            ) : return true; break;
+    case( kNuisBANFFNorm2p2hBar         ) : return true; break;
+
     case( kNuisBANFFNormCCcoh           ) : return true; break;
     case( kNuisBANFFNormNCcoh           ) : return true; break;
     case( kNuisBANFFNormNCoth           ) : return true; break;
@@ -4036,9 +4072,9 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
     case( kNuisBANFFNormNuEToNuMu       ) : return true; break;
     case( kNuisBANFFNormNuEBarToNuMuBar ) : return true; break;
 
-    case( kRHCNuisBANFF2p2h                ) : return true; break;
-    case( kRHCNuisBANFF2p2hBar             ) : return true; break;
-      //case( kRHCNuisBANFFBgRES              ) : return true; break;
+    case( kRHCNuisBANFF2p2h               ) : return true; break;
+    case( kRHCNuisBANFF2p2hBar            ) : return true; break;
+
     case( kRHCNuisBANFFNormCCcoh          ) : return true; break;
     case( kRHCNuisBANFFNormNCcoh          ) : return true; break;
     case( kRHCNuisBANFFNormNCoth          ) : return true; break;
@@ -4073,44 +4109,60 @@ bool valor::util::IsEScale(conv::PhysParamId_t p)
 //____________________________________________________________________________
 bool valor::util::IsUsingSplines(PhysParamId_t p)
 {
-    if(p >= kNuisXSecFermiMom && p <= kNuisXSecBindE)
-        return true;
-    if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecBindE)
-        return true;
-    if(p == kNuisBANFFMAQE || p == kRHCNuisBANFFMAQE)
-        return true;
+  if(p >= kNuisXSecFermiMom && p <= kNuisXSecBindE)
+    return true;
+  if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecBindE)
+    return true;
+  if(p == kNuisBANFFMAQE || p == kRHCNuisBANFFMAQE)
+    return true;
     
-    switch (p) {
-        case kNuisBANFFMAQE:
-        case kNuisBANFFMARES:
+  switch (p) {
+  case kNuisBANFFMAQE:
+  case kNuisBANFFMARES:
 #if (BANFF_BINS != 2)
-        case kNuisBANFFSCCA:
-        case kNuisBANFFSCCV:
+  case kNuisBANFFSCCA:
+  case kNuisBANFFSCCV:
 #endif
-        case kNuisBANFFCA5:
-        case kNuisBANFFShapeCCoth:
-        case kNuisBANFFFermiMom:
-        case kNuisBANFFBindE:
-        case kNuisBANFFBgRES:
-            return true;
+  case kNuisBANFFCA5:
+  case kNuisBANFFShapeCCoth:
+  case kNuisBANFFFermiMom:
+  case kNuisBANFFBindE:
+  case kNuisBANFFBgRES:
             
-        case kRHCNuisBANFFMAQE:
-        case kRHCNuisBANFFMARES:
+  case kNuisBANFFBeRPA_A:     
+  case kNuisBANFFBeRPA_B:    
+  case kNuisBANFFBeRPA_D:     
+  case kNuisBANFFBeRPA_E:     
+  case kNuisBANFFBeRPA_U:     
+  case kNuisBANFFShape2p2h:   
+  case kNuisBANFFShape2p2hBar:
+    return true;
+            
+  case kRHCNuisBANFFMAQE:
+  case kRHCNuisBANFFMARES:
 #if (BANFF_BINS != 2)
-        case kRHCNuisBANFFSCCA:
-        case kRHCNuisBANFFSCCV:
+  case kRHCNuisBANFFSCCA:
+  case kRHCNuisBANFFSCCV:
 #endif
-        case kRHCNuisBANFFCA5:
-        case kRHCNuisBANFFShapeCCoth:
-        case kRHCNuisBANFFFermiMom:
-        case kRHCNuisBANFFBindE:
-        case kRHCNuisBANFFBgRES:
-            return true;
+  case kRHCNuisBANFFCA5:
+  case kRHCNuisBANFFShapeCCoth:
+  case kRHCNuisBANFFFermiMom:
+  case kRHCNuisBANFFBindE:
+  case kRHCNuisBANFFBgRES:
+
+  case kRHCNuisBANFFBeRPA_A:     
+  case kRHCNuisBANFFBeRPA_B:    
+  case kRHCNuisBANFFBeRPA_D:     
+  case kRHCNuisBANFFBeRPA_E:     
+  case kRHCNuisBANFFBeRPA_U:     
+  case kRHCNuisBANFFShape2p2h:   
+  case kRHCNuisBANFFShape2p2hBar:
+    return true;
             
-        default:
-            return false;
-    }
+  default:
     return false;
+  }
+  return false;
 }
 //____________________________________________________________________________
 bool valor::util::IsEff1Rmu(PhysParamId_t p)
@@ -4314,71 +4366,96 @@ bool valor::util::IsBANFF(PhysParamId_t p)
 //____________________________________________________________________________
 string valor::util::AsStringSpline(PhysParamId_t p)
 {
-    switch(p) {
-        case ( kNuisBANFFMAQE           ) :
-        case ( kRHCNuisBANFFMAQE        ) :
-            return "maqe";
-        case ( kNuisBANFFMARES          ) :
-        case ( kRHCNuisBANFFMARES       ) :
-            return "manff";
+  switch(p) {
+  case ( kNuisBANFFMAQE           ) :
+  case ( kRHCNuisBANFFMAQE        ) :
+    return "maqe";
+  case ( kNuisBANFFMARES          ) :
+  case ( kRHCNuisBANFFMARES       ) :
+    return "manff";
             
-            // NEW XSEC
-        case ( kNuisBANFFCA5            ) :
-        case ( kRHCNuisBANFFCA5         ) :
-            return "ca5";
-        case ( kNuisBANFFBgRES          ) :
-        case ( kRHCNuisBANFFBgRES       ) :
-            return "bgscl";
-            // NEW SPLIT ANA
+  // NEW XSEC
+  case ( kNuisBANFFCA5            ) :
+  case ( kRHCNuisBANFFCA5         ) :
+    return "ca5";
+  case ( kNuisBANFFBgRES          ) :
+  case ( kRHCNuisBANFFBgRES       ) :
+    return "bgscl";
+  // NEW SPLIT ANA
 #if (BANFF_BINS != 2)
-        case ( kNuisBANFFSCCV           ) :
-        case ( kRHCNuisBANFFSCCV        ) :
-            return "sccvec";
-        case ( kNuisBANFFSCCA           ) :
-        case ( kRHCNuisBANFFSCCA        ) :
-            return "sccaxl";
+  case ( kNuisBANFFSCCV           ) :
+  case ( kRHCNuisBANFFSCCV        ) :
+    return "sccvec";
+  case ( kNuisBANFFSCCA           ) :
+  case ( kRHCNuisBANFFSCCA        ) :
+    return "sccaxl";
 #endif
-        case ( kNuisBANFFFermiMom       ) :
-        case ( kRHCNuisBANFFFermiMom    ) :
-            return "pfo";
-        case ( kNuisBANFFShapeCCoth     ) :
-        case ( kRHCNuisBANFFShapeCCoth  ) :
-            return "dismpishp";
-        case ( kNuisBANFFBindE          ) :
-        case ( kRHCNuisBANFFBindE       ) :
-            return "ebo";
-            //
+  case ( kNuisBANFFFermiMom       ) :
+  case ( kRHCNuisBANFFFermiMom    ) :
+    return "pfo";
+  case ( kNuisBANFFShapeCCoth     ) :
+  case ( kRHCNuisBANFFShapeCCoth  ) :
+    return "dismpishp";
+  case ( kNuisBANFFBindE          ) :
+  case ( kRHCNuisBANFFBindE       ) :
+    return "ebo";
+  //
             
-            // NEW XSEC
-        case ( kNuisXSecRPA             ) :
-        case ( kRHCNuisXSecRPA          ) :
-            return "rpa";
+  // NEW XSEC
+  case ( kNuisXSecRPA             ) :
+  case ( kRHCNuisXSecRPA          ) :
+    return "rpa";
             
-        case ( kNuisXSecBindE           ) :
-        case ( kRHCNuisXSecBindE        ) :
-            return "ebo";
-        case ( kNuisXSecFermiMom        ) :
-        case ( kRHCNuisXSecFermiMom     ) :
-            return "pfo";
-        case ( kNuisXSecShapeCCoth      ) :
-        case ( kRHCNuisXSecShapeCCoth   ) :
-            return "dismpishp";
-        case ( kNuisXSecPiLessDelta     ) :
-        case ( kRHCNuisXSecPiLessDelta  ) :
-            return "piless";
-        case ( kNuisXSecSpecFunc        ) :
-        case ( kRHCNuisXSecSpecFunc     ) :
-            return "sf";
-        case ( kNuisXSecWshape          ) :
-        case ( kRHCNuisXSecWshape       ) :
-            return "wshape";
+  case ( kNuisXSecBindE           ) :
+  case ( kRHCNuisXSecBindE        ) :
+    return "ebo";
+  case ( kNuisXSecFermiMom        ) :
+  case ( kRHCNuisXSecFermiMom     ) :
+    return "pfo";
+  case ( kNuisXSecShapeCCoth      ) :
+  case ( kRHCNuisXSecShapeCCoth   ) :
+    return "dismpishp";
+  case ( kNuisXSecPiLessDelta     ) :
+  case ( kRHCNuisXSecPiLessDelta  ) :
+    return "piless";
+  case ( kNuisXSecSpecFunc        ) :
+  case ( kRHCNuisXSecSpecFunc     ) :
+    return "sf";
+  case ( kNuisXSecWshape          ) :
+  case ( kRHCNuisXSecWshape       ) :
+    return "wshape";
             
-        default:
-            break;
-    }
-    std::cerr<<"util/AsStringSpline failed for parameter: "<<util::AsString(p)
-    <<" ("<<util::RawParamAsString(p)<<")"<<std::endl;
-    return "--";
+  case ( kNuisBANFFBeRPA_A         ) : 
+  case ( kRHCNuisBANFFBeRPA_A      ) : 
+    return "erpa_A";    break;
+  case ( kNuisBANFFBeRPA_B         ) : 
+  case ( kRHCNuisBANFFBeRPA_B      ) : 
+    return "erpa_B";    break;
+  case ( kNuisBANFFBeRPA_D         ) : 
+  case ( kRHCNuisBANFFBeRPA_D      ) : 
+    return "erpa_D";    break;
+  case ( kNuisBANFFBeRPA_E         ) : 
+  case ( kRHCNuisBANFFBeRPA_E      ) : 
+    return "erpa_E";    break;
+  case ( kNuisBANFFBeRPA_U         ) : 
+  case ( kRHCNuisBANFFBeRPA_U      ) : 
+    return "erpa_U";    break;
+  case ( kNuisBANFFShape2p2h       ) : 
+  case ( kRHCNuisBANFFShape2p2h    ) : 
+    return "mecpdd_mec";     break;
+  case ( kNuisBANFFShape2p2hBar    ) : 
+  case ( kRHCNuisBANFFShape2p2hBar ) : 
+    return "mecpdd_mec";  break;
+
+
+
+
+  default:
+    break;
+  }
+  std::cerr<<"util/AsStringSpline failed for parameter: "<<util::AsString(p)
+           <<" ("<<util::RawParamAsString(p)<<")"<<std::endl;
+  return "--";
 }
 //____________________________________________________________________________
 string valor::util::AsStringCompact_KDI(PhysParamId_t p)
@@ -4428,56 +4505,68 @@ string valor::util::AsStringSimple(PhysParamId_t p)
 }
 //____________________________________________________________________________
 string valor::util::AsStringNIWG(PhysParamId_t p)
-{
-    
-    switch(p) {
+{    
+  switch(p) {
             
-        case (kNuisBANFFNorm2p2h              ): return "2p2h_O";
-        case (kNuisBANFFNorm2p2hBar           ): return "2p2h_NUBAR";
-        case (kNuisBANFFCA5              ): return "CA5";
-        case (kNuisBANFFBgRES            ): return "BgRES";
-        case (kNuisBANFFMAQE             ): return "MAQE";
-        case (kNuisBANFFMARES            ): return "MANFFRES";
+  case (kNuisBANFFNorm2p2h         ): return "2p2h_NORM_O";
+  case (kNuisBANFFNorm2p2hBar      ): return "2p2h_NORM_NUBAR_O";
+  case (kNuisBANFFCA5              ): return "CA5";
+  case (kNuisBANFFBgRES            ): return "BgRES";
+  case (kNuisBANFFMAQE             ): return "MAQE";
+  case (kNuisBANFFMARES            ): return "MANFFRES";
 #if (BANFF_BINS != 2)
-        case (kNuisBANFFSCCA             ): return "SCCA";
-        case (kNuisBANFFSCCV             ): return "SCCV";
+  case (kNuisBANFFSCCA             ): return "SCCA";
+  case (kNuisBANFFSCCV             ): return "SCCV";
 #endif
-        case (kNuisBANFFFermiMom         ): return "pF_O";
-        case (kNuisBANFFShapeCCoth       ): return "DISMPISHP";
-        case (kNuisBANFFBindE            ): return "EB_O";
-        case (kNuisBANFFNormCCcoh        ): return "CCCOH_O_0";
-        case (kNuisBANFFNormNCcoh        ): return "NCCOH_0";
-        case (kNuisBANFFNormNCoth        ): return "NCOTHER_FAR_0";
-        case (kNuisBANFFNormNC1Gamma     ): return "NC1GAMMA_0";
+  case (kNuisBANFFFermiMom         ): return "pF_O";
+  case (kNuisBANFFShapeCCoth       ): return "DISMPISHP";
+  case (kNuisBANFFBindE            ): return "EB_O";
+  case (kNuisBANFFNormCCcoh        ): return "CCCOH_O_0";
+  case (kNuisBANFFNormNCcoh        ): return "NCCOH_0";
+  case (kNuisBANFFNormNCoth        ): return "NCOTHER_FAR_0";
+  case (kNuisBANFFNormNC1Gamma     ): return "NC1GAMMA_0";
 
-        case (kNuisBANFFNormNuEToNuMu      ): return "SigmaNue";
-        case (kNuisBANFFNormNuEBarToNuMuBar): return "SigmaNuebar";
-	  //case (kNuisBANFFNormNuEToNuMu    ): return "CCNue";
-	  //case (kNuisBANFFNormNuEBarToNuMuBar): return "CCNueBar";
-	  
-        case (kRHCNuisBANFF2p2hBar        ): return "2p2h_NUBAR";
-        case (kRHCNuisBANFF2p2h           ): return "2p2h_O";
-        case (kRHCNuisBANFFCA5           ): return "CA5";
-        case (kRHCNuisBANFFBgRES         ): return "BgRES";
-        case (kRHCNuisBANFFMAQE          ): return "MAQE";
-        case (kRHCNuisBANFFMARES         ): return "MANFFRES";
+  case (kNuisBANFFNormNuEToNuMu      ): return "SigmaNue";
+  case (kNuisBANFFNormNuEBarToNuMuBar): return "SigmaNuebar";
+ 
+  case (kNuisBANFFBeRPA_A          ) :return "BeRPA_A";    
+  case (kNuisBANFFBeRPA_B          ) :return "BeRPA_B";   
+  case (kNuisBANFFBeRPA_D          ) :return "BeRPA_D";    
+  case (kNuisBANFFBeRPA_E          ) :return "BeRPA_E";    
+  case (kNuisBANFFBeRPA_U          ) :return "BeRPA_U";    
+  case (kNuisBANFFShape2p2h        ) :return "2p2h_shape_O_nu";  
+  case (kNuisBANFFShape2p2hBar     ) :return "2p2h_shape_O_nubar";
+
+  case (kRHCNuisBANFF2p2h          ): return "2p2h_NORM_O";
+  case (kRHCNuisBANFF2p2hBar       ): return "2p2h_NORM_NUBAR_O";
+  case (kRHCNuisBANFFCA5           ): return "CA5";
+  case (kRHCNuisBANFFBgRES         ): return "BgRES";
+  case (kRHCNuisBANFFMAQE          ): return "MAQE";
+  case (kRHCNuisBANFFMARES         ): return "MANFFRES";
 #if (BANFF_BINS != 2)
-        case (kRHCNuisBANFFSCCA          ): return "SCCA";
-        case (kRHCNuisBANFFSCCV          ): return "SCCV";
+  case (kRHCNuisBANFFSCCA          ): return "SCCA";
+  case (kRHCNuisBANFFSCCV          ): return "SCCV";
 #endif
-        case (kRHCNuisBANFFFermiMom      ): return "pF_O";
-        case (kRHCNuisBANFFShapeCCoth    ): return "DISMPISHP";
-        case (kRHCNuisBANFFBindE         ): return "EB_O";
-        case (kRHCNuisBANFFNormCCcoh     ): return "CCCOH_O_0";
-        case (kRHCNuisBANFFNormNCcoh     ): return "NCCOH_0";
-        case (kRHCNuisBANFFNormNCoth     ): return "NCOTHER_FAR_0";
-        case (kRHCNuisBANFFNormNuEToNuMu ): return "CCNue";
-        case (kRHCNuisBANFFNormNuEBarToNuMuBar): return "CCNueBar";
-        case (kRHCNuisBANFFNormNC1Gamma  ): return "NC1GAMMA_0";
-            
-            
-        default                           : return "--";
-    }
+  case (kRHCNuisBANFFFermiMom      ): return "pF_O";
+  case (kRHCNuisBANFFShapeCCoth    ): return "DISMPISHP";
+  case (kRHCNuisBANFFBindE         ): return "EB_O";
+  case (kRHCNuisBANFFNormCCcoh     ): return "CCCOH_O_0";
+  case (kRHCNuisBANFFNormNCcoh     ): return "NCCOH_0";
+  case (kRHCNuisBANFFNormNCoth     ): return "NCOTHER_FAR_0";
+  case (kRHCNuisBANFFNormNuEToNuMu ): return "CCNue";
+  case (kRHCNuisBANFFNormNuEBarToNuMuBar): return "CCNueBar";
+  case (kRHCNuisBANFFNormNC1Gamma  ): return "NC1GAMMA_0";
+
+  case (kRHCNuisBANFFBeRPA_A       ) :return "BeRPA_A";    
+  case (kRHCNuisBANFFBeRPA_B       ) :return "BeRPA_B";   
+  case (kRHCNuisBANFFBeRPA_D       ) :return "BeRPA_D";    
+  case (kRHCNuisBANFFBeRPA_E       ) :return "BeRPA_E";    
+  case (kRHCNuisBANFFBeRPA_U       ) :return "BeRPA_U";    
+  case (kRHCNuisBANFFShape2p2h     ) :return "2p2h_shape_O_nu";  
+  case (kRHCNuisBANFFShape2p2hBar  ) :return "2p2h_shape_O_nubar";
+          
+  default                           : return "--";
+  }
 }
 //____________________________________________________________________________
 valor::conv::PhysParamId_t

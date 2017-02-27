@@ -74,7 +74,7 @@ namespace valor {
         static const PhysParamId_t kListOfBANFFParams[kNumOfParamsInBANFFfit] =
         {
             // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2017__)
             // NEW XSEC
             kNuisBANFF00 ,
             kNuisBANFF01 ,
@@ -321,8 +321,8 @@ namespace valor {
             false,                // kNuisBANFFNormNCcoh
             false,                // kNuisBANFFNormNCoth
             false,                // kNuisBANFFNormNuEToNuMu
-            false, 				  // kNuisBANFFNormNC1Gamma
-            false, 				  // kNuisBANFFNormNuEBarToNuMuBar
+            false,                // kNuisBANFFNormNC1Gamma
+            false,                // kNuisBANFFNormNuEBarToNuMuBar
             false,                // kNuisBANFFNorm2p2hBar
             
             //
@@ -377,8 +377,8 @@ namespace valor {
             false,                // kRHCNuisBANFFNormNCcoh
             false,                // kRHCNuisBANFFNormNCoth
             false,                // kRHCNuisBANFFNormNuEToNuMu
-            false, 				  // kNuisBANFFNormNC1Gamma
-            false, 				  // kRHCNuisBANFFNormNuEBarToNuMuBar
+            false,                // kNuisBANFFNormNC1Gamma
+            false,                // kRHCNuisBANFFNormNuEBarToNuMuBar
             false,                // kRHCNuisBANFF2p2hBar
             
             //
@@ -463,7 +463,7 @@ namespace valor {
             false,                // kRHCNuisBANFFNormNCcoh
             false,                // kRHCNuisBANFFNormNCoth
             false,                // kRHCNuisBANFFNormNuEToNuMu
-            false, 				  // kRHCNuisBANFFNormNC1Gamma
+            false,                // kRHCNuisBANFFNormNC1Gamma
             false,                // kRHCNuisBANFFNormNuEBarToNuMuBar
             false,                // kRHCNuisBANFF2p2hBar
             
@@ -523,7 +523,7 @@ namespace valor {
             0,                    // kNuisBANFFNormNCcoh
             0,                    // kNuisBANFFNormNCoth
             0,                    // kNuisBANFFNormNuEToNuMu
-            0, 				     // kNuisBANFFNormNC1Gamma
+            0,                    // kNuisBANFFNormNC1Gamma
             0,                    // kNuisBANFFNormNuEBarToNuMuBar
             0,                    // kNuisBANFFNorm2p2hBar
             
@@ -579,7 +579,7 @@ namespace valor {
             0,                    // kRHCNuisBANFFNormNCcoh
             0,                    // kRHCNuisBANFFNormNCoth
             0,                    // kRHCNuisBANFFNormNuEToNuMu
-            0, 				     // kRHCNuisBANFFNormNC1Gamma
+            0,                    // kRHCNuisBANFFNormNC1Gamma
             0,                    // kRHCNuisBANFFNormNuEBarToNuMuBar
             0,                    // kRHCNuisBANFF2p2hBar
             
@@ -667,7 +667,7 @@ namespace valor {
             0,                    // kRHCNuisBANFFNormNCcoh
             0,                    // kRHCNuisBANFFNormNCoth
             0,                    // kRHCNuisBANFFNormNuEToNuMu
-            0, 				      // kRHCNuisBANFFNormNC1Gamma
+            0,                    // kRHCNuisBANFFNormNC1Gamma
             0,                    // kNuisBANFFNormNuEBarToNuMuBar
             0,                    // kRHCNuisBANFF2p2hBar
             
@@ -730,7 +730,7 @@ namespace valor {
             {  -1,   -1 },        // kNuisBANFFNormNCcoh, not a flux param
             {  -1,   -1 },        // kNuisBANFFNormNCoth, not a flux param
             {  -1,   -1 },        // kNuisBANFFNormNuEToNuMu, not a flux param
-            {  -1,   -1 },	 	  // kNuisBANFFNormNC1Gamma, not a flux param
+            {  -1,   -1 },        // kNuisBANFFNormNC1Gamma, not a flux param
             {  -1,   -1 },        // kNuisBANFFNormNuEBarToNuMuBar, not a flux param
             {  -1,   -1 },        // kNuisBANFFNorm2p2hBar not a flux param
             
@@ -743,7 +743,7 @@ namespace valor {
         static const double kEtrueRangeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit][2] =
         {
             // NEW XSEC NIWG            
-#if defined(__USE_NIWG2015__)
+#if defined(__USE_NIWG2015__)s
             // NEW XSEC
             // numu
             { 0.0,  0.7 },        // kRHCNuisBANFF00
@@ -793,7 +793,7 @@ namespace valor {
             {  -1,   -1 },        // kRHCNuisBANFFNormNCcoh, not a flux param
             {  -1,   -1 },        // kRHCNuisBANFFNormNCoth, not a flux param
             {  -1,   -1 },        // kRHCNuisBANFFNormNuEToNuMu, not a flux param
-            {  -1,   -1 },	 	  // kRHCNuisBANFFNormNC1Gamma, not a flux param
+            {  -1,   -1 },        // kRHCNuisBANFFNormNC1Gamma, not a flux param
             {  -1,   -1 },        // kNuisBANFFNormNuEBarToNuMuBar, not a flux param
             {  -1,   -1 },        // kRHCNuisBANFF2p2hBar not a flux param
 #endif
@@ -888,7 +888,7 @@ namespace valor {
             {  -1,   -1 },        // kNuisBANFFNormNCcoh, not a flux param
             {  -1,   -1 },        // kNuisBANFFNormNCoth, not a flux param
             {  -1,   -1 },        // kNuisBANFFNormNuEToNuMu, not a flux param
-            {  -1,   -1 },	 	  // kNuisBANFFNormNC1Gamma, not a flux param
+            {  -1,   -1 },        // kNuisBANFFNormNC1Gamma, not a flux param
             {  -1,   -1 },        // kNuisBANFFNormNuEBarToNuMuBar, not a flux param
             {  -1,   -1 },        // kNuisBANFFNorm2p2hBar not a flux param
             

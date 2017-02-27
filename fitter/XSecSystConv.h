@@ -224,8 +224,8 @@ namespace valor {
             true,                      // kNuisBANFFNormNCcoh
             true,                      // kNuisBANFFNormNCoth
             true,                      // kNuisBANFFNormNuEToNuMu
-            true,                     // kNuisBANFFNormNC1Gamma
-            true,                     // kNuisBANFFNormNuEBarToNuMuBar
+            true,                      // kNuisBANFFNormNC1Gamma
+            true,                      // kNuisBANFFNormNuEBarToNuMuBar
             true,                      // kNuisBANFFNorm2p2hBar
 
 #endif
@@ -256,8 +256,8 @@ namespace valor {
             true,                      // kRHCNuisBANFFNormNCcoh
             true,                      // kRHCNuisBANFFNormNCoth
             true,                      // kRHCNuisBANFFNormNuEToNuMu
-            true,                     // kRHCNuisBANFFNormNC1Gamma
-            true,                     // kRHCNuisBANFFNormNuEBarToNuMuBar
+            true,                      // kRHCNuisBANFFNormNC1Gamma
+            true,                      // kRHCNuisBANFFNormNuEBarToNuMuBar
             true,                      // kRHCNuisBANFF2p2hBar
 
 #endif
