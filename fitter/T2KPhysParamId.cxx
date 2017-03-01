@@ -4508,26 +4508,26 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
 {    
   switch(p) {
             
-  case (kNuisBANFFNorm2p2h         ): return "2p2h_NORM_O";
-  case (kNuisBANFFNorm2p2hBar      ): return "2p2h_NORM_NUBAR_O";
+  case (kNuisBANFFNorm2p2h         ): return "2p2h_norm_nu";
+  case (kNuisBANFFNorm2p2hBar      ): return "2p2h_norm_nubar";
   case (kNuisBANFFCA5              ): return "CA5";
-  case (kNuisBANFFBgRES            ): return "BgRES";
+  case (kNuisBANFFBgRES            ): return "ISO_BKG";
   case (kNuisBANFFMAQE             ): return "MAQE";
-  case (kNuisBANFFMARES            ): return "MANFFRES";
+  case (kNuisBANFFMARES            ): return "MARES";
 #if (BANFF_BINS != 2)
   case (kNuisBANFFSCCA             ): return "SCCA";
   case (kNuisBANFFSCCV             ): return "SCCV";
 #endif
   case (kNuisBANFFFermiMom         ): return "pF_O";
-  case (kNuisBANFFShapeCCoth       ): return "DISMPISHP";
-  case (kNuisBANFFBindE            ): return "EB_O";
-  case (kNuisBANFFNormCCcoh        ): return "CCCOH_O_0";
-  case (kNuisBANFFNormNCcoh        ): return "NCCOH_0";
-  case (kNuisBANFFNormNCoth        ): return "NCOTHER_FAR_0";
-  case (kNuisBANFFNormNC1Gamma     ): return "NC1GAMMA_0";
+  case (kNuisBANFFShapeCCoth       ): return "CC_DIS";
+  case (kNuisBANFFBindE            ): return "Eb_O_nu";
+  case (kNuisBANFFNormCCcoh        ): return "CC_Coh_O";
+  case (kNuisBANFFNormNCcoh        ): return "NC_Coh";
+  case (kNuisBANFFNormNCoth        ): return "NC_other_far";
+  case (kNuisBANFFNormNC1Gamma     ): return "NC_1gamma";
 
-  case (kNuisBANFFNormNuEToNuMu      ): return "SigmaNue";
-  case (kNuisBANFFNormNuEBarToNuMuBar): return "SigmaNuebar";
+  case (kNuisBANFFNormNuEToNuMu      ): return "nue_numu";
+  case (kNuisBANFFNormNuEBarToNuMuBar): return "nuebar_numubar";
  
   case (kNuisBANFFBeRPA_A          ) :return "BeRPA_A";    
   case (kNuisBANFFBeRPA_B          ) :return "BeRPA_B";   
@@ -4537,25 +4537,25 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case (kNuisBANFFShape2p2h        ) :return "2p2h_shape_O_nu";  
   case (kNuisBANFFShape2p2hBar     ) :return "2p2h_shape_O_nubar";
 
-  case (kRHCNuisBANFF2p2h          ): return "2p2h_NORM_O";
+  case (kRHCNuisBANFF2p2h          ): return "2p2h_norm_O";
   case (kRHCNuisBANFF2p2hBar       ): return "2p2h_NORM_NUBAR_O";
   case (kRHCNuisBANFFCA5           ): return "CA5";
-  case (kRHCNuisBANFFBgRES         ): return "BgRES";
+  case (kRHCNuisBANFFBgRES         ): return "ISO_BKG";
   case (kRHCNuisBANFFMAQE          ): return "MAQE";
-  case (kRHCNuisBANFFMARES         ): return "MANFFRES";
+  case (kRHCNuisBANFFMARES         ): return "MARES";
 #if (BANFF_BINS != 2)
   case (kRHCNuisBANFFSCCA          ): return "SCCA";
   case (kRHCNuisBANFFSCCV          ): return "SCCV";
 #endif
   case (kRHCNuisBANFFFermiMom      ): return "pF_O";
-  case (kRHCNuisBANFFShapeCCoth    ): return "DISMPISHP";
-  case (kRHCNuisBANFFBindE         ): return "EB_O";
-  case (kRHCNuisBANFFNormCCcoh     ): return "CCCOH_O_0";
-  case (kRHCNuisBANFFNormNCcoh     ): return "NCCOH_0";
-  case (kRHCNuisBANFFNormNCoth     ): return "NCOTHER_FAR_0";
-  case (kRHCNuisBANFFNormNuEToNuMu ): return "CCNue";
-  case (kRHCNuisBANFFNormNuEBarToNuMuBar): return "CCNueBar";
-  case (kRHCNuisBANFFNormNC1Gamma  ): return "NC1GAMMA_0";
+  case (kRHCNuisBANFFShapeCCoth    ): return "CC_DIS";
+  case (kRHCNuisBANFFBindE         ): return "Eb_O_nu";
+  case (kRHCNuisBANFFNormCCcoh     ): return "CC_Coh_O";
+  case (kRHCNuisBANFFNormNCcoh     ): return "NC_Coh";
+  case (kRHCNuisBANFFNormNCoth     ): return "NC_other_far";
+  case (kRHCNuisBANFFNormNuEToNuMu ): return "nue_numu";
+  case (kRHCNuisBANFFNormNuEBarToNuMuBar): return "nuebar_numubar";
+  case (kRHCNuisBANFFNormNC1Gamma  ): return "NC_1gamma";
 
   case (kRHCNuisBANFFBeRPA_A       ) :return "BeRPA_A";    
   case (kRHCNuisBANFFBeRPA_B       ) :return "BeRPA_B";   

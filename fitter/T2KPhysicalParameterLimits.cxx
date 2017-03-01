@@ -159,18 +159,21 @@ void valor::T2KPhysicalParameterLimits::SetDefaults(void)
   // MA
   fParamMinima[conv::kNuisBANFFMAQE    ] = 0;
   fParamMinima[conv::kRHCNuisBANFFMAQE ] = 0;
+  
   fParamMinima[conv::kNuisBANFFMARES   ] = 0;
   fParamMinima[conv::kRHCNuisBANFFMARES] = 0;
   
   // EBO
   fParamMinima[conv::kNuisBANFFBindE    ] = 0.44;
   fParamMaxima[conv::kNuisBANFFBindE    ] = 1.56;
+  
   fParamMinima[conv::kRHCNuisBANFFBindE ] = 0.44;
   fParamMaxima[conv::kRHCNuisBANFFBindE ] = 1.56;
   
   // PFO
   fParamMinima[conv::kNuisBANFFFermiMom    ] = 0.89;
   fParamMaxima[conv::kNuisBANFFFermiMom    ] = 1.22;
+  
   fParamMinima[conv::kRHCNuisBANFFFermiMom ] = 0.89;
   fParamMaxima[conv::kRHCNuisBANFFFermiMom ] = 1.22;
   

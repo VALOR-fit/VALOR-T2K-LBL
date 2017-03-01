@@ -137,7 +137,7 @@ void SuperkExpectation::CheckPhysParamId(void)
   LOG("SuperkExpectation", pINFO) << "Check FHC BANFF PhysParamId"; 
   for (int i=0; i<conv::kNumOfParamsInBANFFfit;i++){
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kNuisBANFF00);
-    PhysParamId_t p_list = ( PhysParamId_t)kListOfBANFFParams[i];
+    PhysParamId_t p_list = (PhysParamId_t)kListOfBANFFParams[i];
 #ifdef __show_physparamid__
     std::cout << util::AsString(p) << endl;
 #endif

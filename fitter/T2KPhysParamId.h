@@ -32,7 +32,7 @@ namespace conv {
    
    
    /*
-    * List of 2011 analysis nuisance parameters 
+    * List of 2017 analysis nuisance parameters 
     * -----------------------------------------
    */
 
@@ -123,7 +123,7 @@ static const PhysParamId_t kNuisBANFFSCCV     = kNuis057;  // Second current vec
 #endif
 static const PhysParamId_t kNuisBANFFFermiMom            = kNuis058;   // Fermi momentum
 static const PhysParamId_t kNuisBANFFShapeCCoth          = kNuis059;   // CC other shape
-static const PhysParamId_t kNuisBANFFBindE               = kNuis060;   // Binding energy
+static const PhysParamId_t kNuisBANFFBindE               = kNuis060;   // Binding energy, not in 2017 summer analysis
 static const PhysParamId_t kNuisBANFFNormCCcoh           = kNuis061;   // CC coherent norm
 static const PhysParamId_t kNuisBANFFNormNCcoh           = kNuis062;   // NC coh norm
 static const PhysParamId_t kNuisBANFFNormNCoth           = kNuis063;   // NC other norm

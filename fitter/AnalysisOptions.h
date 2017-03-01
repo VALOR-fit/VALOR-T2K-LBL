@@ -49,10 +49,10 @@ Split valor::conv namespace into several smaller files
 //#define __FULLY_CORRELATED__ // fully correlated rhc-fhc samples
 #endif
 
-// XSEC (either niwg2015 or niwg2017)
+// XSEC (either niwg2015 or niwg2016)
+#define __USE_NIWG2016__
+#ifndef __USE_NIWG2016__
 #define __USE_NIWG2015__
-#ifndef __USE_NIWG2015__
-#define __USE_NIWG2013__
 #endif
 
 // NEW SKDETFSI (either 2013 or 2015)
