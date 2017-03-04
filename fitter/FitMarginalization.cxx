@@ -1325,10 +1325,10 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
           skexp->TweakAllSystematics();
           //skexp->PrintSystematicVariations();
           TVectorD twkv(skexp->GetBANFF()->CurrentValues());
-          double 2p2hval = skexp->GetBANFF()->InitialValue(conv::kNuisBANFFNorm2p2h);
+          double mecval = skexp->GetBANFF()->InitialValue(conv::kNuisBANFFNorm2p2h);
           int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFNorm2p2h);
-          twkv[ip] = 2p2hval;
-          //cout << "ip = " << ip << " --> " << 2p2hval << endl;
+          twkv[ip] = mecval;
+          //cout << "ip = " << ip << " --> " << mecval << endl;
           skexp->GetBANFF()->Tweak(true,&twkv);
           //skexp->PrintSystematicVariations();
 #else

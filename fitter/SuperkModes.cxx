@@ -1292,7 +1292,7 @@ int valor::util::AppliesToNC1Gamma(vector<valor::conv::SuperkMode_t> modes)
      find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        == modes.end() &&
      find(modes.begin(), modes.end(), kSKmNuEBarNC1Gamma)     == modes.end())
     return 0;
-  //effects all NC1Gamma
+  //Affects all NC1Gamma
   if(find(modes.begin(), modes.end(), kSKmNuMuNC1Gamma)       != modes.end() &&
      find(modes.begin(), modes.end(), kSKmNuMuBarNC1Gamma)    != modes.end() &&
      find(modes.begin(), modes.end(), kSKmNuENC1Gamma)        != modes.end() &&
@@ -1683,7 +1683,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmNuMuCCQE        ) : return "numuccqe";          break;
         case ( kSKmNuMuCC1pi       ) : return "numucc1pi";         break;
         case ( kSKmNuMuCCcoh       ) : return "numucccoh";         break;
-        case ( kSKmNuMuCC2p2h       ) : return "numuccmec";         break;
+        case ( kSKmNuMuCC2p2h      ) : return "numumec";         break;
         case ( kSKmNuMuCCoth       ) : return "numuccoth";         break;
         case ( kSKmNuMuNC1piC      ) : return "numunc1piC";        break;
         case ( kSKmNuMuNC1pi0      ) : return "numunc1pi0";        break;
@@ -1692,12 +1692,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuCCQE     ) : return "oscnumuccqe";       break;
         case ( kSKmOscNuMuCC1pi    ) : return "oscnumucc1pi";      break;
         case ( kSKmOscNuMuCCcoh    ) : return "oscnumucccoh";      break;
-        case ( kSKmOscNuMuCC2p2h    ) : return "oscnumuccmec";      break;
+        case ( kSKmOscNuMuCC2p2h   ) : return "oscnumumec";      break;
         case ( kSKmOscNuMuCCoth    ) : return "oscnumuccoth";      break;
         case ( kSKmNuMuBarCCQE     ) : return "numubarccqe";       break;
         case ( kSKmNuMuBarCC1pi    ) : return "numubarcc1pi";      break;
         case ( kSKmNuMuBarCCcoh    ) : return "numubarcccoh";      break;
-        case ( kSKmNuMuBarCC2p2h    ) : return "numubarccmec";      break;
+        case ( kSKmNuMuBarCC2p2h   ) : return "numubarmec";      break;
         case ( kSKmNuMuBarCCoth    ) : return "numubarccoth";      break;
         case ( kSKmNuMuBarNC1piC   ) : return "numubarnc1piC";     break;
         case ( kSKmNuMuBarNC1pi0   ) : return "numubarnc1pi0";     break;
@@ -1706,12 +1706,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuMuBarCCQE  ) : return "oscnumubarccqe";    break;
         case ( kSKmOscNuMuBarCC1pi ) : return "oscnumubarcc1pi";   break;
         case ( kSKmOscNuMuBarCCcoh ) : return "oscnumubarcccoh";   break;
-        case ( kSKmOscNuMuBarCC2p2h ) : return "oscnumubarccmec";   break;
+        case ( kSKmOscNuMuBarCC2p2h) : return "oscnumubarmec";   break;
         case ( kSKmOscNuMuBarCCoth ) : return "oscnumubarccoth";   break;
         case ( kSKmNuECCQE         ) : return "nueccqe";           break;
         case ( kSKmNuECC1pi        ) : return "nuecc1pi";          break;
         case ( kSKmNuECCcoh        ) : return "nuecccoh";          break;
-        case ( kSKmNuECC2p2h        ) : return "nueccmec";          break;
+        case ( kSKmNuECC2p2h       ) : return "nuemec";          break;
         case ( kSKmNuECCoth        ) : return "nueccoth";          break;
         case ( kSKmNuENC1piC       ) : return "nuenc1piC";         break;
         case ( kSKmNuENC1pi0       ) : return "nuenc1pi0";         break;
@@ -1720,12 +1720,12 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuECCQE      ) : return "oscnueccqe";        break;
         case ( kSKmOscNuECC1pi     ) : return "oscnuecc1pi";       break;
         case ( kSKmOscNuECCcoh     ) : return "oscnuecccoh";       break;
-        case ( kSKmOscNuECC2p2h     ) : return "oscnueccmec";       break;
+        case ( kSKmOscNuECC2p2h    ) : return "oscnuemec";       break;
         case ( kSKmOscNuECCoth     ) : return "oscnueccoth";       break;
         case ( kSKmNuEBarCCQE      ) : return "nuebarccqe";        break;
         case ( kSKmNuEBarCC1pi     ) : return "nuebarcc1pi";       break;
         case ( kSKmNuEBarCCcoh     ) : return "nuebarcccoh";       break;
-        case ( kSKmNuEBarCC2p2h     ) : return "nuebarccmec";       break;
+        case ( kSKmNuEBarCC2p2h     ) : return "nuebarmec";       break;
         case ( kSKmNuEBarCCoth     ) : return "nuebarccoth";       break;
         case ( kSKmNuEBarNC1piC    ) : return "nuebarnc1piC";      break;
         case ( kSKmNuEBarNC1pi0    ) : return "nuebarnc1pi0";      break;
@@ -1734,7 +1734,7 @@ string valor::util::AsStringCompact (valor::conv::SuperkMode_t m)
         case ( kSKmOscNuEBarCCQE   ) : return "oscnuebarccqe";     break;
         case ( kSKmOscNuEBarCC1pi  ) : return "oscnuebarcc1pi";    break;
         case ( kSKmOscNuEBarCCcoh  ) : return "oscnuebarcccoh";    break;
-        case ( kSKmOscNuEBarCC2p2h  ) : return "oscnuebarccmec";    break;
+        case ( kSKmOscNuEBarCC2p2h  ) : return "oscnuebarmec";    break;
         case ( kSKmOscNuEBarCCoth  ) : return "oscnuebarccoth";    break;
     // NC 1 gamma
         case ( kSKmNuMuNC1Gamma    ) : return "numunc1gamma";      break;  

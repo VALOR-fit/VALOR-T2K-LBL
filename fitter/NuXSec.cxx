@@ -388,7 +388,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     spline_files[kSKsFCFV1RingMuLike    ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
     spline_files[kSKsFCFV1RingELike     ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring" );
     
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
     spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring_rhc");
     spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring_rhc" );
 #endif
@@ -653,7 +653,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
   spline_files[kSKsFCFV1RingMuLike    ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring");
   spline_files[kSKsFCFV1RingELike     ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring" );
     
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
   spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring_rhc");
   spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring_rhc" );
 #endif
@@ -730,7 +730,8 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
         }
 #if defined(DISABLE_SCC) && BANFF_BINS != 2
         if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
-            p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
+            p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       ||
+            p == kNuisBANFFBeRPA_U       )
           continue;
 #endif
         // is the current systematic parameter going to be applied to current sample/mode?
@@ -750,6 +751,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
             double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
                         
             for(int iv = 0; iv < kNXsQ2Bins[is]; iv++) {
+              if ((s == kSKsFCFV1RingMuLike || s == kSKsRHCFCFV1RingMuLike) && iv != 0) continue; 
               double Q2     = util::XsecQ2BinEdges(s,iv) + kOneMeV; // Edit this for diff Q2 bins per mode
               double Q2_min = util::XsecQ2BinEdges(s,iv);
               double Q2_max = util::XsecQ2BinEdges(s,iv+1);
@@ -974,7 +976,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         }
     }
     
-#ifdef __USE_NIWG2015__
+#if  ( defined (__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     if (fUntunedCentralValues    ) delete fUntunedCentralValues   ;
     if (fRHCUntunedCentralValues ) delete fRHCUntunedCentralValues;
     
@@ -986,15 +988,13 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         util::Die(-1);
     }
     if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
-        cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
-        << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements()
-        << endl;
+      LOG("NuXSec",pERROR) << __func__ << " >> Expected "<<kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit
+        << " elements in <untuned_parameter_central_values>, got "<<fUntunedCentralValues->GetNoElements();
         util::Die(-1);
     }
     if (fRHCUntunedCentralValues->GetNoElements()!=kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit) {
-        cerr << "NuXSec/Read " << __func__ << " >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
-        << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements()
-        << endl;
+         LOG("NuXSec",pERROR) << __func__ << " >> Expected "<<kNumOfRHCParamsInBANFFfit-kNumOfRHCFluxParamsInBANFFfit
+        << " elements in <untuned_parameter_central_values>, got "<<fRHCUntunedCentralValues->GetNoElements();
         util::Die(-1);
     }
 #endif
@@ -1137,7 +1137,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     
     // NEW XSEC NIWG
     
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     
     //
     // BANFF param, M_{A} QE
@@ -1254,7 +1254,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // NORMALIZATION PARAMETERS
     
     // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     //
     // NEW XSEC
     //
@@ -1407,7 +1407,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // RESPONSE FUNCTION PARAMETERS
     
     // NEW XSEC NIWG   
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     
     // NEW XSEC
     //
@@ -1428,10 +1428,10 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         return wght;
 #endif
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-	std::string splname_debug = this->BuildSplineName(s,m,p,Ereco,Etrue,Q2);
-	if(!wght_spl){
-	  LOG("NuXSec",pINFO) << "Couldn't find spline " << splname_debug;
-	  cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << ",\t" << Ereco << ",\t" << Etrue << ",\t" << Q2 << endl;
+        std::string splname_debug = this->BuildSplineName(s,m,p,Ereco,Etrue,Q2);
+        if(!wght_spl){
+          LOG("NuXSec",pINFO) << "Couldn't find spline " << splname_debug;
+          cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << ",\t" << Ereco << ",\t" << Etrue << ",\t" << Q2 << endl;
 	}
         assert(wght_spl);
         double untuned_value = 0;
@@ -1528,7 +1528,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // NORMALIZATION PARAMETERS
     
     // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     //
     // NEW XSEC
     //
@@ -1673,7 +1673,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     
     // NEW XSEC NIWG
     
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     //
     // NEW XSEC
     //
@@ -1838,7 +1838,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     
     // NEW XSEC NIWG
     
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     //
     // RPA tuning
     //
@@ -1978,7 +1978,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     
     // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
     //
     // NEW XSEC
     //
@@ -2142,7 +2142,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif // NIWG2015
     
     // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     //
     // RPA tuning
     //
@@ -2315,7 +2315,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
             return conv::kBadResult;
     }
     
-#elif defined(__USE_NIWG2015__)
+#elif ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     
     // NEW XSEC
     
@@ -3150,7 +3150,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
   
   ostringstream splname;
   splname << "spl_";
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     splname << util::AsStringCompact(s) <<"_"
     << util::AsStringSpline(p)  <<"_"
     << util::AsStringCompact(m) <<"_"
@@ -3170,7 +3170,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 #endif 		      
     ostringstream splname;
     splname << "spl_";
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
     splname << util::AsStringCompact(s) <<"_"
     << util::AsStringSpline(p)  <<"_"
     << util::AsStringCompact(m) <<"_"

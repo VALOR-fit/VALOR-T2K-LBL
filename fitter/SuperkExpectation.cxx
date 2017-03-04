@@ -1165,7 +1165,7 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
   // --> not commented any longer
 
   // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
   this->GetNuXSec()->Tweak(kNuisXSecRPA , 1.); // NEW XSEC 
 #endif
 
@@ -1179,7 +1179,7 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
   // --> not commented any longer
 
   // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
   this->GetNuXSec()->Tweak(kRHCNuisXSecRPA           , 1.); // NEW XSEC
 #endif
 
@@ -1228,8 +1228,8 @@ void SuperkExpectation::TweakSystematic(conv::PhysParamId_t p, double twkdial, O
   }
   
   else {
-     cerr << "Exp/Tweak>> Unhandled systematic parameter (" << util::AsString(p) << ")" << endl;
-     exit(1);
+    LOG("SuperkExp",pERROR) "Unhandled systematic parameter (" << util::AsString(p) << ")";
+    util::Die(1);
   }           
 }
 
@@ -1283,7 +1283,7 @@ void SuperkExpectation::CopyTweaksTo(PhysParamList & pl, Option_t * /*opt*/) con
   // 
   //  Uncorrelated xsec (common to FHC and RHC)
   // 
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
   pl.SetValue( kNuisXSecRPA,             this->GetNuXSec()->CurrentValue(kNuisXSecRPA)            ); 
 #endif
 

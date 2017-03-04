@@ -30,7 +30,7 @@ using namespace valor;
 using namespace valor::conv;
 
 
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
 #ifndef __USE_ALLFLUX__
 #define __USE_ALLFLUX__
 #endif
@@ -2380,7 +2380,14 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_fhc_rhc"; break; 
         case ( kNuisBANFFNormNC1Gamma      ) : return "f_banffnorm_nc1gamma_fhc_rhc";  break; 
         case ( kNuisBANFFNormNuEBarToNuMuBar) : return "f_banffnorm_nuebartonumubar_fhc_rhc"; break; 
-        case ( kNuisBANFFNorm2p2hBar       ) : return "f_banffmecbar_fhc_rhc";         break;
+        case ( kNuisBANFFNorm2p2hBar       ) : return "f_banff2p2hbar_fhc_rhc";         break;
+        case ( kNuisBANFFBeRPA_A           ) : return "f_banffshape_berpa_A_fhc_rhc";    break;
+        case ( kNuisBANFFBeRPA_B           ) : return "f_banffshape_berpa_B_fhc_rhc";    break;
+        case ( kNuisBANFFBeRPA_D           ) : return "f_banffshape_berpa_D_fhc_rhc";    break;
+        case ( kNuisBANFFBeRPA_E           ) : return "f_banffshape_berpa_E_fhc_rhc";    break;
+        case ( kNuisBANFFBeRPA_U           ) : return "f_banffshape_berpa_U_fhc_rhc";    break;
+        case ( kNuisBANFFShape2p2h         ) : return "f_banffshape_2p2hnu_fhc_rhc";     break;
+        case ( kNuisBANFFShape2p2hBar      ) : return "f_banffshape_2p2hnubar_fhc_rhc";  break;
             
 #else
 #ifndef ONEOVERMAQE
@@ -3981,7 +3988,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
     
   //Old uncorr xsec syst (as in the old code)
     
-#if defined(__USE_NIWG2015__)
+#if ( defined(__USE_NIWG2015__) ||defined(__USE_NIWG2016__) )
   if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
     return true;
 #endif
@@ -4046,7 +4053,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
 //________________________________________________________________________________________
 bool valor::util::IsSCC(PhysParamId_t p)
 {
-#if defined(__USE_NIWG2015__) && (BANFF_BINS != 2)
+#if (defined(__USE_NIWG2015__) && (BANFF_BINS != 2) ) || defined (__USE_NIWG2016__)
   if (p == kNuisBANFFSCCA        ||
       p == kNuisBANFFSCCV        ||
       p == kRHCNuisBANFFSCCA     || 
@@ -4442,10 +4449,10 @@ string valor::util::AsStringSpline(PhysParamId_t p)
     return "erpa_U";    break;
   case ( kNuisBANFFShape2p2h       ) : 
   case ( kRHCNuisBANFFShape2p2h    ) : 
-    return "mecpdd_mec";     break;
+    return "mecpdd";     break;
   case ( kNuisBANFFShape2p2hBar    ) : 
   case ( kRHCNuisBANFFShape2p2hBar ) : 
-    return "mecpdd_mec";  break;
+    return "mecpdd";  break;
 
 
 
