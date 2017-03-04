@@ -1,0 +1,668 @@
+<?xml version="1.0"?>
+
+<analysis_inputs analysis="T2K/VaLOR/joint" data="run1to7c_prelim" flux="tun13av1.1" mc="neut/14a" ndfit="banff/prelim" oth="sk+fsi">
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Data POT for analysis Run 1-7c
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <data_pot>
+    <superk>
+      <fhc>
+        7.482e+20
+      </fhc>
+      <rhc>
+        7.471e+20
+      </rhc>
+      <multiring_fhc>
+        7.482e+20
+      </multiring_fhc>
+    </superk>
+  </data_pot>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Flux inputs
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+  <flux>
+    <superk>
+    <!--
+     Tuned SuperK flux
+    -->
+      <tuned>
+        <numu>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numu  </objname>
+           <objtype>    TH1D                  </objtype>
+        </numu>
+        <numubar>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numub </objname>
+           <objtype>    TH1D                  </objtype>
+        </numubar>
+        <nue>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nue   </objname>
+           <objtype>    TH1D                  </objtype>
+        </nue>
+        <nuebar>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nueb  </objname>
+           <objtype>    TH1D                  </objtype>
+        </nuebar>
+      </tuned>
+      <tuned_rhc>
+        <numu>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numu  </objname>
+           <objtype>    TH1D                  </objtype>
+        </numu>
+        <numubar>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numub </objname>
+           <objtype>    TH1D                  </objtype>
+        </numubar>
+        <nue>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nue   </objname>
+           <objtype>    TH1D                  </objtype>
+        </nue>
+        <nuebar>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nueb  </objname>
+           <objtype>    TH1D                  </objtype>
+        </nuebar>
+      </tuned_rhc>
+      <!--
+       Flux weights: nominal -> tuned
+      -->
+
+      <tuning_weights>
+        <numu>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numu_ratio   </objname>
+           <objtype>    TH1D                         </objtype>
+        </numu>
+        <numubar>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numub_ratio  </objname>
+           <objtype>    TH1D                         </objtype>
+        </numubar>
+        <nue>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nue_ratio    </objname>
+           <objtype>    TH1D                         </objtype>
+        </nue>
+        <nuebar>
+           <filename>   official/2016/flux/Run1-7c/sk_tuned13av1.1_13anom_run1-7c_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
+           <objtype>    TH1D                         </objtype>
+        </nuebar>
+      </tuning_weights>
+
+      <tuning_weights_rhc>
+        <numu>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numu_ratio   </objname>
+           <objtype>    TH1D                         </objtype>
+        </numu>
+        <numubar>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_numub_ratio  </objname>
+           <objtype>    TH1D                         </objtype>
+        </numubar>
+        <nue>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nue_ratio    </objname>
+           <objtype>    TH1D                         </objtype>
+        </nue>
+        <nuebar>
+           <filename>   official/2016/flux/Run5c-7b/sk_tuned13av1.1_13anom_run5c-7b_antinumode_fine.root </filename>
+           <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
+           <objtype>    TH1D                         </objtype>
+        </nuebar>
+      </tuning_weights_rhc>
+    </superk>
+  </flux>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  SuperK MC inputs for VaLOR MC templates
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <mc>
+    <superk>
+      <nominal>
+        <numu>
+          <pot_fhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnumu  </objname>
+            <objtype>    TH1D              </objtype>
+          </pot_fhc>
+          <one_mu_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+            <objname>    tnumu   </objname>
+            <objtype>    TTree   </objtype>
+          </one_mu_ring>
+          <one_e_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+            <objname>    tnumu   </objname>
+            <objtype>    TTree   </objtype>
+          </one_e_ring>
+
+          <pot_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnumu  </objname>
+            <objtype>    TH1D              </objtype>
+          </pot_rhc>
+          <one_mu_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+            <objname>    tnumu   </objname>
+            <objtype>    TTree   </objtype>
+          </one_mu_ring_rhc>
+          <one_e_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+            <objname>    tnumu   </objname>
+            <objtype>    TTree   </objtype>
+          </one_e_ring_rhc>
+
+          <!-- Input FHC POT MultiRing -->
+          <!-- 2016_02_06/mtuples_nuecc1pi_withweights 
+               2016_02_06/nue_CC1pi/  -->
+          <pot_fhc_cc1pi>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnumu  </objname>
+            <objtype>    TH1D              </objtype>
+          </pot_fhc_cc1pi>
+          <multi_mu_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
+            <objname>    tnumu   </objname>
+            <objtype>    TTree   </objtype>
+          </multi_mu_ring>
+          <multi_e_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
+            <objname>    tnumu   </objname>
+            <objtype>    TTree   </objtype>
+          </multi_e_ring>
+        </numu>
+
+        <numubar>
+          <pot_fhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnumubar  </objname>
+            <objtype>    TH1D                 </objtype>
+          </pot_fhc>
+          <one_mu_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+            <objname>    tnumubar   </objname>
+            <objtype>    TTree      </objtype>
+          </one_mu_ring>
+          <one_e_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+            <objname>    tnumubar   </objname>
+            <objtype>    TTree      </objtype>
+          </one_e_ring>
+
+          <pot_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnumubar  </objname>
+            <objtype>    TH1D                 </objtype>
+          </pot_rhc>
+          <one_mu_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+            <objname>    tnumubar   </objname>
+            <objtype>    TTree      </objtype>
+          </one_mu_ring_rhc>
+          <one_e_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+            <objname>    tnumubar   </objname>
+            <objtype>    TTree      </objtype>
+          </one_e_ring_rhc>
+
+          <!-- Input FHC POT to MultiRing -->
+          <pot_fhc_cc1pi>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnumubar  </objname>
+            <objtype>    TH1D                 </objtype>
+          </pot_fhc_cc1pi>
+          <multi_mu_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
+            <objname>    tnumubar   </objname>
+            <objtype>    TTree      </objtype>
+          </multi_mu_ring>
+          <multi_e_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
+            <objname>    tnumubar   </objname>
+            <objtype>    TTree      </objtype>
+          </multi_e_ring>
+        </numubar>
+
+        <nue>
+          <pot_fhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnue  </objname>
+            <objtype>    TH1D             </objtype>
+          </pot_fhc>
+          <one_mu_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+            <objname>    tnue   </objname>
+            <objtype>    TTree  </objtype>
+          </one_mu_ring>
+          <one_e_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+            <objname>    tnue   </objname>
+            <objtype>    TTree  </objtype>
+          </one_e_ring>
+
+          <pot_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnue  </objname>
+            <objtype>    TH1D             </objtype>
+          </pot_rhc>
+          <one_mu_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+            <objname>    tnue   </objname>
+            <objtype>    TTree  </objtype>
+          </one_mu_ring_rhc>
+          <one_e_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+            <objname>    tnue   </objname>
+            <objtype>    TTree  </objtype>
+          </one_e_ring_rhc>
+
+          <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
+          <pot_fhc_cc1pi>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnue  </objname>
+            <objtype>    TH1D             </objtype>
+          </pot_fhc_cc1pi>
+          <multi_mu_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
+            <objname>    tnue   </objname>
+            <objtype>    TTree  </objtype>
+          </multi_mu_ring>
+          <multi_e_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
+            <objname>    tnue   </objname>
+            <objtype>    TTree  </objtype>
+          </multi_e_ring>
+        </nue>
+
+        <nuebar>
+          <pot_fhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnuebar  </objname>
+            <objtype>    TH1D                </objtype>
+          </pot_fhc>
+          <one_mu_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+            <objname>    tnuebar   </objname>
+            <objtype>    TTree     </objtype>
+          </one_mu_ring>
+          <one_e_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+            <objname>    tnuebar   </objname>
+            <objtype>    TTree     </objtype>
+          </one_e_ring>
+
+          <pot_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnuebar  </objname>
+            <objtype>    TH1D                </objtype>
+          </pot_rhc>
+          <one_mu_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+            <objname>    tnuebar   </objname>
+            <objtype>    TTree     </objtype>
+          </one_mu_ring_rhc>
+          <one_e_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+            <objname>    tnuebar   </objname>
+            <objtype>    TTree     </objtype>
+          </one_e_ring_rhc>
+
+          <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
+          <pot_fhc_cc1pi>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tnuebar  </objname>
+            <objtype>    TH1D                </objtype>
+          </pot_fhc_cc1pi>
+          <multi_mu_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
+            <objname>    tnuebar   </objname>
+            <objtype>    TTree     </objtype>
+          </multi_mu_ring>
+          <multi_e_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
+            <objname>    tnuebar   </objname>
+            <objtype>    TTree     </objtype>
+          </multi_e_ring>
+        </nuebar>
+
+        <signal_nue>
+          <pot_fhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tsignue  </objname>
+            <objtype>    TH1D                </objtype>
+          </pot_fhc>
+          <one_mu_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+            <objname>    tsignue   </objname>
+            <objtype>    TTree     </objtype>
+          </one_mu_ring>
+          <one_e_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+            <objname>    tsignue   </objname>
+            <objtype>    TTree     </objtype>
+          </one_e_ring>
+
+          <pot_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tsignue  </objname>
+            <objtype>    TH1D                </objtype>
+          </pot_rhc>
+          <one_mu_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+            <objname>    tsignue   </objname>
+            <objtype>    TTree     </objtype>
+          </one_mu_ring_rhc>
+          <one_e_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+            <objname>    tsignue   </objname>
+            <objtype>    TTree     </objtype>
+          </one_e_ring_rhc>
+
+          <!-- Input FHC POT to MultiRing -->
+          <pot_fhc_cc1pi>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tsignue  </objname>
+            <objtype>    TH1D                </objtype>
+          </pot_fhc_cc1pi>
+          <multi_mu_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
+            <objname>    tsignue   </objname>
+            <objtype>    TTree     </objtype>
+          </multi_mu_ring>
+          <multi_e_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
+            <objname>    tsignue   </objname>
+            <objtype>    TTree     </objtype>
+          </multi_e_ring>
+        </signal_nue>
+
+        <signal_nuebar>
+          <pot_fhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tsignuebar  </objname>
+            <objtype>    TH1D                   </objtype>
+          </pot_fhc>
+          <one_mu_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.numuselec.root  </filename>
+            <objname>    tsignuebar   </objname>
+            <objtype>    TTree        </objtype>
+          </one_mu_ring>
+          <one_e_ring>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.250ka.nueselec.root  </filename>
+            <objname>    tsignuebar   </objname>
+            <objtype>    TTree        </objtype>
+          </one_e_ring>
+
+          <pot_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tsignuebar  </objname>
+            <objtype>    TH1D                   </objtype>
+          </pot_rhc>
+          <one_mu_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.numuselec.root  </filename>
+            <objname>    tsignuebar   </objname>
+            <objtype>    TTree        </objtype>
+          </one_mu_ring_rhc>
+          <one_e_ring_rhc>
+            <filename>   official/2015/superk/mc/neut/14a/t2ksk.14a.neut5.3.2.13a_tuned_v1r0.m250ka.nueselec.root  </filename>
+            <objname>    tsignuebar   </objname>
+            <objtype>    TTree        </objtype>
+          </one_e_ring_rhc>
+
+          <!-- Input FHC POT MultiRing -->
+          <pot_fhc_cc1pi>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root </filename>
+            <objname>    h_stat_snt_tsignuebar  </objname>
+            <objtype>    TH1D                   </objtype>
+          </pot_fhc_cc1pi>
+          <multi_mu_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.numuselec.root  </filename>
+            <objname>    tsignuebar   </objname>
+            <objtype>    TTree        </objtype>
+          </multi_mu_ring>
+          <multi_e_ring>
+            <filename>   official/2015/SK_nue_cc1pi/2016_05_22/mtuples_nuecc1pi_withweights/t2ksk.14a.250ka.nueselec.root  </filename>
+            <objname>    tsignuebar   </objname>
+            <objtype>    TTree        </objtype>
+          </multi_e_ring>
+        </signal_nuebar>
+      </nominal>
+    </superk>
+    
+    <fake_data>
+      <martini_to_nieves_nu>
+        <filename>   test/banff_comparison_sep16/martini_nieves_ratio.root </filename>
+        <objname>    mec_ratio      </objname>
+        <objtype>    TGraph         </objtype>
+      </martini_to_nieves_nu>
+      <martini_to_nieves_nubar>
+        <filename>   test/banff_comparison_sep16/martini_nieves_ratio_nubar.root </filename>
+        <objname>    ratio          </objname>
+        <objtype>    TGraph         </objtype>
+      </martini_to_nieves_nubar>
+      <nieves_momentum_offset>
+        <filename>   test/banff_comparison_sep16/1p1h/1p_1h_Oxygen.root </filename>
+        <objname>    nieves_minus_neut_hist    </objname>
+        <objtype>    TH2D                      </objtype>
+      </nieves_momentum_offset>
+      <two_d>
+        <pdd_nu>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_skTh600.root </filename>
+          <objname>    nonPDD_ratio_hist      </objname>
+          <!--            <objname>    PDD_ratio_hist      </objname>-->
+          <objtype>    TH2D         </objtype>
+        </pdd_nu>
+        <pdd_nubar>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_skTh600.root </filename>
+          <objname>    nonPDD_ratio_hist_numubar          </objname>
+          <!--            <objname>    PDD_ratio_hist_numubar          </objname>-->
+          <objtype>    TH2D       </objtype>
+        </pdd_nubar>
+      </two_d>
+      <three_d>
+        <pdd_nu>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_3D_skTh528_dCP_90deg.root </filename>
+          <objname>    nonPDD_ratio_3D_hist      </objname>
+          <!--            <objname>    PDD_ratio_hist      </objname>-->
+          <objtype>    TH3D         </objtype>
+        </pdd_nu>
+        <pdd_nubar>
+          <filename>   test/banff_comparison_sep16/pdd/ccqe_mec_pdd_ratio_3D_skTh528_dCP_90deg.root </filename>
+          <objname>    nonPDD_ratio_3D_hist_numubar          </objname>
+          <!--            <objname>    PDD_ratio_hist_numubar          </objname>-->
+          <objtype>    TH3D       </objtype>
+        </pdd_nubar>
+      </three_d>
+    </fake_data>
+  </mc>
+
+  <!--
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Neutrino cross section weight splines
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  -->
+
+  <xsec>
+
+    <weight_splines>
+      <one_mu_ring>
+        <filename>
+          official/2015/xsec/splines_v8_1Rmu.root
+        </filename>
+      </one_mu_ring>
+      <one_e_ring>
+        <filename>
+          official/2015/xsec/splines_v8_1Re.root
+        </filename>
+      </one_e_ring>
+
+      <one_mu_ring_rhc>
+        <filename>
+          official/2015/xsec/splines_v8_RHC1Rmu.root
+        </filename>
+      </one_mu_ring_rhc>
+      <one_e_ring_rhc>
+        <filename>
+          official/2015/xsec/splines_v8_RHC1Re.root
+        </filename>
+      </one_e_ring_rhc>
+
+      <!-- MultiRing sample splines -->
+      <multi_mu_ring>
+        <filename>
+          official/2015/xsec/splines_v8_1Rmu.root
+        </filename>
+      </multi_mu_ring>
+      <multi_e_ring>
+        <filename>
+          official/2015/SK_nue_cc1pi/2016_06_01/splines06012016/splines_v5_MultiRe_SFRPA_theta.root
+          <!-- official/2015/SK_nue_cc1pi/2016_05_24/cc1pi_splines/splines_v3_MultiRe.root -->
+          <!-- official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_v1_MultiRe.root -->
+          <!-- official/2015/SK_nue_cc1pi/2016_02_06/splines_2016_02_03/14a_cc1pi_splines/splines_vzero_bin_MultiRe.root -->
+        </filename>
+      </multi_e_ring>
+
+    </weight_splines>
+
+    <!-- 1bin/SFRPA not official splines -->
+    <!-- The splines in this section may need to be altered to reflect the configuration that is set in AnalyisOptions.h  -->
+    <weight_splines_2d>
+      <one_mu_ring>
+        <filename>
+          official/2017/xsec/valor_format/splines_v3_1Rmu.root
+        </filename>
+      </one_mu_ring>
+      <one_e_ring>
+        <filename>
+          official/2017/xsec/valor_format/splines_v3_1Re.root
+        </filename>
+      </one_e_ring>
+
+      <one_mu_ring_rhc>
+        <filename>
+          official/2017/xsec/valor_format/splines_v3_RHC1Rmu.root
+        </filename>
+      </one_mu_ring_rhc>
+      <one_e_ring_rhc>
+        <filename>
+          official/2017/xsec/valor_format/splines_v3_RHC1Re.root
+        </filename>
+      </one_e_ring_rhc>
+
+      <!-- Input the single ring splines into the MultiRing samples -->
+      <multi_mu_ring>
+        <filename>
+          official/2017/xsec/valor_format/splines_v3_1Rmu.root
+        </filename>
+      </multi_mu_ring>
+      <multi_e_ring>
+        <filename>
+          official/2017/xsec/valor_format/splines_v3_MultiRe.root
+        </filename>
+      </multi_e_ring>
+
+    </weight_splines_2d>
+
+    <normalisations>
+      <cccoh>            1.0      </cccoh>
+      <nc1piC>           0.3      </nc1piC>
+      <nccoh>            0.3      </nccoh>
+      <ncoth>            0.3      </ncoth>
+      <numu_to_nue>      0.03     </numu_to_nue>
+      <nu_to_antinu>     0.20     </nu_to_antinu>
+      <rhc_to_fhc>       0.00     </rhc_to_fhc>
+    </normalisations>
+
+    <untuned_parameter_central_values>
+      <filename>   official/2017/banff/Fit_PostFit_170214_oldEb_SK_valor_order_fhc_plus_scc.root  </filename>
+      <objname>    banff_xsec_untuned_central_values    </objname>
+      <objtype>    TVectorD                             </objtype>
+    </untuned_parameter_central_values>
+
+  </xsec>
+
+  <!-- Systematics using CorrelatedSystematics class start here-->
+  <syst>
+
+    <!--
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SKDET+FSI
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    -->
+    <skdetfsi>
+      <!--
+          Covariance matrix of SKDet FSI parameters
+      -->
+      <covariance_matrix>
+        <!-- <filename>  official/2015/SK_nue_cc1pi/2016_02_06/nue_CC1pi/new_fullmatrix/Erec_Matrix_withCC1pi_04052016_VALOR_Order.root </filename> -->
+        <filename>  official/2016/SK_nue_cc1pi/Erec_Matrix_CCpi_fixed_17102016_VALOR_order.root  </filename>
+        <objname>   skdetfsi    </objname>
+        <objtype>   TMatrixD                                  </objtype>
+      </covariance_matrix>
+
+    </skdetfsi>
+
+    <!--
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    BANFF inputs
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    -->
+
+    <banff>
+      <!--
+          Parameter untuned central values
+      -->
+      <untuned_values>
+        <filename>   official/2017/banff/Fit_PostFit_170214_oldEb_SK_valor_order_fhc_plus_scc.root </filename>
+        <objname>    banff_untuned_central_values  </objname>
+        <objtype>    TVectorD                      </objtype>
+      </untuned_values>
+      <!--
+          Postfit 
+      -->
+      <!--
+          Central values from BANFF fit
+      -->
+      <initial_values>
+        <filename>   official/2017/banff/Fit_PostFit_170214_oldEb_SK_valor_order_all_plus_scc.root </filename>
+        <objname>    postfit_params   </objname>
+        <objtype>    TVectorD         </objtype>
+      </initial_values>
+      <!--
+          Covariance of fit parameters
+      -->
+      <covariance_matrix>
+        <filename>   official/2017/banff/Fit_PostFit_170214_oldEb_SK_valor_order_all_plus_scc.root </filename>
+        <objname>    postfit_cov       </objname>
+        <objtype>    TMatrixD          </objtype>
+      </covariance_matrix>
+      
+      <x_mec>
+        -1.0
+      </x_mec>
+      <x_pdd_mec>
+        0.0
+      </x_pdd_mec>
+    </banff>
+
+  </syst>
+
+</analysis_inputs>
