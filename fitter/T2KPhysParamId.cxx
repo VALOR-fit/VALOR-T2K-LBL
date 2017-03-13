@@ -30,7 +30,7 @@ using namespace valor;
 using namespace valor::conv;
 
 
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
 #ifndef __USE_ALLFLUX__
 #define __USE_ALLFLUX__
 #endif
@@ -152,7 +152,7 @@ string valor::util::AsString(PhysParamId_t p)
     //
 
     // NEW XSEC
-  case ( kNuisXSecRPA        ) : return "Tuning; Norm; RPA";                     break;
+  case ( kNuisXSecRPA        ) : return "Tuning; Norm; RPA";               break;
 
   case ( kNuisXSecFermiMom   ) : return "Fermi Momentum";                  break;
   case ( kNuisXSecSpecFunc   ) : return "Spectral Func";                   break;
@@ -2364,7 +2364,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFNC1pi0           ) : return "f_banffnc1pi0_fhc_rhc";  break;
 #endif
             
-        case ( kNuisBANFFNorm2p2h               ) : return "f_banffmec_fhc_rhc";            break;
+        case ( kNuisBANFFNorm2p2h          ) : return "f_banff2p2h_fhc_rhc";            break;
         case ( kNuisBANFFCA5               ) : return "f_banffca5_fhc_rhc";            break;
         case ( kNuisBANFFBgRES             ) : return "f_banffbgres_fhc_rhc";          break;
 #if (BANFF_BINS != 2)
@@ -2583,7 +2583,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #endif
             
             // NEW XSEC
-        case ( kRHCNuisBANFF2p2h               ) : return "f_banffmec_rhc";            break;
+        case ( kRHCNuisBANFF2p2h               ) : return "f_banff2p2h_rhc";            break;
         case ( kRHCNuisBANFFCA5               ) : return "f_banffca5_rhc";            break;
         case ( kRHCNuisBANFFBgRES             ) : return "f_banffbgres_rhc";          break;
             // NEW SPLIT ANA
@@ -2600,7 +2600,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kRHCNuisBANFFNormNuEToNuMu     ) : return "f_banffnorm_nuetonumu_rhc"; break;
         case ( kRHCNuisBANFFNormNC1Gamma     ) : return "f_banffnorm_nc1gamma_rhc"; break; // uncorrelated in the past
         case ( kRHCNuisBANFFNormNuEBarToNuMuBar) : return "f_banffnorm_nuebartonumubar_rhc"; break; // uncorrelated in the past
-        case ( kRHCNuisBANFF2p2hBar            ) : return "f_banffmecbar_rhc";            break;
+        case ( kRHCNuisBANFF2p2hBar            ) : return "f_banff2p2hbar_rhc";            break;
             
             //
             
@@ -3071,11 +3071,11 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kNuisBANFFNormNuEToNuMu  ) : return "$f_{Norm_{\\nu_e \\rightarrow \\nu_\\mu}}^{banff}$";
         case ( kNuisBANFFNormNC1Gamma   ) : return "$f_{Norm_{NC1\\gamma}}^{banff}$";
         case ( kNuisBANFFNormNuEBarToNuMuBar  ) : return "$f_{Norm_{\\bar{\\nu}_e \\rightarrow \\bar{\\nu}_{\\mu}}}^{banff}$";
-        case ( kNuisBANFFBeRPA_A      ) : return "$f_{Shape_{BeRPA_A}}^{banff}$";         break;
-        case ( kNuisBANFFBeRPA_B      ) : return "$f_{Shape_{BeRPA_B}}^{banff}$";         break;
-        case ( kNuisBANFFBeRPA_D      ) : return "$f_{Shape_{BeRPA_D}}^{banff}$";         break;
-        case ( kNuisBANFFBeRPA_E      ) : return "$f_{Shape_{BeRPA_E}}^{banff}$";         break;
-        case ( kNuisBANFFBeRPA_U      ) : return "$f_{Shape_{BeRPA_U}}^{banff}$";         break;
+        case ( kNuisBANFFBeRPA_A      ) : return "$f_{Shape_{BeRPA_{A}}}^{banff}$";       break;
+        case ( kNuisBANFFBeRPA_B      ) : return "$f_{Shape_{BeRPA_{B}}}^{banff}$";       break;
+        case ( kNuisBANFFBeRPA_D      ) : return "$f_{Shape_{BeRPA_{D}}}^{banff}$";       break;
+        case ( kNuisBANFFBeRPA_E      ) : return "$f_{Shape_{BeRPA_{E}}}^{banff}$";       break;
+        case ( kNuisBANFFBeRPA_U      ) : return "$f_{Shape_{BeRPA_{U}}}^{banff}$";       break;
         case ( kNuisBANFFShape2p2h    ) : return "$f_{Shape_{2p2h\\nu}}^{banff}$";        break;
         case ( kNuisBANFFShape2p2hBar ) : return "$f_{Shape_{2p2h\\bar{\\nu}}}^{banff}$"; break;
             //
@@ -3691,7 +3691,7 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
         case ( kRHCNuisXSecRPA            ) : return "f_rpa_rhc";                 break;
             
             // NEW XSEC
-        case ( kRHCNuisBANFF2p2h           ) : return "f_banffmec_rhc";            break;
+        case ( kRHCNuisBANFF2p2h           ) : return "f_banff2p2h_rhc";            break;
         case ( kRHCNuisBANFFCA5           ) : return "f_banffca5_rhc";            break;
         case ( kRHCNuisBANFFBgRES         ) : return "f_banffbgres_rhc";          break;
             // NEW SPLIT ANA
@@ -3708,7 +3708,7 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
         case ( kRHCNuisBANFFNormNuEToNuMu ) : return "f_banffnorm_nuetonumu_rhc"; break; // uncorrelated in the past
         case ( kRHCNuisBANFFNormNC1Gamma      ) : return "f_banffnorm_nc1gamma_rhc";  break; // uncorrelated in the past
         case ( kRHCNuisBANFFNormNuEBarToNuMuBar ) : return "f_banffnorm_nuebartonumubar_rhc"; break; // uncorrelated in the past
-        case ( kRHCNuisBANFF2p2hBar        ) : return "f_banffmecbar_rhc";            break;
+        case ( kRHCNuisBANFF2p2hBar        ) : return "f_banff2p2hbar_rhc";            break;
             
             //
             
@@ -3988,56 +3988,35 @@ bool valor::util::IsXSec(PhysParamId_t p)
     
   //Old uncorr xsec syst (as in the old code)
     
-#if ( defined(__USE_NIWG2015__) ||defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) ||defined(__USE_NIWG2017__) )
   if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
     return true;
 #endif
 
   switch(p) {
             
-  case (kNuisBANFFNorm2p2h         ): return true;
-  case (kNuisBANFFNorm2p2hBar      ): return true;
-  case (kNuisBANFFCA5              ): return true;
-  case (kNuisBANFFBgRES            ): return true;
-  case (kNuisBANFFMAQE             ): return true;
-  case (kNuisBANFFMARES            ): return true;
-#if (BANFF_BINS != 2)
-  case (kNuisBANFFSCCA             ): return true;
-  case (kNuisBANFFSCCV             ): return true;
-#endif
-  case (kNuisBANFFFermiMom         ): return true;
-  case (kNuisBANFFShapeCCoth       ): return true;
-  case (kNuisBANFFBindE            ): return true;
-  case (kNuisBANFFNormCCcoh        ): return true;
-  case (kNuisBANFFNormNCcoh        ): return true;
-  case (kNuisBANFFNormNCoth        ): return true;
-  case (kNuisBANFFNormNC1Gamma     ): return true;
-
-  case (kNuisBANFFNormNuEToNuMu      ): return true;
-  case (kNuisBANFFNormNuEBarToNuMuBar): return true;
-    //case (kNuisBANFFNormNuEToNuMu    ): return true;
-    //case (kNuisBANFFNormNuEBarToNuMuBar): return true;
-    
-  case (kRHCNuisBANFF2p2hBar       ): return true;
-  case (kRHCNuisBANFF2p2h          ): return true;
-  case (kRHCNuisBANFFCA5           ): return true;
-  case (kRHCNuisBANFFBgRES         ): return true;
-  case (kRHCNuisBANFFMAQE          ): return true;
-  case (kRHCNuisBANFFMARES         ): return true;
-#if (BANFF_BINS != 2)
-  case (kRHCNuisBANFFSCCA          ): return true;
-  case (kRHCNuisBANFFSCCV          ): return true;
-#endif
-  case (kRHCNuisBANFFFermiMom      ): return true;
-  case (kRHCNuisBANFFShapeCCoth    ): return true;
-  case (kRHCNuisBANFFBindE         ): return true;
-  case (kRHCNuisBANFFNormCCcoh     ): return true;
-  case (kRHCNuisBANFFNormNCcoh     ): return true;
-  case (kRHCNuisBANFFNormNCoth     ): return true;
-  case (kRHCNuisBANFFNormNuEToNuMu ): return true;
-  case (kRHCNuisBANFFNormNuEBarToNuMuBar): return true;
-  case (kRHCNuisBANFFNormNC1Gamma  ): return true;
-
+  case ( kNuisBANFFNorm2p2h         ) : return true;
+  case ( kNuisBANFFNorm2p2hBar      ) : return true;
+  case ( kNuisBANFFCA5              ) : return true;
+  case ( kNuisBANFFBgRES            ) : return true;
+  case ( kNuisBANFFMAQE             ) : return true;
+  case ( kNuisBANFFMARES            ) : return true;
+#if (BANFF_BINS != 2)                 
+  case ( kNuisBANFFSCCA             ) : return true;
+  case ( kNuisBANFFSCCV             ) : return true;
+#endif                                
+  case ( kNuisBANFFFermiMom         ) : return true;
+  case ( kNuisBANFFShapeCCoth       ) : return true;
+  case ( kNuisBANFFBindE            ) : return true;
+  case ( kNuisBANFFNormCCcoh        ) : return true;
+  case ( kNuisBANFFNormNCcoh        ) : return true;
+  case ( kNuisBANFFNormNCoth        ) : return true;
+  case ( kNuisBANFFNormNC1Gamma     ) : return true;
+         
+  case ( kNuisBANFFNormNuEToNuMu      ) : return true;
+  case ( kNuisBANFFNormNuEBarToNuMuBar) : return true;
+    //case (kNuisBANFFNormNuEToNuMu    ) : return true;
+    //case (kNuisBANFFNormNuEBarToNuMuBar) : return true;
   case ( kNuisBANFFBeRPA_A        ) : return true;
   case ( kNuisBANFFBeRPA_B        ) : return true;
   case ( kNuisBANFFBeRPA_D        ) : return true;
@@ -4045,6 +4024,36 @@ bool valor::util::IsXSec(PhysParamId_t p)
   case ( kNuisBANFFBeRPA_U        ) : return true;
   case ( kNuisBANFFShape2p2h      ) : return true;
   case ( kNuisBANFFShape2p2hBar   ) : return true;
+
+    
+    
+  case ( kRHCNuisBANFF2p2hBar       ) : return true;
+  case ( kRHCNuisBANFF2p2h          ) : return true;
+  case ( kRHCNuisBANFFCA5           ) : return true;
+  case ( kRHCNuisBANFFBgRES         ) : return true;
+  case ( kRHCNuisBANFFMAQE          ) : return true;
+  case ( kRHCNuisBANFFMARES         ) : return true;
+#if (BANFF_BINS != 2)                 
+  case ( kRHCNuisBANFFSCCA          ) : return true;
+  case ( kRHCNuisBANFFSCCV          ) : return true;
+#endif   
+  case ( kRHCNuisBANFFFermiMom      ) : return true;
+  case ( kRHCNuisBANFFShapeCCoth    ) : return true;
+  case ( kRHCNuisBANFFBindE         ) : return true;
+  case ( kRHCNuisBANFFNormCCcoh     ) : return true;
+  case ( kRHCNuisBANFFNormNCcoh     ) : return true;
+  case ( kRHCNuisBANFFNormNCoth     ) : return true;
+  case ( kRHCNuisBANFFNormNuEToNuMu ) : return true;
+  case ( kRHCNuisBANFFNormNuEBarToNuMuBar) : return true;
+  case ( kRHCNuisBANFFNormNC1Gamma  ) : return true;
+
+  case ( kRHCNuisBANFFBeRPA_A       ) : return true;
+  case ( kRHCNuisBANFFBeRPA_B       ) : return true;
+  case ( kRHCNuisBANFFBeRPA_D       ) : return true;
+  case ( kRHCNuisBANFFBeRPA_E       ) : return true;
+  case ( kRHCNuisBANFFBeRPA_U       ) : return true;
+  case ( kRHCNuisBANFFShape2p2h     ) : return true;
+  case ( kRHCNuisBANFFShape2p2hBar  ) : return true;
             
   default                           : return false;
   }
@@ -4053,7 +4062,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
 //________________________________________________________________________________________
 bool valor::util::IsSCC(PhysParamId_t p)
 {
-#if (defined(__USE_NIWG2015__) && (BANFF_BINS != 2) ) || defined (__USE_NIWG2016__)
+#if (defined(__USE_NIWG2015__) && (BANFF_BINS != 2) ) || defined (__USE_NIWG2017__)
   if (p == kNuisBANFFSCCA        ||
       p == kNuisBANFFSCCV        ||
       p == kRHCNuisBANFFSCCA     || 
@@ -4078,6 +4087,7 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
     case( kNuisBANFFNormNC1Gamma        ) : return true; break;
     case( kNuisBANFFNormNuEToNuMu       ) : return true; break;
     case( kNuisBANFFNormNuEBarToNuMuBar ) : return true; break;
+    case( kNuisBANFFBeRPA_U             ) : return true; break;
 
     case( kRHCNuisBANFF2p2h               ) : return true; break;
     case( kRHCNuisBANFF2p2hBar            ) : return true; break;
@@ -4088,7 +4098,8 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
     case( kRHCNuisBANFFNormNC1Gamma       ) : return true; break;
     case( kRHCNuisBANFFNormNuEToNuMu      ) : return true; break;
     case( kRHCNuisBANFFNormNuEBarToNuMuBar) : return true; break; 
-
+    case( kRHCNuisBANFFBeRPA_U            ) : return true; break;
+      
     default                               : return false; break;
    }
   return false;
@@ -4371,6 +4382,12 @@ bool valor::util::IsBANFF(PhysParamId_t p)
     return false;
 }
 //____________________________________________________________________________
+bool valor::util::IsRHCBANFF(PhysParamId_t p)
+{
+  if(p >= kRHCNuisBANFF00 && p < kRHCLastBANFFParam) return true;
+  return false;
+}
+//____________________________________________________________________________
 string valor::util::AsStringSpline(PhysParamId_t p)
 {
   switch(p) {
@@ -4453,8 +4470,6 @@ string valor::util::AsStringSpline(PhysParamId_t p)
   case ( kNuisBANFFShape2p2hBar    ) : 
   case ( kRHCNuisBANFFShape2p2hBar ) : 
     return "mecpdd";  break;
-
-
 
 
   default:

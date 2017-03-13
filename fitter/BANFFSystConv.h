@@ -68,7 +68,7 @@ namespace valor {
     //
 #  endif
 #endif
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
 #  if BANFF_BINS == 1 //joint
     static const int kNumOfParamsInBANFFfit = 49;
     static const int kNumOfXSecParamsInBANFFfit = 24;
@@ -85,7 +85,7 @@ namespace valor {
     static const PhysParamId_t kListOfBANFFParams[kNumOfParamsInBANFFfit] =
     {
         // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       kNuisBANFF00 ,
       kNuisBANFF01 ,
@@ -134,8 +134,8 @@ namespace valor {
       kNuisBANFFNormNC1Gamma      , // NC 1 gamma
       kNuisBANFFNormNuEBarToNuMuBar ,
       kNuisBANFFNorm2p2hBar          ,
-#  if defined(__USE_NIWG2016__)      
-      kNuisBANFFBeRPA_A ,
+#  if defined(__USE_NIWG2017__)      
+      kNuisBANFFBeRPA_A     ,
       kNuisBANFFBeRPA_B     ,
       kNuisBANFFBeRPA_D     ,
       kNuisBANFFBeRPA_E     ,
@@ -148,7 +148,7 @@ namespace valor {
         
     static const PhysParamId_t kListOfRHCBANFFParams[kNumOfRHCParamsInBANFFfit] =
     {            
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )     
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )     
       // NEW XSEC
       kRHCNuisBANFF00 ,
       kRHCNuisBANFF01 ,
@@ -197,7 +197,7 @@ namespace valor {
       kRHCNuisBANFFNormNC1Gamma      , // NC 1 gamma
       kRHCNuisBANFFNormNuEBarToNuMuBar ,
       kRHCNuisBANFF2p2hBar   ,
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       kRHCNuisBANFFBeRPA_A ,
       kRHCNuisBANFFBeRPA_B     ,
       kRHCNuisBANFFBeRPA_D     ,
@@ -212,7 +212,7 @@ namespace valor {
         
     static const PhysParamId_t kListOfFHCpRHCBANFFParams[kNumOfFHCpRHCParamsInBANFFfit] =
     {            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       kNuisBANFF00 ,
       kNuisBANFF01 ,
@@ -288,7 +288,7 @@ namespace valor {
       kNuisBANFFNormNC1Gamma      , // NC 1 gamma
       kNuisBANFFNormNuEBarToNuMuBar ,
       kNuisBANFFNorm2p2hBar,
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       kNuisBANFFBeRPA_A ,
       kNuisBANFFBeRPA_B     ,
       kNuisBANFFBeRPA_D     ,
@@ -313,7 +313,7 @@ namespace valor {
     static const bool kParamInBANFFfitIsSuperkFluxParam[kNumOfParamsInBANFFfit] =
     {
         // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       true,                 // kNuisBANFF00
       true,                 // kNuisBANFF01
@@ -361,7 +361,7 @@ namespace valor {
       false,                // kNuisBANFFNormNC1Gamma
       false,                // kNuisBANFFNormNuEBarToNuMuBar
       false,                // kNuisBANFFNorm2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       false,                // kNuisBANFFBeRPA_A     
       false,                // kNuisBANFFBeRPA_B     
       false,                // kNuisBANFFBeRPA_D     
@@ -377,7 +377,7 @@ namespace valor {
     static const bool kRHCParamInBANFFfitIsSuperkFluxParam[kNumOfRHCParamsInBANFFfit] =
     {
         // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       true,                 // kRHCNuisBANFF00
       true,                 // kRHCNuisBANFF01
@@ -425,7 +425,7 @@ namespace valor {
       false,                // kNuisBANFFNormNC1Gamma
       false,                // kRHCNuisBANFFNormNuEBarToNuMuBar
       false,                // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       false,                // kNuisBANFFBeRPA_A     
       false,                // kNuisBANFFBeRPA_B     
       false,                // kNuisBANFFBeRPA_D     
@@ -444,7 +444,7 @@ namespace valor {
     static const bool kFHCpRHCParamInBANFFfitIsSuperkFluxParam[kNumOfFHCpRHCParamsInBANFFfit] =
     {
       // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       true,                 // kNuisBANFF00
       true,                 // kNuisBANFF01
@@ -519,7 +519,7 @@ namespace valor {
       false,                // kRHCNuisBANFFNormNC1Gamma
       false,                // kRHCNuisBANFFNormNuEBarToNuMuBar
       false,                // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       false,                // kNuisBANFFBeRPA_A     
       false,                // kNuisBANFFBeRPA_B     
       false,                // kNuisBANFFBeRPA_D     
@@ -537,7 +537,7 @@ namespace valor {
     static const int kNuPdgCodeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit] =
     {
       // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       kPdgNuMu,             // kNuisBANFF00
       kPdgNuMu,             // kNuisBANFF01
@@ -588,7 +588,7 @@ namespace valor {
       0,                    // kNuisBANFFNormNC1Gamma
       0,                    // kNuisBANFFNormNuEBarToNuMuBar
       0,                    // kNuisBANFFNorm2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       0,                    // kNuisBANFFBeRPA_A     
       0,                    // kNuisBANFFBeRPA_B     
       0,                    // kNuisBANFFBeRPA_D     
@@ -605,7 +605,7 @@ namespace valor {
         
     static const int kNuPdgCodeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit] =
     {            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       kPdgNuMu,             // kRHCNuisBANFF00
       kPdgNuMu,             // kRHCNuisBANFF01
@@ -653,7 +653,7 @@ namespace valor {
       0,                    // kRHCNuisBANFFNormNC1Gamma
       0,                    // kRHCNuisBANFFNormNuEBarToNuMuBar
       0,                    // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       0,                    // kNuisBANFFBeRPA_A     
       0,                    // kNuisBANFFBeRPA_B     
       0,                    // kNuisBANFFBeRPA_D     
@@ -673,7 +673,7 @@ namespace valor {
     static const int kNuPdgCodeOfFHCpRHCFluxParamInBANFFfit[kNumOfFHCpRHCParamsInBANFFfit] =
     {
       // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       kPdgNuMu,             // kNuisBANFF00
       kPdgNuMu,             // kNuisBANFF01
@@ -750,7 +750,7 @@ namespace valor {
       0,                    // kRHCNuisBANFFNormNC1Gamma
       0,                    // kNuisBANFFNormNuEBarToNuMuBar
       0,                    // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       0,                    // kNuisBANFFBeRPA_A     
       0,                    // kNuisBANFFBeRPA_B     
       0,                    // kNuisBANFFBeRPA_D     
@@ -769,7 +769,7 @@ namespace valor {
     static const double kEtrueRangeOfFluxParamInBANFFfit[kNumOfParamsInBANFFfit][2] =
     {
       // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       { 0.0,  0.4 },        // kNuisBANFF00 //numu
       { 0.4,  0.5 },        // kNuisBANFF01
@@ -821,7 +821,7 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFNormNC1Gamma, not a flux param
       {  -1,   -1 },        // kNuisBANFFNormNuEBarToNuMuBar, not a flux param
       {  -1,   -1 },        // kNuisBANFFNorm2p2hBar not a flux param
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       {  -1,   -1 },        // kNuisBANFFBeRPA_A     
       {  -1,   -1 },        // kNuisBANFFBeRPA_B     
       {  -1,   -1 },        // kNuisBANFFBeRPA_D     
@@ -839,7 +839,7 @@ namespace valor {
     static const double kEtrueRangeOfRHCFluxParamInBANFFfit[kNumOfRHCParamsInBANFFfit][2] =
     {
       // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       // numu
       { 0.0,  0.7 },        // kRHCNuisBANFF00
@@ -892,7 +892,7 @@ namespace valor {
       {  -1,   -1 },        // kRHCNuisBANFFNormNC1Gamma, not a flux param
       {  -1,   -1 },        // kNuisBANFFNormNuEBarToNuMuBar, not a flux param
       {  -1,   -1 },        // kRHCNuisBANFF2p2hBar not a flux param
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       {  -1,   -1 },        // kNuisBANFFBeRPA_A     
       {  -1,   -1 },        // kNuisBANFFBeRPA_B     
       {  -1,   -1 },        // kNuisBANFFBeRPA_D     
@@ -911,7 +911,7 @@ namespace valor {
     static const double kEtrueRangeOfFHCpRHCFluxParamInBANFFfit[kNumOfFHCpRHCParamsInBANFFfit][2] =
     {
         // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)  || defined(__USE_NIWG2017__) )
       // NEW XSEC
       // FHC
       { 0.0,  0.4 },        // kNuisBANFF00
@@ -996,7 +996,7 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFNormNC1Gamma, not a flux param
       {  -1,   -1 },        // kNuisBANFFNormNuEBarToNuMuBar, not a flux param
       {  -1,   -1 },        // kNuisBANFFNorm2p2hBar not a flux param
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       {  -1,   -1 },        // kNuisBANFFBeRPA_A     
       {  -1,   -1 },        // kNuisBANFFBeRPA_B     
       {  -1,   -1 },        // kNuisBANFFBeRPA_D     

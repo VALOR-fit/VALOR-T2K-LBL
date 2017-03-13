@@ -32,6 +32,8 @@ class BANFF: public CorrelatedSystematics
 public:
   BANFF();   
  ~BANFF();
+
+  // Need to be removed  Replace with Tweak calls and the function 
   void TweakSampleConstrainedOnly  (bool force_inputs = false, TVectorD * input_vec = 0, bool unconstrainted=false);
   void TweakSampleFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleXSecOnly  (bool force_inputs = false, TVectorD * input_vec = 0);

@@ -29,7 +29,8 @@
 //#define __use_1Rsplines_for_MultiR_sample__
 
 //#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
-//#define WARN_ON_FLAT_SPLINE
+
+#define WARN_ON_FLAT_SPLINE
 
 //
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
@@ -388,7 +389,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     spline_files[kSKsFCFV1RingMuLike    ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring");
     spline_files[kSKsFCFV1RingELike     ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring" );
     
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
     spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_mu_ring_rhc");
     spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines/one_e_ring_rhc" );
 #endif
@@ -516,7 +517,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifndef __use_flat_splines_for_missing_splines__
                               LOG("NuXSec",pERROR) << "Reading from file: "
                                                    <<  spline_files[s]->GetName() << "\n"
-                                                   << "Exp/NuXSec >> Null cross-section weight spline: "
+                                                   << ">> Null cross-section weight spline: "
                                                    << splname
 #if SPLINE_TYPE == 0
                                 << ", " << AsString(m)
@@ -653,7 +654,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
   spline_files[kSKsFCFV1RingMuLike    ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring");
   spline_files[kSKsFCFV1RingELike     ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring" );
     
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
   spline_files[kSKsRHCFCFV1RingMuLike ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_mu_ring_rhc");
   spline_files[kSKsRHCFCFV1RingELike  ] = util::XML2TFile(xml,root_node,"xsec/weight_splines_2d/one_e_ring_rhc" );
 #endif
@@ -730,8 +731,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
         }
 #if defined(DISABLE_SCC) && BANFF_BINS != 2
         if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
-            p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       ||
-            p == kNuisBANFFBeRPA_U       )
+            p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
           continue;
 #endif
         // is the current systematic parameter going to be applied to current sample/mode?
@@ -751,7 +751,6 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
             double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
                         
             for(int iv = 0; iv < kNXsQ2Bins[is]; iv++) {
-              if ((s == kSKsFCFV1RingMuLike || s == kSKsRHCFCFV1RingMuLike) && iv != 0) continue; 
               double Q2     = util::XsecQ2BinEdges(s,iv) + kOneMeV; // Edit this for diff Q2 bins per mode
               double Q2_min = util::XsecQ2BinEdges(s,iv);
               double Q2_max = util::XsecQ2BinEdges(s,iv+1);
@@ -794,7 +793,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                   LOG("NuXSec",pERROR) 
                     << "Reading from file: "
                     << spline_files[s]->GetName() << "\n"
-                    << "Exp/NuXSec >> Null cross-section weight spline: "
+                    << ">> Null cross-section weight spline: "
                     << splname
 #if SPLINE_TYPE == 0
                     << ", " << AsString(m)
@@ -976,7 +975,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         }
     }
     
-#if  ( defined (__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if  ( defined (__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     if (fUntunedCentralValues    ) delete fUntunedCentralValues   ;
     if (fRHCUntunedCentralValues ) delete fRHCUntunedCentralValues;
     
@@ -1105,7 +1104,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     //
     // - NIWG2015 BANFF param, 2p2h        normalization
     // - NIWG2015 BANFF param, CA5
-    // - NIWG2015 BANFF param, BgRES      normalization
+    // - NIWG2015 BANFF param, BgRES       normalization
     // - NIWG2015 BANFF param, M_{A} QE
     // - NIWG2015 BANFF param, M_{A} RES
     // - NIWG2015 BANFF param, SCCA 
@@ -1137,7 +1136,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     
     // NEW XSEC NIWG
     
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     
     //
     // BANFF param, M_{A} QE
@@ -1198,7 +1197,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
         p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
         p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
-        p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE       )
+        p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE      ||
+        p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
+        p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
+        p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
+        p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
+        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h   )
     {
         //
 #if SPLINE_TYPE == -1
@@ -1221,7 +1225,13 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
            p == kRHCNuisBANFFSCCV       ||
 #endif
            p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES       )
+           p == kRHCNuisBANFFBgRES      ||
+           p == kRHCNuisBANFFBeRPA_A    ||
+           p == kRHCNuisBANFFBeRPA_B    ||
+           p == kRHCNuisBANFFBeRPA_D    ||
+           p == kRHCNuisBANFFBeRPA_E    ||
+           p == kRHCNuisBANFFShape2p2h  
+           )
         {
             tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
@@ -1254,7 +1264,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // NORMALIZATION PARAMETERS
     
     // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     //
     // NEW XSEC
     //
@@ -1270,12 +1280,11 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 #endif
     
 #ifdef __show_banff_tuning_wght_mesg_debug__
-    cout << "Exp/NuXSec/FinTuningWght >> "
+    LOG("NuXSec",pDEBUG)
     << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
     << ", Ereco = " << Ereco << " GeV"
     << ", Etrue = " << Etrue << " GeV => Weight ["
-    << util::AsString(p) << "] = " << wght
-    << endl;
+    << util::AsString(p) << "] = " << wght;
 #endif
     
     if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
@@ -1390,24 +1399,15 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // - NIWG2015 BANFF param, NuEToNuMu  normalization
     //
     
-    // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
     TSpline3 * wght_spl = 0;
     
     double wght = 1.;
     double tb;
-    
-    //~ cout << "\nEtrue: " << Etrue
-    //~ << "\tEreco: " << Ereco
-    //~ << "\np :" << AsString(p)
-    //~ << "mode: " << AsString(m)
-    //~ << "\nEvents: "<<this->HowManyEvents(s,m,Ereco,Etrue)
-    //~ << endl;
-    
-    
+
     // RESPONSE FUNCTION PARAMETERS
     
     // NEW XSEC NIWG   
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     
     // NEW XSEC
     //
@@ -1472,7 +1472,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
         p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
         p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
-        p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE       )
+        p == kNuisBANFFBindE         || p == kRHCNuisBANFFBindE      ||
+        p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
+        p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
+        p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
+        p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
+        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h   )
     {
         //
 #if SPLINE_TYPE == -1
@@ -1495,7 +1500,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
            p == kRHCNuisBANFFSCCV       ||
 #endif
            p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES       )
+           p == kRHCNuisBANFFBgRES      ||
+           p == kRHCNuisBANFFBeRPA_A    ||
+           p == kRHCNuisBANFFBeRPA_B    ||
+           p == kRHCNuisBANFFBeRPA_D    ||
+           p == kRHCNuisBANFFBeRPA_E    ||
+           p == kRHCNuisBANFFShape2p2h   )
         {
             tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
@@ -1528,11 +1538,11 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // NORMALIZATION PARAMETERS
     
     // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     //
     // NEW XSEC
     //
-    // - BANFF param, 2p2h        normalization
+    // - BANFF param, 2p2h       normalization
     // - BANFF param, BgRES      normalization
     // - BANFF param, CCcoh      normalization
     // - BANFF param, NCcoh      normalization
@@ -1543,13 +1553,12 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 #endif
     
 #ifdef __show_banff_tuning_wght_mesg_debug__
-    cout << "Exp/NuXSec/FinTuningWght_1p >> "
+    LOG("NuXSec", pDEBUG) 
     << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
     << ", Ereco = " << Ereco << " GeV"
     << ", Etrue = " << Etrue << " GeV"
     << ", Q2    = " << Q2 << " GeV=> Weight ["
-    << util::AsString(p) << "] = " << wght
-    << endl;
+    << util::AsString(p) << "] = " << wght;
 #endif
     
     if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
@@ -1673,7 +1682,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     
     // NEW XSEC NIWG
     
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     //
     // NEW XSEC
     //
@@ -1736,7 +1745,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
              p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
 #endif
              p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
-             p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES       )
+             p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
+             p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
+             p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
+             p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
+             p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
+             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h   )
     {
 #if SPLINE_TYPE == -1
         return wght;
@@ -1754,7 +1768,13 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
            p == kRHCNuisBANFFSCCV       ||
 #endif
            p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES       )
+           p == kRHCNuisBANFFBgRES      ||
+           p == kRHCNuisBANFFBeRPA_A    || 
+           p == kRHCNuisBANFFBeRPA_B    ||
+           p == kRHCNuisBANFFBeRPA_D    ||
+           p == kRHCNuisBANFFBeRPA_E    ||
+           p == kRHCNuisBANFFShape2p2h  
+           )
         {
             tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
@@ -1838,7 +1858,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     
     // NEW XSEC NIWG
     
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     //
     // RPA tuning
     //
@@ -1858,12 +1878,11 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #ifdef __show_syst_var_wght_mesg_debug__
     if (wght != 1.)
     {
-        cout << "Exp/NuXSec/SystWght >> "
+        LOG("NuXSec",pDEBUG)
         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
         << ", Ereco = " << Ereco << " GeV"
         << ", Etrue = " << Etrue << " GeV => Weight ["
-        << util::AsString(p) << "] = " << wght
-        << endl;
+        << util::AsString(p) << "] = " << wght;
     }
 #endif
     
@@ -1978,7 +1997,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     
     // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
     //
     // NEW XSEC
     //
@@ -1991,7 +2010,6 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     // BANFF param, CCothShape
     // BANFF param, Eb
     
-    // Axial masses
     if (p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
         p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES      )
     {
@@ -2041,7 +2059,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
              p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
 #endif
              p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
-             p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES       )
+             p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
+             p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
+             p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
+             p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
+             p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
+             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h   )
     {
 #if SPLINE_TYPE == -1
         return wght;
@@ -2059,7 +2082,13 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
            p == kRHCNuisBANFFSCCV       ||
 #endif
            p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES       )
+           p == kRHCNuisBANFFBgRES      ||
+           p == kRHCNuisBANFFBeRPA_A    || 
+           p == kRHCNuisBANFFBeRPA_B    ||
+           p == kRHCNuisBANFFBeRPA_D    ||
+           p == kRHCNuisBANFFBeRPA_E    ||
+           p == kRHCNuisBANFFShape2p2h    
+           )
         {
             tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
@@ -2130,7 +2159,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     // BANFF param normalization:
     //
-    // - BANFF param, 2p2h        normalization
+    // - BANFF param, 2p2h       normalization
     // - BANFF param, BgRES      normalization
     // - BANFF param, CCcoh      normalization
     // - BANFF param, NCcoh      normalization
@@ -2142,7 +2171,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif // NIWG2015
     
     // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     //
     // RPA tuning
     //
@@ -2162,13 +2191,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #ifdef __show_syst_var_wght_mesg_debug__
     if (wght != 1.)
     {
-        cout << "Exp/NuXSec/SystWght >> "
+        LOG("NuXSec",pDEBUG)
         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
         << ", Ereco = " << Ereco << " GeV"
         << ", Etrue = " << Etrue << " GeV"
         << ", Q2    = " << Q2 << " GeV=> Weight ["
-        << util::AsString(p) << "] = " << wght
-        << endl;
+        << util::AsString(p) << "] = " << wght;
     }
 #endif
     
@@ -2315,7 +2343,7 @@ double NuXSec::CurrentValue(PhysParamId_t p) const
             return conv::kBadResult;
     }
     
-#elif ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#elif ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     
     // NEW XSEC
     
@@ -2453,15 +2481,14 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     }
     
 #ifdef __show_find_wght_spline_mesg_debug__
-    cout << "Exp/NuXSec/FindWghtSpline >> Looking for spline: "
+  LOG("NuXSec", pDEBUG) << "Looking for spline: "
     << "sample = "      << util::AsString(s)
     << ", mode = "      << util::AsString(m)
     << ", parameter = " << util::AsString(p)
     << ", Ereco = "     << Ereco << " GeV"
     << ", Etrue = "     << Etrue << " GeV!"
     << ", Q2    = "     << Q2    << " GeV!"
-    << " idx = " << idx
-    << endl;
+    << " idx = " << idx;
 #endif
     
     //Todo: need to cover case when sample is none of kSKsFCFV1RingMuLike,
@@ -3150,7 +3177,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
   
   ostringstream splname;
   splname << "spl_";
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     splname << util::AsStringCompact(s) <<"_"
     << util::AsStringSpline(p)  <<"_"
     << util::AsStringCompact(m) <<"_"
@@ -3170,7 +3197,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 #endif 		      
     ostringstream splname;
     splname << "spl_";
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     splname << util::AsStringCompact(s) <<"_"
     << util::AsStringSpline(p)  <<"_"
     << util::AsStringCompact(m) <<"_"

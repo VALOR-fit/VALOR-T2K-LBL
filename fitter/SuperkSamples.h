@@ -46,7 +46,7 @@ typedef enum ESuperkSample
    kSKsRHCFCFV1RingELike,  //fully-contained fiducial-volume single-ring e-like with reverse horn current 
    kSKsFCFVMultiRingMuLike, // fully-contained fiducial-volume multi-ring mu-like
    kSKsFCFVMultiRingELike  // fully-contained fiducial-volume multi-ring e-like
-} 
+}
 SuperkSample_t;
 
 } // conv
@@ -75,6 +75,9 @@ namespace util {
   string SampleAsStringCompact(conv::SuperkSample_t   s);
   string SampleAsStringTex    (conv::SuperkSample_t   s);
   string SampleAsStringRooTex (conv::SuperkSample_t   s);
+
+  // Get conv::SuperkSample_t enum in array 
+  conv::SuperkSample_t GetSKSample (int s);
   
 } // util
 } // valor

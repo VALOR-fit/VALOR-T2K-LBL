@@ -363,7 +363,7 @@ static const double kXsErecoBinEdgesMultiRe[kXsNErecoBinsMultiRe+1] =
 // Note that the order of modes below should match the one defined in kSKReactionModes array.
 //
 static const int kXsNEtrueBins = 11;
-#if (defined (__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if (defined (__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
 static const double kXsEtrueBinEdges[kns][knm][kXsNEtrueBins+1] = {
 { // > 1 muon-like ring
   {  0.000,  0.400,  0.500,  0.600,  0.700,  1.000,  1.500,  2.500,  3.500,  5.000,  7.000, 30.000 }, // kSKmNuMuCCQE

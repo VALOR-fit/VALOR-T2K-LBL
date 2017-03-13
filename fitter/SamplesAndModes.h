@@ -1237,7 +1237,10 @@ namespace valor {
     };
 
   } // conv
-} // valor
+namespace util {
 
+  
+} // util
+} // valor
 #endif
 

@@ -139,7 +139,7 @@ void SuperkExpectation::CheckPhysParamId(void)
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kNuisBANFF00);
     PhysParamId_t p_list = (PhysParamId_t)kListOfBANFFParams[i];
 #ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
+    LOG("SuperkExp",pINFO) << util::AsString(p_list);
 #endif
     std::string parname = util::AsString(p);
     if( parname == "--"){
@@ -157,9 +157,9 @@ void SuperkExpectation::CheckPhysParamId(void)
   LOG("SuperkExpectation", pINFO) << "Check RHC BANFF PhysParamId"; 
   for (int i=0; i<kNumOfRHCParamsInBANFFfit;i++){
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCNuisBANFF00);
-    PhysParamId_t p_list = ( PhysParamId_t)kListOfRHCBANFFParams[i];
+    PhysParamId_t p_list = (PhysParamId_t)kListOfRHCBANFFParams[i];
 #ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
+    LOG("SuperkExp",pINFO) << util::AsString(p_list);
 #endif
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
@@ -186,7 +186,7 @@ void SuperkExpectation::CheckPhysParamId(void)
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kLastBANFFParam+1);
     PhysParamId_t p_list = (conv::PhysParamId_t)kListOfXSecSyst[i];
 #ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
+    LOG("SuperkExp",pINFO) << util::AsString(p_list);
 #endif
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
@@ -204,7 +204,7 @@ void SuperkExpectation::CheckPhysParamId(void)
   for (int i=0; i<kNumOfRHCUncXSecSyst;i++){
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCLastBANFFParam+1);
 #ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
+    LOG("SuperkExp",pINFO) << util::AsString(p);
 #endif
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
@@ -226,7 +226,7 @@ void SuperkExpectation::CheckPhysParamId(void)
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kNuisSKDetFSI000);
     PhysParamId_t p_list = (conv::PhysParamId_t)kListOfSKDetFSIParams[i];
 #ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
+    LOG("SuperkExp",pINFO) << util::AsString(p);
 #endif
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
@@ -246,7 +246,7 @@ void SuperkExpectation::CheckPhysParamId(void)
     // PhysParamId_t p = (PhysParamId_t)(i+conv::kMultiRingNuisSKDetFSI_first);
     PhysParamId_t p_list = (PhysParamId_t)kListOfMultiRingSKDetFSIParams[i];
 #ifdef __show_physparamid__
-    std::cout << p_list << " " << util::AsString(p_list) << endl;
+    LOG("SuperkExp",pINFO) << p_list  << " " << util::AsString(p_list);
 #endif
     // if(util::AsString(p) == "--"){
     //   std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
@@ -265,7 +265,7 @@ void SuperkExpectation::CheckPhysParamId(void)
     PhysParamId_t p = (conv::PhysParamId_t)(i+conv::kRHCNuisSKDetFSI000);
     PhysParamId_t p_list = (conv::PhysParamId_t)kListOfRHCSKDetFSIParams[i];
 #ifdef __show_physparamid__
-    std::cout << util::AsString(p) << endl;
+    LOG("SuperkExp",pINFO) << util::AsString(p_list);
 #endif
     if(util::AsString(p) == "--"){
       std::cerr << "SuperkExpectation/CheckPhysParamId >> parameter " << p << " is not defined:" 
@@ -1165,7 +1165,7 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
   // --> not commented any longer
 
   // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
   this->GetNuXSec()->Tweak(kNuisXSecRPA , 1.); // NEW XSEC 
 #endif
 
@@ -1179,7 +1179,7 @@ void SuperkExpectation::ResetSystematics(Option_t * /*opt*/)
   // --> not commented any longer
 
   // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
   this->GetNuXSec()->Tweak(kRHCNuisXSecRPA           , 1.); // NEW XSEC
 #endif
 
@@ -1283,7 +1283,7 @@ void SuperkExpectation::CopyTweaksTo(PhysParamList & pl, Option_t * /*opt*/) con
   // 
   //  Uncorrelated xsec (common to FHC and RHC)
   // 
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
   pl.SetValue( kNuisXSecRPA,             this->GetNuXSec()->CurrentValue(kNuisXSecRPA)            ); 
 #endif
 

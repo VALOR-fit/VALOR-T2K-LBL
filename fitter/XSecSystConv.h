@@ -66,7 +66,7 @@ namespace valor {
 #  endif      
 #endif
       
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
     // NEW XSEC
 #  if BANFF_BINS == 1
     static const int kNumOfXSecSyst = 25;
@@ -93,7 +93,7 @@ namespace valor {
     static const PhysParamId_t kListOfXSecSyst[kNumOfXSecSyst] =
     {
             // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       kNuisXSecRPA,               // RPA tuning
         
@@ -117,7 +117,7 @@ namespace valor {
       kNuisBANFFNormNC1Gamma,		    // BANFF, NC 1 gamma
       kNuisBANFFNormNuEBarToNuMuBar,
       kNuisBANFFNorm2p2hBar,              // BANFF, 2p2hBar normalization
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       kNuisBANFFBeRPA_A ,
       kNuisBANFFBeRPA_B     ,
       kNuisBANFFBeRPA_D     ,
@@ -132,7 +132,7 @@ namespace valor {
     static const PhysParamId_t kListOfRHCXSecSyst[kNumOfRHCXSecSyst] =
     {
             // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       kRHCNuisXSecRPA,               // RPA tuning
             
@@ -156,7 +156,7 @@ namespace valor {
       kRHCNuisBANFFNormNC1Gamma,		    // BANFF, NC 1 gamma
       kRHCNuisBANFFNormNuEBarToNuMuBar,
       kRHCNuisBANFF2p2hBar,              // BANFF, 2p2hBar normalization
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       kNuisBANFFBeRPA_A ,
       kNuisBANFFBeRPA_B     ,
       kNuisBANFFBeRPA_D     ,
@@ -175,7 +175,7 @@ namespace valor {
     static const bool kXSecSystHasWghtSplines[kNumOfXSecSyst] =
     {
       // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       false,                     // RPA tuning kNuisXSecRPA
             
@@ -199,12 +199,12 @@ namespace valor {
       false,                     // kNuisBANFFNormNC1Gamma
       false,                     // kNuisBANFFNormNuEBarToNuMuBar
       false,                     // kNuisBANFFNorm2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       true,                      //kNuisBANFFBeRPA_A     
       true,                      //kNuisBANFFBeRPA_B     
       true,                      //kNuisBANFFBeRPA_D     
       true,                      //kNuisBANFFBeRPA_E     
-      true,                      //kNuisBANFFBeRPA_U     
+      false,                      //kNuisBANFFBeRPA_U     
       true,                      //kNuisBANFFShape2p2h   
       true,                      //kNuisBANFFShape2p2hBar
 #  endif             
@@ -214,7 +214,7 @@ namespace valor {
     static const bool kRHCXSecSystHasWghtSplines[kNumOfRHCXSecSyst] =
     {
             // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
       // NEW XSEC
       false,                      // RPA tuning kRHCNuisXSecRPA
             
@@ -238,12 +238,12 @@ namespace valor {
       false,                     // kRHCNuisBANFFNormNC1Gamma
       false,                     // kRHCNuisBANFFNormNuEBarToNuMuBar
       false,                     // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       true,                      // kNuisBANFFBeRPA_A     
       true,                      // kNuisBANFFBeRPA_B     
       true,                      // kNuisBANFFBeRPA_D     
       true,                      // kNuisBANFFBeRPA_E     
-      true,                      // kNuisBANFFBeRPA_U     
+      false,                      // kNuisBANFFBeRPA_U     
       true,                      // kNuisBANFFShape2p2h   
       true,                      // kNuisBANFFShape2p2hBar
 #  endif             
@@ -257,7 +257,7 @@ namespace valor {
     static const bool kXSecSystIncludedInBANFF[kNumOfXSecSyst] =
     {
             // NEW XSEC
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       false,                     // RPA tuning kNuisXSecRPA
       
@@ -281,7 +281,7 @@ namespace valor {
       true,                      // kNuisBANFFNormNC1Gamma
       true,                      // kNuisBANFFNormNuEBarToNuMuBar
       true,                      // kNuisBANFFNorm2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       true,                      // kNuisBANFFBeRPA_A     
       true,                      // kNuisBANFFBeRPA_B     
       true,                      // kNuisBANFFBeRPA_D     
@@ -298,7 +298,7 @@ namespace valor {
     static const bool kRHCXSecSystIncludedInBANFF[kNumOfRHCXSecSyst] =
     {
             // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__)|| defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__)|| defined(__USE_NIWG2017__) )
       // NEW XSEC
       false,                     // RPA tuning kRHCNuisXSecRPA
             
@@ -322,7 +322,7 @@ namespace valor {
       true,                      // kRHCNuisBANFFNormNC1Gamma
       true,                      // kRHCNuisBANFFNormNuEBarToNuMuBar
       true,                      // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       true,                      //kNuisBANFFBeRPA_A     
       true,                      //kNuisBANFFBeRPA_B     
       true,                      //kNuisBANFFBeRPA_D     
@@ -340,7 +340,7 @@ namespace valor {
     static const double kXSecSystErecoCut[kNumOfXSecSyst][2] =
     {
       // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       { 0.0, 100.0 },            // RPA tuning kNuisXSec RPA
             
@@ -364,7 +364,7 @@ namespace valor {
       { 0.0, 100.0 },            // kNuisBANFFNormNC1Gamma
       { 0.0, 100.0 },            // kNuisBANFFNormNuEBarToNuMuBar
       { 0.0, 100.0 },            // kNuisBANFFNorm2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_A     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_B     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_D     
@@ -380,7 +380,7 @@ namespace valor {
     static const double kRHCXSecSystErecoCut[kNumOfRHCXSecSyst][2] =
     {
       // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       { 0.0, 100.0 },            // RPA tuning kRHCNuisXSecRPA
             
@@ -404,7 +404,7 @@ namespace valor {
       { 0.0, 100.0 },            // kRHCNuisBANFFNormNC1Gamma
       { 0.0, 100.0 },            // kRHCNuisBANFFNormNuEBarToNuMuBar
       { 0.0, 100.0 },            // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_A     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_B     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_D     
@@ -420,7 +420,7 @@ namespace valor {
     static const double kXSecSystEtrueCut[kNumOfXSecSyst][2] =
     {
             // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       { 0.0, 100.0 },            // RPA tuning kNuisXSecRPA
             
@@ -444,7 +444,7 @@ namespace valor {
       { 0.0, 100.0 },            // kNuisBANFFNormNC1Gamma
       { 0.0, 100.0 },            // kNuisBANFFNormNuEBarToNuMuBar
       { 0.0, 100.0 },            // kNuisBANFFNorm2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_A     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_B     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_D     
@@ -459,7 +459,7 @@ namespace valor {
     static const double kRHCXSecSystEtrueCut[kNumOfRHCXSecSyst][2] =
     {
       // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       { 0.0, 100.0 },            // RPA tuning kRHCNuisXSecRPA
             
@@ -483,7 +483,7 @@ namespace valor {
       { 0.0, 100.0 },            // kRHCNuisBANFFNormNC1Gamma
       { 0.0, 100.0 },            // kRHCNuisBANFFNormNuEBarToNuMuBar
       { 0.0, 100.0 },            // kRHCNuisBANFF2p2hBar
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_A     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_B     
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_D     
@@ -501,7 +501,7 @@ namespace valor {
     static const double kXSecSystFracErr[kNumOfXSecSyst] =
     {
           // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
       // NEW XSEC
       0.1,            // RPA tuning
             
@@ -524,7 +524,7 @@ namespace valor {
       0.03,           // BANFF, nue / numu cross section
       0.5,	      // BANFF, NC 1 gamma
       0.03            // BANFF, nuebar / numubar cross section
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
      -999,            //kNuisBANFFBeRPA_A     
      -999,            //kNuisBANFFBeRPA_B     
      -999,            //kNuisBANFFBeRPA_D     
@@ -539,7 +539,7 @@ namespace valor {
     static const double kRHCXSecSystFracErr[kNumOfRHCXSecSyst] =
     {
       // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2016__) )
+#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
       // NEW XSEC
       0.1,            // RPA tuning
             
@@ -562,7 +562,7 @@ namespace valor {
       0.03,           // BANFF, nue / numu cross section
       0.5,	      // BANFF, NC 1 gamma
       0.03            // BANFF, nuebar / numubar cross section
-#  if defined(__USE_NIWG2016__)      
+#  if defined(__USE_NIWG2017__)      
       -999,            //BANFF, BeRPA_A     
       -999,            //BANFF, BeRPA_B     
       -999,            //BANFF, BeRPA_D     
@@ -679,7 +679,7 @@ namespace valor {
       {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #  endif
 #endif
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
       /// rpa
       /// banff2p2h banffca5 banffbgres banffmaqe banffmares banffscca banffsccv
       /// banffpF  banffccothshape banffbindE
@@ -861,7 +861,7 @@ namespace valor {
       {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #  endif
 #endif
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
       /// rpa
       /// banff2p2h banffca5 banffbgres banffmaqe banffmares banffscca banffsccv
       /// banffpF  banffccothshape banffbindE
@@ -1043,7 +1043,7 @@ namespace valor {
       {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #  endif
 #endif
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
       /// rpa
       /// banff2p2h banffca5 banffbgres banffmaqe banffmares banffscca banffsccv
       /// banffpF  banffccothshape banffbindE
@@ -1225,7 +1225,7 @@ namespace valor {
       {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #  endif
 #endif
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
       /// rpa
       /// banff2p2h banffca5 banffbgres banffmaqe banffmares banffscca banffsccv
       /// banffpF  banffccothshape banffbindE
@@ -1408,7 +1408,7 @@ namespace valor {
       {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #  endif
 #endif
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
       /// rpa
       /// banff2p2h banffca5 banffbgres banffmaqe banffmares banffscca banffsccv
       /// banffpF  banffccothshape banffbindE
@@ -1590,7 +1590,7 @@ namespace valor {
       {  0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, /// kSKmUndefined
 #  endif
 #endif
-#if defined(__USE_NIWG2016__)
+#if defined(__USE_NIWG2017__)
       /// rpa
       /// banff2p2h banffca5 banffbgres banffmaqe banffmares banffscca banffsccv
       /// banffpF  banffccothshape banffbindE

@@ -198,3 +198,11 @@ string valor::util::SampleAsStringCompact(conv::SuperkSample_t s) { return AsStr
 string valor::util::SampleAsStringTex    (conv::SuperkSample_t s) { return AsStringTex    (s);}
 string valor::util::SampleAsStringRooTex (conv::SuperkSample_t s) { return AsStringRooTex (s);}
 //________________________________________________________________________________________
+conv::SuperkSample_t valor::util::GetSKSample (int s)
+{
+  if (s < conv::kNSuperkSamples) {
+    return conv::kSKSamples[s];
+  }
+  else return conv::kSKsUndefined;
+}
+//________________________________________________________________________________________
