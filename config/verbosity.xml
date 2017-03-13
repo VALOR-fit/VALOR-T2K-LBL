@@ -15,7 +15,7 @@
   <priority msgstream="Reg">                    NOTICE   </priority>
   <priority msgstream="SuperkDetectorFSI">      DEBUG    </priority>
   <priority msgstream="SuperkMC">               DEBUG    </priority>
-  <priority msgstream="SuperkExp">               DEBUG    </priority>  
+  <priority msgstream="SuperkExp">              DEBUG    </priority>  
   <priority msgstream="CorrelatedSystematics">  DEBUG    </priority>
   <priority msgstream="UtlFitParamListFactory"> DEBUG    </priority>
   <priority msgstream="NuXSec">                 DEBUG    </priority>
