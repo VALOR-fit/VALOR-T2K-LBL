@@ -21,19 +21,34 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_file
   modes      = list_of_tuples(mode_filename)
   parameters = list_of_tuples(parameter_filename)
 
+  # MaCh3 patterns
   mach3_nom_pattern = "[CURRENT][SELECTION][MODE]_nom"
   mach3_pattern     = "[CURRENT][SELECTION]_[PARAM][MODE]_sig_[VAR]"
-#  valor_nom_pattern = "Spectrum_"+sample+"_nominal"
+
+  # ptheta patterns
+  # mach3_nom_pattern = "[SELECTION]_[PARAM]_nom_osc"
+  # mach3_pattern     = "[SELECTION]_[PARAM]_[VAR]sig_osc"
+  ptheta_compare = False
+
+  #  valor_nom_pattern = "Spectrum_"+sample+"_nominal"
 #  valor_nom_pattern     = "Spectrum_"+sample+"[MODE]_[PARAM]_[VAR]" 
   valor_pattern     = "Ratio_"+sample+"[MODE]_[PARAM]_[VAR]" 
 #  valor_pattern     = valor_nom_pattern
   
+  # paired objects have valor, then ptheta
+  # variations = [ ("p1","q1"),
+  #                ("p3","q3"),
+  #                ("m1","n1"),
+  #                ("m3","n3") ]
+
   # paired objects have valor, then mach3
   variations = [ ("p1","p1"),
                  ("p3","p3"),
                  ("m1","n1"),
                  ("m3","n3") ]
 
+  
+  
   mach3_current = "" #"anu_" # only looking at the FHC current samples, and are not labelled in the current round
   mach3_selection_1 = mach3_selection # nue CC 1pi sample "sknue1pi" ( "sknumu" "sknue" )
   
@@ -56,7 +71,7 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_file
   
   mach3_nom_hists         = dict() # only valor names will be used as keys
   mach3_nom_hists_binno   = dict() # only valor names will be used as keys
-  
+
   valor_hists             = dict() # only valor names will be used as keys
   mach3_hists             = dict() # only valor names will be used as keys
   mach3_ratio_hists       = dict() # only valor names will be used as keys
@@ -79,8 +94,8 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_file
     mach3_hists_binno       [valor_mode] = dict()
     mach3_ratio_hists_binno [valor_mode] = dict()
 
-    if mach3_mode == "" :
-      mach3_selection = "h" + mach3_selection_1
+    if mach3_mode == "" and not(ptheta_compare) :
+      mach3_selection = mach3_selection_1 #"h" + mach3_selection_1
     else :
       mach3_selection = mach3_selection_1
 
@@ -89,25 +104,29 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_file
     for old,new in [("[CURRENT]"  , mach3_current  ),
                     ("[MODE]"     , mach3_mode     ),
                     ("[SELECTION]", mach3_selection) ]:
-      mach3_nom_histname = mach3_nom_histname.replace(old,new)
+        mach3_nom_histname = mach3_nom_histname.replace(old,new)
 
-    mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
-    if not mach3_nom_hists[valor_mode]:
-      print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
+    if not(ptheta_compare):
+      mach3_nom_hists[valor_mode] = mach3_file.Get(mach3_nom_histname)
+      if not mach3_nom_hists[valor_mode]:
+        print "Failed to get MaCh3 nominal histogram ",mach3_nom_histname
 
-    print mach3_nom_hists[valor_mode]
+      print mach3_nom_hists[valor_mode]
 
-    mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
+      mach3_nom_hists_binno[valor_mode] = hist_to_bin_number(mach3_nom_hists[valor_mode])
 
 
     for iparam,(valor_param,mach3_param) in enumerate(parameters):
-
+      #if
+      
       valor_hists             [valor_mode][valor_param] = dict()
       mach3_hists             [valor_mode][valor_param] = dict()
       mach3_ratio_hists       [valor_mode][valor_param] = dict()
       valor_hists_binno       [valor_mode][valor_param] = dict()
       mach3_hists_binno       [valor_mode][valor_param] = dict()
       mach3_ratio_hists_binno [valor_mode][valor_param] = dict()
+
+      #if util.IsXSec(util.PhysParamIdFromString(valor_param))
 
       for valor_var,mach3_var in variations:
 

@@ -1,31 +1,63 @@
 # List of ('VALOR' , 'MaCh3'), parameters 
-   ( 'f_banffmaqe_fhc_rhc'          ,  'xsec_par_0'  ) ,    #   0: MaQE                               
-  #(                                ,  'xsec_par_1'  ) ,    #   1: pF (C)                               
-  #(                                ,  'xsec_par_2'  ) ,    #   2: MEC (C)                            
-  #(                                ,  'xsec_par_3'  ) ,    #   3: Eb (C)                                                                                                         
-  ( 'f_banffpfermi_fhc_rhc'        ,  'xsec_par_4'  ) ,    #   4: pF (O)                             
-  ( 'f_banffmec_fhc_rhc'           ,  'xsec_par_5'  ) ,    #   5: MEC (O)                            
-  ( 'f_banffbindE_fhc_rhc'         ,  'xsec_par_6'  ) ,    #   6: Eb (O)
-  ( 'f_banffmecbar_fhc_rhc'        ,  'xsec_par_7'  ) ,    #   7: $\bar{\nu}$ MEC (O)                
-  ( 'f_banffca5_fhc_rhc'           ,  'xsec_par_8'  ) ,    #   8: CA5                                   
-  ( 'f_banffmares_fhc_rhc'         ,  'xsec_par_9'  ) ,    #   9: MaRES                              
-  ( 'f_banffbgres_fhc_rhc'         ,  'xsec_par_10' ) ,    #  10: Isospin Bkg.                       
-  ( 'f_banffnorm_nuetonumu_fhc_rhc',  'xsec_par_11' ) ,    #  11: $\nu_{e}/\nu_{\mu}$                
-  ( 'f_banffnorm_nuebartonumubar_fhc_rhc'  ,  'xsec_par_12' ) ,    #  12: $\bar{\nu_{e}}/\bar{\nu_{\mu}}$                                                                              
-  ( 'f_banffshapeCCoth_fhc_rhc'    ,  'xsec_par_13' ) ,    #  13: CC Oth Shape                                                                                                                                                                           
-  #(     ,  'xsec_par_14' ) ,    #  14: CC Coh (C)
-  ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_15' ) ,    #  15: CC Coh (O)                                            
-  ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_16' ) ,    #  16: NC Coh                                                
-  ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_17' ) ,    #  17: NC 1 Gamma
-  #(                                ,  'xsec_par_18' ) ,    #  18: NC Oth Near                                           
-  ( 'f_banffnorm_ncoth_fhc_rhc'     ,  'xsec_par_19' ) ,    #  19: NC Oth Far                                            
-  #(                                ,  'xsec_par_20' ) ,    #  20: FSI Inel. Low E                                       
-  #(                                ,  'xsec_par_21' ) ,    #  21: FSI Inel. High E                                      
-  #(                                ,  'xsec_par_22' ) ,    #  22: FSI Pion Prod.                                        
-  #(                                ,  'xsec_par_23' ) ,    #  23: FSI Pion Abs.                                         
-  #(                                ,  'xsec_par_24' ) ,    #  24: FSI Ch. Exch. Low E                                   
-  #(                                ,  'xsec_par_25' ) ,    #  25: FSI Ch. Exch. High E                                  
-  
+  #  ( 'f_banffmaqe_fhc_rhc'          ,  'xsec_par_0'  ) ,    #   0: MaQE                               
+  # #(                                ,  'xsec_par_1'  ) ,    #   1: pF (C)                               
+  # #(                                ,  'xsec_par_2'  ) ,    #   2: MEC (C)                            
+  # #(                                ,  'xsec_par_3'  ) ,    #   3: Eb (C)                                                                                                         
+  # ( 'f_banffpfermi_fhc_rhc'        ,  'xsec_par_4'  ) ,    #   4: pF (O)                             
+  # ( 'f_banff2p2h_fhc_rhc'          ,  'xsec_par_5'  ) ,    #   5: MEC (O)                            
+  # ( 'f_banffbindE_fhc_rhc'         ,  'xsec_par_6'  ) ,    #   6: Eb (O)
+  # ( 'f_banff2p2hbar_fhc_rhc'       ,  'xsec_par_7'  ) ,    #   7: $\bar{\nu}$ MEC (O)                
+  # ( 'f_banffca5_fhc_rhc'           ,  'xsec_par_8'  ) ,    #   8: CA5                                   
+  # ( 'f_banffmares_fhc_rhc'         ,  'xsec_par_9'  ) ,    #   9: MaRES                              
+  # ( 'f_banffbgres_fhc_rhc'         ,  'xsec_par_10' ) ,    #  10: Isospin Bkg.                       
+  # ( 'f_banffnorm_nuetonumu_fhc_rhc',  'xsec_par_11' ) ,    #  11: $\nu_{e}/\nu_{\mu}$                
+  # ( 'f_banffnorm_nuebartonumubar_fhc_rhc'  ,  'xsec_par_12' ) ,    #  12: $\bar{\nu_{e}}/\bar{\nu_{\mu}}$                                                                             
+  # ( 'f_banffshapeCCoth_fhc_rhc'    ,  'xsec_par_13' ) ,    #  13: CC Oth Shape                                                                                                                                                                           
+  # #(     ,  'xsec_par_14' ) ,    #  14: CC Coh (C)
+  # ( 'f_banffnorm_cccoh_fhc_rhc'    ,  'xsec_par_15' ) ,    #  15: CC Coh (O)                                            
+  # ( 'f_banffnorm_nccoh_fhc_rhc'    ,  'xsec_par_16' ) ,    #  16: NC Coh                                                
+  # ( 'f_banffnorm_nc1gamma_fhc_rhc' ,  'xsec_par_17' ) ,    #  17: NC 1 Gamma
+  # #(                                ,  'xsec_par_18' ) ,    #  18: NC Oth Near                                           
+  # ( 'f_banffnorm_ncoth_fhc_rhc'     ,  'xsec_par_19' ) ,    #  19: NC Oth Far                                            
+  # #(                                ,  'xsec_par_20' ) ,    #  20: FSI Inel. Low E                                       
+  # #(                                ,  'xsec_par_21' ) ,    #  21: FSI Inel. High E                                      
+  # #(                                ,  'xsec_par_22' ) ,    #  22: FSI Pion Prod.                                        
+  # #(                                ,  'xsec_par_23' ) ,    #  23: FSI Pion Abs.                                         
+  # #(                                ,  'xsec_par_24' ) ,    #  24: FSI Ch. Exch. Low E                                   
+  # #(                                ,  'xsec_par_25' ) ,    #  25: FSI Ch. Exch. High E                                  
+
+  (  'f_banffmaqe_fhc_rhc'           , 'xsec_par_0'  ) ,      #0    | MAQE                          
+#  (  '' ,'xsec_par_1'  ) ,                                   #1    | pF_C                          
+  (  'f_banffpfermi_fhc_rhc'         , 'xsec_par_2'  ) ,      #2    | pF_O                          
+  (  'f_banff2p2h_fhc_rhc'           , 'xsec_par_3'  ) ,      #3    | 2p2h_norm_nu                  
+  (  'f_banff2p2hbar_fhc_rhc'        , 'xsec_par_4'  ) ,      #4    | 2p2h_norm_nubar               
+#  (  '' ,'xsec_par_5'  ) ,                                   #5    | 2p2h_normCtoO                 
+#  (  '' ,'xsec_par_6'  ) ,                                   #6    | 2p2h_shape_C                  
+  (  'f_banffshape_2p2hnu_fhc_rhc'   , 'xsec_par_7'  ) ,      #7    | 2p2h_shape_O                  
+  (  'f_banffshape_berpa_A_fhc_rhc'  , 'xsec_par_8'  ) ,      #8    | BeRPA_A                       
+  (  'f_banffshape_berpa_B_fhc_rhc'  , 'xsec_par_9'  ) ,      #9    | BeRPA_B                       
+  (  'f_banffshape_berpa_D_fhc_rhc'  , 'xsec_par_10' ) ,      #10   | BeRPA_D                       
+  (  'f_banffshape_berpa_E_fhc_rhc'  , 'xsec_par_11' ) ,      #11   | BeRPA_E                       
+  (  'f_banffshape_berpa_U_fhc_rhc'  , 'xsec_par_12' ) ,      #12   | BeRPA_U                       
+  (  'f_banffca5_fhc_rhc'            , 'xsec_par_13' ) ,      #13   | CA5                           
+  (  'f_banffmares_fhc_rhc'          , 'xsec_par_14' ) ,      #14   | MARES                         
+  (  'f_banffbgres_fhc_rhc'          , 'xsec_par_15' ) ,      #15   | ISO_BKG                       
+  (  'f_banffnorm_nuetonumu_fhc_rhc' , 'xsec_par_16' ) ,      #16   | nue_numu                      
+  (  'f_banffnorm_nuebartonumubar_fhc_rhc' ,'xsec_par_17' ) , #17   | nuebar_numubar                
+  (  'f_banffshapeCCoth_fhc_rhc'     , 'xsec_par_18' ) ,      #18   | CC_DIS                        
+#  (  '' ,'xsec_par_19' ) ,                                   #19   | CC_Coh_C                      
+  (  'f_banffnorm_cccoh_fhc_rhc'     , 'xsec_par_20' ) ,      #20   | CC_Coh_O                      
+  (  'f_banffnorm_nccoh_fhc_rhc'     , 'xsec_par_21' ) ,      #21   | NC_Coh                        
+  (  'f_banffnorm_nc1gamma_fhc_rhc'  , 'xsec_par_22' ) ,      #22   | NC_1gamma                     
+#  (  '' ,'xsec_par_23' ) ,                                   #23   | NC_other_near                 
+  (  'f_banffnorm_ncoth_fhc_rhc'     , 'xsec_par_24' ) ,      #24   | NC_other_far                  
+#  (  '' ,'xsec_par_25' ) ,                                   #25   | FSI_INEL_LO                   
+#  (  '' ,'xsec_par_26' ) ,                                   #26   | FSI_INEL_HI                   
+#  (  '' ,'xsec_par_27' ) ,                                   #27   | FSI_PI_PROD                   
+#  (  '' ,'xsec_par_28' ) ,                                   #28   | FSI_PI_ABS                    
+#  (  '' ,'xsec_par_29' ) ,                                   #29   | FSI_CEX_LO                    
+#  (  '' ,'xsec_par_30' ) ,                                   #30   | FSI_CEX_HI                    
+
   ( 'f_banff00' ,  'flux_par_50' ) ,
   ( 'f_banff01' ,  'flux_par_51' ) ,
   ( 'f_banff02' ,  'flux_par_52' ) ,
@@ -55,17 +87,17 @@
   # Have no entries in lowest energy bins see SKFSISystConv.h
   # kListOfMultiRingSKDetFSIParams
   
-  #( 'f_skdetfsi006_multiring',  '') , 
-  ( 'f_skdetfsi007_multiring',  'skdet_par_36') ,
-  ( 'f_skdetfsi008_multiring',  'skdet_par_37') ,
-  #( 'f_skdetfsi009_multiring',  '') ,
-  ( 'f_skdetfsi010_multiring',  'skdet_par_38') ,
-  ( 'f_skdetfsi011_multiring',  'skdet_par_39') ,
-  #( 'f_skdetfsi012_multiring',  '') ,
-  ( 'f_skdetfsi013_multiring',  'skdet_par_40') ,
-  ( 'f_skdetfsi014_multiring',  'skdet_par_41') ,
-  #( 'f_skdetfsi015_multiring',  '') ,
-  ( 'f_skdetfsi016_multiring',  'skdet_par_42') ,
-  ( 'f_skdetfsi017_multiring',  'skdet_par_43') ,
+  # #( 'f_skdetfsi006_multiring',  '') , 
+  # ( 'f_skdetfsi007_multiring',  'skdet_par_36') ,
+  # ( 'f_skdetfsi008_multiring',  'skdet_par_37') ,
+  # #( 'f_skdetfsi009_multiring',  '') ,
+  # ( 'f_skdetfsi010_multiring',  'skdet_par_38') ,
+  # ( 'f_skdetfsi011_multiring',  'skdet_par_39') ,
+  # #( 'f_skdetfsi012_multiring',  '') ,
+  # ( 'f_skdetfsi013_multiring',  'skdet_par_40') ,
+  # ( 'f_skdetfsi014_multiring',  'skdet_par_41') ,
+  # #( 'f_skdetfsi015_multiring',  '') ,
+  # ( 'f_skdetfsi016_multiring',  'skdet_par_42') ,
+  # ( 'f_skdetfsi017_multiring',  'skdet_par_43') ,
 
-  ( 'f_sk_e_scale' ,  'skdet_par_44'),
+#  ( 'f_sk_e_scale' ,  'skdet_par_44'),

@@ -5,6 +5,7 @@ import math
 import array
 import sys
 import os
+import subprocess
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
@@ -26,10 +27,10 @@ rnd     = valor.Rnd.Instance()
 arridx  = util.ArrIdx.Instance()
 
 species   = ["numu","nue","numubar","nuebar","signue", "signuebar"]
-#processes      = ["CCQE", "CC1pi", "CCcoherent", "MEC", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother"]
-#processes_used = ["CCQE", "CC1pi", "CCcoherent", "MEC", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother"]
-processes      = ["CCQE", "CC1pi", "CCcoherent", "MEC", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother", "NC1gamma"]
-processes_used = ["CCQE", "CC1pi", "CCcoherent", "MEC", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother", "NC1gamma"]
+#processes      = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother"]
+#processes_used = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother"]
+processes      = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother", "NC1gamma"]
+processes_used = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother", "NC1gamma"]
 
 
 #samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
@@ -54,12 +55,12 @@ modes_to_species_and_process = dict()
 modes_to_species_and_process[conv.kSKmNuMuCCQE]         = ("numu", "CCQE")
 modes_to_species_and_process[conv.kSKmNuMuCC1pi]        = ("numu", "CC1pi")
 modes_to_species_and_process[conv.kSKmNuMuCCcoh]        = ("numu", "CCcoherent")
-modes_to_species_and_process[conv.kSKmNuMuCCMEC]        = ("numu", "MEC")
+modes_to_species_and_process[conv.kSKmNuMuCC2p2h]       = ("numu", "2p2h")
 modes_to_species_and_process[conv.kSKmNuMuCCoth]        = ("numu", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuNC1piC]       = ("numu", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuNC1pi0]       = ("numu", "NC1pi0")
 modes_to_species_and_process[conv.kSKmNuMuNCcoh]        = ("numu", "NCcoherent")
-modes_to_species_and_process[conv.kSKmNuMuNCoth]        = ("numu", "NCother")  # unified definition
+modes_to_species_and_process[conv.kSKmNuMuNCoth]        = ("numu", "NCother")  # unified defini,.qtion
 modes_to_species_and_process[conv.kSKmNuMuNC1Gamma]     = ("numu", "NC1gamma")  # unified definition
 #~ modes_to_species_and_process[conv.kSKmNuMuNCoth_mu]     = ("numu", "NCother")  #nu_mu appearance analysis definition
 #~ modes_to_species_and_process[conv.kSKmNuMuNCoth_e]      = ("numu", "NCother")  #nu_e appearance analysis definition
@@ -70,7 +71,7 @@ modes_to_species_and_process[conv.kSKmNuMuNC1Gamma]     = ("numu", "NC1gamma")  
 modes_to_species_and_process[conv.kSKmNuMuBarCCQE]      = ("numubar", "CCQE")
 modes_to_species_and_process[conv.kSKmNuMuBarCC1pi]     = ("numubar", "CC1pi")
 modes_to_species_and_process[conv.kSKmNuMuBarCCcoh]     = ("numubar", "CCcoherent")
-modes_to_species_and_process[conv.kSKmNuMuBarCCMEC]     = ("numubar", "MEC")
+modes_to_species_and_process[conv.kSKmNuMuBarCC2p2h]     = ("numubar", "2p2h")
 modes_to_species_and_process[conv.kSKmNuMuBarCCoth]     = ("numubar", "CCother")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1piC]    = ("numubar", "NC1piPM")
 modes_to_species_and_process[conv.kSKmNuMuBarNC1pi0]    = ("numubar", "NC1pi0")
@@ -86,7 +87,7 @@ modes_to_species_and_process[conv.kSKmNuMuBarNC1Gamma]  = ("numubar", "NC1gamma"
 modes_to_species_and_process[conv.kSKmNuECCQE]          = ("nue","CCQE")
 modes_to_species_and_process[conv.kSKmNuECC1pi]         = ("nue","CC1pi")
 modes_to_species_and_process[conv.kSKmNuECCcoh]         = ("nue","CCcoherent")
-modes_to_species_and_process[conv.kSKmNuECCMEC]         = ("nue","MEC")
+modes_to_species_and_process[conv.kSKmNuECC2p2h]         = ("nue","2p2h")
 modes_to_species_and_process[conv.kSKmNuECCoth]         = ("nue","CCother")
 modes_to_species_and_process[conv.kSKmNuENC1piC]        = ("nue","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuENC1pi0]        = ("nue","NC1pi0")
@@ -98,12 +99,12 @@ modes_to_species_and_process[conv.kSKmNuENC1Gamma]      = ("nue","NC1gamma") #un
 modes_to_species_and_process[conv.kSKmOscNuEBarCCQE]    = ("signuebar","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuEBarCC1pi]   = ("signuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCcoh]   = ("signuebar","CCcoherent")
-modes_to_species_and_process[conv.kSKmOscNuEBarCCMEC]   = ("signuebar","MEC")
+modes_to_species_and_process[conv.kSKmOscNuEBarCC2p2h]   = ("signuebar","2p2h")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCoth]   = ("signuebar","CCother")
 modes_to_species_and_process[conv.kSKmNuEBarCCQE]       = ("nuebar","CCQE")
 modes_to_species_and_process[conv.kSKmNuEBarCC1pi]      = ("nuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmNuEBarCCcoh]      = ("nuebar","CCcoherent")
-modes_to_species_and_process[conv.kSKmNuEBarCCMEC]      = ("nuebar","MEC")
+modes_to_species_and_process[conv.kSKmNuEBarCC2p2h]      = ("nuebar","2p2h")
 modes_to_species_and_process[conv.kSKmNuEBarCCoth]      = ("nuebar","CCother")
 modes_to_species_and_process[conv.kSKmNuEBarNC1piC]     = ("nuebar","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuEBarNC1pi0]     = ("nuebar","NC1pi0")
@@ -115,7 +116,7 @@ modes_to_species_and_process[conv.kSKmNuEBarNC1Gamma]   = ("nuebar","NC1gamma") 
 modes_to_species_and_process[conv.kSKmOscNuECCQE]       = ("signue","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuECC1pi]      = ("signue","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuECCcoh]      = ("signue","CCcoherent")
-modes_to_species_and_process[conv.kSKmOscNuECCMEC]      = ("signue","MEC")
+modes_to_species_and_process[conv.kSKmOscNuECC2p2h]     = ("signue","2p2h")
 modes_to_species_and_process[conv.kSKmOscNuECCoth]      = ("signue","CCother")
 
 fancy_species = dict()
@@ -261,7 +262,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
 
   # Special tweak to compare with prefit values
   # BANFF XSec parameters for convenience
-  # 50 (default: 1)  BANFF; Norm; MEC                   kNuisBANFFMEC                
+  # 50 (default: 1)  BANFF; Norm; 2p2h                   kNuisBANFF2p2h                
   # 51 (default: 1)  BANFF; CA5 RES                     kNuisBANFFCA5                
   # 52 (default: 1)  BANFF; BgRES Isospin 1/2           kNuisBANFFBgRES              
   # 53 (default: 1)  BANFF; Ma QE                       kNuisBANFFMAQE               
@@ -277,7 +278,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   # 63 (default: 1)  BANFF; Norm; NuE To NuMu           kNuisBANFFNormNuEToNuMu      
   # 64 (default: 1)  BANFF; Norm; NC 1 Gamma            kNuisBANFFNormNC1Gamma       
   # 65 (default: 1)  BANFF; Norm; NuEBar To NuMuBar     kNuisBANFFNormNuEBarToNuMuBar
-  # 66 (default: 1)  BANFF; Norm; MECBar                kNuisBANFFMECBar             
+  # 66 (default: 1)  BANFF; Norm; 2p2hBar                kNuisBANFF2p2hBar             
 
   if(tweakedbanff):
     print "- Tweaking BANFF tuning to match ptheta analysis"
@@ -296,11 +297,11 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     #     print "\t", util.ParamAsString(skexp.GetBANFF().Idx2Param(i)), " set to untuned values"
     #     v[i] = v_untuned[i];
 
-    #v[50] =     # BANFF; Norm; MEC                        1     | .  #50 MA QE, type:3                       
+    #v[50] =     # BANFF; Norm; 2p2h                        1     | .  #50 MA QE, type:3                       
     v[51] = 1.0  # BANFF; CA5 RES                          0.78  | .  #51 pF, type:3                          
-    v[52] = 1.0  # BANFF; BgRES Isospin 1/2                1     |   #52 MEC O norm, type:2                  
+    v[52] = 1.0  # BANFF; BgRES Isospin 1/2                1     |   #52 2p2h O norm, type:2                  
     v[53] = 1.0  # BANFF; Ma QE                            0.93  | .  #53 Eb, type:3                          
-    v[54] = 1.0  # BANFF; Ma RES                           0.88  |   #54 MEC nubar, type:2                   
+    v[54] = 1.0  # BANFF; Ma RES                           0.88  |   #54 2p2h nubar, type:2                   
     v[55] = 1.0  # BANFF; Second current class axial       1     | .  #55 CA5_RES, type:3                     
     v[56] = 1.0  # BANFF; Second current class vector      1     | .  #56 MANFF_RES, type:3                   
     v[57] = 1.0  # BANFF; Fermi Momentum                   1.04  | .  #57 BG_RES, type:3                      
@@ -312,15 +313,23 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     # v[63] =    # BANFF; Norm; NuE To NuMu                1     |   #63 NC gamma norm, type:2               
     # v[64] =    # BANFF; Norm; NC 1 Gamma                 1     |   #64 NC other norm, type:2               
     # v[65] =    # BANFF; Norm; NuEBar To NuMuBar          1     |   #65 RPA, type:3                         
-    # v[66] =    # BANFF; Norm; MECBar                     0.57  |
+    # v[66] =    # BANFF; Norm; 2p2hBar                     0.57  |
+    v[67] =  0.59   # BANFF; BeRPA A
+    v[68] =  1.05   # BANFF; BeRPA B
+    v[69] =  1.13   # BANFF; BeRPA D
+    v[70] =  0.88   # BANFF; BeRPA E
+    v[71] =  1.2    # BANFF; BeRPA U
+    # v[72] =    # BANFF; Shape; 2p2h nu
+    # v[73] =    # BANFF; Shape; 2p2h nubar
 
     skexp.GetBANFF().Tweak(1,v,"")
-    skexp.GetBANFF().PrintSystematicVariations()
+    #skexp.GetBANFF().PrintSystematicVariations()
 
     print "Special tweak for comparison with prefit systematic variations "
-  #skexp.GetBANFF().PrintSystematicVariations()
+  skexp.GetBANFF().PrintSystematicVariations()
 
   # Make the dataset
+  print "Making the data set"
   skexp.Generate(phyp)
   
   tex_output = open(output_file,"w")
@@ -474,36 +483,36 @@ if __name__=="__main__":
   parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of validation spectra")
 
   # # T2K+reactors (sinsqtheta) - Normal Hierarchy
-#  parser.add_option('--mixing12', dest='mixing12',default=0.   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-#  parser.add_option('--mixing13', dest='mixing13',default=0.  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-#  parser.add_option('--mixing23', dest='mixing23',default=0.   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
-#  parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
-#  parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.509E-3 ,type=float, help='Value of large mass splitting')
-#  parser.add_option('--deltacp' , dest='deltacp' ,default=0.    ,type=float, help='Value of delta CP')
-#  parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-#  parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-#  parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
-#  parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
-#  parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.509E-3 ,type=float, help='Barred value of large mass splitting')
-#  parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=0.   ,type=float, help='Barred value of delta CP')
-#  parser.add_option('--betabar'    , dest='betaBar'    ,default=1.      ,type=float, help='Barred value of nuebar appearance normalization ')
-#  parser.add_option('--hierarchy'  , dest="hierarchy"  , default="normal", help='Mass hierarchy: "normal" or "inverted"')
-
-  # T2K+reactors best-fit (sinsqtheta) - Asimov data set (A)
-  parser.add_option('--mixing12', dest='mixing12',default=0.304   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  parser.add_option('--mixing13', dest='mixing13',default=0.0217  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  parser.add_option('--mixing23', dest='mixing23',default=0.528   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  parser.add_option('--mixing12', dest='mixing12',default=0.   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  parser.add_option('--mixing13', dest='mixing13',default=0.  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing23', dest='mixing23',default=0.   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
   parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.509E-3 ,type=float, help='Value of large mass splitting')
-  parser.add_option('--deltacp' , dest='deltacp' ,default=-1.601    ,type=float, help='Value of delta CP')
-  parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.304   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
-  parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0217  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
-  parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.528   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  parser.add_option('--deltacp' , dest='deltacp' ,default=0.    ,type=float, help='Value of delta CP')
+  parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
   parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
   parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.509E-3 ,type=float, help='Barred value of large mass splitting')
-  parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=-1.601   ,type=float, help='Barred value of delta CP')
+  parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=0.   ,type=float, help='Barred value of delta CP')
   parser.add_option('--betabar'    , dest='betaBar'    ,default=1.      ,type=float, help='Barred value of nuebar appearance normalization ')
   parser.add_option('--hierarchy'  , dest="hierarchy"  , default="normal", help='Mass hierarchy: "normal" or "inverted"')
+
+  # T2K+reactors best-fit (sinsqtheta) - Asimov data set (A)
+  # parser.add_option('--mixing12', dest='mixing12',default=0.304   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  # parser.add_option('--mixing13', dest='mixing13',default=0.0217  ,type=float, help='Value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  # parser.add_option('--mixing23', dest='mixing23',default=0.528   ,type=float, help='Value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  # parser.add_option('--dm12sq'  , dest='dm12sq'  ,default=7.53E-5 ,type=float, help='Value of small mass splitting')
+  # parser.add_option('--dm23sq'  , dest='dm23sq'  ,default=2.509E-3 ,type=float, help='Value of large mass splitting')
+  # parser.add_option('--deltacp' , dest='deltacp' ,default=-1.601    ,type=float, help='Value of delta CP')
+  # parser.add_option('--mixing12bar', dest='mixing12Bar',default=0.304   ,type=float, help='Barred value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
+  # parser.add_option('--mixing13bar', dest='mixing13Bar',default=0.0217  ,type=float, help='Barred value of sinsqtheta13 or sinsq2theta13 depending on mixing param choice')
+  # parser.add_option('--mixing23bar', dest='mixing23Bar',default=0.528   ,type=float, help='Barred value of sinsqtheta23 or sinsq2theta23 depending on mixing param choice')
+  # parser.add_option('--dm12sqbar'  , dest='dm12sqBar'  ,default=7.53E-5 ,type=float, help='Barred value of small mass splitting')
+  # parser.add_option('--dm23sqbar'  , dest='dm23sqBar'  ,default=2.509E-3 ,type=float, help='Barred value of large mass splitting')
+  # parser.add_option('--deltacpbar' , dest='deltacpBar' ,default=-1.601   ,type=float, help='Barred value of delta CP')
+  # parser.add_option('--betabar'    , dest='betaBar'    ,default=1.      ,type=float, help='Barred value of nuebar appearance normalization ')
+  # parser.add_option('--hierarchy'  , dest="hierarchy"  , default="normal", help='Mass hierarchy: "normal" or "inverted"')
 
 #  # T2K+reactors best-fit (sinsqtheta) - Asimov data set (B)
 #  parser.add_option('--mixing12', dest='mixing12',default=0.304   ,type=float, help='Value of sinsqtheta12 or sinsq2theta12 depending on mixing param choice')
@@ -558,13 +567,13 @@ if __name__=="__main__":
   parser.add_option('-t','--mixing-param-octant', dest="mixparamoctant", default="two"       , help='Mixing param octant: "one" or "two"')
   parser.add_option('-a','--dmsq-scheme', dest="dmsqscheme", default="auto"       , help='"abs23", "abs31", "auto" or "fogli"')
   
-  parser.add_option('-f', '--file', dest='output_file', default="validation_oscA.tex", help="Name for output TeX file.")
+  parser.add_option('-f', '--file', dest='output_file', default="validation_no_osc_special.tex", help="Name for output TeX file.")
   
   
   #
   # NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
   #
-  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_Run1-7cPOT_theta.xml", help="Configuration file")
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_prefit_Run1-7cPOT_theta_banff_2p2h_berpa.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml", help="Configuration file")

@@ -15,7 +15,7 @@ using namespace valor::conv;
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
  const char * tag                  = "tamesu",
- const char * sk_sample            = "MultiRe",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu", "MultiRe" */
+ const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu", "MultiRe" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
  // // No Oscillations

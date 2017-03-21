@@ -28,26 +28,26 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 (
  // int          mode               = 1,              /* options: see the macro   */
  bool         update_rootfile    = false,          /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "MultiRe",      /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu, MultiRe" */
+ const char * sk_sample          = "1Re",      /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu, MultiRe" */
  const char * hypothesis         = "3f_osc",       /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" , "nuosc_3f+nuisance"*/
 
- double       input_mixing12       = 0.304,//-99,    
- double       input_mixing13       = 0.0217, //-99,    
- double       input_mixing23       = 0.528,    
- double       input_deltacp        = -1.601,   
- double       input_dm12sq         = 7.53E-5,   
- double       input_dm23sq         = 2.509E-3,     
-
- // double       input_mixing12       = 0.,    
- // double       input_mixing13       = 0.,    
- // double       input_mixing23       = 0.,
- // double       input_deltacp        = 0.,
+ // double       input_mixing12       = 0.304,//-99,    
+ // double       input_mixing13       = 0.0217, //-99,    
+ // double       input_mixing23       = 0.528,    
+ // double       input_deltacp        = -1.601,   
  // double       input_dm12sq         = 7.53E-5,   
  // double       input_dm23sq         = 2.509E-3,     
+
+ double       input_mixing12       = 0.,    
+ double       input_mixing13       = 0.,    
+ double       input_mixing23       = 0.,
+ double       input_deltacp        = 0.,
+ double       input_dm12sq         = 7.53E-5,   
+ double       input_dm23sq         = 2.509E-3,     
  
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT.xml",
+ const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT_theta_banff_2p2h_berpa.xml",
  const char * fit_param_list     = "nuosc3f+nuisance",
  
  const char * mixparamchoice     = "sinsqtheta",
@@ -58,7 +58,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  string tablesyst_name           = "f_tamesu", //"f_banff17", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
  const bool   per_mode           = true,
- const char*  tag                = "_tamesu_prebanff_asimovA_lowEevt"
+ const char*  tag                = "_tamesu_prebanff_unosc_noRPA_BeRPA"
  ){
   using namespace std;
   using namespace valor;
@@ -1123,8 +1123,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // streamer << "\\hline \\hline" << endl;
     streamer << "\\toprule" << endl;
     streamer << "{\\textbf{ Parameter }} &  "
-             // << "{\\textbf{ Nominal}}   &  "
-             // << "{\\textbf{ BANFF tuned}} &  "
+             << "{\\textbf{ Nominal}}   &  "
+             << "{\\textbf{ BANFF tuned}} &  "
              << "\\multicolumn {1}{|c|}{\\textbf{ 1 $\\sigma$ value}} &  "
              << "\\multicolumn {2}{S|} { {\\textbf{ BANFF -3$\\sigma$}} } & "
              << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned -1$\\sigma$}} } &  "
@@ -1154,10 +1154,10 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     streamer   << setw(ncol1)  << setfill(' ')
                << "All syst"
                << endcolumn
-               // << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
-               // << endcolumn
-               // << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot
-               // << endcolumn
+               << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
+               << endcolumn
+               << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot
+               << endcolumn
                << setw(ncolnev)  << setfill(' ') << setprecision(5) << ""
                << endcolumn
                << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_all_m3
