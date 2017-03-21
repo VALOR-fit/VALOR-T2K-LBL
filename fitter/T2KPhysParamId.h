@@ -123,24 +123,24 @@ static const PhysParamId_t kNuisBANFFSCCV     = kNuis057;  // Second current vec
 #endif
 static const PhysParamId_t kNuisBANFFFermiMom            = kNuis058;   // Fermi momentum
 static const PhysParamId_t kNuisBANFFShapeCCoth          = kNuis059;   // CC other shape
-static const PhysParamId_t kNuisBANFFBindE               = kNuis060;   // Binding energy, not in 2017 summer analysis
-static const PhysParamId_t kNuisBANFFNormCCcoh           = kNuis061;   // CC coherent norm
-static const PhysParamId_t kNuisBANFFNormNCcoh           = kNuis062;   // NC coh norm
-static const PhysParamId_t kNuisBANFFNormNCoth           = kNuis063;   // NC other norm
-static const PhysParamId_t kNuisBANFFNormNuEToNuMu       = kNuis064;   // nue / numu cross section
-static const PhysParamId_t kNuisBANFFNormNC1Gamma        = kNuis065;   // NC 1 gamma
-static const PhysParamId_t kNuisBANFFNormNuEBarToNuMuBar = kNuis066;   // nuebar / numubar 
-static const PhysParamId_t kNuisBANFFNorm2p2hBar         = kNuis067;   // 2p2h nubar normalization
-static const PhysParamId_t kNuisBANFFBeRPA_A             = kNuis068;   // BeRPA A
-static const PhysParamId_t kNuisBANFFBeRPA_B             = kNuis069;   // BeRPA B
-static const PhysParamId_t kNuisBANFFBeRPA_D             = kNuis070;   // BeRPA D
-static const PhysParamId_t kNuisBANFFBeRPA_E             = kNuis071;   // BeRPA E
-static const PhysParamId_t kNuisBANFFBeRPA_U             = kNuis072;   // BeRPA U
-static const PhysParamId_t kNuisBANFFShape2p2h           = kNuis073;   // 2p2h nu shape
-static const PhysParamId_t kNuisBANFFShape2p2hBar        = kNuis074;   // 2p2hbar nu shape  
+  //static const PhysParamId_t kNuisBANFFBindE               = kNuis060;   // Binding energy, not in 2017 summer analysis
+static const PhysParamId_t kNuisBANFFNormCCcoh           = kNuis060;   // CC coherent norm
+static const PhysParamId_t kNuisBANFFNormNCcoh           = kNuis061;   // NC coh norm
+static const PhysParamId_t kNuisBANFFNormNCoth           = kNuis062;   // NC other norm
+static const PhysParamId_t kNuisBANFFNormNuEToNuMu       = kNuis063;   // nue / numu cross section
+static const PhysParamId_t kNuisBANFFNormNC1Gamma        = kNuis064;   // NC 1 gamma
+static const PhysParamId_t kNuisBANFFNormNuEBarToNuMuBar = kNuis065;   // nuebar / numubar 
+static const PhysParamId_t kNuisBANFFNorm2p2hBar         = kNuis066;   // 2p2h nubar normalization
+static const PhysParamId_t kNuisBANFFBeRPA_A             = kNuis067;   // BeRPA A
+static const PhysParamId_t kNuisBANFFBeRPA_B             = kNuis068;   // BeRPA B
+static const PhysParamId_t kNuisBANFFBeRPA_D             = kNuis069;   // BeRPA D
+static const PhysParamId_t kNuisBANFFBeRPA_E             = kNuis070;   // BeRPA E
+static const PhysParamId_t kNuisBANFFBeRPA_U             = kNuis071;   // BeRPA U
+static const PhysParamId_t kNuisBANFFShape2p2h           = kNuis072;   // 2p2h nu/nubar shape
+static const PhysParamId_t kNuisBANFFNorm2p2hCtoO        = kNuis073;   // 2p2h CtoO norm
 //
 
-static const PhysParamId_t kLastBANFFParam  = kNuis075; // Utility, should always come after last FHC BANFF
+static const PhysParamId_t kLastBANFFParam  = kNuis074; // Utility, should always come after last FHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -310,26 +310,25 @@ static const PhysParamId_t kRHCNuisBANFFSCCV    = kNuis207;  // Second current v
 #endif
 static const PhysParamId_t kRHCNuisBANFFFermiMom            = kNuis208;   // Fermi momentum
 static const PhysParamId_t kRHCNuisBANFFShapeCCoth          = kNuis209;   // CC other shape
-static const PhysParamId_t kRHCNuisBANFFBindE               = kNuis210;   // Binding energy
-static const PhysParamId_t kRHCNuisBANFFNormCCcoh           = kNuis211;   // CC coherent norm
-static const PhysParamId_t kRHCNuisBANFFNormNCcoh           = kNuis212;   // NC coh norm
-static const PhysParamId_t kRHCNuisBANFFNormNCoth           = kNuis213;   // NC other norm
-static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu       = kNuis214;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisBANFFNormNC1Gamma        = kNuis215;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisBANFFNormNuEBarToNuMuBar = kNuis216;   // nue / numu cross section
-static const PhysParamId_t kRHCNuisBANFF2p2hBar             = kNuis217;  // 2p2h normalization
-static const PhysParamId_t kRHCNuisBANFFBeRPA_A             = kNuis218;   // BeRPA A
-static const PhysParamId_t kRHCNuisBANFFBeRPA_B             = kNuis219;   // BeRPA B
-static const PhysParamId_t kRHCNuisBANFFBeRPA_D             = kNuis220;   // BeRPA D
-static const PhysParamId_t kRHCNuisBANFFBeRPA_E             = kNuis221;   // BeRPA E
-static const PhysParamId_t kRHCNuisBANFFBeRPA_U             = kNuis222;   // BeRPA U
-static const PhysParamId_t kRHCNuisBANFFShape2p2h           = kNuis223;   // 2p2h nu shape
-static const PhysParamId_t kRHCNuisBANFFShape2p2hBar        = kNuis224;   // 2p2hbar nu shape  
-  
+  //static const PhysParamId_t kRHCNuisBANFFBindE               = kNuis210;   // Binding energy
+static const PhysParamId_t kRHCNuisBANFFNormCCcoh           = kNuis210;   // CC coherent norm
+static const PhysParamId_t kRHCNuisBANFFNormNCcoh           = kNuis211;   // NC coh norm
+static const PhysParamId_t kRHCNuisBANFFNormNCoth           = kNuis212;   // NC other norm
+static const PhysParamId_t kRHCNuisBANFFNormNuEToNuMu       = kNuis213;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisBANFFNormNC1Gamma        = kNuis214;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisBANFFNormNuEBarToNuMuBar = kNuis215;   // nue / numu cross section
+static const PhysParamId_t kRHCNuisBANFF2p2hBar             = kNuis216;  // 2p2h normalization
+static const PhysParamId_t kRHCNuisBANFFBeRPA_A             = kNuis217;   // BeRPA A
+static const PhysParamId_t kRHCNuisBANFFBeRPA_B             = kNuis218;   // BeRPA B
+static const PhysParamId_t kRHCNuisBANFFBeRPA_D             = kNuis219;   // BeRPA D
+static const PhysParamId_t kRHCNuisBANFFBeRPA_E             = kNuis220;   // BeRPA E
+static const PhysParamId_t kRHCNuisBANFFBeRPA_U             = kNuis221;   // BeRPA U
+static const PhysParamId_t kRHCNuisBANFFShape2p2h           = kNuis222;   // 2p2h nu shape
+static const PhysParamId_t kRHCNuisBANFFNorm2p2hCtoO        = kNuis223;   // 2p2h CtoO norm
   
 //
 
-static const PhysParamId_t kRHCLastBANFFParam  = kNuis225; // Utility, should always come after last RHC BANFF
+static const PhysParamId_t kRHCLastBANFFParam  = kNuis224; // Utility, should always come after last RHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -494,6 +493,7 @@ namespace util {
   /// 
   bool IsMixingAngle          (conv::PhysParamId_t p);
   bool IsBANFF                (conv::PhysParamId_t p);
+  bool IsRHCBANFF             (conv::PhysParamId_t p); 
   bool IsXSec                 (conv::PhysParamId_t p);
   bool IsUsingSplines         (conv::PhysParamId_t p);
   bool IsEff                  (conv::PhysParamId_t p);
@@ -528,7 +528,7 @@ namespace util {
   string ParamAsStringCompact_KDI        (conv::PhysParamId_t p);
   string ParamAsStringSpline             (conv::PhysParamId_t p);
   string ParamAsStringNIWG               (conv::PhysParamId_t p);
-  
+
   conv::PhysParamId_t GetBarredVersionOfPhysParam(conv::PhysParamId_t p);
   
   // Tell the framework classes what our parameter names are

@@ -67,7 +67,7 @@ namespace valor {
     const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s) const;
     double*       CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
     const double* CurrErecoSpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
-    VALORArray * CurrSpectrumVArray        (conv::SuperkSample_t s);
+    VALORArray *  CurrSpectrumVArray       (conv::SuperkSample_t s);
     const VALORArray * CurrSpectrumVArray  (conv::SuperkSample_t s) const;
     
     
@@ -82,7 +82,7 @@ namespace valor {
     const double* CurrErecoVsQ2SpectrumArray   (conv::SuperkSample_t s) const;
     double*       CurrErecoVsQ2SpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m);
     const double* CurrErecoVsQ2SpectrumArray   (conv::SuperkSample_t s, conv::SuperkMode_t m) const;
-    VALORArray * CurrSpectrumVArray2D        (conv::SuperkSample_t s);
+    VALORArray *  CurrSpectrumVArray2D         (conv::SuperkSample_t s);
     const VALORArray * CurrSpectrumVArray2D  (conv::SuperkSample_t s) const;
     //
     

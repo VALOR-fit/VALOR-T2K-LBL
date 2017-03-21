@@ -129,7 +129,7 @@ string valor::util::AsString(PhysParamId_t p)
 #endif
   case ( kNuisBANFFFermiMom       ) : return "BANFF; Fermi Momentum";               break; 
   case ( kNuisBANFFShapeCCoth     ) : return "BANFF; Shape; CC Oth";                break; 
-  case ( kNuisBANFFBindE          ) : return "BANFF; Binding energy";               break; 
+    //  case ( kNuisBANFFBindE          ) : return "BANFF; Binding energy";               break; 
   case ( kNuisBANFFNormCCcoh      ) : return "BANFF; Norm; CC Coh";                 break; 
   case ( kNuisBANFFNormNCcoh      ) : return "BANFF; Norm; NC Coh";                 break; 
   case ( kNuisBANFFNormNCoth      ) : return "BANFF; Norm; NC Oth";                 break; 
@@ -143,7 +143,7 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kNuisBANFFBeRPA_E       ) : return "BANFF; BeRPA E";            break;
   case ( kNuisBANFFBeRPA_U       ) : return "BANFF; BeRPA U";            break;
   case ( kNuisBANFFShape2p2h     ) : return "BANFF; Shape; 2p2h nu";     break;
-  case ( kNuisBANFFShape2p2hBar  ) : return "BANFF; Shape; 2p2h nubar";  break;
+  case ( kNuisBANFFNorm2p2hCtoO  ) : return "BANFF; Norm;  2p2h C to O";  break;
 
     //
 
@@ -519,7 +519,7 @@ string valor::util::AsString(PhysParamId_t p)
 #endif
   case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";               break; 
   case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                break; 
-  case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";               break; 
+    // case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";               break; 
   case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm; CC Coh; RHC";                 break; 
   case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm; NC Coh; RHC";                 break; 
   case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm; NC Oth; RHC";                 break; 
@@ -532,8 +532,8 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFBeRPA_D       ) : return "BANFF; BeRPA D; RHC";            break;
   case ( kRHCNuisBANFFBeRPA_E       ) : return "BANFF; BeRPA E; RHC";            break;
   case ( kRHCNuisBANFFBeRPA_U       ) : return "BANFF; BeRPA U; RHC";            break;
-  case ( kRHCNuisBANFFShape2p2h     ) : return "BANFF; 2p2h nu shape; RHC";      break;
-  case ( kRHCNuisBANFFShape2p2hBar  ) : return "BANFF; 2p2hbar nu shape; RHC";   break;
+  case ( kRHCNuisBANFFShape2p2h     ) : return "BANFF; 2p2h nu nubar shape; RHC"; break;
+  case ( kRHCNuisBANFFNorm2p2hCtoO  ) : return "BANFF; 2p2h C to O; RHC";        break;
 
     //
 
@@ -1126,7 +1126,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
 #endif
   case ( kNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum";                      break; 
   case ( kNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth";                       break; 
-  case ( kNuisBANFFBindE         ) : return "BANFF; Binding energy";                      break; 
+    // case ( kNuisBANFFBindE         ) : return "BANFF; Binding energy";                      break; 
   case ( kNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh";                        break; 
   case ( kNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh";                        break; 
   case ( kNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth";                        break; 
@@ -1139,8 +1139,8 @@ string valor::util::AsStringTex(PhysParamId_t p)
   case ( kNuisBANFFBeRPA_D       ) : return "BANFF; BeRPA D";                    break;
   case ( kNuisBANFFBeRPA_E       ) : return "BANFF; BeRPA E";                    break;
   case ( kNuisBANFFBeRPA_U       ) : return "BANFF; BeRPA U";                    break;
-  case ( kNuisBANFFShape2p2h     ) : return "BANFF; Shape; 2p2h $\\nu$";         break;
-  case ( kNuisBANFFShape2p2hBar  ) : return "BANFF; Shape; 2p2h $\\bar{\\nu}$";  break;
+  case ( kNuisBANFFShape2p2h     ) : return "BANFF; Shape; 2p2h";         break;
+  case ( kNuisBANFFNorm2p2hCtoO  ) : return "BANFF; Norm; 2p2h C to O";  break;
 
     //
             
@@ -1518,7 +1518,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
 #endif
   case ( kRHCNuisBANFFFermiMom      ) : return "BANFF; Fermi Momentum; RHC";                      break; // uncorrelated in the past
   case ( kRHCNuisBANFFShapeCCoth    ) : return "BANFF; Shape; CC Oth; RHC";                       break; // uncorrelated in the past
-  case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";                      break; // uncorrelated in the past
+    // case ( kRHCNuisBANFFBindE         ) : return "BANFF; Binding energy; RHC";                      break; // uncorrelated in the past
   case ( kRHCNuisBANFFNormCCcoh     ) : return "BANFF; Norm, CC Coh; RHC";                        break; // uncorrelated in the past
   case ( kRHCNuisBANFFNormNCcoh     ) : return "BANFF; Norm, NC Coh; RHC";                        break; // uncorrelated in the past
   case ( kRHCNuisBANFFNormNCoth     ) : return "BANFF; Norm, NC Oth; RHC";                        break; // uncorrelated in the past
@@ -2373,7 +2373,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #endif
         case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi_fhc_rhc";         break; 
         case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_fhc_rhc";     break; 
-        case ( kNuisBANFFBindE             ) : return "f_banffbindE_fhc_rhc";          break; 
+          //case ( kNuisBANFFBindE             ) : return "f_banffbindE_fhc_rhc";          break; 
         case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_fhc_rhc";     break; 
         case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_fhc_rhc";     break; 
         case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_fhc_rhc";     break; 
@@ -2387,7 +2387,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFBeRPA_E           ) : return "f_banffshape_berpa_E_fhc_rhc";    break;
         case ( kNuisBANFFBeRPA_U           ) : return "f_banffshape_berpa_U_fhc_rhc";    break;
         case ( kNuisBANFFShape2p2h         ) : return "f_banffshape_2p2hnu_fhc_rhc";     break;
-        case ( kNuisBANFFShape2p2hBar      ) : return "f_banffshape_2p2hnubar_fhc_rhc";  break;
+        case ( kNuisBANFFNorm2p2hCtoO      ) : return "f_banffnorm_2p2hCtoO_fhc_rhc";  break;
             
 #else
 #ifndef ONEOVERMAQE
@@ -2417,7 +2417,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #endif
         case ( kNuisBANFFFermiMom          ) : return "f_banffpfermi";         break; 
         case ( kNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth";     break; 
-        case ( kNuisBANFFBindE             ) : return "f_banffbindE";          break; 
+          //case ( kNuisBANFFBindE             ) : return "f_banffbindE";          break; 
         case ( kNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh";     break; 
         case ( kNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh";     break; 
         case ( kNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth";     break; 
@@ -2431,7 +2431,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFBeRPA_E           ) : return "f_banffshape_berpa_E";    break;
         case ( kNuisBANFFBeRPA_U           ) : return "f_banffshape_berpa_U";    break;
         case ( kNuisBANFFShape2p2h         ) : return "f_banffshape_2p2hnu";     break;
-        case ( kNuisBANFFShape2p2hBar      ) : return "f_banffshape_2p2hnubar";  break;
+        case ( kNuisBANFFNorm2p2hCtoO      ) : return "f_banffnorm_2p2hCtoO";    break;
             //
             
 #endif //if defined(__FHC_RUNNING__) && defined(__RHC_RUNNING__)
@@ -2593,7 +2593,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #endif
         case ( kRHCNuisBANFFFermiMom          ) : return "f_banffpfermi_rhc";         break;
         case ( kRHCNuisBANFFShapeCCoth        ) : return "f_banffshapeCCoth_rhc";     break;
-        case ( kRHCNuisBANFFBindE             ) : return "f_banffbindE_rhc";          break;
+          //case ( kRHCNuisBANFFBindE             ) : return "f_banffbindE_rhc";          break;
         case ( kRHCNuisBANFFNormCCcoh         ) : return "f_banffnorm_cccoh_rhc";     break;
         case ( kRHCNuisBANFFNormNCcoh         ) : return "f_banffnorm_nccoh_rhc";     break;
         case ( kRHCNuisBANFFNormNCoth         ) : return "f_banffnorm_ncoth_rhc";     break;
@@ -3064,7 +3064,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 #endif
         case ( kNuisBANFFFermiMom   ) : return "$f_{p_{f}}^{banff}$";
         case ( kNuisBANFFShapeCCoth ) : return "$f_{Shape_{CCoth}}^{banff}$";
-        case ( kNuisBANFFBindE      ) : return "$f_{E_{B}}^{banff}$";
+          //case ( kNuisBANFFBindE      ) : return "$f_{E_{B}}^{banff}$";
         case ( kNuisBANFFNormCCcoh  ) : return "$f_{Norm_{CCcoh}}^{banff}$";
         case ( kNuisBANFFNormNCcoh  ) : return "$f_{Norm_{NCcoh}}^{banff}$";
         case ( kNuisBANFFNormNCoth  ) : return "$f_{Norm_{NCother}}^{banff}$";
@@ -3077,7 +3077,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kNuisBANFFBeRPA_E      ) : return "$f_{Shape_{BeRPA_{E}}}^{banff}$";       break;
         case ( kNuisBANFFBeRPA_U      ) : return "$f_{Shape_{BeRPA_{U}}}^{banff}$";       break;
         case ( kNuisBANFFShape2p2h    ) : return "$f_{Shape_{2p2h\\nu}}^{banff}$";        break;
-        case ( kNuisBANFFShape2p2hBar ) : return "$f_{Shape_{2p2h\\bar{\\nu}}}^{banff}$"; break;
+        case ( kNuisBANFFNorm2p2hCtoO ) : return "$f_{Norm_{2p2h C to O}^{banff}$"; break;
             //
             
             //
@@ -3280,8 +3280,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
             return "$f_{p_{f}}^{banff} RHC$";
         case ( kRHCNuisBANFFShapeCCoth ) :     // uncorrelated in the past
             return "$f_{Shape_{CCoth}}^{banff} RHC$";
-        case ( kRHCNuisBANFFBindE      ) :     // uncorrelated in the past
-            return "$f_{E_{B}}^{banff} RHC$";
+            //case ( kRHCNuisBANFFBindE      ) :     // uncorrelated in the past
+            //return "$f_{E_{B}}^{banff} RHC$";
         case ( kRHCNuisBANFFNormCCcoh  ) :     // uncorrelated in the past
             return "$f_{Norm_{CCcoh}}^{banff} RHC$";
         case ( kRHCNuisBANFFNormNCcoh  ) :     // uncorrelated in the past
@@ -3526,9 +3526,9 @@ string valor::util::AsStringPaperTable(PhysParamId_t p)
     case ( kNuisBANFFShapeCCoth        ) :
     case ( kRHCNuisBANFFShapeCCoth     ) :
       return "CC other shape";
-    case ( kNuisBANFFBindE             ) :
-    case ( kRHCNuisBANFFBindE          ) :
-      return "Binding energy for $^{16}$O";
+    //case ( kNuisBANFFBindE             ) :
+    //case ( kRHCNuisBANFFBindE          ) :
+    //return "Binding energy for $^{16}$O";
     case ( kNuisBANFFNormCCcoh         ) :
     case ( kRHCNuisBANFFNormCCcoh      ) :
       return "CC coherent for $^{16}$O normalisation";
@@ -3565,10 +3565,10 @@ string valor::util::AsStringPaperTable(PhysParamId_t p)
       return "Bernstein Polynomial coefficient U";    break;
     case ( kNuisBANFFShape2p2h       ) : 
     case ( kRHCNuisBANFFShape2p2h    ) : 
-      return "Neutrino two particle two hole shape for $^{16}$O";     break;
-    case ( kNuisBANFFShape2p2hBar    ) : 
-    case ( kRHCNuisBANFFShape2p2hBar ) : 
-      return "Antineutrino two particle two hole shape for $^{16}$O";  break;
+      return "Neutrino two particle two hole $^{16}$O shape";     break;
+    case ( kNuisBANFFNorm2p2hCtoO    ) : 
+    case ( kRHCNuisBANFFNorm2p2hCtoO ) : 
+      return "Two particle two hole $^{12}$C to $^{16}$O normalisation";  break;
 
                 
     default:
@@ -3701,7 +3701,7 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
 #endif
         case ( kRHCNuisBANFFFermiMom      ) : return "f_banffpfermi_rhc";         break;    // uncorrelated in the past
         case ( kRHCNuisBANFFShapeCCoth    ) : return "f_banffshapeCCoth_rhc";     break;     // uncorrelated in the past
-        case ( kRHCNuisBANFFBindE         ) : return "f_banffbindE_rhc";          break;    // uncorrelated in the past
+          //case ( kRHCNuisBANFFBindE         ) : return "f_banffbindE_rhc";          break;    // uncorrelated in the past
         case ( kRHCNuisBANFFNormCCcoh     ) : return "f_banffnorm_cccoh_rhc";     break;    // uncorrelated in the past
         case ( kRHCNuisBANFFNormNCcoh     ) : return "f_banffnorm_nccoh_rhc";     break;    // uncorrelated in the past
         case ( kRHCNuisBANFFNormNCoth     ) : return "f_banffnorm_ncoth_rhc";     break;    // uncorrelated in the past
@@ -4007,7 +4007,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
 #endif                                
   case ( kNuisBANFFFermiMom         ) : return true;
   case ( kNuisBANFFShapeCCoth       ) : return true;
-  case ( kNuisBANFFBindE            ) : return true;
+    //case ( kNuisBANFFBindE            ) : return true;
   case ( kNuisBANFFNormCCcoh        ) : return true;
   case ( kNuisBANFFNormNCcoh        ) : return true;
   case ( kNuisBANFFNormNCoth        ) : return true;
@@ -4023,7 +4023,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
   case ( kNuisBANFFBeRPA_E        ) : return true;
   case ( kNuisBANFFBeRPA_U        ) : return true;
   case ( kNuisBANFFShape2p2h      ) : return true;
-  case ( kNuisBANFFShape2p2hBar   ) : return true;
+  case ( kNuisBANFFNorm2p2hCtoO   ) : return true;
 
     
     
@@ -4039,7 +4039,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
 #endif   
   case ( kRHCNuisBANFFFermiMom      ) : return true;
   case ( kRHCNuisBANFFShapeCCoth    ) : return true;
-  case ( kRHCNuisBANFFBindE         ) : return true;
+    //case ( kRHCNuisBANFFBindE         ) : return true;
   case ( kRHCNuisBANFFNormCCcoh     ) : return true;
   case ( kRHCNuisBANFFNormNCcoh     ) : return true;
   case ( kRHCNuisBANFFNormNCoth     ) : return true;
@@ -4053,7 +4053,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
   case ( kRHCNuisBANFFBeRPA_E       ) : return true;
   case ( kRHCNuisBANFFBeRPA_U       ) : return true;
   case ( kRHCNuisBANFFShape2p2h     ) : return true;
-  case ( kRHCNuisBANFFShape2p2hBar  ) : return true;
+  case ( kRHCNuisBANFFNorm2p2hCtoO  ) : return true;
             
   default                           : return false;
   }
@@ -4088,6 +4088,7 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
     case( kNuisBANFFNormNuEToNuMu       ) : return true; break;
     case( kNuisBANFFNormNuEBarToNuMuBar ) : return true; break;
     case( kNuisBANFFBeRPA_U             ) : return true; break;
+    case( kNuisBANFFNorm2p2hCtoO        ) : return true; break;      
 
     case( kRHCNuisBANFF2p2h               ) : return true; break;
     case( kRHCNuisBANFF2p2hBar            ) : return true; break;
@@ -4099,6 +4100,7 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
     case( kRHCNuisBANFFNormNuEToNuMu      ) : return true; break;
     case( kRHCNuisBANFFNormNuEBarToNuMuBar) : return true; break; 
     case( kRHCNuisBANFFBeRPA_U            ) : return true; break;
+    case( kRHCNuisBANFFNorm2p2hCtoO       ) : return true; break;
       
     default                               : return false; break;
    }
@@ -4131,8 +4133,6 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
     return true;
   if(p >= kRHCNuisXSecFermiMom && p <= kRHCNuisXSecBindE)
     return true;
-  if(p == kNuisBANFFMAQE || p == kRHCNuisBANFFMAQE)
-    return true;
     
   switch (p) {
   case kNuisBANFFMAQE:
@@ -4144,16 +4144,14 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
   case kNuisBANFFCA5:
   case kNuisBANFFShapeCCoth:
   case kNuisBANFFFermiMom:
-  case kNuisBANFFBindE:
+    //case kNuisBANFFBindE:
   case kNuisBANFFBgRES:
             
   case kNuisBANFFBeRPA_A:     
   case kNuisBANFFBeRPA_B:    
   case kNuisBANFFBeRPA_D:     
   case kNuisBANFFBeRPA_E:     
-  case kNuisBANFFBeRPA_U:     
   case kNuisBANFFShape2p2h:   
-  case kNuisBANFFShape2p2hBar:
     return true;
             
   case kRHCNuisBANFFMAQE:
@@ -4165,16 +4163,14 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
   case kRHCNuisBANFFCA5:
   case kRHCNuisBANFFShapeCCoth:
   case kRHCNuisBANFFFermiMom:
-  case kRHCNuisBANFFBindE:
+    //case kRHCNuisBANFFBindE:
   case kRHCNuisBANFFBgRES:
 
   case kRHCNuisBANFFBeRPA_A:     
   case kRHCNuisBANFFBeRPA_B:    
   case kRHCNuisBANFFBeRPA_D:     
   case kRHCNuisBANFFBeRPA_E:     
-  case kRHCNuisBANFFBeRPA_U:     
   case kRHCNuisBANFFShape2p2h:   
-  case kRHCNuisBANFFShape2p2hBar:
     return true;
             
   default:
@@ -4420,9 +4416,9 @@ string valor::util::AsStringSpline(PhysParamId_t p)
   case ( kNuisBANFFShapeCCoth     ) :
   case ( kRHCNuisBANFFShapeCCoth  ) :
     return "dismpishp";
-  case ( kNuisBANFFBindE          ) :
-  case ( kRHCNuisBANFFBindE       ) :
-    return "ebo";
+  //case ( kNuisBANFFBindE          ) :
+  //case ( kRHCNuisBANFFBindE       ) :
+  //return "ebo";
   //
             
   // NEW XSEC
@@ -4467,10 +4463,6 @@ string valor::util::AsStringSpline(PhysParamId_t p)
   case ( kNuisBANFFShape2p2h       ) : 
   case ( kRHCNuisBANFFShape2p2h    ) : 
     return "mecpdd";     break;
-  case ( kNuisBANFFShape2p2hBar    ) : 
-  case ( kRHCNuisBANFFShape2p2hBar ) : 
-    return "mecpdd";  break;
-
 
   default:
     break;
@@ -4542,7 +4534,7 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
 #endif
   case (kNuisBANFFFermiMom         ): return "pF_O";
   case (kNuisBANFFShapeCCoth       ): return "CC_DIS";
-  case (kNuisBANFFBindE            ): return "Eb_O_nu";
+    //case (kNuisBANFFBindE            ): return "Eb_O_nu";
   case (kNuisBANFFNormCCcoh        ): return "CC_Coh_O";
   case (kNuisBANFFNormNCcoh        ): return "NC_Coh";
   case (kNuisBANFFNormNCoth        ): return "NC_other_far";
@@ -4556,11 +4548,11 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case (kNuisBANFFBeRPA_D          ) :return "BeRPA_D";    
   case (kNuisBANFFBeRPA_E          ) :return "BeRPA_E";    
   case (kNuisBANFFBeRPA_U          ) :return "BeRPA_U";    
-  case (kNuisBANFFShape2p2h        ) :return "2p2h_shape_O_nu";  
-  case (kNuisBANFFShape2p2hBar     ) :return "2p2h_shape_O_nubar";
+  case (kNuisBANFFShape2p2h        ) :return "2p2h_shape_O";  
+  case (kNuisBANFFNorm2p2hCtoO     ) :return "2p2h_normCtoO";
 
   case (kRHCNuisBANFF2p2h          ): return "2p2h_norm_O";
-  case (kRHCNuisBANFF2p2hBar       ): return "2p2h_NORM_NUBAR_O";
+  case (kRHCNuisBANFF2p2hBar       ): return "2p2h_norm_nubar_O";
   case (kRHCNuisBANFFCA5           ): return "CA5";
   case (kRHCNuisBANFFBgRES         ): return "ISO_BKG";
   case (kRHCNuisBANFFMAQE          ): return "MAQE";
@@ -4571,7 +4563,7 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
 #endif
   case (kRHCNuisBANFFFermiMom      ): return "pF_O";
   case (kRHCNuisBANFFShapeCCoth    ): return "CC_DIS";
-  case (kRHCNuisBANFFBindE         ): return "Eb_O_nu";
+    //case (kRHCNuisBANFFBindE         ): return "Eb_O_nu";
   case (kRHCNuisBANFFNormCCcoh     ): return "CC_Coh_O";
   case (kRHCNuisBANFFNormNCcoh     ): return "NC_Coh";
   case (kRHCNuisBANFFNormNCoth     ): return "NC_other_far";
@@ -4585,7 +4577,7 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case (kRHCNuisBANFFBeRPA_E       ) :return "BeRPA_E";    
   case (kRHCNuisBANFFBeRPA_U       ) :return "BeRPA_U";    
   case (kRHCNuisBANFFShape2p2h     ) :return "2p2h_shape_O_nu";  
-  case (kRHCNuisBANFFShape2p2hBar  ) :return "2p2h_shape_O_nubar";
+  case (kRHCNuisBANFFNorm2p2hCtoO  ) :return "2p2h_normCtoO";
           
   default                           : return "--";
   }

@@ -122,6 +122,8 @@ namespace valor {
         
         // Access compiler macro from interpreter
         int GetSystNSigma();
+
+        bool ApplySystToSKMode(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m);
         
         //
         //

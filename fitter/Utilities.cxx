@@ -1312,7 +1312,29 @@ int valor::util::GetSystNSigma()
   return nsig;
 }
 //____________________________________________________________________________
+bool util::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m) 
+{
+  ArrIdx * arr_index = util::ArrIdx::Instance();
+  int im = arr_index->SuperkModeIdx(s,m);
+  if (im == -1) return false;
   
+  int isyst;
+  if(util::IsRHCSample(s)) {
+    isyst = arr_index->RHCXSecSystIdx(p);
+    if (isyst == -1) return false;
+  }
+  else {
+    isyst = arr_index->XSecSystIdx(p);
+    if (isyst == -1) return false;
+  }
+    
+  int is = arr_index->SuperkSampleIdx(s);
+    
+  bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
+    
+  return apply;
+}
+//____________________________________________________________________________  
 
 
 

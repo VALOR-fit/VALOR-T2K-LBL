@@ -62,9 +62,9 @@
 
 #define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
-#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
+//#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
 
-#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
+//#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
 
 #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
 #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
@@ -1339,7 +1339,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         //cout << Q2 << " ";
         //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
         //cout << Q2 << " ";
-        // // PROVA
+        PROVA
         // double px = ereco_nu*kBeamDir[0];
         // double py = ereco_nu*kBeamDir[1];
         // double pz = ereco_nu*kBeamDir[2];
@@ -3948,7 +3948,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
             if(skip) continue;
             
 #ifdef __show_banfftun_syst_var_wght_mesg_debug__
-            cout << "Exp/SKMC >> Applying BANFF tuning to sample, mode: " << AsString(s) << "\t" << AsString(m) << endl;
+            LOG("SuperkMC", pDEBUG) << "Applying BANFF tuning to sample, mode: " << AsString(s) << "\t" << AsString(m);
 #endif
             
             //
@@ -4017,14 +4017,13 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
                     if( flux_wght  != 1. ||
                        xsec_wght  != 1. )
                     {
-                        cout << "Exp/SKMC/SystVarWght >> "
+                      LOG("SuperkMC", pDEBUG) << "SystVarWght >> "
                         << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
                         << ", Ereco = " << Ereco << " GeV"
                         << ", Etrue = " << Etrue << " GeV => Weights: "
                         << ", Flux = "  << flux_wght
                         << ", XSec = "  << xsec_wght
-                        << " (total = " << wght << ")"
-                        << endl;
+                        << " (total = " << wght << ")";
                     }
 #endif //__show_banfftun_syst_var_wght_mesg_debug__
                     
@@ -4077,7 +4076,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
             if(skip) continue;
             
 #ifdef __show_banfftun_syst_var_wght_mesg_debug__
-            cout << "Exp/SKMC >> Applying BANFF 2D tuning to sample, mode: " << AsString(s) << "\t" << AsString(m) << endl;
+             LOG("SuperkMC", pDEBUG) << "Applying BANFF 2D tuning to sample, mode: " << AsString(s) << "\t" << AsString(m);
 #endif
             
             //
@@ -4153,7 +4152,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
                     if( flux_wght  != 1. ||
                        xsec_wght  != 1. )
                     {
-                        cout << "Exp/SKMC/SystVarWght >> "
+                      LOG("SuperkMC", pDEBUG) <<  "\nSystVarWght >> "
                         << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
                         << ", Q2 = " << Q2 << " GeV"
                         << ", Ereco = " << Ereco << " GeV"
@@ -4162,8 +4161,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
                         << ", XSec = "  << xsec_wght
                         << " (total = " << wght << ")"
                         << " Nom events = " << nev
-                        << " New events = " << nev_tuned
-                        << endl;
+                        << " New events = " << nev_tuned;
                     }
 #endif //__show_banfftun_syst_var_wght_mesg_debug__
                     

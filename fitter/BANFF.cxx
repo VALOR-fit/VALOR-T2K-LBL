@@ -53,7 +53,7 @@ CorrelatedSystematics()
   reg.Set("banff", this);
   
   // Somewhat hacky handling of the fact that some of our code still thinks there are RHC specific BANFF-XSEC params.
-  for (int irhcp = kRHCNuisBANFFMAQE ; irhcp <= kRHCNuisBANFFShape2p2hBar; irhcp++) {
+  for (int irhcp = kRHCNuisBANFFMAQE ; irhcp <= kRHCNuisBANFFNorm2p2hCtoO; irhcp++) {
     int ifhcp = irhcp - (kRHCNuisBANFFMAQE-kNuisBANFFMAQE);
     fParam2Idx[irhcp] = fParam2Idx[ifhcp];
   }
@@ -64,7 +64,6 @@ CorrelatedSystematics()
   (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_D)]   = 1.13;
   (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_E)]   = 0.88;
   (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_U)]   = 1.20;
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFShape2p2h)] = 0;
   
   
   LOG("BANFF",pINFO) << "Defined final BANFF matrix rows: ";
