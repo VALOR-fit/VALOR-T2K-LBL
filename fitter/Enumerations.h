@@ -98,7 +98,7 @@ typedef enum ESKMCTemplateType
    kSKMCtOri, // nominal MC
    kSKMCtPOT, // POT and nominal flux weights applied. No NIWG tune.
    kSKMCtNom, // nominal MC + tuning (ext) weights 
-   kSKMCtRPA, // same as above, but with relativistic rather than nonrelativistic RPA
+   kSKMCtRPA, // same as above, but with (relativistic rather than nonrelativistic RPA) || (Bernstein polynomial RPA)
    kSKMCtTun, // nominal MC + tuning (ext) weights + tuning (T2K) weights
    kSKMCtSys, // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations
    kSKMCtFin  // nominal MC + tuning (ext) weights + tuning (T2K) weights + systematic variations + physics hypothesis 

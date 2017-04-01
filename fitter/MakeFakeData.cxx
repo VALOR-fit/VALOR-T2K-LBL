@@ -224,7 +224,7 @@ double util::UtlMakeFakeData::GetWeight()
   
 };
 
-void util::UtlMakeFakeData::SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _fBrDir[10][3],float _Etrue,
+void util::UtlMakeFakeData::SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _fBrDir[10][7][3],float _Etrue,
                                          conv::SuperkMode_t _m, double _ERec, conv::SuperkSample_t _s,
                                         float _fBrAmome[10], float _fBrAmomm[10] )
 {
@@ -242,7 +242,7 @@ void util::UtlMakeFakeData::SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10]
     for(int j=0;j<3;j++)
     {
       fBrDirNu[i][j] = _fBrDirNu[i][j];
-      fBrDir[i][j] = _fBrDir[i][j];
+      fBrDir[0][i][j] = _fBrDir[0][i][j];
     }
   }
   

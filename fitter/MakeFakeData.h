@@ -39,7 +39,7 @@ namespace valor {
       static  UtlMakeFakeData * Instance();
       bool    Read(TXMLEngine* xml, XMLNodePointer_t root_node);
       double  GetWeight();
-      void    SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _fBrDir[10][3],float _Etrue, conv::SuperkMode_t _m, double _ERec, conv::SuperkSample_t _s, float _fBrAmome[10], float _fBrAmomm[10]);
+      void    SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _fBrDir[10][7][3],float _Etrue, conv::SuperkMode_t _m, double _ERec, conv::SuperkSample_t _s, float _fBrAmome[10], float _fBrAmomm[10]);
       void    SetReweightStyle(string _s = "error");
       double  GetEreco();
       bool    IsActive(){return fActive;};
@@ -102,7 +102,7 @@ namespace valor {
       conv::SuperkMode_t m;
       conv::SuperkSample_t s;
       float fBrDirNu[10][3];
-      float fBrDir[10][3];
+      float fBrDir[10][7][3];
       float fBrPtrue[10];
       
       

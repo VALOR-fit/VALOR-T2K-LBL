@@ -91,7 +91,7 @@ string valor::util::AsString(conv::SKMCTemplateType_t t)
       return "nominal with weights from SKMC branches";
       break;
     case ( kSKMCtRPA ) : 
-      return "nominal + rel RPA";
+      return "nominal + rel/Be RPA";
       break;
     case ( kSKMCtTun ) : 
       return "tuned"; 

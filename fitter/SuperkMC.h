@@ -155,7 +155,7 @@ namespace valor {
     
     // NEW 2D TEMPLATES
     
-    double CalcThetaDegrees(float dir[10][3]);
+    double CalcThetaDegrees(float dir[10][7][3], conv::SuperkSample_t s );
     
     double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
     double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep);
@@ -301,7 +301,7 @@ namespace valor {
     std::vector<VALORArray * > fMCTemplArrayTun2D; //sample -> (mode, etrue, observable1, observable2)
     std::vector<VALORArray * > fMCTemplArrayFin2D; //sample -> (mode, etrue, observable1, observable2)
     
-    std::vector<VALORArray * > fMCTemplArrayRPAWght2D; //sample -> (mode, etrue, observable1, observable2) - contains weight RPA_rel / weight RPA_nonrel
+    std::vector<VALORArray * > fMCTemplArrayRPAWght2D; //sample -> (mode, etrue, observable1, observable2) - contains weight RPA_rel / weight RPA_nonrel or the BeRPA weight
     
     std::vector<VALORArray * > fMCStatFracErr2D;               // sample -> (mode, etrue, observable1, observable2)
                                                                //std::vector<VALORArray * > fMCEtrueSpectrumTotArray2D;   // sample -> etrue
@@ -376,6 +376,7 @@ namespace valor {
     double     fBrWghtSFRFG;                 ///< branch var for reading input MC mini-DST
     double     fBrWghtRPArel;                ///< branch var for reading input MC mini-DST
     double     fBrWghtRPAnonrel;             ///< branch var for reading input MC mini-DST
+    double     fBrWghtBeRPA;                 ///< branch var for reading input MC mini-DST 
     double     fBrWghtCCcoh;                 ///< branch var for reading input MC mini-DST
     double     fBrWghtOsc;                   ///< branch var for reading input MC mini-DST, used for comparison with p-theta analysis oscillation weights as branch
     int        fBrEvFlag;                    ///< branch var for reading input MC mini-DST
@@ -384,8 +385,8 @@ namespace valor {
                                              //int        fBrNring;                     ///< branch var for reading input MC mini-DST
     float      fBrAmomm[10];                  ///< branch var for reading input MC mini-DST (1 mu-like ring)
     float      fBrAmome[10];                  ///< branch var for reading input MC mini-DST (1 e-like ring)
-    float      fBrDir[1][3];                    ///< branch var for reading input MC mini-DST
-    float      fBrDirNu[10][3];                 ///< branch var for reading input MC mini-DST
+    float      fBrDir[10][7][3];              ///< branch var for reading input MC mini-DST
+    float      fBrDirNu[10][3];               ///< branch var for reading input MC mini-DST
                                                 //
     
     static const int kMaxVarBins   = 1000;

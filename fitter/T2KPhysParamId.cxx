@@ -3940,6 +3940,26 @@ bool valor::util::IsRPA(PhysParamId_t p)
     return false;
 }
 //________________________________________________________________________________________
+bool valor::util::IsBeRPA(PhysParamId_t p)
+{
+  switch (p) {
+
+    case ( kNuisBANFFBeRPA_A    ) :
+    case ( kNuisBANFFBeRPA_B    ) :
+    case ( kNuisBANFFBeRPA_D    ) :
+    case ( kNuisBANFFBeRPA_E    ) :
+
+    case ( kRHCNuisBANFFBeRPA_A ) :   
+    case ( kRHCNuisBANFFBeRPA_B ) :  
+    case ( kRHCNuisBANFFBeRPA_D ) :  
+    case ( kRHCNuisBANFFBeRPA_E ) :  
+      return true;
+            
+  default:
+    return false;
+  }
+}
+//________________________________________________________________________________________
 bool valor::util::IsRHCSystematic(PhysParamId_t p)
 {
     // if(!IsSystematic(p))

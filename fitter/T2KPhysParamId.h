@@ -507,6 +507,7 @@ namespace util {
   bool IsBANFFUnconstrained   (conv::PhysParamId_t p);
   bool IsBANFFNotUnconstrained(conv::PhysParamId_t p);  
   bool IsRPA                  (conv::PhysParamId_t p);
+  bool IsBeRPA                (conv::PhysParamId_t p);  
   bool IsSCC                  (conv::PhysParamId_t p);
   bool IsNormXSecParam        (conv::PhysParamId_t p);
   bool IsXSecNumuNue          (conv::PhysParamId_t p);

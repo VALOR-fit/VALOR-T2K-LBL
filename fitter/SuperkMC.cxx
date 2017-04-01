@@ -32,7 +32,7 @@
 //#define __show_skipped_templates__
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
-//#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
+#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
 // 1 number of events
 // 2 number of events, weighted by pot & mc normalisation
 // 3 number of events, weighted by pot & mc normalisation, flux tuning
@@ -41,11 +41,11 @@
 // 6 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations
 // 7 number of events, weighted by pot & mc normalisation, flux tuning, banff tuning, multiplicative systematic variations, nonmultiplicative systematic variations, physics hypothesis
 #ifdef __save_templates_debug__
-//#define __save_templates_debug_mcstat__ //do the extra MCStatErrDebug
+#define __save_templates_debug_mcstat__ //do the extra MCStatErrDebug
 #endif
 //#define __apply_minevents_to_individual_modes__ //special debug mode that applies kSetNegEventsTo to all modes. Used for comparisons with the KDI 1 sigma spectra
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
-//#define FakeDataWeightDebug //Print out fake data weights 
+// #define FakeDataWeightDebug //Print out fake data weights 
 // #define POTWEIGHTSAREONE
 // #define FLUXWEIGHTSAREONE
 // #define BANFFTUNEISONE
@@ -62,9 +62,10 @@
 
 #define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
-//#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
+#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
 
 //#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
+#define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
 
 #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
 #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
@@ -156,6 +157,11 @@ SuperkMC::~SuperkMC()
 //________________________________________________________________________________________
 void SuperkMC::Init(void)
 {
+#if defined USE_RPA_WEIGHTS && defined USE_BeRPA_WEIGHTS
+  LOG("SuperKMC", pERROR) << "Both RPA and BeRPA weights are being read from the MC tree!";
+  util::Die(-1);
+#endif
+
     fPOT = 0;
     fPOTRHC = 0;
     fX2p2h = -1;
@@ -287,7 +293,7 @@ void SuperkMC::Init(void)
             fMCEtrueSpectrumTotArray[is]->SetTitle( Form("MC Spectrum Etrue_Total %s"   , util::AsString(s).c_str()));
             fMCErecoSpectrumTotArray[is]->SetTitle( Form("MC Spectrum Ereco Total %s"   , util::AsString(s).c_str()));
             fMCErecoSpectrumArray   [is]->SetTitle( Form("MC Spectrum Ereco per mode %s", util::AsString(s).c_str()));
-            fMCTemplArrayRPAWght    [is]->SetTitle( Form("Rel_RPA/Nonrel_RPA Weight %s" , util::AsString(s).c_str()));
+            fMCTemplArrayRPAWght    [is]->SetTitle( Form("MC RPA Weight %s" , util::AsString(s).c_str()));
             
             fMCTemplArrayRPAWght    [is]->SetAll(1);
             
@@ -331,7 +337,7 @@ void SuperkMC::Init(void)
             fMCErecoVsQ2SpectrumTotArray2D[is]->SetTitle( Form("MC Spectrum Ereco Vs Q2 Total 2D %s"      , util::AsString(s).c_str()));
             fMCQ2SpectrumTotArray2D       [is]->SetTitle( Form("MC Spectrum Q2 Total 2D %s"         , util::AsString(s).c_str()));
             fMCErecoVsQ2SpectrumArray     [is]->SetTitle( Form("MC Spectrum Ereco Vs Q2 per mode %s", util::AsString(s).c_str()));
-            fMCTemplArrayRPAWght2D        [is]->SetTitle( Form("Rel_RPA/Nonrel_RPA Weight %s"       , util::AsString(s).c_str()));
+            fMCTemplArrayRPAWght2D        [is]->SetTitle( Form("MC RPA Weight %s"       , util::AsString(s).c_str()));
             
             fMCTemplArrayRPAWght2D        [is]->SetAll(1);
             //
@@ -1128,6 +1134,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     const char * flux_wght_branch     = "wgtflx";
     const char * rpa_nrel_wght_branch = "wgtRPA_nr";
     const char * rpa_rel_wght_branch  = "wgtRPA_r";
+    const char * berpa_wght_branch    = "wgtBeRPA_nom";
     const char * sf_rfg_wght_branch   = "wgtsfrfg";
     const char * cc_coh_wght_branch   = "wght_CCcoh";
     const char * osc_wgt_branch       = "wgtosc";
@@ -1136,12 +1143,19 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     // // NEW 2D TEMPLATES
     // const char * numnu_branch = "numnu";
     // const char * nring_branch = "nring";
-    const char * amomm_branch = "amomm"; // MeV/c
-    const char * amome_branch = "amome"; // MeV/c
-    const char * dir_branch   = "dir";
-     const char * dirnu_branch = "dirnu";
-    // //
+    // const char * amomm_branch = "amomm"; // MeV/c
+    // const char * amome_branch = "amome"; // MeV/c
+    // const char * dir_branch   = "dir";
+    // const char * dirnu_branch = "dirnu";
 
+    // fiTQun branches have different names 
+    const char * amomm_branch = "fqmomm"; // MeV/c
+    const char * amome_branch = "fqmome"; // MeV/c
+    const char * dir_branch   = "fq1rdir";
+    const char * dirnu_branch = "dirnu";
+
+    // //
+    
     // SetBranchAddress?
     TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
     TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
@@ -1155,11 +1169,13 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     TBranch * branchDir     = mctree->GetBranch(dir_branch        );
     TBranch * branchDirnu   = mctree->GetBranch(dirnu_branch      );
     // //
-    
+
     branchEreco    -> SetAddress(&fBrEreco);
     branchEtrue    -> SetAddress(&fBrPtrue);
     branchGenCode  -> SetAddress(&fBrGenCode);
     branchWghtFlx  -> SetAddress(&fBrWghtFlx);
+
+
     // // NEW 2D TEMPLATES
     // branchNumnu    -> SetAddress(&fBrNumnu);
     // branchNring    -> SetAddress(&fBrNring);
@@ -1168,7 +1184,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     branchDir      -> SetAddress(&fBrDir);
     branchDirnu    -> SetAddress(&fBrDirNu);
     // //
-    
+
     mctree->SetBranchStatus("*",0);
     mctree->SetBranchStatus(erec_branch      , 1 );
     mctree->SetBranchStatus(etrue_branch     , 1 );
@@ -1180,8 +1196,10 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     mctree->SetBranchStatus(amomm_branch     , 1 );
     mctree->SetBranchStatus(amome_branch     , 1 );
     mctree->SetBranchStatus(dir_branch       , 1 );
-     mctree->SetBranchStatus(dirnu_branch     , 1 );
+    mctree->SetBranchStatus(dirnu_branch     , 1 );
     // //
+
+
     
 #ifdef USE_SFRFG_WEIGHT
     TBranch * branchSfRfg   = mctree->GetBranch(sf_rfg_wght_branch);
@@ -1199,6 +1217,13 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     mctree->SetBranchStatus(rpa_rel_wght_branch , 1 );
     branchRPAr->SetAddress(&fBrWghtRPArel);
 #endif
+#ifdef USE_BeRPA_WEIGHTS
+    TBranch * branchBeRPA = mctree->GetBranch(berpa_wght_branch);
+    if (branchBeRPA){
+      mctree->SetBranchStatus(berpa_wght_branch , 1 );
+      branchBeRPA->SetAddress(&fBrWghtBeRPA);
+    } 
+#endif    
 #ifdef USE_CCcoh_WEIGHTS
     TBranch * branchCCcoh   = mctree->GetBranch(cc_coh_wght_branch);
     mctree->SetBranchStatus(cc_coh_wght_branch , 1 );
@@ -1212,6 +1237,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     }
 #endif
   
+
+
     bool is_fake_data_active = util::UtlMakeFakeData::Instance()->IsActive();
   
     double ntotevents = 0.;
@@ -1228,7 +1255,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         // Get reconstructed energy
         double ereco_fill = fBrEreco/1000.; // GeV
-        
         
         
         // NEW 2D TEMPLATES
@@ -1286,8 +1312,13 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         // Get lepton direction
         // Costheta is the scalar product between the neutrino beam and lepton directions.
-        
-        double costheta = kBeamDir[0] * fBrDir[0][0] + kBeamDir[1] * fBrDir[0][1] + kBeamDir[2] * fBrDir[0][2];
+        double costheta = -999;
+        if util::Is1RESample(s) {
+          double costheta = kBeamDir[0] * fBrDir[0][1][0] + kBeamDir[1] * fBrDir[0][1][1] + kBeamDir[2] * fBrDir[0][1][2];
+        }
+        if util::Is1RMuSample(s) {
+            double costheta = kBeamDir[0] * fBrDir[0][2][0] + kBeamDir[1] * fBrDir[0][2][1] + kBeamDir[2] * fBrDir[0][2][2];    
+        }
         if( costheta<-1.00001 || costheta>+1.00001 ){
             cerr << endl;
             cerr << std::setprecision(10);
@@ -1339,7 +1370,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         //cout << Q2 << " ";
         //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
         //cout << Q2 << " ";
-        PROVA
+        // // PROVA
         // double px = ereco_nu*kBeamDir[0];
         // double py = ereco_nu*kBeamDir[1];
         // double pz = ereco_nu*kBeamDir[2];
@@ -1375,7 +1406,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             util::Die(1); return;
         }
 #endif
-        
+        // Will need to be updated if we use the fitqun 
         if( q2_fill < util::Q2BinEdges(s,0) ){
             cout << "Q2 < Q2BinEdge(s,0)" << endl;
             cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
@@ -1400,8 +1431,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         
 #elif defined(__ERECO_VS_THETA_TEMPLATES__) // Use Ereco Vs Theta parametrization
-        
-	double q2_fill = CalcThetaDegrees(fBrDir);
+
+	double q2_fill = CalcThetaDegrees(fBrDir,s);
 
 #ifdef INCLUDEEVENTSNEGATIVEQ2
         if(q2_fill < 0.){
@@ -1507,8 +1538,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         // Actually fill the template
         
 #ifndef __USE_2D_TEMPLATES__
-#ifdef USE_RPA_WEIGHTS || USE_OscBr_WEIGHTS
-#  ifdef USE_RPA_WEIGHTS && !defined(USE_OscBr_WEIGHTS)       
+#ifdef USE_RPA_WEIGHTS || USE_OscBr_WEIGHTS 
+#  ifdef USE_RPA_WEIGHTS && !defined(USE_OscBr_WEIGHTS)        
 	if(branchRPAnr){
 	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 	} else {
@@ -1537,7 +1568,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif
 #else
         // NEW 2D TEMPLATES
-#if defined(USE_RPA_WEIGHTS) || defined(USE_OscBr_WEIGHTS)
+#if defined(USE_RPA_WEIGHTS) || defined(USE_OscBr_WEIGHTS) || defined(USE_BeRPA_WEIGHTS) 
 #  if defined(USE_RPA_WEIGHTS) && !defined(USE_OscBr_WEIGHTS)       
 	if(branchRPAnr){
 	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
@@ -1547,16 +1578,12 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 	  //this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
           this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 	}
-        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
-
 #  elif !defined(USE_RPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
-        if (s == kSKsFCFVMultiRingELike ){
           this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
           this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
-        }
+
 #  elif defined(USE_RPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
         LOG("SuperkMC",pINFO) << "Applying RPA and Oscillation branch weights" ;
-        if (s == kSKsFCFVMultiRingELike ){
         if(branchRPAnr){
 	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPAnonrel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
 	} else {
@@ -1564,11 +1591,24 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 	}
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         }
-#  endif
-#else
+
+#  elif defined(USE_BeRPA_WEIGHTS) && !defined(USE_OscBr_WEIGHTS)       
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
+        
+#  elif !defined(USE_BeRPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
+        
+#  elif defined(USE_BeRPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc   * fake_data_weight);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
+
+#  else        
         this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
-#endif
+#  endif
+#endif //
         
 #endif // __USE_2D_TEMPLATES__
         
@@ -1698,6 +1738,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     const char * mode_branch          = "mode";
     const char * flux_wght_branch     = "wgtflx";
     const char * rpa_nrel_wght_branch = "wgtRPA_nr";
+    const char * berpa_wght_branch    = "wgtBeRPA_nom";
     const char * rpa_rel_wght_branch  = "wgtRPA_r";
     const char * sf_rfg_wght_branch   = "wgtsfrfg";
     const char * cc_coh_wght_branch   = "wght_CCcoh";
@@ -1768,6 +1809,13 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     mctree->SetBranchStatus(rpa_rel_wght_branch , 1 );
     branchRPAr->SetAddress(&fBrWghtRPArel);
 #endif
+#ifdef USE_BeRPA_WEIGHTS
+    TBranch * branchBeRPA = mctree->GetBranch(berpa_wght_branch);
+    if (branchBeRPA){
+      mctree->SetBranchStatus(berpa_wght_branch , 1 );
+      branchBeRPA->SetAddress(&fBrWghtBeRPA);
+    } 
+#endif    
 #ifdef USE_CCcoh_WEIGHTS
     TBranch * branchCCcoh   = mctree->GetBranch(cc_coh_wght_branch);
     mctree->SetBranchStatus(cc_coh_wght_branch , 1 );
@@ -1798,10 +1846,14 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         // Get lepton direction
         // Costheta is the scalar product between the neutrino beam and lepton directions.
-        
-        double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-        double costheta = dir_nu[0] * fBrDir[0][0] + dir_nu[1] * fBrDir[0][1] + dir_nu[2] * fBrDir[0][2];
-       
+        double costheta = -999;
+        double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+        if (util::Is1RESample(s)) {
+          costheta = dir_nu[0] * fBrDir[0][1][0] + dir_nu[1] * fBrDir[0][1][1] + dir_nu[2] * fBrDir[0][1][2];
+        }
+        if (util::Is1RMuSample(s)) {
+          costheta = dir_nu[0] * fBrDir[0][2][0] + dir_nu[1] * fBrDir[0][2][1] + dir_nu[2] * fBrDir[0][2][2];
+        }
         if( costheta<-1.00001 || costheta>+1.00001 ){
             cerr << endl;
             cerr << std::setprecision(10);
@@ -2187,7 +2239,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 	} else {
 	  this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 	}
-        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #else
         this -> Template(s,m,kSKMCtNom) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
         this -> Template(s,m,kSKMCtRPA) -> Fill (ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
@@ -2201,6 +2253,9 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 	  this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 	}
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+#elif defined(USE_BeRPA_WEIGHTS)
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtBeRPA );        
 #else
         this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
@@ -2329,7 +2384,7 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                     fMCTemplArrayTun[is]->GetEntryRef(im, it-1 , ir-1) = nev;
                     fMCTemplArrayFin[is]->GetEntryRef(im, it-1 , ir-1) = nev;
                     
-#ifdef USE_RPA_WEIGHTS
+#ifdef USE_RPA_WEIGHTS || USE_BeRPA_WEIGHTS
                     double nev_relrpa = this->Template(s,m,kSKMCtRPA)->GetBinContent(ir,it);
                     if ( (!with_niwg_weights) || (nev_relrpa < conv::kASmallNum && nev < conv::kASmallNum)) {
                         fMCTemplArrayRPAWght[is]->GetEntryRef(im, it-1 , ir-1) = 1.;
@@ -2456,7 +2511,7 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                         fMCTemplArrayTun2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
                         fMCTemplArrayFin2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
                         
-#ifdef USE_RPA_WEIGHTS
+#if defined(USE_RPA_WEIGHTS) || defined(USE_BeRPA_WEIGHTS)
                         double nev_relrpa = this->Template2D(s,m,kSKMCtRPA)->GetBinContent(iq,ir,it);
                         if ( (!with_niwg_weights) || (nev_relrpa < conv::kASmallNum && nev < conv::kASmallNum)) {
                             fMCTemplArrayRPAWght2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = 1.;
@@ -3757,32 +3812,6 @@ double* SuperkMC::CurrErecoVsQ2SpectrumArray(SuperkSample_t s, SuperkMode_t m)
     
     return &(fMCErecoVsQ2SpectrumArray[sidx]->GetEntryRef(midx,0,0));
 }
-
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
 {
@@ -3819,11 +3848,6 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
     return h;
 }
 //________________________________________________________________________________________
-
-
-
-
-
 // NEW 2D TEMPLATES
 TH3D * SuperkMC::Template2D(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t type) const
 {
@@ -3859,19 +3883,6 @@ TH3D * SuperkMC::Template2D(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t
     
     return h;
 }
-//
-
-
-
-
-
-
-
-
-
-
-
-
 //________________________________________________________________________________________
 TH2D * SuperkMC::VarTemplate(SuperkSample_t s, SuperkMode_t m) const
 {
@@ -7050,14 +7061,6 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
     
 }
 //________________________________________________________________________________________
-
-
-
-
-
-
-// NEW 2D TEMPLATES
-
 void SuperkMC::NevDebug2D(SKMCTemplateType_t t, string name)
 {
     
@@ -7067,10 +7070,10 @@ void SuperkMC::NevDebug2D(SKMCTemplateType_t t, string name)
         
         if(s == kSKsUndefined) continue;
 
-	if(s == kSKsFCFV1RingELike || s == kSKsFCFV1RingMuLike || s == kSKsRHCFCFV1RingMuLike) {
-	  LOG("SuperkMC", pDEBUG) << "Skipping templates other than RHC1Re and Multiring";
-	  continue; //Skip everything except RHC1Re and Multiring
-	}
+	// if(s == kSKsFCFV1RingELike || s == kSKsFCFV1RingMuLike || s == kSKsRHCFCFV1RingMuLike) {
+	//   LOG("SuperkMC", pDEBUG) << "Skipping templates other than RHC1Re and Multiring";
+	//   continue; //Skip everything except RHC1Re and Multiring
+	// }
         TFile* oute = new TFile(Form("Template2D_%s%s.root", name.c_str(),util::AsStringCompact(s).c_str()),"RECREATE");
         
         const int q2bins = util::NumQ2Bins(s);
@@ -7241,7 +7244,7 @@ void SuperkMC::MCStatErrDebug()
         int n_ereco_bins = kNErecoBins[is];
         
         //fill the nominal spectrum
-        TH1D * spectrum           = new TH1D("spe","spe",n_ereco_bins, util::ErecoBinEdges(kSKsFCFV1RingMuLike));
+        TH1D * spectrum = new TH1D("spe","spe",n_ereco_bins, util::ErecoBinEdges(kSKsFCFV1RingMuLike));
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
@@ -7301,7 +7304,7 @@ void SuperkMC::MCStatErrDebug()
                     }//ie
                 }//iy
             }//ix
-            cout << "Exp/SKMC >> Finished MC stat error debug loops for mode: " << util::AsStringCompact(m) << endl;
+            LOG("SuperkMC",pDEBUG) << "Finished MC stat error debug loops for mode: " << util::AsStringCompact(m);
         }//im
         
         //go from sum squares to RMS
@@ -7627,14 +7630,21 @@ double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta
   return XSecTerm;
 }
 //____________________________________________________________________________________
-
-
-double SuperkMC::CalcThetaDegrees(float dir[10][3]){
+double SuperkMC::CalcThetaDegrees(float dir[][7][3], conv::SuperkSample_t s ){
 
   //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
   //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
-  double costheta = kBeamDir[0] * dir[0][0] + kBeamDir[1] * dir[0][1] + kBeamDir[2] * dir[0][2];
-
+  // LOG("SuperkMC", pERROR) << "Filling theta for sample: " << util::SampleAsString(s)
+  //                         << " Is1RESample?: "  << util::Is1RESample(s)
+  //                         << " Is1RMuSample?: " << util::Is1RMuSample(s);
+  
+  double costheta = -999;
+  if (util::Is1RESample(s)) {
+    costheta = kBeamDir[0] * dir[0][1][0] + kBeamDir[1] * dir[0][1][1] + kBeamDir[2] * dir[0][1][2];
+  }
+  if (util::Is1RMuSample(s)) {
+    costheta = kBeamDir[0] * dir[0][2][0] + kBeamDir[1] * dir[0][2][1] + kBeamDir[2] * dir[0][2][2];    
+  }
   if( costheta<-1.00001 || costheta>+1.00001 ){
     cerr << endl;
     cerr << std::setprecision(10);

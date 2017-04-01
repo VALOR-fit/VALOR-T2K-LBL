@@ -59,11 +59,11 @@ CorrelatedSystematics()
   }
   (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFShapeCCoth)] = 0;
   
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_A)]   = 0.59;
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_B)]   = 1.05;
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_D)]   = 1.13;
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_E)]   = 0.88;
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_U)]   = 1.20;
+  // (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_A)]   = 0.59;
+  // (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_B)]   = 1.05;
+  // (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_D)]   = 1.13;
+  // (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_E)]   = 0.88;
+  // (*fDefaultValues)[this->Param2Idx(conv::kNuisBANFFBeRPA_U)]   = 1.20;
   
   
   LOG("BANFF",pINFO) << "Defined final BANFF matrix rows: ";

@@ -22,17 +22,16 @@ valor::conv::SuperkSample_t valor::util::SKSampleFromString(string sh)
   if(sh == "1Re" )     return kSKsFCFV1RingELike;
   if(sh == "RHC1Rmu")  return kSKsRHCFCFV1RingMuLike;
   if(sh == "RHC1Re" )  return kSKsRHCFCFV1RingELike;
-  if(sh == "MultiRmu") return kSKsFCFVMultiRingMuLike;       /// NEW MULTIRING
-  if(sh == "MultiRe" ) return kSKsFCFVMultiRingELike;       /// NEW MULTIRING
+  if(sh == "MultiRmu") return kSKsFCFVMultiRingMuLike;     
+  if(sh == "MultiRe" ) return kSKsFCFVMultiRingELike;      
 
   return kSKsUndefined;
 }
 //________________________________________________________________________________________
 bool valor::util::IsFHCSample(conv::SuperkSample_t s)
 {
-  //if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike)
   if(s == kSKsFCFV1RingMuLike || s == kSKsFCFV1RingELike ||
-     s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)   /// ADD MULTIRING
+     s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
     return true;
   return false;
 }
@@ -44,17 +43,12 @@ bool valor::util::IsRHCSample(conv::SuperkSample_t s)
   return false;
 }
 //___________________________________________________________________________
-
-
-/// NEW MULTIRING
 bool valor::util::IsMultiRingSample(conv::SuperkSample_t s)
 {
   if(s == kSKsFCFVMultiRingMuLike || s == kSKsFCFVMultiRingELike)
     return true;
   return false;
 }
-///
-
 //___________________________________________________________________________
 bool valor::util::Is1RMuSample(conv::SuperkSample_t s)
 {
@@ -77,20 +71,12 @@ bool valor::util::IsMultiRMuSample(conv::SuperkSample_t s)
   return false;
 }
 //___________________________________________________________________________
-
-
-/// NEW MULTIRING
 bool valor::util::IsMultiRESample(conv::SuperkSample_t s)
 {
   if(s == kSKsFCFVMultiRingELike)
     return true;
   return false;
 }
-///
-
-
-
-
 //___________________________________________________________________________
 string valor::util::GetXMLMCTreeName(valor::conv::SuperkSample_t s)
 {
@@ -114,10 +100,6 @@ string valor::util::GetXMLMCTreeName(valor::conv::SuperkSample_t s)
   }
   return "";
 }
-
-
-
-
 //___________________________________________________________________________
 string valor::util::GetXMLDatasetName(valor::conv::SuperkSample_t s)
 {
