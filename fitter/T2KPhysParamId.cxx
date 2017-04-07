@@ -3948,16 +3948,19 @@ bool valor::util::IsBeRPA(PhysParamId_t p)
     case ( kNuisBANFFBeRPA_B    ) :
     case ( kNuisBANFFBeRPA_D    ) :
     case ( kNuisBANFFBeRPA_E    ) :
+    case ( kNuisBANFFBeRPA_U    ) :      
 
     case ( kRHCNuisBANFFBeRPA_A ) :   
     case ( kRHCNuisBANFFBeRPA_B ) :  
     case ( kRHCNuisBANFFBeRPA_D ) :  
-    case ( kRHCNuisBANFFBeRPA_E ) :  
+    case ( kRHCNuisBANFFBeRPA_E ) :
+    case ( kRHCNuisBANFFBeRPA_U ) :        
       return true;
             
   default:
     return false;
   }
+  
 }
 //________________________________________________________________________________________
 bool valor::util::IsRHCSystematic(PhysParamId_t p)
