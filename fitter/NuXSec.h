@@ -97,15 +97,15 @@ public:
   double CurrentValue        (conv::PhysParamId_t p) const;
 
   // Get the relative error of systematic params handled by this class
-  double RelativeError (conv::PhysParamId_t p) const;
+  double RelativeError (conv::PhysParamId_t p) const {assert(false); return 0;};
 
   // Get weight spline for each sample / mode / parameters / Ereco bin / Etrue bin
   TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   TSpline3 * FindWghtSpline(conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
 
   // Print
-  void PrintSystematicVariations (std::ostream & stream = std::cout) const;
-  void PrintRHCSystematicVariations (std::ostream & stream = std::cout) const;
+  void PrintSystematicVariations (std::ostream & stream = std::cout) const {};
+  void PrintRHCSystematicVariations (std::ostream & stream = std::cout) const {};
 
   // Read inputs from XML file
   bool Read          (TXMLEngine* xml, XMLNodePointer_t root_node);
@@ -125,7 +125,7 @@ public:
   TH3D * Template2D(conv::SuperkSample_t s, conv::SuperkMode_t m) const;
 
   // Penalty term included in the chisq if NuXSec nuisance terms are included in the fit
-  double ChisqPenalty(bool all_syst = true, bool hk_syst = false) const;
+  double ChisqPenalty(bool all_syst = true, bool hk_syst = false) const {return 0;};
 
   //ask for splines stored - to plot them
   /*

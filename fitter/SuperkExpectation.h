@@ -93,7 +93,7 @@ public:
   
   void TweakAllSystematics                       (void) {RandomizeSystematics();}
   void TweakAllBANFFSystematics                  (void);        ///< random variation of all BANFF systematics
-  void TweakAllUncorrelatedXSecSystematics       (void);        ///< random variation of all Uncorrelated XSec systematics
+  void TweakAllUncorrelatedXSecSystematics       (void){};        ///< random variation of all Uncorrelated XSec systematics
   void TweakAllSKDetectorFSISystematics          (void);        ///< random variation of all SK Detector systematics
   
   // Interface method for fitters. The fit parameter list can contain info for both the 
