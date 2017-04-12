@@ -18,6 +18,6 @@
   <priority msgstream="SuperkExp">              DEBUG    </priority>  
   <priority msgstream="CorrelatedSystematics">  DEBUG    </priority>
   <priority msgstream="UtlFitParamListFactory"> DEBUG    </priority>
-  <priority msgstream="NuXSec">                 DEBUG    </priority>
+  <priority msgstream="NuXSec">                 ERROR    </priority>
   
 </messenger_config>
