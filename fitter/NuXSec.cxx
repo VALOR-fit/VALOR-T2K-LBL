@@ -25,7 +25,7 @@
 //#define __save_ori_templates_init_debug__
 #define __skip_unexpected_spline_test_in_readsplines__ // skip looking for splines we don't expect (due to our empty bins) - speedy!
 //#define __check_splines_not_flat_on_read__ // Make sure the input splines aren't flat - something has gone wrong. needs __use_flat_splines_for_missing_splines__
-#define check_spline_limits       //slow, but should be used when testing
+//#define check_spline_limits       //slow, but should be used when testing
 //#define __use_1Rsplines_for_MultiR_sample__
 
 #define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
@@ -1061,7 +1061,6 @@ void NuXSec::TellMeAboutTheRHCBANFFfit(BANFF * banff)
 //________________________________________________________________________________________
 double NuXSec::FinTuningWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
-    LOG("NuXSec", pFATAL) << "Start of function ";
     double tot_wght = 1.;
     
     int nXSecSyst;
@@ -1099,7 +1098,6 @@ double NuXSec::FinTuningWght(SuperkSample_t s, SuperkMode_t m, double Ereco, dou
 //________________________________________________________________________________________
 double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue) const
 {
-  LOG("NuXSec", pFATAL) << "Start of function ";
 #if defined(DISABLE_SCC) && BANFF_BINS != 2
     if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
         p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
@@ -1286,7 +1284,10 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // - BANFF param, NCoth      normalization
     // - BANFF param, NuEToNuMu  normalization
     //
-    else if( util::IsNormXSecParam(p) ) { wght = fBANFF->InitialValue(p); }
+    else if( util::IsNormXSecParam(p) ) {
+      if (util::IsBeRPA(p)) wght = 1.0;
+      else wght = fBANFF->InitialValue(p);
+    }
 
 #endif
     
@@ -1297,7 +1298,18 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     << ", Etrue = " << Etrue << " GeV => Weight ["
     << util::AsString(p) << "] = " << wght;
 #endif
-    
+        // Hack to get around some small negative values in some of the fermi momentum response functions -1e-5 level
+    if (wght < 0){
+      wght = 2 * conv::kASmallNum;
+      LOG("NuXSec", pWARN) << "Setting negative weight to zero "
+                           << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+                           << " Current value = " << this->CurrentValue(p);
+      if (wght_spl) {
+        LOG("NuXSec", pWARN) << "Spline name, title: "<<wght_spl->GetName()
+                             <<" , "<<wght_spl->GetTitle();
+      }
+    }
+
     if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
         //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
         int ireco = -1;
@@ -1488,7 +1500,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         
         wght = wght_spl->Eval(spline_point);
         LOG("NuXSec",pDEBUG) << "Spline name, title: "<< wght_spl->GetName() << " , " <<wght_spl->GetTitle()
-                             <<  "Evaluated at " << spline_point ;
+                             <<  " Evaluated at " << spline_point ;
 
     }
     
@@ -1545,7 +1557,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         
-        double spline_point = tb-untuned_value;
+        spline_point = tb-untuned_value;
         
 #ifdef check_spline_limits
         if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
@@ -1590,7 +1602,10 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // - BANFF param, NCoth      normalization
     // - BANFF param, NuEToNuMu  normalization
     //
-    else if( util::IsNormXSecParam(p) ) { wght = fBANFF->InitialValue(p); }
+    else if( util::IsNormXSecParam(p) ) {
+      if (util::IsBeRPA(p)) wght = 1.0;
+      else wght = fBANFF->InitialValue(p);
+    }
 #endif
     
 #ifdef __show_banff_tuning_wght_mesg_debug__
@@ -1601,7 +1616,18 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     << ", Q2    = " << Q2 << " GeV=> Weight ["
     << util::AsString(p) << "] = " << wght;
 #endif
-    
+    // Hack to get around some small negative values in some of the fermi momentum response functions -1e-5 level
+    if (wght < 0){
+      wght = 2 * conv::kASmallNum;
+      LOG("NuXSec", pWARN) << "Setting negative weight to zero "
+                           << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+                           << " Current value = " << this->CurrentValue(p);
+      if (wght_spl) {
+        LOG("NuXSec", pWARN) << "Spline name, title: "<<wght_spl->GetName()
+                             <<" , "<<wght_spl->GetTitle();
+      }
+    }
+
     if(fabs(wght) > conv::kMaxAllowedWght || wght < conv::kASmallNum) {
         //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
         int ireco = -1;
@@ -1640,7 +1666,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         << ", Q2    = " << Q2    << " GeV =>"
         << " Bins are Ereco,Etrue,Q2 = " << ireco << "," << itrue << "," << iq2 << " =>"
         << " Weight [" << util::AsString(p) << "] = " << wght
-                              << " At point "
+        << " At point " <<  spline_point 
         << " Current value = " << this->CurrentValue(p);
         if (wght_spl) {
             cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
@@ -2023,7 +2049,6 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
 //________________________________________________________________________________________
 double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2) const
 {
-    LOG("NuXSec", pFATAL) << "Start of function ";
 #if defined(DISABLE_SCC) && BANFF_BINS != 2
     if (p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
         p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       )
@@ -2036,11 +2061,12 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     
     // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
-    LOG("NuXSec", pFATAL) << "Start of function ";
     TSpline3 * wght_spl = 0;
     
     double wght = 1.;
     double tb, tc;
+    
+    double spl_tb(0), spl_tc(0);
     
     //
     // BANFF param w/ response functions:
@@ -2084,11 +2110,15 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
-        double spl_tb = (tb-untuned_value);
-        double spl_tc = (tc-untuned_value);
+        // double spl_tb = (tb-untuned_value);
+        // double spl_tc = (tc-untuned_value);
+        spl_tb = (tb-untuned_value);
+        spl_tc = (tc-untuned_value);
+
 #ifdef check_spline_limits
         if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-            std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+          LOG("NuXSec", pERROR) <<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc
+                                <<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
         
@@ -2150,11 +2180,14 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
-        double spl_tb = tb-untuned_value;
-        double spl_tc = tc-untuned_value;
+        // double spl_tb = tb-untuned_value;
+        // double spl_tc = tc-untuned_value;
+        spl_tb = tb-untuned_value;
+        spl_tc = tc-untuned_value;
 #ifdef check_spline_limits
         if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-            std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+          LOG("NuXSec", pERROR) <<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc
+                                <<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
         
@@ -2164,9 +2197,9 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
         
         wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
-        // LOG("NuXSec", pFATAL) << "Parameter: " << util::AsString(p) 
-        //                       <<" fBANFF->InitialValue(p): "<< wght_spl->Eval(spl_tb) << " @ " <<  spl_tb
-        //                       <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
+        LOG("NuXSec", pFATAL) << "Parameter: " << util::AsString(p) 
+                              <<" fBANFF->InitialValue(p): "<< wght_spl->Eval(spl_tb) << " @ " <<  spl_tb
+                              <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
     }
     
     // Response functions where we expect to exceed the splines range.
@@ -2202,6 +2235,10 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
         
         wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+       // LOG("NuXSec", pFATAL) << "Parameter: " << util::AsString(p) 
+       //                       <<" fBANFF->InitialValue(p): "<< wght_spl->Eval(spl_tb) << " @ " <<  spl_tb
+       //                       <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
+        
     } // end of response functions
     
     //
@@ -2220,7 +2257,11 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     // - BANFF param, NuEToNuMu  normalization
     //
                 
-    else if( util::IsNormXSecParam(p)) { wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p); }
+    else if( util::IsNormXSecParam(p)) {
+      //if (util::IsBeRPA(p)) wght = 1.0; 
+      //else
+        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
+    }
 #endif // NIWG2015
     
     // NEW XSEC NIWG
@@ -2228,16 +2269,8 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     // RPA tuning
     //
-    else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
-    {
+    else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA) {
         return 1; // This is implented in SKMC for now
-        //~ #if SPLINE_TYPE == -1
-        //~ return wght;
-        //~ #endif
-        //~ wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        //~ assert(wght_spl);
-        //~ tc = this->CurrentValue(p);
-        //~ wght = wght_spl->Eval(tc);
     }
 #endif
     
@@ -2252,7 +2285,18 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         << util::AsString(p) << "] = " << wght;
     }
 #endif
-    
+    // Hack to get around some small negative values in some of the fermi momentum response functions -1e-5 level
+    if (wght < 0){
+      wght = 2 * conv::kASmallNum;
+      LOG("NuXSec", pWARN) << "Setting negative weight to zero "
+                           << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
+                           << " Current value = " << this->CurrentValue(p);
+      if (wght_spl) {
+        LOG("NuXSec", pWARN) << "Spline name, title: "<<wght_spl->GetName()
+                             <<" , "<<wght_spl->GetTitle();
+      }
+    }
+
     if(fabs(wght) > conv::kMaxAllowedWght) {
         //get the ereco & etrue bin indexes (to be used to check whether the spline is sensible)
         int ireco = -1;
@@ -2286,7 +2330,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             }
         }
         
-        cout << "Exp/NuXSec/Systwght >> Got an absurd weight! "
+        LOG("NuXSec", pERROR) << "Got an absurd weight! "
         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
         << ", Ereco = " << Ereco << " GeV"
         << ", Etrue = " << Etrue << " GeV =>"
@@ -2294,7 +2338,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         << " Bins are Ereco,Etrue,Q2 = " << ireco << "," << itrue << "," << iq2 << " =>"
         << " Weight [" << util::AsString(p) << "] = " << wght
         << " Current value = " << this->CurrentValue(p)
-        << endl;
+        << "\nEvaluated at: tb " << spl_tb << ", tc "<< spl_tc ;
         if (wght_spl) {
             cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
             << endl;
@@ -2495,7 +2539,7 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
 #ifdef __use_1Rsplines_for_MultiR_sample__
   // ~#{ Hack for testing set multiring splines to single ring splines
   if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  if (util::IsMultiReSample(s))  s = kSKsFCFV1RingELike;
   // }#~
 #endif 		        
 
@@ -3224,7 +3268,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 #ifdef __use_1Rsplines_for_MultiR_sample__
   // ~#{ Hack for testing set multiring splines to single ring splines
   if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  if (util::IsMultiReSample(s))  s = kSKsFCFV1RingELike;
   // }#~
 #endif
   
@@ -3245,7 +3289,7 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
 #ifdef __use_1Rsplines_for_MultiR_sample__
   // ~#{ Hack for testing set multiring splines to single ring splines
   if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  if (util::IsMultiReSample(s))  s = kSKsFCFV1RingELike;
   // }#~
 #endif 		      
     ostringstream splname;
