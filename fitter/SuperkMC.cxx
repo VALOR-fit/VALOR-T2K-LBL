@@ -60,7 +60,7 @@
 #define INCLUDEEVENTSNEGATIVEQ2      // include Q2 underflow events in the first bin?
 #define INCLUDEEVENTSOVERFLOWQ2      // include Q2 overflow events in the last bin?
 
-#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
+//#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 
 #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
 
@@ -1313,7 +1313,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         // Get lepton direction
         // Costheta is the scalar product between the neutrino beam and lepton directions.
         double costheta = -999;
-        if util::Is1RESample(s) {
+        if (util::Is1ReSample(s) || util::IsMultiReSample(s)) {
           double costheta = kBeamDir[0] * fBrDir[0][1][0] + kBeamDir[1] * fBrDir[0][1][1] + kBeamDir[2] * fBrDir[0][1][2];
         }
         if util::Is1RMuSample(s) {
@@ -1848,7 +1848,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         // Costheta is the scalar product between the neutrino beam and lepton directions.
         double costheta = -999;
         double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-        if (util::Is1RESample(s)) {
+        if (util::Is1ReSample(s) || util::IsMultiReSample(s)) {
           costheta = dir_nu[0] * fBrDir[0][1][0] + dir_nu[1] * fBrDir[0][1][1] + dir_nu[2] * fBrDir[0][1][2];
         }
         if (util::Is1RMuSample(s)) {
@@ -7635,11 +7635,11 @@ double SuperkMC::CalcThetaDegrees(float dir[][7][3], conv::SuperkSample_t s ){
   //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
   //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
   // LOG("SuperkMC", pERROR) << "Filling theta for sample: " << util::SampleAsString(s)
-  //                         << " Is1RESample?: "  << util::Is1RESample(s)
+  //                         << " Is1RESample?: "  << util::Is1ReSample(s)
   //                         << " Is1RMuSample?: " << util::Is1RMuSample(s);
   
   double costheta = -999;
-  if (util::Is1RESample(s)) {
+  if (util::Is1ReSample(s) || util::IsMultiReSample(s)) {
     costheta = kBeamDir[0] * dir[0][1][0] + kBeamDir[1] * dir[0][1][1] + kBeamDir[2] * dir[0][1][2];
   }
   if (util::Is1RMuSample(s)) {
