@@ -57,7 +57,7 @@ bool valor::util::Is1RMuSample(conv::SuperkSample_t s)
   return false;
 }
 //___________________________________________________________________________
-bool valor::util::Is1RESample(conv::SuperkSample_t s)
+bool valor::util::Is1ReSample(conv::SuperkSample_t s)
 {
   if(s == kSKsRHCFCFV1RingELike || s == kSKsFCFV1RingELike)
     return true;
@@ -71,7 +71,7 @@ bool valor::util::IsMultiRMuSample(conv::SuperkSample_t s)
   return false;
 }
 //___________________________________________________________________________
-bool valor::util::IsMultiRESample(conv::SuperkSample_t s)
+bool valor::util::IsMultiReSample(conv::SuperkSample_t s)
 {
   if(s == kSKsFCFVMultiRingELike)
     return true;

@@ -57,9 +57,9 @@ namespace util {
   bool IsFHCSample        (conv::SuperkSample_t s);
   bool IsMultiRingSample  (conv::SuperkSample_t s);
   bool Is1RMuSample       (conv::SuperkSample_t s);
-  bool Is1RESample        (conv::SuperkSample_t s);
+  bool Is1ReSample        (conv::SuperkSample_t s);
   bool IsMultiRMuSample   (conv::SuperkSample_t s);
-  bool IsMultiRESample    (conv::SuperkSample_t s);
+  bool IsMultiReSample    (conv::SuperkSample_t s);
   
   string GetXMLMCTreeName  (conv::SuperkSample_t     s);
   string GetXMLDatasetName (conv::SuperkSample_t     s);
