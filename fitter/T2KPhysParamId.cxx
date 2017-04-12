@@ -3077,7 +3077,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kNuisBANFFBeRPA_E      ) : return "$f_{Shape_{BeRPA_{E}}}^{banff}$";       break;
         case ( kNuisBANFFBeRPA_U      ) : return "$f_{Shape_{BeRPA_{U}}}^{banff}$";       break;
         case ( kNuisBANFFShape2p2h    ) : return "$f_{Shape_{2p2h\\nu}}^{banff}$";        break;
-        case ( kNuisBANFFNorm2p2hCtoO ) : return "$f_{Norm_{2p2h C to O}^{banff}$"; break;
+        case ( kNuisBANFFNorm2p2hCtoO ) : return "$f_{Norm_{2p2h C to O}}^{banff}$"; break;
             //
             
             //
