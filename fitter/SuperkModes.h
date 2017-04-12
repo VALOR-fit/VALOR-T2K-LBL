@@ -36,7 +36,7 @@ namespace valor {
             kSKmNuMuCCQE,         // numu CC QE
             kSKmNuMuCC1pi,        // numu CC 1pi
             kSKmNuMuCCcoh,        // numu CC coherent
-            kSKmNuMuCC2p2h,        // numu CC 2p2h
+            kSKmNuMuCC2p2h,       // numu CC 2p2h
             kSKmNuMuCCoth,        // numu CC other
             kSKmNuMuNC1piC,       // numu NC 1 charged pi
             kSKmNuMuNC1pi0,       // numu NC 1pi0
@@ -46,12 +46,12 @@ namespace valor {
             kSKmOscNuMuCCQE,      // oscillated numu CCQE
             kSKmOscNuMuCC1pi,     // oscillated numu CC 1pi
             kSKmOscNuMuCCcoh,     // oscillated numu coh
-            kSKmOscNuMuCC2p2h,     // oscillated numu CC 2p2h
+            kSKmOscNuMuCC2p2h,    // oscillated numu CC 2p2h
             kSKmOscNuMuCCoth,     // oscillated numu CC other
             kSKmNuMuBarCCQE,      // numubar CCQE
             kSKmNuMuBarCC1pi,     // numubar CC 1pi
             kSKmNuMuBarCCcoh,     // numubar CC coh
-            kSKmNuMuBarCC2p2h,     // numubar CC 2p2h
+            kSKmNuMuBarCC2p2h,    // numubar CC 2p2h
             kSKmNuMuBarCCoth,     // numubar CC other
             kSKmNuMuBarNC1piC,    // numubar NC 1 charged pi
             kSKmNuMuBarNC1pi0,    // numubar NC 1pi0
@@ -61,12 +61,12 @@ namespace valor {
             kSKmOscNuMuBarCCQE,   // oscillated numubar CCQE
             kSKmOscNuMuBarCC1pi,  // oscillated numubar CC 1pi
             kSKmOscNuMuBarCCcoh,  // oscillated numubar CC coh
-            kSKmOscNuMuBarCC2p2h,  // oscillated numubar CC 2p2h
+            kSKmOscNuMuBarCC2p2h, // oscillated numubar CC 2p2h
             kSKmOscNuMuBarCCoth,  // oscillated numubar CC other
             kSKmNuECCQE,          // nue CC QE
             kSKmNuECC1pi,         // nue CC 1pi
             kSKmNuECCcoh,         // nue CC coherent
-            kSKmNuECC2p2h,         // nue CC 2p2h
+            kSKmNuECC2p2h,        // nue CC 2p2h
             kSKmNuECCoth,         // nue CC other
             kSKmNuENC1piC,        // nue NC 1 charged pi
             kSKmNuENC1pi0,        // nue NC 1pi0
@@ -76,12 +76,12 @@ namespace valor {
             kSKmOscNuEBarCCQE,    // oscillated nuebar CC QE
             kSKmOscNuEBarCC1pi,   // oscillated nuebar CC 1pi
             kSKmOscNuEBarCCcoh,   // oscillated nuebar CC coherent
-            kSKmOscNuEBarCC2p2h,   // oscillated nuebar CC 2p2h
+            kSKmOscNuEBarCC2p2h,  // oscillated nuebar CC 2p2h
             kSKmOscNuEBarCCoth,   // oscillated nuebar CC other
             kSKmNuEBarCCQE,       // nuebar CC QE
             kSKmNuEBarCC1pi,      // nuebar CC 1pi
             kSKmNuEBarCCcoh,      // nuebar CC coherent
-            kSKmNuEBarCC2p2h,      // nuebar CC 2p2h
+            kSKmNuEBarCC2p2h,     // nuebar CC 2p2h
             kSKmNuEBarCCoth,      // nuebar CC other
             kSKmNuEBarNC1piC,     // nuebar NC 1 charged pi
             kSKmNuEBarNC1pi0,     // nuebar NC 1pi0
@@ -91,7 +91,7 @@ namespace valor {
             kSKmOscNuECCQE,       // oscillated nue CCQE
             kSKmOscNuECC1pi,      // oscillated nue CC 1pi
             kSKmOscNuECCcoh,      // oscillated nue CC coh
-            kSKmOscNuECC2p2h,      // oscillated nue CC 2p2h
+            kSKmOscNuECC2p2h,     // oscillated nue CC 2p2h
             kSKmOscNuECCoth,      // oscillated nue CC other
         }
         SuperkMode_t;
