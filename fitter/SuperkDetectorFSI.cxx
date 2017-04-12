@@ -334,7 +334,7 @@ double SuperkDetectorFSI::SystWght(
 #ifdef __use_1Rsyst_for_MultiR_sample__
   // ~#{ Hack for testing set multiring splines to single ring splines
   if (util::IsMultiRMuSample(s)) s = kSKsFCFV1RingMuLike;
-  if (util::IsMultiRESample(s))  s = kSKsFCFV1RingELike;
+  if (util::IsMultiReSample(s))  s = kSKsFCFV1RingELike;
   // }#~
 #endif
   
