@@ -15,7 +15,7 @@ using namespace valor::conv;
 void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 (
  const char * tag                  = "tamesu",
- const char * sk_sample            = "1Rmu",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu", "MultiRe" */
+ const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu", "MultiRe" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  
  // // No Oscillations
@@ -73,7 +73,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
  //const char * config_file    = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_mrmc_test.xml",
  // const char * config_file    = "analysis_configuration.xml",
- const char * config_file     = "analysis_configuration_Run1-7cPOT_theta.xml",    //"analysis_configuration.xml",
+ const char * config_file     = "analysis_configuration_prefit_Run1-7cPOT_theta_banff_2p2h_berpa.xml",
  //const char * config_file    = "analysis_configuration_dummy_multiring.xml",
  //const char * config_file  = "analysis_configuration_test_theta_elike_RFGRPA.xml",
  //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
@@ -297,7 +297,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
   // Generate prediction
   cout << "- Generating predictions..." << endl;
-  skexp.GetSuperkMC()->SetXMEC(1);
+  skexp.GetSuperkMC()->SetX2p2h(1);
   skexp.Generate(ph);
 
   //Get energy spectra
@@ -440,7 +440,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
         
     //cout << m << " " << modestr << " --> ";
     if     (util::IsCCQE(m))  cout << "IsCCQE"  << endl;
-    else if(util::IsMEC(m))   cout << "IsMEC"   << endl;
+    else if(util::Is2p2h(m))   cout << "Is2p2h"   << endl;
     else if(util::IsCCnQE(m)) cout << "IsCCnQE" << endl;
     else if(util::IsNC(m))    cout << "IsNC"    << endl;
     else{
@@ -477,7 +477,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     if( util::IsCCQE(m) )    
       //hErecoVsQ2Mode_CCQE->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // CCQE
       hErecoVsQ2Mode_CCQE->Add(hErecoVsQ2Modes[im]); // CCQE
-    else if( util::IsMEC(m) )    
+    else if( util::Is2p2h(m) )    
       //hErecoVsQ2Mode_MEC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // MEC {2p-2h}
       hErecoVsQ2Mode_MEC->Add(hErecoVsQ2Modes[im]); // MEC {2p-2h}
     else if( util::IsCCnQE(m) )    

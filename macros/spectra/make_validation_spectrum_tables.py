@@ -99,12 +99,12 @@ modes_to_species_and_process[conv.kSKmNuENC1Gamma]      = ("nue","NC1gamma") #un
 modes_to_species_and_process[conv.kSKmOscNuEBarCCQE]    = ("signuebar","CCQE")
 modes_to_species_and_process[conv.kSKmOscNuEBarCC1pi]   = ("signuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCcoh]   = ("signuebar","CCcoherent")
-modes_to_species_and_process[conv.kSKmOscNuEBarCC2p2h]   = ("signuebar","2p2h")
+modes_to_species_and_process[conv.kSKmOscNuEBarCC2p2h]  = ("signuebar","2p2h")
 modes_to_species_and_process[conv.kSKmOscNuEBarCCoth]   = ("signuebar","CCother")
 modes_to_species_and_process[conv.kSKmNuEBarCCQE]       = ("nuebar","CCQE")
 modes_to_species_and_process[conv.kSKmNuEBarCC1pi]      = ("nuebar","CC1pi")
 modes_to_species_and_process[conv.kSKmNuEBarCCcoh]      = ("nuebar","CCcoherent")
-modes_to_species_and_process[conv.kSKmNuEBarCC2p2h]      = ("nuebar","2p2h")
+modes_to_species_and_process[conv.kSKmNuEBarCC2p2h]     = ("nuebar","2p2h")
 modes_to_species_and_process[conv.kSKmNuEBarCCoth]      = ("nuebar","CCother")
 modes_to_species_and_process[conv.kSKmNuEBarNC1piC]     = ("nuebar","NC1piPM")
 modes_to_species_and_process[conv.kSKmNuEBarNC1pi0]     = ("nuebar","NC1pi0")
@@ -262,7 +262,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
 
   # Special tweak to compare with prefit values
   # BANFF XSec parameters for convenience
-  # 50 (default: 1)  BANFF; Norm; 2p2h                   kNuisBANFF2p2h                
+  # 50 (default: 1)  BANFF; Norm; 2p2h                  kNuisBANFF2p2h                
   # 51 (default: 1)  BANFF; CA5 RES                     kNuisBANFFCA5                
   # 52 (default: 1)  BANFF; BgRES Isospin 1/2           kNuisBANFFBgRES              
   # 53 (default: 1)  BANFF; Ma QE                       kNuisBANFFMAQE               
@@ -278,7 +278,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
   # 63 (default: 1)  BANFF; Norm; NuE To NuMu           kNuisBANFFNormNuEToNuMu      
   # 64 (default: 1)  BANFF; Norm; NC 1 Gamma            kNuisBANFFNormNC1Gamma       
   # 65 (default: 1)  BANFF; Norm; NuEBar To NuMuBar     kNuisBANFFNormNuEBarToNuMuBar
-  # 66 (default: 1)  BANFF; Norm; 2p2hBar                kNuisBANFF2p2hBar             
+  # 66 (default: 1)  BANFF; Norm; 2p2hBar               kNuisBANFF2p2hBar             
 
   if(tweakedbanff):
     print "- Tweaking BANFF tuning to match ptheta analysis"
@@ -286,7 +286,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
 
     v = skexp.GetBANFF().CurrentValues()
     v_untuned = skexp.GetBANFF().UntunedValues()
-    
+    v=v_untuned
     # for i in range(50,67):
     #   #v[i] = v_untuned[i];
     #   print "Parameter: ", util.ParamAsString(skexp.GetBANFF().Idx2Param(i))
@@ -298,27 +298,26 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     #     v[i] = v_untuned[i];
 
     #v[50] =     # BANFF; Norm; 2p2h                        1     | .  #50 MA QE, type:3                       
-    v[51] = 1.0  # BANFF; CA5 RES                          0.78  | .  #51 pF, type:3                          
-    v[52] = 1.0  # BANFF; BgRES Isospin 1/2                1     |   #52 2p2h O norm, type:2                  
+    v[51] = 0.950495049505  # BANFF; CA5 RES                          0.78  | .  #51 pF, type:3                          
+    v[52] = 0.738461538462  # BANFF; BgRES Isospin 1/2                1     |   #52 2p2h O norm, type:2                  
     v[53] = 1.0  # BANFF; Ma QE                            0.93  | .  #53 Eb, type:3                          
-    v[54] = 1.0  # BANFF; Ma RES                           0.88  |   #54 2p2h nubar, type:2                   
+    v[54] = 1.12631578947  # BANFF; Ma RES                           0.88  |   #54 2p2h nubar, type:2                   
     v[55] = 1.0  # BANFF; Second current class axial       1     | .  #55 CA5_RES, type:3                     
     v[56] = 1.0  # BANFF; Second current class vector      1     | .  #56 MANFF_RES, type:3                   
     v[57] = 1.0  # BANFF; Fermi Momentum                   1.04  | .  #57 BG_RES, type:3                      
-    #v[58] = 0.0  # BANFF; Shape; CC Oth                    -0.03 |  .  #58 nue/numu xsec, type:4               
-    v[59] = 1.0  # BANFF; Binding energy                   0.88  |  .  #59 nuebar/numu xsec, type:4            
-    # v[60] =    # BANFF; Norm; CC Coh                     1     | .  #60 CCother Shape/DIS Multi-PI, type:3  
-    # v[61] =    # BANFF; Norm; NC Coh                     1     |   #61 CC coherent norm, type:2            
-    # v[62] =    # BANFF; Norm; NC Oth                     1     |   #62 NC coherent norm, type:2            
-    # v[63] =    # BANFF; Norm; NuE To NuMu                1     |   #63 NC gamma norm, type:2               
-    # v[64] =    # BANFF; Norm; NC 1 Gamma                 1     |   #64 NC other norm, type:2               
-    # v[65] =    # BANFF; Norm; NuEBar To NuMuBar          1     |   #65 RPA, type:3                         
-    # v[66] =    # BANFF; Norm; 2p2hBar                     0.57  |
-    v[67] =  0.59   # BANFF; BeRPA A
-    v[68] =  1.05   # BANFF; BeRPA B
-    v[69] =  1.13   # BANFF; BeRPA D
-    v[70] =  0.88   # BANFF; BeRPA E
-    v[71] =  1.2    # BANFF; BeRPA U
+    # v[58] = 0.0  # BANFF; Shape; CC Oth                    -0.03 |  .  #58 nue/numu xsec, type:4               
+    # v[59] =    # BANFF; Norm; CC Coh                     1     | .  #60 CCother Shape/DIS Multi-PI, type:3  
+    # v[60] =    # BANFF; Norm; NC Coh                     1     |   #61 CC coherent norm, type:2            
+    # v[61] =    # BANFF; Norm; NC Oth                     1     |   #62 NC coherent norm, type:2            
+    # v[62] =    # BANFF; Norm; NuE To NuMu                1     |   #63 NC gamma norm, type:2               
+    # v[63] =    # BANFF; Norm; NC 1 Gamma                 1     |   #64 NC other norm, type:2               
+    # v[64] =    # BANFF; Norm; NuEBar To NuMuBar          1     |   #65 RPA, type:3                         
+    # v[65] =    # BANFF; Norm; 2p2hBar                     0.57  |
+    v[66] =  0.59   # BANFF; BeRPA A
+    v[67] =  1.05   # BANFF; BeRPA B
+    v[68] =  1.13   # BANFF; BeRPA D
+    v[69] =  0.88   # BANFF; BeRPA E
+    v[70] =  1.2    # BANFF; BeRPA U
     # v[72] =    # BANFF; Shape; 2p2h nu
     # v[73] =    # BANFF; Shape; 2p2h nubar
 
@@ -573,7 +572,7 @@ if __name__=="__main__":
   #
   # NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
   #
-  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_prefit_Run1-7cPOT_theta_banff_2p2h_berpa.xml", help="Configuration file")
+  parser.add_option('-c', '--config', dest='config', default="analysis_configuration_Run1-7cPOT_theta_banff_2p2h_berpa.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml", help="Configuration file")
   #parser.add_option('-c', '--config', dest='config', default="analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml", help="Configuration file")
