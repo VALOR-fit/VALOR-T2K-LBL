@@ -1593,7 +1593,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         }
 
 #  elif defined(USE_BeRPA_WEIGHTS) && !defined(USE_OscBr_WEIGHTS)       
-        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
         
 #  elif !defined(USE_BeRPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
@@ -1601,7 +1601,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         
 #  elif defined(USE_BeRPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
-        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc   * fake_data_weight);
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
 
 #  else        
@@ -1609,6 +1609,10 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
 #  endif
 #endif //
+
+        // if (fBrWghtBeRPA > conv::kASmallNum){
+        //   LOG("SuperkMC", pINFO) << "Value of BeRPA weight"  << fBrWghtBeRPA;
+        // }
         
 #endif // __USE_2D_TEMPLATES__
         
@@ -2254,7 +2258,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 	}
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtRPArel    * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
 #elif defined(USE_BeRPA_WEIGHTS)
-        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
+        this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtBeRPA );
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtBeRPA );        
 #else
         this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght);
