@@ -47,10 +47,6 @@
 //#define NO_EVENTS_CAN_BE_NEGATIVE // if defined, will stop events being negative at all stages (not just building the Ereco spectra)
 // #define FakeDataWeightDebug //Print out fake data weights 
 // #define POTWEIGHTSAREONE
-// #define FLUXWEIGHTSAREONE
-// #define BANFFTUNEISONE
-// #define XSECWEIGHTSAREONE
-// #define SYSTWEIGHTSAREONE
 // #define PHYSHYPWEIGHTSAREONE
 // #define PHYSHYPWEIGHTAREONEANDNUEISZERO //needs PHYSHYPWEIGHTSAREONE to work
    
@@ -61,20 +57,34 @@
 #define INCLUDEEVENTSOVERFLOWQ2      // include Q2 overflow events in the last bin?
 
 //#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
-
-#define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
-
 //#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
-#define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
-
-#define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
-#define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
 
 //#define USE_OscBr_WEIGHTS   // use the ptheta branch with oscillation weights, for comparison purposes only
 
 //#define __INCLUDE_MC_STAT_FLUCTUATIONS__ // fluctuate bin contents in final MC templates based on MC stat error in each bin
 
 //#define __ALLOW_DIFFERING_HIERARCHIES__ // do we allow our oscillation calculators to have different mass hiearchies to the globals?
+
+//#define FULL_2017
+#define NO_WEIGHTS
+
+#if defined FULL_2017
+
+   #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
+   #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
+   #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
+   #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
+
+#elif defined NO_WEIGHTS
+
+   #define FLUXWEIGHTSAREONE
+   #define BANFFTUNEISONE
+   #define XSECWEIGHTSAREONE
+   #define SYSTWEIGHTSAREONE
+   #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
+   #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
+
+#endif
 
 #include <cassert>
 #include <cstdlib>
@@ -1593,6 +1603,10 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         }
 
 #  elif defined(USE_BeRPA_WEIGHTS) && !defined(USE_OscBr_WEIGHTS)       
+   #ifdef NO_WEIGHTS
+      fBrWghtBeRPA = 1.0; // Can't just turn off USE_BeRPA_WEIGHTS, so force to 1
+      fBrWghtSFRFG = 1.0; // Can't just turn off USE_SFRFG_WEIGHT, so force to 1
+   #endif
         this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
         
