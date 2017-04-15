@@ -174,7 +174,7 @@
           <!-- 2016_02_06/mtuples_nuecc1pi_withweights 
                2016_02_06/nue_CC1pi/  -->
           <pot_fhc_cc1pi>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnumu  </objname>
             <objtype>    TH1D              </objtype>
           </pot_fhc_cc1pi>
@@ -184,7 +184,7 @@
             <objtype>    TTree   </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.cc1piselec.root  </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </multi_e_ring>
@@ -225,7 +225,7 @@
 
           <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnumubar  </objname>
             <objtype>    TH1D                 </objtype>
           </pot_fhc_cc1pi>
@@ -276,7 +276,7 @@
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnue  </objname>
             <objtype>    TH1D             </objtype>
           </pot_fhc_cc1pi>
@@ -286,7 +286,7 @@
             <objtype>    TTree  </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.cc1piselec.root  </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </multi_e_ring>
@@ -327,7 +327,7 @@
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnuebar  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc_cc1pi>
@@ -337,7 +337,7 @@
             <objtype>    TTree     </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.cc1piselec.root  </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </multi_e_ring>
@@ -378,7 +378,7 @@
 
           <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tsignue  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc_cc1pi>
@@ -429,17 +429,17 @@
 
           <!-- Input FHC POT MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.cc1piselec.root </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tsignuebar  </objname>
             <objtype>    TH1D                   </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.cc1piselec.root </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.cc1piselec.root  </filename>
+            <filename>   official/2017/superk/mc/neut/14a/mtuples_fitqun_cc1pi_berpaweights/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </multi_e_ring>
@@ -644,7 +644,7 @@
       -->
       <initial_values>
         <filename>   official/2017/banff/DataFit_Postfit_170316_2017b_valor_order_all_plus_scc.root </filename>
-        <objname>    postfit_params   </objname>
+        <objname>    prefit_params   </objname>
         <objtype>    TVectorD         </objtype>
       </initial_values>
       <!--
@@ -652,7 +652,7 @@
       -->
       <covariance_matrix>
         <filename>   official/2017/banff/DataFit_Postfit_170316_2017b_valor_order_all_plus_scc.root </filename>
-        <objname>    postfit_cov       </objname>
+        <objname>    prefit_cov       </objname>
         <objtype>    TMatrixD          </objtype>
       </covariance_matrix>
 
