@@ -65,11 +65,11 @@
 
 //#define __ALLOW_DIFFERING_HIERARCHIES__ // do we allow our oscillation calculators to have different mass hiearchies to the globals?
 
-//#define FULL_2017
+#define FULL_2017
 //#define NO_WEIGHTS
 //#define MACH3_NO_BANFF_TUNE
 //#define TREE_WEIGHTS_BeRPA
-#define TREE_WEIGHTS_BeRPA_1
+//#define TREE_WEIGHTS_BeRPA_1
 
 #if defined FULL_2017
 
