@@ -66,7 +66,10 @@
 //#define __ALLOW_DIFFERING_HIERARCHIES__ // do we allow our oscillation calculators to have different mass hiearchies to the globals?
 
 //#define FULL_2017
-#define NO_WEIGHTS
+//#define NO_WEIGHTS
+//#define MACH3_NO_BANFF_TUNE
+//#define TREE_WEIGHTS_BeRPA
+#define TREE_WEIGHTS_BeRPA_1
 
 #if defined FULL_2017
 
@@ -74,6 +77,34 @@
    #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
    #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
    #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
+
+#elif defined TREE_WEIGHTS_BeRPA
+
+   #define SYSTWEIGHTSAREONE
+   #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
+   #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
+   #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
+   #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
+
+#elif defined TREE_WEIGHTS_BeRPA_1
+
+   #define SYSTWEIGHTSAREONE
+   #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
+   #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
+   #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
+   #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
+   #define FORCE_BeRPA_WEIGHTS_1
+
+#elif defined MACH3_NO_BANFF_TUNE
+
+   #define FLUXWEIGHTSAREONE
+   #define BANFFTUNEISONE
+   #define XSECWEIGHTSAREONE
+   #define SYSTWEIGHTSAREONE
+   #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
+   #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
+   #define FORCE_SFRFG_WEIGHT_1
+   #define FORCE_BeRPA_WEIGHTS_1
 
 #elif defined NO_WEIGHTS
 
@@ -83,6 +114,8 @@
    #define SYSTWEIGHTSAREONE
    #define USE_SFRFG_WEIGHT    // use the wgtsfrfg weight in the trees - probably should not be combined with an RPA branch
    #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
+   #define FORCE_SFRFG_WEIGHT_1
+   #define FORCE_BeRPA_WEIGHTS_1
 
 #endif
 
@@ -1603,9 +1636,11 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         }
 
 #  elif defined(USE_BeRPA_WEIGHTS) && !defined(USE_OscBr_WEIGHTS)       
-   #ifdef NO_WEIGHTS
-      fBrWghtBeRPA = 1.0; // Can't just turn off USE_BeRPA_WEIGHTS, so force to 1
+   #ifdef FORCE_SFRFG_WEIGHT_1
       fBrWghtSFRFG = 1.0; // Can't just turn off USE_SFRFG_WEIGHT, so force to 1
+   #endif
+   #ifdef FORCE_BeRPA_WEIGHTS_1
+      fBrWghtBeRPA = 1.0; // Can't just turn off USE_BeRPA_WEIGHTS, so force to 1
    #endif
         this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight);
@@ -1615,6 +1650,12 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         
 #  elif defined(USE_BeRPA_WEIGHTS) && defined(USE_OscBr_WEIGHTS)
+   #ifdef FORCE_SFRFG_WEIGHT_1
+      fBrWghtSFRFG = 1.0; // Can't just turn off USE_SFRFG_WEIGHT, so force to 1
+   #endif
+   #ifdef FORCE_BeRPA_WEIGHTS_1
+      fBrWghtBeRPA = 1.0; // Can't just turn off USE_BeRPA_WEIGHTS, so force to 1
+   #endif
         this -> Template2D(s,m,kSKMCtNom) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
         this -> Template2D(s,m,kSKMCtRPA) -> Fill (q2_fill, ereco_fill, Etrue, pot_flx_weight * fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fBrWghtOsc * fake_data_weight);
 
