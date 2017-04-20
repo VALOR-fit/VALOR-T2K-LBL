@@ -47,7 +47,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT_theta_banff_2p2h_berpa.xml",
+ const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT_nuecc1pi_theta_2p2h_berpa_splines.xml",
  const char * fit_param_list     = "nuosc3f+nuisance",
  
  const char * mixparamchoice     = "sinsqtheta",
@@ -68,7 +68,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   double ratio_line_width    = 1.0;
     
   int NtotParam=0;
-    
+  
   bool RHCFlag = false;
   TString str_sk_sample(sk_sample);
   if(str_sk_sample.Contains("RHC"))
@@ -233,6 +233,11 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   double vm3sigma_banff[nbanff];
   double vm3sigma_skescale;
   double vm3sigma_skescale_rhc;
+
+  //Special values for the sigma tweaks for 2p2h shape parameter kNuisBANFFShape2p2h
+  double  sp_2p2h_1sigma = 0.5;
+  double  sp_2p2h_3sigma = 1.;    
+
     
   // central parameter vectors --> to restore the nominal MC for skdetfsi
   TVectorD *vcentral_skdetfsi = new TVectorD(nskdetfsi);
@@ -398,25 +403,37 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       idx = skexp.GetBANFF()->Param2Idx(p);
       // cout << "Index difference " << idx_old - idx << endl;
       if(idx>=0){
-                
         bestfit = skexp.GetBANFF()->InitialValues()(idx);
-                
         cout << "best fit\t" << bestfit << endl;
+        
+        if (p == kNuisBANFFShape2p2h    ||
+            p == kRHCNuisBANFFShape2p2h   ){
+          tweak_p1 = bestfit + sp_2p2h_1sigma;
+          tweak_m1 = bestfit - sp_2p2h_1sigma;
+          vp1sigma_banff[ip_banff] = tweak_p1;
+          vm1sigma_banff[ip_banff] = tweak_m1;
+                
+          tweak_p3 = bestfit + sp_2p2h_3sigma;
+          tweak_m3 = bestfit - sp_2p2h_3sigma;
+          vp3sigma_banff[ip_banff] = tweak_p3;
+          vm3sigma_banff[ip_banff] = tweak_m3;
+                
+          ip_banff++;
+          
+        } else {
+
         tweak_p1 = bestfit + (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
         tweak_m1 = bestfit - (1 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
-        //tweak_p1 = TMath::Max(tweak_p1,0.);
-        //tweak_m1 = TMath::Max(tweak_m1,0.);
         vp1sigma_banff[ip_banff] = tweak_p1;
         vm1sigma_banff[ip_banff] = tweak_m1;
                 
         tweak_p3 = bestfit + (3 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
         tweak_m3 = bestfit - (3 * sqrt(skexp.GetBANFF()->CovMatrix()(idx,idx)));
-        //tweak_p3 = TMath::Max(tweak_p3,0.);
-        //tweak_m3 = TMath::Max(tweak_m3,0.);
         vp3sigma_banff[ip_banff] = tweak_p3;
         vm3sigma_banff[ip_banff] = tweak_m3;
                 
         ip_banff++;
+        }
       }
     }
     
@@ -436,16 +453,13 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       exit(1);
     }
     
-
-    
-    
     
     // Get the tweaked spectrum histograms
     
     // +1 sigma tweak systematic
     skexp.GetBANFF()->Tweak(0,0,"untuned");
     skexp.ResetSystematics();
-    cout << "Twk p1\t" << sysstr << "\t" << tweak_p1 << endl; 
+    cout << "Twk p1\t" << sysstr << "\t" << tweak_p1 << endl;
     if(util::IsSKDetFSI(p))   cout << "Nominal = " << skexp.GetSuperkDetectorFSI()->CurrentValue(p)       << endl;
     else if(util::IsBANFF(p)) cout << "Nominal = " << skexp.GetBANFF()            ->CurrentValue(p)       << endl;
     else if(util::IsXSec(p))  cout << "Nominal = " << skexp.GetNuXSec()           ->FHCpRHCCurrentValue(p)<< endl;
