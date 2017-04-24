@@ -48,8 +48,11 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_file
                  ("m3","n3") ]
 
   
-  
-  mach3_current = "" #"anu_" # only looking at the FHC current samples, and are not labelled in the current round
+  mach3_current = ""  
+  if "RHC" in sample:
+    mach3_current = "anu_" # only looking at the FHC current samples, and are not labelled in the current round
+  else:
+    mach3_current = ""
   mach3_selection_1 = mach3_selection # nue CC 1pi sample "sknue1pi" ( "sknumu" "sknue" )
   
   ROOT.gROOT.SetBatch(1)
@@ -117,7 +120,6 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_file
 
 
     for iparam,(valor_param,mach3_param) in enumerate(parameters):
-      #if
       
       valor_hists             [valor_mode][valor_param] = dict()
       mach3_hists             [valor_mode][valor_param] = dict()
