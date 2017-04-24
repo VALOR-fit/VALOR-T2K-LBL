@@ -1718,6 +1718,10 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
         if(!apply) continue;
         // Calculate weight
         double wght = this->SystWght_1p(p,s,m,Ereco,Etrue);
+        if(p == kNuisBANFFShape2p2h || p == kRHCNuisBANFFShape2p2h)
+        {
+           wght = 1;
+        }
         tot_wght *= wght;
     }//isyst
     return tot_wght;
