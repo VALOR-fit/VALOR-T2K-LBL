@@ -47,7 +47,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT_nuecc1pi_theta_2p2h_berpa_splines.xml",
+ const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT_nuecc1pi_theta_2p2h_berpa.xml",
  const char * fit_param_list     = "nuosc3f+nuisance",
  
  const char * mixparamchoice     = "sinsqtheta",
