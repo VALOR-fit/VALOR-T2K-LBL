@@ -505,35 +505,35 @@
     <weight_splines>
       <one_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_1Rmu.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_1Rmu.root
         </filename>
       </one_mu_ring>
       <one_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_1Re.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_1Re.root
         </filename>
       </one_e_ring>
 
       <one_mu_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_RHC1Rmu.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_RHC1Rmu.root
         </filename>
       </one_mu_ring_rhc>
       <one_e_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_RHC1Re.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_RHC1Re.root
         </filename>
       </one_e_ring_rhc>
 
       <!-- MultiRing sample splines -->
       <multi_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_1Rmu.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_1Rmu.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_MultiRe.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_MultiRe.root
         </filename>
       </multi_e_ring>
 
@@ -544,35 +544,35 @@
     <weight_splines_2d>
       <one_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_1Rmu.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_1Rmu.root
         </filename>
       </one_mu_ring>
       <one_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4erectheta_1Re.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5erectheta_1Re.root
         </filename>
       </one_e_ring>
 
       <one_mu_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_RHC1Rmu.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_RHC1Rmu.root
         </filename>
       </one_mu_ring_rhc>
       <one_e_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4erectheta_RHC1Re.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5erectheta_RHC1Re.root
         </filename>
       </one_e_ring_rhc>
 
       <!-- Input the single ring splines into the MultiRing samples -->
       <multi_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4_1Rmu.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5_1Rmu.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv4/valor_format/splines_fitqunv4erectheta_MultiRe.root
+          official/2017/xsec/splines2017fitqunv5/valor_format/splines_fitqunv5erectheta_MultiRe.root
         </filename>
       </multi_e_ring>
 
