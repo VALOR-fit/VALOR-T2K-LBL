@@ -155,13 +155,13 @@ namespace valor {
       kRHCNuisBANFFNormNuEBarToNuMuBar,
       kRHCNuisBANFF2p2hBar,              // BANFF, 2p2hBar normalization
 #  if defined(__USE_NIWG2017__)      
-      kNuisBANFFBeRPA_A ,
-      kNuisBANFFBeRPA_B     ,
-      kNuisBANFFBeRPA_D     ,
-      kNuisBANFFBeRPA_E     ,
-      kNuisBANFFBeRPA_U     ,
-      kNuisBANFFShape2p2h   ,
-      kNuisBANFFNorm2p2hCtoO,
+      kRHCNuisBANFFBeRPA_A ,
+      kRHCNuisBANFFBeRPA_B     ,
+      kRHCNuisBANFFBeRPA_D     ,
+      kRHCNuisBANFFBeRPA_E     ,
+      kRHCNuisBANFFBeRPA_U     ,
+      kRHCNuisBANFFShape2p2h   ,
+      kRHCNuisBANFFNorm2p2hCtoO,
 #  endif             
 #endif
         };
