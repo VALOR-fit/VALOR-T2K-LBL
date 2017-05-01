@@ -28,7 +28,7 @@
 //#define check_spline_limits       //slow, but should be used when testing
 //#define __use_1Rsplines_for_MultiR_sample__
 
-#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
+//#define __use_flat_splines_for_missing_splines__ // DON'T USE! will use flat splines for missing splines. Only used between SK MC versions (new SKMC, old splines)
 
 #define WARN_ON_FLAT_SPLINE
 
