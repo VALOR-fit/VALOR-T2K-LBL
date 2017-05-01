@@ -5,19 +5,19 @@
   <!-- 
     Defines the priority levels for VALOR message streams.
     The priority (in descending importance order) can be 
-    FATAL, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG.
+    FATAL, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, FATAL.
    -->
 
-  <priority msgstream="Messenger">              DEBUG    </priority>
-  <priority msgstream="XML">                    NOTICE   </priority>
-  <priority msgstream="Parser">                 NOTICE   </priority>
-  <priority msgstream="NuOsc3Flavour">          NOTICE   </priority>
-  <priority msgstream="Reg">                    NOTICE   </priority>
-  <priority msgstream="SuperkDetectorFSI">      DEBUG    </priority>
-  <priority msgstream="SuperkMC">               DEBUG    </priority>
-  <priority msgstream="SuperkExp">              DEBUG    </priority>  
-  <priority msgstream="CorrelatedSystematics">  DEBUG    </priority>
-  <priority msgstream="UtlFitParamListFactory"> DEBUG    </priority>
-  <priority msgstream="NuXSec">                 DEBUG    </priority>
+  <priority msgstream="Messenger">              FATAL    </priority>
+  <priority msgstream="XML">                    FATAL   </priority>
+  <priority msgstream="Parser">                 FATAL   </priority>
+  <priority msgstream="NuOsc3Flavour">          FATAL   </priority>
+  <priority msgstream="Reg">                    FATAL   </priority>
+  <priority msgstream="SuperkDetectorFSI">      FATAL    </priority>
+  <priority msgstream="SuperkMC">               FATAL    </priority>
+  <priority msgstream="SuperkExp">              FATAL    </priority>  
+  <priority msgstream="CorrelatedSystematics">  FATAL    </priority>
+  <priority msgstream="UtlFitParamListFactory"> FATAL    </priority>
+  <priority msgstream="NuXSec">                 FATAL    </priority>
   
 </messenger_config>
