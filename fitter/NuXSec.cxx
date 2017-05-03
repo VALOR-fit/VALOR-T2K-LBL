@@ -34,7 +34,7 @@
 
 //
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
-#define __ALLOW_SPLINES_OUTSIDE_LIMIT__  // allow splines to go outside the min and max limit where defined. To use only for syst effect cross checks
+//#define __ALLOW_SPLINES_OUTSIDE_LIMIT__  // allow splines to go outside the min and max limit where defined. To use only for syst effect cross checks
 
 #include <cassert>
 #include <cstdlib>
@@ -2025,7 +2025,7 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
             p = kListOfRHCXSecSyst[isyst];
             // Was tweaked?
             if(kRHCXSecSystIncludedInBANFF[isyst])
-                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
+                dt = 1.0;//fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
             else
                 dt = fabs(this->CurrentValue(p)); // non-banff normalisations
         }//RHC
@@ -2033,7 +2033,7 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
             p = kListOfXSecSyst[isyst];
             // Was tweaked?
             if(kXSecSystIncludedInBANFF[isyst])
-                dt = fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
+                dt = 1.0;//fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
             else
                 dt = fabs(this->CurrentValue(p)); // non-banff normalisations
         }//FHC
@@ -2061,11 +2061,9 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
     //
     // This method provides weights to account for systematic variations to the XSec params.
-    // The weights are relative to MC reweighted to the BANFF best-fit point.
     // It handles both the BANFF and uncorelated XSec params.
     //
     
-    // if( ! this->ApplySyst(p,s,m,Ereco,Etrue) ) return 1.; // check already made in function that calls this one
     TSpline3 * wght_spl = 0;
     
     double wght = 1.;
@@ -2133,7 +2131,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
 #endif
         
-        wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+        wght = wght_spl->Eval(spl_tc);
     } // end of MAQE
     
     // Other systematics where we check spline limits
@@ -2201,7 +2199,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
 #endif
         
-        wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+        wght = wght_spl->Eval(spl_tc);
         LOG("NuXSec", pFATAL) << "Parameter: " << util::AsString(p) 
                               <<" fBANFF->InitialValue(p): "<< wght_spl->Eval(spl_tb) << " @ " <<  spl_tb
                               <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
@@ -2239,7 +2237,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
 #endif
         
-        wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
+        wght = wght_spl->Eval(spl_tc);
        // LOG("NuXSec", pFATAL) << "Parameter: " << util::AsString(p) 
        //                       <<" fBANFF->InitialValue(p): "<< wght_spl->Eval(spl_tb) << " @ " <<  spl_tb
        //                       <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
@@ -2262,10 +2260,16 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     // - BANFF param, NuEToNuMu  normalization
     //
                 
-    else if( util::IsNormXSecParam(p)) {
-      //if (util::IsBeRPA(p)) wght = 1.0; 
-      //else
-        wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
+    else if( util::IsNormXSecParam(p))
+    {
+      if (util::IsBeRPA(p))
+      {
+         wght = 1.0; 
+      }
+      else
+      {
+         wght = fBANFF->CurrentValue(p);
+      }
     }
 #endif // NIWG2015
     

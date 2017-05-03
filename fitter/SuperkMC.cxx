@@ -4175,7 +4175,9 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
                 double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
                 double Q2VarMin    = util::XsecQ2BinEdges(s,iqv-1) +kOneMeV;
                 // Plug-in BANFF & other xsec systematics
-                double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin); // Apply systematics in Ereco and Q2
+                //double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin); // Apply systematics in Ereco and Q2
+                // Don't apply the xsec weight here, this is now handled in ApplySystematicsToTemplates2D
+                double xsec_wght = 1.0;
                 
                 // Combined weight
                 double wght = flux_wght * xsec_wght;
