@@ -132,7 +132,10 @@ def state(filename, var, mode, flav, etbin, erbin, thetabin):
             axismin = low
         else:
             axismin = min(nom - 5 * err, xmin - xspan / 2)
-        axismax = max(nom + 5 * err, xmax + xspan / 2)
+        if high < 9999:
+            axismax = high
+        else:
+            axismax = max(nom + 5 * err, xmax + xspan / 2)
         dx = (axismax - axismin) / 50
         xx = []
         yy = []
