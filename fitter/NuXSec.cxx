@@ -53,9 +53,6 @@
 #include "Utilities.h"
 #include "Build.h"
 
-using std::cout;
-using std::cerr;
-using std::endl;
 using std::ostringstream;
 using std::setprecision;
 
@@ -116,9 +113,8 @@ void NuXSec::CheckListOfXSecSyst(int nparams, const conv::PhysParamId_t * params
     LOG("NuXSec",pINFO)   << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr);
 #endif
     if((int)curr != ((int)prev + 1)) {
-      cerr << "NuXSec/Init >> " << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr) << endl
-           << " comes before " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev)
-           << endl;
+      LOG("NuXSec",pDEBUG) << "NuXSec/Init >> " << vname << "[" << ix   << "] = " << curr << " " << util::AsString(curr)
+           << " comes before " << vname << "[" << ix-1 << "] = " << prev << " " << util::AsString(prev);
       if(is_fatal) {
         util::Die(-1);
       }
@@ -140,8 +136,8 @@ void NuXSec::CheckIsSplineParam(int nparams, const conv::PhysParamId_t * params,
 #endif
     bool expected_spline = (name.find("Norm") == string::npos && name.find("Tuning") == string::npos);
     if(isspline != expected_spline) {
-      cerr << "NuXSec/Init >> " << vname << (isspline ? " is" : " isn't") << " a spline. It "
-           << (expected_spline ? "should" : "shouldn't") << " be " << util::AsString(curr) << endl;
+      LOG("NuXSec",pDEBUG) << "NuXSec/Init >> " << vname << (isspline ? " is" : " isn't") << " a spline. It "
+           << (expected_spline ? "should" : "shouldn't") << " be " << util::AsString(curr);
       //~ util::Die(-1);
     }
   }//ix
@@ -162,8 +158,8 @@ void NuXSec::CheckIsBANFFParam(int nparams, int nbanffxsecparams, const conv::Ph
       nbanff++;
   }//ix
   if(nbanff != nbanffxsecparams) {
-    cerr << "NuXSec/Init >> " << vname << " has " << nbanff
-         << " parameters. Expected " << nbanffxsecparams << endl;
+    LOG("NuXSec",pDEBUG) << vname << " has " << nbanff
+         << " parameters. Expected " << nbanffxsecparams;
     util::Die(-1);
   }
 }
@@ -187,17 +183,17 @@ void NuXSec::CheckERange(int nparams, const PhysParamId_t * params, const double
     if(TMath::Abs(this_lo - prev_hi) > 1E-6) {
       if(TMath::Abs(prev_hi - 100) < 1E-6 && TMath::Abs(this_lo) < 1E-6) {} //it's ok!
       else {
-        cerr << "NuXSec/Init >> Wrong energy range" << endl
-             << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << endl
-             << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
-             << "Should be previous high and this low should be identical (or 100 and 0)" << endl;
+        LOG("NuXSec",pDEBUG) << "Wrong energy range\n"
+             << vname << "[" << ix-1 << "] = " << prev_lo << "," << prev_hi << " " << util::AsString(prev) << "\n"
+             << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << "\n"
+             << "Should be previous high and this low should be identical (or 100 and 0)";
         util::Die(-1);
       }
     }
     if(TMath::Abs(this_lo + 1) < 1E-6 || TMath::Abs(this_hi + 1) < 1E-6) {
-      cerr << "NuXSec/Init >> Wrong energy range" << endl
-           << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << endl
-           << "XSec parameters shouldn't have -1 here" << endl;	
+      LOG("NuXSec",pDEBUG) << "Wrong energy range\n" 
+           << vname << "[" << ix << "] = " << this_lo << "," << this_hi << " " << util::AsString(curr) << "\n"
+           << "XSec parameters shouldn't have -1 here";
     }
   }//ix
 }
@@ -218,7 +214,7 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
       SuperkSample_t s = kSKSamples[is];
       if(s == kSKsUndefined) continue;
 #ifdef __show_xsecsystconv_check_mesg_debug__
-      cout << "\t" << util::AsString(s) << endl;
+      LOG("NuXSec",pDEBUG) << util::AsString(s);
 #endif
       vector<SuperkMode_t> modes_set;
       for(int im = 0; im < knm; im++) {
@@ -228,13 +224,10 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
         if(applies_to_mode) {
           modes_set.push_back(m);
 #ifdef __show_xsecsystconv_check_mesg_debug__
-          cout << util::AsString(m) << "\t\t";
+          LOG("NuXSec",pDEBUG) << util::AsString(m);
 #endif
         }
       }//im
-#ifdef __show_xsecsystconv_check_mesg_debug__
-      cout << endl;
-#endif
       if(!found_good_sample) {
         found_good_sample = true;
         first_modes_set = modes_set;
@@ -243,14 +236,14 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
       else {
         //check that they're equal
         if(first_modes_set != modes_set) {
-          cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
-               << "\tDifference between samples " <<util::AsString(s)<<" and good sample "<<util::AsString(first_sample)<< endl;
+          LOG("NuXSec",pDEBUG) << vname << " Parameter " << ix << " " << util::AsString(curr)
+               << "\tDifference between samples " <<util::AsString(s)<<" and good sample "<<util::AsString(first_sample);
         }
       }
     }//is
     if(!first_modes_set.size()) {
-      cerr << "NuXSec/Init >> " << vname << " Parameter " << ix << " " << util::AsString(curr)
-           << "\tHas no effect on any mode!" << endl;
+      LOG("NuXSec",pDEBUG) << vname << " Parameter " << ix << " " << util::AsString(curr)
+           << "\tHas no effect on any mode!";
 #if defined(DISABLE_SCC)
       //      if (!util::IsSCC(curr)) {util::Die(-1);}
 #else
@@ -381,7 +374,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     //
     
 #if SPLINE_TYPE == -1
-    cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
+    LOG("NuXSec",pDEBUG) << "Special mode turned on in which splines are not read, and weights involving splines are set to 1";
     return true;
 #endif
     
@@ -476,13 +469,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
                 for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
                     double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
-                    double Ereco_min = util::XsecErecoBinEdges(s,ir);
-                    double Ereco_max = util::XsecErecoBinEdges(s,ir+1);
                     
                     for(int it = 0; it < kXsNEtrueBins; it++) {
                         double Etrue     = kXsEtrueBinEdges[is][im][it] + kOneMeV;
-                        double Etrue_min = kXsEtrueBinEdges[is][im][it];
-                        double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
                         
                         bool bin_is_beyond_end_of_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
                         if(bin_is_beyond_end_of_range) continue;
@@ -508,9 +497,8 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         if(!spl) {
                             if(!bin_is_not_empty) {
 #ifdef __show_init_mesg_debug__
-                                cout << "Exp/NuXSec >> No events or spline for: "
-                                << splname
-                                << endl;
+                                LOG("NuXSec",pDEBUG) << "No events or spline for: "
+                                << splname;
 #endif
                                 continue;
                             }
@@ -524,26 +512,20 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                                 << ", " << AsString(m)
 #endif
                                 << " Ereco: " << Ereco << ", Etrue: " << Etrue;
-                                cerr << AsString(s) << endl;
+                                LOG("NuXSec",pDEBUG) << AsString(s);
                                 util::Die(1);
 #else
                                 spl = flatspline;
 #ifdef WARN_ON_FLAT_SPLINE
-                                cout<<"Exp/NuXSec >> Using flat spline: "<<splname
+                                LOG("NuXSec",pDEBUG) << "Using flat spline: " <<splname
                                 << ", " << AsString(m)
-                                << " Ereco: " << Ereco << ", Etrue: " << Etrue << endl;
+                                << " Ereco: " << Ereco << ", Etrue: " << Etrue;
 #endif // WARN_ON_FLAT_SPLINE
 #endif //__use_flat_splines_for_missing_splines__
                             } //bin_is_not_empty
                         } // !spl
                         else {
                             if(!bin_is_not_empty) {
-                                // cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-                                // << splname
-                                // << " Ereco: "  << Ereco_min << "-" << Ereco_max
-                                // << ", Etrue: " << Etrue_min << "-" << Etrue_max
-                                // //<< ". Spline thinks there are " << spl->GetTitle()
-                                // << endl;
                                 util::Die(1);
                             }
                         }
@@ -555,31 +537,28 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         int nevents_spl = atoi(spln.c_str());
                         int nevents_hist = this->HowManyEvents(s, m, Ereco, Etrue);
                         if(nevents_spl != nevents_hist) {
-                            cerr << "Exp/NuXSec >> Spline and histogram disagree on number of events! "
+                            LOG("NuXSec",pDEBUG) << "Spline and histogram disagree on number of events! "
                             << "Spline thinks there are: " << nevents_spl
                             << ", Histogram thinks there are: " << nevents_hist
                             << "; " << splname
                             << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
-                            << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
-                            << endl;
-                            //util::Die(1);
+                            << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1];
                         }
 #endif
 #endif
                         // Get index for current weight spline
                         int idx = this->WghtSplineIdx(p,s,m,Ereco,Etrue);
                         if(idx < 0) {
-                            cerr << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: "
-                            << splname
-                            << endl;
+                            LOG("NuXSec",pDEBUG) << "Exp/NuXSec >> WghtSplineIdx returned invalid index for spline: "
+                            << splname;
                             util::Die(1);
                         }
                         
 #ifdef __show_init_mesg_debug__
-                        cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: "
-                        << idx << "  for spline: " << splname << endl;
-                        cout << "Exp/NuXSec >> Spline thinks there are "
-                        << spl->GetTitle() << endl;
+                        LOG("NuXSec",pDEBUG) << "Storing cross-section weight spline at slot: "
+                        << idx << "  for spline: " << splname;
+                        LOG("NuXSec",pDEBUG) << "Spline thinks there are "
+                        << spl->GetTitle();
 #endif
                         
 #ifdef __check_splines_not_flat_on_read__
@@ -616,10 +595,9 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                         
 #ifdef __show_init_mesg_debug2__
                         //check that the spline is not flat
-                        cout << "Exp/NuXSec >> Spline weights at -1,0,+1 are: " ;
-                        cout << spl->Eval(-1) << "\t"
+                        LOG("NuXSec",pDEBUG) << "Spline weights at -1,0,+1 are: " << spl->Eval(-1) << "\t"
                         << spl->Eval(0) << "\t"
-                        << spl->Eval(+1) << endl;
+                        << spl->Eval(+1);
                         
 #endif
                     }//Etrue
@@ -629,7 +607,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
     }//s
     
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (splines only)!" << endl;
+    LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (splines only)!";
 #endif
     
     return true;
@@ -646,7 +624,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
     //
     
 #if SPLINE_TYPE == -1
-  cout << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1" << endl;
+  LOG("NuXSec",pDEBUG) << "Exp/NuXSec >> Special mode turned on in which splines are not read, and weights involving splines are set to 1";
   return true;
 #endif
     
@@ -749,18 +727,12 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
         // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
         for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
           double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
-          double Ereco_min = util::XsecErecoBinEdges(s,ir);
-          double Ereco_max = util::XsecErecoBinEdges(s,ir+1);
                     
           for(int it = 0; it < kXsNEtrueBins; it++) {
             double Etrue     = kXsEtrueBinEdges[is][im][it] + kOneMeV;
-            double Etrue_min = kXsEtrueBinEdges[is][im][it];
-            double Etrue_max = kXsEtrueBinEdges[is][im][it+1];
                         
             for(int iv = 0; iv < kNXsQ2Bins[is]; iv++) {
               double Q2     = util::XsecQ2BinEdges(s,iv) + kOneMeV; // Edit this for diff Q2 bins per mode
-              double Q2_min = util::XsecQ2BinEdges(s,iv);
-              double Q2_max = util::XsecQ2BinEdges(s,iv+1);
                             
               bool bin_is_beyond_end_of_etrue_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
               bool bin_is_beyond_end_of_q2_range = (util::XsecQ2BinEdges(s,iv+1) < 0.);
@@ -789,9 +761,8 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               if(!spl) {
                 if(!bin_is_not_empty) {
 #ifdef __show_init_mesg_debug__
-                  cout << "Exp/NuXSec >> No events or spline for: "
-                       << splname
-                       << endl;
+                  LOG("NuXSec",pDEBUG) << "No events or spline for: "
+                       << splname;
 #endif
                   continue;
                 }
@@ -806,7 +777,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                     << ", " << AsString(m)
 #endif
                     << " Ereco: " << Ereco << ", Etrue: " << Etrue << ", Q2: " << Q2;
-                  cerr << AsString(s) << endl;
+                  LOG("NuXSec",pDEBUG) << AsString(s);
                   //util::Die(1);
 #else
                   spl = flatspline;
@@ -821,13 +792,6 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               } // !spl
               else {
                 if(!bin_is_not_empty) {
-                  // cerr << "Exp/NuXSec >> Spline exists for empty bin: "
-                  // << splname
-                  // << " Ereco: "  << Ereco_min << "-" << Ereco_max
-                  // << ", Etrue: " << Etrue_min << "-" << Etrue_max
-                  // << ", Q2:    " << Q2_min    << "-" << Q2_max
-                  // //<< ". Spline thinks there are " << spl->GetTitle()
-                  // << endl;
                   util::Die(1);
                 }
               }
@@ -839,15 +803,13 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               int nevents_spl = atoi(spln.c_str());
               int nevents_hist = this->HowManyEvents(s, m, Ereco, Etrue, Q2);
               if(nevents_spl != nevents_hist) {
-                cerr << "Exp/NuXSec >> Spline and histogram disagree on number of events! "
+                LOG("NuXSec",pDEBUG) << "Exp/NuXSec >> Spline and histogram disagree on number of events! "
                      << "Spline thinks there are: " << nevents_spl
                      << ", Histogram thinks there are: " << nevents_hist
                      << "; " << splname
                      << "; Ereco: " << Ereco - kOneMeV << " to " << util::XsecErecoBinEdges(s,ir+1)
                      << ", Etrue: " << Etrue - kOneMeV << " to " << kXsEtrueBinEdges[is][im][it+1]
-                     << ", Q2   : " << Q2    - kOneMeV << " to " << util::XsecQ2BinEdges(s,iv+1)
-                     << endl;
-                //util::Die(1);
+                     << ", Q2   : " << Q2    - kOneMeV << " to " << util::XsecQ2BinEdges(s,iv+1);
               }
 #endif
 #endif
@@ -860,10 +822,10 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               }
                             
 #ifdef __show_init_mesg_debug__
-              cout << "Exp/NuXSec >> Storing cross-section weight spline at slot: "
-                   << idx << "  for spline: " << splname << endl;
-              cout << "Exp/NuXSec >> Spline thinks there are "
-                   << spl->GetTitle() << endl;
+              LOG("NuXSec",pDEBUG) << "Storing cross-section weight spline at slot: "
+                   << idx << "  for spline: " << splname;
+              LOG("NuXSec",pDEBUG) << "Spline thinks there are "
+                   << spl->GetTitle();
 #endif
                             
 #ifdef __check_splines_not_flat_on_read__
@@ -900,13 +862,13 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                             
 #ifdef __show_init_mesg_debug2__
               //check that the spline is not flat
-              cout << "Exp/NuXSec >> Spline: " << spl->GetName()
+              LOG("NuXSec",pDEBUG) << "Spline: " << spl->GetName()
                    << "\n Spline weights at -2,-1,0,+1,+2 are: " ;
-              cout << spl->Eval(-2) << "\t"
+              LOG("NuXSec",pDEBUG) << spl->Eval(-2) << "\t"
                    << spl->Eval(-1) << "\t"
                    << spl->Eval(0)  << "\t"
                    << spl->Eval(+1) << "\t"
-                   << spl->Eval(+2) << endl;
+                   << spl->Eval(+2);
 #endif
             }//Q2
           }//Etrue
@@ -920,7 +882,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 //util::VThreadPool::Instance()->Wait();
 
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (splines only)!" << endl;
+    LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (splines only)!";
 #endif
 
     // return splines_status(true);
@@ -930,7 +892,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> Reading neutrino generator inputs (minus splines) from input XML file." << endl;
+    LOG("NuXSec",pDEBUG) << "Reading neutrino generator inputs (minus splines) from input XML file.";
 #endif
     
     //
@@ -992,7 +954,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     fRHCUntunedCentralValues = util::XML2TVectorD(xml,root_node,"xsec/untuned_parameter_central_values");
     
     if (not (fUntunedCentralValues && fRHCUntunedCentralValues) ) {
-        cerr<<"Failed to read <untuned_parameter_central_values>"<<endl;
+        LOG("NuXSec",pDEBUG)<<"Failed to read <untuned_parameter_central_values>";
         util::Die(-1);
     }
     if (fUntunedCentralValues->GetNoElements()!=kNumOfParamsInBANFFfit-kNumOfFluxParamsInBANFFfit) {
@@ -1006,13 +968,6 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         util::Die(-1);
     }
 #endif
-    
-    //DEBUG
-    //~ for (int ip = kNumOfFluxParamsInBANFFfit ; ip < kNumOfParamsInBANFFfit; ip++) {
-    //~ conv::PhysParamId_t p = conv::kListOfBANFFParams[ip];
-    //~ int i = arr_index->BANFFXSecSystIdx(p);
-    //~ std::cerr<<AsString(p)<<"\t"<<(*fUntunedCentralValues)[i]<<std::endl;
-    //~ }
     
     // NEW XSEC --> comment old xsec systematics --> not commented any longer because used
     fNormCCcohRelErr =
@@ -1042,7 +997,7 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     fNormRHCToFHCRelErr =
     util::XML2Dbl(xml,root_node,"xsec/normalisations/rhc_to_fhc");
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> Done reading neutrino cross-section inputs (not splines)!" << endl;
+    LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (not splines)!";
 #endif
     
     return true;
@@ -1133,14 +1088,6 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     double wght = 1.;
     double tb;
     
-    //~ cout << "\nEtrue: " << Etrue
-    //~ << "\tEreco: " << Ereco
-    //~ << "\np :" << AsString(p)
-    //~ << "mode: " << AsString(m)
-    //~ << "\nEvents: "<<this->HowManyEvents(s,m,Ereco,Etrue)
-    //~ << endl;
-    
-    
     // RESPONSE FUNCTION PARAMETERS
     
     // NEW XSEC NIWG
@@ -1165,8 +1112,6 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         return wght;
 #endif
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        //~ if(!wght_spl)
-        //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
         assert(wght_spl);
         double untuned_value = 0;
         if(p == kRHCNuisBANFFMAQE       ||
@@ -1184,7 +1129,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         double spline_point = (tb-untuned_value);
 #ifdef check_spline_limits
          if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
-            std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+            LOG("NuXSec",pDEBUG)<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
         
@@ -1218,8 +1163,6 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         return wght;
 #endif
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        //~ if(!wght_spl)
-        //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
         assert(wght_spl);
         double untuned_value = 0;
         // NEW XSEC
@@ -1254,8 +1197,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         
 #ifdef check_spline_limits
         if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
-            std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point
-                     <<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+            LOG("NuXSec",pDEBUG) << "EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point
+                     <<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
         
@@ -1332,20 +1275,18 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
                 break;
             }
         }
-        cout << "Exp/NuXSec/FinTuningWght_1p >> Got an absurd weight! "
+        LOG("NuXSec",pDEBUG) << "Got an absurd weight! "
         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
         << ", Ereco = " << Ereco << " GeV"
         << ", Etrue = " << Etrue << " GeV =>"
         << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
         << " Weight [" << util::AsString(p) << "] = " << wght
-        << " Current value = " << this->CurrentValue(p)
-        << endl;
+        << " Current value = " << this->CurrentValue(p);
         if (wght_spl) {
-            cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
-            << endl;
+            LOG("NuXSec",pDEBUG) << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle();
         }
         else {
-            cout <<"Not using spline"<<std::endl;
+            LOG("NuXSec",pDEBUG) <<"Not using spline";
         }
         util::Die(1);
     }
@@ -1459,7 +1400,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         std::string splname_debug = this->BuildSplineName(s,m,p,Ereco,Etrue,Q2);
         if(!wght_spl){
           LOG("NuXSec",pINFO) << "Couldn't find spline " << splname_debug;
-          cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << ",\t" << Ereco << ",\t" << Etrue << ",\t" << Q2 << endl;
+          LOG("NuXSec",pDEBUG) << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << ",\t" << Ereco << ",\t" << Etrue << ",\t" << Q2;
 	}
         assert(wght_spl);
         double untuned_value = 0;
@@ -1525,8 +1466,6 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         return wght;
 #endif
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        //~ if(!wght_spl)
-        //~ cout << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << "\t" << Ereco << "\t" << Etrue << endl;
         assert(wght_spl);
         double untuned_value = 0;
         // NEW XSEC
@@ -1674,11 +1613,10 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         << " At point " <<  spline_point 
         << " Current value = " << this->CurrentValue(p);
         if (wght_spl) {
-            cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
-            << endl;
+            LOG("NuXSec",pDEBUG) << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle();
         }
         else {
-            cout <<"Not using spline"<<std::endl;
+            LOG("NuXSec",pDEBUG) <<"Not using spline";
         }
         util::Die(1);
     }
@@ -1799,7 +1737,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         double spl_tc = (tc-untuned_value);
 #ifdef check_spline_limits
         if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-            std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+            LOG("NuXSec",pDEBUG) << "EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
         
@@ -1865,7 +1803,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         double spl_tc = tc-untuned_value;
 #ifdef check_spline_limits
         if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-            std::cerr<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax()<<std::endl;
+            LOG("NuXSec",pDEBUG) << "EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
         
@@ -1984,20 +1922,18 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
                 break;
             }
         }
-        cout << "Exp/NuXSec/SystWght_1p >> Got an absurd weight! "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/SystWght_1p >> Got an absurd weight! "
         << "Sample/Mode = " << util::AsString(s) << " / " << util::AsString(m)
         << ", Ereco = " << Ereco << " GeV"
         << ", Etrue = " << Etrue << " GeV =>"
         << " Bins are Ereco,Etrue = " << ireco << "," << itrue << " =>"
         << " Weight [" << util::AsString(p) << "] = " << wght
-        << " Current value = " << this->CurrentValue(p)
-        << endl;
+        << " Current value = " << this->CurrentValue(p);
         if (wght_spl) {
-            cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
-            << endl;
+            LOG("NuXSec",pDEBUG) << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle();
         }
         else {
-            cout <<"Not using spline"<<std::endl;
+            LOG("NuXSec",pDEBUG) <<"Not using spline";
         }
         util::Die(1);
     }
@@ -2206,8 +2142,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     }
     
     // Response functions where we expect to exceed the splines range.
-    else if (p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom 
-                                                                        )
+    else if (p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom)
     {
 #if SPLINE_TYPE == -1
         return wght;
@@ -2229,7 +2164,6 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
-        double spl_tb = tb-untuned_value;
         double spl_tc = tc-untuned_value;
         
 #ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
@@ -2238,10 +2172,6 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
         
         wght = wght_spl->Eval(spl_tc);
-       // LOG("NuXSec", pFATAL) << "Parameter: " << util::AsString(p) 
-       //                       <<" fBANFF->InitialValue(p): "<< wght_spl->Eval(spl_tb) << " @ " <<  spl_tb
-       //                       <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
-        
     } // end of response functions
     
     //
@@ -2349,11 +2279,10 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         << " Current value = " << this->CurrentValue(p)
         << "\nEvaluated at: tb " << spl_tb << ", tc "<< spl_tc ;
         if (wght_spl) {
-            cout << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle()
-            << endl;
+            LOG("NuXSec",pDEBUG) << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle();
         }
         else {
-            cout <<"Not using spline"<<std::endl;
+            LOG("NuXSec",pDEBUG) <<"Not using spline";
         }
         util::Die(1);
     }
@@ -2537,7 +2466,7 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     default                        :
       LOG("NuXSec", pERROR) << "Couldn't find spline for: " << AsString(s)
                             << ", mode = " << AsString(m) << ", for parameter = " << AsString(p);
-      util::Die(1);
+      util::Die(1); return 0;
     }    
     
     ///
@@ -2574,15 +2503,14 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     
     if(idx == -1 || idx == -2)
     {
-        cerr << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/FindWghtSpline >> Didn't find weight spline for "
         << "sample = "      << util::AsString(s)
         << ", mode = "      << util::AsString(m)
         << ", parameter = " << util::AsString(p)
         << ", Ereco = "     << Ereco << " GeV"
         << ", Etrue = "     << Etrue << " GeV!"
         << ", Q2    = "     << Q2    << " GeV!"
-        << " idx = " << idx
-        << endl;
+        << " idx = " << idx;
         util::Die(1); return 0;
     }
     
@@ -2621,12 +2549,10 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
         return fXSecWghtSpl1Rmu[idx];
     
     else if(s == kSKsFCFVMultiRingELike){ // multiring
-        //cout << "kSKsFCFVMultiRingELike" << endl;
         assert(fXSecWghtSplMultiRe[idx]);
         return fXSecWghtSplMultiRe[idx];
     }
     else {
-        //cout << "kSKsFCFVMultiRingLike" << endl;
         assert(fXSecWghtSplMultiRmu[idx]);
         return fXSecWghtSplMultiRmu[idx];
     }
@@ -2649,24 +2575,22 @@ int NuXSec::WghtSplineIdx(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, dou
     int is = arr_index->SuperkSampleIdx(s);
     if(is == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for sample "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for sample "
         << util::AsString(s)
         << ". util::ArrIdx returned "
-        << arr_index->SuperkSampleIdx(s)
-        << endl;
+        << arr_index->SuperkSampleIdx(s);
 #endif //__show_wght_spline_idx_mesg_debug__
         return -1;
     }
     int im = arr_index->SuperkModeIdx(s,m);
     if(im == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for mode "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for mode "
         << util::AsString(m)
         << " in sample "
         << util::AsString(s)
         << ". util::ArrIdx returned "
-        << arr_index->SuperkModeIdx(s,m)
-        << endl;
+        << arr_index->SuperkModeIdx(s,m);
 #endif //__show_wght_spline_idx_mesg_debug__
         return -1;
     }
@@ -2677,11 +2601,10 @@ int NuXSec::WghtSplineIdx(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, dou
         ip = arr_index->XSecSystIdx(p);
     if(ip == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec syst "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec syst "
         << util::AsString(p)
         << ". util::ArrIdx returned "
-        << arr_index->XSecSystIdx(p)
-        << endl;
+        << arr_index->XSecSystIdx(p);
 #endif//__show_wght_spline_idx_mesg_debug__
         return -1;
     }
@@ -2698,8 +2621,8 @@ int NuXSec::WghtSplineIdx(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, dou
     }
     if(ireco == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ERecoBin for ereco value "
-        << Ereco << endl;
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find ERecoBin for ereco value "
+        << Ereco;
 #endif//__show_wght_spline_idx_mesg_debug__
         return -1;
     }
@@ -2716,13 +2639,12 @@ int NuXSec::WghtSplineIdx(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, dou
     }
     if(itrue == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
         << Etrue
         << " in mode " << m << " "
         << util::AsString(m)
         << " in sample " << s << " "
-        << util::AsString(s)
-        << endl;
+        << util::AsString(s);
 #endif //__show_wght_spline_idx_mesg_debug__
         return -2;
     }
@@ -2735,14 +2657,13 @@ int NuXSec::WghtSplineIdx(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, dou
     
     
 #ifdef __show_wght_spline_idx_mesg_debug__
-    cout << "Exp/NuXSec/WghtSplineIdx >> Spline information:"
+    LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Spline information:"
     << "\tEtrue: "<<Etrue<<" ("<<itrue<<") , Ereco: "<<Ereco<<" ("<<ireco<<") \n"
     << " in mode " << m << " "
     << util::AsString(m)
     << " in sample " << s << " "
     << util::AsString(s)
-    << " has index "<<idx<<"\n"
-    << endl;
+    << " has index "<<idx<<"\n";
 #endif //__show_wght_spline_idx_mesg_debug__
     
     return idx;
@@ -2764,24 +2685,22 @@ int NuXSec::WghtSplineIdx( PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     int is = arr_index->SuperkSampleIdx(s);
     if(is == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for sample "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for sample "
         << util::AsString(s)
         << ". util::ArrIdx returned "
-        << arr_index->SuperkSampleIdx(s)
-        << endl;
+        << arr_index->SuperkSampleIdx(s);
 #endif //__show_wght_spline_idx_mesg_debug__
         return -1;
     }
     int im = arr_index->SuperkModeIdx(s,m);
     if(im == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for mode "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for mode "
         << util::AsString(m)
         << " in sample "
         << util::AsString(s)
         << ". util::ArrIdx returned "
-        << arr_index->SuperkModeIdx(s,m)
-        << endl;
+        << arr_index->SuperkModeIdx(s,m);
 #endif //__show_wght_spline_idx_mesg_debug__
         return -1;
     }
@@ -2792,11 +2711,10 @@ int NuXSec::WghtSplineIdx( PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         ip = arr_index->XSecSystIdx(p);
     if(ip == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec syst "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find Idx for xsec syst "
         << util::AsString(p)
         << ". util::ArrIdx returned "
-        << arr_index->XSecSystIdx(p)
-        << endl;
+        << arr_index->XSecSystIdx(p);
 #endif//__show_wght_spline_idx_mesg_debug__
         return -1;
     }
@@ -2813,8 +2731,8 @@ int NuXSec::WghtSplineIdx( PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     }
     if(ireco == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ERecoBin for ereco value "
-        << Ereco << endl;
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find ERecoBin for ereco value "
+        << Ereco;
 #endif//__show_wght_spline_idx_mesg_debug__
         return -1;
     }
@@ -2831,13 +2749,12 @@ int NuXSec::WghtSplineIdx( PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     }
     if(itrue == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find ETrueBin for etrue value "
         << Etrue
         << " in mode " << m << " "
         << util::AsString(m)
         << " in sample " << s << " "
-        << util::AsString(s)
-        << endl;
+        << util::AsString(s);
 #endif //__show_wght_spline_idx_mesg_debug__
         return -2;
     }
@@ -2854,13 +2771,12 @@ int NuXSec::WghtSplineIdx( PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     }
     if(iq2 == -1) {
 #ifdef __show_wght_spline_idx_mesg_debug__
-        cout << "Exp/NuXSec/WghtSplineIdx >> Didn't find Q2 bin for Q2 value "
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Didn't find Q2 bin for Q2 value "
         << Q2
         << " in mode " << m << " "
         << util::AsString(m)
         << " in sample " << s << " "
-        << util::AsString(s)
-        << endl;
+        << util::AsString(s);
 #endif //__show_wght_spline_idx_mesg_debug__
         return -2;
     }
@@ -2874,14 +2790,13 @@ int NuXSec::WghtSplineIdx( PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     
     
 #ifdef __show_wght_spline_idx_mesg_debug__
-    cout << "Exp/NuXSec/WghtSplineIdx >> Spline information:"
+    LOG("NuXSec",pDEBUG) << "Exp/NuXSec/WghtSplineIdx >> Spline information:"
     << "\tEtrue: "<<Etrue<<" ("<<itrue<<") , Ereco: "<<Ereco<<" ("<<ireco<<"), Q2: "<<Q2<<" ("<<iq2<<") \n"
     << " in mode " << m << " "
     << util::AsString(m)
     << " in sample " << s << " "
     << util::AsString(s)
-    << " has index "<<idx<<"\n"
-    << endl;
+    << " has index "<<idx<<"\n";
 #endif //__show_wght_spline_idx_mesg_debug__
     
     return idx;
@@ -2941,7 +2856,7 @@ bool NuXSec::ApplySystToEnergyBin(PhysParamId_t p, double Ereco, double Etrue) c
 void NuXSec::BuildXsBinningMCTemplates(TH2D * input_mctempl_array[kns][knm])
 {
 #ifdef __show_init_mesg_info__
-    cout << "Exp/NuXSec >> BuildXsBinningMCTemplates "<< endl;
+    LOG("NuXSec",pDEBUG) << "BuildXsBinningMCTemplates ";
 #endif
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
@@ -2950,10 +2865,9 @@ void NuXSec::BuildXsBinningMCTemplates(TH2D * input_mctempl_array[kns][knm])
             SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
 #ifdef __show_build_xsbinning_template_mesg_info__
-            cout << "Exp/NuXSec >> Building Xsec binning MC template for "
+            LOG("NuXSec",pDEBUG) << "Building Xsec binning MC template for "
             << "sample = " << util::AsString(s)
-            << ", mode = " << util::AsString(m)
-            << endl;
+            << ", mode = " << util::AsString(m);
 #endif
             const TH2D * mctempl = input_mctempl_array[is][im];
             assert (mctempl);
@@ -2967,17 +2881,15 @@ void NuXSec::BuildXsBinningMCTemplates(TH2D * input_mctempl_array[kns][knm])
                         int bx = 0, by = 0, bz = 0;
                         int bg = mctempl_xsbinning->FindBin(mctempl->GetXaxis()->GetBinCenter(ir), mctempl->GetYaxis()->GetBinCenter(it));
                         mctempl_xsbinning->GetBinXYZ(bg, bx, by, bz);
-                        cout << std::fixed
+                        LOG("NuXSec",pDEBUG) << std::fixed
                         << "Exp/NuXSec >> Filled Xsec binning MC template for "
                         << "ereco = " << mctempl->GetXaxis()->GetBinCenter(ir)
                         << " etrue = " << mctempl->GetYaxis()->GetBinCenter(it)
-                        << endl
-                        << "\t Put into bins: ereco "
+                        << "\n Put into bins: ereco "
                         << mctempl_xsbinning->GetXaxis()->GetBinLowEdge(bx) << " - "
                         << mctempl_xsbinning->GetXaxis()->GetBinUpEdge(bx) << "\t etrue "
                         << mctempl_xsbinning->GetYaxis()->GetBinLowEdge(by) << " - "
-                        << mctempl_xsbinning->GetYaxis()->GetBinUpEdge(by)
-                        << endl;
+                        << mctempl_xsbinning->GetYaxis()->GetBinUpEdge(by);
 #endif
                     }
                 }//it
@@ -3013,10 +2925,9 @@ void NuXSec::BuildXsBinningMCTemplates(TH3D * input_mctempl_array[kns][knm])
             SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
 #ifdef __show_build_xsbinning_template_mesg_info__
-            cout << "Exp/NuXSec >> Building Xsec binning MC template for "
+            LOG("NuXSec",pDEBUG) << "Building Xsec binning MC template for "
             << "sample = " << util::AsString(s)
-            << ", mode = " << util::AsString(m)
-            << endl;
+            << ", mode = " << util::AsString(m);
 #endif
             const TH3D * mctempl = input_mctempl_array[is][im];
             assert (mctempl);
@@ -3032,21 +2943,18 @@ void NuXSec::BuildXsBinningMCTemplates(TH3D * input_mctempl_array[kns][knm])
                             int bx = 0, by = 0, bz = 0;
                             int bg = mctempl_xsbinning->FindBin(mctempl->GetXaxis()->GetBinCenter(ir), mctempl->GetYaxis()->GetBinCenter(it),mctempl->GetZaxis()->GetBinCenter(iv));
                             mctempl_xsbinning->GetBinXYZ(bg, bx, by, bz);
-                            cout << std::fixed
-                            << "Exp/NuXSec >> Filled Xsec binning MC template for "
+                            LOG("NuXSec",pDEBUG)
+                            << "Filled Xsec binning MC template for "
                             << " Q2    = " << mctempl->GetXaxis()->GetBinCenter(ir)
                             << " ereco = " << mctempl->GetYaxis()->GetBinCenter(it)
                             << " etrue = " << mctempl->GetZaxis()->GetBinCenter(iv);
-                            << endl
-                            << "\t Put into bins: ereco "
+                            << "\n Put into bins: ereco "
                             << mctempl_xsbinning->GetXaxis()->GetBinLowEdge(bx) << " - "
                             << mctempl_xsbinning->GetXaxis()->GetBinUpEdge(bx) << "\t Q2 "
                             << mctempl_xsbinning->GetYaxis()->GetBinLowEdge(by) << " - "
                             << mctempl_xsbinning->GetYaxis()->GetBinUpEdge(by)  << "\t ereco "
                             << mctempl_xsbinning->GetZaxis()->GetBinLowEdge(bz) << " - "
-                            << mctempl_xsbinning->GetZaxis()->GetBinUpEdge(bz) << "\t etrue "
-                            
-                            << endl;
+                            << mctempl_xsbinning->GetZaxis()->GetBinUpEdge(bz) << "\t etrue ";
 #endif
                         }
                     }//iv
@@ -3087,12 +2995,11 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
     
 #ifdef __show_isanevent_mesg_debug__
     if(ev)
-        cout << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it)
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it)
         << " events for sample = " << util::AsString(s)
         << ", mode = " << util::AsString(m)
         << ", Etrue = " << Etrue
-        << ", Ereco = " << Ereco
-        << endl;
+        << ", Ereco = " << Ereco;
 #endif
     return ev;
 }
@@ -3114,13 +3021,12 @@ bool NuXSec::IsThereAnEvent(SuperkSample_t s, SuperkMode_t m, double Ereco, doub
     
 #ifdef __show_isanevent_mesg_debug__
     if(ev > kASmallNum)
-        cout << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it,iv)
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec >> There are " << mctempl_xsbinning->GetBinContent(ir,it,iv)
         << " events for sample = " << util::AsString(s)
         << ", mode = " << util::AsString(m)
         << ", Etrue = " << Etrue
         << ", Ereco = " << Ereco
-        << ", Q2    = " << Q2
-        << endl;
+        << ", Q2    = " << Q2;
 #endif
     return ev;
 }
@@ -3141,12 +3047,11 @@ int NuXSec::HowManyEvents(SuperkSample_t s, SuperkMode_t m, double Ereco, double
     
 #ifdef __show_isanevent_mesg_debug__
     if(ev)
-        cout << "Exp/NuXSec >> There are " << ev
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec >> There are " << ev
         << " events for sample = " << util::AsString(s)
         << ", mode = " << util::AsString(m)
         << ", Etrue = " << Etrue
-        << ", Ereco = " << Ereco
-        << endl;
+        << ", Ereco = " << Ereco;
 #endif
     
     return ev;
@@ -3170,13 +3075,12 @@ int NuXSec::HowManyEvents(SuperkSample_t s, SuperkMode_t m, double Ereco, double
     
 #ifdef __show_isanevent_mesg_debug__
     if((int)ev)
-        cout << "Exp/NuXSec >> There are " << ev
+        LOG("NuXSec",pDEBUG) << "Exp/NuXSec >> There are " << ev
         << " events for sample = " << util::AsString(s)
         << ", mode = " << util::AsString(m)
         << ", Etrue = " << Etrue
         << ", Ereco = " << Ereco
-        << ", Q2    = " << Q2
-        << endl;
+        << ", Q2    = " << Q2;
 #endif
     
     return ev;
@@ -3229,10 +3133,8 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
         if( fabs(twkdial)>conv::kASmallNum && fabs(twkdial-1)>conv::kASmallNum ){
             if(twkdial < 0.5) twkdial = 0.;
             else              twkdial = 1.;
-            std::cout << std::endl;
-            std::cout << "Tweak Dial RPA must be 0 or 1 " << std::endl;
-            std::cout << "Tweak Dial RPA restored to " << twkdial << std::endl;
-            std::cout << std::endl;
+            LOG("NuXSec",pDEBUG) << "Tweak Dial RPA must be 0 or 1 ";
+            LOG("NuXSec",pDEBUG) << "Tweak Dial RPA restored to " << twkdial;
         }
         fRPATwkDial      = twkdial;
     }
@@ -3240,16 +3142,14 @@ void NuXSec::Tweak(conv::PhysParamId_t p , double twkdial)
         if( fabs(twkdial)>conv::kASmallNum && fabs(twkdial-1)>conv::kASmallNum ){
             if(twkdial < 0.5) twkdial = 0.;
             else              twkdial = 1.;
-            std::cout << std::endl;
-            std::cout << "Tweak Dial RHC RPA must be 0 or 1 " << std::endl;
-            std::cout << "Tweak Dial RHC RPA restored to " << twkdial << std::endl;
-            std::cout << std::endl;
+            LOG("NuXSec",pDEBUG) << "Tweak Dial RHC RPA must be 0 or 1 ";
+            LOG("NuXSec",pDEBUG) << "Tweak Dial RHC RPA restored to " << twkdial;
         }
         fRHCRPATwkDial   = twkdial;
     }
 
     else {
-        cerr<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p)<<endl;
+        LOG("NuXSec",pDEBUG)<<"NuXSec/Tweak >> Failed to tweak parameter "<<util::AsString(p);
         util::Die(1);
     }
 #endif    

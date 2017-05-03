@@ -147,10 +147,6 @@
 #include "valor/Utilities/UtlSystem.h"
 #include "valor/Messenger/Messenger.h"
 
-using std::cout;
-using std::cerr;
-using std::endl;
-
 using namespace valor;
 using namespace valor::conv;
 using namespace valor::util;
@@ -433,12 +429,12 @@ void SuperkMC::Init(void)
     arr_index = util::ArrIdx::Instance();
     
 #ifdef USE_CCcoh_WEIGHTS
-    cout << "Exp/SKMC CCcoherent reweight is applied" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC CCcoherent reweight is applied";
 #endif   
 #ifdef USE_NC1gamma_WEIGHTS 
-    cout << "Exp/SKMC NC1gamma reweight is applied" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC NC1gamma reweight is applied";
 #endif
-    cout << "Exp/SKMC >> Init complete" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Init complete";
     
 }
 //________________________________________________________________________________________
@@ -493,7 +489,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
   }
   
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> Reading SuperK MC inputs from input XML file." << endl;
+    LOG("SuperkMC",pDEBUG) << "Reading SuperK MC inputs from input XML file.";
 #endif
     
     //
@@ -501,14 +497,14 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     //
     fPOT = util::XML2Dbl(xml,root_node,"data_pot/superk/fhc");
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> " << "POT_{data} (FHC) = " << fPOT << endl;
+    LOG("SuperkMC",pINFO) << "POT_{data} (FHC) = " << fPOT;
 #endif
     //
     // Get data POT RHC
     //
     fPOTRHC = util::XML2Dbl(xml,root_node,"data_pot/superk/rhc");
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> " << "POT_{data} (RHC) = " << fPOTRHC << endl;
+    LOG("SuperkMC",pINFO) << "POT_{data} (RHC) = " << fPOTRHC;
 #endif
     
     // NEW MULTIRING
@@ -520,7 +516,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __MULTIRING_FHC_RUNNING__
     fPOTMultiRing = util::XML2Dbl(xml,root_node,"data_pot/superk/multiring_fhc");
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> " << "POT_{data} (MultiRing) = " << fPOTMultiRing << endl;
+    LOG("SuperkMC",pINFO) << "POT_{data} (MultiRing) = " << fPOTMultiRing;
 #endif
 #endif
     ///
@@ -599,29 +595,29 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     
 #ifdef __show_init_mesg_info__
     // FHC
-    cout << "Exp/SKMC >> " << "FHC POT {MC; numu}    = "    << fMCPOTNuMu       << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; numubar} = "    << fMCPOTNuMuBar    << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; nue}     = "    << fMCPOTNuE        << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; nuebar}  = "    << fMCPOTNuEBar     << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nue} = "    << fMCPOTOscNuE     << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar  << endl;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "FHC POT {MC; numu}    = "    << fMCPOTNuMu;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "FHC POT {MC; numubar} = "    << fMCPOTNuMuBar;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "FHC POT {MC; nue}     = "    << fMCPOTNuE;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "FHC POT {MC; nuebar}  = "    << fMCPOTNuEBar;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "FHC POT {MC; osc_nue} = "    << fMCPOTOscNuE;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "FHC POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar;
     
     // RHC
-    cout << "Exp/SKMC >> " << "RHC POT {MC; numu}    = "    << fMCPOTRHCNuMu       << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; numubar} = "    << fMCPOTRHCNuMuBar    << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; nue}     = "    << fMCPOTRHCNuE        << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar     << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE     << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar  << endl;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "RHC POT {MC; numu}    = "    << fMCPOTRHCNuMu;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "RHC POT {MC; numubar} = "    << fMCPOTRHCNuMuBar;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "RHC POT {MC; nue}     = "    << fMCPOTRHCNuE;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "RHC POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "RHC POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "RHC POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar;
     
     // NEW MULTIRING
 #ifdef __MULTIRING_FHC_RUNNING__
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numu}       = " << fMCPOTMultiRingNuMu      << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar   << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nue}        = " << fMCPOTMultiRingNuE       << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar    << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE    << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar << endl;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "MultiRing: POT {MC; numu}       = " << fMCPOTMultiRingNuMu;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "MultiRing: POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "MultiRing: POT {MC; nue}        = " << fMCPOTMultiRingNuE;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "MultiRing: POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE;
+    LOG("SuperkMC",pINFO) << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar;
 #endif
     ////
     
@@ -629,18 +625,18 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         SuperkSample_t s = kSKSamples[is];
         if (s==kSKsUndefined) continue;
         
-        cout << "Exp/SKMC >> " << "Nev {MC; numu;     "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMu     [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; numubar;  "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar  [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nue;      "   <<AsStringCompact(s)<<"} = " << fMCTreeNuE      [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   "   <<AsStringCompact(s)<<"} = " << fMCTreeNuEBar   [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; "   <<AsStringCompact(s)<<"} = " << fMCTreeOscNuE   [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nuebar[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuEBar[is]-> GetEntries()  << endl;
+        LOG("SuperkMC",pDEBUG) << "Nev {MC; numu;     "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMu     [is]-> GetEntries();
+        LOG("SuperkMC",pDEBUG) << "Nev {MC; numubar;  "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar  [is]-> GetEntries();
+        LOG("SuperkMC",pDEBUG) << "Nev {MC; nue;      "   <<AsStringCompact(s)<<"} = " << fMCTreeNuE      [is]-> GetEntries();
+        LOG("SuperkMC",pDEBUG) << "Nev {MC; nuebar;   "   <<AsStringCompact(s)<<"} = " << fMCTreeNuEBar   [is]-> GetEntries();
+        LOG("SuperkMC",pDEBUG) << "Nev {MC; nue[osc]; "   <<AsStringCompact(s)<<"} = " << fMCTreeOscNuE   [is]-> GetEntries();
+        LOG("SuperkMC",pDEBUG) << "Nev {MC; nuebar[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuEBar[is]-> GetEntries();
         
     }
 #endif//__show_init_mesg_info__
   
   if(util::UtlMakeFakeData::Instance()->IsActive()){
-    cout << "Exp/SKMC >> " << "Reweighting events for " << util::UtlMakeFakeData::Instance()->GetReweightStyle() << endl;
+    LOG("SuperkMC",pDEBUG) << "Reweighting events for " << util::UtlMakeFakeData::Instance()->GetReweightStyle();
   }
   
     // initialise physics hypothesis
@@ -754,7 +750,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
     
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> Done reading SuperK MC inputs!" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Done reading SuperK MC inputs!";
 #endif
     
     return true;
@@ -770,29 +766,29 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
 
 #ifdef __show_init_mesg_info__
     // FHC
-    cout << "Exp/SKMC >> " << "FHC POT {MC; numu}    = "    << fMCPOTNuMu       << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; numubar} = "    << fMCPOTNuMuBar    << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; nue}     = "    << fMCPOTNuE        << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; nuebar}  = "    << fMCPOTNuEBar     << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nue} = "    << fMCPOTOscNuE     << endl;
-    cout << "Exp/SKMC >> " << "FHC POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar  << endl;
+    LOG("SuperkMC",pDEBUG) << "FHC POT {MC; numu}    = "    << fMCPOTNuMu;
+    LOG("SuperkMC",pDEBUG) << "FHC POT {MC; numubar} = "    << fMCPOTNuMuBar;
+    LOG("SuperkMC",pDEBUG) << "FHC POT {MC; nue}     = "    << fMCPOTNuE;
+    LOG("SuperkMC",pDEBUG) << "FHC POT {MC; nuebar}  = "    << fMCPOTNuEBar;
+    LOG("SuperkMC",pDEBUG) << "FHC POT {MC; osc_nue} = "    << fMCPOTOscNuE;
+    LOG("SuperkMC",pDEBUG) << "FHC POT {MC; osc_nuebar} = " << fMCPOTOscNuEBar;
     
     // RHC
-    cout << "Exp/SKMC >> " << "RHC POT {MC; numu}    = "    << fMCPOTRHCNuMu       << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; numubar} = "    << fMCPOTRHCNuMuBar    << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; nue}     = "    << fMCPOTRHCNuE        << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar     << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE     << endl;
-    cout << "Exp/SKMC >> " << "RHC POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar  << endl;
+    LOG("SuperkMC",pDEBUG) << "RHC POT {MC; numu}    = "    << fMCPOTRHCNuMu;
+    LOG("SuperkMC",pDEBUG) << "RHC POT {MC; numubar} = "    << fMCPOTRHCNuMuBar;
+    LOG("SuperkMC",pDEBUG) << "RHC POT {MC; nue}     = "    << fMCPOTRHCNuE;
+    LOG("SuperkMC",pDEBUG) << "RHC POT {MC; nuebar}  = "    << fMCPOTRHCNuEBar;
+    LOG("SuperkMC",pDEBUG) << "RHC POT {MC; osc_nue} = "    << fMCPOTRHCOscNuE;
+    LOG("SuperkMC",pDEBUG) << "RHC POT {MC; osc_nuebar} = " << fMCPOTRHCOscNuEBar;
     
     // NEW MULTIRING
 #ifdef __MULTIRING_FHC_RUNNING__
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numu}       = " << fMCPOTMultiRingNuMu      << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar   << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nue}        = " << fMCPOTMultiRingNuE       << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar    << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE    << endl;
-    cout << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "MultiRing: POT {MC; numu}       = " << fMCPOTMultiRingNuMu;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "MultiRing: POT {MC; numubar}    = " << fMCPOTMultiRingNuMuBar;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "MultiRing: POT {MC; nue}        = " << fMCPOTMultiRingNuE;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "MultiRing: POT {MC; nuebar}     = " << fMCPOTMultiRingNuEBar;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nue}    = " << fMCPOTMultiRingOscNuE;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "MultiRing: POT {MC; osc_nuebar} = " << fMCPOTMultiRingOscNuEBar;
 #endif
     ////
     
@@ -800,12 +796,12 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
         SuperkSample_t s = kSKSamples[is];
         if (s==kSKsUndefined) continue;
         
-        cout << "Exp/SKMC >> " << "Nev {MC; numu;     "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMu     [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; numubar;  "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar  [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nue;      "   <<AsStringCompact(s)<<"} = " << fMCTreeNuE      [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nuebar;   "   <<AsStringCompact(s)<<"} = " << fMCTreeNuEBar   [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nue[osc]; "   <<AsStringCompact(s)<<"} = " << fMCTreeOscNuE   [is]-> GetEntries()  << endl;
-        cout << "Exp/SKMC >> " << "Nev {MC; nuebar[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuEBar[is]-> GetEntries()  << endl;
+        LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "Nev {MC; numu;     "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMu     [is]-> GetEntries()  ;
+        LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "Nev {MC; numubar;  "   <<AsStringCompact(s)<<"} = " << fMCTreeNuMuBar  [is]-> GetEntries()  ;
+        LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "Nev {MC; nue;      "   <<AsStringCompact(s)<<"} = " << fMCTreeNuE      [is]-> GetEntries()  ;
+        LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "Nev {MC; nuebar;   "   <<AsStringCompact(s)<<"} = " << fMCTreeNuEBar   [is]-> GetEntries()  ;
+        LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "Nev {MC; nue[osc]; "   <<AsStringCompact(s)<<"} = " << fMCTreeOscNuE   [is]-> GetEntries()  ;
+        LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> " << "Nev {MC; nuebar[osc]; "<<AsStringCompact(s)<<"} = " << fMCTreeOscNuEBar[is]-> GetEntries()  ;
         
     }
 #endif//__show_init_mesg_info__
@@ -923,7 +919,7 @@ bool SuperkMC::ReadSmearedMomentum(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
     
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> Done reading SuperK MC inputs!" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Done reading SuperK MC inputs!" ;
 #endif
     
     return true;
@@ -1130,8 +1126,8 @@ void SuperkMC::Book(void)
 void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 {
 #ifdef __show_init_mesg_debug__
-    cout << "Exp/SKMC/FillTemplate >> Creating MC template for: "
-    << util::AsString(s) << " / " << util::AsString(m) << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Creating MC template for: "
+    << util::AsString(s) << " / " << util::AsString(m);
 #endif
     
     //filled in FillSpecialTemplates()
@@ -1149,8 +1145,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     double  mcpot  = this->MCPOT (s,m);
     
     if(!mctree) {
-        cerr << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
-        << util::AsString(s) << "/" << util::AsString(m) << endl;
+        LOG("SuperkMC",pERROR) << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
+        << util::AsString(s) << "/" << util::AsString(m);
         util::Die(1); return;
     }
     
@@ -1161,13 +1157,13 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif
     
 #ifdef __show_init_mesg_debug__
-    cout << "Exp/SKMC/FillTemplate >>      "
-    << "Weight (data POT / MC POT) = " << pot_wght << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >>      "
+    << "Weight (data POT / MC POT) = " << pot_wght;
 #endif
     if(pot_wght < 0) {
-        cerr << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
+        LOG("SuperkMC",pERROR) << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
         << util::AsString(s) << "/" << util::AsString(m)
-        << " is " << pot_wght << endl;
+        << " is " << pot_wght;
         util::Die(1); return;
     }
     
@@ -1175,12 +1171,9 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     const char * etrue_branch         = "pnu";  // GeV/c
     const char * mode_branch          = "mode";
     const char * flux_wght_branch     = "wgtflx";
-    const char * rpa_nrel_wght_branch = "wgtRPA_nr";
-    const char * rpa_rel_wght_branch  = "wgtRPA_r";
     const char * berpa_wght_branch    = "wgtBeRPA_nom";
     const char * sf_rfg_wght_branch   = "wgtsfrfg";
     const char * cc_coh_wght_branch   = "wght_CCcoh";
-    const char * osc_wgt_branch       = "wgtosc";
     
     //~ const char * flux_wght_branch = "wgt";
     // // NEW 2D TEMPLATES
@@ -1317,15 +1310,15 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             pmax_lep = fBrAmomm[0] / 1000.; // GeV
         }
         else{
-            cerr << endl;
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "Using sample " << util::AsString(s) << endl;
-            cerr << "Samples other than: " << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << "are not implemented" << endl;
+            LOG("SuperkMC",pERROR) ;
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
+            LOG("SuperkMC",pERROR) << "Using sample " << util::AsString(s) ;
+            LOG("SuperkMC",pERROR) << "Samples other than: " ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingELike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike);
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike);
+            LOG("SuperkMC",pERROR) << "are not implemented" ;
             util::Die(1); return;
         }
         
@@ -1337,15 +1330,15 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             mass_nucl = kNeutronMassGeV; // nubar interacts with neutron
         }
         else{
-            cerr << endl;
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "Using sample " << util::AsString(s) << endl;
-            cerr << "Samples other than: " << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << "are not implemented" << endl;
+            LOG("SuperkMC",pERROR) ;
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
+            LOG("SuperkMC",pERROR) << "Using sample " << util::AsString(s);
+            LOG("SuperkMC",pERROR) << "Samples other than: ";
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingMuLike);
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingELike);
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike);
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike);
+            LOG("SuperkMC",pERROR) << "are not implemented";
             util::Die(1); return;
         }
         
@@ -1363,31 +1356,29 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
             double costheta = kBeamDir[0] * fBrDir[0][2][0] + kBeamDir[1] * fBrDir[0][2][1] + kBeamDir[2] * fBrDir[0][2][2];    
         }
         if( costheta<-1.00001 || costheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-            cerr << endl;
+            LOG("SuperkMC",pERROR);
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram";
+            LOG("SuperkMC",pERROR) << "costheta = " << costheta << " --> outside allowed range";
+            LOG("SuperkMC",pERROR);
             util::Die(1); return;
         }
         
         double sintheta = 1. - costheta*costheta;
         if( sintheta<-1.00001 || sintheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
-            cerr << "costheta = " << costheta << endl;
-            cerr << endl;
+            LOG("SuperkMC",pERROR);
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram";
+            LOG("SuperkMC",pERROR) << "sintheta = " << sintheta << " --> outside allowed range";
+            LOG("SuperkMC",pERROR) << "costheta = " << costheta;
+            LOG("SuperkMC",pERROR);
             util::Die(1); return;
         }
         
         double LepTheta        = TMath::ACos(costheta); // radians
         double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
         if(LepTheta<0.){
-            cerr << endl;
-            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-            cerr << endl;
+            LOG("SuperkMC",pERROR);
+            LOG("SuperkMC",pERROR) << "Theta lepton is negative: " << LepThetaDegrees << " degrees";
+            LOG("SuperkMC",pERROR);
             util::Die(1); return;
         }
         
@@ -1402,33 +1393,6 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         //double Q2 = this->CalcWhadr(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
         double Q2 = this->CalcXSecTerm(ereco_nu,emax_lep,pmax_lep,costheta,mass_lep,mass_nucl);
         
-        //if(Q2<0. || Q2 > 1.){
-        //cout << "costheta = " << costheta << " ";
-        //cout << "emax_lep = " << emax_lep << " ";
-        //cout << "ereco_nu = " << ereco_nu << " ";
-        //cout << "Q2 = " << Q2 << " GeV" << endl;
-        // //Q2 = 0.001;
-        //}
-        
-        //cout << Q2 << " ";
-        //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
-        //cout << Q2 << " ";
-        // // PROVA
-        // double px = ereco_nu*kBeamDir[0];
-        // double py = ereco_nu*kBeamDir[1];
-        // double pz = ereco_nu*kBeamDir[2];
-        // double e = ereco_nu;
-        // TLorentzVector lv_pnu(px,py,pz,e);
-        // px = pmax_lep*fBrDir[0][1];
-        // py = pmax_lep*fBrDir[0][2];
-        // pz = pmax_lep*fBrDir[0][3];
-        // e = emax_lep;
-        // TLorentzVector lv_plep(px,py,pz,e);
-        // Q2 = (lv_pnu - lv_plep).Mag2();
-        // cout << Q2 << endl;
-        // //
-        
-        
         double q2_fill = Q2;
         
 #ifdef INCLUDEEVENTSNEGATIVEQ2
@@ -1441,34 +1405,33 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double MaxQ2_up   = util::Q2BinEdges(s,nbins);
         double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
         double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
-        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
         q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
         
         if(q2_fill > MaxQ2_up){
-            cout << q2_fill << endl;
+            LOG("SuperkMC",pDEBUG) << q2_fill;
             util::Die(1); return;
         }
 #endif
         // Will need to be updated if we use the fitqun 
         if( q2_fill < util::Q2BinEdges(s,0) ){
-            cout << "Q2 < Q2BinEdge(s,0)" << endl;
-            cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
-            cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
-            cout << "theta = " << LepThetaDegrees << " ";
-            cout << "costheta = " << costheta << " ";
-            //cout << "sintheta = " << sintheta << " ";
-            cout << "emax_lep = " << emax_lep << " ";
-            cout << "ereco_nu = " << ereco_nu << " ";
-            cout << "Q2 = " << Q2 << " GeV" << endl;
+            LOG("SuperkMC",pDEBUG) << "Q2 < Q2BinEdge(s,0)";
+            LOG("SuperkMC",pDEBUG) << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
+            LOG("SuperkMC",pDEBUG) << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
+            LOG("SuperkMC",pDEBUG) << "theta = " << LepThetaDegrees << " ";
+            LOG("SuperkMC",pDEBUG) << "costheta = " << costheta << " ";
+            //LOG("SuperkMC",pDEBUG) << "sintheta = " << sintheta << " ";
+            LOG("SuperkMC",pDEBUG) << "emax_lep = " << emax_lep << " ";
+            LOG("SuperkMC",pDEBUG) << "ereco_nu = " << ereco_nu << " ";
+            LOG("SuperkMC",pDEBUG) << "Q2 = " << Q2 << " GeV";
             util::Die(1); return;
         }
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
-            cout << "Q2 > Q2BinEdge(s,0)" << endl;
-            cout << "costheta = " << costheta << " ";
-            cout << "sintheta = " << sintheta << " ";
-            cout << "emax_lep = " << emax_lep << " ";
-            cout << "ereco_nu = " << ereco_nu << " ";
-            cout << "Q2 = " << Q2 << " GeV" << endl;
+            LOG("SuperkMC",pDEBUG) << "Q2 > Q2BinEdge(s,0)";
+            LOG("SuperkMC",pDEBUG) << "costheta = " << costheta << " ";
+            LOG("SuperkMC",pDEBUG) << "sintheta = " << sintheta << " ";
+            LOG("SuperkMC",pDEBUG) << "emax_lep = " << emax_lep << " ";
+            LOG("SuperkMC",pDEBUG) << "ereco_nu = " << ereco_nu << " ";
+            LOG("SuperkMC",pDEBUG) << "Q2 = " << Q2 << " GeV";
             util::Die(1); return;
         }
         
@@ -1487,34 +1450,27 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         double MaxQ2_up   = util::Q2BinEdges(s,nbins);
         double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
         double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
-        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
         q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
         
         if(q2_fill > MaxQ2_up){
-            cout << q2_fill << endl;
+            LOG("SuperkMC",pDEBUG) << q2_fill;
             util::Die(1); return;
         }
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
-          cout << "q2_fill = " << q2_fill << endl;
-	  //cout << "costheta = " << costheta << endl;
-	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+          LOG("SuperkMC",pDEBUG) << "q2_fill = " << q2_fill;
 	  util::Die(1); return;
         }
         
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
-          cout << "q2_fill = " << q2_fill << endl;
-	  //cout << "costheta = " << costheta << endl;
-	  //cout << "LepThetaDegrees = " << LepThetaDegrees << endl;
+          LOG("SuperkMC",pDEBUG) << "q2_fill = " << q2_fill;
 	  util::Die(1); return;
         }
         
 #else
-        cerr << endl;
-        cerr << "SuperkMC::FillTemplateHistogram()" << endl;
-        cerr << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" << endl;
-        cerr << endl;
+        LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram()";
+        LOG("SuperkMC",pERROR) << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization";
         util::Die(1); return;
 #endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
         
@@ -1565,8 +1521,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         fake_data_weight = util::UtlMakeFakeData::Instance()->GetWeight();
         ereco_fill = util::UtlMakeFakeData::Instance()->GetEreco();
 #ifdef FakeDataWeightDebug
-        std::cout << "SKMC/FillTemplateHistogram >> Fake data reweight: " << fake_data_weight << " Ereco: " << ereco_fill << " Sample: " << util::AsStringCompact(s)
-        << " mode: " << util::AsStringCompact(m) << endl;
+        LOG("SuperkMC",pDEBUG) << "SKMC/FillTemplateHistogram >> Fake data reweight: " << fake_data_weight << " Ereco: " << ereco_fill << " Sample: " << util::AsStringCompact(s)
+        << " mode: " << util::AsStringCompact(m);
 #endif
       }
       
@@ -1677,17 +1633,17 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
 #ifdef __show_init_mesg_debug__
         if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
-            cout << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
-            << " (Ereco = " << fBrEreco/1000 << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            << " (Ereco = " << fBrEreco/1000 << ")";
 #endif
 #ifdef __show_init_mesg_debug2__
         if(fBrEreco/1000 <= 0)
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
-            << " (Etrue = " << Etrue << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            << " (Etrue = " << Etrue << ")";
         //#endif __show_init_mesg_debug2__
         if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
-            << " (Etrue = " << Etrue << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            << " (Etrue = " << Etrue << ")";
 #endif
         
 #else
@@ -1696,30 +1652,30 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
 #ifdef __show_init_mesg_debug__
         if(Etrue <= 0 || Etrue >= this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsZ())){
-            cout << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
             << " (Ereco = " << fBrEreco/1000 << ")"
-            << " (Q2 = " << q2_fill << ")" << endl;
+            << " (Q2 = " << q2_fill << ")";
         }
 #endif
 #ifdef __show_init_mesg_debug2__
         if(fBrEreco/1000 <= 0)
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
-            << " (Etrue = " << Etrue << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            << " (Etrue = " << Etrue << ")";
         //#endif __show_init_mesg_debug2__
         if(fBrEreco/1000 >= this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsY()))
-            cout << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << fBrEreco/1000
             << " (Etrue = " << Etrue << ")"
-            << " (Q2 = " << q2_fill << ")" << endl;
+            << " (Q2 = " << q2_fill << ")";
         
         if(q2_fill <= 0)
-            cout << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
             << " (Ereco = " << fBrEreco/1000 << ")"
-            << " (Etrue = " << Etrue << ")" << endl;
+            << " (Etrue = " << Etrue << ")";
         //#endif __show_init_mesg_debug2__
         if(q2_fill >= this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsX()))
-            cout << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
             << " (Ereco = " << fBrEreco/1000 << ")"
-            << " (Etrue = " << Etrue << ")" << endl;
+            << " (Etrue = " << Etrue << ")";
         //
 #endif// __show_init_mesg_debug__
         
@@ -1730,14 +1686,14 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #ifdef __show_init_mesg_debug__
     
 #ifndef __USE_2D_TEMPLATES__
-    cout << "Exp/SKMC/FillTemplate >>      "
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >>      "
     << "Number of template entries = "
-    << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
+    << this -> Template(s,m,kSKMCtNom) -> GetEntries();
 #else
     // NEW 2D TEMPLATES
-    cout << "Exp/SKMC/FillTemplate2D >>      "
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate2D >>      "
     << "Number of template entries = "
-    << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << endl;
+    << this -> Template2D(s,m,kSKMCtNom) -> GetEntries();
     //
 #endif
 
@@ -1751,8 +1707,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 {
 #ifdef __show_init_mesg_debug__
-    cout << "Exp/SKMC/FillTemplate >> Creating MC template for: "
-    << util::AsString(s) << " / " << util::AsString(m) << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Creating MC template for: "
+    << util::AsString(s) << " / " << util::AsString(m);
 #endif
     
     //filled in FillSpecialTemplates()
@@ -1770,8 +1726,8 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     double  mcpot  = this->MCPOT (s,m);
     
     if(!mctree) {
-        cerr << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
-        << util::AsString(s) << "/" << util::AsString(m) << endl;
+        LOG("SuperkMC",pERROR) << "Exp/SKMC/FillTemplate >> Couldn't find event tree for template: "
+        << util::AsString(s) << "/" << util::AsString(m);
         util::Die(1); return;
     }
     
@@ -1782,13 +1738,13 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 #endif
     
 #ifdef __show_init_mesg_debug__
-    cout << "Exp/SKMC/FillTemplate >>      "
-    << "Weight (data POT / MC POT) = " << pot_wght << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >>      "
+    << "Weight (data POT / MC POT) = " << pot_wght;
 #endif
     if(pot_wght < 0) {
-        cerr << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
+        LOG("SuperkMC",pERROR) << "Exp/SKMC/FillTemplate >> Weight (data POT / MC POT) for "
         << util::AsString(s) << "/" << util::AsString(m)
-        << " is " << pot_wght << endl;
+        << " is " << pot_wght;
         util::Die(1); return;
     }
     
@@ -1796,9 +1752,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
     const char * etrue_branch         = "pnu";  // GeV/c
     const char * mode_branch          = "mode";
     const char * flux_wght_branch     = "wgtflx";
-    const char * rpa_nrel_wght_branch = "wgtRPA_nr";
     const char * berpa_wght_branch    = "wgtBeRPA_nom";
-    const char * rpa_rel_wght_branch  = "wgtRPA_r";
     const char * sf_rfg_wght_branch   = "wgtsfrfg";
     const char * cc_coh_wght_branch   = "wght_CCcoh";
     
@@ -1914,31 +1868,23 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
           costheta = dir_nu[0] * fBrDir[0][2][0] + dir_nu[1] * fBrDir[0][2][1] + dir_nu[2] * fBrDir[0][2][2];
         }
         if( costheta<-1.00001 || costheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-            cerr << endl;
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
+            LOG("SuperkMC",pERROR) << "costheta = " << costheta << " --> outside allowed range" ;
             util::Die(1); return;
         }
         
         double sintheta = 1. - costheta*costheta;
         if( sintheta<-1.00001 || sintheta>+1.00001 ){
-            cerr << endl;
-            cerr << std::setprecision(10);
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "sintheta = " << sintheta << " --> outside allowed range" << endl;
-            cerr << "costheta = " << costheta << endl;
-            cerr << endl;
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
+            LOG("SuperkMC",pERROR) << "sintheta = " << sintheta << " --> outside allowed range" ;
+            LOG("SuperkMC",pERROR) << "costheta = " << costheta ;
             util::Die(1); return;
         }
         
         double LepTheta        = TMath::ACos(costheta); // radiant
         double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees
         if(LepTheta<0.){
-            cerr << endl;
-            cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-            cerr << endl;
+            LOG("SuperkMC",pERROR) << "Theta lepton is negative: " << LepThetaDegrees << " degrees" ;
             util::Die(1); return;
         }
         
@@ -1960,7 +1906,6 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         //Set all values based on smeared quantitiy
         
-        double LepThetaSmeared = LepThetaDegreesSmeared * TMath::Pi() / 180.;
         double costhetaSmeared = TMath::Cos(LepTheta);
         
         // Get the true lepton momentum from the tree, position in array depends on int mode.
@@ -1994,21 +1939,16 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             mass_lep = kMuonMassGeV; // GeV
         }
         else{
-            cerr << endl;
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "Using sample " << util::AsString(s) << endl;
-            cerr << "Samples other than: " << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << "are not implemented" << endl;
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
+            LOG("SuperkMC",pERROR) << "Using sample " << util::AsString(s);
+            LOG("SuperkMC",pERROR) << "Samples other than: " ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingELike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike);
+            LOG("SuperkMC",pERROR) << "are not implemented" ;
             util::Die(1); return;
         }
-        
-        // Calculate lepton energy
-        
-        double emax_lepSmeared = sqrt( pmax_lepSmeared*pmax_lepSmeared + mass_lep*mass_lep );
         
         /*
          
@@ -2040,15 +1980,14 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             pmax_lep = fBrAmomm[0] / 1000.; // GeV
         }
         else{
-            cerr << endl;
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "Using sample " << util::AsString(s) << endl;
-            cerr << "Samples other than: " << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << "are not implemented" << endl;
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram";
+            LOG("SuperkMC",pERROR) << "Using sample " << util::AsString(s) ;
+            LOG("SuperkMC",pERROR) << "Samples other than: " ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingELike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << "are not implemented" ;
             util::Die(1); return;
         }
         
@@ -2060,15 +1999,14 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
             mass_nucl = kNeutronMassGeV; // nubar interacts with neutron
         }
         else{
-            cerr << endl;
-            cerr << "SuperkMC::FillTemplateHistogram" << endl;
-            cerr << "Using sample " << util::AsString(s) << endl;
-            cerr << "Samples other than: " << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-            cerr << "are not implemented" << endl;
+            LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
+            LOG("SuperkMC",pERROR) << "Using sample " << util::AsString(s) ;
+            LOG("SuperkMC",pERROR) << "Samples other than: " ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsFCFV1RingELike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) ;
+            LOG("SuperkMC",pERROR) << "are not implemented" ;
             util::Die(1); return;
         }
         
@@ -2082,33 +2020,6 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         //double Q2 = this->CalcWhadr(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
         double Q2 = this->CalcXSecTerm(ereco_nuSmeared,emax_lepSmeared,pmax_lepSmeared,costhetaSmeared,mass_lep,mass_nucl);
         
-        //if(Q2<0. || Q2 > 1.){
-        //cout << "costheta = " << costheta << " ";
-        //cout << "emax_lep = " << emax_lep << " ";
-        //cout << "ereco_nu = " << ereco_nu << " ";
-        //cout << "Q2 = " << Q2 << " GeV" << endl;
-        // //Q2 = 0.001;
-        //}
-        
-        //cout << Q2 << " ";
-        //Q2 = 4*ereco_nu*emax_lep*TMath::Sin(LepTheta/2.)*TMath::Sin(LepTheta/2.);
-        //cout << Q2 << " ";
-        // // PROVA
-        // double px = ereco_nu*kBeamDir[0];
-        // double py = ereco_nu*kBeamDir[1];
-        // double pz = ereco_nu*kBeamDir[2];
-        // double e = ereco_nu;
-        // TLorentzVector lv_pnu(px,py,pz,e);
-        // px = pmax_lep*fBrDir[0][1];
-        // py = pmax_lep*fBrDir[0][2];
-        // pz = pmax_lep*fBrDir[0][3];
-        // e = emax_lep;
-        // TLorentzVector lv_plep(px,py,pz,e);
-        // Q2 = (lv_pnu - lv_plep).Mag2();
-        // cout << Q2 << endl;
-        // //
-        
-        
         double q2_fill = Q2;
         
 #ifdef INCLUDEEVENTSNEGATIVEQ2
@@ -2121,34 +2032,33 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         double MaxQ2_up   = util::Q2BinEdges(s,nbins);
         double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
         double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
-        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
         q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
         
         if(q2_fill > MaxQ2_up){
-            cout << q2_fill << endl;
+            LOG("SuperkMC",pDEBUG) << q2_fill;
             util::Die(1); return;
         }
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
-            cout << "Q2 < Q2BinEdge(s,0)" << endl;
-            cout << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
-            cout << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
-            cout << "theta = " << LepThetaDegreesSmeared << " ";
-            cout << "costheta = " << costhetaSmeared << " ";
-            //cout << "sintheta = " << sintheta << " ";
-            cout << "emax_lep = " << emax_lepSmeared << " ";
-            cout << "ereco_nu = " << ereco_nuSmeared << " ";
-            cout << "Q2 = " << Q2 << " GeV" << endl;
+            LOG("SuperkMC",pDEBUG) << "Q2 < Q2BinEdge(s,0)";
+            LOG("SuperkMC",pDEBUG) << "nu direction: " << kBeamDir[0] << " " << kBeamDir[1] << " " << kBeamDir[2] << " ";
+            LOG("SuperkMC",pDEBUG) << "lepton direction: " << fBrDir[0][0] << " " << fBrDir[0][1] << " " << fBrDir[0][2] << " ";
+            LOG("SuperkMC",pDEBUG) << "theta = " << LepThetaDegreesSmeared << " ";
+            LOG("SuperkMC",pDEBUG) << "costheta = " << costhetaSmeared << " ";
+            //LOG("SuperkMC",pDEBUG) << "sintheta = " << sintheta << " ";
+            LOG("SuperkMC",pDEBUG) << "emax_lep = " << emax_lepSmeared << " ";
+            LOG("SuperkMC",pDEBUG) << "ereco_nu = " << ereco_nuSmeared << " ";
+            LOG("SuperkMC",pDEBUG) << "Q2 = " << Q2 << " GeV";
             util::Die(1); return;
         }
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
-            cout << "Q2 > Q2BinEdge(s,0)" << endl;
-            cout << "costheta = " << costhetaSmeared << " ";
-            cout << "sintheta = " << TMath::Sin(LepThetaSmeared) << " ";
-            cout << "emax_lep = " << emax_lepSmeared << " ";
-            cout << "ereco_nu = " << ereco_nuSmeared << " ";
-            cout << "Q2 = " << Q2 << " GeV" << endl;
+            LOG("SuperkMC",pDEBUG) << "Q2 > Q2BinEdge(s,0)";
+            LOG("SuperkMC",pDEBUG) << "costheta = " << costhetaSmeared << " ";
+            LOG("SuperkMC",pDEBUG) << "sintheta = " << TMath::Sin(LepThetaSmeared) << " ";
+            LOG("SuperkMC",pDEBUG) << "emax_lep = " << emax_lepSmeared << " ";
+            LOG("SuperkMC",pDEBUG) << "ereco_nu = " << ereco_nuSmeared << " ";
+            LOG("SuperkMC",pDEBUG) << "Q2 = " << Q2 << " GeV";
             util::Die(1); return;
         }
         
@@ -2167,81 +2077,31 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         double MaxQ2_up   = util::Q2BinEdges(s,nbins);
         double MaxQ2_low  = util::Q2BinEdges(s,nbins-1);
         double MaxQ2_cent = (MaxQ2_up + MaxQ2_low)/2.;
-        //cout << nbins << " " << MaxQ2_up << " " << MaxQ2_low << " " << MaxQ2_cent << " " << Q2 << endl;
         q2_fill = TMath::Min(MaxQ2_cent, q2_fill);
         
         if(q2_fill > MaxQ2_up){
-            cout << q2_fill << endl;
+            LOG("SuperkMC",pDEBUG) << q2_fill;
             util::Die(1); return;
         }
 #endif
         
         if( q2_fill < util::Q2BinEdges(s,0) ){
-            cout << "costheta = " << costhetaSmeared << endl;
-            cout << "LepThetaDegrees = " << LepThetaDegreesSmeared << endl;
+            LOG("SuperkMC",pDEBUG) << "costheta = " << costhetaSmeared;
+            LOG("SuperkMC",pDEBUG) << "LepThetaDegrees = " << LepThetaDegreesSmeared;
             util::Die(1); return;
         }
         
         if( q2_fill > util::Q2BinEdges(s,nbins) ){
-            cout << "costheta = " << costhetaSmeared << endl;
-            cout << "LepThetaDegrees = " << LepThetaDegreesSmeared << endl;
+            LOG("SuperkMC",pDEBUG) << "costheta = " << costhetaSmeared;
+            LOG("SuperkMC",pDEBUG) << "LepThetaDegrees = " << LepThetaDegreesSmeared;
             util::Die(1); return;
         }
         
 #else
-        cerr << endl;
-        cerr << "SuperkMC::FillTemplateHistogram()" << endl;
-        cerr << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" << endl;
-        cerr << endl;
+        LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram()" ;
+        LOG("SuperkMC",pERROR) << "Need to choose between Ereco Vs Q2 or Ereco Vs Theta parametrization" ;
         util::Die(1); return;
 #endif //__ERECO_VS_Q2_TEMPLATES__ or __ERECO_VS_THETA_TEMPLATES__
-        
-        //
-        
-        
-        
-        // //// PROVA Ereco
-        
-        // //if(s!=kSKsRHCFCFV1RingMuLike) continue;
-        // //if(s!=kSKsRHCFCFV1RingELike) continue;
-        // //if(s!=kSKsFCFV1RingELike) continue;
-        
-        // // Get momentum and energy of most energetic lepton (only 1Ring samples)
-        // double pmax_lep = 0.; // momentum of most energetic lepton
-        // double mass_lep = 0.;
-        // if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-        //   mass_lep = kElectronMassGeV * 1000.; // GeV --> MeV
-        //   pmax_lep = fBrAmome[0]; // MeV
-        // }
-        // else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-        //   mass_lep = kMuonMassGeV * 1000.; // GeV --> MeV
-        //   pmax_lep = fBrAmomm[0]; // MeV
-        // }
-        // else{
-        //   cerr << endl;
-        //   cerr << "SuperkMC::FillTemplateHistogram" << endl;
-        //   cerr << "Using sample " << util::AsString(s) << endl;
-        //   cerr << "Samples other than: " << endl;
-        //   cerr << " - " << util::AsString(kSKsFCFV1RingMuLike) << endl;
-        //   cerr << " - " << util::AsString(kSKsFCFV1RingELike) << endl;
-        //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-        //   cerr << " - " << util::AsString(kSKsRHCFCFV1RingMuLike) << endl;
-        //   cerr << "are not implemented" << endl;
-        //   util::Die(1); return;
-        // }
-        
-        // //double myereco_nu = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep); // inputs are MeV
-        // //double myereco_nubar = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep); // inputs are MeV
-        
-        // //cout << ereco_fill << " " << myereco_nu / 1000. << " " << myereco_nubar / 1000. << endl;
-        // //cout << ;
-        
-        // ///////////
-        
-        
-        
-        
-        
         
         //if(util::IsRHCSample(s))
 #ifdef USE_FLUX_EXT_WEIGHT
@@ -2326,17 +2186,17 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
 #ifdef __show_init_mesg_debug__
         if(Etrue <= 0 || Etrue >= this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsY()))
-            cout << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
-            << " (Ereco = " << ereco_nuSmeared << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            << " (Ereco = " << ereco_nuSmeared << ")";
 #endif
 #ifdef __show_init_mesg_debug2__
         if(fBrEreco/1000 <= 0)
-            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
-            << " (Etrue = " << Etrue << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            << " (Etrue = " << Etrue << ")";
         //#endif __show_init_mesg_debug2__
         if(fBrEreco/1000 >= this->Template(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template(s,m,kSKMCtOri)->GetNbinsX()))
-            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
-            << " (Etrue = " << Etrue << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            << " (Etrue = " << Etrue << ")";
 #endif
         
 #else
@@ -2345,30 +2205,30 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
 #ifdef __show_init_mesg_debug__
         if(Etrue <= 0 || Etrue >= this->Template2D(s,m,kSKMCtOri)->GetZaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsZ())){
-            cout << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Etrue is out of template range " << AsString(s) << " " << AsString(m) << " " << Etrue
             << " (Ereco = " << ereco_nuSmeared << ")"
-            << " (Q2 = " << q2_fill << ")" << endl;
+            << " (Q2 = " << q2_fill << ")";
         }
 #endif
 #ifdef __show_init_mesg_debug2__
         if(fBrEreco/1000 <= 0)
-            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
-            << " (Etrue = " << Etrue << ")" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            << " (Etrue = " << Etrue << ")";
         //#endif __show_init_mesg_debug2__
         if(fBrEreco/1000 >= this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsY()))
-            cout << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Ereco is out of template range " << AsString(s) << " " << AsString(m) << " " << ereco_nuSmeared
             << " (Etrue = " << Etrue << ")"
-            << " (Q2 = " << q2_fill << ")" << endl;
+            << " (Q2 = " << q2_fill << ")";
         
         if(q2_fill <= 0)
-            cout << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
             << " (Ereco = " << ereco_nuSmeared << ")"
-            << " (Etrue = " << Etrue << ")" << endl;
+            << " (Etrue = " << Etrue << ")";
         //#endif __show_init_mesg_debug2__
         if(q2_fill >= this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinUpEdge(this->Template2D(s,m,kSKMCtOri)->GetNbinsX()))
-            cout << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >> Q2 is out of template range " << AsString(s) << " " << AsString(m) << " " << q2_fill
             << " (Ereco = " << ereco_nuSmeared << ")"
-            << " (Etrue = " << Etrue << ")" << endl;
+            << " (Etrue = " << Etrue << ")";
         //
 #endif// __show_init_mesg_debug__
         
@@ -2379,14 +2239,14 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
 #ifdef __show_init_mesg_debug__
     
 #ifndef __USE_2D_TEMPLATES__
-    cout << "Exp/SKMC/FillTemplateSmeared >>      "
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplateSmeared >>      "
     << "Number of template entries = "
-    << this -> Template(s,m,kSKMCtNom) -> GetEntries() << endl;
+    << this -> Template(s,m,kSKMCtNom) -> GetEntries();
 #else
     // NEW 2D TEMPLATES
-    cout << "Exp/SKMC/FillTemplate2DSmeared >>      "
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate2DSmeared >>      "
     << "Number of template entries = "
-    << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << endl;
+    << this -> Template2D(s,m,kSKMCtNom) -> GetEntries();
     //
 #endif
     
@@ -2434,11 +2294,6 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                     
                     double nev = this->Template(s,m,template_to_use)->GetBinContent(ir,it);
                     
-                    // cout << "1D: " << util::AsString(s) << " , " << util::AsString(m)
-                    //      << " --> Ereco = " << this->Template(s,m,kSKMCtOri)->GetYaxis()->GetBinCenter(ir)
-                    //      << " --> nev = " << nev << endl;
-                    // if(nev==0) exit(1);
-                    
                     fMCTemplArrayNom[is]->GetEntryRef(im, it-1 , ir-1) = nev;
                     fMCTemplArrayTun[is]->GetEntryRef(im, it-1 , ir-1) = nev;
                     fMCTemplArrayFin[is]->GetEntryRef(im, it-1 , ir-1) = nev;
@@ -2449,7 +2304,7 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                         fMCTemplArrayRPAWght[is]->GetEntryRef(im, it-1 , ir-1) = 1.;
                     }
                     else if  (nev < conv::kASmallNum) {
-                        std::cerr<<"Warning: divide by zero in RPA rel weighting, setting weight of 1"<<std::endl;
+                        LOG("SuperkMC",pERROR)<<"Warning: divide by zero in RPA rel weighting, setting weight of 1";
                         fMCTemplArrayRPAWght[is]->GetEntryRef(im, it-1 , ir-1) = 1.;
                     }
                     else{
@@ -2472,12 +2327,6 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                 int EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,etrue_bin_edges,EtrueVarMin);
                 int EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,etrue_bin_edges,EtrueVarMax);
                 
-                //~ cout <<
-                //~ "\nEmin: " << util::VariableMCEtrueBinEdges(s,m)[itv-1] <<
-                //~ " Emax: " << util::VariableMCEtrueBinEdges(s,m)[itv] <<
-                //~ "\nEtruemin Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[is],util::EtrueBinEdges(s),EtrueVarMin) <<
-                //~ " Etruemax Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[is],util::EtrueBinEdges(s),EtrueVarMax) << endl;
-                
                 // loop over variable Ereco
                 for(int irv = 1; irv <= fMCVariableTempl[is][im]->GetXaxis()->GetNbins(); irv++) {
                     double nev = fMCVariableTempl[is][im]->GetBinContent(irv,itv);
@@ -2486,7 +2335,6 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                     
                     // Fill nonempty bin numbers.
                     if (nev < conv::kASmallNum) {
-                        //cout << irv << "exit" << endl;
                         continue;
                     }
                     
@@ -2497,14 +2345,6 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                     
                     int ErecoMinBin = 1 + TMath::BinarySearch(n_ereco_bins,ereco_bin_edges,ErecoVarMin);
                     int ErecoMaxBin = 1 + TMath::BinarySearch(n_ereco_bins,ereco_bin_edges,ErecoVarMax);
-                    
-                    //~ cout <<
-                    //~ "\n" <<
-                    //~ irv <<
-                    //~ "\nErmin: " << util::XsecErecoBinEdges(s,irv-1) <<
-                    //~ " Ermax: " << util::XsecErecoBinEdges(s,irv) <<
-                    //~ "\nErecomin Bin number: " << 1 + TMath::BinarySearch(kNErecoBins[is],util::ErecoBinEdges(s),ErecoVarMin) <<
-                    //~ " Erecomax Bin number: "  << 1 + TMath::BinarySearch(kNErecoBins[is],util::ErecoBinEdges(s),ErecoVarMax) << endl;
                     
                     int i_ne_fixed = 0;
                     // loop over fixed Etrue to count n nonempty
@@ -2559,13 +2399,6 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                         
                         double nev = this->Template2D(s,m,template_to_use)->GetBinContent(iq,ir,it);
                         
-                        // cout << "2D: " << util::AsString(s) << " , " << util::AsString(m)
-                        //      << " --> Q2 = " << this->Template2D(s,m,kSKMCtOri)->GetXaxis()->GetBinCenter(iq)
-                        //      << " --> Ereco = " << this->Template2D(s,m,kSKMCtOri)->GetYaxis()->GetBinCenter(ir)
-                        //      << " --> nev = " << nev << endl;
-                        // if(nev==0) {util::Die(1); return;}
-                        
-                        
                         fMCTemplArrayNom2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
                         fMCTemplArrayTun2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
                         fMCTemplArrayFin2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = nev;
@@ -2576,7 +2409,7 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                             fMCTemplArrayRPAWght2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = 1.;
                         }
                         else if  (nev < conv::kASmallNum) {
-                            std::cerr<<"Warning: divide by zero in RPA rel weighting, setting weight of 1"<<std::endl;
+                            LOG("SuperkMC",pERROR)<<"Warning: divide by zero in RPA rel weighting, setting weight of 1";
                             fMCTemplArrayRPAWght2D[is]->GetEntryRef(im, it-1 , ir-1, iq-1) = 1.;
                         }
                         else{
@@ -2600,12 +2433,6 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                 int EtrueMinBin = 1 + TMath::BinarySearch(n_etrue_bins,etrue_bin_edges,EtrueVarMin);
                 int EtrueMaxBin = 1 + TMath::BinarySearch(n_etrue_bins,etrue_bin_edges,EtrueVarMax);
                 
-                //~ cout <<
-                //~ "\nEmin: " << util::VariableMCEtrueBinEdges(s,m)[itv-1] <<
-                //~ " Emax: " << util::VariableMCEtrueBinEdges(s,m)[itv] <<
-                //~ "\nEtruemin Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[is],util::EtrueBinEdges(s),EtrueVarMin) <<
-                //~ " Etruemax Bin number: " << 1 + TMath::BinarySearch(kNEtrueBins[is],util::EtrueBinEdges(s),EtrueVarMax) << endl;
-                
                 // loop over variable Ereco
                 for(int irv = 1; irv <= fMCVariableTempl2D[is][im]->GetYaxis()->GetNbins(); irv++) {
                     
@@ -2628,19 +2455,10 @@ void SuperkMC::FillTemplateArrays(bool with_niwg_weights) // refill the template
                         
                         // Fill nonempty bin numbers.
                         if (nev < conv::kASmallNum) {
-                            //cout << irv << "exit" << endl;
                             continue;
                         }
                         
                         fNonEmptyVariableBins2D[is][im][i_ne_var_2d] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
-                        
-                        //~ cout <<
-                        //~ "\n" <<
-                        //~ irv <<
-                        //~ "\nErmin: " << util::XsecErecoBinEdges(s,irv-1) <<
-                        //~ " Ermax: " << util::XsecErecoBinEdges(s,irv) <<
-                        //~ "\nErecomin Bin number: " << 1 + TMath::BinarySearch(kNErecoBins[is],util::ErecoBinEdges(s),ErecoVarMin) <<
-                        //~ " Erecomax Bin number: "  << 1 + TMath::BinarySearch(kNErecoBins[is],util::ErecoBinEdges(s),ErecoVarMax) << endl;
                         
                         int i_ne_fixed = 0;
                         // loop over fixed Etrue to count n nonempty
@@ -2729,7 +2547,7 @@ void SuperkMC::FillSpecialTemplates(void)
         
 #ifndef __USE_2D_TEMPLATES__ // 1D templates
         
-        cout << "SKMC/FillSpecialTemplates >> Filling osc numu templates for " << util::AsString(s) << " sample" << endl;
+        LOG("SuperkMC",pDEBUG) << "SKMC/FillSpecialTemplates >> Filling osc numu templates for " << util::AsString(s) << " sample";
         SuperkMode_t src_modes[n] = {  kSKmNuMuCCQE,    kSKmNuMuCC1pi,     kSKmNuMuCCcoh,    kSKmNuMuCCoth    };
         SuperkMode_t tgt_modes[n] = {  kSKmOscNuMuCCQE, kSKmOscNuMuCC1pi,  kSKmOscNuMuCCcoh, kSKmOscNuMuCCoth };
         
@@ -2850,7 +2668,7 @@ void SuperkMC::FillSpecialTemplates(void)
         
         // NEW 2D TEMPLATES
         
-        cout << "SKMC/FillSpecialTemplates2D >> Filling osc numu templates for " << util::AsString(s) << " sample" << endl;
+        LOG("SuperkMC",pDEBUG) << "SKMC/FillSpecialTemplates2D >> Filling osc numu templates for " << util::AsString(s) << " sample";
         SuperkMode_t src_modes[n] = {  kSKmNuMuCCQE,    kSKmNuMuCC1pi,     kSKmNuMuCCcoh,    kSKmNuMuCCoth    };
         SuperkMode_t tgt_modes[n] = {  kSKmOscNuMuCCQE, kSKmOscNuMuCC1pi,  kSKmOscNuMuCCcoh, kSKmOscNuMuCCoth };
         
@@ -3008,7 +2826,7 @@ void SuperkMC::FillSpecialTemplates(void)
         
 #ifndef __USE_2D_TEMPLATES__ // 1D templates
         
-        cout << "SKMC/FillSpecialTemplates >> Filling osc numubar templates for " << util::AsString(s) << " sample" << endl;
+        LOG("SuperkMC",pDEBUG) << "SKMC/FillSpecialTemplates >> Filling osc numubar templates for " << util::AsString(s) << " sample";
         SuperkMode_t src_modes_numubar[n] = {  kSKmNuMuBarCCQE,    kSKmNuMuBarCC1pi,     kSKmNuMuBarCCcoh,    kSKmNuMuBarCCoth    };
         SuperkMode_t tgt_modes_numubar[n] = {  kSKmOscNuMuBarCCQE, kSKmOscNuMuBarCC1pi,  kSKmOscNuMuBarCCcoh, kSKmOscNuMuBarCCoth };
         
@@ -3127,7 +2945,7 @@ void SuperkMC::FillSpecialTemplates(void)
         
         // NEW 2D TEMPLATES
         
-        cout << "SKMC/FillSpecialTemplates2D >> Filling osc numubar templates for " << util::AsString(s) << " sample" << endl;
+        LOG("SuperkMC",pDEBUG) << "SKMC/FillSpecialTemplates2D >> Filling osc numubar templates for " << util::AsString(s) << " sample";
         SuperkMode_t src_modes_numubar[n] = {  kSKmNuMuBarCCQE,    kSKmNuMuBarCC1pi,     kSKmNuMuBarCCcoh,    kSKmNuMuBarCCoth    };
         SuperkMode_t tgt_modes_numubar[n] = {  kSKmOscNuMuBarCCQE, kSKmOscNuMuBarCC1pi,  kSKmOscNuMuBarCCcoh, kSKmOscNuMuBarCCoth };
         
@@ -3281,7 +3099,7 @@ void SuperkMC::FillSpecialTemplates(void)
         
 #ifndef __USE_2D_TEMPLATES__ // 1D templates
         
-        cout << "SKMC/FillSpecialTemplates >> Filling osc nuebar templates for " << util::AsString(s) << " sample" << endl;
+        LOG("SuperkMC",pDEBUG) << "SKMC/FillSpecialTemplates >> Filling osc nuebar templates for " << util::AsString(s) << " sample";
         
         SuperkMode_t src_modes_nuebar[n] = {  kSKmNuEBarCCQE,    kSKmNuEBarCC1pi,     kSKmNuEBarCCcoh,    kSKmNuEBarCCoth    };
         SuperkMode_t tgt_modes_nuebar[n] = {  kSKmOscNuEBarCCQE, kSKmOscNuEBarCC1pi,  kSKmOscNuEBarCCcoh, kSKmOscNuEBarCCoth };
@@ -3405,7 +3223,7 @@ void SuperkMC::FillSpecialTemplates(void)
         
         // NEW 2D TEMPLATES
         
-        cout << "SKMC/FillSpecialTemplates2D >> Filling osc nuebar templates for " << util::AsString(s) << " sample" << endl;
+        LOG("SuperkMC",pDEBUG) << "SKMC/FillSpecialTemplates2D >> Filling osc nuebar templates for " << util::AsString(s) << " sample";
         
         SuperkMode_t src_modes_nuebar[n] = {  kSKmNuEBarCCQE,    kSKmNuEBarCC1pi,     kSKmNuEBarCCcoh,    kSKmNuEBarCCoth    };
         SuperkMode_t tgt_modes_nuebar[n] = {  kSKmOscNuEBarCCQE, kSKmOscNuEBarCC1pi,  kSKmOscNuEBarCCcoh, kSKmOscNuEBarCCoth };
@@ -3901,7 +3719,6 @@ TH2D * SuperkMC::Template(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t t
         default:
             return 0;
     }
-    //std::cerr<<util::AsString(s)<<"\t"<<util::AsString(m)<<"\t"<<util::AsString(type)<<std::endl;
     assert(h);
     
     return h;
@@ -3937,7 +3754,6 @@ TH3D * SuperkMC::Template2D(SuperkSample_t s, SuperkMode_t m, SKMCTemplateType_t
         default:
             return 0;
     }
-    //std::cerr<<util::AsString(s)<<"\t"<<util::AsString(m)<<"\t"<<util::AsString(type)<<std::endl;
     assert(h);
     
     return h;
@@ -4002,7 +3818,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
     //
     
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> Applying BANFF flux and cross-section tuning." << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying BANFF flux and cross-section tuning.";
 #endif
     
     // loop over samples
@@ -4070,8 +3886,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
                     if(nev_tuned < 0) {
 #ifdef __show_negative_events_mesg_debug__
-                        cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> set negative number of events " << nev_tuned
-                        << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV << endl;
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplyBANFFTuningToTemplates >> set negative number of events " << nev_tuned
+                        << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV;
 #endif
                         nev_tuned = 0;
                     }
@@ -4103,7 +3919,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates(void)
     }//is
     
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC/ApplyBANFFTuningToTemplates >> Complete" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplyBANFFTuningToTemplates >> Complete";
 #endif
 }
 //________________________________________________________________________________________
@@ -4130,7 +3946,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
     //
     
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC >> Applying BANFF 2D flux and cross-section tuning." << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying BANFF 2D flux and cross-section tuning.";
 #endif
     
     // loop over samples
@@ -4206,8 +4022,8 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
                     if(nev_tuned < 0) {
 #ifdef __show_negative_events_mesg_debug__
-                        cout << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> set negative number of events " << nev_tuned
-                        << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV << endl;
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> set negative number of events " << nev_tuned
+                        << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV;
 #endif
                         nev_tuned = 0;
                     }
@@ -4243,7 +4059,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
     }//is
     
 #ifdef __show_init_mesg_info__
-    cout << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> Complete" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> Complete";
 #endif
 }
 
@@ -4255,7 +4071,7 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
 void SuperkMC::UpdateTemplates(void)
 {
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> Updating MC templates...." << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Updating MC templates....";
 #endif
     
 #ifndef __USE_2D_TEMPLATES__
@@ -4268,7 +4084,7 @@ void SuperkMC::UpdateTemplates(void)
     
 #ifdef __INCLUDE_MC_STAT_FLUCTUATIONS__
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> ** Note ** Fluctuating templates to take into account the effect of finite MC statistics...." << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> ** Note ** Fluctuating templates to take into account the effect of finite MC statistics....";
 #endif
 #ifndef __USE_2D_TEMPLATES__
     this->ApplyMCStatFluctationToTemplates(true); // Implemented only for 1D templates
@@ -4305,7 +4121,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
     // All multiplicative systematics are handled in the following loop.
     //
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying multiplicative systematics";
 #endif
     
     //~ fNuXSec->SetSKMCArraysHaveNIWGTune(fTemplateArraysHaveNIWGTune);
@@ -4321,8 +4137,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
         
         bool relativisticRPA = (bool) rpa_tweakval;
         assert ( fabs ( (double)relativisticRPA - rpa_tweakval) < conv::kASmallNum); // Check RPA was exactly 1 or 0
-        
-        //~ std::cerr<<util::AsString(s)<<"\t"<<is_rhc<<"\t"<<rpa_tweakval<<"\t"<<relativisticRPA<<std::endl;
         
         // Loop over sample modes
         for(int im = 0; im < knm; im++) {
@@ -4396,10 +4210,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #ifdef SYSTWEIGHTSAREONE
                 wght = 1;
 #endif
-                /*
-                 if(util::Is2p2h(m))
-                 cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
-                 */
                 // loop over 50MeV Ereco
                 for (int ifb = 0 ; ifb < fNNonEmptyFixedBins[is][im][ivb] ; ifb++ ) {
                     int it =  fNonEmptyFixedBins[is][im][ivb][ifb] % conv::kBigIndex;
@@ -4431,15 +4241,14 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
                         flux_wght  != 1. ||
                         xsec_wght  != 1. )
                     {
-                        cout << "Exp/SKMC/SystVarWght >> "
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/SystVarWght >> "
                         << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
                         << ", Ereco = " << Ereco << " GeV"
                         << ", Etrue = " << Etrue << " GeV \n=> Weights: "
                         << "SK+FSI = "  << skfsi_wght 
                         << ", Flux = "  << flux_wght
                         << ", XSec = "  << xsec_wght
-                        << " (total = " << wght << ")"
-                        << endl;
+                        << " (total = " << wght << ")";
                     }
 		    }
 #endif//__show_syst_var_wght_mesg_debug__
@@ -4447,8 +4256,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative(void)
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
                     if(nev_systm < 0) {
 #ifdef __show_negative_events_mesg_debug__
-                        cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
-                        << " to " << 0 << "\t" << " Ereco: " << Ereco << endl;
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
+                        << " to " << 0 << "\t" << " Ereco: " << Ereco;
 #endif//__show_negative_events_mesg_debug__
                         nev_systm = 0;
                     }
@@ -4480,7 +4289,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
     // All multiplicative systematics are handled in the following loop.
     //
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> Applying multiplicative systematics" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying multiplicative systematics";
 #endif
     
     // Loop over samples
@@ -4495,12 +4304,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
         bool relativisticRPA = (bool) rpa_tweakval;
         assert ( fabs ( (double)relativisticRPA - rpa_tweakval) < conv::kASmallNum); // Check RPA was exactly 1 or 0
         
-        //~ std::cerr<<util::AsString(s)<<"\t"<<is_rhc<<"\t"<<rpa_tweakval<<"\t"<<relativisticRPA<<std::endl;
-	//LOG("SuperkMC",pINFO) << "Initial values for SKDetFSI";
-        //~# fSKDetFSI->CurrentValues().Print();
-	//~# fSKDetFSI->UntunedValues().Print();
-	//~# fSKDetFSI->InitialValues().Print();
-    
         // Loop over sample modes
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];
@@ -4577,10 +4380,6 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
 #ifdef SYSTWEIGHTSAREONE
                 wght = 1;
 #endif
-                /*
-                 if(util::Is2p2h(m))
-                 cout << "SK: " << skfsi_wght << "\tFlux: " << flux_wght << "\tXSec: " << xsec_wght << "\tTotal: " << wght << endl;
-                 */
                 // loop over 50MeV Ereco
                 for (int ifb = 0 ; ifb < fNNonEmptyFixedBins2D[is][im][ivb] ; ifb++ ) {
                     
@@ -4617,7 +4416,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
                         flux_wght  != 1. ||
                         xsec_wght  != 1. )
                     {
-                        cout << "Exp/SKMC/SystVarWght >> "
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/SystVarWght >> "
                         << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
                         << ", Q2 = " << Q2 << " GeV"
                         << ", Ereco = " << Ereco << " GeV"
@@ -4628,8 +4427,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
                         << ", RPA  = "  << templRPA[it-1][ir-1][iq-1]
                         << " (total = " << wght << ")"
                         << " Nom events = " << nev
-                        << " New events = " << nev_systm
-                        << endl;
+                        << " New events = " << nev_systm;
                     }
 		    }
 #endif//__show_syst_var_wght_mesg_debug__
@@ -4637,8 +4435,8 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
 #ifdef NO_EVENTS_CAN_BE_NEGATIVE
                     if(nev_systm < 0) {
 #ifdef __show_negative_events_mesg_debug__
-                        cout << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
-                        << " to " << 0 << "\t" << " Ereco: " << Ereco << ", Q2: " << Q2 << endl;
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplySystematicsToTemplates_Multiplicative >> set negative number of events " << nev_systm
+                        << " to " << 0 << "\t" << " Ereco: " << Ereco << ", Q2: " << Q2;
 #endif//__show_negative_events_mesg_debug__
                         nev_systm = 0;
                     }
@@ -4681,7 +4479,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum(void)
     // This systematic is applied by scaling the Ereco bin edges and assuming uniform
     // distribution of events within each bin.
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> Applying non-multiplicative systematics to total spectrum" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying non-multiplicative systematics to total spectrum";
 #endif
     
     bool applied_negevents_condition = false;
@@ -4720,7 +4518,7 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum2D(void)
     // This systematic is applied by scaling the Ereco bin edges and assuming uniform
     // distribution of events within each bin.
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> Applying non-multiplicative systematics to total spectrum" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying non-multiplicative systematics to total spectrum";
 #endif
     
     bool applied_negevents_condition = false;
@@ -4756,7 +4554,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     //
     
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> Applying physics hypothesis" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying physics hypothesis";
 #endif
     
     PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
@@ -4793,7 +4591,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates(void)
     }
     else
     {
-        std::cerr<<"SKMC/ApplyPhysHypothesisToTemplates >> Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
+        LOG("SuperkMC",pERROR)<<"SKMC/ApplyPhysHypothesisToTemplates >> Unimplemented hypothesis: "<<util::AsString(hyp);
         util::Die(-1); return;
     }
     
@@ -4820,7 +4618,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates2D(void)
     //
     
 #ifdef __show_update_mesg_info__
-    cout << "Exp/SKMC >> Applying physics hypothesis" << endl;
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying physics hypothesis";
 #endif
     
     PhysHypothesis_t hyp = fPhysHypothesis.Hypothesis();
@@ -4857,7 +4655,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates2D(void)
     }
     else
     {
-        std::cerr<<"SKMC/ApplyPhysHypothesisToTemplates2D >> Unimplemented hypothesis: "<<util::AsString(hyp)<<std::endl;
+        LOG("SuperkMC",pERROR)<<"SKMC/ApplyPhysHypothesisToTemplates2D >> Unimplemented hypothesis: "<<util::AsString(hyp);
         util::Die(-1); return;
     }
     
@@ -4888,7 +4686,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
     double Dmsq     = fPhysHypothesis.CurrValue(kPhypDm23sq);
     double delta_cp = fPhysHypothesis.CurrValue(kPhypCPV    );
 #ifdef __show_hypothesis__
-    cout << "**  SKMC/ApplyPhysHypothesisToTemplates_3fOsc >> " << fPhysHypothesis;
+    LOG("SuperkMC",pDEBUG) << "**  SKMC/ApplyPhysHypothesisToTemplates_3fOsc >> " << fPhysHypothesis;
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
@@ -4934,10 +4732,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
     }
     //unknown
     else {
-        cerr << "**  Exp/SKMC >> Can't handle choice of "
+        LOG("SuperkMC",pERROR) << "**  Exp/SKMC >> Can't handle choice of "
         << "\n oscillation mixing params: " << util::AsString(omp)
-        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
-        << endl;
+        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme);
         util::Die(1); return;
     }
     
@@ -4986,15 +4783,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
             
             
 #ifdef __show_hypothesis_probabilities__
-            cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu      ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar  ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue       ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu       ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar ;
 #endif
             
             
@@ -5125,7 +4922,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates
     double Dmsqbar     = fPhysHypothesis.CurrValue(kPhypDm23sqBar);
     double delta_cpbar = fPhysHypothesis.CurrValue(kPhypCPVBar );
 #ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+    LOG("SuperkMC",pDEBUG) << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
@@ -5177,10 +4974,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates
     }
     //unknown
     else {
-        cerr << "**  Exp/SKMC >> Can't handle choice of "
+        LOG("SuperkMC",pERROR) << "**  Exp/SKMC >> Can't handle choice of "
         << "\n oscillation mixing params: " << util::AsString(omp)
-        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
-        << endl;
+        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme);
         util::Die(1); return;
     }
     
@@ -5229,15 +5025,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBar(const bool Use2Dtemplates
             
             
 #ifdef __show_hypothesis_probabilities__
-            cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu      ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar  ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue       ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu       ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar ;
 #endif
             
             
@@ -5358,7 +5154,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarDissap(const bool Use2Dtem
   double Dmsqbar     = fPhysHypothesis.CurrValue(kPhypDm23sqBar);
   
 #ifdef __show_hypothesis__
-  cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+  LOG("SuperkMC",pDEBUG) << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
   NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
   NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
@@ -5410,10 +5206,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarDissap(const bool Use2Dtem
   }
   //unknown
   else {
-    cerr << "**  Exp/SKMC >> Can't handle choice of "
+    LOG("SuperkMC",pERROR) << "**  Exp/SKMC >> Can't handle choice of "
     << "\n oscillation mixing params: " << util::AsString(omp)
-    << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
-    << endl;
+    << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme);
     util::Die(1); return;
   }
   
@@ -5462,15 +5257,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarDissap(const bool Use2Dtem
       
       
 #ifdef __show_hypothesis_probabilities__
-      cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-      cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-      cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-      cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-      cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-      cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-      cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
-      cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
-      cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  E = " << Etrue << " GeV" ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        ;
+      LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  ;
 #endif
       
       
@@ -5600,7 +5395,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(const bool Use2Dte
     double betabar     = fPhysHypothesis.CurrValue(kPhypBetaBar);  // add betabar
     
 #ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+    LOG("SuperkMC",pDEBUG) << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
@@ -5652,10 +5447,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(const bool Use2Dte
     }
     //unknown
     else {
-        cerr << "**  Exp/SKMC >> Can't handle choice of "
+        LOG("SuperkMC",pERROR) << "**  Exp/SKMC >> Can't handle choice of "
         << "\n oscillation mixing params: " << util::AsString(omp)
-        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
-        << endl;
+        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme);
         util::Die(1); return;
     }
     
@@ -5704,15 +5498,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscBarNormBar(const bool Use2Dte
             
             
 #ifdef __show_hypothesis_probabilities__
-            cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  E = " << Etrue << " GeV" ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  ;
 #endif
             
             
@@ -5841,7 +5635,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(const bool Use2Dtempl
     double betabar     = fPhysHypothesis.CurrValue(kPhypBetaBar);  // add betabar
     
 #ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+    LOG("SuperkMC",pDEBUG) << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     NuOscDmsqScheme_t  dmsqscheme = Opt::Instance()->GetEffectiveDmsqScheme();
@@ -5887,10 +5681,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(const bool Use2Dtempl
     }
     //unknown
     else {
-        cerr << "**  Exp/SKMC >> Can't handle choice of "
+        LOG("SuperkMC",pERROR) << "**  Exp/SKMC >> Can't handle choice of "
         << "\n oscillation mixing params: " << util::AsString(omp)
-        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme)
-        << endl;
+        << "\n and independent squared mass-splittings: " << util::AsString(dmsqscheme);
         util::Die(1); return;
     }
     
@@ -5939,15 +5732,15 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOscNormBar(const bool Use2Dtempl
             
             
 #ifdef __show_hypothesis_probabilities__
-            cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  E = " << Etrue << " GeV" ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  ;
 #endif
             
             
@@ -6093,7 +5886,7 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(const bool Use2Dtemplates)
     }
     
 #ifdef __show_hypothesis__
-    cout << "**  Exp/SKMC >> " << fPhysHypothesis;
+    LOG("SuperkMC",pDEBUG) << "**  Exp/SKMC >> " << fPhysHypothesis;
 #endif
     NuOscMixParam_t omp = Opt::Instance()->gOscMixingParamChoice;
     
@@ -6108,16 +5901,14 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(const bool Use2Dtemplates)
             fNuOscSterile.SetMixingDoubleAnglesOct2(mixing12,mixing13,mixing14,mixing15,mixing23,mixing24,mixing25,mixing34,mixing35);
         }
         else {
-            cerr << "**  Exp/SKMC >> Can't handle choice of "
-            << "\n octant: " << util::AsString(Opt::Instance()->gOscOctantChoice)
-            << endl;
+            LOG("SuperkMC",pERROR) << "**  Exp/SKMC >> Can't handle choice of "
+            << "\n octant: " << util::AsString(Opt::Instance()->gOscOctantChoice);
             util::Die(1); return;
         }
     }
     else {
-        cerr << "**  Exp/SKMC >> Can't handle choice of "
-        << "\n oscillation mixing params: " << util::AsString(omp)
-        << endl;
+        LOG("SuperkMC",pERROR) << "**  Exp/SKMC >> Can't handle choice of "
+        << "\n oscillation mixing params: " << util::AsString(omp);
         util::Die(1); return;
     }
     
@@ -6170,20 +5961,19 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_Sterile(const bool Use2Dtemplates)
             double p_nuebar_nc  = p_osc_bar[0][0]+p_osc_bar[0][1]+p_osc_bar[0][2];
             
 #ifdef __show_hypothesis_probabilities__
-            cout << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   << endl;
-            cout << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  << endl;
-            
-            cout << "Exp/SKMC >>  * P (numu     -> active ) = " << p_numu_nc         << endl;
-            cout << "Exp/SKMC >>  * P (numubar  -> active ) = " << p_numubar_nc      << endl;
-            cout << "Exp/SKMC >>  * P (nue      -> active ) = " << p_nue_nc          << endl;
-            cout << "Exp/SKMC >>  * P (nuebar   -> active ) = " << p_nuebar_nc       << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  E = " << Etrue << " GeV" << endl;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> numu   ) = " << p_numu_numu       ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> numubar) = " << p_numubar_numubar ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> nue    ) = " << p_nue_nue         ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> nuebar ) = " << p_nuebar_nuebar   ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> nue    ) = " << p_numu_nue        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> nuebar ) = " << p_numubar_nuebar  ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> numu   ) = " << p_nue_numu        ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> numubar) = " << p_nuebar_numubar  ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numu     -> active ) = " << p_numu_nc         ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (numubar  -> active ) = " << p_numubar_nc      ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nue      -> active ) = " << p_nue_nc          ;
+            LOG("SuperkMC",pDEBUG) << "Exp/SKMC >>  * P (nuebar   -> active ) = " << p_nuebar_nc       ;
             
 #endif
             
@@ -6501,8 +6291,8 @@ bool SuperkMC::UpdateErecoSpectra(void)
 #ifdef __apply_minevents_to_individual_modes__
                 if(nev < 0) {
 #ifdef __show_negative_events_mesg_debug__
-                    cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
-                    << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) << endl;
+                    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
+                    << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetXaxis()->GetBinCenter(ir) ;
 #endif
                     nev = 0;
                 } // if nev < 0
@@ -6571,9 +6361,9 @@ bool SuperkMC::UpdateErecoVsQ2Spectra(void)
 #ifdef __apply_minevents_to_individual_modes__
                     if(nev < 0) {
 #ifdef __show_negative_events_mesg_debug__
-                        cout << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/UpdateErecoSpectra >> set negative number of events " << nev
                         << " to zero " << 0 << "\t" << " Ereco: " << reco_spectrum_tot->GetYaxis()->GetBinCenter(ir)
-                        << " to zero " << 0 << "\t" << " Q2: "    << q2_spectrum_tot->GetXaxis()->GetBinCenter(iq) << endl;
+                        << " to zero " << 0 << "\t" << " Q2: "    << q2_spectrum_tot->GetXaxis()->GetBinCenter(iq) ;
 #endif
                         nev = 0;
                     } // if nev < 0
@@ -6695,10 +6485,9 @@ bool SuperkMC::IsThereAnEvent(SuperkSample_t s, double Etrue) const
 #ifdef __show_isanevent_mesg_debug__
     if(ev){
         
-        cout << "Exp/SuperkMC >> There are " << fMCEtrueSpectrumTotArray[is]->GetEntryRef(it-1);
-        cout << " events for sample = " << util::AsString(s)
-        << ", Etrue = " << Etrue
-        << endl;
+        LOG("SuperkMC",pDEBUG) << "Exp/SuperkMC >> There are " << fMCEtrueSpectrumTotArray[is]->GetEntryRef(it-1);
+        LOG("SuperkMC",pDEBUG) << " events for sample = " << util::AsString(s)
+        << ", Etrue = " << Etrue;
     }
 #endif
     
@@ -6718,7 +6507,7 @@ double SuperkMC::AnalyzedSamplePOT(SuperkSample_t s) const
             return fPOT;
     }
     else {
-        cerr << "Sample not selected" << endl;
+        LOG("SuperkMC",pERROR) << "Sample not selected";
         util::Die(1); return 0;
     }
 }
@@ -7019,7 +6808,7 @@ bool SuperkMC::SkipTemplate(SuperkMode_t m)
     
 #ifdef __show_skipped_templates__
     if(skip) {
-        cout << "Exp/SKMC >> Skipping template: " << util::AsString(m) << endl;
+        LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Skipping template: " << util::AsString(m);
     }
 #endif
     
@@ -7056,7 +6845,6 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
             
             //first write the 2d template, and cout the mode integral
             mctempl->Write();
-            //      cout << name << " " << util::AsString(s) << " " << util::AsString(m) << " " << mctempl->Integral() << endl;
             nsk += mctempl->Integral();
             
             //fill a 1D ereco spectrum
@@ -7115,7 +6903,6 @@ void SuperkMC::NevDebug(SKMCTemplateType_t t, string name)
         TH1D * hfull = this->CurrErecoSpectrum(s);
         hfull->Write("ereco_spectrum");
         delete hfull;
-        //    cout << "Total: " << nsk << endl << endl;
         oute->Close();
         delete oute;
     }//sample
@@ -7157,7 +6944,7 @@ void SuperkMC::NevDebug2D(SKMCTemplateType_t t, string name)
             
             //first write the 3d template, and cout the mode integral
             mctempl->Write();
-            cout << name << " " << util::AsString(s) << " " << util::AsString(m) << " " << mctempl->Integral() << endl;
+            LOG("SuperkMC",pINFO) << name << " " << util::AsString(s) << " " << util::AsString(m) << " " << mctempl->Integral();
             nsk += mctempl->Integral();
             
             //fill a 1D q2 spectrum
@@ -7266,7 +7053,7 @@ void SuperkMC::NevDebug2D(SKMCTemplateType_t t, string name)
         hfull2D->Write("erecoVsq2_spectrum");
         delete hfull2D;
         
-        cout << "Total: " << nsk << endl << endl;
+        LOG("SuperkMC",pINFO) << "Total: " << nsk;
         oute->Close();
         delete oute;
     }//sample
@@ -7355,7 +7142,7 @@ void SuperkMC::MCStatErrDebug()
                     double nev_new = mctemplerr->GetBinContent(ix, iy);
                     if(mctempl->GetBinContent(ix,iy) > kASmallNum)
                         if(mctempl->GetBinContent(ix,iy) > mctemplerr->GetBinContent(ix,iy))
-                            cout << mctempl->GetBinContent(ix,iy) << "\t" << mctemplerr->GetBinContent(ix,iy) << endl;
+                            LOG("SuperkMC",pINFO) << mctempl->GetBinContent(ix,iy) << "\t" << mctemplerr->GetBinContent(ix,iy);
                     double nev_old = spectrum_with2derr->GetBinContent(ix);
                     spectrum_with2derr->SetBinContent(ix, nev_new + nev_old);
                     for(int ie = 1; ie < ntoys; ie++) {
@@ -7707,20 +7494,15 @@ double SuperkMC::CalcThetaDegrees(float dir[][7][3], conv::SuperkSample_t s ){
     costheta = kBeamDir[0] * dir[0][2][0] + kBeamDir[1] * dir[0][2][1] + kBeamDir[2] * dir[0][2][2];    
   }
   if( costheta<-1.00001 || costheta>+1.00001 ){
-    cerr << endl;
-    cerr << std::setprecision(10);
-    cerr << "SuperkMC::FillTemplateHistogram" << endl;
-    cerr << "costheta = " << costheta << " --> outside allowed range" << endl;
-    cerr << endl;
+    LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
+    LOG("SuperkMC",pERROR) << "costheta = " << costheta << " --> outside allowed range" ;
     util::Die(1); return 0;
     exit(1);
   }    
   double LepTheta        = TMath::ACos(costheta); // radiant    
   double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
   if(LepTheta<0.){
-    cerr << endl;
-    cerr << "Theta lepton is negative: " << LepThetaDegrees << " degrees" << endl;
-    cerr << endl;
+    LOG("SuperkMC",pERROR) << "Theta lepton is negative: " << LepThetaDegrees << " degrees" ;
     exit(1);
   }
   return LepThetaDegrees;
@@ -7739,15 +7521,12 @@ void SuperkMC::DrawProjectionXY(TH3D *h){ // for debugging
     //this->DrawProjectionXY( mctempl ); // OK!!!
     //util::Die(1); return;;
     
-    cout << "Draw Canvas" << endl;
-    
     TCanvas *c = new TCanvas("c","c");
     h->DrawCopy("colz");
     
     TCanvas *c1 = new TCanvas("c1","c1");
     h->Project3D("xy")->DrawCopy("colz");
     
-    cout << "Print Canvas" << endl;
     c->Print("ciao.pdf");
     c1->Print("proj_xy.pdf");
     
