@@ -27,75 +27,75 @@ import matplotlib.backends.backend_pdf
 
 def sigma(name):
     if "ca5" in name:
-        return 0.057437
+        return 0.0591673
     elif "bgscl" in name:
-        return 0.189887
+        return 0.189454
     elif "maqe" in name:
-        return 0.068549
+        return 0.0551331
     elif "manff" in name:
-        return 0.04588
+        return 0.0451161
     elif "pfo" in name:
-        return 0.088927
+        return 0.0727042
     elif "dismpishp" in name:
-        return 0.184702
+        return 0.186182
     elif "erpa_A" in name:
-        return 0.105128
+        return 0.0558764
     elif "erpa_B" in name:
-        return 0.139964
+        return 0.117005
     elif "erpa_D" in name:
-        return 0.13877
+        return 0.126062
     elif "erpa_E" in name:
-        return 0.357223
+        return 0.354058
     elif "mecpdd" in name:
-        return 0
+        return 0.30569
 
 def nominal(name):
     if "ca5" in name:
-        return -0.00564
+        return 0.973796 - 1
     elif "bgscl" in name:
-        return -0.07577
+        return 0.977381 - 1
     elif "maqe" in name:
-        return 0.00022
+        return 0.898567 - 1
     elif "manff" in name:
-        return -0.2009
+        return 0.824069 - 1
     elif "pfo" in name:
-        return -0.06443
+        return 0.917547 - 1
     elif "dismpishp" in name:
-        return 0.446271
+        return 0.509591 - 0
     elif "erpa_A" in name:
-        return -0.20329
+        return 0.661699 - 1
     elif "erpa_B" in name:
-        return 0.77547
+        return 1.64227 - 1
     elif "erpa_D" in name:
-        return -0.08457
+        return 0.994518 - 1
     elif "erpa_E" in name:
-        return -0.14269
+        return 0.878244 - 1
     elif "mecpdd" in name:
-        return 1
+        return 0.973912 - 1
 
 def niwg(name):
     if "ca5" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "bgscl" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "maqe" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "manff" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "pfo" in name:
         return (-0.11,0.27)
     elif "dismpishp" in name:
-        return (-9999,9999)
+        return (-9999.0,9999.0)
     elif "erpa_A" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "erpa_B" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "erpa_D" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "erpa_E" in name:
-        return (-1,9999)
+        return (-1.0,9999.0)
     elif "mecpdd" in name:
-        return (-9999,9999)
+        return (-1.0,1.0)
 
 
 def state(filename, var, mode, flav, etbin, erbin, thetabin):

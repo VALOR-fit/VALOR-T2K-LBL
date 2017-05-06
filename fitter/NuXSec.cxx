@@ -1498,11 +1498,6 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 
         spline_point = tb-untuned_value;
 
-/*        if(p == kNuisBANFFShape2p2h || p == kRHCNuisBANFFShape2p2h)
-        {
-           spline_point = 1.0;
-        }*/
-        
 #ifdef check_spline_limits
         if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
                     LOG("NuXSec",pERROR) <<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point
@@ -1969,7 +1964,9 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
             p = kListOfXSecSyst[isyst];
             // Was tweaked?
             if(kXSecSystIncludedInBANFF[isyst])
+            {
                 dt = 1.0;//fabs(fBANFF->CurrentValue(p) - fBANFF->InitialValue(p)); // banff parameters
+            }
             else
                 dt = fabs(this->CurrentValue(p)); // non-banff normalisations
         }//FHC
@@ -2003,9 +2000,9 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     TSpline3 * wght_spl = 0;
     
     double wght = 1.;
-    double tb, tc;
+    double tc;
     
-    double spl_tb(0), spl_tc(0);
+    double spl_tc(0);
     
     //
     // BANFF param w/ response functions:
@@ -2040,18 +2037,13 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         if(p == kRHCNuisBANFFMAQE          ||
            p == kRHCNuisBANFFMARES          )
         {
-            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
-        // double spl_tb = (tb-untuned_value);
-        // double spl_tc = (tc-untuned_value);
-        spl_tb = (tb-untuned_value);
         spl_tc = (tc-untuned_value);
 
 #ifdef check_spline_limits
@@ -2110,19 +2102,15 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
            p == kRHCNuisBANFFShape2p2h  
            )
         {
-            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
-        // double spl_tb = tb-untuned_value;
-        // double spl_tc = tc-untuned_value;
-        spl_tb = tb-untuned_value;
         spl_tc = tc-untuned_value;
+
 #ifdef check_spline_limits
         if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
           LOG("NuXSec", pERROR) <<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc
@@ -2136,8 +2124,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
         
         wght = wght_spl->Eval(spl_tc);
-        LOG("NuXSec", pFATAL) << "Parameter: " << util::AsString(p) 
-                              <<" fBANFF->InitialValue(p): "<< wght_spl->Eval(spl_tb) << " @ " <<  spl_tb
+        LOG("NuXSec", pDEBUG) << "Parameter: " << util::AsString(p) 
                               <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
     }
     
@@ -2155,12 +2142,10 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         // NEW XSEC
         if(p == kRHCNuisBANFFFermiMom )
         {
-            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
         }
         else {
-            tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
@@ -2277,7 +2262,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         << " Bins are Ereco,Etrue,Q2 = " << ireco << "," << itrue << "," << iq2 << " =>"
         << " Weight [" << util::AsString(p) << "] = " << wght
         << " Current value = " << this->CurrentValue(p)
-        << "\nEvaluated at: tb " << spl_tb << ", tc "<< spl_tc ;
+        << "\nEvaluated at: tc "<< spl_tc ;
         if (wght_spl) {
             LOG("NuXSec",pDEBUG) << "Spline name, title: "<<wght_spl->GetName()<<" , "<<wght_spl->GetTitle();
         }

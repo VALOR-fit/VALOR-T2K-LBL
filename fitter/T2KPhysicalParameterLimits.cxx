@@ -163,13 +163,6 @@ void valor::T2KPhysicalParameterLimits::SetDefaults(void)
   fParamMinima[conv::kNuisBANFFMARES   ] = 0;
   fParamMinima[conv::kRHCNuisBANFFMARES] = 0;
   
-  // EBO
-  // fParamMinima[conv::kNuisBANFFBindE    ] = 0.44;
-  // fParamMaxima[conv::kNuisBANFFBindE    ] = 1.56;
-  
-  // fParamMinima[conv::kRHCNuisBANFFBindE ] = 0.44;
-  // fParamMaxima[conv::kRHCNuisBANFFBindE ] = 1.56;
-  
   // PFO
   fParamMinima[conv::kNuisBANFFFermiMom    ] = 0.89;
   fParamMaxima[conv::kNuisBANFFFermiMom    ] = 1.22;
@@ -184,8 +177,26 @@ void valor::T2KPhysicalParameterLimits::SetDefaults(void)
   // ca5
   fParamMinima[conv::kNuisBANFFCA5    ] = 0.;
   fParamMinima[conv::kRHCNuisBANFFCA5 ] = 0.;
-  
-  
+
+  // BeRPA
+  fParamMinima[conv::kNuisBANFFBeRPA_A] = 0.;
+  fParamMinima[conv::kRHCNuisBANFFBeRPA_A] = 0.;
+  fParamMinima[conv::kNuisBANFFBeRPA_B] = 0.;
+  fParamMinima[conv::kRHCNuisBANFFBeRPA_B] = 0.;
+  fParamMinima[conv::kNuisBANFFBeRPA_D] = 0.;
+  fParamMinima[conv::kRHCNuisBANFFBeRPA_D] = 0.;
+  fParamMinima[conv::kNuisBANFFBeRPA_E] = 0.;
+  fParamMinima[conv::kRHCNuisBANFFBeRPA_E] = 0.;
+  fParamMinima[conv::kNuisBANFFBeRPA_U] = 0.;
+  fParamMinima[conv::kRHCNuisBANFFBeRPA_U] = 0.;
+
+  // Shape 2p2h
+  fParamMinima[conv::kNuisBANFFShape2p2h] = -1.;
+  fParamMinima[conv::kRHCNuisBANFFShape2p2h] = -1.;
+  fParamMaxima[conv::kNuisBANFFShape2p2h] = 1.;
+  fParamMaxima[conv::kRHCNuisBANFFShape2p2h] = 1.;
+
+
   return;
 }
 //____________________________________________________________________________

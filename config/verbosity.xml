@@ -18,6 +18,6 @@
   <priority msgstream="SuperkExp">              FATAL    </priority>  
   <priority msgstream="CorrelatedSystematics">  FATAL    </priority>
   <priority msgstream="UtlFitParamListFactory"> FATAL    </priority>
-  <priority msgstream="NuXSec">                 FATAL    </priority>
+  <priority msgstream="NuXSec">                 INFO    </priority>
   
 </messenger_config>

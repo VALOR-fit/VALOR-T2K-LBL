@@ -32,7 +32,7 @@
 //#define __show_skipped_templates__
 //#define __show_isanevent_mesg_debug__
 //#define __show_negative_events_mesg_debug__
-#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
+//#define __save_templates_debug__   // saves to files, and cout's number of events, at various stages of applying tunes to the templates:
 // 1 number of events
 // 2 number of events, weighted by pot & mc normalisation
 // 3 number of events, weighted by pot & mc normalisation, flux tuning
@@ -56,7 +56,7 @@
 #define INCLUDEEVENTSNEGATIVEQ2      // include Q2 underflow events in the first bin?
 #define INCLUDEEVENTSOVERFLOWQ2      // include Q2 overflow events in the last bin?
 
-//#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
+#define USE_FLUX_EXT_WEIGHT // Instead of using 'wgt' branch in files, use '_ratio' flux plots.
 //#define USE_RPA_WEIGHTS     // use the wgtRPA_nr and wgtRPA_r weights in the trees
 
 //#define USE_OscBr_WEIGHTS   // use the ptheta branch with oscillation weights, for comparison purposes only

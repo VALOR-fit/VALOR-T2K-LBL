@@ -92,156 +92,110 @@ foreach (@ARGV) {
   $iarg++;
 }
 
-$resource        = "interactive"               unless defined $resource;
-#$tag            = "submit_prova"              unless defined $tag;
-$tag             = "submit_prova_TemplVArray"  unless defined $tag;
+$resource        = "warwick"               unless defined $resource;
+$tag             = "oa2017_AsimovA"  unless defined $tag;
+$config_file     = "analysis_configuration_oa2017_run1-7c_postfit.xml"  unless defined $config_file;
+$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
 
-#$config_file     = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml"  unless defined $config_file;
-$config_file     = "analysis_configuration_test_theta_elike_RFGRPA.xml"  unless defined $config_file;
-
-$config_file     = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml"  unless defined $config_file;
-
-
-#$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
-$fitparamlist   = "nuosc3f_normbar+nuisance"    unless defined $fitparamlist;  # nuebar appearance analysis
-
-# Mach3, T2K Run1-4 + reactors best fit
+# Asimov Common
 $dm23sq_nh       = 2.509E-3                           unless defined $dm23sq_nh; 
 $dm12sq_nh       = 7.53E-5                            unless defined $dm12sq_nh; 
-$mix23_nh        = 0.528                              unless defined $mix23_nh;
-$mix13_nh        = 0.0243                             unless defined $mix13_nh;
+$mix13_nh        = 0.0217                             unless defined $mix13_nh;
 $mix12_nh        = 0.304                              unless defined $mix12_nh;
-$deltacp_nh      = -1.601                             unless defined $deltacp_nh;
 $dm23sq_ih       = 2.509E-3                           unless defined $dm23sq_ih; 
 $dm12sq_ih       = 7.53E-5                            unless defined $dm12sq_ih; 
-$mix23_ih        = 0.528                              unless defined $mix23_ih;
-$mix13_ih        = 0.0243                             unless defined $mix13_ih;
+$mix13_ih        = 0.0217                             unless defined $mix13_ih;
 $mix12_ih        = 0.304                              unless defined $mix12_ih;
-$deltacp_ih      = -1.601                             unless defined $deltacp_ih;
 $betaBar         = -99                                unless defined $betaBar;
 
-# # Mach3, T2K only Run1-4  best fit
-# $dm23sq_nh       = 2.509E-3                         unless defined $dm23sq_nh; 
-# $dm12sq_nh       = 7.53E-5                          unless defined $dm12sq_nh; 
-# $mix23_nh        = 0.528                            unless defined $mix23_nh;
-# $mix13_nh        = 0.0422                           unless defined $mix13_nh;
-# $mix12_nh        = 0.304                            unless defined $mix12_nh;
-# $deltacp_nh      = 1.91                             unless defined $deltacp_nh;
-# $dm23sq_ih       = 2.509E-3                         unless defined $dm23sq_ih; 
-# $dm12sq_ih       = 7.53E-5                          unless defined $dm12sq_ih; 
-# $mix23_ih        = 0.528                            unless defined $mix23_ih;
-# $mix13_ih        = 0.0422                           unless defined $mix13_ih;
-# $mix12_ih        = 0.304                            unless defined $mix12_ih;
-# $deltacp_ih      = 1.91                             unless defined $deltacp_ih;
-# $betaBar         = -99                              unless defined $betaBar;
+# Asimov A
+$mix23_nh        = 0.528                              unless defined $mix23_nh;
+$deltacp_nh      = -1.601                             unless defined $deltacp_nh;
+$mix23_ih        = 0.528                              unless defined $mix23_ih;
+$deltacp_ih      = -1.601                             unless defined $deltacp_ih;
 
-# 1D fit - betaBar (nuebar appearance)
-$freepar0               = "betaBar"                 unless defined $freepar0;
-$minfreepar0            = 0.                        unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = 1.                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-$npt_freepar0           = 2                         unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1               = ""                        unless defined $freepar1;
-$minfreepar1            = 0.                        unless defined $minfreepar1;     # Minimum free parameter allowed value
-$maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan
+# Asimov B
+#$mix23_nh        = 0.450                              unless defined $mix23_nh;
+#$deltacp_nh      = 0                                  unless defined $deltacp_nh;
+#$mix23_ih        = 0.450                              unless defined $mix23_ih;
+#$deltacp_ih      = 0                                  unless defined $deltacp_ih;
+
+# Asimov C
+#$mix23_nh        = 0.528                              unless defined $mix23_nh;
+#$deltacp_nh      = 0                             unless defined $deltacp_nh;
+#$mix23_ih        = 0.528                              unless defined $mix23_ih;
+#$deltacp_ih      = 0                             unless defined $deltacp_ih;
+
+# Asimov D
+#$mix23_nh        = 0.528                              unless defined $mix23_nh;
+#$deltacp_nh      = 3.14159265358979312                unless defined $deltacp_nh;
+#$mix23_ih        = 0.528                              unless defined $mix23_ih;
+#$deltacp_ih      = 3.14159265358979312                unless defined $deltacp_ih;
+
+# Asimov E
+#$mix23_nh        = 0.528                              unless defined $mix23_nh;
+#$deltacp_nh      = 1.5707963267948966                 unless defined $deltacp_nh;
+#$mix23_ih        = 0.528                              unless defined $mix23_ih;
+#$deltacp_ih      = 1.5707963267948966                 unless defined $deltacp_ih;
 
 # # 1D fit - dcp
-$freepar0               = "deltacp"                   unless defined $freepar0;
-$minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
-$maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-$npt_freepar0           = 201                         unless defined $npt_freepar0;    # of free parameter points to scan
-$freepar1               = ""                          unless defined $freepar1;
-$minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
-$maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-$npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
-
-# 2D fit - sinsqth13 Vs dcp (debug)
-# $freepar0               = "mixing13"                  unless defined $freepar0;
-# $minfreepar0            = 0.                          unless defined $minfreepar0;     # Minimum free parameter allowed value
-# $maxfreepar0            = 0.4                         unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-# $npt_freepar0           = 4                           unless defined $npt_freepar0;    # of free parameter points to scan
-# $freepar1               = "deltacp"                   unless defined $freepar1;
-# $minfreepar1            = -3.14159265358979312e+00    unless defined $minfreepar1;     # Minimum free parameter allowed value
-# $maxfreepar1            = +3.14159265358979312e+00    unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-# $npt_freepar1           = 3                           unless defined $npt_freepar1;    # of free parameter points to scan
-
-# # 1D fit - mixing23 (reactors)                                                                                                                         
-# $freepar0               = "mixing23"                unless defined $freepar0;
-# $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value                     
-# $maxfreepar0            = 0.7                     unless defined $maxfreepar0;     # Maximum free parameter allowed value               
-# $npt_freepar0           = 201                       unless defined $npt_freepar0;    # of free parameter points to scan                          
-# $freepar1               = ""                        unless defined $freepar1;
-# $minfreepar1            = 0.                        unless defined $minfreepar1;     # Minimum free parameter allowed value       
-# $maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value             
-# $npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan                                
-
-# # 1D fit - dmsq23 (reactors)                                                                                       
-# $freepar0               = "dmsq23"                  unless defined $freepar0;
-# $minfreepar0            = 2.E-3                     unless defined $minfreepar0;     # Minimum free parameter allowed value                    
-# $maxfreepar0            = 3.E-3                     unless defined $maxfreepar0;     # Maximum free parameter allowed value                
-# $npt_freepar0           = 201                       unless defined $npt_freepar0;    # of free parameter points to scan                    
-# $freepar1               = ""                        unless defined $freepar1;
-# $minfreepar1            = 0.                        unless defined $minfreepar1;     # Minimum free parameter allowed value           
-# $maxfreepar1            = 0.                        unless defined $maxfreepar1;     # Maximum free parameter allowed value              
-# $npt_freepar1           = 1                         unless defined $npt_freepar1;    # of free parameter points to scan                                 
+if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
+{
+   $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $npt_freepar0           = 10; #201                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                    unless defined $masshierarchy;
+   $step_freepar0          = 10;#201                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+}
 
 # # 2D fit - sinsqth13 Vs dcp
-# $freepar0               = "mixing13"                 unless defined $freepar0;
-# #$minfreepar0            = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
-# #$maxfreepar0            = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value  
-# $minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
-# $maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-# $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
-# $freepar1               = "deltacp"                  unless defined $freepar1;
-# $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
-# $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-# $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
+if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "deltacp") and ($freepar1 eq "mixing13")))
+{
+   if($freepar0 eq "deltacp")
+   {
+      $freepar0 = "mixing13";
+      $freepar1 = "deltacp";
+   }
+   $minfreepar0            = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $npt_freepar0           = 10;#81                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 10;#51                         unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0                          unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                   unless defined $masshierarchy;
+   $step_freepar0          = 10;#4                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 10;#2                            unless defined $step_freepar1;   # of points for each job param1
+}
 
-# # 2D fit - sinsqth13 Vs dcp (bins x 2)
-# $freepar0               = "mixing13"                 unless defined $freepar0;
-# #$minfreepar0            = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
-# #$maxfreepar0            = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value  
-# $minfreepar0            = 0.                         unless defined $minfreepar0;     # Minimum free parameter allowed value
-# $maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-# $npt_freepar0           = 162                         unless defined $npt_freepar0;    # of free parameter points to scan
-# $freepar1               = "deltacp"                  unless defined $freepar1;
-# $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
-# $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-# $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
+# # 2D fit - sinsqth23 Vs dmsq23
+if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
+{
+   if($freepar0 eq "dmsq23")
+   {
+      $freepar0 = "mixing23";
+      $freepar1 = "dmsq23";
+   }
+   $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $npt_freepar0           = 10;#81                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1            = 2.0e-3                  unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 3.0e-3                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 10;#21                        unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 1                          unless defined $marg_hierarchy;
+   $step_freepar0          = 10;#4                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 10;#1                            unless defined $step_freepar1;   # of points for each job param1
+}
 
-# # 2D fit - sinsqth23 Vs dmsq32
-# $freepar0               = "mixing23"                 unless defined $freepar0;
-# $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
-# $maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-# $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
-# $freepar1               = "dmsq23"                   unless defined $freepar1;
-# $minfreepar1            = 2.E-3                      unless defined $minfreepar1;     # Minimum free parameter allowed value
-# $maxfreepar1            = 3.E-3                      unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-# $npt_freepar1           = 21                         unless defined $npt_freepar1;    # of free parameter points to scan
-
-#$nexpts_marg            = 10000                       unless defined $nexpts_marg;     # of toys
-$nexpts_marg            = 2                            unless defined $nexpts_marg;     # of toys
-					               
-# # 1D fits - dcp			               
-#$step_freepar0          = 201                         unless defined $step_freepar0;   # of points for each job param0
-#$step_freepar1          = 1                           unless defined $step_freepar1;   # of points for each job param1
-					               
-# 2D fits - sinsqth13 Vs dcp (debug) 	               
-$step_freepar0          = 1                            unless defined $step_freepar0;   # of points for each job param0
-$step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
-					               
-# # 2D fits - sinsqth13 Vs dcp 		               
-# $step_freepar0          = 4                          unless defined $step_freepar0;   # of points for each job param0
-# $step_freepar1          = 2                          unless defined $step_freepar1;   # of points for each job param1
-					               
-# # 2D fits - sinsqth23 Vs dmsq 	               
-# $step_freepar0          = 4                          unless defined $step_freepar0;   # of points for each job param0
-# $step_freepar1          = 1                          unless defined $step_freepar1;   # of points for each job param1
+$nexpts_marg            = 10; #10000                        unless defined $nexpts_marg;     # of toys
 					               
 $tweak_systematics      = 1                            unless defined $tweak_systematics;
-$marg_hierarchy         = 1                            unless defined $marg_hierarchy;
 $prior_prob_nh          = 0.5                          unless defined $prior_prob_nh;
-					               
 $rethrow_unphysical     = 1                            unless defined $rethrow_unphysical;
 
 #$file_prior             = "../../inputs/priors/joint_T2Kreact_run14/valor/Priors_T2Kreact_run14_Valor.root" unless defined $file_prior;
@@ -251,12 +205,11 @@ $job_dir                = "."                  unless defined $job_dir;
 $softw_dir              = $ENV{'T2KOSCANA'}    unless defined $softw_dir;
 $fmwk_dir               = $ENV{'VALOR_FMWK'}   unless defined $fmwk_dir;
 $dmsqscheme             = "auto"               unless defined $dmsqscheme;
-$masshierarchy          = "normal"          unless defined $masshierarchy;
 $mixparamchoice         = "sinsqtheta"         unless defined $mixparamchoice;
 $mixparamoctant         = "two"                unless defined $mixparamoctant;
 
 $use_reactors           = 1                    unless defined $use_reactors;
-$queue                  = 0                    unless defined $use_reactors;
+$queue                  = 0                    unless defined $queue;
 if( !defined $cput ) {
     #takes approx 0.04 sec per sample
     $sec = int ( $step_freepar0 *  $step_freepar1 * $nexpts_marg * 0.22 );
@@ -525,6 +478,10 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	if($resource eq "interactive") {
 	    system($command);
 	}
+
+        if($resource eq "warwick") {
+          `bsub -q short -oo log_$masshierarchy-$imin0-$imin1.log $softw_dir/production/warwick_submit_build_marg_toys.sh $command`
+        }
 	
 	$irun++;
 
