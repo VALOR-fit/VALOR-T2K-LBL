@@ -92,7 +92,7 @@ foreach (@ARGV) {
   $iarg++;
 }
 
-$resource        = "warwick"               unless defined $resource;
+$resource        = "interactive"               unless defined $resource;
 $tag             = "oa2017_AsimovA"  unless defined $tag;
 $config_file     = "analysis_configuration_oa2017_run1-7c_postfit.xml"  unless defined $config_file;
 $fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
@@ -187,7 +187,8 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $minfreepar1            = 2.0e-3                  unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = 3.0e-3                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
    $npt_freepar1           = 10;#21                        unless defined $npt_freepar1;    # of free parameter points to scan
-   $marg_hierarchy         = 1                          unless defined $marg_hierarchy;
+   $marg_hierarchy         = 0                          unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                   unless defined $masshierarchy;
    $step_freepar0          = 10;#4                unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1          = 10;#1                            unless defined $step_freepar1;   # of points for each job param1
 }
@@ -480,7 +481,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	}
 
         if($resource eq "warwick") {
-          `bsub -q short -oo log_$masshierarchy-$imin0-$imin1.log $softw_dir/production/warwick_submit_build_marg_toys.sh $command`
+          `bsub -q short -oo log_$masshierarchy-$imin0-$imin1.log $softw_dir/production/warwick_submit_command.sh $command`
         }
 	
 	$irun++;
