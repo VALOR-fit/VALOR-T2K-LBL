@@ -1,0 +1,291 @@
+
+//
+// ------------------------------------------------------------------------------------------------
+//
+// Read and analyze the output from run_fit_marginalization_readbinary_*.C
+//
+// Davide Sgalaberna
+//
+// ------------------------------------------------------------------------------------------------
+
+using namespace std;
+using namespace valor;
+using namespace valor::conv;
+TCanvas *ccontours = new TCanvas("ccontours","ccontours");
+
+void CompareContour1D_4
+(
+ const char* file_1 = "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/data/dcp_reactor/data_nh_a-_0_0_contour.root",
+ const char* file_2 = "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/data/dcp_reactor/data_nh_a-_0_0_contour.root",
+ const char* file_3 = "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/data/dcp_reactor/data_nh_a-_0_0_contour.root",
+ const char* file_4 = "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/data/dcp_reactor/data_nh_a-_0_0_contour.root",
+
+ const char* tag    = "",
+ const char* tag1   = "",
+ const char* tag2   = "",
+ const char* tag3   = "",
+ const char* tag4   = "",
+ 
+ const bool doGlobalMin  = false,
+ const bool draw_preliminary = true,
+ 
+ bool draw_1sigmaCL = true,
+ bool draw_90CL     = true,
+ bool draw_2sigmaCL = false,
+ bool draw_3sigmaCL = true,
+ bool draw_4sigmaCL = false,
+ bool draw_5sigmaCL = true,
+ 
+ const bool draw_reactors = false
+ )
+{
+  TGaxis::SetMaxDigits(3);
+
+  const int Nfiles = 4;
+  TString latexname[Nfiles] = {
+    "Erec-Theta",
+    "Erec",
+    "Theta",
+    "1Bin"
+  };
+
+  cout << "tag: " << tag
+  << " tag1: " << tag1
+  << " tag2: " << tag2
+  << " tag3: " << tag3
+  << " tag4: " << tag4
+  << endl;
+
+  if(tag1 != "") latexname[0] = tag1;
+  if(tag2 != "") latexname[1] = tag2;
+  if(tag3 != "") latexname[2] = tag3;
+  if(tag4 != "") latexname[3] = tag4;
+
+
+  TFile f1(file_1,"read");
+  TFile f2(file_2,"read");
+  TFile f3(file_3,"read");
+  TFile f4(file_4,"read");
+  
+  string histname;
+  
+  if(doGlobalMin) histname = "h_chisq";
+  else histname = "h_deltachisq";
+
+  TH1D* h1 = f1.Get(histname.c_str());
+  TH1D* h2 = f2.Get(histname.c_str());
+  TH1D* h3 = f3.Get(histname.c_str());
+  TH1D* h4 = f4.Get(histname.c_str());
+
+  h1->SetDirectory(0);
+  h2->SetDirectory(0);
+  h3->SetDirectory(0);
+  h4->SetDirectory(0);
+  f1.Close();
+  f2.Close();
+  f3.Close();
+  f4.Close();
+
+  h1->SetLineColor(kBlack);
+  h2->SetLineColor(kRed);
+  h3->SetLineColor(kGreen+2);
+  h4->SetLineColor(kGreen+2);
+  h4->SetLineStyle(2);
+
+  h1->SetLineWidth(2);
+  h2->SetLineWidth(2);
+  h3->SetLineWidth(2);
+  h4->SetLineWidth(2);
+
+  cout << "Hist1Min: " << std::setprecision (8) << h1->GetMinimum() << " (" << h1->GetXaxis()->GetBinCenter(h1->GetMinimumBin()) << ") " << endl;
+  cout << "Hist2Min: " << std::setprecision (8) << h2->GetMinimum() << " (" << h2->GetXaxis()->GetBinCenter(h2->GetMinimumBin()) << ") " << endl;
+  cout << "Hist3Min: " << std::setprecision (8) << h3->GetMinimum() << " (" << h3->GetXaxis()->GetBinCenter(h3->GetMinimumBin()) << ") " << endl;
+  cout << "Hist4Min: " << std::setprecision (8) << h4->GetMinimum() << " (" << h4->GetXaxis()->GetBinCenter(h4->GetMinimumBin()) << ") " << endl;
+  cout << "Hist1: " << endl;
+
+  valor::RootFinder* find_root = new valor::RootFinder();
+  cout << "Hist1: " << endl;
+
+  find_root->SetGraph(h1);
+  cout << "Hist1: " << endl;
+  find_root->SetDchiSq(1);
+  find_root->GetRoots();
+  cout << "Hist1: " << endl;
+  find_root->PrintRoots();
+  delete find_root;
+  
+  valor::RootFinder* find_root2 = new valor::RootFinder();
+  find_root2->SetGraph(h2);
+  
+  find_root2->SetDchiSq(1);
+  find_root2->GetRoots();
+  cout << "Hist2: " << endl;
+  find_root2->PrintRoots();
+  delete find_root2;
+  double max;
+  double max1 = h1->GetMaximum();
+  double max2 = h2->GetMaximum();
+  double max_hist = (max1>max2)? max1 : max2;
+  if(max_hist>17) max = 30;
+  else max = max_hist*1.4;
+  
+  if(max_hist<1.3){
+    draw_1sigmaCL=false;
+    draw_90CL=false;
+    draw_2sigmaCL=false;
+    draw_3sigmaCL=false;
+    draw_4sigmaCL=false;
+    draw_5sigmaCL=false;
+  }
+  
+
+  
+  if(max_hist<3.5){
+    draw_90CL=false;
+    draw_2sigmaCL=false;
+    draw_3sigmaCL=false;
+    draw_4sigmaCL=false;
+    draw_5sigmaCL=false;
+  }
+  
+  if(max_hist<4.6){
+    draw_2sigmaCL=false;
+    draw_3sigmaCL=false;
+    draw_4sigmaCL=false;
+    draw_5sigmaCL=false;
+  }
+
+  if(max_hist<13){
+    draw_3sigmaCL=false;
+    draw_4sigmaCL=false;
+    draw_5sigmaCL=false;
+  }
+  
+  if(max_hist<17.6){
+    draw_4sigmaCL=false;
+    draw_5sigmaCL=false;
+  }
+
+  
+
+  
+  h1->GetYaxis()->SetTitle("-2ln(L)");
+  
+  h1->GetYaxis()->SetRangeUser(0,max);
+  h1->Draw("l");
+  
+  const double sinsqth13_nom = 0.0219;
+  const double sinsqth13_err = 0.0012;
+  double X1 = sinsqth13_nom - sinsqth13_err;
+  double X2 = sinsqth13_nom + sinsqth13_err;
+  double Y1 = h1->GetMinimum();
+  //double Y2 = hInit->GetMaximum();
+  double Y2 = max;
+  TBox *breactors = new TBox(X1,Y1,X2,Y2);
+  breactors->SetFillColor(kYellow+1);
+  
+
+  
+  if(draw_reactors) breactors->Draw("same");
+  h1->Draw("lsame");
+  h2->SetLineStyle(2);
+  h2->Draw("samel");
+  h3->Draw("samel");
+  h4->Draw("samel");
+  
+  TLine *l1sigma = new TLine(h1->GetXaxis()->GetBinLowEdge(1),1.,h1->GetXaxis()->GetBinUpEdge(h1->GetNbinsX()),1.);
+  TLine *l90 = new TLine(h1->GetXaxis()->GetBinLowEdge(1),2.71,h1->GetXaxis()->GetBinUpEdge(h1->GetNbinsX()),2.71);
+  TLine *l2sigma = new TLine(h1->GetXaxis()->GetBinLowEdge(1),4.,h1->GetXaxis()->GetBinUpEdge(h1->GetNbinsX()),4.);
+  TLine *l3sigma = new TLine(h1->GetXaxis()->GetBinLowEdge(1),9.,h1->GetXaxis()->GetBinUpEdge(h1->GetNbinsX()),9.);
+  TLine *l4sigma = new TLine(h1->GetXaxis()->GetBinLowEdge(1),16.,h1->GetXaxis()->GetBinUpEdge(h1->GetNbinsX()),16.);
+  TLine *l5sigma = new TLine(h1->GetXaxis()->GetBinLowEdge(1),25.,h1->GetXaxis()->GetBinUpEdge(h1->GetNbinsX()),25.);
+  l1sigma->SetLineWidth(2);
+  l90->SetLineWidth(2);
+  l2sigma->SetLineWidth(2);
+  l3sigma->SetLineWidth(2);
+  l4sigma->SetLineWidth(2);
+  l5sigma->SetLineWidth(2);
+  l1sigma->SetLineColor(kBlue);
+  l90->SetLineColor(kBlue);
+  l2sigma->SetLineColor(kBlue);
+  l3sigma->SetLineColor(kBlue);
+  l4sigma->SetLineColor(kBlue);
+  l5sigma->SetLineColor(kBlue);
+  if(draw_1sigmaCL) l1sigma->Draw();
+  if(draw_90CL)     l90->Draw();
+  if(draw_2sigmaCL) l2sigma->Draw();
+  if(draw_3sigmaCL) l3sigma->Draw();
+  if(draw_4sigmaCL) l4sigma->Draw();
+  if(draw_5sigmaCL) l5sigma->Draw();
+  
+  TLatex *latLine1Sigma = new TLatex(h1->GetXaxis()->GetBinLowEdge(5),1.1,"1#sigma");
+  TLatex *latLine90CL = new TLatex(h1->GetXaxis()->GetBinLowEdge(5),2.81,"90% CL");
+  TLatex *latLine2Sigma = new TLatex(h1->GetXaxis()->GetBinLowEdge(5),4.1,"2#sigma");
+  TLatex *latLine3Sigma = new TLatex(h1->GetXaxis()->GetBinLowEdge(5),9.1,"3#sigma");
+  TLatex *latLine4Sigma = new TLatex(h1->GetXaxis()->GetBinLowEdge(5),16.1,"4#sigma");
+  TLatex *latLine5Sigma = new TLatex(h1->GetXaxis()->GetBinLowEdge(5),25.1,"5#sigma");
+  latLine1Sigma->SetTextColor(kBlue);
+  latLine90CL->SetTextColor(kBlue);
+  latLine2Sigma->SetTextColor(kBlue);
+  latLine3Sigma->SetTextColor(kBlue);
+  latLine4Sigma->SetTextColor(kBlue);
+  latLine5Sigma->SetTextColor(kBlue);
+  latLine1Sigma->SetTextSize(0.05);
+  latLine90CL->SetTextSize(0.05);
+  latLine2Sigma->SetTextSize(0.05);
+  latLine3Sigma->SetTextSize(0.05);
+  latLine4Sigma->SetTextSize(0.05);
+  latLine5Sigma->SetTextSize(0.05);
+  if(draw_1sigmaCL) latLine1Sigma->Draw("same");
+  if(draw_90CL)     latLine90CL->Draw("same");
+  if(draw_2sigmaCL) latLine2Sigma->Draw("same");
+  if(draw_3sigmaCL) latLine3Sigma->Draw("same");
+  if(draw_4sigmaCL) latLine4Sigma->Draw("same");
+  if(draw_5sigmaCL) latLine5Sigma->Draw("same");
+  TLegend *lcontours = new TLegend(0.6,0.77,0.75,0.9);
+  lcontours->SetFillColor(0);
+  lcontours->SetLineColor(0);
+  lcontours->SetTextFont(132);
+  lcontours->SetTextSize(0.05);
+  lcontours->AddEntry(h1,latexname[0]);
+  lcontours->AddEntry(h2,latexname[1]);
+  lcontours->AddEntry(h3,latexname[2]);
+  lcontours->AddEntry(h4,latexname[3]);
+  lcontours->Draw();
+
+  char* mass_hierarchy_text = (doGlobalMin)? "Global minimum" :"Fixed Mass Hierarchy" ;
+  
+  
+  TLatex *mass_hierarchy_tex = new TLatex(h1->GetXaxis()->GetBinLowEdge(8),1.01*max,mass_hierarchy_text);
+  TLatex *latPreliminary = new TLatex(h1->GetXaxis()->GetBinLowEdge(110),1.01*max,"T2K Run1-7 Preliminary");
+
+  mass_hierarchy_tex->SetTextSize(0.05);
+  latPreliminary->SetTextSize(0.05);
+
+  if(draw_preliminary) latPreliminary->Draw("same");
+  mass_hierarchy_tex->Draw("same");
+  ccontours->SaveAs(Form("%s.pdf",tag));
+  // // Store in root file
+  // if(SaveRootFile){
+  //   TFile* f2 = new TFile(Form("%s_contour.root",tag),"recreate");
+  //   for(int ifile=0;ifile<Nfiles;ifile++){
+  //     for(int imh=0;imh<Nmh;imh++){
+  // 	//sprintf(name,"hdeltachisq_%i_%i",ifile);
+  // 	hdeltachisq1D_GlobMin[ifile]->Write();//(name);
+  //     }
+  //   }
+  //   f2->Close();
+  // }
+  
+  return;
+  
+}
+
+//void minimise_hist(TH1* h1, double min)
+//{
+//  for(int i =1;i<=h1->GetNbinsX();i++)
+//  {
+//    h1->SetBinContent(i,h1->GetBinContent(i)-min);
+//  }
+//}
+
