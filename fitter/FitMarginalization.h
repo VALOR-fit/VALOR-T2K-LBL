@@ -92,7 +92,7 @@ class FitMarginalization
  public:
 
   FitMarginalization();
-  ~FitMarginalization(void);
+  virtual ~FitMarginalization(void);
 
   void Init(SuperkExpectation *skexp);
 
