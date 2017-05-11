@@ -1129,7 +1129,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         double spline_point = (tb-untuned_value);
 #ifdef check_spline_limits
          if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
-            LOG("NuXSec",pDEBUG)<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
+            LOG("NuXSec",pINFO)<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
         
