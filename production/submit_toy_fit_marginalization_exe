@@ -263,11 +263,13 @@ $freepar0          = "deltacp"     unless defined $freepar0;
 
 $file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys";
 
+$wqueue = "short";
+
 # 1D fit - dcp
 if($freepar0 eq "deltacp")
 {
-   $nfiles_margtoys   = 5; #201           unless defined $nfiles_margtoys; # of marginalization files
-   $ntoys_margtoys    = 1000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
+   $nfiles_margtoys   = 41; #201           unless defined $nfiles_margtoys; # of marginalization files
+   $ntoys_margtoys    = 10000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
 
    if($masshierarchy eq "normal")
    {
@@ -280,18 +282,20 @@ if($freepar0 eq "deltacp")
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
    $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
-   $npt_freepar0      = 50; #201           unless defined $npt_freepar0; # of free parameter points to scan
+   $npt_freepar0      = 201; #201           unless defined $npt_freepar0; # of free parameter points to scan
    $freepar1          = ""     unless defined $freepar1;
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
+
+   $wqueue = "short -W 20";
 }
 
 # 2D fit - dcp v mixing13
 if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "deltacp") && ($freepar1 eq "mixing13")))
 {
-   $nfiles_margtoys   = 54; #201           unless defined $nfiles_margtoys; # of marginalization files
-   $ntoys_margtoys    = 100; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
+   $nfiles_margtoys   = 546; #201           unless defined $nfiles_margtoys; # of marginalization files
+   $ntoys_margtoys    = 10000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
 
    $freepar0 = "mixing13";
    $freepar1 = "deltacp";
@@ -311,13 +315,15 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
    $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 51;#10            unless defined $npt_freepar1; # of free parameter points to scan
+
+   $wqueue = "long -W 3:00";
 }
 
 # 2D fit - mixing23 v dmsq23
 if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dmsq23") && ($freepar1 eq "mixing23")))
 {
-   $nfiles_margtoys   = 27; #201           unless defined $nfiles_margtoys; # of marginalization files
-   $ntoys_margtoys    = 100; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
+   $nfiles_margtoys   = 231; #201           unless defined $nfiles_margtoys; # of marginalization files
+   $ntoys_margtoys    = 10000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
 
    $freepar0 = "mixing23";
    $freepar1 = "dmsq23";
@@ -337,6 +343,8 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    $minfreepar1       = 2.0e-3  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 3.0e-3  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 21;#10            unless defined $npt_freepar1; # of free parameter points to scan
+
+   $wqueue = "long -W 3:00";
 }
 
 $type_error        = "" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
@@ -732,7 +740,7 @@ while($i_freepar1 < $n_freepar1) {
 	    }
 
       if($resource eq "warwick") {
-        `bsub -q short -oo log_$irun-$i_freepar0-$ifreepar1.log $command`
+        `bsub -q $wqueue -oo log_$irun-$i_freepar0-$ifreepar1.log $command`
       }
 	    
 	    

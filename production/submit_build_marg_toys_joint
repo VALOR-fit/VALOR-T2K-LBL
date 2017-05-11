@@ -138,51 +138,51 @@ $deltacp_ih      = -1.601                             unless defined $deltacp_ih
 #$mix23_ih        = 0.528                              unless defined $mix23_ih;
 #$deltacp_ih      = 1.5707963267948966                 unless defined $deltacp_ih;
 
-$queue = "medium";
+$wqueue = "medium";
 
 # # 1D fit - dcp
 if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
 {
-   $nexpts_marg            = 1000; #10000                        unless defined $nexpts_marg;     # of toys
+   $nexpts_marg            = 10000; #10000                        unless defined $nexpts_marg;     # of toys
    $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $npt_freepar0           = 50; #201                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $npt_freepar0           = 201; #201                         unless defined $npt_freepar0;    # of free parameter points to scan
    $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
    $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
    $masshierarchy          = "normal"                    unless defined $masshierarchy;
-   $step_freepar0          = 10;#201                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar0          = 5;#201                unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
-   $queue                  = "medium";
+   $wqueue                  = "long -W 8:00";
 }
 
 # # 2D fit - sinsqth13 Vs dcp
 if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "deltacp") and ($freepar1 eq "mixing13")))
 {
-   $nexpts_marg = 1000;
+   $nexpts_marg = 10000;
    if($freepar0 eq "deltacp")
    {
       $freepar0 = "mixing13";
       $freepar1 = "deltacp";
    }
-   $minfreepar0            = 0.015                      unless defined $minfreepar0;     # Minimum free parameter allowed value
-   $maxfreepar0            = 0.036                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar0            = 0.0                      unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
    $npt_freepar0           = 81;#10;#81                         unless defined $npt_freepar0;    # of free parameter points to scan
    $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
    $npt_freepar1           = 51;#10;#51                         unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy         = 0                          unless defined $marg_hierarchy;
    $masshierarchy          = "normal"                   unless defined $masshierarchy;
-   $step_freepar0          = 10;#4                unless defined $step_freepar0;   # of points for each job param0
-   $step_freepar1          = 10;#2                            unless defined $step_freepar1;   # of points for each job param1
-   $queue                  = "long";
+   $step_freepar0          = 4;#10;#4                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 2;#10;#2                            unless defined $step_freepar1;   # of points for each job param1
+   $wqueue                  = "long";
 }
 
 # # 2D fit - sinsqth23 Vs dmsq23
 if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
 {
-   $nexpts_marg = 1000;
+   $nexpts_marg = 10000;
    if($freepar0 eq "dmsq23")
    {
       $freepar0 = "mixing23";
@@ -196,9 +196,9 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $npt_freepar1           = 21;#10;#21                        unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy         = 0                          unless defined $marg_hierarchy;
    $masshierarchy          = "normal"                   unless defined $masshierarchy;
-   $step_freepar0          = 10;#4                unless defined $step_freepar0;   # of points for each job param0
-   $step_freepar1          = 10;#1                            unless defined $step_freepar1;   # of points for each job param1
-   $queue                  = "long";
+   $step_freepar0          = 4;#10;#4                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 2;#10;#1                            unless defined $step_freepar1;   # of points for each job param1
+   $wqueue                  = "long";
 }
 
 					               
@@ -216,7 +216,7 @@ $dmsqscheme             = "auto"               unless defined $dmsqscheme;
 $mixparamchoice         = "sinsqtheta"         unless defined $mixparamchoice;
 $mixparamoctant         = "two"                unless defined $mixparamoctant;
 
-$use_reactors           = 1                    unless defined $use_reactors;
+$use_reactors           = 0                    unless defined $use_reactors;#1
 $queue                  = 0                    unless defined $queue;
 if( !defined $cput ) {
     #takes approx 0.04 sec per sample
@@ -488,7 +488,42 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	}
 
         if($resource eq "warwick") {
-          `bsub -q $queue -oo log_$masshierarchy-$imin0-$imin1.log $softw_dir/production/warwick_submit_command.sh $command`
+          $current = $wqueue;
+          if($npt_freepar1 == 1)
+          {  # 1D
+             if(($imin0 == ($npt_freepar0 - 1)) && ($npt_freepar1 == 1))
+             {  # Last job for 1D fit is small, use shorter queue
+               $wqueue = "medium";
+             }
+          }
+          else
+          {  # 2D
+            if($freepar0 eq "mixing23")
+            {
+               if(($imin0 == ($npt_freepar0 - 1)) && ($imin1 == ($npt_freepar1 - 1)))
+               {  # Both params on short "final" job
+                  $wqueue = "medium";
+               }
+               elsif(($imin0 == ($npt_freepar0 - 1)) || ($imin1 == ($npt_freepar1 - 1)))
+               {  # One param on short "final" job
+                  $wqueue = "long";
+               }
+            }
+            elsif($freepar0 eq "mixing13")
+            {
+               if(($imin0 == ($npt_freepar0 - 1)) && ($imin1 == ($npt_freepar1 - 1)))
+               {  # Both params on short "final" job
+                  $wqueue = "medium";
+               }
+               elsif(($imin0 == ($npt_freepar0 - 1)) || ($imin1 == ($npt_freepar1 - 1)))
+               {  # One param on short "final" job
+                  $wqueue = "long -W 6:00";
+               }
+            }
+
+          }
+          `bsub -q $wqueue -oo log_$masshierarchy-$imin0-$imin1.log $softw_dir/production/warwick_submit_command.sh $command`;
+          $wqueue = $current;
         }
 	
 	$irun++;
