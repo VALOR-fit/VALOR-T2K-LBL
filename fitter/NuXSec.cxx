@@ -34,7 +34,7 @@
 
 //
 #define DISABLE_SCC // we don't have the SCC splines yet (waiting on the NIWG) so we'll turn it off.
-//#define __ALLOW_SPLINES_OUTSIDE_LIMIT__  // allow splines to go outside the min and max limit where defined. To use only for syst effect cross checks
+#define __ALLOW_SPLINES_OUTSIDE_LIMIT__  // allow splines to go outside the min and max limit where defined. To use only for syst effect cross checks
 
 #include <cassert>
 #include <cstdlib>
@@ -2052,8 +2052,20 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
                                 <<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
         }
 #endif
-        
-        
+
+/*        if(fBANFF->CurrentValue(p) != fBANFF->InitialValue(p))
+        {
+         double centre = fBANFF->InitialValue(p) - untuned_value;
+         LOG("NuXSeC", pWARN) << "xsec spline: " << util::AsString(p) << "\n" <<
+           " => N: " << fBANFF->InitialValue(p) << "\n" <<
+           " :: U: " << untuned_value << " :: C: " << tc << "\n" <<
+           " :: V: " << spl_tc <<"\n" <<
+           " :: 1s: [" << (centre - fBANFF->OneSigmaError(p)) << "," <<
+           (centre + fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
+           " :: 3s: [" << (centre - 3*fBANFF->OneSigmaError(p)) << "," <<
+           (centre + 3*fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
+           " :: L: [" << wght_spl->GetXmin() << "," << wght_spl->GetXmax() << "]";
+        }*/
 #ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
         if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
         if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
@@ -2110,6 +2122,19 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         spl_tc = tc-untuned_value;
+/*        if(fBANFF->CurrentValue(p) != fBANFF->InitialValue(p) && (p == kNuisBANFFBeRPA_A || p == kRHCNuisBANFFBeRPA_B || p == kRHCNuisBANFFBeRPA_D || p == kRHCNuisBANFFBeRPA_E))
+        {
+         double centre = fBANFF->InitialValue(p) - untuned_value;
+         LOG("NuXSeC", pFATAL) << "xsec spline: " << util::AsString(p) << "\n" <<
+           " => N: " << fBANFF->InitialValue(p) << "\n" <<
+           " :: U: " << untuned_value << " :: C: " << tc << "\n" <<
+           " :: V: " << spl_tc <<"\n" <<
+           " :: 1s: [" << (centre - fBANFF->OneSigmaError(p)) << "," <<
+           (centre + fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
+           " :: 3s: [" << (centre - 3*fBANFF->OneSigmaError(p)) << "," <<
+           (centre + 3*fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
+           " :: L: [" << wght_spl->GetXmin() << "," << wght_spl->GetXmax() << "]";
+        }*/
 
 #ifdef check_spline_limits
         if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
@@ -2150,7 +2175,20 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         double spl_tc = tc-untuned_value;
-        
+/*        if(fBANFF->CurrentValue(p) != fBANFF->InitialValue(p))
+        {
+         double centre = fBANFF->InitialValue(p) - untuned_value;
+         LOG("NuXSeC", pFATAL) << "xsec spline: " << util::AsString(p) << "\n" <<
+           " => N: " << fBANFF->InitialValue(p) << "\n" <<
+           " :: U: " << untuned_value << " :: C: " << tc << "\n" <<
+           " :: V: " << spl_tc <<"\n" <<
+           " :: 1s: [" << (centre - fBANFF->OneSigmaError(p)) << "," <<
+           (centre + fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
+           " :: 3s: [" << (centre - 3*fBANFF->OneSigmaError(p)) << "," <<
+           (centre + 3*fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
+           " :: L: [" << wght_spl->GetXmin() << "," << wght_spl->GetXmax() << "]";
+        }*/
+
 #ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
         if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
         if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
