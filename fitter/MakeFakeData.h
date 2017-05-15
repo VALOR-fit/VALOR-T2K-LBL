@@ -54,8 +54,11 @@ namespace valor {
         MECPDD2D    = 1,
         MECPDD3D    = 2,
         Nieves1P1H  = 3,
-        MECPDD3DFlatFlux  = 4
-
+        MECPDD3DFlatFlux = 4,
+	// new 2017
+	2p2hPDD2D_2017 = 5,
+	2p2hnonPDD2D_2017 = 6
+	//
       };
       
     private:
@@ -77,6 +80,13 @@ namespace valor {
       TH3D* PDD_ratio_numubar;
       TH3D* PDD_ratio_nue;
       TH3D* PDD_ratio_nuebar;
+
+      // new 2017
+      TH2D* 2p2hPDD_2017;
+      TH2D* 2p2hnonPDD_2017;
+      double Weight2p2hPDD_2017();
+      double Weight2p2hnonPDD_2017();
+      //
 
       double WeightMECPDD3DFlatFlux();
       double WeightMECPDD3D();
