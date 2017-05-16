@@ -609,7 +609,7 @@
           Covariance matrix of SKDet FSI parameters
       -->
       <covariance_matrix>
-        <filename>  official/2017/skdetfsi/skdetfsi.root  </filename>
+        <filename>  official/2017/skdetfsi/SKJointErrorMatrix2017_Total_fitqun_v1_15thMay2017_VALOR_order.root</filename>
         <objname>   skdetfsi    </objname>
         <objtype>   TMatrixD                                  </objtype>
       </covariance_matrix>
