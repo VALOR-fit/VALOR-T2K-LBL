@@ -4,7 +4,7 @@
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Data POT for analysis Run 1-8
+  Data POT for analysis Run 1-7c
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
@@ -609,9 +609,7 @@
           Covariance matrix of SKDet FSI parameters
       -->
       <covariance_matrix>
-        <!-- <filename>  official/2016/SK_nue_cc1pi/Erec_Matrix_CCpi_fixed_17102016_VALOR_noccc1pi.root </filename> -->
-        <filename>  official/2016/SK_nue_cc1pi/Erec_Matrix_CCpi_fixed_17102016_VALOR_order.root  </filename>
-        <!-- <objname>   skdetfsi_nocc1pi    </objname> -->
+        <filename>  official/2017/skdetfsi/SKJointErrorMatrix2017_Total_fitqun_v1_15thMay2017_VALOR_order.root</filename>
         <objname>   skdetfsi    </objname>
         <objtype>   TMatrixD                                  </objtype>
       </covariance_matrix>
