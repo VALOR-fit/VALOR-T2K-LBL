@@ -168,14 +168,14 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    }
    $minfreepar0            = 0.0                      unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $npt_freepar0           = 81;#10;#81                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
    $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-   $npt_freepar1           = 51;#10;#51                         unless defined $npt_freepar1;    # of free parameter points to scan
+   $npt_freepar1           = 51                         unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy         = 0                          unless defined $marg_hierarchy;
    $masshierarchy          = "normal"                   unless defined $masshierarchy;
-   $step_freepar0          = 4;#10;#4                unless defined $step_freepar0;   # of points for each job param0
-   $step_freepar1          = 2;#10;#2                            unless defined $step_freepar1;   # of points for each job param1
+   $step_freepar0          = 4                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 2                         unless defined $step_freepar1;   # of points for each job param1
    $wqueue                  = "long";
 }
 
@@ -517,7 +517,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
                }
                elsif(($imin0 == ($npt_freepar0 - 1)) || ($imin1 == ($npt_freepar1 - 1)))
                {  # One param on short "final" job
-                  $wqueue = "long -W 6:00";
+                  $wqueue = "long -W 8:00";
                }
             }
 
