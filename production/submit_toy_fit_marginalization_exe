@@ -733,7 +733,26 @@ while($i_freepar1 < $n_freepar1) {
 		print PBS "mailoutput | mail -s \"run_fit_dcp job done!\" rajbatchjobresult\@gmail.com\n";
 		close(PBS);
 		`qsub $job_dir/$tag-$irun.pbs`;
-	    }    #
+	    }
+            #
+            # Liverpool
+            #
+            if($resource eq "Liverpool") {
+                open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
+                print PBS "#!/bin/bash \n";
+                print PBS "#PBS -N $tag-$irun \n";
+                print PBS "#PBS -q all64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
+                print PBS "#PBS -l nodes=1:ppn=2 \n"; 
+                print PBS "#PBS -o /scratch/cbarry/$tag-$irun.pbs.out \n";
+                print PBS "#PBS -e /scratch/cbarry/$tag-$irun.pbs.err \n";
+                print PBS "cd $job_dir \n";
+
+                print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
+                print PBS "$command \n";
+                close(PBS);
+                `qsub $job_dir/$tag-$irun.pbs`;
+            }            
+            #
 	    # Grid
 	    #
 	    if($resource eq "Grid") {
@@ -746,9 +765,9 @@ while($i_freepar1 < $n_freepar1) {
 		system($command);
 	    }
 
-      if($resource eq "warwick") {
-        `bsub -q $wqueue -oo log_$irun-$i_freepar0-$ifreepar1.log $command`
-      }
+            if($resource eq "warwick") {
+                `bsub -q $wqueue -oo log_$irun-$i_freepar0-$ifreepar1.log $command`
+            }
 	    
 	    
 	    $irun++;
