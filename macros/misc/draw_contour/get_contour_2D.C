@@ -16,8 +16,6 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
 
   TTree* t = f.Get("fitnt");
   
-  TCanvas* c = new TCanvas("c","c",0,0,1200,900);
-  c->SetGrid();
   TH2D* h1;
   TH2D* h2;
   TH2D* h3;
@@ -125,8 +123,10 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   format_hist(h2);
   format_hist(hdchisq);
   format_hist(hlike);
-  
-  
+ 
+  TCanvas* c = new TCanvas("c","c",0,0,1200,900);
+  c->SetGrid();
+ 
   TLegend* leg = new TLegend(0.7,0.8,0.9,0.98);
   leg->AddEntry(bf,"Best fit point","p");
   if(draw_asimov_input) leg->AddEntry(bf2,"True asimov point","p");
@@ -141,6 +141,13 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   leg->Draw();
   
   c->SaveAs(Form("%s_contour.pdf",filename.c_str()));
+ 
+  // Plot likelihood scan
+  TCanvas* c2 = new TCanvas("c","c",0,0,1200,900);
+  c2->SetGrid();
+  hlike->Draw("COLZ");
+  c2->SaveAs(Form("%s_likelihood.pdf",filename.c_str()));
+
   f.Close();
   
   TFile* f2 = new TFile(Form("%s_contour.root",filename.c_str()),"recreate");

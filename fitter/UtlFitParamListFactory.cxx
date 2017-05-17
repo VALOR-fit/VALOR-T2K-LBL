@@ -888,7 +888,27 @@ FitParamList * util::NamedParameterList(string name)
     fp -> FixParameter (kPhypDm12sq);
     fp -> FixParameter (kPhypDm23sq);
   }
-
+  if(name == "nuosc3f+nuisance+fix_noncp") {
+    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 6);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing23);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypDm23sq);
+  }
+  if(name == "nuosc3f+nuisance+fix_non23") {
+    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams);
+    util::AppendAllSystematicsTo(fp, 6);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+    fp -> FixParameter (kPhypMixing13);
+    fp -> FixParameter (kPhypMixing12);
+    fp -> FixParameter (kPhypDm12sq);
+    fp -> FixParameter (kPhypCPV);
+  }
 
   if (!fp) {
     cerr<<"FitParamListFactory/NamedParamList >> Unable to make: "<<name<<endl;
