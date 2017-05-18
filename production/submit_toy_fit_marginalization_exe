@@ -193,7 +193,7 @@ $mix23           = 0.528                        unless defined $mix23;
 $deltacp         = -1.601                        unless defined $deltacp;
 
 # Asimov B
-#$mix23           = 0.404                        unless defined $mix23;
+#$mix23           = 0.624                        unless defined $mix23;
 #$deltacp         = 0                        unless defined $deltacp;
 
 # Asimov C
