@@ -165,7 +165,7 @@ $tag             = "oa2017_AsimovA"  unless defined $tag;
 #$nruns           = 100                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 $nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 
-$config_file     = "analysis_configuration_oa2017_run1-7c_postfit.xml"  unless defined $config_file;
+$config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
 
 #$nexpts          = 10000   unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 $nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 

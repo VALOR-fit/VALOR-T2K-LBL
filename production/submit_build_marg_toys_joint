@@ -94,7 +94,7 @@ foreach (@ARGV) {
 
 $resource        = "interactive"               unless defined $resource;
 $tag             = "oa2017_AsimovA"  unless defined $tag;
-$config_file     = "analysis_configuration_oa2017_run1-7c_postfit.xml"  unless defined $config_file;
+$config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
 $fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
 
 # Asimov Common
