@@ -17,16 +17,6 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  const char * tag                  = "tamesu",
  const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu", "MultiRe" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
- 
- // // No Oscillations
- // double       input_mixing12       = 0.,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0., //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = 0., //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = -99,
-
  // Mach3, T2K Run1-4 + reactors best fit (1)
  double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -35,57 +25,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
  double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
  double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_betabar        = 1., //0., //-99,
-
- // // Mach3, T2K Run1-4 + reactors best fit - dcp=0 + first octant (2)
- // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.45, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = 0., //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = 1., //0., //-99,
-
- // Mach3, T2K Run1-4 + reactors best fit (1)
- // double       input_mixing12       = 0.306,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0257,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.5, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = 0., //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.6E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.49E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = -99,
- 
  bool         disable_banff_tuning = true,                          /* */
- 
- //
- // NEW CONFIGURATION FILES (4/3/16 BANFF RELEASE)
- //
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h.xml",
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_ExpSummer2016.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_FSIOnly.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_SKDetOnly.xml",
- 
- //
- // OLD CONFIGURATION FILES
- //
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_xsecterm_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_q2_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file    = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_mrmc_test.xml",
- // const char * config_file    = "analysis_configuration.xml",
  const char * config_file     = "analysis_configuration_prefit_Run1-7cPOT_theta_banff_2p2h_berpa.xml",
- //const char * config_file    = "analysis_configuration_dummy_multiring.xml",
- //const char * config_file  = "analysis_configuration_test_theta_elike_RFGRPA.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Nu6.57E20POT.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_prefit_theta_elike_RFGRPA_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c.xml",
- //const char * config_file      = "analysis_configuration_test_theta_elike_RFGRPA_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_SKDetonly_Asimov.xml",
- //const char * config_file      = "analysis_configuration_test_theta_1bin_NIWG2015c_FSISIonly_Asimov.xml",
- 
  bool         store_spectrum     = true,
  bool         print_spectrum     = true,                          /* */
  const char * mixparamchoice     = "sinsqtheta",
