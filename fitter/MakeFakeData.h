@@ -56,8 +56,8 @@ namespace valor {
         Nieves1P1H  = 3,
         MECPDD3DFlatFlux = 4,
 	// new 2017
-	2p2hPDD2D_2017 = 5,
-	2p2hnonPDD2D_2017 = 6
+	MEC2p2hPDD_2017 = 5,
+	MEC2p2hnonPDD_2017 = 6
 	//
       };
       
@@ -82,10 +82,10 @@ namespace valor {
       TH3D* PDD_ratio_nuebar;
 
       // new 2017
-      TH2D* 2p2hPDD_2017;
-      TH2D* 2p2hnonPDD_2017;
-      double Weight2p2hPDD_2017();
-      double Weight2p2hnonPDD_2017();
+      TH2D* hMEC2p2hPDD_2017;
+      TH2D* hMEC2p2hnonPDD_2017;
+      double WeightMEC2p2hPDD_2017();
+      double WeightMEC2p2hnonPDD_2017();
       //
 
       double WeightMECPDD3DFlatFlux();
@@ -96,6 +96,11 @@ namespace valor {
       double ErecoFunc_Nu(double Mom,double costh,double mass_lep);
       double ErecoFunc_NuBar(double Mom,double costh,double mass_lep);
       double ErecoFuncCCOnePi_Nu(double Mom,double costh,double mass_lep);
+
+      // new 2017
+      double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
+      //
+
       void   Init(void);
       
       double EReco1P1H();

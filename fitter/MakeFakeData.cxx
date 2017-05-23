@@ -27,7 +27,7 @@ using std::ifstream;
 using namespace valor;
 
 // new 2017
-double util::UtlMakeFakeData::2p2hPDD_2017()
+double util::UtlMakeFakeData::WeightMEC2p2hPDD_2017()
 {
   if(util::Is2p2h(m))
     {
@@ -36,16 +36,18 @@ double util::UtlMakeFakeData::2p2hPDD_2017()
       double costheta = dir_nu[0] * fBrDirNu[lepton_int][0] + dir_nu[1] * fBrDirNu[lepton_int][1] + dir_nu[2] * fBrDirNu[lepton_int][2];
       double weight =1;
       //if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino PDD rescale
-      int binx = 2p2hPDD_2017->GetYaxis()->FindBin(costheta);
-      int biny = 2p2hPDD_2017->GetXaxis()->FindBin(fBrPtrue[lepton_int]);
-      2p2hPDD_2017 = 2p2hPDD_2017->GetBinContent(binx,biny);
+      int binx = hMEC2p2hPDD_2017->GetYaxis()->FindBin(costheta);
+      int biny = hMEC2p2hPDD_2017->GetXaxis()->FindBin(fBrPtrue[lepton_int]);
+      weight = hMEC2p2hPDD_2017->GetBinContent(binx,biny);
       //}
       //else{         //AntiNeutrino PDD rescale
       //}
       return weight;
     }
+  return 1;
+
 };
-double util::UtlMakeFakeData::2p2hnonPDD_2017()
+double util::UtlMakeFakeData::WeightMEC2p2hnonPDD_2017()
 {
   if(util::Is2p2h(m))
     {
@@ -53,11 +55,12 @@ double util::UtlMakeFakeData::2p2hnonPDD_2017()
       double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
       double costheta = dir_nu[0] * fBrDirNu[lepton_int][0] + dir_nu[1] * fBrDirNu[lepton_int][1] + dir_nu[2] * fBrDirNu[lepton_int][2];
       double weight =1;
-      int binx = 2p2hnonPDD_2017->GetYaxis()->FindBin(costheta);
-      int biny = 2p2hnonPDD_2017->GetXaxis()->FindBin(fBrPtrue[lepton_int]);
-      2p2hnonPDD_2017 = 2p2hnonPDD_2017->GetBinContent(binx,biny);
+      int binx = hMEC2p2hnonPDD_2017->GetYaxis()->FindBin(costheta);
+      int biny = hMEC2p2hnonPDD_2017->GetXaxis()->FindBin(fBrPtrue[lepton_int]);
+      weight = hMEC2p2hnonPDD_2017->GetBinContent(binx,biny);
       return weight;
     }
+  return 1;
 };
 /////////
 
@@ -254,9 +257,9 @@ double util::UtlMakeFakeData::GetWeight()
     case util::UtlMakeFakeData::ReweightType::MECPDD3DFlatFlux : return this->WeightMECPDD3DFlatFlux();
       break;
       // new 2017
-    case util::UtlMakeFakeData::ReweightType::2p2hPDD_2017 : return this->Weight2p2hPDD_2017();
+    case util::UtlMakeFakeData::ReweightType::MEC2p2hPDD_2017 : return this->WeightMEC2p2hPDD_2017();
       break;
-    case util::UtlMakeFakeData::ReweightType::2p2hnonPDD_2017 : return this->Weight2p2hnonPDD_2017();
+    case util::UtlMakeFakeData::ReweightType::MEC2p2hnonPDD_2017 : return this->WeightMEC2p2hnonPDD_2017();
       break;
       ///////
     default:
@@ -308,11 +311,11 @@ void util::UtlMakeFakeData::SetReweightStyle(string _s)
     reweight_option = util::UtlMakeFakeData::ReweightType::Nieves1P1H;
   }
   // new 2017
-  else if (!_s.compare("2p2hPDD_2017")) {
-    reweight_option = util::UtlMakeFakeData::ReweightType::2p2hPDD_2017;
+  else if (!_s.compare("MEC2p2hPDD_2017")) {
+    reweight_option = util::UtlMakeFakeData::ReweightType::MEC2p2hPDD_2017;
   }
-  else if (!_s.compare("2p2hnonPDD_2017")) {
-    reweight_option = util::UtlMakeFakeData::ReweightType::2p2hnonPDD_2017;
+  else if (!_s.compare("MEC2p2hnonPDD_2017")) {
+    reweight_option = util::UtlMakeFakeData::ReweightType::MEC2p2hnonPDD_2017;
   }
   //////
   else{
@@ -323,8 +326,8 @@ void util::UtlMakeFakeData::SetReweightStyle(string _s)
     cerr << "\t MECPDD2D" << endl;
     cerr << "\t Nieves1P1H" << endl;
     cerr << "\t MECPDD3DFlatFlux" << endl;
-    cerr << "\t 2p2hPDD_2017" << endl;
-    cerr << "\t 2p2hnonPDD_2017" << endl;
+    cerr << "\t MEC2p2hPDD_2017" << endl;
+    cerr << "\t MEC2p2hnonPDD_2017" << endl;
     exit(1);
   }
 
@@ -378,6 +381,23 @@ double util::UtlMakeFakeData::ErecoFuncCCOnePi_Nu(double Mom,double costh,double
   
   return Ereco;  // GeV
 }
+//________________________________________________________________________________________        
+
+
+// new 2017
+double util::UtlMakeFakeData::CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep)
+{
+  // Enu      --> neutrino energy 
+  // Elep     --> lepton energy
+  // Plep     --> lepton momentum
+  // costheta --> angle between neutrino and lepton
+
+  // Q2 in the laboratory reference system (Giunti section 5.3.1)
+  double Q2 = 2*Enu*(Elep-Plep*costheta) - Mlep*Mlep;
+
+  return Q2;
+}
+////////
 
 //________________________________________________________________________________________
 bool util::UtlMakeFakeData::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -421,12 +441,12 @@ bool util::UtlMakeFakeData::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
       PDD_ratio_nuebar =
       util::XML2TH3D(xml,root_node,"mc/fake_data/three_d/pdd_nuebar");
       // new 2017
-      case util::UtlMakeFakeData::ReweightType::2p2hPDD_2017 :
-	Weight2p2hPDD_2017 =
-	  util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/2p2hPDD_2017");
-      case util::UtlMakeFakeData::ReweightType::2p2hnonPDD_2017 :
-	Weight2p2hPDD_2017 =
-	  util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/2p2hnonPDD_2017");
+      case util::UtlMakeFakeData::ReweightType::MEC2p2hPDD_2017 :
+	hMEC2p2hPDD_2017 =
+	  util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/MEC2p2hPDD_2017");
+      case util::UtlMakeFakeData::ReweightType::MEC2p2hnonPDD_2017 :
+	hMEC2p2hnonPDD_2017 =
+	  util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/MEC2p2hnonPDD_2017");
       /////
 
       return true;
@@ -465,8 +485,8 @@ void util::UtlMakeFakeData::Init(void)
   PDD_ratio_nu_3D                     = 0;
   PDD_ratio_nubar_3D                  = 0;
   
-  2p2hPDD_2017                        = 0;
-  2p2hnonPDD_2017                     = 0;
+  hMEC2p2hPDD_2017                     = 0;
+  hMEC2p2hnonPDD_2017                  = 0;
  
   //NewReweighting
   PDD_ratio_numu                      = 0;
