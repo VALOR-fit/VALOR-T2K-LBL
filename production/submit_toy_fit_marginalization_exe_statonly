@@ -133,11 +133,10 @@ $run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 -
 
 $resource        = "interactive"               unless defined $resource;
 
-$tag             = "oa2017_AsimovA"  unless defined $tag;
 
 $nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 
-$config_file     = "analysis_configuration_oa2017_run1-7c_postfit.xml"  unless defined $config_file;
+$config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
 
 $nexpts          = 1   unless defined $nexpts;  # number of toy experiments and fits per freepar point   (sinsqth13 Vs dcp 2D) 
 $first_expt      = 0   unless defined $first_exp; # first toy experiment id 
@@ -217,7 +216,9 @@ $masshierarchy_marg       = "normal"     unless defined $masshierarchy_marg;    
 
 $freepar0          = "deltacp"     unless defined $freepar0;
 
-$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys";
+$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/statonly";
+
+$tag             = "oa2017_AsimovA_${masshierarchy_marg}"  unless defined $tag;
 
 $wqueue = "express";
 
@@ -230,16 +231,7 @@ if($freepar0 eq "deltacp")
    $fitparamlist   = "nuosc3f+nuisance+fix_noncp";
    $nfiles_margtoys   = 1     unless defined $nfiles_margtoys; # of marginalization files
    $ntoys_margtoys    = 1     unless defined $ntoys_margtoys;     # of marginalization toys
-
-   if($masshierarchy_marg eq "normal")
-   {
-      $file_margtoys   = "$file_margtoys/dcp/statonly/nh/$tag";
-   }
-   else
-   {
-      $file_margtoys   = "$file_margtoys/dcp/statonly/ih/$tag";
-   }
-
+ 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
    $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
    $npt_freepar0      = 201; #201           unless defined $npt_freepar0; # of free parameter points to scan
@@ -259,15 +251,6 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
    $freepar0 = "mixing13";
    $freepar1 = "deltacp";
 
-   if($masshierarchy_marg eq "normal")
-   {
-      $file_margtoys   = "$file_margtoys/th13_dcp/statonly/nh/$tag";
-   }
-   else
-   {
-      $file_margtoys   = "$file_margtoys/th13_dcp/statonly/ih/$tag";
-   }
-
    if($penalty_freepar0 == 1)
    {  # Reactor constraint applied
       $minfreepar0       = 0.015  unless defined $minfreepar0;
@@ -276,7 +259,7 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
    else
    {  # T2K only
       $minfreepar0       = 0.0  unless defined $minfreepar0;  # Min free param allowed value
-      $maxfreepar0       = 0.113  unless defined $maxfreepar0;  # Max free param allowed value
+      $maxfreepar0       = 0.1;#0.113  unless defined $maxfreepar0;  # Max free param allowed value
    }
    $npt_freepar0      = 81           unless defined $npt_freepar0; # of free parameter points to scan
    $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
@@ -294,21 +277,23 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    $freepar0 = "mixing23";
    $freepar1 = "dmsq23";
 
-   if($masshierarchy_marg eq "normal")
-   {
-      $file_margtoys   = "$file_margtoys/th23_dm23/statonly/nh/$tag";
-   }
-   else
-   {
-      $file_margtoys   = "$file_margtoys/th23_dm23/statonly/ih/$tag";
-   }
-
    $minfreepar0       = 0.3  unless defined $minfreepar0;  # Min free param allowed value
    $maxfreepar0       = 0.7  unless defined $maxfreepar0;  # Max free param allowed value
    $npt_freepar0      = 81;#10; #201           unless defined $npt_freepar0; # of free parameter points to scan
    $minfreepar1       = 2.0e-3  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 3.0e-3  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 21;#10            unless defined $npt_freepar1; # of free parameter points to scan
+}
+
+if(($freepar0 ne "") && ($freepar1 eq ""))
+{
+   $tag = "${tag}_${freepar0}";
+   $file_margtoys = "${file_margtoys}/${tag}";
+}
+elsif(($freepar0 ne "") && ($freepar1 ne ""))
+{
+   $tag = "${tag}_${freepar0}_${freepar1}";
+   $file_margtoys = "${file_margtoys}/${tag}";
 }
 
 $type_error        = "" unless defined $type_error;     # HESSE, MINOS or both (use "-" between)
@@ -344,6 +329,18 @@ if($freepar0 eq "deltacp")
 {
    $init_freepar0  = $deltacp;
 }
+if($freepar0 eq "mixing13")
+{
+   $init_freepar0  = $mix13;
+}
+if($freepar0 eq "mixing23")
+{
+   $init_freepar0  = $mix23;
+}
+if($freepar0 eq "dmsq23")
+{
+   $init_freepar0  = $dmsq23;
+}
 
 if($freepar1 eq "")
 {
@@ -365,6 +362,18 @@ else
    if($freepar1 eq "deltacp")
    {
       $init_freepar1  = $deltacp;
+   }
+   if($freepar1 eq "mixing13")
+   {
+      $init_freepar1  = $mix13;
+   }
+   if($freepar1 eq "mixing23")
+   {
+      $init_freepar1  = $mix23;
+   }
+   if($freepar1 eq "dmsq23")
+   {
+      $init_freepar1  = $dmsq23;
    }
 }
 
@@ -702,7 +711,7 @@ while($i_freepar1 < $n_freepar1) {
 	    }
 
       if($resource eq "warwick") {
-        `bsub -q $wqueue -oo log_$irun-$i_freepar0-$ifreepar1.log $command`
+        `bsub -q $wqueue -oo log_${tag}_${irun}_${i_freepar0}_${ifreepar1}.log $command`
       }
 	    
 	    

@@ -1137,8 +1137,6 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // streamer << "\\hline \\hline" << endl;
     streamer << "\\toprule" << endl;
     streamer << "{\\textbf{ Parameter }} &  "
-             << "{\\textbf{ Nominal}}   &  "
-             << "{\\textbf{ BANFF tuned}} &  "
              << "\\multicolumn {1}{|c|}{\\textbf{ 1 $\\sigma$ value}} &  "
              << "\\multicolumn {2}{S|} { {\\textbf{ BANFF -3$\\sigma$}} } & "
              << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned -1$\\sigma$}} } &  "

@@ -93,7 +93,6 @@ foreach (@ARGV) {
 }
 
 $resource        = "interactive"               unless defined $resource;
-$tag             = "oa2017_AsimovA"  unless defined $tag;
 $config_file     = "analysis_configuration_oa2017_run1-7c_postfit.xml"  unless defined $config_file;
 
 # Asimov Common
@@ -137,11 +136,15 @@ $deltacp_ih      = -1.601                             unless defined $deltacp_ih
 #$mix23_ih        = 0.528                              unless defined $mix23_ih;
 #$deltacp_ih      = 1.5707963267948966                 unless defined $deltacp_ih;
 
+$tag             = "oa2017_AsimovA_${masshierarchy}"  unless defined $tag;
+
 $wqueue = "express";
 
 # # 1D fit - dcp
 if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
 {
+   $tag = "${tag}_${freepar0}";
+
    $fitparamlist   = "nuosc3f+nuisance+fix_noncp";
    $nexpts_marg            = 1; # of toys
    $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -159,6 +162,8 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
 # # 2D fit - sinsqth13 Vs dcp
 if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "deltacp") and ($freepar1 eq "mixing13")))
 {
+   $tag = "${tag}_${freepar0}_${freepar1}";
+
    $fitparamlist   = "nuosc3f+nuisance+fix_12_23";
    $nexpts_marg = 1;
    if($freepar0 eq "deltacp")
@@ -167,7 +172,7 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
       $freepar1 = "deltacp";
    }
    $minfreepar0            = 0.0                      unless defined $minfreepar0;     # Minimum free parameter allowed value
-   $maxfreepar0            = 0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $maxfreepar0            = 0.1;#0.113                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
    $npt_freepar0           = 81                         unless defined $npt_freepar0;    # of free parameter points to scan
    $minfreepar1            = -3.14159265358979312e+00   unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = +3.14159265358979312e+00   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
@@ -181,6 +186,8 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
 # # 2D fit - sinsqth23 Vs dmsq23
 if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
 {
+   $tag = "${tag}_${freepar0}_${freepar1}";
+
    $fitparamlist   = "nuosc3f+nuisance+fix_non23";
    $nexpts_marg = 1;
    if($freepar0 eq "dmsq23")
@@ -486,7 +493,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	}
 
         if($resource eq "warwick") {
-          `bsub -q $wqueue -oo log_$masshierarchy-$imin0-$imin1.log $softw_dir/production/warwick_submit_command.sh $command`;
+          `bsub -q $wqueue -oo log_${tag}_${imin0}_${imin1}.log $softw_dir/production/warwick_submit_command.sh $command`;
         }
 	
 	$irun++;
