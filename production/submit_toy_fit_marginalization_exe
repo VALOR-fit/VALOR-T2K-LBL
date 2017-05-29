@@ -270,8 +270,8 @@ $penalty_freepar1 = 0         unless defined $penalty_freepar1;
 # 1D fit - dcp
 if($freepar0 eq "deltacp" && $freepar1 eq "")
 {
-   $nfiles_margtoys   = 41; #201           unless defined $nfiles_margtoys; # of marginalization files
-   $ntoys_margtoys    = 10000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
+   $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
+   $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
    $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
@@ -281,7 +281,7 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
 
-   $wqueue = "short -W 20";
+   $wqueue = "short";#"short -W 20";
 }
 
 # 1D fit - sinsqth13
