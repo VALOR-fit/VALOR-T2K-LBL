@@ -676,6 +676,8 @@ void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * 
     exit(1);
   }
 
+  //cout << "EScale tweak: " << escale_tweak << endl;
+
   // NB: events_par_bin is fine!
 
   // for (int ibin_q2 = 0 ; ibin_q2 < n_q2_bins; ibin_q2++) { // loop over q2
@@ -711,34 +713,79 @@ void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * 
     
     if (total_events < kASmallNum) return;
     
-    double overlap = 0;
-      
+    double factor = 1.0;
+    double overlap = 0.0;
+    double scaleRange = 0.0;
+
     for (int ibin_s = 0 ; ibin_s < n_ereco_bins ; ibin_s++) { // Loop over scaled bins
       double bin_min_s = scaled_bin_edges[ibin_s][ibin_q2];
       double bin_max_s = scaled_bin_edges[ibin_s+1][ibin_q2];
       for (int ibin_u = 0 ; ibin_u < n_ereco_bins+1 ; ibin_u++) {
         double bin_min_u = unscaled_bin_edges[ibin_u][ibin_q2];
         double bin_max_u = unscaled_bin_edges[ibin_u+1][ibin_q2];
-      
-        if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
-        else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
-        else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
-        else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
-        else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
-        else overlap = -999; // No crossover
-        
-        if (overlap <= 0) continue;
-        
-        double new_events = events_per_bin[ibin_s][ibin_q2] * overlap / (scaled_bin_edges[ibin_s+1][ibin_q2] - scaled_bin_edges[ibin_s][ibin_q2]);
+     
+        if(bin_min_u > bin_max_s)
+        {  // Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
+           break;
+        }
+        else if(bin_min_s > bin_max_u)
+        {  // Scaled bin entirely larger than unscaled bin, skip to next unscaled bin
+           continue;
+        }
+        else if(bin_min_u >= bin_min_s && bin_max_u <= bin_max_s)
+        {  // Unscaled bin subset of scaled bin
+           overlap = bin_max_u - bin_min_u;
+           scaleRange = bin_max_s - bin_min_s;
+           factor = overlap / scaleRange;
+        }
+        else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u)
+        {  // Scaled bin subset of unscaled bin
+           // Take the contents of this bin unchanged, there could be additional scaled bins contributing
+           factor = 1.0;
+        }
+        else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s)
+        {  // Scaled bin overlaps low part of unscaled bin
+           overlap = bin_max_s - bin_min_u;
+           scaleRange = bin_max_s - bin_min_s;
+           factor = overlap / scaleRange;
+        }
+        else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s)
+        {  // Scaled bin overlaps high part of unscaled bin
+           overlap = bin_max_u - bin_min_s;
+           scaleRange = bin_max_s - bin_min_s;
+           factor = overlap / scaleRange;
+        }
+        else
+        {  // Shouldn't get here
+           factor = 1.0;
+        }
+       
+/*        cout << "Bins: U = [" << bin_min_u << ", " << bin_max_u <<
+           "] S = [" << bin_min_s << ", " << bin_max_s <<
+           "] => Overlap = " << overlap << "   Range = " << scaleRange <<
+           "   Factor = " << factor << endl;*/
+
+        if (factor <= 0) continue;
+       
+        double new_events = events_per_bin[ibin_s][ibin_q2] * factor;
         new_events_per_bin[ibin_u][ibin_q2] += new_events;
       }
     }
     // Move events back into main array.
-    for (int i = 0 ; i < n_ereco_bins ; i++) {
+    for (int i = 0 ; i < n_ereco_bins ; i++)
+    {
       events_per_bin[i][ibin_q2] = new_events_per_bin[i][ibin_q2];
     }
     events_per_bin[n_ereco_bins-1][ibin_q2] += new_events_per_bin[n_ereco_bins][ibin_q2]; //Put events from overflow bin back into top bin
     
+/*    double migrated_total_events = 0;
+    for (int i = 0 ; i < n_ereco_bins ; i++)
+    {
+       migrated_total_events += events_per_bin[i][ibin_q2];
+    }
+    cout << "Compare (" << escale_tweak << "): " << util::AsString(s) << " Q2: " << ibin_q2 << " Old: " <<
+       total_events << "   New: " << migrated_total_events << endl;*/
+
 #ifndef NDEBUG
   double new_total_events = 0;
   for (int i = 0 ; i < n_ereco_bins ; i++) {
