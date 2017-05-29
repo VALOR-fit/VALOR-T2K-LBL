@@ -246,6 +246,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 
 
   // Get tuned MC - with BANFF tuning
+  //
+  cout << "Getting nominal spectra" << endl;
   
   skexp.GetBANFF()->Tweak(0,0,"untuned");
   skexp.ResetSystematics();
@@ -457,6 +459,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // Get the tweaked spectrum histograms
     
     // +1 sigma tweak systematic
+    cout << "Getting +1 sigma" << endl;
     skexp.GetBANFF()->Tweak(0,0,"untuned");
     skexp.ResetSystematics();
     cout << "Twk p1\t" << sysstr << "\t" << tweak_p1 << endl;
@@ -523,6 +526,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     }
     
     // -1 sigma tweak systematic
+    cout << "Getting -1 sigma" << endl;
     skexp.GetBANFF()->Tweak(1,0,"");
     skexp.ResetSystematics();
     cout << "Twk m1\t" << sysstr << "\t" << tweak_m1 << endl;
@@ -589,6 +593,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     }
     
     // +3 sigma tweak systematic
+    cout << "Getting +3 sigma" << endl;
     skexp.GetBANFF()->Tweak(1,0,"");
     skexp.ResetSystematics();
     cout << "Twk p3\t" << sysstr << "\t" << tweak_p3 << endl;
@@ -656,6 +661,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
     // -3 sigma tweak systematic
     // skexp.GetBANFF()->RestoreFHCpRHCTunedMC();
+    cout << "Getting -3 sigma" << endl;
     skexp.GetBANFF()->Tweak(1,0,"");
     skexp.ResetSystematics();
     cout << "Twk m3\t" << sysstr << "\t" << tweak_m3 << endl;
@@ -1110,7 +1116,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
     // write document header to outfile
     
-    string output_file (Form("systematic_tables%s-%s-%s.tex",tag,oscparams.c_str(),sk_sample));
+    string output_file (Form("systematic_tables%s_%s.tex",tag,sk_sample));
     ofstream outfile (output_file.c_str());
     string f;
     //f += "\\documentclass[10pt,a4paper]{article}\n";
@@ -1165,10 +1171,6 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
     streamer   << setw(ncol1)  << setfill(' ')
                << "All syst"
-               << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
-               << endcolumn
-               << setw(ncolnev)  << setfill(' ') << setprecision(5) << tot
                << endcolumn
                << setw(ncolnev)  << setfill(' ') << setprecision(5) << ""
                << endcolumn
