@@ -101,12 +101,12 @@ void build_marg_toys_joint
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
  
  //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR)
- TString file_priors = "", // Set to "" if no user priors are used (VALOR)
+ int seed = 999,
  
  bool reactors       = false // reactor constraint
  )
 {  
-
+  TString file_priors = "";
   FileStat_t dummy;
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
@@ -228,7 +228,7 @@ void build_marg_toys_joint
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
   fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
-  fitmarg->SetSeed(999);
+  fitmarg->SetSeed(seed);
 
   // Set fit parameter list
   fitmarg->SetFitParamList(fit_param_list);

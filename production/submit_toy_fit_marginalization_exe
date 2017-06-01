@@ -260,22 +260,38 @@ $freepar0          = "deltacp"     unless defined $freepar0;
 
 $file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys";
 
-$tag             = "oa2017_AsimovA_${masshierarchy_marg}"  unless defined $tag;
-
 $wqueue = "short";
 
 $penalty_freepar0 = 0         unless defined $penalty_freepar0; # 1 if reactor constraint, 0 otherwise
 $penalty_freepar1 = 0         unless defined $penalty_freepar1;
 
+if($penalty_freepar0 == 1)
+{
+   $tag             = "oa2017_AsimovA_${masshierarchy_marg}_reactor"  unless defined $tag;
+}
+else
+{
+   $tag             = "oa2017_AsimovA_${masshierarchy_marg}_t2k"  unless defined $tag;
+}
+
 # 1D fit - dcp
 if($freepar0 eq "deltacp" && $freepar1 eq "")
 {
-   $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
-   $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
+   if($penalty_freepar0 == 1)
+   {
+      $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+   }
+   else
+   {
+      $nfiles_margtoys   = 67           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 25000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+   }
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
    $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
-   $npt_freepar0      = 201; #201           unless defined $npt_freepar0; # of free parameter points to scan
    $freepar1          = ""     unless defined $freepar1;
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
@@ -297,8 +313,8 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
    }
    else
    {  # T2K only
-      $minfreepar0       = 0.0  unless defined $minfreepar0;  # Min free param allowed value
-      $maxfreepar0       = 0.113  unless defined $maxfreepar0;  # Max free param allowed value
+      $minfreepar0       = 0.007  unless defined $minfreepar0;  # Min free param allowed value
+      $maxfreepar0       = 0.053  unless defined $maxfreepar0;  # Max free param allowed value
    }
 
    $npt_freepar0      = 201; #201           unless defined $npt_freepar0; # of free parameter points to scan
@@ -313,12 +329,22 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
 # 1D fit - sinsqth23
 if($freepar0 eq "mixing23" && $freepar1 eq "")
 {
-   $nfiles_margtoys   = 41; #201           unless defined $nfiles_margtoys; # of marginalization files
-   $ntoys_margtoys    = 10000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
-   
-   $minfreepar0       = 0.3  unless defined $minfreepar0;  # Min free param allowed value
-   $maxfreepar0       = 0.7  unless defined $maxfreepar0;  # Max free param allowed value
-   $npt_freepar0      = 201; #201           unless defined $npt_freepar0; # of free parameter points to scan
+   if($penalty_freepar0 == 1)
+   {
+      $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+   }
+   else
+   {
+      $nfiles_margtoys   = 67           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 25000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+   }
+
+
+   $minfreepar0       = 0.4  unless defined $minfreepar0;  # Min free param allowed value
+   $maxfreepar0       = 0.65  unless defined $maxfreepar0;  # Max free param allowed value
    $freepar1          = ""     unless defined $freepar1;
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
@@ -330,12 +356,21 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
 # 1D fit - dmsq23
 if($freepar0 eq "dmsq23"  && $freepar1 eq "")
 {
-   $nfiles_margtoys   = 41; #201           unless defined $nfiles_margtoys; # of marginalization files
-   $ntoys_margtoys    = 10000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
+   if($penalty_freepar0 == 1)
+   {
+      $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+   }
+   else
+   {
+      $nfiles_margtoys   = 67           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 25000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+   }
 
-   $minfreepar0       = 2.0e-3  unless defined $minfreepar0;  # Min free param allowed value
-   $maxfreepar0       = 3.0e-3  unless defined $maxfreepar0;  # Max free param allowed value
-   $npt_freepar0      = 201; #201           unless defined $npt_freepar0; # of free parameter points to scan
+   $minfreepar0       = 2.3e-3  unless defined $minfreepar0;  # Min free param allowed value
+   $maxfreepar0       = 2.7e-3  unless defined $maxfreepar0;  # Max free param allowed value
    $freepar1          = ""     unless defined $freepar1;
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
@@ -360,8 +395,8 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
    }
    else
    {  # T2K only
-      $minfreepar0       = 0.0  unless defined $minfreepar0;  # Min free param allowed value
-      $maxfreepar0       = 0.113  unless defined $maxfreepar0;  # Max free param allowed value
+      $minfreepar0       = 0.007  unless defined $minfreepar0;  # Min free param allowed value
+      $maxfreepar0       = 0.053  unless defined $maxfreepar0;  # Max free param allowed value
    }
    $npt_freepar0      = 81;#10; #201           unless defined $npt_freepar0; # of free parameter points to scan
    $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
@@ -380,11 +415,11 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    $freepar0 = "mixing23";
    $freepar1 = "dmsq23";
 
-   $minfreepar0       = 0.3  unless defined $minfreepar0;  # Min free param allowed value
-   $maxfreepar0       = 0.7  unless defined $maxfreepar0;  # Max free param allowed value
+   $minfreepar0       = 0.4  unless defined $minfreepar0;  # Min free param allowed value
+   $maxfreepar0       = 0.65  unless defined $maxfreepar0;  # Max free param allowed value
    $npt_freepar0      = 81;#10; #201           unless defined $npt_freepar0; # of free parameter points to scan
-   $minfreepar1       = 2.0e-3  unless defined $minfreepar1;  # Min free param allowed value
-   $maxfreepar1       = 3.0e-3  unless defined $maxfreepar1;  # Max free param allowed value
+   $minfreepar1       = 2.3e-3  unless defined $minfreepar1;  # Min free param allowed value
+   $maxfreepar1       = 2.7e-3  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 21;#10            unless defined $npt_freepar1; # of free parameter points to scan
 
    $wqueue = "long -W 3:00";
