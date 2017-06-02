@@ -4530,8 +4530,8 @@ bool SuperkMC::ApplyEnergyScaleSystematicToTotalSpectrum2D(void)
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
         
-        //double escale = fSKDetFSI->EnergyScale(s);
-        double escale = fSKDetFSI->CurrentValue(conv::kNuisSuperkEnergyScale);
+        double escale = fSKDetFSI->EnergyScale(s);
+        //double escale = fSKDetFSI->CurrentValue(conv::kNuisSuperkEnergyScale);
         
         double * events_per_bin = this->CurrErecoVsQ2SpectrumArray(s);
         

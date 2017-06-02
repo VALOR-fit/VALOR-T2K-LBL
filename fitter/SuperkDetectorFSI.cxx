@@ -174,7 +174,7 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   this->Init(numOfActiveSKDetFSIParams, activeSKDetFSIParams, "syst/skdetfsi");
   this->SetName("SuperkDetectorFSI");
   
-  (*fDefaultValues)[this->Param2Idx(conv::kNuisSuperkEnergyScale)] = 1;//0; p-theta set to one, event discrepancies during validation 
+  (*fDefaultValues)[this->Param2Idx(conv::kNuisSuperkEnergyScale)] = 0;//0; p-theta set to one, event discrepancies during validation 
   
   LOG("SuperkDetectorFSI",pINFO) << "Defined final SKDetFSI matrix rows: ";
   for (unsigned int i = 0 ; i < fNSystParameters; i++ ) {
