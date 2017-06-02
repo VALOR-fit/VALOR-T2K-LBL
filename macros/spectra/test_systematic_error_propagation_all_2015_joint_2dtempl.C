@@ -28,26 +28,26 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 (
  // int          mode               = 1,              /* options: see the macro   */
  bool         update_rootfile    = false,          /* "update" ROOT output file? If false, will "recreate" */
- const char * sk_sample          = "1Re",      /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu, MultiRe" */
+ const char * sk_sample          = "MultiRe",      /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu, MultiRe" */
  const char * hypothesis         = "3f_osc",       /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" , "nuosc_3f+nuisance"*/
 
- // double       input_mixing12       = 0.304,//-99,    
- // double       input_mixing13       = 0.0217, //-99,    
- // double       input_mixing23       = 0.528,    
- // double       input_deltacp        = -1.601,   
- // double       input_dm12sq         = 7.53E-5,   
- // double       input_dm23sq         = 2.509E-3,     
-
- double       input_mixing12       = 0.,    
- double       input_mixing13       = 0.,    
- double       input_mixing23       = 0.,
- double       input_deltacp        = 0.,
+ double       input_mixing12       = 0.304,//-99,    
+ double       input_mixing13       = 0.0217, //-99,    
+ double       input_mixing23       = 0.528,    
+ double       input_deltacp        = -1.601,   
  double       input_dm12sq         = 7.53E-5,   
  double       input_dm23sq         = 2.509E-3,     
+
+ // double       input_mixing12       = 0.,    
+ // double       input_mixing13       = 0.,    
+ // double       input_mixing23       = 0.,
+ // double       input_deltacp        = 0.,
+ // double       input_dm12sq         = 7.53E-5,   
+ // double       input_dm23sq         = 2.509E-3,     
  
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration_prefit_Run1-7cPOT_nuecc1pi_theta_2p2h_berpa.xml",
+ const char * config_file        = "analysis_configuration_oa2017_run1-8_postfit.xml",
  const char * fit_param_list     = "nuosc3f+nuisance",
  
  const char * mixparamchoice     = "sinsqtheta",
@@ -58,7 +58,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  string tablesyst_name           = "f_tamesu", //"f_banff17", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
  const bool   per_mode           = true,
- const char*  tag                = "_tamesu_prebanff_unosc_noRPA_BeRPA"
+ const char*  tag                = "postbanff_osc"
  ){
   using namespace std;
   using namespace valor;
@@ -1144,7 +1144,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     streamer << "\\toprule" << endl;
     streamer << "{\\textbf{ Parameter }} &  "
              << "\\multicolumn {1}{|c|}{\\textbf{ 1 $\\sigma$ value}} &  "
-             << "\\multicolumn {2}{S|} { {\\textbf{ BANFF -3$\\sigma$}} } & "
+             << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned -3$\\sigma$}} } & "
              << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned -1$\\sigma$}} } &  "
              << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned +1$\\sigma$}} } &  "
              << "\\multicolumn {2}{S|} { {\\textbf{ BANFF tuned +3$\\sigma$}} } \\\\  "
@@ -1199,7 +1199,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       if(!fparm->IsNuisance(p)) continue;
       string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-        
+
       // double tot_p1  = hErecoTun_p1sigma[ip]->Integral();
       // double tot_m1  = hErecoTun_m1sigma[ip]->Integral();
       // double tot_p3  = hErecoTun_p3sigma[ip]->Integral();
@@ -1221,15 +1221,13 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       double frac_m1 = (tot_m1 - tot)/tot * 100;        
       double frac_p3 = (tot_p3 - tot)/tot * 100;
       double frac_m3 = (tot_m3 - tot)/tot * 100;
+
+      if (frac_p1 == 0 && frac_m1 == 0 && frac_p3 == 0 && frac_m3 == 0) continue;
         
       streamer   << setw(ncol1)  << setfill(' ')
         //<< util::AsStringPaperTex(util::PhysParamIdFromString(sysstr))
                  << util::AsStringTex(util::PhysParamIdFromString(sysstr))
                  << endcolumn
-                 // << setw(ncolnev)  << setfill(' ') << setprecision(6) << totnom
-                 // << endcolumn
-                 // << tot
-                 // << endcolumn
                  << setw(ncolnev)  << setfill(' ') << setprecision(6) << sigma_val
                  << endcolumn
                  << setw(ncolnev)  << setfill(' ') << setprecision(6) << tot_m3
