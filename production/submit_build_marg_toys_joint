@@ -85,7 +85,7 @@ foreach (@ARGV) {
 
   elsif($_ eq '--fmwk-dir'               ) { $fmwk_dir              = $ARGV[$iarg+1]; }
   elsif($_ eq '--queue'                  ) { $queue                 = $ARGV[$iarg+1]; }
-  elsif($_ eq '--seed'                  ) { $seed                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--seed'                   ) { $seed                  = $ARGV[$iarg+1]; }
   
   else {
       print "Unrecognised argument ".$_."\n"; exit;
@@ -96,7 +96,7 @@ foreach (@ARGV) {
 $resource        = "interactive"               unless defined $resource;
 $config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
 $fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
-
+$seed           = 999                   unless defined $seed;
 # Asimov Common
 $dm23sq_nh       = 2.509E-3                           unless defined $dm23sq_nh; 
 $dm12sq_nh       = 7.53E-5                            unless defined $dm12sq_nh; 
@@ -561,13 +561,13 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	    open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
 	    print PBS "#!/bin/bash \n";
 	    print PBS "#PBS -N $tag-$irun \n";
-	    print PBS "#PBS -q short64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
-	    #print PBS "#PBS -l cput=$cput \n"; 
+	    print PBS "#PBS -q all64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
+	    print PBS "#PBS -l nodes=1:ppn=2 \n"; 
 	    print PBS "#PBS -o /scratch/cbarry/$tag-$irun.pbs.out \n";
 	    print PBS "#PBS -e /scratch/cbarry/$tag-$irun.pbs.err \n";
 	    print PBS "cd $job_dir \n";
 	    # print PBS "source $fmwk_dir/setup/setup_at_liverpool.sh $fmwk_dir\n";
-	    print PBS "source $softw_dir/setup/setup_at_liverpool.sh $softw_dir $fmwk_dir \n";
+	    print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
 	    print PBS "$command \n";
 	    close(PBS);
 	    `qsub $job_dir/$tag-$irun.pbs`;
