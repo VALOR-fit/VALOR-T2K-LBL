@@ -471,8 +471,7 @@ double SuperkDetectorFSI::EnergyScale(conv::SuperkSample_t /*s*/) const
 {
   PhysParamId_t p = conv::kNuisSuperkEnergyScale;
   double twk     = this->CurrentValue(p);
-  double err     = this->OneSigmaError(p);
   double central = 1.;
-  return central+twk*err;
+  return central + twk;
 }
 //________________________________________________________________________________________

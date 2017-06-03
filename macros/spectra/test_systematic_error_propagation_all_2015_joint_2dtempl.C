@@ -242,7 +242,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   // central parameter vectors --> to restore the nominal MC for skdetfsi
   TVectorD *vcentral_skdetfsi = new TVectorD(nskdetfsi);
   for(int ip = 0; ip < nskdetfsi; ip++)
-    (*vcentral_skdetfsi)[ip] = 1.;    
+    (*vcentral_skdetfsi)[ip] = 1.0;    
 
 
   // Get tuned MC - with BANFF tuning
@@ -362,7 +362,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
              
       idx = skexp.GetSuperkDetectorFSI()->Param2Idx(p);
       cout << "idx\t" << idx << endl;
-      if(true){
+      if(p != conv::kNuisSuperkEnergyScale){
         bestfit = 1.;
 
         tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
@@ -380,24 +380,24 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
                 
         ip_skdetfsi++;
       }
-      // else if(p == conv::kNuisSuperkEnergyScale){
-      //   bestfit = 1.;
-      //   tweak_p1 = bestfit + 1;
-      //   tweak_m1 = bestfit - 1;
+      else if(p == conv::kNuisSuperkEnergyScale){
+         bestfit = 0.;
+         tweak_p1 = bestfit + (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+         tweak_m1 = bestfit - (1 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
       //   //tweak_p1 = TMath::Max(tweak_p1,0.);
       //   //tweak_m1 = TMath::Max(tweak_m1,0.);
         
-      //   vp1sigma_skdetfsi[ip_skdetfsi] = tweak_p1;
-      //   vm1sigma_skdetfsi[ip_skdetfsi] = tweak_m1;
+         vp1sigma_skdetfsi[ip_skdetfsi] = tweak_p1;
+         vm1sigma_skdetfsi[ip_skdetfsi] = tweak_m1;
       //   cout << "idx\t" << idx << endl;
-      //   tweak_p3 = bestfit + 3;
-      //   tweak_m3 = bestfit - 3;
+         tweak_p3 = bestfit + (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
+         tweak_m3 = bestfit - (3 * sqrt(skexp.GetSuperkDetectorFSI()->CovMatrix()(idx,idx)));
 
-      //   vp3sigma_skdetfsi[ip_skdetfsi] = tweak_p3;
-      //   vm3sigma_skdetfsi[ip_skdetfsi] = tweak_m3;
+         vp3sigma_skdetfsi[ip_skdetfsi] = tweak_p3;
+         vm3sigma_skdetfsi[ip_skdetfsi] = tweak_m3;
                 
-      //   ip_skdetfsi++; 
-      // }
+         ip_skdetfsi++; 
+       }
             
     }
     else if(util::IsBANFF(p)){
@@ -1117,21 +1117,6 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // write document header to outfile
     
     string output_file (Form("systematic_tables%s_%s.tex",tag,sk_sample));
-    ofstream outfile (output_file.c_str());
-    string f;
-    //f += "\\documentclass[10pt,a4paper]{article}\n";
-    f += "\\documentclass{standalone}\n";
-    f += ("\\usepackage{amsmath}\n");
-    f += ("\\usepackage{booktabs}\n");
-    f += ("\\usepackage{siunitx}\n");
-    f += ("\\sisetup{round-mode=places,round-precision=5}\n");
-    f += ("\\usepackage[table]{xcolor}\n");
-    f += ("\\usepackage{graphicx}\n");
-    f += ("\\usepackage{dcolumn}\n");
-    //    f += ("\\usepackage[cm]{fullpage}\n");
-    f += ("\\begin{document}\n");
-    outfile.write (f.c_str(),f.size());
-    outfile.close();
     
     stringstream streamer;
     // streamer << "\\begin{table}"   << endl;
@@ -1268,13 +1253,6 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     // write to outfile
     outfile.write (streamer.str().c_str(),size);
     outfile.close();
-    
-    ofstream outfile (output_file.c_str(),ios_base::trunc&&ios_base::out);
-    string f;
-    f += ("\\end{document}\n");
-    outfile.write (f.c_str(),f.size());
-    outfile.close();
-    
   }
 
 
@@ -1287,14 +1265,6 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
     // write document header to outfile
     ofstream outfile (output_file_mode.c_str());
-    string f;
-    f += "\\documentclass[10pt,a4paper]{article}\n";
-    f += ("\\usepackage{amsmath}\n");
-    f += ("\\usepackage{graphicx}\n");
-    f += ("\\usepackage{dcolumn}\n");
-    f += ("\\usepackage[cm]{fullpage}\n");
-    f += ("\\begin{document}\n");
-    outfile.write (f.c_str(),f.size());
     outfile.close();
     
     
@@ -1408,12 +1378,6 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     ofstream outfile (output_file_mode.c_str(),ios_base::app);
     // write to outfile
     outfile.write (streamer.str().c_str(),size);
-    outfile.close();
-    
-    ofstream outfile (output_file_mode.c_str(),ios_base::trunc&&ios_base::out);
-    string f;
-    f += ("\\end{document}\n");
-    outfile.write (f.c_str(),f.size());
     outfile.close();
   }
   else{
