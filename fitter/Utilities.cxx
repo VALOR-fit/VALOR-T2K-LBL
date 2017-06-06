@@ -713,7 +713,7 @@ void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * 
     
     if (total_events < kASmallNum) return;
 
-    double overlap = 0;
+    double factor = 0.0;
     
     for (int ibin_s = 0 ; ibin_s < n_ereco_bins ; ibin_s++) { // Loop over scaled bins
       double bin_min_s = scaled_bin_edges[ibin_s][ibin_q2];
@@ -722,16 +722,40 @@ void valor::util::ApplyEnergyScaleSystematic2D(conv::SuperkSample_t s, double * 
         double bin_min_u = unscaled_bin_edges[ibin_u][ibin_q2];
         double bin_max_u = unscaled_bin_edges[ibin_u+1][ibin_q2];
 
-        if     (bin_min_u >= bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_u; // Entirely subsumed unscaled bin
-        else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u) overlap = bin_max_s - bin_min_s; // Entirely subsumed scaled bin
-        else if(bin_max_u >  bin_max_s && bin_min_u >= bin_min_s) overlap = bin_max_s - bin_min_u; // Scaled bin extends low
-        else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s) overlap = bin_max_u - bin_min_s; // Scaled bin extends high
-        else if(bin_min_u >  bin_max_s) break ; //Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
-        else overlap = -999; // No crossover
-                                                        
-        if (overlap <= 0) continue;
-                                                                
-        double new_events = events_per_bin[ibin_s][ibin_q2] * overlap / (scaled_bin_edges[ibin_s+1][ibin_q2] - scaled_bin_edges[ibin_s][ibin_q2]);
+         if(bin_min_u > bin_max_s)
+         {  // Unscaled bin entirely larger than scaled bin, stop checking higher unscaled
+            break;
+         }
+         else if(bin_min_s > bin_max_u)
+         {  // Scaled bin entirely larger than unscaled bin, skip to next unscaled bin
+            continue;
+         }
+         else if(bin_min_u >= bin_min_s && bin_max_u <= bin_max_s)
+         {  // Unscaled bin subset of scaled bin
+            factor = (bin_max_u - bin_min_u) / (bin_max_s - bin_min_s);
+         }
+         else if(bin_min_s >= bin_min_u && bin_max_s <= bin_max_u)
+         {  // Scaled bin subset of unscaled bin
+            // Take the contents of this bin unchanged, there could be additional scaled bins contributing
+            factor = 1.0;
+         }
+         else if(bin_max_u > bin_max_s && bin_min_u >= bin_min_s)
+         {  // Scaled bin overlaps low part of unscaled bin
+            factor = (bin_max_s - bin_min_u) / (bin_max_s - bin_min_s);
+         }
+         else if(bin_min_u <  bin_min_s && bin_max_u <= bin_max_s)
+         {  // Scaled bin overlaps high part of unscaled bin
+            factor = (bin_max_u - bin_min_s) / (bin_max_s - bin_min_s);
+         }
+         else
+         {  // Shouldn't get here
+            factor = 0.0;
+         }
+
+         if(factor <= 0.0)
+            continue;
+
+        double new_events = events_per_bin[ibin_s][ibin_q2] * factor;
 
         new_events_per_bin[ibin_u][ibin_q2] += new_events;
       }
