@@ -37,27 +37,56 @@ to3dp = "{0:.3f}"
 
 #______________________________________________________________________________________________________________________________
 
+import numpy as np
 def main(sample,output_file,config_file,prefit_config):
-  
+
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+prefit_config)
   banff = skexp.GetBANFF()
   
-  prefit_err = ROOT.TMatrixD(banff.RHCCovMatrix())
+  prefit_err = ROOT.TMatrixD(banff.CovMatrix())
+
+  params = valor.util.NamedParameterList("nuosc3f+nuisance") 
+  N = params.GetNumberParameters()
+
+  for ip in range(0, N):
+    p = params.WhichParam(ip)
+    name = valor.util.ParamAsStringPaperTable(p)
+    if not params.IsNuisance(p):
+        continue
+    if valor.util.IsSKDetFSI(p):
+        idx = skexp.GetSuperkDetectorFSI().Param2Idx(p)
+        err = np.sqrt(skexp.GetSuperkDetectorFSI().CovMatrix()(idx,idx))
+        print "SK: %d %s %f" % (idx, name, err)
+    elif valor.util.IsBANFF(p):
+        idx = skexp.GetBANFF().Param2Idx(p)
+        bestfit = skexp.GetBANFF().InitialValues()(idx)
+        err = np.sqrt(skexp.GetBANFF().CovMatrix()(idx,idx))
+        if valor.util.IsXSec(p):
+            print "XSec: %d %s %f %f" % (idx, name, bestfit, err)
+        else:
+            print "BANFF: %d %s %f %f" % (idx, name, bestfit, err)
+
+  exit()
+
+
   del skexp
   
   skexp = valor.SuperkExpectation()
   skexp.Read(os.environ[env_var]+"/config/"+config_file)
   banff = skexp.GetBANFF()
   
-  bf_vec = ROOT.TVectorD(banff.RHCBestFitValues())
-  postfit_err = ROOT.TMatrixD(banff.RHCCovMatrix())
-  det_matr = ROOT.TMatrixD(skexp.GetSuperkDetectorFSI().RHCCovMatrix())
-  
+  bf_vec = ROOT.TVectorD(banff.InitialValues())
+  postfit_err = ROOT.TMatrixD(banff.CovMatrix())
+  det_matr = ROOT.TMatrixD(skexp.GetSuperkDetectorFSI().CovMatrix())
+
+ 
+
   banff_bestfit       = dict()
   banff_prefit_error  = dict()
   banff_postfit_error = dict()
   detfsi_error        = dict()
+
   
   for ip in xrange(conv.kNumOfRHCParamsInBANFFfit):
     banff_bestfit      [ip] = bf_vec[ip]

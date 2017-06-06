@@ -212,7 +212,7 @@ void CompareContour2D(char* file_1 = "test1",
   char* mass_hierarchy_text = (doGlobalMin)? "Global minimum" :"Fixed Mass Ordering" ;
   TLatex *mass_hierarchy_tex = new TLatex(h1->GetXaxis()->GetBinLowEdge((int) (0.15*h1->GetXaxis()->GetNbins())),1.005*Y2,mass_hierarchy_text);
   
-  TLatex *latPreliminary = new TLatex(h1->GetXaxis()->GetBinLowEdge((int) (0.56*h1->GetXaxis()->GetNbins())),1.005*Y2,"T2K Run1-7 Preliminary");
+  TLatex *latPreliminary = new TLatex(h1->GetXaxis()->GetBinLowEdge((int) (0.56*h1->GetXaxis()->GetNbins())),1.005*Y2,"T2K Run1-8");
   mass_hierarchy_tex->SetTextSize(0.05);
   latPreliminary->SetTextSize(0.05);
 

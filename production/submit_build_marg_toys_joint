@@ -163,7 +163,7 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    else
    {
       $nexpts_marg            = 40000                        unless defined $nexpts_marg;
-      $step_freepar0          = 2;#3;
+      $step_freepar0          = 1;#3;
       $wqueue                 = "long";
       $npt_freepar0           = 100                       unless defined $npt_freepar0;
    }
@@ -211,7 +211,7 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
    else
    {
       $nexpts_marg            = 40000                        unless defined $nexpts_marg;
-      $step_freepar0          = 2;
+      $step_freepar0          = 1;
       $wqueue                 = "long";
       $npt_freepar0           = 100;
    }
@@ -240,7 +240,7 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
    else
    {
       $nexpts_marg            = 40000                        unless defined $nexpts_marg;
-      $step_freepar0          = 2;
+      $step_freepar0          = 1;
       $wqueue                 = "long";
       $npt_freepar0           = 100;
    }
@@ -592,10 +592,10 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
           $current = $wqueue;
           if($npt_freepar1 == 1)
           {  # 1D
-             if(($imin0 == ($npt_freepar0 - 1)) && ($npt_freepar1 == 1))
-             {  # Last job for 1D fit is small, use shorter queue
-               $wqueue = "medium";
-             }
+#             if(($imin0 == ($npt_freepar0 - 1)) && ($npt_freepar1 == 1))
+#             {  # Last job for 1D fit is small, use shorter queue
+#               $wqueue = "medium";
+#             }
           }
           else
           {  # 2D
@@ -619,7 +619,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
             }
 
           }
-
+  
           `bsub -q $wqueue -oo log_${tag}_${imin0}_${imin1}.log $softw_dir/production/warwick_submit_command.sh $command`;
           $wqueue = $current;
         }
