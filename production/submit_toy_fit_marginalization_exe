@@ -258,7 +258,7 @@ $masshierarchy_marg       = "normal"     unless defined $masshierarchy_marg;    
 
 $freepar0          = "deltacp"     unless defined $freepar0;
 
-$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/dmsq23";
+$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/deltacp";
 
 $wqueue = "short";
 
