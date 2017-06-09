@@ -169,6 +169,18 @@ void BANFF::TweakSampleNCGamma  (bool force_inputs, TVectorD * input_vec)
   return;
 }
 //________________________________________________________________________________________
+void BANFF::TweakSampleNCoth  (bool force_inputs, TVectorD * input_vec)
+{
+  
+  this->Tweak(force_inputs, input_vec);
+  
+  for(unsigned int ip=0;ip<fNSystParameters;ip++){
+    PhysParamId_t p = fSystParameters[ip];
+    if (!( p == kNuisBANFFNormNCoth || p == kRHCNuisBANFFNormNCoth)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+  }
+  return;
+}
+//________________________________________________________________________________________
 BANFF::~BANFF()
 {
   

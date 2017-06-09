@@ -1,27 +1,229 @@
 #include <iomanip.h>
 #include <TXMLEngine.h>
 
-void SetRatioNullTo1(TH1D *hratiomy){
-  for(int ibin=0;ibin<hratiomy->GetNbinsX();ibin++){
-    double cont = hratiomy->GetBinContent(ibin+1);
-    if(cont==0)
-      hratiomy->SetBinContent(ibin+1,1.);
-  }
+void VaryFlux(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.GetBANFF()->TweakSampleFluxOnly(0, 0);
+
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D *hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      hEvents->SetName("hEvents");
+      hEvents->SetTitle("Flux");
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
 }
 
-void SetRatio(TH1D* hnom,TH1D* htweak,TH1D* hratio){
-  for(int ibin=0;ibin<hnom->GetNbinsX();ibin++){
-    double cont_nom   = hnom->GetBinContent(ibin+1);
-    double cont_tweak = htweak->GetBinContent(ibin+1);
-    double cont_ratio = -999.;
-    if(cont_nom>0.){
-      cont_ratio = cont_tweak / cont_nom; 
-    }
-    else{
-      cont_ratio = 1.;
-    }
-    hratio->SetBinContent(ibin+1,cont_ratio);
-  }
+void VaryXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.TweakAllUncorrelatedXSecSystematics();
+         skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
+         skexp.GetBANFF()->TweakSampleXSecOnly(0, 0);
+
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      hEvents->SetName("hEvents");
+      hEvents->SetTitle("XSec");
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
+
+}
+
+void VaryFluxAndXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.TweakAllUncorrelatedXSecSystematics();
+         skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
+         skexp.TweakAllBANFFSystematics();
+
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      hEvents->SetName("hEvents");
+      hEvents->SetTitle("Flux+XSec");
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
+}
+
+void VaryConstrained(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.GetBANFF()->TweakSampleConstrainedOnly();
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
+}
+
+void VaryXsecNumuNue(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.GetBANFF()->TweakSampleXSecNumuNueOnly();
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
+}
+
+void VaryXsecNCGamma(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.GetBANFF()->TweakSampleNCGamma();
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
+}
+
+void VaryXsecNCoth(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.GetBANFF()->TweakSampleNCoth();
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
+}
+
+void VarySKFSI(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.TweakAllSKDetectorFSISystematics();
+
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      hEvents->SetName("hEvents");
+      hEvents->SetTitle("SK");
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
+}
+
+void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.RandomizeSystematics();
+
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      hEvents->SetName("hEvents");
+      hEvents->SetTitle("All");
+      events[e] = hEvents->GetEntries();
+      delete hEvents;
+   }
 }
 
 void make_table_systematic_effects
@@ -126,196 +328,86 @@ void make_table_systematic_effects
   string oscparams =
     util::AsString(ph.Hypothesis(),input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
     
-  // Create & config superk spectrum predictor
-  SuperkExpectation skexp;
-  skexp.Read(sconfig);
+   // Create & config superk spectrum predictor
+   SuperkExpectation skexp;
+   skexp.Read(sconfig);
 
-  // Define the tweak histograms
-    
-  TH1D *hEvents;
-   
-   int seed = 100000;
+   stringstream streamer;
+   streamer << fixed << setprecision(2);
+
    int N = 10;
-   // Xsec variations
-   double* xsecEvents = new double[N];
-   for(int e = 0; e < N; ++e)
-   {
-      // stat, syst, osc, fitter, other
-      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
-
-      bool isPhysical = false;
-      while(!isPhysical)
-      {
-         skexp.ResetSystematics();
-         skexp.TweakAllUncorrelatedXSecSystematics();
-         skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
-         skexp.GetBANFF()->TweakSampleXSecOnly(0, 0);
-
-         PhysParamList paramTweaks = skexp.Tweaks();
-         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
-      }
-      skexp.Generate(ph);
-      hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("XSec");
-      xsecEvents[e] = hEvents->GetEntries();
-      delete hEvents;
-   }
-   double meanXsec = TMath::Mean(N, xsecEvents);
-   double rmsXsec = TMath::RMS(N, xsecEvents);
-   double fracXsec = 100 * rmsXsec / meanXsec;
-
-
-   // Flux variations
-   seed = 200000;
-   double* fluxEvents = new double[N];
-   for(int e = 0; e < N; ++e)
-   {
-      // stat, syst, osc, fitter, other
-      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
-
-      bool isPhysical = false;
-      while(!isPhysical)
-      {
-         skexp.ResetSystematics();
-         skexp.GetBANFF()->TweakSampleFluxOnly(0, 0);
-
-         PhysParamList paramTweaks = skexp.Tweaks();
-         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
-      }
-
-      skexp.Generate(ph);
-      hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("Flux");
-      fluxEvents[e] = hEvents->GetEntries();
-      delete hEvents;
-   }
-   double meanFlux = TMath::Mean(N, fluxEvents);
-   double rmsFlux = TMath::RMS(N, fluxEvents);
-   double fracFlux = 100 * rmsFlux / meanFlux;
-  
+ 
    // SK variations
-   seed = 300000;
    double* skEvents = new double[N];
-   for(int e = 0; e < N; ++e)
-   {
-      // stat, syst, osc, fitter, other
-      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
-
-      bool isPhysical = false;
-      while(!isPhysical)
-      {
-         skexp.ResetSystematics();
-         skexp.TweakAllSKDetectorFSISystematics();
-
-         PhysParamList paramTweaks = skexp.Tweaks();
-         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
-      }
-      skexp.Generate(ph);
-      hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("SK");
-      skEvents[e] = hEvents->GetEntries();
-      delete hEvents;
-   }
+   VarySKFSI(skexp, s, ph, 300000, N, skEvents);
    double meanSK = TMath::Mean(N, skEvents);
    double rmsSK = TMath::RMS(N, skEvents);
    double fracSK = 100 * rmsSK / meanSK;
+   streamer << "SK+FSI+SI+PN & " << meanSK << " & " << rmsSK << " & " << fracSK << " & " <<
+      meanSK << " & " << rmsSK << " & " << fracSK << " \\\\ \\hline\\hline" << endl;
 
-   // Flux+Xsec variations
-   seed = 400000;
+   // Constrained variations
    double* banffEvents = new double[N];
-   for(int e = 0; e < N; ++e)
-   {
-      // stat, syst, osc, fitter, other
-      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
-
-      bool isPhysical = false;
-      while(!isPhysical)
-      {
-         skexp.ResetSystematics();
-         skexp.TweakAllUncorrelatedXSecSystematics();
-         skexp.GetNuXSec()->SyncRHCToFHCSystematics(); // uncorr xsec are fully correlated rhc/fhc
-         skexp.TweakAllBANFFSystematics();
-
-         PhysParamList paramTweaks = skexp.Tweaks();
-         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
-      }
-
-      skexp.Generate(ph);
-      hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("Flux+XSec");
-      banffEvents[e] = hEvents->GetEntries();
-      delete hEvents;
-   }
+   VaryConstrained(skexp, s, ph, 400000, N, banffEvents);
    double meanBANFF = TMath::Mean(N, banffEvents);
    double rmsBANFF = TMath::RMS(N, banffEvents);
    double fracBANFF = 100 * rmsBANFF / meanBANFF;
+   streamer << "Flux+Xsec constrained & " << meanBANFF << " & " << rmsBANFF << " & " << fracBANFF << " & " <<
+      meanBANFF << " & " << rmsBANFF << " & " << fracBANFF << " \\\\ \\hline" << endl;
+
+   // Xsec numu->nue variations
+   double* xsecnueEvents = new double[N];
+   VaryXsecNumuNue(skexp, s, ph, 600000, N, xsecnueEvents);
+   double meanXsecnue = TMath::Mean(N, xsecnueEvents);
+   double rmsXsecnue = TMath::RMS(N, xsecnueEvents);
+   double fracXsecnue = 100 * rmsXsecnue / meanXsecnue;
+   streamer << "$\\sigma(\\nu_e)/\\sigma(\\bar{\\nu}_e)$ & " <<
+      meanXsecnue << " & " << rmsXsecnue << " & " << fracXsecnue << " & " <<
+      meanXsecnue << " & " << rmsXsecnue << " & " << fracXsecnue << " \\\\ \\hline" << endl;
+
+   // Xsec NCoth variations
+   double* xsecncothEvents = new double[N];
+   VaryXsecNCoth(skexp, s, ph, 700000, N, xsecncothEvents);
+   double meanXsecncoth = TMath::Mean(N, xsecncothEvents);
+   double rmsXsecncoth = TMath::RMS(N, xsecncothEvents);
+   double fracXsecncoth = 100 * rmsXsecncoth / meanXsecncoth;
+   streamer << "NC Other & " << meanXsecncoth << " & " << rmsXsecncoth << " & " << fracXsecncoth << " & " <<
+      meanXsecncoth << " & " << rmsXsecncoth << " & " << fracXsecncoth << " \\\\ \\hline" << endl;
+
+   // Xsec NCgamma variations
+   double* xsecncgammaEvents = new double[N];
+   VaryXsecNCGamma(skexp, s, ph, 800000, N, xsecncgammaEvents);
+   double meanXsecncgamma = TMath::Mean(N, xsecncgammaEvents);
+   double rmsXsecncgamma = TMath::RMS(N, xsecncgammaEvents);
+   double fracXsecncgamma = 100 * rmsXsecncgamma / meanXsecncgamma;
+   streamer << "NC1$\\gamma$ & " << meanXsecncgamma << " & " << rmsXsecncgamma << " & " << fracXsecncgamma << " & " <<
+      meanXsecncgamma << " & " << rmsXsecncgamma << " & " << fracXsecncgamma << " \\\\ \\hline" << endl;
 
    // All variations
-   seed = 500000;
    double* allEvents = new double[N];
-   for(int e = 0; e < N; ++e)
-   {
-      // stat, syst, osc, fitter, other
-      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
-
-      bool isPhysical = false;
-      while(!isPhysical)
-      {
-         skexp.ResetSystematics();
-         skexp.RandomizeSystematics();
-
-         PhysParamList paramTweaks = skexp.Tweaks();
-         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
-      }
-
-      skexp.Generate(ph);
-      hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("All");
-      allEvents[e] = hEvents->GetEntries();
-      delete hEvents;
-   }
+   VaryAll(skexp, s, ph, 500000, N, allEvents);
    double meanAll = TMath::Mean(N, allEvents);
    double rmsAll = TMath::RMS(N, allEvents);
    double fracAll = 100 * rmsAll / meanAll;
-
-   stringstream streamer;
-   streamer << "\\begin{tabular}{|l||l|l|l||l|l|l|}\n\\hline" << endl;
-   streamer << "  & \\multicolumn{3}{|c||}{\\textbf{Pre-BANFF}} & " <<
-      "\\multicolumn{3}{|c|}{\\textbf{Post-BANFF}} \\\\ \\hline" << endl;
-   streamer << "  Group & Mean & $1\\sigma$ & \\% & Mean & $1\\sigma$ & \\% \\\\ \\hline\\hline" << endl;
-   streamer << fixed << setprecision(2);
-   streamer << "Flux & " << meanFlux << " & " << rmsFlux << " & " << fracFlux << " & " <<
-      meanFlux << " & " << rmsFlux << " & " << fracFlux << " \\\\ \\hline" << endl;
-   streamer << "Xsec & " << meanXsec << " & " << rmsXsec << " & " << fracXsec << " & " <<
-      meanFlux << " & " << rmsXsec << " & " << fracXsec << " \\\\ \\hline" << endl;
-   streamer << "Flux+Xsec & " << meanBANFF << " & " << rmsBANFF << " & " << fracBANFF << " & " <<
-      meanBANFF << " & " << rmsBANFF << " & " << fracBANFF << " \\\\ \\hline" << endl;
-   streamer << "SK+FSI+SI+PN & " << meanSK << " & " << rmsSK << " & " << fracSK << " & " <<
-      meanSK << " & " << rmsSK << " & " << fracSK << " \\\\ \\hline\\hline" << endl;
    streamer << "All & " << meanAll << " & " << rmsAll << " & " << fracAll << " & " <<
       meanAll << " & " << rmsAll << " & " << fracAll << " \\\\ \\hline" << endl;
-   streamer << "\\end{tabular}" << endl;
 
    long size;
    streamer.seekg(0, ifstream::end);
    size=streamer.tellg();
    streamer.seekg(0);
-   ofstream outfile (output_file, ios_base::app);
+   ofstream outfile (output_file);
    outfile.write (streamer.str().c_str(), size);
    outfile.close();
 
-   delete[] fluxEvents;
-   delete[] xsecEvents;
    delete[] skEvents;
    delete[] banffEvents;
+   delete[] xsecnueEvents;
+   delete[] xsecncothEvents;
+   delete[] xsecncgammaEvents;
    delete[] allEvents;
 
-  return;
+   return;
 }
 
 

@@ -41,6 +41,7 @@ public:
   void TweakSample2p2h  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSample2p2hBar  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleNCGamma  (bool force_inputs = false, TVectorD * input_vec = 0);
+  void TweakSampleNCoth  (bool force_inputs = false, TVectorD * input_vec = 0);
 
   
  // The old interface is gone. It never needed to exist anyway.

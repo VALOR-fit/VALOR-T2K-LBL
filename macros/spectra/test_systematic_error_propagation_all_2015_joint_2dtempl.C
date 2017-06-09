@@ -189,6 +189,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   TH1D *hErecoTun_m1sigma[np];
   TH1D *hErecoTunMode_p1sigma[np][conv::knm];
   TH1D *hErecoTunMode_m1sigma[np][conv::knm];
+  TH1D *hRatioSum_p1sigma = new TH1D("hRatioSum_p1sigma", "Ratio of total +1 sigma event to nominal for each parameter", np, 0, np);
+  TH1D *hRatioSum_m1sigma = new TH1D("hRatioSum_m1sigma", "Ratio of total -1 sigma event to nominal for each parameter", np, 0, np);
     
   TH1D *hErecoTun_p3sigma_all;
   TH1D *hErecoTun_m3sigma_all;
@@ -499,6 +501,15 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hRatioTun_p1sigma[ip] = (TH1D*)hErecoTun_p1sigma[ip]->Clone(name);
     SetRatio(hErecoTun,hErecoTun_p1sigma[ip],hRatioTun_p1sigma[ip]);
 
+    if(hErecoTun->Integral() > 0)
+    {
+      hRatioSum_p1sigma->SetBinContent(ip + 1, (hErecoTun_p1sigma[ip]->Integral() / hErecoTun->Integral()) - 1);
+    }
+    else
+    {
+       hRatioSum_p1sigma->SetBinContent(ip + 1, 0);
+    }
+
     for (int im = 0; im < conv::knm; im++) {
       conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
       if(m == conv::kSKmUndefined) continue;
@@ -565,7 +576,16 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     sprintf(title,"Ratio, %s, -1 sigma = %.3lf",sysstr.c_str(),tweak_m1);
     hRatioTun_m1sigma[ip] = (TH1D*)hErecoTun_m1sigma[ip]->Clone(name);
     SetRatio(hErecoTun,hErecoTun_m1sigma[ip],hRatioTun_m1sigma[ip]);
-    
+
+    if(hErecoTun->Integral() > 0)
+    {
+      hRatioSum_m1sigma->SetBinContent(ip + 1, (hErecoTun_m1sigma[ip]->Integral() / hErecoTun->Integral()) - 1);
+    }
+    else
+    {
+       hRatioSum_m1sigma->SetBinContent(ip + 1, 0);
+    }
+   
     for (int im = 0; im < conv::knm; im++) {
       conv::SuperkMode_t m = conv::kSKReactionModes[s][im];
       if(m == conv::kSKmUndefined) continue;
@@ -1086,7 +1106,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   if( config_file_str.find("prefit") == string::npos ) sprintf(fname,"%s","_postfit"); // prefit
   else sprintf(fname,"%s","_prefit"); // postfit
   string file_mode = (update_rootfile ? "UPDATE" : "RECREATE");
-  TFile * fouterr = new TFile(Form("fouterr%s.root",fname),file_mode.c_str());
+  TFile * fouterr = new TFile(Form("fouterr%s_%s.root", fname, sk_sample),file_mode.c_str());
   fouterr->cd();
   hVarFrac_p1s->Write();
   hVarFrac_m1s->Write();
@@ -1098,6 +1118,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   hVarTot_m3s->Write();
   hErecoNom->Write();
   hErecoTun->Write();
+  hRatioSum_p1sigma->Write();
+  hRatioSum_m1sigma->Write();
   fouterr->Close();
 
 
