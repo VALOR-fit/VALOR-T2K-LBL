@@ -25,156 +25,63 @@ env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
-samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re","MultiRe"]
-
-col_width = 30
-banff_col_widths  = [12,60,8,12]
-detfsi_col_widths = [12,90,10]
-
-line_width = 1
-
-to3dp = "{0:.3f}"
-
 #______________________________________________________________________________________________________________________________
 
+def banff_table_header(tex):
+  tex.write("\\begin{tabular} { | " + ("c | " * 5) + " }\n\\hline \n")
+  tex.write("Index & Parameter & Description & Best fit & $1\sigma$ pre/postfit\\\\ \n")
+  tex.write(" & &  &  & fractional error\n\\hline \n")
+
+def sk_table_header(tex):
+  tex.write("\\begin{tabular} { | " + ("c | " * 4) + " }\n\\hline \n")
+  tex.write("Index & Parameter & Description & $1\sigma$ fractional error\\\\ \n")
+
+def table_footer(tex):
+  tex.write("\n\\hline\n")
+  tex.write("\n\\end{tabular}")
+
 import numpy as np
-def main(sample,output_file,config_file,prefit_config):
+def main(sample,output_file,prefit_config, postfit_config):
 
-  skexp = valor.SuperkExpectation()
-  skexp.Read(os.environ[env_var]+"/config/"+prefit_config)
-  banff = skexp.GetBANFF()
+  skexp_pre = valor.SuperkExpectation()
+  skexp_pre.Read(os.environ[env_var] + "/config/" + prefit_config)
+
+  skexp_post = valor.SuperkExpectation()
+  skexp_post.Read(os.environ[env_var] + "/config/" + postfit_config)
   
-  prefit_err = ROOT.TMatrixD(banff.CovMatrix())
-
   params = valor.util.NamedParameterList("nuosc3f+nuisance") 
   N = params.GetNumberParameters()
 
+  xsec_tex = open(output_file + "_xsec.tex","w")
+  flux_tex = open(output_file + "_flux.tex","w")
+  sk_tex = open(output_file + "_sk.tex","w")
+  banff_table_header(xsec_tex)
+  banff_table_header(flux_tex)
+  sk_table_header(sk_tex)
   for ip in range(0, N):
     p = params.WhichParam(ip)
     name = valor.util.ParamAsStringPaperTable(p)
     if not params.IsNuisance(p):
         continue
     if valor.util.IsSKDetFSI(p):
-        idx = skexp.GetSuperkDetectorFSI().Param2Idx(p)
-        err = np.sqrt(skexp.GetSuperkDetectorFSI().CovMatrix()(idx,idx))
-        print "SK: %d %s %f" % (idx, name, err)
+        idx = skexp_pre.GetSuperkDetectorFSI().Param2Idx(p)
+        err = np.sqrt(skexp_pre.GetSuperkDetectorFSI().CovMatrix()(idx,idx))
+        sk_tex.write("%d & %s & %s & %.3f\\\\ \n" % (idx, name, "", err))
     elif valor.util.IsBANFF(p):
-        idx = skexp.GetBANFF().Param2Idx(p)
-        bestfit = skexp.GetBANFF().InitialValues()(idx)
-        err = np.sqrt(skexp.GetBANFF().CovMatrix()(idx,idx))
+        idx = skexp_pre.GetBANFF().Param2Idx(p)
+        bestfit = skexp_post.GetBANFF().InitialValues()(idx)
+        err_pre = np.sqrt(skexp_pre.GetBANFF().CovMatrix()(idx,idx))
+        err_post = np.sqrt(skexp_post.GetBANFF().CovMatrix()(idx,idx))
         if valor.util.IsXSec(p):
-            print "XSec: %d %s %f %f" % (idx, name, bestfit, err)
+            xsec_tex.write("%d & %s & %s & %.3f & %.3f / %.3f\\\\ \n" % (idx, name, "", bestfit, err_pre, err_post))
         else:
-            print "BANFF: %d %s %f %f" % (idx, name, bestfit, err)
-
-  exit()
-
-
-  del skexp
-  
-  skexp = valor.SuperkExpectation()
-  skexp.Read(os.environ[env_var]+"/config/"+config_file)
-  banff = skexp.GetBANFF()
-  
-  bf_vec = ROOT.TVectorD(banff.InitialValues())
-  postfit_err = ROOT.TMatrixD(banff.CovMatrix())
-  det_matr = ROOT.TMatrixD(skexp.GetSuperkDetectorFSI().CovMatrix())
-
- 
-
-  banff_bestfit       = dict()
-  banff_prefit_error  = dict()
-  banff_postfit_error = dict()
-  detfsi_error        = dict()
-
-  
-  for ip in xrange(conv.kNumOfRHCParamsInBANFFfit):
-    banff_bestfit      [ip] = bf_vec[ip]
-    banff_prefit_error [ip] = math.sqrt(prefit_err [ip][ip])
-    banff_postfit_error[ip] = math.sqrt(postfit_err[ip][ip])
-  
-  for ip in xrange(conv.kNumOfRHCSKDetFSIParams):
-    detfsi_error[ip] = math.sqrt(det_matr[ip][ip])
-  
-  # Start writing the TeX
-  tex_output = open(output_file,"w")
-  
-  tex_output.write("""\documentclass[10pt]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage{amsmath}
-\\usepackage{amsfonts}
-\\usepackage{amssymb}
-\\usepackage{fullpage}
-\\usepackage{geometry}
-
-\\begin{document}
-
-""")
-
-  # Write BANFF table
-  tex_output.write("\\begin{table}\n")
-  #~ tex_output.write("\\centering\n")
-  tex_output.write("\n\n\\begin{tabular} { | c ||"+("c | "*3)+" | }\n\\hline\n")
-  
-  cols = ["Parameter","Description","Best fit","$1\sigma$ pre/postfit"]
-  entries = [x.ljust(w) for x,w in zip(cols,banff_col_widths)]
-  tex_output.write("& ".join(entries) + " \\\\ \n")
-  cols = ["","","","fractional error"]
-  entries = [x.ljust(w) for x,w in zip(cols,banff_col_widths)]
-  tex_output.write("& ".join(entries) + " \\\\ \n")
-  tex_output.write("\n\\hline\n")
-  
-  for ip in xrange(conv.kNumOfRHCParamsInBANFFfit):
-    p = getRHCBANFFparam(ip)
-    cols = [str(ip),util.ParamAsStringPaperTable(p),to3dp.format(banff_bestfit[ip])]
-    cols.append(to3dp.format(banff_prefit_error [ip])+" / "+to3dp.format(banff_postfit_error [ip]))
-    entries = [x.ljust(w) for x,w in zip(cols,banff_col_widths)]
-    tex_output.write("& ".join(entries) + " \\\\ \n")
-  
-  tex_output.write("\n\\hline\n")
-  tex_output.write("\n\\end{tabular}")
-  tex_output.write("\\end{table}\n\n")
-  
-  # Write SKDetFSI table
-  tex_output.write("\\begin{table}\n")
-  #~ tex_output.write("\\centering\n")
-  tex_output.write("\n\n\\begin{tabular} { | c ||"+("c | "*2)+" | }\n\\hline\n")
-  
-  cols = ["Parameter","Description","$1\sigma$ error"]
-  entries = [x.ljust(w) for x,w in zip(cols,detfsi_col_widths)]
-  tex_output.write("& ".join(entries) + " \\\\ \n")
-  tex_output.write("\n\\hline\n")
-  
-  for ip in xrange(conv.kNumOfRHCSKDetFSIParams):
-    p = getRHCDetFSIparam(ip)
-    cols = [str(ip),util.ParamAsStringPaperTable(p),to3dp.format(detfsi_error[ip])]
-    entries = [x.ljust(w) for x,w in zip(cols,detfsi_col_widths)]
-    tex_output.write("& ".join(entries) + " \\\\ \n")
-  
-  tex_output.write("\n\\hline\n")
-  tex_output.write("\n\\end{tabular}")
-  tex_output.write("\\end{table}\n\n")
-  
-  
-  tex_output.write("\\end{document}\n")
-  
-  print "Table output written to ",output_file
-
-def getRHCBANFFparam(ip):
-  for p in xrange(conv.knppmax):
-    test_ip = arridx.RHCBANFFSystIdx(p)
-    if test_ip == ip:
-      return p
-  print "Failed to get RHC BANFF param ",ip
-  exit(-1)
-  
-def getRHCDetFSIparam(ip):
-  for p in xrange(conv.knppmax):
-    test_ip = arridx.RHCSKDetFSISystIdx(p)
-    if test_ip == ip:
-      return p
-  print "Failed to get RHC SKDetFSI param ",ip
-  exit(-1)
+            flux_tex.write("%d & %s & %s & %.3f & %.3f / %.3f\\\\ \n" % (idx, name, "", bestfit, err_pre, err_post))
+  table_footer(xsec_tex)
+  table_footer(flux_tex)
+  table_footer(sk_tex)
+  xsec_tex.close()
+  flux_tex.close()
+  sk_tex.close()
   
 if __name__=="__main__":
   
@@ -191,7 +98,7 @@ if __name__=="__main__":
   
   o,other = parser.parse_args()
   sample = util.SKSampleFromString(o.sample)
-  main(sample,o.output_file, o.config, o.pconfig)
+  main(sample,o.output_file, o.pconfig, o.config)
   
   if other:
     print "Warning - ignored arguments: ",other
