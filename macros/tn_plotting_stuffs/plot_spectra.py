@@ -52,7 +52,7 @@ def plot_ereco_spectrum(histos, outfile):
     canvas.Print(outfile)
 
 def plot_ereco_theta_spectrum(histos, outfile):
-    canvas = ROOT.TCanvas("canvas","Spectra", 10, 10, 1034, 778)
+    canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
     total = histos[components[0]].Clone()
     for component in components[1:]:
         total.Add(histos[component])
@@ -86,6 +86,7 @@ def plot_ereco_theta_spectrum(histos, outfile):
     swappedTotal.GetYaxis().SetRangeUser(0,180)
     swappedTotal.GetXaxis().SetRangeUser(0,1.25)
     swappedTotal.Draw("COLZ")
+    canvas.SetRightMargin(0.2)
     canvas.Print(outfile)
 
 def main(infile, outfile, sample):
