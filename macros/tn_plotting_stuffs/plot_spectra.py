@@ -5,6 +5,8 @@ import math
 import sys
 import os
 
+from array import array
+
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 try:
@@ -54,13 +56,36 @@ def plot_ereco_theta_spectrum(histos, outfile):
     total = histos[components[0]].Clone()
     for component in components[1:]:
         total.Add(histos[component])
-    total.Draw("COLZ")
-    total.GetXaxis().SetTitle("#theta (degrees)")
-    total.GetYaxis().SetTitle("#nu Reconstructed Energy (GeV)")
-    total.GetZaxis().SetTitle("Number of Events")
-    total.GetXaxis().SetRangeUser(0,180)
-    total.GetYaxis().SetRangeUser(0,1.25)
-    total.Draw("COLZ")
+
+    thetaAxis = total.GetXaxis()
+    nThetaBins = thetaAxis.GetNbins()
+    thetaEdges = []
+    thetaCentre = []
+    for i in range(1, nThetaBins + 1):
+        thetaEdges.append(thetaAxis.GetBinLowEdge(i))
+        thetaCentre.append(thetaAxis.GetBinCenter(i))
+    thetaEdges.append(thetaAxis.GetBinUpEdge(i))
+
+    eAxis = total.GetYaxis()
+    nEBins = eAxis.GetNbins()
+    eEdges = []
+    eCentre = []
+    for i in range(1, nEBins + 1):
+        eEdges.append(eAxis.GetBinLowEdge(i))
+        eCentre.append(eAxis.GetBinCenter(i))
+    eEdges.append(eAxis.GetBinUpEdge(i))
+
+    swappedTotal = ROOT.TH2D("hErecoVsQ2Tot","hErecoVsQ2Tot", nEBins, array('d', eEdges), nThetaBins, array('d', thetaEdges))
+    for e in range(1, nEBins + 1):
+        for theta in range(1, nThetaBins + 1):
+            swappedTotal.SetBinContent(e, theta, total.GetBinContent(theta, e))
+    swappedTotal.Draw("COLZ")
+    swappedTotal.GetYaxis().SetTitle("#theta (degrees)")
+    swappedTotal.GetXaxis().SetTitle("#nu Reconstructed Energy (GeV)")
+    swappedTotal.GetZaxis().SetTitle("Number of Events")
+    swappedTotal.GetYaxis().SetRangeUser(0,180)
+    swappedTotal.GetXaxis().SetRangeUser(0,1.25)
+    swappedTotal.Draw("COLZ")
     canvas.Print(outfile)
 
 def main(infile, outfile, sample):

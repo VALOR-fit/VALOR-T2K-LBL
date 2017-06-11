@@ -60,22 +60,23 @@ def main(sample,output_file,prefit_config, postfit_config):
   sk_table_header(sk_tex)
   for ip in range(0, N):
     p = params.WhichParam(ip)
-    name = valor.util.ParamAsStringPaperTable(p)
+    name = valor.util.AsStringCompact(p)
+    description = valor.util.ParamAsStringPaperTable(p)
     if not params.IsNuisance(p):
         continue
     if valor.util.IsSKDetFSI(p):
         idx = skexp_pre.GetSuperkDetectorFSI().Param2Idx(p)
         err = np.sqrt(skexp_pre.GetSuperkDetectorFSI().CovMatrix()(idx,idx))
-        sk_tex.write("%d & %s & %s & %.3f\\\\ \n" % (idx, name, "", err))
+        sk_tex.write("%d & %s & %s & %.3f\\\\ \n" % (idx, name, description, err))
     elif valor.util.IsBANFF(p):
         idx = skexp_pre.GetBANFF().Param2Idx(p)
         bestfit = skexp_post.GetBANFF().InitialValues()(idx)
         err_pre = np.sqrt(skexp_pre.GetBANFF().CovMatrix()(idx,idx))
         err_post = np.sqrt(skexp_post.GetBANFF().CovMatrix()(idx,idx))
         if valor.util.IsXSec(p):
-            xsec_tex.write("%d & %s & %s & %.3f & %.3f / %.3f\\\\ \n" % (idx, name, "", bestfit, err_pre, err_post))
+            xsec_tex.write("%d & %s & %s & %.3f & %.3f / %.3f\\\\ \n" % (idx, name, description, bestfit, err_pre, err_post))
         else:
-            flux_tex.write("%d & %s & %s & %.3f & %.3f / %.3f\\\\ \n" % (idx, name, "", bestfit, err_pre, err_post))
+            flux_tex.write("%d & %s & %s & %.3f & %.3f / %.3f\\\\ \n" % (idx, name, description, bestfit, err_pre, err_post))
   table_footer(xsec_tex)
   table_footer(flux_tex)
   table_footer(sk_tex)
