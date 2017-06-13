@@ -148,6 +148,12 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   hlike->Draw("COLZ");
   c2->SaveAs(Form("%s_likelihood.pdf",filename.c_str()));
 
+  // Plot deltachi2 surface
+  TCanvas* c3 = new TCanvas("c","c",0,0,1200,900);
+  c3->SetGrid();
+  hdchisq->Draw("COLZ");
+  c3->SaveAs(Form("%s_dchi2surface.pdf",filename.c_str()));
+
   f.Close();
   
   TFile* f2 = new TFile(Form("%s_contour.root",filename.c_str()),"recreate");

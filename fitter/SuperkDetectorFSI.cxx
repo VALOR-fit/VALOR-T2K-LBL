@@ -337,7 +337,10 @@ double SuperkDetectorFSI::SystWght(
   if (util::IsMultiReSample(s))  s = kSKsFCFV1RingELike;
   // }#~
 #endif
-  
+
+
+  //util::PrintMatrix(CovMatrix(), 7, 5);
+
   // find SuperkDetector+FSI param which corresponds to the current Ereco param
   int iparam = -1;
   int np = fNSystParameters;
@@ -370,6 +373,10 @@ double SuperkDetectorFSI::SystWght(
     return 1.;
   }
   double skdetfsi_wght = skdetfsi_param_value;
+/*  if(p >= kNuisSKDetFSI006 && p <= kNuisSKDetFSI017)
+  {  // Fix an SK weight for testing
+     skdetfsi_wght = 1.0;
+  }*/
   
   return skdetfsi_wght;
 }

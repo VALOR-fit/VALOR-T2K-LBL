@@ -416,8 +416,12 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
         #~ print "Bad spectrum: ","\t",spec,"\t",proc
         event_counts_per_species[proc][spec] = "Unused"
         continue
-      
+
       nev = spectrum.Integral()
+#      if sample_name == "1Re":
+#        nev = spectrum.Integral(1, 15, 1, 7)
+#      else:
+#        nev = spectrum.Integral()
       nev_tot += nev
       total_event_counts_per_species[spec] += nev
       total_event_counts_per_process[proc] += nev

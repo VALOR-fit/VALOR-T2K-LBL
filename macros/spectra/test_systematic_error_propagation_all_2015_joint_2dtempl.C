@@ -344,6 +344,11 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
+/*     cout << "Param: " << ip << " -> " << p << " = " << util::AsStringCompact(p) <<
+        " BANFF: " << util::IsBANFF(p) << " RHC BANFF: " << util::IsRHCBANFF(p) <<
+        " Flux:" << util::IsFlux(p) << " xsec: " << util::IsXSec(p) <<
+        " SK: " << util::IsSKDetFSI(p) << " E: " << util::IsEnergyScale(p) << endl;*/
+
     if(!fparm->IsNuisance(p)) continue;
     string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter

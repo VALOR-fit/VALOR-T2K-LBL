@@ -100,11 +100,11 @@ $seed           = 999                   unless defined $seed;
 # Asimov Common
 $dm23sq_nh       = 2.509E-3                           unless defined $dm23sq_nh; 
 $dm12sq_nh       = 7.53E-5                            unless defined $dm12sq_nh; 
-$mix13_nh        = 0.0217                             unless defined $mix13_nh;
+$mix13_nh        = 0.0219                             unless defined $mix13_nh;
 $mix12_nh        = 0.304                              unless defined $mix12_nh;
 $dm23sq_ih       = 2.509E-3                           unless defined $dm23sq_ih; 
 $dm12sq_ih       = 7.53E-5                            unless defined $dm12sq_ih; 
-$mix13_ih        = 0.0217                             unless defined $mix13_ih;
+$mix13_ih        = 0.0219                             unless defined $mix13_ih;
 $mix12_ih        = 0.304                              unless defined $mix12_ih;
 $betaBar         = -99                                unless defined $betaBar;
 
