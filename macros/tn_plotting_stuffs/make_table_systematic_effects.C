@@ -48,7 +48,7 @@ void RandomizeOsc(valor::PhysHypothesis& ph)
    for( ; ; )
    {
       double mix12val = Rnd::Instance()->RndToyMCosc().Gaus(kPrior_Sinsq2th12_Used_Mean, kPrior_Sinsq2th12_Used_RMS);
-      double mix13val = Rnd::Instance()->RndToyMCosc().Uniform(kPrior_Sinsq2th13_Flat_Low, kPrior_Sinsq2th13_Flat_Up);
+      double mix13val = Rnd::Instance()->RndToyMCosc().Gaus(kPrior_Sinsq2th13_Used_Mean, kPrior_Sinsq2th13_Used_RMS);
       double mix23val = Rnd::Instance()->RndToyMCosc().Uniform(kPrior_Sinsq2th23_Flat_Low, kPrior_Sinsq2th23_Flat_Up);
       double dm12val = Rnd::Instance()->RndToyMCosc().Gaus(kPrior_Dm12sq_Used_Mean, kPrior_Dm12sq_Used_RMS);
       double dm23val = Rnd::Instance()->RndToyMCosc().Uniform(kPrior_Dm23sq_Flat_Low, kPrior_Dm23sq_Flat_Up);
@@ -58,12 +58,13 @@ void RandomizeOsc(valor::PhysHypothesis& ph)
       mix13val = util::FromSinsq2thToSinsqth(mix13val);
       mix23val = util::FromSinsq2thToSinsqth(mix23val);
 
+      // Leave the atmospheric parameters fixed
       ph.SetCurrValue(conv::kPhypMixing12, mix12val);
       ph.SetCurrValue(conv::kPhypMixing13, mix13val);
-      ph.SetCurrValue(conv::kPhypMixing23, mix23val);
-      ph.SetCurrValue(conv::kPhypCPV, cpvval);
+//      ph.SetCurrValue(conv::kPhypMixing23, mix23val);
+//      ph.SetCurrValue(conv::kPhypCPV, cpvval);
       ph.SetCurrValue(conv::kPhypDm12sq, dm12val);
-      ph.SetCurrValue(conv::kPhypDm23sq, dm23val);
+//      ph.SetCurrValue(conv::kPhypDm23sq, dm23val);
       if(OscParamsPhysical(mix12val, mix13val, mix23val, dm12val, dm23val, cpvval))
       {
          break;

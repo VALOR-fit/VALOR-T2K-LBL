@@ -151,7 +151,11 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   // Plot deltachi2 surface
   TCanvas* c3 = new TCanvas("c","c",0,0,1200,900);
   c3->SetGrid();
+  hdchisq->SetMinimum(4.0);
+  hdchisq->SetMaximum(6.0);
   hdchisq->Draw("COLZ");
+  h1->Draw("cont3same");
+  h3->Draw("cont3same");
   c3->SaveAs(Form("%s_dchi2surface.pdf",filename.c_str()));
 
   f.Close();

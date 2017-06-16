@@ -30,11 +30,11 @@ arridx= util.ArrIdx.Instance()
 def banff_table_header(tex):
   tex.write("\\begin{tabular} { | " + ("c | " * 5) + " }\n\\hline \n")
   tex.write("Index & Parameter & Description & Best fit & $1\sigma$ pre/postfit\\\\ \n")
-  tex.write(" & &  &  & fractional error\n\\hline \n")
+  tex.write(" & &  &  & fractional error\\\\\n\\hline \n")
 
 def sk_table_header(tex):
   tex.write("\\begin{tabular} { | " + ("c | " * 4) + " }\n\\hline \n")
-  tex.write("Index & Parameter & Description & $1\sigma$ fractional error\\\\ \n")
+  tex.write("Index & Parameter & Description & $1\sigma$ fractional error\\\\ \n\\hline \n")
 
 def table_footer(tex):
   tex.write("\n\\hline\n")
@@ -60,7 +60,7 @@ def main(sample,output_file,prefit_config, postfit_config):
   sk_table_header(sk_tex)
   for ip in range(0, N):
     p = params.WhichParam(ip)
-    name = valor.util.AsStringCompact(p)
+    name = valor.util.AsStringPaperTex(p)
     description = valor.util.ParamAsStringPaperTable(p)
     if not params.IsNuisance(p):
         continue

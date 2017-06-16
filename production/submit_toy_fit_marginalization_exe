@@ -258,7 +258,7 @@ $masshierarchy_marg       = "normal"     unless defined $masshierarchy_marg;    
 
 $freepar0          = "deltacp"     unless defined $freepar0;
 
-$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/deltacp" unless defined $file_margtoys;
+$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/mixing13_deltacp" unless defined $file_margtoys;
 
 $wqueue = "short";
 
@@ -279,9 +279,12 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
 {
    if($penalty_freepar0 == 1)
    {
-      $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
-      $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+#      $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
+#      $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
+#      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
+      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
    }
    else
    {
