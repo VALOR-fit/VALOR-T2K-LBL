@@ -339,6 +339,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   TH2D * hErecoVsQ2Mode_NumuBarToNueBar = new TH2D("hErecoVsQ2Mode_NumuBarToNueBar","hErecoVsQ2Mode_NumuBarToNueBar",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
   TH2D * hErecoVsQ2Mode_NumuToNue = new TH2D("hErecoVsQ2Mode_NumuToNue","hErecoVsQ2Mode_NumuToNue",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
   TH2D * hErecoVsQ2Mode_NC = new TH2D("hErecoVsQ2Mode_NC","hErecoVsQ2Mode_NC",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
+  TH2D * hErecoVsQ2Mode_NC1Gamma = new TH2D("hErecoVsQ2Mode_NC1Gamma","hErecoVsQ2Mode_NC1Gamma",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
   TH2D * hErecoVsQ2Mode_MEC = new TH2D("hErecoVsQ2Mode_MEC","hErecoVsQ2Mode_MEC",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
   TH2D * hErecoVsQ2Mode_CCQE = new TH2D("hErecoVsQ2Mode_CCQE","hErecoVsQ2Mode_CCQE",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
   TH2D * hErecoVsQ2Mode_CCnQE = new TH2D("hErecoVsQ2Mode_CCnQE","hErecoVsQ2Mode_CCnQE",nbins_Q2,Q2_bin_edges,nbins_ereco,ereco_bin_edges);
@@ -349,6 +350,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   TH1D * hErecoMode_NumuBarToNueBar;
   TH1D * hErecoMode_NumuToNue;
   TH1D * hErecoMode_NC;
+  TH1D * hErecoMode_NC1Gamma;
   TH1D * hErecoMode_MEC;
   TH1D * hErecoMode_CCQE;
   TH1D * hErecoMode_CCnQE;
@@ -390,9 +392,13 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     }
     
     // Fill by flavor/mode    
-    if(util::IsNC(m))    
+    if(util::IsNC(m))
+    {
       //hErecoVsQ2Mode_NC->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NC
       hErecoVsQ2Mode_NC->Add(hErecoVsQ2Modes[im]); // NC
+      if(util::IsNC1Gamma(m))
+         hErecoVsQ2Mode_NC1Gamma->Add(hErecoVsQ2Modes[im]); // NC1Gamma
+    }
     else if( util::IsOscNuEBar(m) )
       //hErecoVsQ2Mode_NumuBarToNueBar->Add(skexp.CurrPredictedErecoVsQ2Spectrum(s,m)); // NumuBar->NueBar
       hErecoVsQ2Mode_NumuBarToNueBar->Add(hErecoVsQ2Modes[im]); // NumuBar->NueBar
@@ -451,6 +457,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   hErecoMode_NumuBarToNueBar = (TH1D*) hErecoVsQ2Mode_NumuBarToNueBar->ProjectionY()->Clone("hErecoMode_NumuBarToNueBar");
   hErecoMode_NumuToNue       = (TH1D*) hErecoVsQ2Mode_NumuToNue      ->ProjectionY()->Clone("hErecoMode_NumuToNue");
   hErecoMode_NC              = (TH1D*) hErecoVsQ2Mode_NC             ->ProjectionY()->Clone("hErecoMode_NC");
+  hErecoMode_NC1Gamma        = (TH1D*) hErecoVsQ2Mode_NC1Gamma       ->ProjectionY()->Clone("hErecoMode_NC1Gamma");
   hErecoMode_MEC             = (TH1D*) hErecoVsQ2Mode_MEC            ->ProjectionY()->Clone("hErecoMode_MEC");
   hErecoMode_CCQE            = (TH1D*) hErecoVsQ2Mode_CCQE           ->ProjectionY()->Clone("hErecoMode_CCQE");
   hErecoMode_CCnQE           = (TH1D*) hErecoVsQ2Mode_CCnQE          ->ProjectionY()->Clone("hErecoMode_CCnQE");
@@ -636,6 +643,9 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   hErecoMode_NC->SetLineWidth(2);
   if(draw_data) hErecoMode_NC->Scale(scale_ereco);
 
+  TCanvas *cEreco_NC1Gamma = new TCanvas("cErecoNC1Gamma","cErecoNC1Gamma");
+  hErecoMode_NC1Gamma->SetLineColor(kBlack);
+
   hErecoMode_MEC->SetFillStyle(1001);
   hErecoMode_MEC->SetLineColor(kBlack);
   hErecoMode_MEC->SetFillColor(kBlue);
@@ -662,6 +672,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   hErecoMode_NumuToNue->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoMode_NumuBarToNueBar->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoMode_NC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
+  hErecoMode_NC1Gamma->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoMode_MEC->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoMode_CCQE->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoMode_CCnQE->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
@@ -684,6 +695,7 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     hErecoMode_NumuToNue->GetYaxis()->SetTitle("Number of events");
     hErecoMode_NumuBarToNueBar->GetYaxis()->SetTitle("Number of events");
     hErecoMode_NC->GetYaxis()->SetTitle("Number of events");
+    hErecoMode_NC1Gamma->GetYaxis()->SetTitle("Number of events");
     hErecoMode_MEC->GetYaxis()->SetTitle("Number of events");
     hErecoMode_CCQE->GetYaxis()->SetTitle("Number of events");
     hErecoMode_CCnQE->GetYaxis()->SetTitle("Number of events");
@@ -1117,7 +1129,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   cout << "NC = " << hErecoVsQ2Mode_NC->Integral() << endl; 
   cout << "Total = " << TotEvts << endl;
   cout << endl;
-  cout << "NC = " << hErecoVsQ2Mode_NC->Integral() << endl; 
+  cout << "NC = " << hErecoVsQ2Mode_NC->Integral() << endl;
+  cout << "NC1gamma = " << hErecoVsQ2Mode_NC1Gamma->Integral() << endl;
   cout << "MEC = " << hErecoVsQ2Mode_MEC->Integral() << endl; 
   cout << "CCQE = " << hErecoVsQ2Mode_CCQE->Integral() << endl; 
   cout << "CCnQE = " << hErecoVsQ2Mode_CCnQE->Integral() << endl; 
@@ -1158,6 +1171,8 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
     hErecoVsQ2Tot->Write();
     hQ2Tot->Write();
     hErecoTot->Write();
+
+    hErecoMode_NC1Gamma->Write();
 
     hErecoVsQ2Mode_NueBeam->Write();
     hErecoVsQ2Mode_NumuBeam->Write();

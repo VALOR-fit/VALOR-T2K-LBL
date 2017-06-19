@@ -1,6 +1,55 @@
 #include <iomanip.h>
 #include <TXMLEngine.h>
 
+void CreateEnvelope(const int N, TH1D** binnedEvents, const char* filename)
+{
+   double* binEvents = new double[N];
+   TH1D* nominal = binnedEvents[0]->Clone();
+   TH1D* lower = nominal->Clone();
+   TH1D* upper = nominal->Clone();
+   int nbins = nominal->GetNbinsX();
+   for(int i = 1; i <= nbins; ++i)
+   {
+      for(int j = 0; j < N; ++j)
+      {
+         binEvents[j] = binnedEvents[j]->GetBinContent(i);
+      }
+      double nom = TMath::Mean(N, binEvents);
+      double err = TMath::RMS(N, binEvents);
+      nominal->SetBinContent(i, nom);
+      upper->SetBinContent(i, nom + err);
+      lower->SetBinContent(i, nom - err);
+   }
+   TCanvas* c = new TCanvas("c1","c1", 10,10, 1034,778);
+   nominal->SetMinimum(0.0);
+   nominal->SetMaximum(upper->GetMaximum() + 0.5);
+   double max = nominal->GetXaxis()->GetBinCenter(nbins);
+   if(max > 2.9)
+   {
+      nominal->GetXaxis()->SetRangeUser(0.0, 2.9);
+   }
+   nominal->Draw("");
+   upper->SetFillColor(kRed);
+   upper->SetFillStyle(1001);
+   upper->SetLineWidth(1);
+   upper->Draw("same");
+   lower->SetFillColor(10);
+   lower->SetFillStyle(1001);
+   lower->SetLineWidth(1);
+   lower->Draw("same");
+   nominal->SetLineColor(kBlack);
+   nominal->SetLineStyle(1);
+   nominal->SetLineWidth(2);
+   nominal->Draw("same");
+   c->SaveAs(filename);
+
+   delete nominal;
+   delete upper;
+   delete lower;
+   delete c;
+   delete[] binEvents;
+}
+
 void ResetOscParams(valor::PhysHypothesis& ph, double mix12val, double mix13val, double mix23val, double dm12val, double dm23val, double cpvval)
 {
    ph.SetCurrValue(conv::kPhypMixing12, mix12val);
@@ -72,8 +121,9 @@ void RandomizeOsc(valor::PhysHypothesis& ph)
    }
 }
 
-void VaryOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
+   int nbins = 0;
    for(int e = 0; e < N; ++e)
    {
       // stat, syst, osc, fitter, other
@@ -85,11 +135,11 @@ void VaryOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, val
       skexp.Generate(ph);
       TH1D *hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryFlux(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryFlux(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -108,14 +158,12 @@ void VaryFlux(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, va
 
       skexp.Generate(ph);
       TH1D *hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("Flux");
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -135,15 +183,13 @@ void VaryXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, va
       }
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("XSec");
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 
 }
 
-void VaryFluxAndXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryFluxAndXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -164,14 +210,12 @@ void VaryFluxAndXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
 
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("Flux+XSec");
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryConstrained(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryConstrained(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -190,11 +234,11 @@ void VaryConstrained(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryXsecNumuNue(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryXsecNumuNue(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -213,11 +257,11 @@ void VaryXsecNumuNue(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryXsecNCGamma(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryXsecNCGamma(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -236,11 +280,11 @@ void VaryXsecNCGamma(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryXsecNCoth(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryXsecNCoth(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -259,11 +303,11 @@ void VaryXsecNCoth(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t 
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VarySKFSI(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VarySKFSI(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -281,14 +325,12 @@ void VarySKFSI(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, v
       }
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("SK");
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -307,14 +349,12 @@ void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, val
 
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("All");
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
-void VaryAllWithOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events)
+void VaryAllWithOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -334,10 +374,8 @@ void VaryAllWithOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t
 
       skexp.Generate(ph);
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
-      hEvents->SetName("hEvents");
-      hEvents->SetTitle("All");
       events[e] = hEvents->GetEntries();
-      delete hEvents;
+      binnedEvents[e] = hEvents;
    }
 }
 
@@ -436,13 +474,24 @@ void make_table_systematic_effects
       SuperkExpectation skexp;
       skexp.Read(sconfig);
 
-      int N = 10000;
+      int N = 100;
       double* events = new double[N];
     
       if(group_str == "skdet" || group_str == "skfsi")
       {
          // SK variations
-         VarySKFSI(skexp, s, ph, 300000, N, events);
+         if(banff[b] != "prefit")
+         {
+            TH1D** binnedEvents = new TH1D*[N];
+            VarySKFSI(skexp, s, ph, 300000, N, events, binnedEvents);
+            CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+            for(int i = 0; i < N; ++i)
+            {
+               delete binnedEvents[i];
+            }
+            delete[] binnedEvents;
+         }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
@@ -457,17 +506,26 @@ void make_table_systematic_effects
          }
          if(banff[b] == "prefit")
          {
-            streamer << name << " & " << mean << " & " << rms << " & " << frac << " & ";
+            streamer << name << " & - & - & - & ";
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
       else if(group_str == "banff_constrained")
       {
          // Constrained variations
-         VaryConstrained(skexp, s, ph, 400000, N, events);
+         TH1D** binnedEvents = new TH1D*[N];
+         VaryConstrained(skexp, s, ph, 400000, N, events, binnedEvents);
+         CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+         for(int i = 0; i < N; ++i)
+         {
+            delete binnedEvents[i];
+         }
+         delete[] binnedEvents;
+
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
@@ -478,64 +536,106 @@ void make_table_systematic_effects
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
       else if(group_str == "xsec_nue")
       {
          // Xsec numu->nue variations
-         VaryXsecNumuNue(skexp, s, ph, 600000, N, events);
+         if(banff[b] != "prefit")
+         {
+            TH1D** binnedEvents = new TH1D*[N];
+            VaryXsecNumuNue(skexp, s, ph, 600000, N, events, binnedEvents);
+            CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+            for(int i = 0; i < N; ++i)
+            {
+               delete binnedEvents[i];
+            }
+            delete[] binnedEvents;
+         }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
          std::string name = "$\\sigma(\\nu_e)/\\sigma(\\bar{\\nu}_e)$";
          if(banff[b] == "prefit")
          {
-            streamer << name << " & " << mean << " & " << rms << " & " << frac << " & ";
+            streamer << name << " & - & - & - & ";
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
       else if (group_str == "xsec_ncoth")
       {
          // Xsec NCoth variations
-         VaryXsecNCoth(skexp, s, ph, 700000, N, events);
+         if(banff[b] != "prefit")
+         {
+            TH1D** binnedEvents = new TH1D*[N];
+            VaryXsecNCoth(skexp, s, ph, 700000, N, events, binnedEvents);
+            CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+            for(int i = 0; i < N; ++i)
+            {
+               delete binnedEvents[i];
+            }
+            delete[] binnedEvents;
+         }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
          std::string name = "NC Other";
          if(banff[b] == "prefit")
          {
-            streamer << name << " & " << mean << " & " << rms << " & " << frac << " & ";
+            streamer << name << " & - & - & - & ";
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
       else if (group_str == "xsec_ncgamma")
       {
          // Xsec NCgamma variations
-         VaryXsecNCGamma(skexp, s, ph, 800000, N, events);
+         if(banff[b] != "prefit")
+         {
+            TH1D** binnedEvents = new TH1D*[N];
+            VaryXsecNCGamma(skexp, s, ph, 800000, N, events, binnedEvents);
+            CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+            for(int i = 0; i < N; ++i)
+            {
+               delete binnedEvents[i];
+            }
+            delete[] binnedEvents;
+         }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
          std::string name = "NC1$\\gamma$";
          if(banff[b] == "prefit")
          {
-            streamer << name << " & " << mean << " & " << rms << " & " << frac << " & ";
+            streamer << name << " & - & - & - & ";
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
       else if (group_str == "allsyst")
       {
          // All variations
-         VaryAll(skexp, s, ph, 500000, N, events);
+         TH1D** binnedEvents = new TH1D*[N];
+         VaryAll(skexp, s, ph, 500000, N, events, binnedEvents);
+         CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+         for(int i = 0; i < N; ++i)
+         {
+            delete binnedEvents[i];
+         }
+         delete[] binnedEvents;
+
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
@@ -546,13 +646,22 @@ void make_table_systematic_effects
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
       else if (group_str == "all")
       {
          // All variations
-         VaryAllWithOsc(skexp, s, ph, 500000, N, events);
+         TH1D** binnedEvents = new TH1D*[N];
+         VaryAllWithOsc(skexp, s, ph, 500000, N, events, binnedEvents);
+         CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+         for(int i = 0; i < N; ++i)
+         {
+            delete binnedEvents[i];
+         }
+         delete[] binnedEvents;
+
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
@@ -563,24 +672,35 @@ void make_table_systematic_effects
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
       else if (group_str == "osc")
       {
          // Osc variations
-         VaryOsc(skexp, s, ph, 500000, N, events);
+         if(banff[b] != "prefit")
+         {
+            TH1D** binnedEvents = new TH1D*[N];
+            VaryOsc(skexp, s, ph, 500000, N, events, binnedEvents);
+            CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+
+            for(int i = 0; i < N; ++i)
+            {
+               delete binnedEvents[i];
+            }
+            delete[] binnedEvents;
+         }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
          std::string name = "Osc";
          if(banff[b] == "prefit")
          {
-            streamer << name << " & " << mean << " & " << rms << " & " << frac << " & ";
+            streamer << name << " & - & - & - & ";
          }
          else
          {
-            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline\\hline" << endl;
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
 

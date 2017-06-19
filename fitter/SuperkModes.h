@@ -114,7 +114,8 @@ namespace valor {
         bool IsCCQE             (conv::SuperkMode_t  m);
         bool IsCCnQE            (conv::SuperkMode_t  m);
         bool IsNC               (conv::SuperkMode_t  m);
-        bool Is2p2h              (conv::SuperkMode_t  m);
+        bool IsNC1Gamma         (conv::SuperkMode_t  m);
+        bool Is2p2h             (conv::SuperkMode_t  m);
 
         int AppliesToCCQE(std::vector<valor::conv::SuperkMode_t> modes);
         int AppliesToCC2p2h(std::vector<valor::conv::SuperkMode_t> modes);

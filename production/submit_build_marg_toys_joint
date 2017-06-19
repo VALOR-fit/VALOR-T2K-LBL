@@ -186,18 +186,18 @@ if(($freepar0 eq "mixing13") and ($freepar1 eq ""))
 {
    $tag = "${tag}_${freepar0}";
 
-   $nexpts_marg            = 10000; #10000                        unless defined $nexpts_marg;     # of toys
+   $nexpts_marg            = 80000; #10000                        unless defined $nexpts_marg;     # of toys
    $minfreepar0            = 0.007                          unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = 0.053                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $npt_freepar0           = 201; #201                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $npt_freepar0           = 100; #201                         unless defined $npt_freepar0;    # of free parameter points to scan
    $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
    $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
    $masshierarchy          = "normal"                    unless defined $masshierarchy;
-   $step_freepar0          = 5;#201                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar0          = 1;#5                unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
-   $wqueue                 = "long";
+   $wqueue                 = "long -M 8192";
 }
 
 # # 1D fit - sinsqth23

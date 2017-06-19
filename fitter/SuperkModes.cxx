@@ -206,6 +206,23 @@ bool valor::util::IsNC(valor::conv::SuperkMode_t m)
     return false;
 }
 //____________________________________________________________________________
+bool valor::util::IsNC1Gamma(valor::conv::SuperkMode_t m)
+{
+    switch(m) {
+        case ( kSKmNuMuNC1Gamma    ) :
+        case ( kSKmNuMuBarNC1Gamma ) :
+        case ( kSKmNuENC1Gamma     ) :          
+        case ( kSKmNuEBarNC1Gamma  ) :
+
+        return true;
+        break;
+     default:
+        return false;
+        break;
+    }
+    return false;
+}
+//____________________________________________________________________________
 int valor::util::AppliesToCCQE(vector<valor::conv::SuperkMode_t> modes)
 {
   if(!modes.size())
