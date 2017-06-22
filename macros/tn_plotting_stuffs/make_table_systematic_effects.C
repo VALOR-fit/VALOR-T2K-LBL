@@ -474,7 +474,7 @@ void make_table_systematic_effects
       SuperkExpectation skexp;
       skexp.Read(sconfig);
 
-      int N = 100;
+      int N = 10000;
       double* events = new double[N];
     
       if(group_str == "skdet" || group_str == "skfsi")

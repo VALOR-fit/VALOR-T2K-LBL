@@ -77,6 +77,7 @@
    #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
    #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
    #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
+   #define CANCEL_CCCoh_WEIGHTS // Override CCCoh weight for 2p2h and NC1Gamma events
 
 #elif defined TREE_WEIGHTS_BeRPA
 
@@ -85,6 +86,7 @@
    #define USE_BeRPA_WEIGHTS     // use the wgtBeRPA_nom weights in the trees
    #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
    #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
+   #define CANCEL_CCCoh_WEIGHTS
 
 #elif defined TREE_WEIGHTS_BeRPA_1
 
@@ -94,6 +96,7 @@
    #define USE_CCcoh_WEIGHTS    // use the pion CCcoh weight branch in the trees
    #define USE_NC1gamma_WEIGHTS // use the NC1gamma reweighting by a factor 2
    #define FORCE_BeRPA_WEIGHTS_1
+   #define CANCEL_CCCoh_WEIGHTS
 
 #elif defined MACH3_NO_BANFF_TUNE
 
@@ -1513,6 +1516,15 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #ifdef USE_NC1gamma_WEIGHTS
         if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){
             NC1GammaWght = 2.;
+        }
+#endif
+
+#ifdef CANCEL_CCCoh_WEIGHTS
+        // In 2017 analysis SuperK mtuples included NC1Gamma and 2p2h weights in CCCoh weight
+        // creating problems with double-weighting this events. As CCCoh does not apply to these
+        // events, we override the mtuple weight and apply the weighting manually
+        if(util::IsNC1Gamma(TMath::Abs(fBrGenCode)) || util::Is2p2h(TMath::Abs(fBrGenCode))){
+            fBrWghtCCcoh = 1.;
         }
 #endif
 
