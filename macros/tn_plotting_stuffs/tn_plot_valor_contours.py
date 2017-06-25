@@ -59,8 +59,45 @@ def DrawContours(filenames, labels):
     for f in ff:
         f.Close()
 
+def DrawContours2D(filenames, labels):
+    ff = [None] * len(filenames)
+    hh = [None] * len(filenames)
+    hhp = [None] * len(filenames)
+    canvas = ROOT.TCanvas("canvas","canvas")
+    legend = ROOT.TLegend(0.2, 0.7, 0.35, 0.82);
+    legend.SetFillColor(0)
+    legend.SetLineColor(0)
+    legend.SetTextFont(132)
+    legend.SetTextSize(0.05)
+    for i, filename in enumerate(filenames):
+        ff[i] = ROOT.TFile(filename, "read")
+        hh[i] = ff[i].Get("dchisq_map_2D")
+        hh[i].SetTitle("Marginalisation study")
+        hh[i].SetLineWidth(2)
+        hh[i].SetLineColor(colours[i])
+        hhp[i] = hh[i].Clone()
+        hh[i].SetContour(1)
+        hh[i].SetContourLevel(0, 4.61)
+        hhp[i].SetLineStyle(2)
+        hhp[i].SetContour(1)
+        hhp[i].SetContourLevel(0, 2.3)
+        legend.AddEntry(hh[i], labels[i])
+        if i == 0:
+            hh[i].Draw("axis")
+            hh[i].Draw("cont3same")
+            hhp[i].Draw("cont3same")
+        else:
+            hh[i].Draw("cont3same")
+            hhp[i].Draw("cont3same")
+    legend.Draw()
+    canvas.SaveAs("output.pdf")
+    for f in ff:
+        f.Close()
+
+
 if __name__ == "__main__":
     filenames = GetFilenames()
     labels = GetLabels(filenames)
-    DrawContours(filenames, labels)
+#    DrawContours(filenames, labels)
+    DrawContours2D(filenames, labels)
 

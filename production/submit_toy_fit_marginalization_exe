@@ -258,7 +258,7 @@ $masshierarchy_marg       = "normal"     unless defined $masshierarchy_marg;    
 
 $freepar0          = "deltacp"     unless defined $freepar0;
 
-$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/deltacp/studies/80k/set3" unless defined $file_margtoys;
+$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/mixing13_deltacp/studies/10k/setx" unless defined $file_margtoys;
 
 $wqueue = "short";
 
@@ -387,7 +387,7 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
 # 2D fit - dcp v mixing13
 if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "deltacp") && ($freepar1 eq "mixing13")))
 {
-   $nfiles_margtoys   = 702;#546; #201           unless defined $nfiles_margtoys; # of marginalization files
+   $nfiles_margtoys   = 702           unless defined $nfiles_margtoys; # of marginalization files
    $ntoys_margtoys    = 10000; #10000         unless defined $ntoys_margtoys;     # of marginalization toys
 
    $freepar0 = "mixing13";
@@ -403,10 +403,10 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
       $minfreepar0       = 0.007  unless defined $minfreepar0;  # Min free param allowed value
       $maxfreepar0       = 0.053  unless defined $maxfreepar0;  # Max free param allowed value
    }
-   $npt_freepar0      = 81;#10; #201           unless defined $npt_freepar0; # of free parameter points to scan
+   $npt_freepar0      = 81           unless defined $npt_freepar0; # of free parameter points to scan
    $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;  # Max free param allowed value
-   $npt_freepar1      = 51;#10            unless defined $npt_freepar1; # of free parameter points to scan
+   $npt_freepar1      = 51            unless defined $npt_freepar1; # of free parameter points to scan
 
    $wqueue = "long -W 3:00";
 }
