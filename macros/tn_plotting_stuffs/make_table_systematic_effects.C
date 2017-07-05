@@ -486,11 +486,18 @@ void make_table_systematic_effects
             VarySKFSI(skexp, s, ph, 300000, N, events, binnedEvents);
             CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
 
+            TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
+
             for(int i = 0; i < N; ++i)
             {
+               binnedEvents[i]->Write(Form("events_%d", i));
+               events[i] = binnedEvents[i]->GetEntries();
                delete binnedEvents[i];
             }
             delete[] binnedEvents;
+
+            file->Close();
+            delete file;
          }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
@@ -513,6 +520,24 @@ void make_table_systematic_effects
             streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
          }
       }
+      else if(group_str == "banff_all")
+      {  // Non-standard
+         TH1D** binnedEvents = new TH1D*[N];
+         VaryFluxAndXsec(skexp, s, ph, 400000, N, events, binnedEvents);
+
+         TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
+
+         for(int i = 0; i < N; ++i)
+         {
+            binnedEvents[i]->Write(Form("events_%d", i));
+            events[i] = binnedEvents[i]->GetEntries();
+            delete binnedEvents[i];
+         }
+         delete[] binnedEvents;
+
+         file->Close();
+         delete file;
+      }
       else if(group_str == "banff_constrained")
       {
          // Constrained variations
@@ -520,11 +545,18 @@ void make_table_systematic_effects
          VaryConstrained(skexp, s, ph, 400000, N, events, binnedEvents);
          CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
 
+         TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
+
          for(int i = 0; i < N; ++i)
          {
+            binnedEvents[i]->Write(Form("events_%d", i));
+            events[i] = binnedEvents[i]->GetEntries();
             delete binnedEvents[i];
          }
          delete[] binnedEvents;
+
+         file->Close();
+         delete file;
 
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
@@ -547,12 +579,18 @@ void make_table_systematic_effects
             TH1D** binnedEvents = new TH1D*[N];
             VaryXsecNumuNue(skexp, s, ph, 600000, N, events, binnedEvents);
             CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+            TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
 
             for(int i = 0; i < N; ++i)
             {
+               binnedEvents[i]->Write(Form("events_%d", i));
+               events[i] = binnedEvents[i]->GetEntries();
                delete binnedEvents[i];
             }
             delete[] binnedEvents;
+
+            file->Close();
+            delete file;
          }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
@@ -575,12 +613,18 @@ void make_table_systematic_effects
             TH1D** binnedEvents = new TH1D*[N];
             VaryXsecNCoth(skexp, s, ph, 700000, N, events, binnedEvents);
             CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+            TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
 
             for(int i = 0; i < N; ++i)
             {
+               binnedEvents[i]->Write(Form("events_%d", i));
+               events[i] = binnedEvents[i]->GetEntries();
                delete binnedEvents[i];
             }
             delete[] binnedEvents;
+
+            file->Close();
+            delete file;
          }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
@@ -604,11 +648,18 @@ void make_table_systematic_effects
             VaryXsecNCGamma(skexp, s, ph, 800000, N, events, binnedEvents);
             CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
 
+            TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
+
             for(int i = 0; i < N; ++i)
             {
+               binnedEvents[i]->Write(Form("events_%d", i));
+               events[i] = binnedEvents[i]->GetEntries();
                delete binnedEvents[i];
             }
             delete[] binnedEvents;
+
+            file->Close();
+            delete file;
          }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
@@ -629,12 +680,18 @@ void make_table_systematic_effects
          TH1D** binnedEvents = new TH1D*[N];
          VaryAll(skexp, s, ph, 500000, N, events, binnedEvents);
          CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+         TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
 
          for(int i = 0; i < N; ++i)
          {
+            binnedEvents[i]->Write(Form("events_%d", i));
+            events[i] = binnedEvents[i]->GetEntries();
             delete binnedEvents[i];
          }
          delete[] binnedEvents;
+
+         file->Close();
+         delete file;
 
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
@@ -655,12 +712,18 @@ void make_table_systematic_effects
          TH1D** binnedEvents = new TH1D*[N];
          VaryAllWithOsc(skexp, s, ph, 500000, N, events, binnedEvents);
          CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+         TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
 
          for(int i = 0; i < N; ++i)
          {
+            binnedEvents[i]->Write(Form("events_%d", i));
+            events[i] = binnedEvents[i]->GetEntries();
             delete binnedEvents[i];
          }
          delete[] binnedEvents;
+
+         file->Close();
+         delete file;
 
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);
@@ -683,12 +746,18 @@ void make_table_systematic_effects
             TH1D** binnedEvents = new TH1D*[N];
             VaryOsc(skexp, s, ph, 500000, N, events, binnedEvents);
             CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+            TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
 
             for(int i = 0; i < N; ++i)
             {
+               binnedEvents[i]->Write(Form("events_%d", i));
+               events[i] = binnedEvents[i]->GetEntries();
                delete binnedEvents[i];
             }
             delete[] binnedEvents;
+
+            file->Close();
+            delete file;
          }
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);

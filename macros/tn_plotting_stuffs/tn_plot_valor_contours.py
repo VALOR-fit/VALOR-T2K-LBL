@@ -72,7 +72,7 @@ def DrawContours2D(filenames, labels):
     for i, filename in enumerate(filenames):
         ff[i] = ROOT.TFile(filename, "read")
         hh[i] = ff[i].Get("dchisq_map_2D")
-        hh[i].SetTitle("Marginalisation study")
+        hh[i].SetTitle("Data v Asimov")
         hh[i].SetLineWidth(2)
         hh[i].SetLineColor(colours[i])
         hhp[i] = hh[i].Clone()
@@ -93,7 +93,6 @@ def DrawContours2D(filenames, labels):
     canvas.SaveAs("output.pdf")
     for f in ff:
         f.Close()
-
 
 if __name__ == "__main__":
     filenames = GetFilenames()
