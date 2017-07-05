@@ -188,12 +188,14 @@ $mix12           = 0.304                        unless defined $mix12;
 $betaBar         = -99.                          unless defined $betaBar;
 
 # Asimov A
-$mix23           = 0.528                        unless defined $mix23;
-$deltacp         = -1.601                        unless defined $deltacp;
+#$mix23           = 0.528                        unless defined $mix23;
+#$deltacp         = -1.601                        unless defined $deltacp;
+#$mixparamoctant  = "two"                       unless defined $mixparamoctant;
 
 # Asimov B
-#$mix23           = 0.624                        unless defined $mix23;
-#$deltacp         = 0                        unless defined $deltacp;
+$mix23           = 0.450                        unless defined $mix23;
+$deltacp         = 0                        unless defined $deltacp;
+$mixparamoctant  = "one"                       unless defined $mixparamoctant;
 
 # Asimov C
 #$mix23           = 0.528                        unless defined $mix23;
@@ -212,7 +214,6 @@ $masshierarchy   = "normal"                    unless defined $masshierarchy;  #
 
 $dmsqscheme      = "auto"                      unless defined $dmsqscheme;
 $mixparamscheme  = "sinsqtheta"                unless defined $mixparamscheme;
-$mixparamoctant  = "two"                       unless defined $mixparamoctant;
 $cpvparamscheme  = "delta"                     unless defined $cpvparamscheme;
 
 $job_dir         = "."                         unless defined $job_dir;
@@ -258,7 +259,7 @@ $masshierarchy_marg       = "normal"     unless defined $masshierarchy_marg;    
 
 $freepar0          = "deltacp"     unless defined $freepar0;
 
-$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/mixing13_deltacp/studies/10k/setx" unless defined $file_margtoys;
+$file_margtoys   = "/data/t2k/phrdqd/analysis/data/margtoys/tn/mixing13_deltacp" unless defined $file_margtoys;
 
 $wqueue = "short";
 
@@ -408,7 +409,7 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
    $maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 51            unless defined $npt_freepar1; # of free parameter points to scan
 
-   $wqueue = "long -W 3:00";
+   $wqueue = "long -W 4:00";
 }
 
 # 2D fit - mixing23 v dmsq23

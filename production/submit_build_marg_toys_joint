@@ -97,7 +97,7 @@ $resource        = "interactive"               unless defined $resource;
 $config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
 $fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
 $seed           = 999                   unless defined $seed;
-# Asimov Common
+# Dummy mixing parameter values
 $dm23sq_nh       = 2.509E-3                           unless defined $dm23sq_nh; 
 $dm12sq_nh       = 7.53E-5                            unless defined $dm12sq_nh; 
 $mix13_nh        = 0.0219                             unless defined $mix13_nh;
@@ -107,37 +107,12 @@ $dm12sq_ih       = 7.53E-5                            unless defined $dm12sq_ih;
 $mix13_ih        = 0.0219                             unless defined $mix13_ih;
 $mix12_ih        = 0.304                              unless defined $mix12_ih;
 $betaBar         = -99                                unless defined $betaBar;
-
-# Asimov A
 $mix23_nh        = 0.528                              unless defined $mix23_nh;
 $deltacp_nh      = -1.601                             unless defined $deltacp_nh;
 $mix23_ih        = 0.528                              unless defined $mix23_ih;
 $deltacp_ih      = -1.601                             unless defined $deltacp_ih;
 
-# Asimov B
-#$mix23_nh        = 0.624                              unless defined $mix23_nh;
-#$deltacp_nh      = 0                                  unless defined $deltacp_nh;
-#$mix23_ih        = 0.624                              unless defined $mix23_ih;
-#$deltacp_ih      = 0                                  unless defined $deltacp_ih;
-
-# Asimov C
-#$mix23_nh        = 0.528                              unless defined $mix23_nh;
-#$deltacp_nh      = 0                             unless defined $deltacp_nh;
-#$mix23_ih        = 0.528                              unless defined $mix23_ih;
-#$deltacp_ih      = 0                             unless defined $deltacp_ih;
-
-# Asimov D
-#$mix23_nh        = 0.528                              unless defined $mix23_nh;
-#$deltacp_nh      = 3.14159265358979312                unless defined $deltacp_nh;
-#$mix23_ih        = 0.528                              unless defined $mix23_ih;
-#$deltacp_ih      = 3.14159265358979312                unless defined $deltacp_ih;
-
-# Asimov E
-#$mix23_nh        = 0.528                              unless defined $mix23_nh;
-#$deltacp_nh      = 1.5707963267948966                 unless defined $deltacp_nh;
-#$mix23_ih        = 0.528                              unless defined $mix23_ih;
-#$deltacp_ih      = 1.5707963267948966                 unless defined $deltacp_ih;
-
+# The tag currently includes "AsimovA", this is unecessary, toys are independent of Asimovs
 if($use_reactors == 1)
 {
    $tag             = "oa2017_AsimovA_${masshierarchy}_reactor"  unless defined $tag;
@@ -191,7 +166,7 @@ if(($freepar0 eq "mixing13") and ($freepar1 eq ""))
    $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
    $masshierarchy          = "normal"                    unless defined $masshierarchy;
-   $step_freepar0          = 1;#5                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar0          = 5                unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
    $wqueue                 = "long";#"long -M 8192";
 }
