@@ -328,8 +328,8 @@ int main(int argc, char ** argv)
   hErecoExp_sample[conv::kSKsFCFV1RingMuLike   ] = hErecoExp_1Rmu;
   hErecoExp_sample[conv::kSKsFCFV1RingELike    ] = hErecoExp_1Re ;
   hErecoExp_sample[conv::kSKsRHCFCFV1RingMuLike] = hErecoExp_RHC1Rmu;
-  hErecoExp_sample[conv::kSKsRHCFCFV1RingELike ] = hErecoToy_RHC1Re ;
-  hErecoExp_sample[conv::kSKsFCFVMultiRingELike ] = hErecoToy_MultiRe ;
+  hErecoExp_sample[conv::kSKsRHCFCFV1RingELike ] = hErecoExp_RHC1Re ;
+  hErecoExp_sample[conv::kSKsFCFVMultiRingELike ] = hErecoExp_MultiRe ;
   
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
@@ -676,9 +676,41 @@ int main(int argc, char ** argv)
     cout << "//                                 //" << endl;
     cout << "/////////////////////////////////////" << endl;
     cout << endl;
-    
+
+#ifndef __USE_2D_TEMPLATES__
+#else
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = kSKSamples[is];
+      if(s == kSKsUndefined) continue;
+ 
+      TH2D * hspec_obs = (TH2D*)skobs_fakedata->TwoDSpectrum(s);
+      TH2D * hspec_exp = (TH2D*)skexp->CurrPredictedErecoVsQ2Spectrum(s);
+      cout << "Before Obs: " << util::AsString(s) << " " << hspec_obs->Integral() << endl;
+      cout << "Before Spectrum : " << util::AsString(s) << " " << hspec_exp->Integral() << endl;
+      delete hspec_obs;
+      delete hspec_exp;
+    }
+#endif
+
+
     util::PerformMargFit(argc,argv,runopt,fitmarg_nh,skexp,skobs_fakedata,false,"normal"); // Normal Hierarchy marginalization toys
-    
+
+#ifndef __USE_2D_TEMPLATES__
+#else
+    for(int is = 0; is < kns; is++) {
+      SuperkSample_t s = kSKSamples[is];
+      if(s == kSKsUndefined) continue;
+ 
+      TH2D * hspec_obs2 = (TH2D*)skobs_fakedata->TwoDSpectrum(s);
+      TH2D * hspec_exp2 = (TH2D*)skexp->CurrPredictedErecoVsQ2Spectrum(s);
+      cout << "After Obs: " << util::AsString(s) << " " << hspec_obs2->Integral() << endl;
+      cout << "After Spectrum : " << util::AsString(s) << " " << hspec_exp2->Integral() << endl;
+      delete hspec_obs2;
+      delete hspec_exp2;
+    }
+#endif
+
+
     nchisqcalls_nh = fitmarg_nh->GetNCallsCalcChisqMargPt();
     
     cout << endl;
