@@ -46,17 +46,20 @@ void analyze_run_fc_marginalization_exe
  const bool PrintToy = false,
  const char * rootfile = "data_run1to8/SKdata_Run18.root", 
 
- const bool use_posterior_predictive = false,
- const bool use_post_pred_fhc_mulike = false,
- const bool use_post_pred_fhc_elike  = false,
- const bool use_post_pred_rhc_mulike = false,
- const bool use_post_pred_rhc_elike  = false,
+ const bool use_posterior_predictive  = false,
+ const bool use_post_pred_fhc_mulike  = false,
+ const bool use_post_pred_fhc_elike   = false,
+ const bool use_post_pred_rhc_mulike  = false,
+ const bool use_post_pred_rhc_elike   = false,
+ const bool use_post_pred_fhc_cc1pilike = false, 
 // const char infilename[300] = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXMERGE/fit_fitmarg_fc_nh_10k_run17c_fluxmerge_normal_3.142.root",
- const char infilename[300] = "fitmarg_fc_dcp_0_merge.root",
+ const char infilename[300] = "/scratch/cbarry/tmp/tn_toys/FC/dcp/fc_toys/dcp_0_nh_update/dcp_0_nh_merge.root", //"/scratch/cbarry/tmp/tn_toys/FC/dcp/fc_toys/dcp_pi_ih/fitmarg_fc_dcp_pi_ih_merge.root",
  string mytag = "Run1to8_final",
- const double mydeltachisq = 0.0, // dcp=pi // Don't draw data deltachisq
+ const double mydeltachisq = 7.692815042, // dcp=pi // Don't draw data deltachisq
   )
 {
+
+  cout << "Input data deltachisq: " << mydeltachisq << endl;
   const double MaxHisto = 20.;
   const double MinHisto = -5.;
   const int    NBinHisto = 250.;
@@ -80,9 +83,9 @@ void analyze_run_fc_marginalization_exe
   
   TH1D *hWeight_posterior = new TH1D("hWeight_posterior","hWeight_posterior",300,200,500);
   
-  //TH2D *hbestfit_Vs_chisqweight_posterior = new TH2D("hbestfit_Vs_chisqweight_posterior","hbestfit_Vs_chisqweight_posterior",201,-3.15,3.15,NBinHisto,250,350);
-  TH2D *hbestfit_Vs_chisqweight_posterior = new TH2D("hbestfit_Vs_chisqweight_posterior","hbestfit_Vs_chisqweight_posterior",201,-3.15,3.15,NBinHisto,0,40);
-  TH1D *hbestfit_posterior_1D = new TH1D("hbestfit_posterior_1D","hbestfit_posterior_1D",201,-3.15,3.15);
+  //TH2D *hbestfit_Vs_chisqweight_posterior = new TH2D("hbestfit_Vs_chisqweight_posterior","hbestfit_Vs_chisqweight_posterior",97,-3.15,3.15,NBinHisto,250,350);
+  TH2D *hbestfit_Vs_chisqweight_posterior = new TH2D("hbestfit_Vs_chisqweight_posterior","hbestfit_Vs_chisqweight_posterior",97,-3.15,3.15,NBinHisto,0,40);
+  TH1D *hbestfit_posterior_1D = new TH1D("hbestfit_posterior_1D","hbestfit_posterior_1D",97,-3.15,3.15);
   
   //TH2D *hMHbf_Vs_chisqweight_posterior = new TH2D("hMHbf_Vs_chisqweight_posterior","hMHbf_Vs_chisqweight_posterior",2,0,2,NBinHisto,250,350);
   TH2D *hMHbf_Vs_chisqweight_posterior = new TH2D("hMHbf_Vs_chisqweight_posterior","hMHbf_Vs_chisqweight_posterior",2,0,2,NBinHisto,0,40);
@@ -340,6 +343,7 @@ void analyze_run_fc_marginalization_exe
   treein->SetBranchAddress("hErecoExp_1Re",      &hErecoExp_1Re      );
   treein->SetBranchAddress("hErecoExp_RHC1Rmu",  &hErecoExp_RHC1Rmu  );
   treein->SetBranchAddress("hErecoExp_RHC1Re",   &hErecoExp_RHC1Re   );
+  treein->SetBranchAddress("hErecoExp_MultiRe",  &hErecoExp_MultiRe  );  
 #else  
   cout << "HERE" << endl;
   treein->SetBranchAddress("hErecoToy_1Rmu",     &hErecoToy_1Rmu     );
@@ -364,6 +368,7 @@ void analyze_run_fc_marginalization_exe
   TH2D *h_data_multire;
   TH2D *h_data_rhc1rmu;
   TH2D *h_data_rhc1re;
+  TH2D *h_data_multire;  
   
   TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
   SuperkObservation * skobs_fakedata = new SuperkObservation;
@@ -383,9 +388,10 @@ void analyze_run_fc_marginalization_exe
     
     conv::SuperkSample_t s_1rmu    = util::SKSampleFromString("1Rmu"); 
     conv::SuperkSample_t s_1re     = util::SKSampleFromString("1Re");
-    conv::SuperkSample_t s_multire     = util::SKSampleFromString("MultiRe");
+    conv::SuperkSample_t s_multire = util::SKSampleFromString("MultiRe");
     conv::SuperkSample_t s_rhc1rmu = util::SKSampleFromString("RHC1Rmu"); 
-    conv::SuperkSample_t s_rhc1re  = util::SKSampleFromString("RHC1Re"); 
+    conv::SuperkSample_t s_rhc1re  = util::SKSampleFromString("RHC1Re");
+    conv::SuperkSample_t s_multire = util::SKSampleFromString("MultiRe"); 
     
     //int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
     bool using_xml_file = false;
@@ -396,7 +402,8 @@ void analyze_run_fc_marginalization_exe
     h_data_1re     = (TH2D*) skobs_fakedata->TwoDSpectrum(s_1re)    ->Clone("h_data_1re");
     h_data_multire = (TH2D*) skobs_fakedata->TwoDSpectrum(s_1re)    ->Clone("h_data_multire");
     h_data_rhc1rmu = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1rmu)->Clone("h_data_rhc1rmu");
-    h_data_rhc1re  = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1re) ->Clone("h_data_rhc1re"); 
+    h_data_rhc1re  = (TH2D*) skobs_fakedata->TwoDSpectrum(s_rhc1re) ->Clone("h_data_rhc1re");
+    h_data_multire = (TH2D*) skobs_fakedata->TwoDSpectrum(s_multire)->Clone("h_data_multire");     
     
     cout << "# of events 1Rmu = "    << h_data_1rmu->Integral()    << endl;
     cout << "# of events 1Re = "     << h_data_1re->Integral()     << endl;
@@ -409,21 +416,21 @@ void analyze_run_fc_marginalization_exe
   ///////////// Declare histograms //////////////
 
   TH1D *htrue_MH = new TH1D("htrue_MH","htrue_MH",2,0,2);
-  TH1D *htrue_1D = new TH1D("htrue_1D","htrue_1D",201,-3.15,3.15);
-  TH2D *htrue_2D = new TH2D("htrue_2D","htrue_2D",201,0,0.3,201,-3.15,3.15);
+  TH1D *htrue_1D = new TH1D("htrue_1D","htrue_1D",97,-3.15,3.15);
+  TH2D *htrue_2D = new TH2D("htrue_2D","htrue_2D",97,0,0.3,97,-3.15,3.15);
 
-  TH1D *hbestfitFullChisq_1D = new TH1D("hbestfitFullChisq_1D","hbestfitFullChisq_1D",201,-3.15,3.15);
-  TH2D *hbestfitFullChisq_2D = new TH2D("hbestfitFullChisq_2D","hbestfitFullChisq_2D",201,0,0.3,201,-3.15,3.15);
+  TH1D *hbestfitFullChisq_1D = new TH1D("hbestfitFullChisq_1D","hbestfitFullChisq_1D",97,-3.15,3.15);
+  TH2D *hbestfitFullChisq_2D = new TH2D("hbestfitFullChisq_2D","hbestfitFullChisq_2D",97,0,0.3,97,-3.15,3.15);
 
-  TH1D *hbestfit_1D = new TH1D("hbestfit_1D","hbestfit_1D",201,-3.15,3.15);
-  TH1D *hbestfit_1D_nh = new TH1D("hbestfit_1D_nh","hbestfit_1D_nh",201,-3.15,3.15);
-  TH1D *hbestfit_1D_ih = new TH1D("hbestfit_1D_ih","hbestfit_1D_ih",201,-3.15,3.15);
+  TH1D *hbestfit_1D = new TH1D("hbestfit_1D","hbestfit_1D",97,-3.15,3.15);
+  TH1D *hbestfit_1D_nh = new TH1D("hbestfit_1D_nh","hbestfit_1D_nh",97,-3.15,3.15);
+  TH1D *hbestfit_1D_ih = new TH1D("hbestfit_1D_ih","hbestfit_1D_ih",97,-3.15,3.15);
 
   TH1D *hbestfit_MH = new TH1D("hbestfit_MH","hbestfit_MH",2,0,2);
   
-  TH2D *hbestfit_2D = new TH2D("hbestfit_2D","hbestfit_2D",201,0,0.3,201,-3.15,3.15);
-  TH2D *hbestfit_2D_nh = new TH2D("hbestfit_2D_nh","hbestfit_2D_nh",201,0,0.3,201,-3.15,3.15);
-  TH2D *hbestfit_2D_ih = new TH2D("hbestfit_2D_ih","hbestfit_2D_ih",201,0,0.3,201,-3.15,3.15);
+  TH2D *hbestfit_2D = new TH2D("hbestfit_2D","hbestfit_2D",97,0,0.3,97,-3.15,3.15);
+  TH2D *hbestfit_2D_nh = new TH2D("hbestfit_2D_nh","hbestfit_2D_nh",97,0,0.3,97,-3.15,3.15);
+  TH2D *hbestfit_2D_ih = new TH2D("hbestfit_2D_ih","hbestfit_2D_ih",97,0,0.3,97,-3.15,3.15);
 
   TH1D *hdeltachisq = new TH1D("hdeltachisq","hdeltachisq",NBinHisto,MinHisto,MaxHisto);
   //TH1D *hdeltachisq = new TH1D("hdeltachisq","hdeltachisq",100,-5,20);
@@ -437,11 +444,11 @@ void analyze_run_fc_marginalization_exe
   TH1D *hnchisqcalls = new TH1D("hnchisqcalls","hnchisqcalls",100,0,700);
   TH1D *hfitstatus = new TH1D("hfitstatus","hfitstatus",5,0,5);
 
-  TH1D *hNevents_fhc_mulike = new TH1D("hNevents_fhc_mulike","hNevents_fhc_mulike",50,0,500);
-  TH1D *hNevents_fhc_elike  = new TH1D("hNevents_fhc_elike", "hNevents_fhc_elike" ,50,0,250);
-  TH1D *hNevents_fhc_cc1pilike  = new TH1D("hNevents_fhc_cc1pilike", "hNevents_fhc_cc1pilike" ,50,0,250);
-  TH1D *hNevents_rhc_mulike = new TH1D("hNevents_rhc_mulike","hNevents_rhc_mulike",50,0,500);
-  TH1D *hNevents_rhc_elike  = new TH1D("hNevents_rhc_elike", "hNevents_rhc_elike" ,50,0,250);
+  TH1D *hNevents_fhc_mulike = new TH1D("hNevents_fhc_mulike","hNevents_fhc_mulike",300,0,500);
+  TH1D *hNevents_fhc_elike  = new TH1D("hNevents_fhc_elike", "hNevents_fhc_elike" ,100,0,250);
+  TH1D *hNevents_fhc_cc1pilike  = new TH1D("hNevents_fhc_cc1pilike", "hNevents_fhc_cc1pilike" ,100,0,250);
+  TH1D *hNevents_rhc_mulike = new TH1D("hNevents_rhc_mulike","hNevents_rhc_mulike",100,0,500);
+  TH1D *hNevents_rhc_elike  = new TH1D("hNevents_rhc_elike", "hNevents_rhc_elike" ,100x,0,250);
 
   TH1D *hNevents_exp_fhc_mulike = new TH1D("hNevents_exp_fhc_mulike","hNevents_exp_fhc_mulike",100,0,500);
   TH1D *hNevents_exp_fhc_elike  = new TH1D("hNevents_exp_fhc_elike", "hNevents_exp_fhc_elike" ,100,0,250);
@@ -495,6 +502,14 @@ void analyze_run_fc_marginalization_exe
   cout << "Total # of toys = " << Nentries << endl;
   cout << endl;
 
+  int empty_nev_exp_rhc1re   = 0;
+  int empty_nev_exp_1re      = 0;
+  int empty_nev_exp_rhc1rmu  = 0;
+  int empty_nev_exp_1rmu     = 0;
+  int empty_nev_exp_multire  = 0;
+
+
+  
   for(int ientry=0;ientry<Nentries;ientry++){
     
     if(CheckSingleToy){ 
@@ -528,7 +543,7 @@ void analyze_run_fc_marginalization_exe
     double nevents_exp_1re = hErecoExp_1Re->Integral();    
     double nevents_exp_rhc1rmu = hErecoExp_RHC1Rmu->Integral();    
     double nevents_exp_1rmu = hErecoExp_1Rmu->Integral();
-    double nevents_exp_multire = hErecoToy_MultiRe->Integral();
+    double nevents_exp_multire = hErecoExp_MultiRe->Integral();
 
     if(ientry%1000==0){
       cout << "Toy 1K 1Rmu Exp 1Rmu " << nevents_1rmu << " " << nevents_exp_1rmu << endl;
@@ -563,6 +578,31 @@ void analyze_run_fc_marginalization_exe
     hNevents_exp_rhc_mulike->Fill(nevents_exp_rhc1rmu);    
     hNevents_exp_fhc_mulike->Fill(nevents_exp_1rmu);
 
+     // cout << "ToyID: " << ToyID << endl;
+     // cout << "# of events RHC1Re  = " << nevents_rhc1re  << endl;
+     // cout << "# of events 1Re     = " << nevents_1re     << endl;
+     // cout << "# of events RHC1Rmu = " << nevents_rhc1rmu << endl;
+     // cout << "# of events 1Rmu    = " << nevents_1rmu    << endl;
+     // cout << "# of events MultiRe = " << nevents_multire << endl;
+
+     // cout << "-------------------------" << endl; 
+     // cout << "Nevents Exp: " << endl; 
+     // cout << "# of events RHC1Re  = " << nevents_exp_rhc1re   << endl;
+     // cout << "# of events 1Re     = " << nevents_exp_1re      << endl;
+     // cout << "# of events RHC1Rmu = " << nevents_exp_rhc1rmu  << endl;
+     // cout << "# of events 1Rmu    = " << nevents_exp_1rmu     << endl;
+     // cout << "# of events MultiRe = " << nevents_exp_multire  << endl;
+
+     // cout << endl;
+
+         
+    if (nevents_exp_rhc1re  <= 0)  empty_nev_exp_rhc1re++ ;
+    if (nevents_exp_1re     <= 0)  empty_nev_exp_1re++    ;
+    if (nevents_exp_rhc1rmu <= 0)  empty_nev_exp_rhc1rmu++;
+    if (nevents_exp_1rmu    <= 0)  empty_nev_exp_1rmu++   ;
+    if (nevents_exp_multire <= 0)  empty_nev_exp_multire++;
+                                  
+    
     //
 
 
@@ -635,19 +675,27 @@ void analyze_run_fc_marginalization_exe
         
     double deltachisq0BF_used = deltachisq0BF_glob;
 
-    //cout << "deltachisq0BF_used = " << deltachisq0BF_used;
-    //deltachisq0BF_used = chisqtrue0-chisqmin_glob;
-    //cout << "  " << deltachisq0BF_used;
-    //deltachisq0BF_used = chisqtrue0-chisqminFullChisq_glob;
-    //cout << "  " << deltachisq0BF_used << endl;
-    //if(!UseFullChisqFit) deltachisq0BF_used = chisqtrue0-chisqmin_glob;
-    //else                 deltachisq0BF_used = chisqtrue0-chisqminFullChisq_glob;
+    // cout << "deltachisq0BF_used = " << deltachisq0BF_used;
+    deltachisq0BF_used = chisqtrue0-chisqmin_glob;
+    // cout << "  " << deltachisq0BF_used;
+    deltachisq0BF_used = chisqtrue0-chisqminFullChisq_glob;
+    // cout << "  " << deltachisq0BF_used << endl;
+    if(!UseFullChisqFit) deltachisq0BF_used = chisqtrue0-chisqmin_glob;
+    else                 deltachisq0BF_used = chisqtrue0-chisqminFullChisq_glob;
 
-    // // Print chisq
-    // int npt_chisq_x = hchisq1D_out->GetNbinsX();
-    // for(int ix=0;ix<npt_chisq_x;ix++){
-    //   cout << hchisq1D_out->GetBinContent(ix+1) << " ";
-    // }
+    // Print chisq 
+    if(*trueMH=="inverted"){   
+      int npt_chisq_x = hchisq1D_out_ih->GetNbinsX();
+      for(int ix=0;ix<npt_chisq_x;ix++){
+        // cout << hchisq1D_out_ih->GetBinContent(ix+1) << " ";
+      }
+    }
+    if(*trueMH=="normal"){
+      int npt_chisq_x = hchisq1D_out_nh->GetNbinsX();
+      for(int ix=0;ix<npt_chisq_x;ix++){
+        // cout << hchisq1D_out_nh->GetBinContent(ix+1) << " ";
+      }
+    }
 
     // Fill deltaChisq histogram
     
@@ -713,6 +761,8 @@ void analyze_run_fc_marginalization_exe
 	toy_chisq += calc_chisq(h_data_rhc1rmu,hErecoExp_RHC1Rmu); // RHC 1Rmu
       if(use_post_pred_rhc_elike) 
 	toy_chisq += calc_chisq(h_data_rhc1re, hErecoExp_RHC1Re);  // RHC 1Re
+      if(use_post_pred_fhc_cc1pilike)
+        toy_chisq += calc_chisq(h_data_multire, hErecoExp_MultiRe);  // RHC 1Re
       toy_weight = TMath::Exp(-1*toy_chisq/2.);
 
     }
@@ -934,7 +984,12 @@ void analyze_run_fc_marginalization_exe
   hNevents_rhc_elike->GetXaxis()->SetTitle("# of events");
   hNevents_rhc_elike->GetYaxis()->SetTitle("# of entries");
   hNevents_rhc_elike->DrawClone();
-    
+
+  TCanvas *cNevents_fhc_cc1pilike = new TCanvas("cNevents_fhc_cc1pilike","cNevents_fhc_cc1pilike");
+  hNevents_fhc_cc1pilike->GetXaxis()->SetTitle("# of events");
+  hNevents_fhc_cc1pilike->GetYaxis()->SetTitle("# of entries");
+  hNevents_fhc_cc1pilike->DrawClone();
+
 
   TCanvas *cNevents_exp_fhc_mulike = new TCanvas("cNevents_exp_fhc_mulike","cNevents_exp_fhc_mulike");
   hNevents_exp_fhc_mulike->GetXaxis()->SetTitle("# of events");
@@ -956,6 +1011,10 @@ void analyze_run_fc_marginalization_exe
   hNevents_exp_rhc_elike->GetYaxis()->SetTitle("# of entries");
   hNevents_exp_rhc_elike->DrawClone();
 
+  TCanvas *cNevents_exp_fhc_cc1pilike = new TCanvas("cNevents_exp_fhc_cc1pilike","cNevents_exp_fhc_cc1pilike");
+  hNevents_exp_fhc_cc1pilike->GetXaxis()->SetTitle("# of events");
+  hNevents_exp_fhc_cc1pilike->GetYaxis()->SetTitle("# of entries");
+  hNevents_exp_fhc_cc1pilike->DrawClone();
 
 
   TCanvas *cbestfit_nh = new TCanvas("cbestfit_nh","cbestfit_nh");
@@ -1234,10 +1293,18 @@ void analyze_run_fc_marginalization_exe
       npt_chisq_y = hchisq2D_out->GetNbinsY();
     }
     else{
-      hchisq1D_out->GetXaxis()->SetTitle(namepar0.c_str());
-      hchisq1D_out->Draw("histo");
-      npt_chisq_x = hchisq1D_out->GetNbinsX();
-      npt_chisq_y = hchisq1D_out->GetNbinsY();
+      if(*trueMH=="inverted"){
+        hchisq1D_out_ih->GetXaxis()->SetTitle(namepar0.c_str());
+        hchisq1D_out_ih->Draw("histo");
+        npt_chisq_x = hchisq1D_out_ih->GetNbinsX();
+        npt_chisq_y = hchisq1D_out_ih->GetNbinsY();
+       }
+      if(*trueMH=="normal"){
+        hchisq1D_out_nh->GetXaxis()->SetTitle(namepar0.c_str());
+        hchisq1D_out_nh->Draw("histo");
+        npt_chisq_x = hchisq1D_out_nh->GetNbinsX();
+        npt_chisq_y = hchisq1D_out_nh->GetNbinsY();
+      }
     }
     TCanvas *cdeltachisq_out_GetEntry = new TCanvas("cdeltachisq_out_GetEntry","cdeltachisq_out_GetEntry");
     if(IsFit2D){
@@ -1246,8 +1313,14 @@ void analyze_run_fc_marginalization_exe
       hdeltachisq2D_out->Draw("colz");
     }    
     else{
-      hdeltachisq1D_out->GetXaxis()->SetTitle(namepar0.c_str());
-      hdeltachisq1D_out->Draw("histo");
+      if(*trueMH=="inverted"){
+        hdeltachisq1D_out_ih->GetXaxis()->SetTitle(namepar0.c_str());
+        hdeltachisq1D_out_ih->Draw("histo");
+      }
+      if(*trueMH=="normal"){
+        hdeltachisq1D_out_nh->GetXaxis()->SetTitle(namepar0.c_str());
+        hdeltachisq1D_out_nh->Draw("histo");
+      }
     }
     cout << endl;
     
@@ -1257,7 +1330,14 @@ void analyze_run_fc_marginalization_exe
     for(int iy=0;iy<npt_chisq_y;iy++){
       for(int ix=0;ix<npt_chisq_x;ix++){
        	if(IsFit2D) cout << hchisq2D_out->GetBinContent(ix+1,iy+1) << " ";
-        else        cout << hchisq1D_out->GetBinContent(ix+1) << " ";
+
+        else
+          if(*trueMH=="normal"){
+            cout << hchisq1D_out_nh->GetBinContent(ix+1) << " ";
+          }
+        if(*trueMH=="inverted"){
+          cout << hchisq1D_out_ih->GetBinContent(ix+1) << " ";
+        }
       }
       cout << endl;
     }
@@ -1272,13 +1352,16 @@ void analyze_run_fc_marginalization_exe
     hErecoToy_RHC1Rmu->Draw("colz");
     TCanvas *cErecoToy_RHC1Re = new TCanvas("cErecoToy_RHC1Re","cErecoToy_RHC1Re");
     hErecoToy_RHC1Re->Draw("colz");
-   
+    TCanvas *cErecoToy_MultiRe = new TCanvas("cErecoToy_MultiRe","cErecoToy_MultiRe");
+    hErecoToy_MultiRe->Draw("colz");
+
     cout << endl;
     cout << "Events in fake data spectra:"<< endl;
-    cout << " - # of 1Rmu events = "    << hErecoToy_1Rmu->Integral() << endl;
-    cout << " - # of RHC1Rmu events = " << hErecoToy_RHC1Rmu->Integral() << endl;
-    cout << " - # of 1Re events = "     << hErecoToy_1Re->Integral() << endl;
-    cout << " - # of RHC1Re events = "  << hErecoToy_RHC1Re->Integral() << endl;
+    cout << " - # of 1Rmu events    = "   << hErecoToy_1Rmu->Integral() << endl;
+    cout << " - # of RHC1Rmu events = "   << hErecoToy_RHC1Rmu->Integral() << endl;
+    cout << " - # of 1Re events     = "   << hErecoToy_1Re->Integral(0,15,0,25,"") << endl;
+    cout << " - # of RHC1Re events  = "   << hErecoToy_RHC1Re->Integral(0,15,0,25,"") << endl;
+    cout << " - # of MultiRe events = "   << hErecoToy_MultiRe->Integral(0,15,0,25,"") << endl;
     cout << " - # of MultiRe events = "     << hErecoToy_MultiRe->Integral() << endl;
     cout << endl;
   }
@@ -1303,7 +1386,10 @@ void analyze_run_fc_marginalization_exe
   cNevents_rhc_mulike->Print( TString::Format("%s_Nevents_rhc_mulike_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
   
   cNevents_rhc_elike->Print( TString::Format("%s_Nevents_rhc_elike_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
- 
+
+  cNevents_fhc_cc1pilike->Print( TString::Format("%s_Nevents_fhc_cc1pilike_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  
   cbestfit_nh->Print( TString::Format("%s_cbestfit_nh_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
   
   cbestfit_ih->Print( TString::Format("%s_cbestfit_ih_%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str())  );
@@ -1319,7 +1405,7 @@ void analyze_run_fc_marginalization_exe
 
   cdeltachisq->Print( TString::Format("%s_deltachisq_glob_%s_%1.3f_%s_%1.3f_%s.pdf",
 				      mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
-
+  
   cdeltachisq_nh->Print( TString::Format("%s_deltachisq_nh_%s_%1.3f_%s_%1.3f_%s.pdf",
 					 mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
 
@@ -1346,6 +1432,40 @@ void analyze_run_fc_marginalization_exe
 
   cMHbf_posterior_1D->Print( TString::Format("%s_MHbf_posterior_1D_%s_%1.3f_%s_%1.3f_%s.pdf",
   							 mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
+
+  TFile f_out("fc_analyze.root","recreate");
+  cdeltachisq->Write("cdeltachisq");
+  hdeltachisq->Write("hdeltachisq");
+
+  cNevents_fhc_mulike->Write("cNevents_fhc_mulike");  
+  hNevents_fhc_mulike->Write("hNevents_fhc_mulike");
+  
+  cNevents_fhc_elike->Write("cNevents_fhc_elike");  
+  hNevents_fhc_elike->Write("hNevents_fhc_elike");
+  cNevents_rhc_mulike->Write("cNevents_rhc_mulike");  
+  hNevents_rhc_mulike->Write("hNevents_rhc_mulike");
+  cNevents_rhc_elike->Write("cNevents_rhc_elike");  
+  hNevents_rhc_elike->Write("hNevents_rhc_elike");
+  cNevents_fhc_cc1pilike->Write("cNevents_fhc_cc1pilike");  
+  hNevents_fhc_cc1pilike->Write("hNevents_fhc_cc1pilike");
+
+  cbestfit_nh->Write("cbestfit_nh");  
+  cbestfit_ih->Write("cbestfit_ih");  
+  cbestfit->Write("cbestfit");  
+  
+  cbestfit_MH->Write("cbestfit_MH");  
+  hbestfit_MH->Write("hbestfit_MH");
+  
+  cchisq->Write("cchisq");  
+  
+  cdeltachisq->Write("cdeltachisq");  
+  hdeltachisq->Write("hdeltachisq");
+  cdeltachisq_nh->Write("cdeltachisq_nh");  
+  hdeltachisq_nh->Write("hdeltachisq_nh");
+  cdeltachisq_ih->Write("cdeltachisq_ih");  
+  hdeltachisq_ih->Write("hdeltachisq_ih"); 
+  
+  f_out.Close();
 
 
   // ->Print( TString::Format("%s__%s_%1.3f_%s_%1.3f_%s.pdf",mytag.c_str(),storedparname0.c_str(),storetrue0,storedparname1.c_str(),storetrue1,storedmh.c_str()) );
@@ -1398,8 +1518,13 @@ void analyze_run_fc_marginalization_exe
   cout << " - RHC e-like:" << endl;
   cout << "      Mean = " << hNevents_rhc_elike->GetMean() << endl;
   cout << "      RMS  = " << hNevents_rhc_elike->GetRMS() << endl; 
-  if(hNevents_rhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_rhc_elike->GetRMS() / hNevents_rhc_elike->GetMean() << endl; 
+  if(hNevents_rhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_rhc_elike->GetRMS() / hNevents_rhc_elike->GetMean() << endl;
+  cout << " - CC1 pi e-like:" << endl;
+  cout << "      Mean = " << hNevents_fhc_cc1pilike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_fhc_cc1pilike->GetRMS() << endl; 
+  if(hNevents_fhc_cc1pilike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_fhc_cc1pilike->GetRMS() / hNevents_fhc_cc1pilike->GetMean() << endl; 
   cout << endl;
+  
   cout << "/// Syst only event rate ///" << endl;
   cout << " - FHC mu-like:" << endl;
   cout << "      Mean = " << hNevents_exp_fhc_mulike->GetMean() << endl;
@@ -1420,8 +1545,23 @@ void analyze_run_fc_marginalization_exe
   cout << " - RHC e-like:" << endl;
   cout << "      Mean = " << hNevents_exp_rhc_elike->GetMean() << endl;
   cout << "      RMS  = " << hNevents_exp_rhc_elike->GetRMS() << endl; 
-  if(hNevents_exp_rhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_exp_rhc_elike->GetRMS() / hNevents_exp_rhc_elike->GetMean() << endl; 
+  if(hNevents_exp_rhc_elike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_exp_rhc_elike->GetRMS() / hNevents_exp_rhc_elike->GetMean() << endl;
+  cout << " - CC1pi e-like:" << endl;
+  cout << "      Mean = " << hNevents_exp_fhc_cc1pilike->GetMean() << endl;
+  cout << "      RMS  = " << hNevents_exp_fhc_cc1pilike->GetRMS() << endl; 
+  if(hNevents_exp_fhc_cc1pilike->GetMean()>0) cout << "      RMS / Mean = " << hNevents_exp_fhc_cc1pilike->GetRMS() / hNevents_exp_fhc_cc1pilike->GetMean() << endl; 
+
+
+  cout << "Empty exp events in: " << Nentries << " Toys" << endl;
+  cout << " - FHC mu-like"  << empty_nev_exp_1rmu    << endl;
+  cout << " - FHC e-like"   << empty_nev_exp_1re     << endl;
+  cout << " - RHC mu-like"  << empty_nev_exp_rhc1rmu << endl;
+  cout << " - RHC e-like"   << empty_nev_exp_rhc1re  << endl;
+  cout << " - CC1pi e-like" << empty_nev_exp_multire << endl;
+
+
   cout << endl;
+
   cout << "/// Global Result ///" << endl;
   cout << " - P-value = " << pvalue << endl;
   cout << " - Z = " << zscore << " sigma" << endl;
@@ -1446,7 +1586,8 @@ void analyze_run_fc_marginalization_exe
   if(use_post_pred_fhc_mulike) cout << "     - FHC mu-like" << endl; 
   if(use_post_pred_fhc_elike) cout  << "     - FHC e-like"  << endl; 
   if(use_post_pred_fhc_mulike) cout << "     - RHC mu-like" << endl; 
-  if(use_post_pred_rhc_elike) cout  << "     - RHC e-like"  << endl; 
+  if(use_post_pred_rhc_elike) cout  << "     - RHC e-like"  << endl;
+  if(use_post_pred_fhc_cc1pilike) cout  << "   - CC1pi e-like"  << endl; 
   cout << "   p-value = " << pvalue_posterior 
        << " +- " << err_pvalue
        << endl;
