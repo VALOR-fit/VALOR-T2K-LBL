@@ -151,14 +151,14 @@ $run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 -
 $resource        = "interactive"               unless defined $resource;
 $wqueue          = "short";
 
-$tag             = "fitmarg_fc_dcp"  unless defined $tag;
+$tag             = "fitmarg_fc_dcp_0_ih"  unless defined $tag;
 
-$nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point 
+$nruns           = 240                         unless defined $nruns;  # number of jobs per freepar point 
 
 $config_file    = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
 
 # In total want 10000 experiments, can build incrementally with hadd
-$nexpts          = 1  unless defined $nexpts;  # number of toy experiments and fits per freepar point  
+$nexpts          = 44  unless defined $nexpts;  # number of toy experiments and fits per freepar point  
 
 $first_expt      = 0   unless defined $first_expt; # first toy experiment id 
 
@@ -170,13 +170,13 @@ $mix12           = -999                       unless defined $mix12;
 $betaBar         = -99                          unless defined $betaBar;
 
 # Key values of deltacp to check
-#$deltacp         = 0.                      unless defined $deltacp;
+#$deltacp         = 0.                       unless defined $deltacp;
 #$deltacp         = 1.5707963267948966                      unless defined $deltacp;
-#$deltacp         = -1.5707963267948966                      unless defined $deltacp;
-$deltacp         = 3.14159265358979312         unless defined $deltacp;
+$deltacp         = -1.5707963267948966                      unless defined $deltacp;
+#$deltacp         = 3.14159265358979312          unless defined $deltacp; #4*atan2(1,1)         
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # toys for mass hierarchy in fake data sets
-$masshierarchy   = "normal"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
+$masshierarchy   = "inverted"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
 
 $dmsqscheme      = "auto"                      unless defined $dmsqscheme;
 $mixparamscheme  = "sinsqtheta"                unless defined $mixparamscheme;
@@ -199,10 +199,10 @@ if( !defined $cput ) {
 $hypothesis             = "3f_osc"             unless defined $hypothesis;  
 $do_toys                = 1                   unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-$fakedata_root_file     = "data_run1to6/SKdata_Run16.root" unless defined $fakedata_root_file;
+$fakedata_root_file     = "/data_run1to8/minituples/SKdata_Run18_ccpi.root" unless defined $fakedata_root_file;
 $fakedata_xml_file      = ""                   unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
-$rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
+$rethrow_unphysical     = 1                    unless defined $hrow_unphysical;
 $verbose_systthrows     = 0                    unless defined $verbose_systthrows;
 $verbose_fit            = 0                    unless defined $verbose_fit;
 $sync_ih_to_nh          = 1                    unless defined $sync_ih_to_nh;
@@ -220,10 +220,10 @@ $file_priors            = ""                   unless defined $file_priors;
 
 $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist; # standard joint fit
 
-$file_margtoys_nh = "/data/t2k/phrdqd/analysis/data/margtoys/tn/deltacp/oa2017_AsimovA_normal_reactor" unless defined $file_margtoys_nh;
-$file_margtoys_ih = "/data/t2k/phrdqd/analysis/data/margtoys/tn/deltacp/oa2017_AsimovA_inverted_reactor" unless defined $file_margtoys_ih;
+$file_margtoys_nh = "/scratch/cbarry/tmp/tn_toys/FC/dcp/oa2017_AsimovA_normal_reactor_deltacp" unless defined $file_margtoys_nh;
+$file_margtoys_ih = "/scratch/cbarry/tmp/tn_toys/FC/dcp/oa2017_AsimovA_inverted_reactor_deltacp" unless defined $file_margtoys_ih;
 
-$nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+$nfiles_margtoys   = 97           unless defined $nfiles_margtoys; # of marginalization files
 
 $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
 
@@ -231,7 +231,7 @@ $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marg
 $freepar0          = "deltacp"     unless defined $freepar0;
 $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
 $maxfreepar0       = +3.14159265358979312e+00  unless defined $maxfreepar0;  # Max free param allowed value
-$npt_freepar0      = 100            unless defined $npt_freepar0; # of free parameter points to scan
+$npt_freepar0      = 97            unless defined $npt_freepar0; # of free parameter points to scan
 $freepar1          = ""             unless defined $freepar1;
 $minfreepar1       = 0              unless defined $minfreepar1;  # Min free param allowed value
 $maxfreepar1       = 0              unless defined $maxfreepar1;  # Max free param allowed value
@@ -244,15 +244,15 @@ $test_stat         = "rate+shape"   unless defined $test_stat;     # "rate-only"
 
 $store_like_weights = 0             unless defined $store_like_weights;  # set to 1 only if 1 fit is run
 
-$penalty_freepar0   = 0             unless defined $penalty_freepar0;
+$penalty_freepar0   = 1             unless defined $penalty_freepar0;
 $penalty_freepar1   = 0             unless defined $penalty_freepar1;
 $read_skexp         = 0               unless defined $read_skexp;
 
-$scale_gentoys_2dpenalty_hist_x        = ""  unless defined  $scale_gentoys_2dpenalty_hist_x; 
-$scale_gentoys_2dpenalty_hist_y        = ""  unless defined  $scale_gentoys_2dpenalty_hist_y; 
-$scale_gentoys_2dpenalty               = 0   unless defined  $scale_gentoys_2dpenalty; 
-$scale_gentoys_2dpenalty_hist_name     = ""  unless defined  $scale_gentoys_2dpenalty_hist_name; 
-$scale_gentoys_2dpenalty_hist_file     = ""  unless defined  $scale_gentoys_2dpenalty_hist_file; 
+$scale_gentoys_2dpenalty_hist_x        = "mixing23"  unless defined  $scale_gentoys_2dpenalty_hist_x; 
+$scale_gentoys_2dpenalty_hist_y        = "dmsq23"  unless defined  $scale_gentoys_2dpenalty_hist_y; 
+$scale_gentoys_2dpenalty               = 1   unless defined  $scale_gentoys_2dpenalty; 
+$scale_gentoys_2dpenalty_hist_name     = "likelihood_2D"  unless defined  $scale_gentoys_2dpenalty_hist_name; 
+$scale_gentoys_2dpenalty_hist_file     = "/scratch/cbarry/tmp/tn_toys/FC/dcp/fc_toys/fit_oa2017_fc_inverted_disapp.root"  unless defined  $scale_gentoys_2dpenalty_hist_file; 
 
 
 ########################################################################################
@@ -272,7 +272,7 @@ if($freepar0 eq "deltacp"){
     $freepar0_first = -3.14159265358979312;
     $freepar0_last  = +3.14159265358979312;
     $i_freepar0     = 0;
-    $n_freepar0     = 100; # (it includes pi,-pi/2,0,+pi/2)
+    $n_freepar0     = 97; # (it includes pi,-pi/2,0,+pi/2)
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
     $init_freepar0  = $deltacp;
 }
@@ -617,8 +617,56 @@ while($i_freepar1 < $n_freepar1) {
 		close(PBS);
 		`qsub $job_dir/$tag_in-$irun.pbs`;
 		`sleep 0.001`
-	    }    #
-	    
+	    }    
+            #
+            # Liverpool
+            #
+            if($resource eq "Liverpool") {
+                open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
+                print PBS "#!/bin/bash \n";
+                print PBS "#PBS -N $tag-$irun \n";
+                print PBS "#PBS -q $queue \n"; # Max walltime of 24h, may be possible to specify -l, untested
+                print PBS "#PBS -l nodes=1:ppn=2 \n"; 
+                print PBS "#PBS -o /scratch/cbarry/$tag-$irun.pbs.out \n";
+                print PBS "#PBS -e /scratch/cbarry/$tag-$irun.pbs.err \n";
+                print PBS "cd $job_dir \n";
+                print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
+                print PBS "$command \n";
+                close(PBS);
+                `qsub $job_dir/$tag-$irun.pbs`;
+            }
+
+            if($resource eq "Liverpool_SLURM") {
+                open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
+                print PBS "#!/bin/bash \n";
+                print PBS "#SBATCH -J $tag-$irun \n";
+                print PBS "#SBATCH -p compute \n"; 
+                print PBS "#SBATCH -t $cput \n";
+                print PBS "#SBATCH --mem=9G \n";
+                print PBS "cd $job_dir \n";
+                print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
+                print PBS "$command \n";
+                close(PBS);
+                `sbatch $job_dir/$tag-$irun.pbs`;
+            }
+            #
+            # LyonPBS case
+            #
+            if($batch_system eq "LyonPBS" ) {
+                open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+                print PBS "#!/bin/bash \n";
+                print PBS "#\$ -P P_gdrnu \n";
+                print PBS "#\$ -N $tag-$irun \n";
+                print PBS "#\$ -o $job_dir/$tag-$irun.pbs.out \n";
+                print PBS "#\$ -e $job_dir/$tag-$irun.pbs.err \n";
+                print PBS "#\$ -l ct=$cput,sps=1,s_rss=9G \n";
+                print PBS "source $softw_dir/setup/setup_at_cvmfs_in2p3.sh $softw_dir $fmwk_dir \n";
+                print PBS "$command \n";
+                close(PBS);
+                $job_submission_command = "qsub";
+                `$job_submission_command  $job_dir/$tag-$irun.pbs`;
+            } #LyonPBS
+            #	    
 	    # Grid
 	    #
 	    if($resource eq "Grid") {
