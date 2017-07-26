@@ -42,7 +42,7 @@ void plot_contours_dcp_many
  
  const bool do_fc = true,
  const bool draw_fc_err = false,
- const bool do_fc_conf_interv = true,
+ const bool do_fc_conf_interv = false,
  
  const bool do_const = false,
  
@@ -69,7 +69,7 @@ void plot_contours_dcp_many
  const string truemh1 = "normal", //"inverted",
  
  double mybestfit = kBadResult,
- const char *infilename_toys = "/home/sgalaber/VALOR/results/TN327_Run18/Brazilian/Davide/fitmarg_fc_dcp_normal_5k_-1.571_FullChisq_Set1.root", // need full chisq
+ const char *infilename_toys = "/home/phrdqd/VaLOR/analysis/tn/release/brazilian/fitmarg_fc_dcp_normal_final_10k_-1.571_FullChisq.root", // need full chisq
  const bool paper_style   = true
 
  )
@@ -79,13 +79,13 @@ void plot_contours_dcp_many
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
     {
-      "/home/sgalaber/VALOR/results/TN327_Run18/Data/fit_oa2017_data_normal_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
-      "/home/sgalaber/VALOR/results/TN327_Run18/Data/fit_oa2017_data_inverted_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
+      "/data/t2k/phrdqd/analysis/data/fit/tn/deltacp/newdata/fit_oa2017_data_normal_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
+      "/data/t2k/phrdqd/analysis/data/fit/tn/deltacp/newdata/fit_oa2017_data_inverted_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
     }
   };
     
   // File names of Feldman-Cousins
-  char *fcname = "/home/sgalaber/VALOR/results/FCgraphs.root";
+  char *fcname = "/home/phrdqd/VaLOR/analysis/tn/release/brazilian/FCgraphs.root";
    
   char *latexname[Nfiles][Nmh] = {
     {"Normal","Inverted"}
@@ -342,7 +342,14 @@ void plot_contours_dcp_many
     gFC2sigma_ih   ->SetLineColor(kOrange-4);
     gFC2sigma_ih_p1->SetLineColor(kOrange-4);
     gFC2sigma_ih_m1->SetLineColor(kOrange-4);
-    
+
+//    gFC2sigma_nh   ->SetLineColor(kBlack);
+//    gFC2sigma_nh_p1->SetLineColor(kBlack);
+//   gFC2sigma_nh_m1->SetLineColor(kBlack);
+//    gFC2sigma_ih   ->SetLineColor(kRed);
+//    gFC2sigma_ih_p1->SetLineColor(kRed);
+//    gFC2sigma_ih_m1->SetLineColor(kRed);
+
     gFC90CL_nh   ->SetMarkerSize(0.5);
     gFC90CL_nh_p1->SetMarkerSize(0.5);
     gFC90CL_nh_m1->SetMarkerSize(0.5);
@@ -1332,18 +1339,18 @@ void plot_contours_dcp_many
     // Brazilian plot Normal Hierarchy
     
     TCanvas *cBrazilianPlot_nh = new TCanvas("cBrazilianPlot_nh","cBrazilianPlot_nh");
-    double maxy = 14;
-    hInit->GetYaxis()->SetRangeUser(0.,maxy);
+    double maxy = 30;
+    hInit->GetYaxis()->SetRangeUser(0.,20);
     if(paper_style) format_hist(hInit);
     hInit->DrawCopy();
     
     hdeltachisq1D_nh_p2sigma->SetLineColorAlpha(kBlack+3,0.202);
     hdeltachisq1D_nh_p2sigma->SetFillColorAlpha(kBlack+3,0.202);
-    hdeltachisq1D_nh_p2sigma->Draw("same");
+    hdeltachisq1D_nh_p2sigma->Draw("c same");
     
     hdeltachisq1D_nh_p1sigma->SetLineColorAlpha(kGray,0.595);
     hdeltachisq1D_nh_p1sigma->SetFillColorAlpha(kGray,0.595);
-    hdeltachisq1D_nh_p1sigma->Draw("same");
+    hdeltachisq1D_nh_p1sigma->Draw("c same");
     
     hdeltachisq1D_nh_mean->SetLineWidth(2);
     hdeltachisq1D_nh_mean->SetLineColor(kRed);
@@ -1352,10 +1359,10 @@ void plot_contours_dcp_many
     //hdeltachisq1D_GlobMin[0][0]->SetLineStyle(1); // 0 --> Normal Hierarchy
     // hdeltachisq1D_GlobMin[0][0]->SetLineWidth(2);
     hdeltachisq1D_GlobMin[0][0]->SetLineColor(kGreen+2);
-    hdeltachisq1D_GlobMin[0][0]->Draw("same");
+    hdeltachisq1D_GlobMin[0][0]->Draw("c same");
     if(do_fc){
-      if(draw_90CL)     gFC90CL_nh->Draw("l same");
-      if(draw_2sigmaCL) gFC2sigma_nh->Draw("l same");
+      if(draw_90CL)     gFC90CL_nh->Draw("c l same");
+      if(draw_2sigmaCL) gFC2sigma_nh->Draw("c l same");
     }
     gPad->RedrawAxis();
     
@@ -1392,7 +1399,7 @@ void plot_contours_dcp_many
     // Brazilian plot Inverted Hierarchy
     
     TCanvas *cBrazilianPlot_ih = new TCanvas("cBrazilianPlot_ih","cBrazilianPlot_ih");
-    hInit->GetYaxis()->SetRangeUser(0.,20.);
+    hInit->GetYaxis()->SetRangeUser(0.,maxy);
     if(paper_style) format_hist(hInit);
     hInit->DrawCopy();
     
@@ -1400,14 +1407,14 @@ void plot_contours_dcp_many
     hdeltachisq1D_ih_p2sigma->SetFillColorAlpha(kBlack+3,0.202);
     //hdeltachisq1D_ih_p2sigma->SetLineColor(kCyan);
     //hdeltachisq1D_ih_p2sigma->SetFillColor(kCyan);
-    hdeltachisq1D_ih_p2sigma->Draw("same");
+    hdeltachisq1D_ih_p2sigma->Draw("c same");
     
     hdeltachisq1D_ih_p1sigma->SetLineColorAlpha(kGray,0.595);
     hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kGray,0.595);
     //hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kBlack,0.595);
     //hdeltachisq1D_ih_p1sigma->SetLineColor(kGreen);
     //hdeltachisq1D_ih_p2sigma->SetFillColor(kGreen);
-    hdeltachisq1D_ih_p1sigma->Draw("same");
+    hdeltachisq1D_ih_p1sigma->Draw("c same");
     
     hdeltachisq1D_ih_mean->SetLineWidth(2);
     hdeltachisq1D_ih_mean->SetLineColor(kRed);
@@ -1416,10 +1423,10 @@ void plot_contours_dcp_many
     //hdeltachisq1D_GlobMin[0][1]->SetLineStyle(1); // 1 --> Inverted Hierarchy
     //hdeltachisq1D_GlobMin[0][1]->SetLineWidth(2);
     hdeltachisq1D_GlobMin[0][1]->SetLineColor(kGreen+2);
-    hdeltachisq1D_GlobMin[0][1]->Draw("same");
+    hdeltachisq1D_GlobMin[0][1]->Draw("c same");
     if(do_fc){
-      if(draw_90CL)     gFC90CL_ih->Draw("l same");
-      if(draw_2sigmaCL) gFC2sigma_ih->Draw("l same");
+      if(draw_90CL)     gFC90CL_ih->Draw("c l same");
+      if(draw_2sigmaCL) gFC2sigma_ih->Draw("c l same");
     }
     gPad->RedrawAxis();
     
