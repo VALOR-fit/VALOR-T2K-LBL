@@ -24,21 +24,21 @@ const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
 void plot_contours_dcp_many
 (
  const bool SaveRootFile = true,
- const string tag = "dcp_run17c_react_Data",
+ const string tag = "dcp_run18_react_Data",
  
  TString titleX = "#delta_{CP} (rad)",
  //TString titleX = "sin^{2}#theta_{23}",
  //TString titleX = "sin^{2}#theta_{13}",
  TString titleY = "-2#Deltaln(L)",
  
- const bool doBrazilian = false,
+ const bool doBrazilian = true,
  
  const bool doGlobalMin  = true,
  const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
  
- const bool draw_preliminary = false,
- TString str_preliminary = "T2K Run1-7 preliminary",
+ const bool draw_preliminary = true,
+ TString str_preliminary = "T2K Run1-8 preliminary",
  
  const bool do_fc = true,
  const bool draw_fc_err = false,
@@ -47,8 +47,8 @@ void plot_contours_dcp_many
  const bool do_const = false,
  
  const bool draw_1sigmaCL = false,
- const bool draw_90CL     = true,
- const bool draw_2sigmaCL = false,
+ const bool draw_90CL     = false,
+ const bool draw_2sigmaCL = true,
  const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
@@ -60,455 +60,35 @@ void plot_contours_dcp_many
  
  // Compare true chisq
  
- // Run 1-7c best-fit (global)
- const double truepar0 = -1.791, //kBadResult,
+ // Run 1-8 best-fit (global)
+ const double truepar0 = -1.885, //kBadResult,
  const string truemh0 = "normal",
  
- // // run 1-6 best-fit (global)
- // const double truepar0 = -1.8535397,
- // const string truemh0 = "normal",
- 
- // // Asimov A best-fit (global)
- // const double truepar0 = -1.601,
- // const string truemh0 = "normal",
- 
- // // Asimov B best-fit (global)
- // const double truepar0 = -2.82743339,
- // const string truemh0 = "inverted",
- 
  // True point
- //const double truepar1 = 0., //0., //-1.351,
  const double truepar1 = 0, //0., //-1.351,
  const string truemh1 = "normal", //"inverted",
  
- //double mybestfit = 3.14,
  double mybestfit = kBadResult,
- const char *infilename_toys = "/Users/rajs/work/studies/final_2015_joint/fc/results/total/brazil_nh_0p000.root",
+ const char *infilename_toys = "/home/sgalaber/VALOR/results/TN327_Run18/Brazilian/Davide/fitmarg_fc_dcp_normal_5k_-1.571_FullChisq_Set1.root", // need full chisq
  const bool paper_style   = true
 
  )
 {
-  
-  
-  //
-  // Run 1-7b
-  //
-  
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN16/Raj/fit_nh_dcpminuspi_normal_-1.571_Raj.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_mpiover2_normal_-1.571.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_m1p759_normal_-1.759.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_nh_10k_0_normal_0.000.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b/fullchisq/config_run16fluxtun_margtoysrun17fluxtun/fit_fitmarg_fc_ih_10k_mpiover2_inverted_-1.571.root";
-  
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_0.000.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.571.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_nh_10k_fullchisq_run17fluxtun_-1.759.root ";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17b_FLUXRUN17/fullchisq/run17fluxtunig_all/fit_fitmarg_fc_ih_10k_fullchisq_run17fluxtun_-1.571.root";
-  
-  //
-  // Run 1-7c
-  //
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/fullchisq/fit_fitmarg_fc_nh_10k_run17c_final_FullChisq_normal_-1.791.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/fullchisq/fit_fitmarg_fc_nh_10k_run17c_final_FullChisq_normal_0.000.root";
-  //const char *infilename_toys = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FINAL/fullchisq/fit_fitmarg_fc_nh_10k_run17c_final_FullChisq_inverted_-1.571.root";
-  
+
   const int Nfiles = 1;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
-    
-    
-    
-    //////////////////////////////////////////////
-    //                                          //
-    //         Run 1-7c - Data - Final          //
-    //                                          //
-    //////////////////////////////////////////////
-    
-    // deltaCP - Run 1-7c w/ reactors - Final
     {
-      "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/data/dcp_reactor/data_nh_a-_0_0.root",
-      "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/data/dcp_reactor/data_ih_a-_0_0.root",
-    },
-
-    // deltaCP - Run 1-7c w/ reactors - Asimov
-//        {
-//          "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/asimov/dcp_reactor/asimov_nh_a-_0_0.root",
-//          "/Users/rajs/work/studies/final_2015_joint/fit/ccpi/asimov/dcp_reactor/asimov_ih_a-_0_0.root",
-//        },
-    
-    // // dmsq - Run 1-7c w/ reactors - Final
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dmsq_react_nh_Data_Run17c_nexp_1_0.003_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_dmsq_react_ih_Data_Run17c_nexp_1_0.003_-999.000-job0-_0_0.root"
-    // },
-    
-    // // sinsqth23 - Run 1-7c w/ reactors - Final
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23_react_nh_Data_Run17c_nexp_1_0.450_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/fit_fitmarg_joint_sinsqth23_react_ih_Data_Run17c_nexp_1_0.450_-999.000-job0-_0_0.root"
-    // },
-    
-    // // deltaCP - Run 1-7c T2K only - Final
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/dcp/data_fit_nh_a-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/dcp/data_fit_ih_a-_0_0.root"
-    // },
-    
-    // // sinsqth13 - Run 1-7c T2K only - Final
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/ss13/data_fit_nh_a-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/datafit/ss13/data_fit_ih_a-_0_0.root"
-    // },
-    
-    // // deltaCP - Run 1-7c w/ reactors - Ereco only - Final
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/"
-    // },
-    
-    // // deltaCP - Run 1-7c w/ T2K only - Ereco only - Final
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17c/files/
-    // },
-    
-    
-    
-    
-    
-    //////////////////////////////////////////////
-    //                                          //
-    //      Run 1-7c -Asimov - Run 1-7 Flux      //
-    //                                          //
-    //////////////////////////////////////////////
-    
-    // // deltaCP - Run 1-7 Asimov A w/ reactors - final
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17c_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17c_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    // // deltaCP - Run 1-7 Asimov B w/ reactors - final
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17c_nexp_1_0.000_-999.000-job0-_0_0.root"
-    // },
-    
-    // // deltaCP - Run 1-7 Asimov A T2K only - final
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_nh_a.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_ih_a.root"
-    // },
-    
-    // // deltaCP - Run 1-7 Asimov B T2K only - final
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_nh_b.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/asimovs_run17c_Raj/dcp/dcp_ih_b.root"
-    // },
-    
-    
-    // // deltaCP - FHC: 14.882 x 10^20 POT, RHC: 9.871 x 10^20 POT - Asimov A w/ reactors - final
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_nh_Asimov_A_FHC14p882_RHC9p871_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_ih_Asimov_A_FHC14p882_RHC9p871_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    // // deltaCP - FHC: 12.482 x 10^20 POT, RHC: 12.271 x 10^20 POT - Asimov A w/ reactors - final
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_nh_Asimov_A_FHC12p482_RHC12p271_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_ih_Asimov_A_FHC12p482_RHC12p271_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    // // deltaCP - FHC: 17.282 x 10^20 POT, RHC: 7.471 x 10^20 POT - Asimov A w/ reactors - final
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_nh_Asimov_A_FHC17p282_RHC7p471_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17c/final/files/HighStat/fit_fitmarg_joint_dcp_react_ih_Asimov_A_FHC17p282_RHC7p471_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //////////////////////////////////////////////
-    //                                          //
-    //      Run 1-7b - Data - Run 1-7 Flux       //
-    //                                          //
-    //////////////////////////////////////////////
-    
-    // // deltaCP - Run 1-7 w/ reactors - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dcp_react_nh_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dcp_react_ih_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    // // dmsq - Run 1-7 w/ reactors - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dmsq_react_nh_Data_Run17_nexp_1_0.003_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dmsq_react_ih_Data_Run17_nexp_1_0.003_-999.000-job0-_0_0.root"
-    // },
-    
-    // // sinsqth23 - Run 1-7 w/ reactors - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth23_react_nh_Data_Run17_nexp_1_0.528_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_sinsqth23_react_ih_Data_Run17_nexp_1_0.528_-999.000-job0-_0_0.root"
-    // },
-    
-    // // deltaCP - Run 1-7 T2K only - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/data_fit_dcp_t2konly_nh_run17.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/data_fit_dcp_t2konly_ih_run17.root"
-    // },
-    
-    // // sinsqth13 - Run 1-7 T2K only - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/data_fit_sinsqth13_t2konly_nh_run17.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/data_fit_sinsqth13_t2konly_ih_run17.root"
-    // },
-    
-    // // deltaCP - Run 1-7 T2K only - Flux Run 1-7 (CHECK)
-    //  {
-    //    "../TECH_NOTE_14_3_16/PROVA_FC/fit_fitmarg_joint_dcp_t2konly_nh_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //    "../TECH_NOTE_14_3_16/PROVA_FC/fit_fitmarg_joint_dcp_t2konly_ih_Data_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    //  },
-    
-    // // deltaCP - Run 1-7 w/ reactors - Ereco only - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dcp_react_nh_Data_Run17_ErecoOnly_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dcp_react_ih_Data_Run17_ErecoOnly_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    // // deltaCP - Run 1-7 w/ T2K only - Ereco only - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dcp_t2konly_nh_Data_Run17_ErecoOnly_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/DATA/RUN17b/files/fit_fitmarg_joint_dcp_t2konly_ih_Data_Run17_ErecoOnly_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    
-    
-    
-    //////////////////////////////////////////////
-    //                                          //
-    //      Run 1-7b -Asimov - Run 1-7 Flux      //
-    //                                          //
-    //////////////////////////////////////////////
-    
-    // // deltaCP - Run 1-7 Asimov A T2K only - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_nh_a_dcp_t2konly_run17.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_ih_a_dcp_t2konly_run17.root"
-    // },
-    
-    // // deltaCP - Run 1-7 Asimov B T2K only - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_nh_b_dcp_t2konly_run17.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/asimov_fit_ih_b_dcp_t2konly_run17.root"
-    // },
-    
-    // // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    // // deltaCP - Run 1-7 Asimov B w/ reactors - Flux Run 1-7
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_nh_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root",
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun17_Conference/files/fit_fitmarg_joint_dcp_react_ih_Asimov_B_Run17_nexp_1_0.000_-999.000-job0-_0_0.root"
-    // },
-    
-    // // // deltaCP - Run 1-7 Asimov A w/ reactors - Flux Run 1-6
-    //  {
-    //    "toyfits_dcp_datanh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root",
-    //    "toyfits_dcp_dataih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"
-    //  },
-    // // {
-    // //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun16/files/fit_fitmarg_joint_dcp_react_nh_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    // //   "../TECH_NOTE_14_3_16/SENSI/RUN17b/FluxRun16/files/fit_fitmarg_joint_dcp_react_ih_Asimov_A_Run17_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // // }
-    
-    
-    //////////////////////////////
-    //                          //
-    //      Run 1-6 -Asimov     //
-    //                          //
-    //////////////////////////////
-    
-    // // deltaCP - Run 1-6 Asimov A w/ reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_nh_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root", // NH
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/fit_fitmarg_joint_dcp_react_ih_Run16_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0_TH1D.root"  // IH
-    //   // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_nh_A_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   // "../TECH_NOTE_14_3_16/SENSI/files/valor/fit_fitmarg_joint_dcp_react_ih_A_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    //   //"fit_PROVA_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    // // deltaCP - FHC: 14.4e20, RHC: 7.47e20   - Asimov A w/ reactors
-    // {
-    //   "fit_fitmarg_joint_dcp_react_nh_fhc_14p4_rhc_7p47_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "fit_fitmarg_joint_dcp_react_ih_fhc_14p4_rhc_7p47_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    // // deltaCP - FHC: 10.07e20, RHC: 11.17e20 - Asimov A w/ reactors
-    // {
-    //   "fit_fitmarg_joint_dcp_react_nh_fhc_10p07_rhc_11p17_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "fit_fitmarg_joint_dcp_react_ih_fhc_10p07_rhc_11p17_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    // // deltaCP - FHC: 7.00e20, RHC: 14.87e20  - Asimov A w/ reactors
-    // {
-    //   "fit_fitmarg_joint_dcp_react_nh_fhc_7p00_rhc_14p87_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "fit_fitmarg_joint_dcp_react_ih_fhc_7p00_rhc_14p87_Asimov_A_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    // },
-    
-    // // deltaCP - Run 1-6 Asimov B w/ reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_nh_Run16_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0_TH1D.root", // NH
-    //   "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_ih_Run16_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0_TH1D.root"  // IH
-    // //   "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_nh_B_nexp_1_0.000_-999.000-job0-_0_0.root", // NH
-    // //  "../TECH_NOTE_14_3_16/SENSI/Run16/files/valor/fit_fitmarg_joint_dcp_react_ih_B_nexp_1_0.000_-999.000-job0-_0_0.root"  // IH
-    // }
-    // ,
-    
-    // // deltaCP - FHC: 14.4e20, RHC: 7.47e20   - Asimov A w/ reactors
-    // {
-    //   "fit_fitmarg_joint_dcp_react_nh_fhc_14p4_rhc_7p47_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
-    //   "fit_fitmarg_joint_dcp_react_ih_fhc_14p4_rhc_7p47_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root"
-    // },
-    // // deltaCP - FHC: 10.07e20, RHC: 11.17e20 - Asimov A w/ reactors
-    // {
-    //   "fit_fitmarg_joint_dcp_react_nh_fhc_10p07_rhc_11p17_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
-    //   "fit_fitmarg_joint_dcp_react_ih_fhc_10p07_rhc_11p17_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root"
-    // },
-    // // deltaCP - FHC: 7.00e20, RHC: 14.87e20  - Asimov A w/ reactors
-    // {
-    //   "fit_fitmarg_joint_dcp_react_nh_fhc_7p00_rhc_14p87_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
-    //   "fit_fitmarg_joint_dcp_react_ih_fhc_7p00_rhc_14p87_Asimov_B_nexp_1_0.000_-999.000-job0-_0_0.root",
-    // },
-    
-    
-    // // deltaCP - Run 1-6 Asimov A w/o reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_anh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_aih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
-    // },
-    
-    // // deltaCP - Run 1-6 Asimov B w/o reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_cnh-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/SENSI/RUN16/files/valor/toyfits_dcp_cih-sinsqtheta[12_0.304,13_0.022,23_0.450],dcp_0.000,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
-    // }
-    // ,
-    
-    // // deltaCP - FHC: 12.5e21, RHC: 12.5e21 w/ reactors - Asimov A w/ reactors
-    // {
-    //   "fit_fitmarg_joint_dcp_react_nh_Asimov_A_Both12p5E21POT_nexp_1_-1.601_-999.000-job0-_0_0.root",
-    //   "fit_fitmarg_joint_dcp_react_ih_Asimov_A_Both12p5E21POT_nexp_1_-1.601_-999.000-job0-_0_0.root"
-    // },
-    
-    
-    
-    //////////////////////////////
-    //                          //
-    //      Run 1-6 - Data      //
-    //                          //
-    //////////////////////////////
-    
-    // // deltaCP - Run 1-6 Data w/ reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/RUN16/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/DATA/RUN16/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    //   //"fit_fitmarg_fc_50k_normal_nexp_1_-999.000_-999.000-job0-_0_0.root"
-    //   //"fit_fit_marg_PROVA_dcp_nexp_1_0.000_-999.000-job0-_0_0.root",
-    //   //"fit_fit_marg_PROVA_dcp_nexp_1_0.000_-999.000-job0-_0_0.root"
-    // }
-    // ,
-    
-    // // deltaCP - Run 1-6 Data w/ reactors - e-like 15 bins only for RHC
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_elike_RHConly_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_elike_RHConly_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    // }
-    // ,
-    
-    // // deltaCP - Run 1-6 Data T2K only
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_datanh-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/toyfits_dcp_dataih-sinsqtheta[12_0.304,13_0.022,23_0.528],dcp_-1.601,dmsq_Normal[12_0.00007530,23_0.002509]eV2_0_0.root"  // IH
-    // }
-    // ,
-    
-    // // deltaCP - Run 1-6 Data w/ reactors - FHC only
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_FHC_nexp_1_-1.601_-999.000-job0-_0_0.root", // FHC - NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_FHC_nexp_1_-1.601_-999.000-job0-_0_0.root", // FHC - IH
-    // }
-    // ,
-    // // deltaCP - Run 1-6 Data w/ reactors - RHC only
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_RHC_nexp_1_-1.601_-999.000-job0-_0_0.root", // RHC - NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_RHC_nexp_1_-1.601_-999.000-job0-_0_0.root"  // RHC - IH
-    // }
-    
-    // // sinsqth13 - Run 1-6 Data T2K only
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth13_t2konly_nh_Data_Run16_nexp_1_0.022_-999.000-job0-_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth13_t2konly_ih_Data_Run16_nexp_1_0.022_-999.000-job0-_0_0.root", // IH
-    // }
-    // ,
-    
-    // // sinsqth23 - Run 1-6 Data w/ reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth23_react_nh_Data_Run16_nexp_1_0.528_-999.000-job0-_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_sinsqth23_react_ih_Data_Run16_nexp_1_0.528_-999.000-job0-_0_0.root", // IH
-    // }
-    // ,
-    
-    // // dmsq - Run 1-6 Data w/ reactors
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dmsq_react_nh_Data_Run16_nexp_1_0.003_-999.000-job0-_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dmsq_react_ih_Data_Run16_nexp_1_0.003_-999.000-job0-_0_0.root", // IH
-    // }
-    // ,
-    
-    // // deltaCP - Run 1-6 Data w/ reactors - rate-only
-    // {
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_nh_Data_Run16_rateonly_nexp_1_-1.601_-999.000-job0-_0_0.root", // NH
-    //   "../TECH_NOTE_14_3_16/DATA/files/fit_fitmarg_joint_dcp_react_ih_Data_Run16_rateonly_nexp_1_-1.601_-999.000-job0-_0_0.root"  // IH
-    // }
-    // ,
-    
+      "/home/sgalaber/VALOR/results/TN327_Run18/Data/fit_oa2017_data_normal_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
+      "/home/sgalaber/VALOR/results/TN327_Run18/Data/fit_oa2017_data_inverted_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
+    }
   };
-  
-  
+    
   // File names of Feldman-Cousins
-  char *fcname = "/Users/rajs/work/studies/final_2015_joint/fc/results/output/FCgraphs.root";
-  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17c_FLUXRUN17b/FCgraphs_Run17c_fluxRun17b.root";
-  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN17_FLUXRUN16/FCgraphs_10k_Run17_FluxRun16.root";
-  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/RUN16/FCgraphs_p8k.root";
-  //char *fcname = "../TECH_NOTE_14_3_16/FELDMAN_COUSINS/1D_DCP_VS_MH/FCgraphs_4k.root";
-  
-  //char *fcname = "FCgraphs.root";
-  
+  char *fcname = "/home/sgalaber/VALOR/results/FCgraphs.root";
+   
   char *latexname[Nfiles][Nmh] = {
-    {"Normal","Inverted"},
-    
-    //{"Run 1-7c - NH", "Run 1-7c - IH"},
-    // {"Run 1-7b - NH", "Run 1-7b - IH"},
-    
-    // {"E_{reco} Vs #theta - NH", "E_{reco} Vs #theta - IH"},
-    // {"E_{reco} only - NH", "E_{reco} only - IH"},
-    
-    // {"#nu: 7.48e20  +  #bar{#nu}: 7.47e20 (Run 1-7c)", "IH"},
-    // {"#nu: 14.9e20  +  #bar{#nu}: 9.9e20 ", "IH"},
-    // {"#nu: 12.5e20  +  #bar{#nu}: 12.3e20","IH"},
-    // {"#nu: 17.3e20  +  #bar{#nu}: 7.5e20 ", "IH"}
-    
-    // {"Run 1-7c - NH"},
-    // {"14.882e20 FHC + 9.871e20 RHC - NH"},
-    // {"12.482e20 FHC + 12.271e20 RHC - NH"},
-    // {"17.282e20 FHC + 7.471e20 RHC - NH"},
+    {"Normal","Inverted"}
   };
   
   
@@ -952,7 +532,8 @@ void plot_contours_dcp_many
     for(int ibin=0;ibin<hdeltachisq1D_shifted_fc[0][0]->GetNbinsX();ibin++){
       double bincenter = hdeltachisq1D_shifted_fc[0][0]->GetBinCenter(ibin+1);
       double bincont = hdeltachisq1D_shifted_fc[0][0]->GetBinContent(ibin+1);
-      double bincont_new = bincont - gFC90CL_nh->Eval(bincenter); // bincont=0 --> boundary of CL
+      //double bincont_new = bincont - gFC90CL_nh->Eval(bincenter); // bincont=0 --> boundary of CL
+      double bincont_new = bincont - gFC2sigma_nh->Eval(bincenter); // bincont=0 --> boundary of CL
       hdeltachisq1D_shifted_fc[0][0]->SetBinContent(ibin+1,bincont_new);
     }
     
@@ -1001,7 +582,8 @@ void plot_contours_dcp_many
     for(int ibin=0;ibin<hdeltachisq1D_shifted_fc[0][1]->GetNbinsX();ibin++){
       double bincenter = hdeltachisq1D_shifted_fc[0][1]->GetBinCenter(ibin+1);
       double bincont = hdeltachisq1D_shifted_fc[0][1]->GetBinContent(ibin+1);
-      double bincont_new = bincont - gFC90CL_ih->Eval(bincenter); // bincont=0 --> boundary of CL
+      //double bincont_new = bincont - gFC90CL_ih->Eval(bincenter); // bincont=0 --> boundary of CL
+      double bincont_new = bincont - gFC2sigma_ih->Eval(bincenter); // bincont=0 --> boundary of CL
       hdeltachisq1D_shifted_fc[0][1]->SetBinContent(ibin+1,bincont_new);
     }
     
@@ -1100,15 +682,26 @@ void plot_contours_dcp_many
   ldeltachisq->DrawClone();
   
   if(do_fc){
-    if(draw_90CL){
-      //paper remove
-//      gFC90CL_nh   ->Draw("l same");
-//      gFC90CL_ih   ->Draw("l same");
-      if(draw_fc_err){
-        gFC90CL_nh_p1->Draw("l same");
-        gFC90CL_nh_m1->Draw("l same");
-        gFC90CL_ih_p1->Draw("l same");
-        gFC90CL_ih_m1->Draw("l same");
+    //    if(draw_90CL){
+    //       //paper remove
+    // //      gFC90CL_nh   ->Draw("l same");
+    // //      gFC90CL_ih   ->Draw("l same");
+    //       if(draw_fc_err){
+    //         gFC90CL_nh_p1->Draw("l same");
+    //         gFC90CL_nh_m1->Draw("l same");
+    //         gFC90CL_ih_p1->Draw("l same");
+    //         gFC90CL_ih_m1->Draw("l same");
+    //       }
+
+   if(draw_2sigmaCL){
+     //paper remove
+     //      gFC90CL_nh   ->Draw("l same");
+     //      gFC90CL_ih   ->Draw("l same");
+     if(draw_fc_err){
+       gFC2sigma_nh_p1->Draw("l same");
+       gFC2sigma_nh_m1->Draw("l same");
+       gFC2sigma_ih_p1->Draw("l same");
+       gFC2sigma_ih_m1->Draw("l same");
       }
       
       if(do_fc_conf_interv){
@@ -1743,12 +1336,15 @@ void plot_contours_dcp_many
     hInit->GetYaxis()->SetRangeUser(0.,maxy);
     if(paper_style) format_hist(hInit);
     hInit->DrawCopy();
-    hdeltachisq1D_nh_p2sigma->SetLineColorAlpha(kBlack,0.202);
-    hdeltachisq1D_nh_p2sigma->SetFillColorAlpha(kBlack,0.202);
+    
+    hdeltachisq1D_nh_p2sigma->SetLineColorAlpha(kBlack+3,0.202);
+    hdeltachisq1D_nh_p2sigma->SetFillColorAlpha(kBlack+3,0.202);
     hdeltachisq1D_nh_p2sigma->Draw("same");
-    hdeltachisq1D_nh_p1sigma->SetLineColorAlpha(kBlack,0.595);
-    hdeltachisq1D_nh_p1sigma->SetFillColorAlpha(kBlack,0.595);
+    
+    hdeltachisq1D_nh_p1sigma->SetLineColorAlpha(kGray,0.595);
+    hdeltachisq1D_nh_p1sigma->SetFillColorAlpha(kGray,0.595);
     hdeltachisq1D_nh_p1sigma->Draw("same");
+    
     hdeltachisq1D_nh_mean->SetLineWidth(2);
     hdeltachisq1D_nh_mean->SetLineColor(kRed);
     hdeltachisq1D_nh_mean->SetLineStyle(1);
@@ -1775,7 +1371,7 @@ void plot_contours_dcp_many
     //lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p2sigma,"Exp. #Delta #chi^{2} 2#sigma spread","f");
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p1sigma,"68.27\% of toys MC","f");
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_p2sigma,"95.45\% of toys MC","f");
-//    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. -2 #Delta lnL","l");
+    //    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. -2 #Delta lnL","l");
     //lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. #Delta #chi^{2}","l");
     if(draw_90CL){
       lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"-2 #Delta lnL_{crit} (90% CL)","l");
@@ -1799,14 +1395,20 @@ void plot_contours_dcp_many
     hInit->GetYaxis()->SetRangeUser(0.,20.);
     if(paper_style) format_hist(hInit);
     hInit->DrawCopy();
-    hdeltachisq1D_ih_p2sigma->SetLineColorAlpha(kBlack,0.202);
-    hdeltachisq1D_ih_p2sigma->SetFillColorAlpha(kBlack,0.202);
     
+    hdeltachisq1D_ih_p2sigma->SetLineColorAlpha(kBlack+3,0.202);
+    hdeltachisq1D_ih_p2sigma->SetFillColorAlpha(kBlack+3,0.202);
+    //hdeltachisq1D_ih_p2sigma->SetLineColor(kCyan);
+    //hdeltachisq1D_ih_p2sigma->SetFillColor(kCyan);
     hdeltachisq1D_ih_p2sigma->Draw("same");
-    hdeltachisq1D_ih_p1sigma->SetLineColorAlpha(kBlack,0.595);
-    hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kBlack,0.595);
-
+    
+    hdeltachisq1D_ih_p1sigma->SetLineColorAlpha(kGray,0.595);
+    hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kGray,0.595);
+    //hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kBlack,0.595);
+    //hdeltachisq1D_ih_p1sigma->SetLineColor(kGreen);
+    //hdeltachisq1D_ih_p2sigma->SetFillColor(kGreen);
     hdeltachisq1D_ih_p1sigma->Draw("same");
+    
     hdeltachisq1D_ih_mean->SetLineWidth(2);
     hdeltachisq1D_ih_mean->SetLineColor(kRed);
     hdeltachisq1D_ih_mean->SetLineStyle(1);
@@ -1834,7 +1436,7 @@ void plot_contours_dcp_many
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p1sigma,"68.27\% of toys MC","f");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_p2sigma,"95.45\% of toys MC","f");
     //lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. #Delta #chi^{2}","l");
-//    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. -2 #Delta lnL","l");
+    //    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. -2 #Delta lnL","l");
     if(draw_90CL)
       lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"-2 #Delta lnL_{crit} (90% CL)","l");
     if(draw_2sigmaCL)
