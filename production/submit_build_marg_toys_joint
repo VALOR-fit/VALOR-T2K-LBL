@@ -133,14 +133,14 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
       $nexpts_marg            = 40000                        unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "long";
-      $npt_freepar0           = 100                       unless defined $npt_freepar0;
+      $npt_freepar0           = 97                       unless defined $npt_freepar0;
    }
    else
    {
       $nexpts_marg            = 80000;#40000                        unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "long -M 8192";#"long";
-      $npt_freepar0           = 100                       unless defined $npt_freepar0;
+      $npt_freepar0           = 97                       unless defined $npt_freepar0;
    }
    $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 

@@ -199,7 +199,7 @@ if( !defined $cput ) {
 $hypothesis             = "3f_osc"             unless defined $hypothesis;  
 $do_toys                = 1                   unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-$fakedata_root_file     = "/data_run1to8/minituples/SKdata_Run18_ccpi.root" unless defined $fakedata_root_file;
+$fakedata_root_file     = "data_run1to8/SKdata_Run18.root" unless defined $fakedata_root_file;
 $fakedata_xml_file      = ""                   unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $hrow_unphysical;
@@ -272,7 +272,7 @@ if($freepar0 eq "deltacp"){
     $freepar0_first = -3.14159265358979312;
     $freepar0_last  = +3.14159265358979312;
     $i_freepar0     = 0;
-    $n_freepar0     = 97; # (it includes pi,-pi/2,0,+pi/2)
+    $n_freepar0     = 9; # (it includes pi,-pi/2,0,+pi/2)
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
     $init_freepar0  = $deltacp;
 }
@@ -680,7 +680,8 @@ while($i_freepar1 < $n_freepar1) {
 	    }
 	    
 	    if($resource eq "warwick") {
-            `bsub -q $wqueue -oo log_${tag}_${irun}_${i_freepar0}.log $command`
+#            `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/warwick_submit_command.sh $command`
+            `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/warwick_submit_command_preserve_quotes.sh $command`;
         }
     
 	    $irun++;

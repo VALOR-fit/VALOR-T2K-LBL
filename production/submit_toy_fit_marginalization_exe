@@ -188,14 +188,14 @@ $mix12           = 0.304                        unless defined $mix12;
 $betaBar         = -99.                          unless defined $betaBar;
 
 # Asimov A
-#$mix23           = 0.528                        unless defined $mix23;
-#$deltacp         = -1.601                        unless defined $deltacp;
-#$mixparamoctant  = "two"                       unless defined $mixparamoctant;
+$mix23           = 0.528                        unless defined $mix23;
+$deltacp         = -1.601                        unless defined $deltacp;
+$mixparamoctant  = "two"                       unless defined $mixparamoctant;
 
 # Asimov B
-$mix23           = 0.450                        unless defined $mix23;
-$deltacp         = 0                        unless defined $deltacp;
-$mixparamoctant  = "one"                       unless defined $mixparamoctant;
+#$mix23           = 0.450                        unless defined $mix23;
+#$deltacp         = 0                        unless defined $deltacp;
+#$mixparamoctant  = "one"                       unless defined $mixparamoctant;
 
 # Asimov C
 #$mix23           = 0.528                        unless defined $mix23;
@@ -208,6 +208,24 @@ $mixparamoctant  = "one"                       unless defined $mixparamoctant;
 # Asimov E
 #$mix23           = 0.528                        unless defined $mix23;
 #$deltacp         = 1.5707963267948966           unless defined $deltacp;
+
+# Asimov FC NH - Feldman-Cousins NH Asimov from data best-fit
+#$dmsq23          = 2.460E-3;
+#$mix13           = 0.0219;
+#$mix23           = 0.530;
+#$mixparamoctant  = "two";
+#$dmsq12          = 7.53E-5;
+#$mix12           = 0.304;
+#$deltacp         = -1.601;
+
+# Asimov FC IH - Feldman-Cousins IH Asimov from data best-fit
+#$dmsq23          = 2.440E-3;
+#$mix13           = 0.0219;
+#$mix23           = 0.530;
+#$mixparamoctant  = "two";
+#$dmsq12          = 7.53E-5;
+#$mix12           = 0.304;
+#$deltacp         = -1.601;
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # toys for mass hierarchy in fake data sets
 $masshierarchy   = "normal"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
@@ -283,9 +301,9 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
 #      $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
 #      $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
 #      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
-      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $nfiles_margtoys   = 97           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $npt_freepar0      = 97           unless defined $npt_freepar0; # of free parameter points to scan
    }
    else
    {
