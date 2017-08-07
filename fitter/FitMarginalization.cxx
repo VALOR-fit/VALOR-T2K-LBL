@@ -105,7 +105,17 @@
 #define __USE_RHC1RE_IN_CHISQ__
 #endif
 
+// 3 FHC sample testing
+//#undef __RHC_RUNNING__
+//#undef __USE_RHC1RMU_IN_CHISQ__
+//#undef __USE_RHC1RE_IN_CHISQ__
 
+// No CC1pi or FHC 1Rmu
+//#undef __MULTIRING_FHC_RUNNING__
+//#undef __MULTIRING_FHC_NUE__
+//#undef __USE_MULTIRE_IN_CHISQ__
+//#undef __USE_1RMU_IN_CHISQ__
+//#undef __USE_RHC1RE_IN_CHISQ__
 
 using std::cout;
 using std::cerr;
@@ -2091,6 +2101,15 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
         // NEW 2D TEMPLATES
         
         for(int ibinEreco=0;ibinEreco<util::NumErecoBins(s);ibinEreco++){
+/*           if(s == kSKsFCFV1RingELike)
+           {
+              if(kErecoBinEdges1Re[ibinEreco] == 0.100 && kErecoBinEdges1Re[ibinEreco + 1] == 0.150)
+              {
+                 // Skip bin 0.1-0.15
+                 continue;
+              }
+           }*/
+
           for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
             
             // NEW 2D TEMPLATES (VARRAY)
