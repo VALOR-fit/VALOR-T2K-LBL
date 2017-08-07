@@ -330,7 +330,7 @@ void VarySKFSI(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, v
    }
 }
 
-void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
+void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents, TH2D** binnedEvents2D)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -351,6 +351,9 @@ void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, val
       TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
+
+      TH2D* hEvents2 = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));
+      binnedEvents2D[e] = hEvents2;
    }
 }
 
@@ -678,7 +681,8 @@ void make_table_systematic_effects
       {
          // All variations
          TH1D** binnedEvents = new TH1D*[N];
-         VaryAll(skexp, s, ph, 500000, N, events, binnedEvents);
+         TH2D** binnedEvents2 = new TH2D*[N];
+         VaryAll(skexp, s, ph, 500000, N, events, binnedEvents, binnedEvents2);
          CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
          TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
 
@@ -687,11 +691,17 @@ void make_table_systematic_effects
             binnedEvents[i]->Write(Form("events_%d", i));
             events[i] = binnedEvents[i]->GetEntries();
             delete binnedEvents[i];
+
+            binnedEvents2[i]->Write(Form("erecoQ2Events_%d", i));
+            delete binnedEvents2[i];
          }
          delete[] binnedEvents;
+         delete[] binnedEvents2;
 
          file->Close();
          delete file;
+
+
 
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);

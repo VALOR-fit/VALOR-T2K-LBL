@@ -6,7 +6,8 @@ import sys
 ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptStat(0)
 
-colours = range(1, 10)
+colours = (1,2,3,4,5,5,6,7,8,9)#range(1, 10)
+style = (1,1,1,1,1,1,1,1,1,1)
 
 def GetFilenames():
     filenames = []
@@ -33,7 +34,7 @@ def DrawContours(filenames, labels):
     hh = [None] * len(filenames)
     max = 0.0
     canvas = ROOT.TCanvas("canvas","canvas")
-    legend = ROOT.TLegend(0.3, 0.6, 0.45, 0.82);
+    legend = ROOT.TLegend(0.2, 0.5, 0.35, 0.82);
     legend.SetFillColor(0)
     legend.SetLineColor(0)
     legend.SetTextFont(132)
@@ -41,9 +42,10 @@ def DrawContours(filenames, labels):
     for i, filename in enumerate(filenames):
         ff[i] = ROOT.TFile(filename, "read")
         hh[i] = ff[i].Get("h_deltachisq")
-        hh[i].SetTitle("Marginalisation study")
+        hh[i].SetTitle("Matter Density Study")
         hh[i].SetLineWidth(2)
         hh[i].SetLineColor(colours[i])
+        hh[i].SetLineStyle(style[i])
         if hh[i].GetMaximum() > max:
             max = hh[i].GetMaximum()
         hh[i].GetYaxis().SetTitle("-2#Deltaln(L)")
@@ -64,7 +66,7 @@ def DrawContours2D(filenames, labels):
     hh = [None] * len(filenames)
     hhp = [None] * len(filenames)
     canvas = ROOT.TCanvas("canvas","canvas")
-    legend = ROOT.TLegend(0.2, 0.7, 0.35, 0.82);
+    legend = ROOT.TLegend(0.2, 0.55, 0.35, 0.82);
     legend.SetFillColor(0)
     legend.SetLineColor(0)
     legend.SetTextFont(132)
@@ -72,7 +74,7 @@ def DrawContours2D(filenames, labels):
     for i, filename in enumerate(filenames):
         ff[i] = ROOT.TFile(filename, "read")
         hh[i] = ff[i].Get("dchisq_map_2D")
-        hh[i].SetTitle("Data v Asimov")
+        hh[i].SetTitle("Disappearance Comparison")
         hh[i].SetLineWidth(2)
         hh[i].SetLineColor(colours[i])
         hhp[i] = hh[i].Clone()
@@ -83,6 +85,7 @@ def DrawContours2D(filenames, labels):
         hhp[i].SetContourLevel(0, 2.3)
         legend.AddEntry(hh[i], labels[i])
         if i == 0:
+            hh[i].GetYaxis().SetTitleOffset(1.4)
             hh[i].Draw("axis")
             hh[i].Draw("cont3same")
             hhp[i].Draw("cont3same")
