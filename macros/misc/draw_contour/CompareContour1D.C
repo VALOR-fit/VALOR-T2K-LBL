@@ -151,7 +151,6 @@ void CompareContour1D
   double X1 = sinsqth13_nom - sinsqth13_err;
   double X2 = sinsqth13_nom + sinsqth13_err;
   double Y1 = h1->GetMinimum();
-  //double Y2 = hInit->GetMaximum();
   double Y2 = max;
   TBox *breactors = new TBox(X1,Y1,X2,Y2);
   breactors->SetFillColor(kYellow+1);
@@ -217,33 +216,34 @@ void CompareContour1D
   lcontours->SetTextSize(0.05);
   lcontours->AddEntry(h1,latexname[0]);
   lcontours->AddEntry(h2,latexname[1]);
+  if(draw_reactors)
+  {
+     lcontours->AddEntry(breactors, "PDG 2016", "f");
+  }
   lcontours->Draw();
-  
-  char* mass_hierarchy_text = (doGlobalMin)? "Global minimum" :"Fixed Mass Ordering" ;
-  TLatex *mass_hierarchy_tex = new TLatex(h1->GetXaxis()->GetBinLowEdge(14),1.01*max,mass_hierarchy_text);
-  
-  TLatex *latPreliminary = new TLatex(h1->GetXaxis()->GetBinLowEdge(110),1.01*max,"T2K Run1-8");
-  latPreliminary->SetTextSize(0.05);
+ 
+  //char* note_text = (doGlobalMin) ? "Global minimum" :"Fixed Mass Ordering";
+  char* notetext = "Final systematics pending";
+  double tx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 2);
+  double nx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 10);
+  double ty = max;
 
-  mass_hierarchy_tex->SetTextSize(0.05);
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run1-8 Preliminary");
+  title->SetTextSize(0.05);
+  title->Draw("same");
+  TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");
+  note->SetTextSize(0.025);
+  note->Draw("same");
 
-  if(draw_preliminary) latPreliminary->Draw("same");
-  mass_hierarchy_tex->Draw("same");
+  if(draw_preliminary)
+  {
+     title->Draw("same");
+  }
   ccontours->SaveAs(Form("%s.pdf",tag));
+  ccontours->SaveAs(Form("%s.png",tag));
+  ccontours->SaveAs(Form("%s.eps",tag));
   ccontours->SaveAs(Form("%s.root",tag));
 
-  // // Store in root file
-  // if(SaveRootFile){
-  //   TFile* f2 = new TFile(Form("%s_contour.root",tag),"recreate");
-  //   for(int ifile=0;ifile<Nfiles;ifile++){
-  //     for(int imh=0;imh<Nmh;imh++){
-  // 	//sprintf(name,"hdeltachisq_%i_%i",ifile);
-  // 	hdeltachisq1D_GlobMin[ifile]->Write();//(name);
-  //     }
-  //   }
-  //   f2->Close();
-  // }
-  
   return;
 }
 

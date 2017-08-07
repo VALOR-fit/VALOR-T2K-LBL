@@ -158,7 +158,10 @@ void CompareContour2D(char* file_1 = "test1",
   breactors->SetFillColor(kYellow+1);
   breactors->SetLineColor(kYellow+1);
   
-  if(draw_reactors) breactors->Draw("same");
+  if(draw_reactors)
+  {
+     breactors->Draw("same");
+  }
 
   
   for(int ifile=0;ifile<Nfiles;ifile++){
@@ -205,26 +208,28 @@ void CompareContour2D(char* file_1 = "test1",
   lcontours_2->SetTextSize(0.04);
 
   lcontours_2->AddEntry(gbest_fit_global[0],"Best fit","p");
-  if(draw_reactors) lcontours_2->AddEntry(breactors,"PDG 2015","f");
+  if(draw_reactors) lcontours_2->AddEntry(breactors,"PDG 2016","f");
 
   lcontours->Draw();
   lcontours_2->Draw();
 
-  char* mass_hierarchy_text = (doGlobalMin)? "Global minimum" :"Fixed Mass Ordering" ;
-  TLatex *mass_hierarchy_tex = new TLatex(h1->GetXaxis()->GetBinLowEdge((int) (0.15*h1->GetXaxis()->GetNbins())),1.005*Y2,mass_hierarchy_text);
-  
-  TLatex *latPreliminary = new TLatex(h1->GetXaxis()->GetBinLowEdge((int) (0.56*h1->GetXaxis()->GetNbins())),1.005*Y2,"T2K Run1-8");
-  mass_hierarchy_tex->SetTextSize(0.05);
-  latPreliminary->SetTextSize(0.05);
+  //char* note_text = (doGlobalMin) ? "Global minimum" :"Fixed Mass Ordering";
+  char* notetext = "Final systematics pending";
+  double tx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 2);
+  double nx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 10);
+  double ty = Y2;
 
-  if(draw_preliminary) latPreliminary->Draw("same");
-  mass_hierarchy_tex->Draw("same");
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run1-8 Preliminary");
+  title->SetTextSize(0.05);
+  title->Draw("same");
+  TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");
+  note->SetTextSize(0.025);
+  note->Draw("same");
 
-  //  TLatex *latcontours = new TLatex(0.075,2.,"Global scan");
-  //  latcontours->SetTextSize(0.07);
-  //  latcontours->Draw("same");
-  if(tag != "") ccontours->SaveAs(Form("%s.pdf",tag));
-  if(tag != "") ccontours->SaveAs(Form("%s.root",tag));
+  ccontours->SaveAs(Form("%s.pdf",tag));
+  ccontours->SaveAs(Form("%s.png",tag));
+  ccontours->SaveAs(Form("%s.eps",tag));
+  ccontours->SaveAs(Form("%s.root",tag));
 
   return;
   

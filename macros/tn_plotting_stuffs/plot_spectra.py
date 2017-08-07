@@ -249,10 +249,11 @@ def drop_bin(histo):
     eEdges = np.array(eEdges)
     newHisto = ROOT.TH1D(name, title, nBins, eEdges)
     for i in range(1, nBins + 1):
-        newHisto.SetBinContent(i, histos[component].GetBinContent(i))
+        newHisto.SetBinContent(i, histo.GetBinContent(i))
     return newHisto
 
 def plot_ereco_spectrum(histos, data, outfile):
+    ROOT.gStyle.SetOptTitle(0)
     canvas = ROOT.TCanvas("canvas","Spectra",10, 10, 1034, 778)
     hs = ROOT.THStack("hs", "Spectrum")
     legend = ROOT.TLegend(0.7, 0.7, 0.95, 0.95);
@@ -301,7 +302,7 @@ def plot_ereco_spectrum(histos, data, outfile):
         ey = np.sqrt(y)
         if np.max(y + ey) > max:
             max = np.max(y + ey)
-        hs.SetMaximum(np.ceil(max))
+        hs.SetMaximum(max)
         hs.Draw()
         graph = ROOT.TGraphErrors(len(pointsX), x, y, ex, ey)
         graph.SetMarkerStyle(21)
@@ -309,7 +310,19 @@ def plot_ereco_spectrum(histos, data, outfile):
     else:
         hs.Draw()
     legend.Draw()
-    canvas.Print(outfile)
+
+    tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
+    ty = max * 1.05
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-8 Preliminary");
+    title.SetTextSize(0.05);
+    title.Draw("same");
+    caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
+    caveat.SetTextSize(0.025);
+    caveat.Draw("same");
+
+    canvas.SaveAs(outfile + ".pdf")
+    canvas.SaveAs(outfile + ".eps")
+    canvas.SaveAs(outfile + ".png")
 
 def plot_theta_spectrum(histos, data, outfile):
     canvas = ROOT.TCanvas("canvas","Spectra",10, 10, 1034, 778)
@@ -348,7 +361,7 @@ def plot_theta_spectrum(histos, data, outfile):
         ey = np.sqrt(y)
         if np.max(y + ey) > max:
             max = np.max(y + ey)
-        hs.SetMaximum(np.ceil(max))
+        hs.SetMaximum(max)
         hs.Draw()
         graph = ROOT.TGraphErrors(len(pointsX), x, y, ex, ey)
         graph.SetMarkerStyle(21)
@@ -356,8 +369,19 @@ def plot_theta_spectrum(histos, data, outfile):
     else:
         hs.Draw()
     legend.Draw()
-    canvas.Print(outfile)
 
+    tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
+    ty = max * 1.05
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-8 Preliminary");
+    title.SetTextSize(0.05);
+    title.Draw("same");
+    caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
+    caveat.SetTextSize(0.025);
+    caveat.Draw("same");
+
+    canvas.SaveAs(outfile + ".pdf")
+    canvas.SaveAs(outfile + ".eps")
+    canvas.SaveAs(outfile + ".png")
 
 def plot_ereco_theta_spectrum(histos, data, outfile):
     canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
@@ -397,7 +421,19 @@ def plot_ereco_theta_spectrum(histos, data, outfile):
     canvas.SetRightMargin(0.2)
     if not data is None:
         data.Draw("P0")
-    canvas.Print(outfile)
+
+    tx = swappedTotal.GetXaxis().GetBinLowEdge(swappedTotal.GetXaxis().GetLast())
+    ty = 180 
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-8 Preliminary");
+    title.SetTextSize(0.05);
+    title.Draw("same");
+    caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
+    caveat.SetTextSize(0.025);
+    caveat.Draw("same");
+
+    canvas.SaveAs(outfile + ".pdf")
+    canvas.SaveAs(outfile + ".eps")
+    canvas.SaveAs(outfile + ".png")
 
 def plot_data_ereco_theta_spectrum(histo, outfile):
     canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
@@ -499,12 +535,12 @@ if __name__=="__main__":
     parser.parse_args(values = v)   # v contains only the values that were specified, not defaults
     o, other = parser.parse_args()
   
-    #asimov(o.infile, o.outfile, o.datafile, o.sample)
+    asimov(o.infile, o.outfile, o.datafile, o.sample)
     #data(o.infile, o.outfile, o.sample)
 
     #make_asimovb_variation_spectrum(o.outfile)
   
-    dcp_0("ichikawa2.pdf")
+    #dcp_0("ichikawa2.pdf")
 
     if other:
         print "Warning - ignored arguments: ", other
