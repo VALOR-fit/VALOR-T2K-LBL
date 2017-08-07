@@ -27,50 +27,34 @@ void plot_contours_dcp_many
  const string tag = "dcp_run18_react_Data",
  
  TString titleX = "#delta_{CP} (rad)",
- //TString titleX = "sin^{2}#theta_{23}",
- //TString titleX = "sin^{2}#theta_{13}",
  TString titleY = "-2#Deltaln(L)",
- 
  const bool doBrazilian = true,
- 
  const bool doGlobalMin  = true,
  const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
- 
  const bool draw_preliminary = true,
- TString str_preliminary = "T2K Run1-8 preliminary",
- 
+ TString str_preliminary = "T2K Run1-8 Preliminary",
  const bool do_fc = true,
  const bool draw_fc_err = false,
  const bool do_fc_conf_interv = false,
- 
  const bool do_const = false,
- 
  const bool draw_1sigmaCL = false,
  const bool draw_90CL     = false,
  const bool draw_2sigmaCL = true,
  const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
- 
  const bool draw_reactors = false,
- 
  const bool do_range_1sigma = false,
  const double critval = 1.,
- 
- // Compare true chisq
- 
- // Run 1-8 best-fit (global)
- const double truepar0 = -1.885, //kBadResult, 97 bins
+ const double truepar0 = -1.833, //kBadResult, 97 bins
  //const double truepar0 = -1.833, //kBadResult, 100 bins
  const string truemh0 = "normal",
- 
- // True point
  const double truepar1 = 0, //0., //-1.351,
  const string truemh1 = "normal", //"inverted",
- 
  double mybestfit = kBadResult,
- const char *infilename_toys = "/home/sgalaber/VALOR/results/TN327_Run18/Brazilian/Final/fitmarg_fc_dcp_normal_final_10k_-1.571_FullChisq.root", // Full Chisq
+// const char *infilename_toys = "/home/phrdqd/VaLOR/analysis/tn/final/fitmarg_fc_dcp_normal_final_10k_-1.571_FullChisq.root", // Full Chisq
+ const char *infilename_toys = "/home/phrdqd/VaLOR/analysis/tn/final/fitmarg_fc_dcp_normal_final_10k_-1.833_FullChisq.root",
  const bool paper_style   = true
  )
 {
@@ -79,13 +63,13 @@ void plot_contours_dcp_many
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
     {
-      "/home/sgalaber/VALOR/results/TN327_Run18/Data/fit_oa2017_data_normal_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
-      "/home/sgalaber/VALOR/results/TN327_Run18/Data/fit_oa2017_data_inverted_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root"
+      "/home/phrdqd/VaLOR/analysis/tn/final/fit_oa2017_data_normal_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
+      "/home/phrdqd/VaLOR/analysis/tn/final/fit_oa2017_data_inverted_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root"
     }
   };
     
   // File names of Feldman-Cousins
-  char *fcname = "/home/sgalaber/VALOR/results/TN327_Run18/FeldmanCousins/FCgraphs.root"; 
+  char *fcname = "/home/phrdqd/VaLOR/analysis/tn/final/FCgraphs.root"; 
    
   char *latexname[Nfiles][Nmh] = {
     {"Normal","Inverted"}
@@ -286,7 +270,9 @@ void plot_contours_dcp_many
   
   
   // Get file of Feldman-Cousins
-  
+
+  TGraph *gFC1sigma_nh;
+  TGraph *gFC1sigma_ih;
   TGraph *gFC90CL_nh;
   TGraph *gFC90CL_ih;
   TGraph *gFC2sigma_nh;
@@ -304,12 +290,20 @@ void plot_contours_dcp_many
     gFC2sigma_nh    = (TGraph*) fin_fc->Get("gFC2sigma_nh");
     gFC2sigma_nh_p1 = (TGraph*) fin_fc->Get("gFC2sigma_nh_p1");
     gFC2sigma_nh_m1 = (TGraph*) fin_fc->Get("gFC2sigma_nh_m1");
+    gFC1sigma_nh    = (TGraph*) fin_fc->Get("gFC1sigma_nh");
+    gFC1sigma_nh_p1 = (TGraph*) fin_fc->Get("gFC1sigma_nh_p1");
+    gFC1sigma_nh_m1 = (TGraph*) fin_fc->Get("gFC1sigma_nh_m1");
+
     gFC90CL_ih      = (TGraph*) fin_fc->Get("gFC90CL_ih");
     gFC90CL_ih_p1   = (TGraph*) fin_fc->Get("gFC90CL_ih_p1");
     gFC90CL_ih_m1   = (TGraph*) fin_fc->Get("gFC90CL_ih_m1");
     gFC2sigma_ih    = (TGraph*) fin_fc->Get("gFC2sigma_ih");
     gFC2sigma_ih_p1 = (TGraph*) fin_fc->Get("gFC2sigma_ih_p1");
     gFC2sigma_ih_m1 = (TGraph*) fin_fc->Get("gFC2sigma_ih_m1");
+    gFC1sigma_ih    = (TGraph*) fin_fc->Get("gFC1sigma_ih");
+    gFC1sigma_ih_p1 = (TGraph*) fin_fc->Get("gFC1sigma_ih_p1");
+    gFC1sigma_ih_m1 = (TGraph*) fin_fc->Get("gFC1sigma_ih_m1");
+
     
     //fin_fc_nh = new TFile(fcname_nh,"READ");
     //fin_fc_ih = new TFile(fcname_ih,"READ");
@@ -342,6 +336,12 @@ void plot_contours_dcp_many
     gFC2sigma_ih   ->SetLineColor(kOrange-4);
     gFC2sigma_ih_p1->SetLineColor(kOrange-4);
     gFC2sigma_ih_m1->SetLineColor(kOrange-4);
+    gFC1sigma_nh   ->SetLineColor(kOrange-4);
+    gFC1sigma_nh_p1->SetLineColor(kOrange-4);
+    gFC1sigma_nh_m1->SetLineColor(kOrange-4);
+    gFC1sigma_ih   ->SetLineColor(kOrange-4);
+    gFC1sigma_ih_p1->SetLineColor(kOrange-4);
+    gFC1sigma_ih_m1->SetLineColor(kOrange-4);
 
 //    gFC2sigma_nh   ->SetLineColor(kBlack);
 //    gFC2sigma_nh_p1->SetLineColor(kBlack);
@@ -362,7 +362,13 @@ void plot_contours_dcp_many
     gFC2sigma_ih   ->SetMarkerSize(0.5);
     gFC2sigma_ih_p1->SetMarkerSize(0.5);
     gFC2sigma_ih_m1->SetMarkerSize(0.5);
-    
+    gFC1sigma_nh   ->SetMarkerSize(0.5);
+    gFC1sigma_nh_p1->SetMarkerSize(0.5);
+    gFC1sigma_nh_m1->SetMarkerSize(0.5);
+    gFC1sigma_ih   ->SetMarkerSize(0.5);
+    gFC1sigma_ih_p1->SetMarkerSize(0.5);
+    gFC1sigma_ih_m1->SetMarkerSize(0.5);
+
     gFC90CL_nh     ->SetLineWidth(3);
     gFC90CL_nh_p1  ->SetLineWidth(3);
     gFC90CL_nh_m1  ->SetLineWidth(3);
@@ -375,7 +381,13 @@ void plot_contours_dcp_many
     gFC2sigma_ih   ->SetLineWidth(3);
     gFC2sigma_ih_p1->SetLineWidth(3);
     gFC2sigma_ih_m1->SetLineWidth(3);
-    
+    gFC1sigma_nh   ->SetLineWidth(3);
+    gFC1sigma_nh_p1->SetLineWidth(3);
+    gFC1sigma_nh_m1->SetLineWidth(3);
+    gFC1sigma_ih   ->SetLineWidth(3);
+    gFC1sigma_ih_p1->SetLineWidth(3);
+    gFC1sigma_ih_m1->SetLineWidth(3);
+   
     if(do_fc_conf_interv){
      // gFC90CL_nh     ->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
      // gFC90CL_nh_p1  ->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
@@ -396,12 +408,19 @@ void plot_contours_dcp_many
       gFC2sigma_nh   ->SetLineStyle(2);
       gFC2sigma_nh_p1->SetLineStyle(2);
       gFC2sigma_nh_m1->SetLineStyle(2);
+      gFC1sigma_nh   ->SetLineStyle(2);
+      gFC1sigma_nh_p1->SetLineStyle(2);
+      gFC1sigma_nh_m1->SetLineStyle(2);
+
       gFC90CL_ih     ->SetLineStyle(2);
       gFC90CL_ih_p1  ->SetLineStyle(2);
       gFC90CL_ih_m1  ->SetLineStyle(2);
       gFC2sigma_ih   ->SetLineStyle(2);
       gFC2sigma_ih_p1->SetLineStyle(2);
       gFC2sigma_ih_m1->SetLineStyle(2);
+      gFC1sigma_ih   ->SetLineStyle(2);
+      gFC1sigma_ih_p1->SetLineStyle(2);
+      gFC1sigma_ih_m1->SetLineStyle(2);
     }
   }
   
@@ -541,7 +560,8 @@ void plot_contours_dcp_many
       double bincont = hdeltachisq1D_shifted_fc[0][0]->GetBinContent(ibin+1);
       double bincont_new = 0.;
       if     (draw_90CL)   bincont_new = bincont - gFC90CL_nh->Eval(bincenter); // bincont=0 --> boundary of CL
-      else if(draw_2sigma) bincont_new = bincont - gFC2sigma_nh->Eval(bincenter); // bincont=0 --> boundary of CL      
+      else if(draw_2sigmaCL) bincont_new = bincont - gFC2sigma_nh->Eval(bincenter); // bincont=0 --> boundary of CL      
+      else if(draw_1sigmaCL) bincont_new = bincont - gFC1sigma_nh->Eval(bincenter);
       else{
 	cerr << "CL interval only available for 90% or 2sigma CL" << endl;
 	exit(1);
@@ -597,6 +617,7 @@ void plot_contours_dcp_many
       double bincont_new = 0.;
       if     (draw_90CL)     bincont_new = bincont - gFC90CL_ih->Eval(bincenter); // bincont=0 --> boundary of CL
       else if(draw_2sigmaCL) bincont_new = bincont - gFC2sigma_ih->Eval(bincenter); // bincont=0 --> boundary of CL
+      else if(draw_1sigmaCL) bincont_new = bincont - gFC1sigma_ih->Eval(bincenter);
       else{
 	cerr << "CL interval only available for 90% or 2sigma CL" << endl;
 	exit(1);
@@ -721,12 +742,17 @@ void plot_contours_dcp_many
 	gFC2sigma_nh_m1->Draw("l same");
 	gFC2sigma_ih_p1->Draw("l same");
 	gFC2sigma_ih_m1->Draw("l same");
+	gFC1sigma_nh_p1->Draw("l same");
+	gFC1sigma_nh_m1->Draw("l same");
+	gFC1sigma_ih_p1->Draw("l same");
+	gFC1sigma_ih_m1->Draw("l same");
+
       }
     }
     
     // Computation of confidence intervals available only for 90% or 2sigma CL
 
-    if( (draw_90CL || draw_2sigmaCL) && do_fc_conf_interv){
+    if( (draw_90CL || draw_1sigmaCL || draw_2sigmaCL) && do_fc_conf_interv){
 
       if(Status_range_nh!=conv::kBadResult){
 	min90CL_nh->SetLineWidth(2);
@@ -810,6 +836,18 @@ void plot_contours_dcp_many
       }
     }
 
+    if(draw_1sigmaCL){
+      gFC1sigma_nh   ->Draw("l same");
+      gFC1sigma_ih   ->Draw("l same");
+      if(draw_fc_err){
+        gFC1sigma_nh_p1->Draw("l same");
+        gFC1sigma_nh_m1->Draw("l same");
+        gFC1sigma_ih_p1->Draw("l same");
+        gFC1sigma_ih_m1->Draw("l same");
+      }
+    }
+
+
     if(draw_90CL){
       gFC90CL_nh   ->Draw("l same");
       gFC90CL_ih   ->Draw("l same");
@@ -839,6 +877,10 @@ void plot_contours_dcp_many
       //lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
       lcritval->AddEntry(gFC2sigma_nh,"-2 #Delta lnL_{crit} (2#sigma CL)","l");
     }
+    if(draw_1sigmaCL){
+      lcritval->AddEntry(gFC1sigma_nh,"-2 #Delta lnL_{crit} (1#sigma CL)","l");
+    }
+
     //paper remove
     // lcritval->DrawClone();
   }

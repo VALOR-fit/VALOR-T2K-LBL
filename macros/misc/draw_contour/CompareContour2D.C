@@ -23,7 +23,7 @@ void CompareContour2D(char* file_1 = "test1",
                       const bool draw_reactors = false,
                       const bool doGlobalMin  = false,
                       const bool draw_preliminary = true,
-                      const bool paper_style   = false
+                      const bool paper_style   = true
 
                       )
 {
@@ -141,6 +141,7 @@ void CompareContour2D(char* file_1 = "test1",
   // Global scan contours
   
   TCanvas *ccontours = new TCanvas("ccontours","ccontours");
+  ccontours->SetTopMargin(0.1);
 
   hchisq_valor[0]->GetYaxis()->SetLabelSize(0.04);
   hchisq_valor[0]->GetXaxis()->SetLabelSize(0.04);

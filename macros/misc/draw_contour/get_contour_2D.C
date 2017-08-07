@@ -108,8 +108,16 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
       hlike->SetBinContent(i,j,TMath::Exp(30-h2->GetBinContent(i,j)/2));
     }
   }
-  
-
+  double max = hlike->GetMaximum();
+  cout << "Max likelihood value " << max << endl;
+  for(int i = 1;i<((h2->GetNbinsX() +1));i++)
+  {
+    for(int j = 1;j<(h2->GetNbinsY()+1);j++)
+    {
+      hlike->SetBinContent(i,j, hlike->GetBinContent(i,j) / max);
+    }
+  }
+  cout << "Adjusted max likelihood value " << hlike->GetMaximum();
   
   TMarker * bf = new TMarker(xmin,ymin,kFullStar);
   bf->SetMarkerColor(kRed);

@@ -33,8 +33,8 @@ void make_fc_critval_1d(){
   
   // RUN 1-8
   // Root path to toys location, for convenience specifying path in "infilename_fc"
-  string path_fc_nh = "/scratch/cbarry/tmp/tn_toys/FC/dcp/fc_toys/final/final/";
-  string path_fc_ih = "/scratch/cbarry/tmp/tn_toys/FC/dcp/fc_toys/final/final/";
+  string path_fc_nh = "/home/phrdqd/VaLOR/analysis/tn/final/";
+  string path_fc_ih = "/home/phrdqd/VaLOR/analysis/tn/final/";
     
   TH1D* h1[NFCpts][Nmh] = {0};
   TH1D* h1_bf[NFCpts][Nmh] = {0};
@@ -764,7 +764,7 @@ void make_fc_critval_1d(){
   gFC90CL_nh->GetXaxis()->SetTitle("#delta_{CP}");
   gFC90CL_nh->GetYaxis()->SetTitle("#Delta #chi^{2}_{crit}");
 //  gFC90CL_nh->GetYaxis()->SetRangeUser(0.8,5);
-  gFC90CL_nh->GetYaxis()->SetRangeUser(1.5,10);
+  gFC90CL_nh->GetYaxis()->SetRangeUser(0,10);
 
   gFC90CL_nh   ->Draw("apl");
   gFC90CL_nh_p1->Draw("pl same");
@@ -792,7 +792,7 @@ void make_fc_critval_1d(){
   gFC3sigma_ih_p1->Draw("pl same");
   gFC3sigma_ih_m1->Draw("pl same");
   
-  TLegend *lDeltaChisq_p1sigma = new TLegend(0.75,0.2,0.9,0.35);
+  TLegend *lDeltaChisq_p1sigma = new TLegend(0.75,0.5,0.9,0.65);
   lDeltaChisq_p1sigma->SetLineColor(0);
   lDeltaChisq_p1sigma->SetFillStyle(0);
   lDeltaChisq_p1sigma->AddEntry(gFC1sigma_nh,"1#sigma","l");  
