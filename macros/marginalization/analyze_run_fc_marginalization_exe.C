@@ -450,11 +450,11 @@ void analyze_run_fc_marginalization_exe
   TH1D *hNevents_rhc_mulike = new TH1D("hNevents_rhc_mulike","hNevents_rhc_mulike",100,0,500);
   TH1D *hNevents_rhc_elike  = new TH1D("hNevents_rhc_elike", "hNevents_rhc_elike" ,100x,0,250);
 
-  TH1D *hNevents_exp_fhc_mulike = new TH1D("hNevents_exp_fhc_mulike","hNevents_exp_fhc_mulike",100,0,500);
-  TH1D *hNevents_exp_fhc_elike  = new TH1D("hNevents_exp_fhc_elike", "hNevents_exp_fhc_elike" ,100,0,250);
-  TH1D *hNevents_exp_fhc_cc1pilike  = new TH1D("hNevents_exp_fhc_cc1pilike", "hNevents_exp_fhc_cc1pilike" ,100,0,250);
-  TH1D *hNevents_exp_rhc_mulike = new TH1D("hNevents_exp_rhc_mulike","hNevents_exp_rhc_mulike",100,0,500);
-  TH1D *hNevents_exp_rhc_elike  = new TH1D("hNevents_exp_rhc_elike", "hNevents_exp_rhc_elike" ,100,0,250);
+  TH1D *hNevents_exp_fhc_mulike = new TH1D("hNevents_exp_fhc_mulike","hNevents_exp_fhc_mulike",500,0,500);
+  TH1D *hNevents_exp_fhc_elike  = new TH1D("hNevents_exp_fhc_elike", "hNevents_exp_fhc_elike" ,250,0,250);
+  TH1D *hNevents_exp_fhc_cc1pilike  = new TH1D("hNevents_exp_fhc_cc1pilike", "hNevents_exp_fhc_cc1pilike" ,250,0,250);
+  TH1D *hNevents_exp_rhc_mulike = new TH1D("hNevents_exp_rhc_mulike","hNevents_exp_rhc_mulike",500,0,500);
+  TH1D *hNevents_exp_rhc_elike  = new TH1D("hNevents_exp_rhc_elike", "hNevents_exp_rhc_elike" ,100,0,100);
  
   ///////////////////////////////////////////////
   
