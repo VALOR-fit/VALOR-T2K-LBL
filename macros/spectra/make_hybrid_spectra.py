@@ -17,27 +17,27 @@ except:
   
 ROOT.gROOT.SetBatch(1)
 
-def make_full_hybrid(outfile, datafile):
+samples=["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
+mcfileprefix="spectra_osc_asimova_"
+
+def make_full_hybrid(outfile, datafile, mcsamples=[]):
     df = ROOT.TFile(datafile)
-
-    mcf1 = ROOT.TFile("spectra_osc_asimova_1Rmu.root")
-    h1Rmu = mcf1.Get("curr_ereco_Vs_q2_1Rmu")
-    mcf2 = ROOT.TFile("spectra_osc_asimova_RHC1Rmu.root")
-    hRHC1Rmu = mcf2.Get("curr_ereco_Vs_q2_RHC1Rmu")
-    mcf3 = ROOT.TFile("spectra_osc_asimova_1Re.root")
-    h1Re = mcf3.Get("curr_ereco_Vs_q2_1Re")
-    mcf4 = ROOT.TFile("spectra_osc_asimova_RHC1Re.root")
-    hRHC1Re = mcf4.Get("curr_ereco_Vs_q2_RHC1Re")
-    mcf5 = ROOT.TFile("spectra_osc_asimova_MultiRe.root")
-    hMultiRe = mcf5.Get("curr_ereco_Vs_q2_MultiRe")
-
     hybrid = ROOT.TFile(outfile, "RECREATE")
-    h1Rmu.Write("mock_data_1Rmu_0")
-    hRHC1Rmu.Write("mock_data_RHC1Rmu_0")
-    h1Re.Write("mock_data_1Re_0")
-    hRHC1Re.Write("mock_data_RHC1Re_0")
-    hMultiRe.Write("mock_data_MultiRe_0")
+    print "Output", outfile
 
+    for sample in samples:
+        if sample in mcsamples:
+            mcf = ROOT.TFile(mcfileprefix + sample + ".root")
+            hsample = mcf.Get("curr_ereco_Vs_q2_" + sample)
+            hybrid.cd()
+            hsample.Write("mock_data_" + sample + "_0")
+            mcf.Close()
+            print sample, "from MC"
+        else:
+            hsample = df.Get("mock_data_" + sample + "_0")
+            hybrid.cd()
+            hsample.Write("mock_data_" + sample + "_0")
+            print sample, "from data"
 
 def make_hybrid(outfile, datafile, mcFHC1Rmu=None, mcRHC1Rmu=None):
     df = ROOT.TFile(datafile)
@@ -70,8 +70,6 @@ def make_hybrid(outfile, datafile, mcFHC1Rmu=None, mcRHC1Rmu=None):
 if __name__=="__main__":
     import optparse
     parser = optparse.OptionParser(usage="%prog [options]..", description="Plot spectra")
-    parser.add_option("-a", "--fhc-mu-mc-file", dest="mcfile1", help='Input file containing Asimov 1Rmu spectra')
-    parser.add_option("-b", "--rhc-mu-mc-file", dest="mcfile2", help='Input file containing Asimov RHC1Rmu spectra')
     parser.add_option("-o", "--output-file", dest="outfile", help='Output file for hyrbid spectra')
     parser.add_option("-d", "--data-file", dest="datafile", help='Input file containing data spectra')
     
@@ -79,7 +77,11 @@ if __name__=="__main__":
     parser.parse_args(values = v)
     o, other = parser.parse_args()
   
-    make_full_hybrid(o.outfile, o.datafile)
+    make_full_hybrid("hybrid_1Re.root", o.datafile, ["1Re"])
+    make_full_hybrid("hybrid_1Rmu.root", o.datafile, ["1Rmu"])
+    make_full_hybrid("hybrid_RHC1Re.root", o.datafile, ["RHC1Re"])
+    make_full_hybrid("hybrid_RHC1Rmu.root", o.datafile, ["RHC1Rmu"])
+    make_full_hybrid("hybrid_MultiRe.root", o.datafile, ["MultiRe"])
   
     if other:
         print "Warning - ignored arguments: ", other
