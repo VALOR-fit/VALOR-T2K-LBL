@@ -28,7 +28,7 @@ void plot_contours_dcp_many
  
  TString titleX = "#delta_{CP} (rad)",
  TString titleY = "-2#Deltaln(L)",
- const bool doBrazilian = true,
+ const bool doBrazilian = false,
  const bool doGlobalMin  = true,
  const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
@@ -36,11 +36,12 @@ void plot_contours_dcp_many
  TString str_preliminary = "T2K Run1-8 Preliminary",
  const bool do_fc = true,
  const bool draw_fc_err = false,
- const bool do_fc_conf_interv = false,
+ const bool do_fc_critval = true,
+ const bool do_fc_conf_interv = true,
  const bool do_const = false,
- const bool draw_1sigmaCL = false,
+ const bool draw_1sigmaCL = true,
  const bool draw_90CL     = false,
- const bool draw_2sigmaCL = true,
+ const bool draw_2sigmaCL = false,
  const bool draw_3sigmaCL = false,
  const bool draw_4sigmaCL = false,
  const bool draw_5sigmaCL = false,
@@ -58,7 +59,7 @@ void plot_contours_dcp_many
  const bool paper_style   = true
  )
 {
-
+  gStyle->SetOptTitle(0);
   const int Nfiles = 1;
   const int Nmh = 2;
   char *infilename[Nfiles][Nmh] = {
@@ -343,12 +344,14 @@ void plot_contours_dcp_many
     gFC1sigma_ih_p1->SetLineColor(kOrange-4);
     gFC1sigma_ih_m1->SetLineColor(kOrange-4);
 
-//    gFC2sigma_nh   ->SetLineColor(kBlack);
-//    gFC2sigma_nh_p1->SetLineColor(kBlack);
-//   gFC2sigma_nh_m1->SetLineColor(kBlack);
-//    gFC2sigma_ih   ->SetLineColor(kRed);
-//    gFC2sigma_ih_p1->SetLineColor(kRed);
-//    gFC2sigma_ih_m1->SetLineColor(kRed);
+    gFC2sigma_nh   ->SetLineColor(kBlack);
+    gFC2sigma_nh_p1->SetLineColor(kBlack);
+   gFC2sigma_nh_m1->SetLineColor(kBlack);
+    gFC2sigma_ih   ->SetLineColor(kRed);
+    gFC2sigma_ih_p1->SetLineColor(kRed);
+    gFC2sigma_ih_m1->SetLineColor(kRed);
+
+    gFC2sigma_nh   ->SetLineStyle(2);
 
     gFC90CL_nh   ->SetMarkerSize(0.5);
     gFC90CL_nh_p1->SetMarkerSize(0.5);
@@ -707,7 +710,7 @@ void plot_contours_dcp_many
     }
   }
 
-  TLegend *ldeltachisq = new TLegend(0.6,0.45,0.8,0.6);
+  TLegend *ldeltachisq = new TLegend(0.2,0.7,0.4,0.85);
   ldeltachisq->SetFillColor(0);
   ldeltachisq->SetLineColor(0);
   ldeltachisq->SetTextFont(132);
@@ -718,10 +721,11 @@ void plot_contours_dcp_many
       ldeltachisq->AddEntry(hdeltachisq1D_GlobMin[ifile][imh],latexname[ifile][imh],"l");
     }
   }
+//  ldeltachisq->AddEntry(gFC2sigma_nh, "2#sigma CL","l");
   ldeltachisq->DrawClone();
   
   if(do_fc){
-    if(draw_90CL){
+    if(do_fc_critval && draw_90CL){
       //paper remove
       //      gFC90CL_nh   ->Draw("l same");
       //      gFC90CL_ih   ->Draw("l same");
@@ -733,7 +737,7 @@ void plot_contours_dcp_many
       }
     }
 
-    if(draw_2sigmaCL){
+    if(do_fc_critval && draw_2sigmaCL){
       //paper remove
       //      gFC2sigma_nh   ->Draw("l same");
       //      gFC2sigma_ih   ->Draw("l same");
@@ -825,7 +829,7 @@ void plot_contours_dcp_many
       }
     }
     
-    if(draw_2sigmaCL){
+    if(do_fc_critval && draw_2sigmaCL){
       gFC2sigma_nh   ->Draw("l same");
       gFC2sigma_ih   ->Draw("l same");
       if(draw_fc_err){
@@ -836,7 +840,7 @@ void plot_contours_dcp_many
       }
     }
 
-    if(draw_1sigmaCL){
+    if(do_fc_critval && draw_1sigmaCL){
       gFC1sigma_nh   ->Draw("l same");
       gFC1sigma_ih   ->Draw("l same");
       if(draw_fc_err){
@@ -848,7 +852,7 @@ void plot_contours_dcp_many
     }
 
 
-    if(draw_90CL){
+    if(do_fc_critval && draw_90CL){
       gFC90CL_nh   ->Draw("l same");
       gFC90CL_ih   ->Draw("l same");
       if(draw_fc_err){
@@ -866,19 +870,19 @@ void plot_contours_dcp_many
   lcritval->SetLineColor(0);
   lcritval->SetTextFont(132);
   lcritval->SetTextSize(0.05);
-  if(do_fc){
+  if(do_fc && do_fc_critval){
     if(draw_90CL){
       //lcritval->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90%CL) - NH","l");
       //lcritval->AddEntry(gFC90CL_ih,"#Delta #chi^{2}_{crit} (90%CL) - IH","l");
-      lcritval->AddEntry(gFC90CL_nh,"-2 #Delta lnL_{crit} (90% CL)","l");
+      lcritval->AddEntry(gFC90CL_nh,"-90% CL","l");
     }
     if(draw_2sigmaCL){
       //lcritval->AddEntry(gFC2sigma_nh,"#Delta #chi^{2}_{crit} (2#sigma) - NH","l");
       //lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
-      lcritval->AddEntry(gFC2sigma_nh,"-2 #Delta lnL_{crit} (2#sigma CL)","l");
+      lcritval->AddEntry(gFC2sigma_nh,"2#sigma CL","l");
     }
     if(draw_1sigmaCL){
-      lcritval->AddEntry(gFC1sigma_nh,"-2 #Delta lnL_{crit} (1#sigma CL)","l");
+      lcritval->AddEntry(gFC1sigma_nh,"1#sigma CL","l");
     }
 
     //paper remove
@@ -938,10 +942,24 @@ void plot_contours_dcp_many
     if(draw_4sigmaCL) latLine4Sigma->Draw("same");
     if(draw_5sigmaCL) latLine5Sigma->Draw("same");
   }
-  
-  TLatex *latPreliminary = new TLatex(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(5),1.1,str_preliminary);
-  latPreliminary->SetTextSize(0.05);
-  if(draw_preliminary) latPreliminary->Draw("same");
+ 
+  double tx = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetNbins() / 2);
+  double nx = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetBinLowEdge(hdeltachisq1D_GlobMin[0][0]->GetXaxis()->GetNbins() / 10);
+  double ty = Max_deltachisq * 1.2;
+  TLatex *title = new TLatex(tx, ty * 1.01, str_preliminary);
+  title->SetTextSize(0.05);
+  TLatex *caveat = new TLatex(nx, ty * 1.01, "Final systematics pending");
+  caveat->SetTextSize(0.025);
+  if(draw_preliminary)
+  {
+     title->Draw("same");
+     caveat->Draw("same");
+  }
+  // deltacp_critval.*, deltacp_interval_1sigma.*, deltacp_interval_90.*, deltacp_interval_2sigma.*
+  const char* plotname = "interval_1sigma";
+  cDeltaChisq->SaveAs(Form("deltacp_%s.pdf",plotname));
+  cDeltaChisq->SaveAs(Form("deltacp_%s.png",plotname));
+  cDeltaChisq->SaveAs(Form("deltacp_%s.eps",plotname));
   
   // Store in root file
   if(SaveRootFile){
@@ -1427,8 +1445,8 @@ void plot_contours_dcp_many
     hdeltachisq1D_nh_p2sigma->SetFillColorAlpha(kBlack+3,0.202);
     hdeltachisq1D_nh_p2sigma->Draw("c same");
     
-    hdeltachisq1D_nh_p1sigma->SetLineColorAlpha(kGray,0.595);
-    hdeltachisq1D_nh_p1sigma->SetFillColorAlpha(kGray,0.595);
+    hdeltachisq1D_nh_p1sigma->SetLineColorAlpha(kGreen+3,0.202);
+    hdeltachisq1D_nh_p1sigma->SetFillColorAlpha(kGreen+3,0.202);
     hdeltachisq1D_nh_p1sigma->Draw("c same");
     
     hdeltachisq1D_nh_mean->SetLineWidth(2);
@@ -1446,7 +1464,14 @@ void plot_contours_dcp_many
     gPad->RedrawAxis();
     
     if(draw_preliminary){
-      latPreliminary->DrawLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy*1.01,str_preliminary);
+//      title->DrawLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy*1.01,str_preliminary);
+      TLatex *braz_nh_title = new TLatex(tx, 20 * 1.01, str_preliminary);
+      braz_nh_title->SetTextSize(0.05);
+      TLatex *braz_nh_caveat = new TLatex(nx, 20 * 1.01, "Final systematics pending");
+      braz_nh_caveat->SetTextSize(0.025);
+
+      braz_nh_title->Draw("same");
+      braz_nh_caveat->Draw("same");
     }
     TLegend *lBrazilianPlot_nh = new TLegend(0.15,0.64,0.35,0.92);
     lBrazilianPlot_nh->SetFillColor(0);
@@ -1460,11 +1485,11 @@ void plot_contours_dcp_many
     //    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. -2 #Delta lnL","l");
     //lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_mean,"Mean Exp. #Delta #chi^{2}","l");
     if(draw_90CL){
-      lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"-2 #Delta lnL_{crit} (90% CL)","l");
+      lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"90% CL","l");
       //lBrazilianPlot_nh->AddEntry(gFC90CL_nh,"#Delta #chi^{2}_{crit} (90% CL)","l");
     }
     if(draw_2sigmaCL){
-      lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"-2 #Delta lnL_{crit} (2#sigma CL)","l");
+      lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"2#sigma CL","l");
     }
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
     lBrazilianPlot_nh->DrawClone();
@@ -1473,6 +1498,8 @@ void plot_contours_dcp_many
     latNormal->SetTextSize(0.06);
     latNormal->Draw("same");
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.pdf",tag.c_str()));
+    cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.png",tag.c_str()));
+    cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.eps",tag.c_str()));
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.root",tag.c_str()));
     
     // Brazilian plot Inverted Hierarchy
@@ -1488,8 +1515,8 @@ void plot_contours_dcp_many
     //hdeltachisq1D_ih_p2sigma->SetFillColor(kCyan);
     hdeltachisq1D_ih_p2sigma->Draw("c same");
     
-    hdeltachisq1D_ih_p1sigma->SetLineColorAlpha(kGray,0.595);
-    hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kGray,0.595);
+    hdeltachisq1D_ih_p1sigma->SetLineColorAlpha(kGreen+3,0.202);
+    hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kGreen+3,0.202);
     //hdeltachisq1D_ih_p1sigma->SetFillColorAlpha(kBlack,0.595);
     //hdeltachisq1D_ih_p1sigma->SetLineColor(kGreen);
     //hdeltachisq1D_ih_p2sigma->SetFillColor(kGreen);
@@ -1510,7 +1537,13 @@ void plot_contours_dcp_many
     gPad->RedrawAxis();
     
     if(draw_preliminary){
-      latPreliminary->DrawLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy*1.01,str_preliminary);
+      TLatex *braz_ih_title = new TLatex(tx, 30 * 1.01, str_preliminary);
+      braz_ih_title->SetTextSize(0.05);
+      TLatex *braz_ih_caveat = new TLatex(nx, 30 * 1.01, "Final systematics pending");
+      braz_ih_caveat->SetTextSize(0.025);
+
+      braz_ih_title->Draw("same");
+      braz_ih_caveat->Draw("same");
     }
     TLegend *lBrazilianPlot_ih = new TLegend(0.15,0.64,0.35,0.92);
     lBrazilianPlot_ih->SetFillColor(0);
@@ -1524,9 +1557,9 @@ void plot_contours_dcp_many
     //lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. #Delta #chi^{2}","l");
     //    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_mean,"Mean Exp. -2 #Delta lnL","l");
     if(draw_90CL)
-      lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"-2 #Delta lnL_{crit} (90% CL)","l");
+      lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"90% CL","l");
     if(draw_2sigmaCL)
-      lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"-2 #Delta lnL_{crit} (2#sigma CL)","l");
+      lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"2#sigma CL","l");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
     lBrazilianPlot_ih->DrawClone();
     
@@ -1534,6 +1567,8 @@ void plot_contours_dcp_many
     latInverted->SetTextSize(0.06);
     latInverted->Draw("same");
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.pdf",tag.c_str()));
+    cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.png",tag.c_str()));
+    cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.eps",tag.c_str()));
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.root",tag.c_str()));
 
     //
@@ -1553,7 +1588,8 @@ void plot_contours_dcp_many
     hPvalueChisq_ih->SetLineColor(kRed);
     hPvalueChisq_ih->Draw("same");
     if(draw_preliminary){
-      latPreliminary->Draw("same");
+      title->Draw("same");
+      caveat->Draw("same");
     }
     TLegend *lPvalueChisq = new TLegend(0.6,0.4,0.8,0.65);
     lPvalueChisq->SetFillColor(0);
@@ -1580,7 +1616,8 @@ void plot_contours_dcp_many
     hZscoreChisq_ih->SetLineColor(kRed);
     hZscoreChisq_ih->Draw("same");
     if(draw_preliminary){
-      latPreliminary->Draw("same");
+      title->Draw("same");
+      caveat->Draw("same");
     }
     TLegend *lZscoreChisq = new TLegend(0.6,0.4,0.8,0.65);
     lZscoreChisq->SetFillColor(0);
@@ -1591,7 +1628,8 @@ void plot_contours_dcp_many
     lZscoreChisq->AddEntry(hZscoreChisq_ih,"Inverted Hierarchy","l");
     lZscoreChisq->Draw();
     if(draw_preliminary){
-      latPreliminary->Draw("same");
+      title->Draw("same");
+      caveat->Draw("same");
     }
     //
     
@@ -1606,22 +1644,28 @@ void plot_contours_dcp_many
     hProbChisq_90CL_nh->SetLineWidth(2);
     hProbChisq_90CL_nh->SetLineColor(kBlack);
     hProbChisq_90CL_nh->SetLineStyle(1);
-    hProbChisq_90CL_nh->Draw("same");
+    hProbChisq_90CL_nh->Draw("l same");
     hProbChisq_2sigma_nh->SetLineWidth(2);
     hProbChisq_2sigma_nh->SetLineColor(kRed);
     hProbChisq_2sigma_nh->SetLineStyle(1);
-    hProbChisq_2sigma_nh->Draw("same");
+    hProbChisq_2sigma_nh->Draw("l same");
     hProbChisq_90CL_ih->SetLineWidth(2);
     hProbChisq_90CL_ih->SetLineColor(kBlack);
     hProbChisq_90CL_ih->SetLineStyle(2);
-    hProbChisq_90CL_ih->Draw("same");
+    hProbChisq_90CL_ih->Draw("l same");
     hProbChisq_2sigma_ih->SetLineWidth(2);
     hProbChisq_2sigma_ih->SetLineColor(kRed);
     hProbChisq_2sigma_ih->SetLineStyle(2);
-    hProbChisq_2sigma_ih->Draw("same");
+    hProbChisq_2sigma_ih->Draw("l same");
     
     if(draw_preliminary){
-      latPreliminary->DrawLatex(hInit->GetXaxis()->GetBinLowEdge(110),1.1,str_preliminary);
+      TLatex *prob_title = new TLatex(tx, 1.1 * 1.01, str_preliminary);
+      prob_title->SetTextSize(0.05);
+      TLatex *prob_caveat = new TLatex(nx, 1.1 * 1.01, "Final systematics pending");
+      prob_caveat->SetTextSize(0.025);
+
+      prob_title->Draw("same");
+      prob_caveat->Draw("same");
     }
     TLegend *lProbChisq = new TLegend(0.488,0.1937,0.882,0.4);
     lProbChisq->SetFillColor(0);
@@ -1634,6 +1678,8 @@ void plot_contours_dcp_many
     lProbChisq->AddEntry(hProbChisq_2sigma_ih,"2#sigma CL - Inverted","l");
     lProbChisq->Draw();
     cProbChisq->SaveAs(Form("%s_prob_chisq.pdf",tag.c_str()));
+    cProbChisq->SaveAs(Form("%s_prob_chisq.png",tag.c_str()));
+    cProbChisq->SaveAs(Form("%s_prob_chisq.eps",tag.c_str()));
     
     //
     
