@@ -14,96 +14,42 @@ using namespace valor::conv;
 
 void event_rate_ellipse_fhc_Vs_rhc
 (
- const string str_preliminary = "T2K Run 1-7c preliminary",
+ const string str_preliminary = "T2K Run 1-8 preliminary",
 
- const char * tag                  = "ErecoVsTheta_Run17_Asimov_A_dcpPi",
- const char * sk_sample            = "RHC1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
+ const char * tag                  = "ellipse_Run18",
+ const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
- 
- // // No Oscillations
- // double       input_mixing12       = 0.,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0., //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = 0., //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = -99,
-
- // Asimov A
- double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- double       input_mixing23       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- //double       input_deltacp        = 0., //-99,    /* deltacp, */
- //double       input_deltacp        = +TMath::Pi(), //-99,    /* deltacp, */
- double       input_deltacp        = -1.601, //-99,    /* deltacp, */
- //double       input_deltacp        = +TMath::Pi()/2, //-99,    /* deltacp, */
- double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- double       input_betabar        = 1., //0., //-99,
-
- // // Asimov B
- // double       input_mixing12       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13       = 0.0217,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23       = 0.45, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp        = 0., //-99,    /* deltacp, */
- // double       input_dm12sq         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_betabar        = 1., //0., //-99,
-
+ // Best fit values NH
+ double       input_mixing12       = 0.304,
+ double       input_mixing13       = 0.02235,
+ double       input_mixing23       = 0.530,
+ double       input_deltacp        = 0,
+ double       input_dm12sq         = 7.53E-5,
+ double       input_dm23sq         = 2.460E-3,
+ // Best fit values IH
+/* double       input_mixing12       = 0.304,
+ double       input_mixing13       = 0.0226125,
+ double       input_mixing23       = 0.530,
+ double       input_deltacp        = 0,
+ double       input_dm12sq         = 7.53E-5,
+ double       input_dm23sq         = 2.440E-3,*/
+ double       input_betabar        = -99., //0., //-99,
  bool         disable_banff_tuning = false,                          /* */
-
- //
- // NEW CONFIGURATION FILES (13/7/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7c FLUX, FINAL)   
- //
- const char * config_file = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17c_final.xml",
-
-
- //
- // NEW CONFIGURATION FILES (4/6/16 BANFF RELEASE W/ FIT BIAS AND ADDITIONAL UNCERTAINTY ON RUN 1-7 FLUX)
- //
- //const char * config_file      = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
- //const char * config_file      = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias_FluxTunRun17_prefit.xml", // Run 5-7 flux tuning for RHC
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17_prefit.xml", // Run 5-7 flux tuning for RHC
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_FluxTunRun17.xml", // Run 5-7 flux tuning for RHC
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_Run17.xml", // Run 1-6 flux tuning
- 
- //
- // NEW CONFIGURATION FILES (14/3/16 BANFF RELEASE W/ FIT BIAS)
- // 
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
- //const char * config_file      = "analysis_configuration_data_theta_elike_fhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
- //const char * config_file      = "analysis_configuration_data_theta_elike_rhc_only_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
- //const char * config_file      = "analysis_configuration_data_theta_elike_RFGRPA_NIWG2015c_1p1h_fitbias_ExpSummer2016.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_NIWG2015c_1p1h_fitbias.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_FSIOnly.xml",
- //const char * config_file      = "analysis_configuration_data_theta_1bin_RFGRPA_NIWG2015c_1p1h_fitbias_SKDetOnly.xml",
- 
+ const char * config_file = "analysis_configuration_oa2017_run1-8_postfit.xml",
  bool         store_spectrum      = true,
  bool         print_spectrum      = true,                          /* */
  const char * mixparamchoice      = "sinsqtheta",
  const char * hierarchy           = "normal"   ,
  const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
-
  bool plot_per_50MeV = false,
  double ErecoRangeLow = 0.,
  double ErecoRangeUp = 30.,
-
-
-
- int          iexperiment         = 0, //4404, //4739,                       /* */
- //const char * rootfile = "data_run1to4/SKdata_Run14.root",
- //const char * rootfile = "data_run1to6/SKdata_Run16.root", 
- //const char * rootfile = "data_run1to7b/SKdata_Run17.root", 
- const char * rootfile = "data_run1to7c/SKdata_Run17c.root", 
+ int          iexperiment         = 0,
+ const char * rootfile = "data_run1to8/SKdata_Run18.root", 
  const bool draw_data_spectra = true,
  const bool scale_mc = false,
-
  const bool change_banff_params = false
-
-
 )
 {
   using namespace std;
@@ -189,8 +135,6 @@ void event_rate_ellipse_fhc_Vs_rhc
     ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
     ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
   }
-  
-  
   
   string oscparams = util::AsString(ph.Hypothesis(),
 				    input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq,input_betabar,-999,-999);
@@ -297,6 +241,15 @@ void event_rate_ellipse_fhc_Vs_rhc
   TGraph *gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_mpi2 = new TGraph();
   TGraph *gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_mpi2 = new TGraph();
 
+  double ss12_nh = 0.304;
+  double ss13_nh = 0.02235;
+  double dm12_nh = 7.53E-5;
+  double dm23_nh = 2.460E-3;
+
+  double ss12_ih = 0.304;
+  double ss13_ih = 0.0226125;
+  double dm12_ih = 7.53E-5;
+  double dm23_ih = 2.440E-3;
 
   for(int idcp=0;idcp<dcp_npt;idcp++){
 
@@ -306,17 +259,22 @@ void event_rate_ellipse_fhc_Vs_rhc
     double dcp = deltaCP_first + idcp * deltaCP_width;
     
     cout << "dcp = " << dcp << endl;
+    // Set NH oscillation parameter values
+    ph.SetCurrValue(conv::kPhypMixing12, ss12_nh);
+    ph.SetCurrValue(conv::kPhypMixing13, ss13_nh);
+    ph.SetCurrValue(conv::kPhypDm12sq, dm12_nh);
+    ph.SetCurrValue(conv::kPhypDm23sq, dm23_nh);
 
     // 
-    // sinsqth23 = 0.45 - Normal Hierarchy
+    // sinsqth23 = -1sigma - Normal Hierarchy
     //
-    double ss23 = 0.45;
+    double ss23 = 0.493;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
     ph.SetCurrValue(conv::kPhypMixing23,ss23);
     // Generate prediction
-    skexp.GetSuperkMC()->SetXMEC(1);
+    skexp.GetSuperkMC()->SetX2p2h(1);
     skexp.Generate(ph);
     Nfhc = -999;
     Nrhc = -999;
@@ -344,15 +302,15 @@ void event_rate_ellipse_fhc_Vs_rhc
 
     
     //
-    // sinsqth23 = 0.5 - Normal Hierarchy
+    // sinsqth23 = 0.530 - Best fit Normal Hierarchy
     //
-    double ss23 = 0.5;
+    double ss23 = 0.530;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
     ph.SetCurrValue(conv::kPhypMixing23, ss23);
     //Generate prediction
-    skexp.GetSuperkMC()->SetXMEC(1);
+    skexp.GetSuperkMC()->SetX2p2h(1);
     skexp.Generate(ph);
     Nfhc = -999;
     Nrhc = -999;
@@ -379,15 +337,15 @@ void event_rate_ellipse_fhc_Vs_rhc
     }
     
     // 
-    // sinsqth23 = 0.55 - Normal Hierarchy
+    // sinsqth23 = +1sigma - Normal Hierarchy
     //
-    double ss23 = 0.55;
+    double ss23 = 0.561;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
     ph.SetCurrValue(conv::kPhypMixing23, ss23);
     // Generate prediction
-    skexp.GetSuperkMC()->SetXMEC(1);
+    skexp.GetSuperkMC()->SetX2p2h(1);
     skexp.Generate(ph);
     Nfhc = -999;
     Nrhc = -999;
@@ -412,16 +370,22 @@ void event_rate_ellipse_fhc_Vs_rhc
       cout << "NH: sinsqth23 = " << ss23 << ", Nfhc = " << Nfhc << ", Nrhc = " << Nrhc << endl; 
    }
 
+    // Set IH oscillation parameter values
+    ph.SetCurrValue(conv::kPhypMixing12, ss12_ih);
+    ph.SetCurrValue(conv::kPhypMixing13, ss13_ih);
+    ph.SetCurrValue(conv::kPhypDm12sq, dm12_ih);
+    ph.SetCurrValue(conv::kPhypDm23sq, dm23_ih);
+
     // 
-    // sinsqth23 = 0.45 - Inverted Hierarchy
+    // sinsqth23 = -1sigma - Inverted Hierarchy
     //
-    double ss23 = 0.45;
+    double ss23 = 0.496;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
     ph.SetCurrValue(conv::kPhypMixing23, ss23);
     // Generate prediction
-    skexp.GetSuperkMC()->SetXMEC(1);
+    skexp.GetSuperkMC()->SetX2p2h(1);
     skexp.Generate(ph);
     Nfhc = -999;
     Nrhc = -999;
@@ -447,15 +411,15 @@ void event_rate_ellipse_fhc_Vs_rhc
     }
 
     //
-    // sinsqth23 = 0.5 - Inverted Hierarchy
+    // sinsqth23 = Best fit - Inverted Hierarchy
     //
-    double ss23 = 0.5;
+    double ss23 = 0.530;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
     ph.SetCurrValue(conv::kPhypMixing23, ss23);
     //Generate prediction
-    skexp.GetSuperkMC()->SetXMEC(1);
+    skexp.GetSuperkMC()->SetX2p2h(1);
     skexp.Generate(ph);
     Nfhc = -999;
     Nrhc = -999;
@@ -481,15 +445,15 @@ void event_rate_ellipse_fhc_Vs_rhc
     }
  
     // 
-    // sinsqth23 = 0.55 - Inverted Hierarchy
+    // sinsqth23 = +1sigma - Inverted Hierarchy
     //
-    double ss23 = 0.55;
+    double ss23 = 0.559;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
     ph.SetCurrValue(conv::kPhypMixing23, ss23);
     // Generate prediction
-    skexp.GetSuperkMC()->SetXMEC(1);
+    skexp.GetSuperkMC()->SetX2p2h(1);
     skexp.Generate(ph);
     Nfhc = -999;
     Nrhc = -999;
@@ -565,9 +529,6 @@ void event_rate_ellipse_fhc_Vs_rhc
     is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
     double nrhc = skobs_fakedata->TwoDSpectrum(s)->Integral();
     
-    nfhc = 32;
-    nrhc = 4;
-    
     double nfhc_err = sqrt(nfhc);
     double nrhc_err = sqrt(nrhc);
 
@@ -578,17 +539,18 @@ void event_rate_ellipse_fhc_Vs_rhc
     int ipt = gN_fhcVsrhc_elike_data->GetN();
     gN_fhcVsrhc_elike_data->SetPoint(ipt,nfhc,nrhc);
     gN_fhcVsrhc_elike_data->SetPointError(ipt,nfhc_err,nrhc_err);
+
+    cout << "idcp = " << idcp << "" << endl;
   }
  
 
   // Init histogram
   
-  TH2D *hInit = new TH2D("hInit","hInit",500,0,50,500,0,50);
-  hInit->GetXaxis()->SetRangeUser(10.,35.);
-  hInit->GetYaxis()->SetRangeUser(3.,10.1);
+  TH2D *hInit = new TH2D("hInit","hInit",500,0,100,500,0,100);
+  hInit->GetXaxis()->SetRangeUser(20.,90.);
+  hInit->GetYaxis()->SetRangeUser(3.,14);
   hInit->GetXaxis()->SetTitle("Number of #nu_{e} candidates");
   hInit->GetYaxis()->SetTitle("Number of #bar{#nu}_{e} candidates");
-
 
   // Draw 
 
@@ -693,7 +655,7 @@ void event_rate_ellipse_fhc_Vs_rhc
   gN_fhcVsrhc_elike_data->SetMarkerSize(1);
   gN_fhcVsrhc_elike_data->SetMarkerStyle(4);
   gN_fhcVsrhc_elike_data->Draw("PE");
-  
+
   double x1;
   double x2;
   double y1;
@@ -711,17 +673,21 @@ void event_rate_ellipse_fhc_Vs_rhc
   lMassHierarchy->SetLineColor(kBlack);
   lMassHierarchy->SetLineWidth(2);
   lMassHierarchy->SetLineStyle(2);
-  //lMassHierarchy->Draw();
   
   gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_mpi2->GetPoint(0,x1,y1);
   gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_mpi2->GetPoint(0,x2,y2);
   Xfirst = (x1+x2) / 2.; // * 0.7; 
   Yfirst = (y1+y2) / 2.; // * 0.7; 
+
+  double xtag_m1 = x1;
+  double ytag_m1 = y1;
+  double xtag_p1 = x2;
+  double ytag_p1 = y2;
+
   gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_ppi2->GetPoint(0,x1,y1);
   gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_ppi2->GetPoint(0,x2,y2);
   Xlast = (x1+x2) / 2.; // * 1.2; 
-  Ylast = (y1+y2) / 2.; // * 1.2;   
-
+  Ylast = (y1+y2) / 2.; // * 1.2;  
   
   TLine *lOctant = new TLine(Xfirst,Yfirst,Xlast,Ylast);
   lOctant->SetLineColor(kBlack);
@@ -750,46 +716,31 @@ void event_rate_ellipse_fhc_Vs_rhc
   // latInverted->SetTextAngle(angle);
   // latInverted->Draw("same");
 
-  TLatex *latOct1 = new TLatex(Xfirst,Yfirst,"sin^{2} #theta_{23} = 0.45");
+  TLatex *latOct1 = new TLatex(xtag_m1, ytag_m1,"sin^{2} #theta_{23} = -1#sigma");
   latOct1->SetLineColor(kBlack);
-  latOct1->SetTextSize(0.05);
+  latOct1->SetTextSize(0.035);
   //latOct1->SetTextAngle(angle);
   latOct1->Draw("same");
-  TLatex *latOct2 = new TLatex(Xfirst,Yfirst,"sin^{2} #theta_{23} = 0.55");
+  TLatex *latOct2 = new TLatex(xtag_p1, ytag_p1,"sin^{2} #theta_{23} = +1#sigma");
   latOct2->SetLineColor(kBlack);
-  latOct2->SetTextSize(0.05);
+  latOct2->SetTextSize(0.035);
   //latOct2->SetTextAngle(angle);
   latOct2->Draw("same");
 
-  TLegend *ldcp = new TLegend(0.6,0.45,0.8,0.65);
+  TLegend *ldcp = new TLegend(0.2,0.35,0.4,0.6);
   ldcp->SetFillColor(0);
   ldcp->SetLineColor(0);
   ldcp->SetTextFont(132);
-  ldcp->SetTextSize(0.05);
+  ldcp->SetTextSize(0.035);
   ldcp->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p55,"Normal Hierarchy","l");
   ldcp->AddEntry(gN_fhcVsrhc_elike_ih_sinsqth23_0p55,"Inverted Hierarchy","l");
+  ldcp->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi,"#delta_{CP} = #pi","p");
+  ldcp->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi2,"#delta_{CP} = +#pi/2","p");
+  ldcp->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_0,"#delta_{CP} = 0","p");
+  ldcp->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_mpi2,"#delta_{CP} = -#pi/2","p");
+  ldcp->AddEntry(gN_fhcVsrhc_elike_data,"Data","pe");
   ldcp->Draw();
 
-  TLegend *lFhcVsRhc = new TLegend(0.6,0.45,0.8,0.65);
-  lFhcVsRhc->SetFillColor(0);
-  lFhcVsRhc->SetLineColor(0);
-  lFhcVsRhc->SetTextFont(132);
-  lFhcVsRhc->SetTextSize(0.05);
-  lFhcVsRhc->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi,"#delta_{CP} = #pi","p");
-  lFhcVsRhc->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi2,"#delta_{CP} = +#pi/2","p");
-  lFhcVsRhc->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_0,"#delta_{CP} = 0","p");
-  lFhcVsRhc->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_mpi2,"#delta_{CP} = -#pi/2","p");
-  lFhcVsRhc->Draw();
-
-  TLegend *ldata = new TLegend(0.6,0.45,0.8,0.65);
-  ldata->SetFillColor(0);
-  ldata->SetLineColor(0);
-  ldata->SetTextFont(132);
-  ldata->SetTextSize(0.05);
-  ldata->AddEntry(gN_fhcVsrhc_elike_data,str_preliminary.c_str(),"pe");
-  ldata->Draw();
-
-  
   // // Get total # of events
   //double TotEvts = hErecoVsQ2Tot->Integral();
   // cout << "Total = " << TotEvts << endl;
@@ -808,8 +759,7 @@ void event_rate_ellipse_fhc_Vs_rhc
   //   }
   // }
 
-   
-  
+  cEllipse_nh_sinsqth23->SaveAs("ellipse.pdf");
 
 
 
