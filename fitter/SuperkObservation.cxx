@@ -1142,3 +1142,26 @@ double SuperkObservation::GetFitStatistic (FitModelABC * model, Option_t * stat_
   exit(-1);
 }
 //________________________________________________________________________________________
+void SuperkObservation::ReplaceSamplesWithData(SuperkObservation& new_data, bool* replace_sample)
+{
+   for(int is = 0; is < conv::kns; ++is)
+   {
+      SuperkSample_t s = kSKSamples[is];
+      if(s==kSKsUndefined)
+      {
+         continue;
+      }
+      if(replace_sample[is])
+      {
+         for(int xbin = 0; xbin < util::NumErecoBins(s); ++xbin)
+         {
+            for(int ybin = 0; ybin < util::NumQ2Bins(s); ++ybin)
+            {
+               double nobs = new_data.TwoDSpectrumVArray(s)->GetEntry(xbin, ybin);
+               this->TwoDSpectrumVArray(s)->SetEntry(nobs, xbin, ybin);
+            }
+         }
+      }
+   }
+}
+//________________________________________________________________________________________

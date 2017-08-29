@@ -286,11 +286,11 @@ $penalty_freepar1 = 0         unless defined $penalty_freepar1;
 
 if($penalty_freepar0 == 1)
 {
-   $tag             = "oa2017_AsimovA_${masshierarchy_marg}_reactor"  unless defined $tag;
+   $tag             = "oa2017_${masshierarchy_marg}_reactor"  unless defined $tag;
 }
 else
 {
-   $tag             = "oa2017_AsimovA_${masshierarchy_marg}_t2k"  unless defined $tag;
+   $tag             = "oa2017_${masshierarchy_marg}_t2k"  unless defined $tag;
 }
 
 # 1D fit - dcp

@@ -141,6 +141,13 @@ int main(int argc, char ** argv)
     exit(1);
   }
   Opt::Instance()->SetDefaultParameterValues();
+
+/*  // For testing purposes only
+  const char* data_file = Form("%s/inputs/data_run1to8/SKdata_Run18.root",
+     Env::Instance()->TopLevelDir().c_str());
+  SuperkObservation new_data = SuperkObservation();
+  new_data.Read(data_file, 0, false);
+  // End testing*/
   
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
@@ -567,9 +574,28 @@ int main(int argc, char ** argv)
         if(applied_negevents_condition)
           weird_applied_neg++;
       }//applied_negevents_condition
-      
+     
+/*      // Replace some fake data sample spectra with real spectra for testing
+      bool replace_samples[conv::kns];
+      for(int is = 0; is < conv::kns; ++is)
+      {
+         SuperkSample_t s = kSKSamples[is];
+//         if(util::IsMultiReSample(s) // Keep CC1pi MC)
+//         if(util::Is1ReSample(s) && util::IsRHCSample(s))   // Keep RHC1Re MC
+         if(util::Is1RMuSample(s) && util::IsRHCSample(s))   // Keep FHC1Rmu MC
+         {
+            replace_samples[is] = false;
+         }
+         else
+         {  // Replace MC with data
+            replace_samples[is] = true;
+         }
+      }
+
+      // For testing purposes only, replace selected samples with real data
+      skobs_fakedata->ReplaceSamplesWithData(new_data, replace_samples);
+      // End testing*/
       //  cout << *fparm << endl;
-      
     }
     
     else { // Read xml file

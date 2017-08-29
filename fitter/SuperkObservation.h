@@ -62,6 +62,18 @@ public:
   double GetFitStatistic (FitModelABC * pred, const FitParamList & fp,   Option_t * stat_opt = "likelihood-ratio");
   double GetFitStatistic (FitModelABC * pred, const PhysHypothesis & ph, Option_t * stat_opt = "likelihood-ratio");
   double GetFitStatistic (FitModelABC * pred, Option_t * stat_opt = "likelihood-ratio");
+
+  /**
+    Takes the current SuperkObservation and replaces the chosen sample spectra
+    with the spectra from the specified file.
+
+    \param new_data The SuperkObservation containing the new spectra
+    \param replace_sample An array of flags corresponding to SuperkSamples.
+       This array must have indices correspnding to each SuperkSample. A value
+       of true indicates that the sample should be replaced with the specified
+       data, false indicates it should be left unchanged.
+  */
+  void ReplaceSamplesWithData(SuperkObservation& new_data, bool* replace_sample);
   
   //  *** T2K LEGACY INTERFACE ***
   bool Read(string config_file, int data_set_id, bool is_xml = true);

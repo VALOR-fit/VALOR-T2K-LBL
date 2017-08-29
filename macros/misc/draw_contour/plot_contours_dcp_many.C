@@ -483,7 +483,7 @@ void plot_contours_dcp_many
   cChisq = new TCanvas(name,name);
   hInit->SetMaximum(Max_chisq*1.2);
   if(paper_style) format_hist(hInit);
-  hInit->DrawCopy();
+  hInit->Draw();
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int imh=0;imh<Nmh;imh++){
       hchisq1D[ifile][imh]->SetMaximum(Max_chisq*1.2);
@@ -527,7 +527,7 @@ void plot_contours_dcp_many
   hInit->GetXaxis()->SetTitle(titleX);
   hInit->GetYaxis()->SetTitle(titleY);
   if(paper_style) format_hist(hInit);
-  hInit->DrawCopy();
+  hInit->Draw();
   
   // Draw reactors box
   const double sinsqth13_nom = 0.0219;
@@ -1364,7 +1364,8 @@ void plot_contours_dcp_many
     hProbChisq_2sigma_ih->Reset();
     
     //
-    
+    double maxy_nh = 0;
+    double maxy_ih = 0;
     for(int ibin=0;ibin<NbinsChisq;ibin++){
       
       // Get +1,2sigma critical values of data wrt sensitivity on 1 true point of dcp
@@ -1372,11 +1373,19 @@ void plot_contours_dcp_many
       {
          double p1sigma = CalcDLcrit_posterior(vec_deltachisq_bin_nh[ibin],vec_like_penalty[ibin],CLfrac_1sigma*100.,0.);
          double p2sigma = CalcDLcrit_posterior(vec_deltachisq_bin_nh[ibin],vec_like_penalty[ibin],CLfrac_2sigma*100.,0.);
+         if(p2sigma > maxy_nh)
+         {
+            maxy_nh = TMath::Ceil(p2sigma);
+         }
          hdeltachisq1D_nh_p1sigma->SetBinContent(ibin+1,p1sigma);
          hdeltachisq1D_nh_p2sigma->SetBinContent(ibin+1,p2sigma);
 
          p1sigma = CalcDLcrit_posterior(vec_deltachisq_bin_ih[ibin],vec_like_penalty[ibin],CLfrac_1sigma*100.,0.);
          p2sigma = CalcDLcrit_posterior(vec_deltachisq_bin_ih[ibin],vec_like_penalty[ibin],CLfrac_2sigma*100.,0.);
+         if(p2sigma > maxy_ih)
+         {
+            maxy_ih = TMath::Ceil(p2sigma);
+         }
          hdeltachisq1D_ih_p1sigma->SetBinContent(ibin+1,p1sigma);
          hdeltachisq1D_ih_p2sigma->SetBinContent(ibin+1,p2sigma);
       }
@@ -1384,6 +1393,10 @@ void plot_contours_dcp_many
       {  // 2-sided critical values
          std::pair<double, double> nh_1sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_nh[ibin], CLfrac_1sigma);
          std::pair<double, double> nh_2sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_nh[ibin], CLfrac_2sigma);
+         if(nh_2sigma_new.second > maxy_nh)
+         {
+            maxy_nh = TMath::Ceil(nh_2sigma_new.second);
+         }
 
          hdeltachisq1D_nh_p1sigma->SetBinContent(ibin + 1, nh_1sigma_new.second);
          hdeltachisq1D_nh_p2sigma->SetBinContent(ibin + 1, nh_2sigma_new.second);
@@ -1392,6 +1405,10 @@ void plot_contours_dcp_many
 
          std::pair<double, double> ih_1sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_ih[ibin], CLfrac_1sigma);
          std::pair<double, double> ih_2sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_ih[ibin], CLfrac_2sigma);
+         if(ih_2sigma_new.second > maxy_ih)
+         {
+            maxy_ih = TMath::Ceil(ih_2sigma_new.second);
+         }
 
          hdeltachisq1D_ih_p1sigma->SetBinContent(ibin + 1, ih_1sigma_new.second);
          hdeltachisq1D_ih_p2sigma->SetBinContent(ibin + 1, ih_2sigma_new.second);
@@ -1471,12 +1488,17 @@ void plot_contours_dcp_many
     hchisq1D_ih_mean->SetLineColor(kRed);
     
     // Brazilian plot Normal Hierarchy
-    
+   
+    double maxdchisq_nh = hdeltachisq1D_GlobMin[0][0]->GetBinContent(hdeltachisq1D_GlobMin[0][0]->GetMaximumBin());
+    if(maxdchisq_nh > maxy_nh)
+    {
+       maxy_nh = TMath::Ceil(maxdchisq_nh);
+    }
+
     TCanvas *cBrazilianPlot_nh = new TCanvas("cBrazilianPlot_nh","cBrazilianPlot_nh");
-    double maxy = 35;
-    hInit->GetYaxis()->SetRangeUser(0.,20);
+    hInit->GetYaxis()->SetRangeUser(0.,maxy_nh);
     if(paper_style) format_hist(hInit);
-    hInit->DrawCopy();
+    hInit->Draw();
 
     if(!two_sided)
     {  // 1-sided interval
@@ -1490,17 +1512,17 @@ void plot_contours_dcp_many
     }
     else
     {  // 2-sided interval
-       hdeltachisq1D_nh_p2sigma->SetLineColor(kBlue);
-       hdeltachisq1D_nh_p2sigma->SetFillColor(kBlue);
+       hdeltachisq1D_nh_p2sigma->SetLineColor(kYellow);
+       hdeltachisq1D_nh_p2sigma->SetFillColor(kYellow);
        hdeltachisq1D_nh_p2sigma->Draw("c same");
-       hdeltachisq1D_nh_p1sigma->SetLineColor(kRed);
-       hdeltachisq1D_nh_p1sigma->SetFillColor(kRed);
+       hdeltachisq1D_nh_p1sigma->SetLineColor(kGreen);
+       hdeltachisq1D_nh_p1sigma->SetFillColor(kGreen);
        hdeltachisq1D_nh_p1sigma->Draw("c same");
 
-       hdeltachisq1D_nh_m1sigma->SetLineColor(kBlue);
-       hdeltachisq1D_nh_m1sigma->SetFillColor(kBlue);
+       hdeltachisq1D_nh_m1sigma->SetLineColor(kYellow);
+       hdeltachisq1D_nh_m1sigma->SetFillColor(kYellow);
        hdeltachisq1D_nh_m1sigma->Draw("c same");
-       hdeltachisq1D_nh_m2sigma->SetLineColor(kBlue);
+       hdeltachisq1D_nh_m2sigma->SetLineColor(kYellow);
        hdeltachisq1D_nh_m2sigma->SetFillColor(10);
        hdeltachisq1D_nh_m2sigma->Draw("c same");
     }
@@ -1510,8 +1532,8 @@ void plot_contours_dcp_many
     hdeltachisq1D_nh_mean->SetLineStyle(1);
     //    hdeltachisq1D_nh_mean->Draw("same"); //remove mean
     //hdeltachisq1D_GlobMin[0][0]->SetLineStyle(1); // 0 --> Normal Hierarchy
-    // hdeltachisq1D_GlobMin[0][0]->SetLineWidth(2);
-    hdeltachisq1D_GlobMin[0][0]->SetLineColor(kGreen+2);
+    hdeltachisq1D_GlobMin[0][0]->SetLineWidth(2);
+    hdeltachisq1D_GlobMin[0][0]->SetLineColor(kBlack);
     hdeltachisq1D_GlobMin[0][0]->Draw("c same");
     if(do_fc){
       if(draw_90CL)     gFC90CL_nh->Draw("l same");
@@ -1521,9 +1543,9 @@ void plot_contours_dcp_many
     
     if(draw_preliminary){
 //      title->DrawLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy*1.01,str_preliminary);
-      TLatex *braz_nh_title = new TLatex(tx, 20 * 1.01, str_preliminary);
+      TLatex *braz_nh_title = new TLatex(tx, maxy_nh * 1.01, str_preliminary);
       braz_nh_title->SetTextSize(0.05);
-      TLatex *braz_nh_caveat = new TLatex(nx, 20 * 1.01, "Final systematics pending");
+      TLatex *braz_nh_caveat = new TLatex(nx, maxy_nh * 1.01, "Final systematics pending");
       braz_nh_caveat->SetTextSize(0.025);
 
       braz_nh_title->Draw("same");
@@ -1551,7 +1573,7 @@ void plot_contours_dcp_many
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
     lBrazilianPlot_nh->DrawClone();
     
-    TLatex *latNormal = new TLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy*0.9,"Normal Ordering");
+    TLatex *latNormal = new TLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy_ih*0.9,"Normal Ordering");
     latNormal->SetTextSize(0.06);
     latNormal->Draw("same");
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.pdf",tag.c_str()));
@@ -1560,11 +1582,17 @@ void plot_contours_dcp_many
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.root",tag.c_str()));
     
     // Brazilian plot Inverted Hierarchy
-    
+ 
+    double maxdchisq_ih = hdeltachisq1D_GlobMin[0][1]->GetBinContent(hdeltachisq1D_GlobMin[0][1]->GetMaximumBin());
+    if(maxdchisq_ih > maxy_ih)
+    {
+       maxy_ih = TMath::Ceil(maxdchisq_ih);
+    }
+   
     TCanvas *cBrazilianPlot_ih = new TCanvas("cBrazilianPlot_ih","cBrazilianPlot_ih");
-    hInit->GetYaxis()->SetRangeUser(0.,maxy);
+    hInit->GetYaxis()->SetRangeUser(0.,maxy_ih);
     if(paper_style) format_hist(hInit);
-    hInit->DrawCopy();
+    hInit->Draw();
 
     if(!two_sided)
     {  // 1-sided interval
@@ -1579,17 +1607,17 @@ void plot_contours_dcp_many
     else
     {
        // 2-sided interval
-       hdeltachisq1D_ih_p2sigma->SetLineColor(kBlue);
-       hdeltachisq1D_ih_p2sigma->SetFillColor(kBlue);
+       hdeltachisq1D_ih_p2sigma->SetLineColor(kYellow);
+       hdeltachisq1D_ih_p2sigma->SetFillColor(kYellow);
        hdeltachisq1D_ih_p2sigma->Draw("c same");
-       hdeltachisq1D_ih_p1sigma->SetLineColor(kRed);
-       hdeltachisq1D_ih_p1sigma->SetFillColor(kRed);
+       hdeltachisq1D_ih_p1sigma->SetLineColor(kGreen);
+       hdeltachisq1D_ih_p1sigma->SetFillColor(kGreen);
        hdeltachisq1D_ih_p1sigma->Draw("c same");
 
-       hdeltachisq1D_ih_m1sigma->SetLineColor(kBlue);
-       hdeltachisq1D_ih_m1sigma->SetFillColor(kBlue);
+       hdeltachisq1D_ih_m1sigma->SetLineColor(kYellow);
+       hdeltachisq1D_ih_m1sigma->SetFillColor(kYellow);
        hdeltachisq1D_ih_m1sigma->Draw("c same");
-       hdeltachisq1D_ih_m2sigma->SetLineColor(kBlue);
+       hdeltachisq1D_ih_m2sigma->SetLineColor(kYellow);
        hdeltachisq1D_ih_m2sigma->SetFillColor(10);
        hdeltachisq1D_ih_m2sigma->Draw("c same");
     }
@@ -1599,8 +1627,9 @@ void plot_contours_dcp_many
     hdeltachisq1D_ih_mean->SetLineStyle(1);
     //hdeltachisq1D_ih_mean->Draw("same"); //remove mean
     //hdeltachisq1D_GlobMin[0][1]->SetLineStyle(1); // 1 --> Inverted Hierarchy
-    //hdeltachisq1D_GlobMin[0][1]->SetLineWidth(2);
-    hdeltachisq1D_GlobMin[0][1]->SetLineColor(kGreen+2);
+
+    hdeltachisq1D_GlobMin[0][1]->SetLineWidth(2);
+    hdeltachisq1D_GlobMin[0][1]->SetLineColor(kBlack);
     hdeltachisq1D_GlobMin[0][1]->Draw("c same");
     if(do_fc){
       if(draw_90CL)     gFC90CL_ih->Draw("l same");
@@ -1609,9 +1638,9 @@ void plot_contours_dcp_many
     gPad->RedrawAxis();
     
     if(draw_preliminary){
-      TLatex *braz_ih_title = new TLatex(tx, maxy * 1.01, str_preliminary);
+      TLatex *braz_ih_title = new TLatex(tx, maxy_ih * 1.01, str_preliminary);
       braz_ih_title->SetTextSize(0.05);
-      TLatex *braz_ih_caveat = new TLatex(nx, maxy * 1.01, "Final systematics pending");
+      TLatex *braz_ih_caveat = new TLatex(nx, maxy_ih * 1.01, "Final systematics pending");
       braz_ih_caveat->SetTextSize(0.025);
 
       braz_ih_title->Draw("same");
@@ -1653,7 +1682,7 @@ void plot_contours_dcp_many
     hInit->GetYaxis()->SetRangeUser(0.01,1.1);
     hInit->GetYaxis()->SetTitle("P-value");
     if(paper_style) format_hist(hInit);
-    hInit->DrawCopy();
+    hInit->Draw();
     hPvalueChisq_nh->SetLineWidth(2);
     hPvalueChisq_nh->SetLineColor(kBlack);
     hPvalueChisq_nh->Draw("same");
@@ -1681,7 +1710,7 @@ void plot_contours_dcp_many
     hInit->GetYaxis()->SetRangeUser(0,2.5);
     hInit->GetYaxis()->SetTitle("# of Std. Deviations");
     if(paper_style) format_hist(hInit);
-    hInit->DrawCopy();
+    hInit->Draw();
     hZscoreChisq_nh->SetLineWidth(2);
     hZscoreChisq_nh->SetLineColor(kBlack);
     hZscoreChisq_nh->Draw("same");
@@ -1713,7 +1742,7 @@ void plot_contours_dcp_many
     hInit->GetYaxis()->SetRangeUser(0.01,1.1);
     hInit->GetYaxis()->SetTitle("Prob. to exclude #delta_{CP}");
     if(paper_style) format_hist(hInit);
-    hInit->DrawCopy();
+    hInit->Draw();
     hProbChisq_90CL_nh->SetLineWidth(2);
     hProbChisq_90CL_nh->SetLineColor(kBlack);
     hProbChisq_90CL_nh->SetLineStyle(1);

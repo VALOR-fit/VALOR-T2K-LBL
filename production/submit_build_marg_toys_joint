@@ -112,14 +112,13 @@ $deltacp_nh      = -1.601                             unless defined $deltacp_nh
 $mix23_ih        = 0.528                              unless defined $mix23_ih;
 $deltacp_ih      = -1.601                             unless defined $deltacp_ih;
 
-# The tag currently includes "AsimovA", this is unecessary, toys are independent of Asimovs
 if($use_reactors == 1)
 {
-   $tag             = "oa2017_AsimovA_${masshierarchy}_reactor"  unless defined $tag;
+   $tag             = "oa2017_${masshierarchy}_reactor"  unless defined $tag;
 }
 else
 {
-   $tag             = "oa2017_AsimovA_${masshierarchy}_t2k"  unless defined $tag;
+   $tag             = "oa2017_${masshierarchy}_t2k"  unless defined $tag;
 }
 
 $wqueue = "medium";

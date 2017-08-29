@@ -82,6 +82,8 @@ if __name__=="__main__":
     make_full_hybrid("hybrid_RHC1Re.root", o.datafile, ["RHC1Re"])
     make_full_hybrid("hybrid_RHC1Rmu.root", o.datafile, ["RHC1Rmu"])
     make_full_hybrid("hybrid_MultiRe.root", o.datafile, ["MultiRe"])
-  
+
+    make_full_hybrid("hybrid_4mc_cc1pi_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
+
     if other:
         print "Warning - ignored arguments: ", other

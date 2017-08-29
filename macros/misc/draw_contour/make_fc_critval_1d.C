@@ -730,18 +730,18 @@ void make_fc_critval_1d(){
   gFC2sigma_nh   ->Draw("pl same");
   gFC2sigma_nh_p1->Draw("pl same");
   gFC2sigma_nh_m1->Draw("pl same");
-  gFC3sigma_nh   ->Draw("pl same");
-  gFC3sigma_nh_p1->Draw("pl same");
-  gFC3sigma_nh_m1->Draw("pl same");
+//  gFC3sigma_nh   ->Draw("pl same");
+//  gFC3sigma_nh_p1->Draw("pl same");
+//  gFC3sigma_nh_m1->Draw("pl same");
   gFC90CL_ih   ->Draw("pl same");
   gFC90CL_ih_p1->Draw("pl same");
   gFC90CL_ih_m1->Draw("pl same");
   gFC2sigma_ih   ->Draw("pl same");
   gFC2sigma_ih_p1->Draw("pl same");
   gFC2sigma_ih_m1->Draw("pl same");
-  gFC3sigma_ih   ->Draw("pl same");
-  gFC3sigma_ih_p1->Draw("pl same");
-  gFC3sigma_ih_m1->Draw("pl same");
+//  gFC3sigma_ih   ->Draw("pl same");
+//  gFC3sigma_ih_p1->Draw("pl same");
+//  gFC3sigma_ih_m1->Draw("pl same");
   
   TLegend *lDeltaChisq = new TLegend(0.75,0.2,0.9,0.35);
   lDeltaChisq->SetLineColor(0);
@@ -757,14 +757,15 @@ void make_fc_critval_1d(){
   lDeltaChisq->AddEntry(gFC90CL_ih,"IH","l");
 
   lDeltaChisq->Draw();
-  cDeltaChisq->SaveAs("FC_critical_values.pdf");
+//  cDeltaChisq->SaveAs("FC_critical_values.pdf");
 
 
   TCanvas *cDeltaChisq_p1sigma = new TCanvas("cDeltaChisq_p1sigma","cDeltaChisq_p1sigma");
+
   gFC90CL_nh->GetXaxis()->SetTitle("#delta_{CP}");
   gFC90CL_nh->GetYaxis()->SetTitle("#Delta #chi^{2}_{crit}");
 //  gFC90CL_nh->GetYaxis()->SetRangeUser(0.8,5);
-  gFC90CL_nh->GetYaxis()->SetRangeUser(0,10);
+  gFC90CL_nh->GetYaxis()->SetRangeUser(0,5);
 
   gFC90CL_nh   ->Draw("apl");
   gFC90CL_nh_p1->Draw("pl same");
@@ -775,9 +776,9 @@ void make_fc_critval_1d(){
   gFC2sigma_nh   ->Draw("pl same");
   gFC2sigma_nh_p1->Draw("pl same");
   gFC2sigma_nh_m1->Draw("pl same");
-  gFC3sigma_nh   ->Draw("pl same");
-  gFC3sigma_nh_p1->Draw("pl same");
-  gFC3sigma_nh_m1->Draw("pl same");
+//  gFC3sigma_nh   ->Draw("pl same");
+//  gFC3sigma_nh_p1->Draw("pl same");
+//  gFC3sigma_nh_m1->Draw("pl same");
 
   gFC90CL_ih   ->Draw("pl same");
   gFC90CL_ih_p1->Draw("pl same");
@@ -788,23 +789,33 @@ void make_fc_critval_1d(){
   gFC2sigma_ih   ->Draw("pl same");
   gFC2sigma_ih_p1->Draw("pl same");
   gFC2sigma_ih_m1->Draw("pl same");
-  gFC3sigma_ih   ->Draw("pl same");
-  gFC3sigma_ih_p1->Draw("pl same");
-  gFC3sigma_ih_m1->Draw("pl same");
+//  gFC3sigma_ih   ->Draw("pl same");
+//  gFC3sigma_ih_p1->Draw("pl same");
+//  gFC3sigma_ih_m1->Draw("pl same");
   
-  TLegend *lDeltaChisq_p1sigma = new TLegend(0.75,0.5,0.9,0.65);
+  TLegend *lDeltaChisq_p1sigma = new TLegend(0.75,0.2,1.0,0.35);
   lDeltaChisq_p1sigma->SetLineColor(0);
   lDeltaChisq_p1sigma->SetFillStyle(0);
   lDeltaChisq_p1sigma->AddEntry(gFC1sigma_nh,"1#sigma","l");  
   lDeltaChisq_p1sigma->AddEntry(gFC90CL_nh,"90%","l");
   lDeltaChisq_p1sigma->AddEntry(gFC2sigma_nh,"2#sigma","l");
-  lDeltaChisq_p1sigma->AddEntry(gFC3sigma_nh,"3#sigma","l");
-  lDeltaChisq_p1sigma->AddEntry(gFC90CL_nh,"NH","l");
+//  lDeltaChisq_p1sigma->AddEntry(gFC3sigma_nh,"3#sigma","l");
+  lDeltaChisq_p1sigma->AddEntry(gFC2sigma_nh,"NH","l");
 
-  lDeltaChisq_p1sigma->AddEntry(gFC90CL_ih,"IH","l");
+  lDeltaChisq_p1sigma->AddEntry(gFC2sigma_ih,"IH","l");
 
   lDeltaChisq_p1sigma->Draw();
-  cDeltaChisq_p1sigma->SaveAs("FC_critical_values_p1sigma.pdf");
+
+  TLatex* title = new TLatex(0.0, 1.01 * 5.0, "T2K Run1-8 Preliminary");
+  title->SetTextSize(0.05);
+  title->Draw();
+  TLatex* caveat = new TLatex(-2.5, 1.01 * 5.0, "Final systematics pending");
+  caveat->SetTextSize(0.025);
+  caveat->Draw();
+
+  cDeltaChisq_p1sigma->SaveAs("FC_critical_values.pdf");
+  cDeltaChisq_p1sigma->SaveAs("FC_critical_values.png");
+  cDeltaChisq_p1sigma->SaveAs("FC_critical_values.eps");
 
   TFile *fileout_fc = new TFile("FC_critvals.root","RECREATE");
 

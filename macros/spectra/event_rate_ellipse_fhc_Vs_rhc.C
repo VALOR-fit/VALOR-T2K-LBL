@@ -265,7 +265,7 @@ void event_rate_ellipse_fhc_Vs_rhc
     // 
     // sinsqth23 = -1sigma - Normal Hierarchy
     //
-    double ss23 = 0.493;
+    double ss23 = 0.404;//0.493;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
@@ -348,7 +348,7 @@ void event_rate_ellipse_fhc_Vs_rhc
     // 
     // sinsqth23 = +1sigma - Normal Hierarchy
     //
-    double ss23 = 0.561;
+    double ss23 = 0.624;//0.561;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
@@ -395,7 +395,7 @@ void event_rate_ellipse_fhc_Vs_rhc
     // 
     // sinsqth23 = -1sigma - Inverted Hierarchy
     //
-    double ss23 = 0.496;
+    double ss23 = 0.398;//0.496;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
@@ -477,7 +477,7 @@ void event_rate_ellipse_fhc_Vs_rhc
     // 
     // sinsqth23 = +1sigma - Inverted Hierarchy
     //
-    double ss23 = 0.559;
+    double ss23 = 0.618;//0.559;
     Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
     skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
     ph.SetCurrValue(conv::kPhypCPV,dcp);
@@ -591,11 +591,14 @@ void event_rate_ellipse_fhc_Vs_rhc
   
   TH2D *hInit = new TH2D("hInit","hInit",500,0,100,500,0,100);
   double xmax = 100.0;
-  hInit->GetXaxis()->SetRangeUser(25.,xmax);
-  hInit->GetYaxis()->SetRangeUser(4.,12);
-  double ttx = (xmax + 25.0) * 0.5;
-  double ctx = 25.0 + (xmax + 25.0) * 0.1;
-  double ty = 12.0;
+  double xmin = 20.0;
+  double ymin = 0.0;
+  double ymax = 13.0;
+  hInit->GetXaxis()->SetRangeUser(xmin,xmax);
+  hInit->GetYaxis()->SetRangeUser(ymin,ymax);
+  double ttx = (xmax + xmin) * 0.5;
+  double ctx = xmin + (xmax + xmin) * 0.1;
+  double ty = ymax;
   hInit->GetXaxis()->SetTitle("Number of #nu_{e} candidates");
   hInit->GetYaxis()->SetTitle("Number of #bar{#nu}_{e} candidates");
 
@@ -769,11 +772,12 @@ void event_rate_ellipse_fhc_Vs_rhc
   double angle = (lMassHierarchy->GetY2() - lMassHierarchy->GetY1()) / (lMassHierarchy->GetX2() - lMassHierarchy->GetX1());
   angle = TMath::ATan(angle) / TMath::Pi() * 180.;  
 
-  TLatex *latOct1 = new TLatex(xtag_m1, ytag_m1,"sin^{2} #theta_{23,-1#sigma}");
+//  TLatex *latOct1 = new TLatex(xtag_m1, ytag_m1,"sin^{2} #theta_{23,-1#sigma}=0.493 (0.496)");
+  TLatex *latOct1 = new TLatex(xtag_m1, ytag_m1,"sin^{2} #theta_{23,-1#sigma}=0.404 (0.398)");
   latOct1->SetLineColor(kBlack);
   latOct1->SetTextSize(0.035);
   latOct1->Draw("same");
-  TLatex *latOct2 = new TLatex(xtag_p1, ytag_p1,"sin^{2} #theta_{23,+1#sigma}");
+  TLatex *latOct2 = new TLatex(xtag_p1, ytag_p1,"sin^{2} #theta_{23,+1#sigma}=0.624 (0.618)");
   latOct2->SetLineColor(kBlack);
   latOct2->SetTextSize(0.035);
   latOct2->Draw("same");
@@ -837,6 +841,112 @@ void event_rate_ellipse_fhc_Vs_rhc
   caveat->Draw();
 
   cEllipse_bestfit->SaveAs(Form("%s_bestfit.pdf", tag));
+
+  TCanvas *cEllipse_all = new TCanvas("cEllipse_all","cEllipse_all");
+  hInit->Draw();
+
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5->SetLineColor(kBlack);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5->SetLineStyle(1);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5->SetLineColor(kBlack);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5->SetLineStyle(2);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi->SetMarkerColor(kBlack);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_mpi2->SetMarkerColor(kBlack);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_0->SetMarkerColor(kBlack);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi2->SetMarkerColor(kBlack);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_ppi->SetMarkerColor(kBlack);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_mpi2->SetMarkerColor(kBlack);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_0->SetMarkerColor(kBlack);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_ppi2->SetMarkerColor(kBlack);
+
+
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5->Draw("l");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5->Draw("l");
+
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi->Draw("p");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_mpi2->Draw("p"); 
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_0->Draw("p");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi2->Draw("p");
+
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_ppi->Draw("p");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_mpi2->Draw("p"); 
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_0->Draw("p");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p5_dcp_ppi2->Draw("p");
+
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45->SetLineColor(kRed);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45->SetLineStyle(1);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45->SetLineColor(kRed);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45->SetLineStyle(2);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55->SetLineColor(kBlue);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55->SetLineStyle(1);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55->SetLineColor(kBlue);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55->SetLineStyle(2);
+
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_ppi->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_mpi2->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_0->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_ppi2->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_ppi->SetMarkerColor(kBlue);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_mpi2->SetMarkerColor(kBlue);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_0->SetMarkerColor(kBlue);
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_ppi2->SetMarkerColor(kBlue);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_ppi->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_mpi2->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_0->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_ppi2->SetMarkerColor(kRed);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_ppi->SetMarkerColor(kBlue);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_mpi2->SetMarkerColor(kBlue);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_0->SetMarkerColor(kBlue);
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_ppi2->SetMarkerColor(kBlue);
+
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45->Draw("l");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55->Draw("l");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45->Draw("l");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55->Draw("l");
+
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_ppi->Draw("p");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_mpi2->Draw("p"); 
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_0->Draw("p");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p45_dcp_ppi2->Draw("p");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_ppi->Draw("p");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_mpi2->Draw("p"); 
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_0->Draw("p");
+  gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_ppi2->Draw("p");
+
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_ppi->Draw("p");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_mpi2->Draw("p"); 
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_0->Draw("p");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p45_dcp_ppi2->Draw("p");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_ppi->Draw("p");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_mpi2->Draw("p"); 
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_0->Draw("p");
+  gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_ppi2->Draw("p");
+
+  gN_fhcVsrhc_elike_data->Draw("PE");
+
+  TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.59);
+  ldcp_all->SetFillColor(0);
+  ldcp_all->SetLineColor(0);
+  ldcp_all->SetTextFont(132);
+  ldcp_all->SetTextSize(0.035);
+//  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5,"sin^{2} #theta_{23,bf} = 0.530 (0.530)","l");
+//  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p45,"sin^{2} #theta_{23,-1#sigma} = 0.493 (0.496)","l");
+//  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p55,"sin^{2} #theta_{23,+1#sigma} = 0.561 (0.559)","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5,"sin^{2} #theta_{23,T2K} = 0.530 (0.530)","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p45,"sin^{2} #theta_{23,NoVA_{1}} = 0.404 (0.398)","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p55,"sin^{2} #theta_{23,NoVA_{2}} = 0.624 (0.618)","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5,"Normal Hierarchy","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_ih_sinsqth23_0p5,"Inverted Hierarchy","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi,"#delta_{CP} = #pi","p");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi2,"#delta_{CP} = +#pi/2","p");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_0,"#delta_{CP} = 0","p");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_mpi2,"#delta_{CP} = -#pi/2","p");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_data,"Data","pe");
+  ldcp_all->Draw();
+
+  title->Draw();
+  caveat->Draw();
+
+  cEllipse_all->SaveAs(Form("%s_nova.pdf", tag));
 
   return;
 }
