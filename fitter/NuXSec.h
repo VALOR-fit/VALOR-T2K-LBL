@@ -147,7 +147,8 @@ public:
   bool ApplySyst            (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const; 
   bool ApplySystToSKMode    (conv::PhysParamId_t p, conv::SuperkSample_t s, conv::SuperkMode_t m) const;
   bool ApplySystToEnergyBin (conv::PhysParamId_t p, double Ereco, double Etrue) const;
-  
+  void PrintXSecSystApplication();
+ 
 private:
 
   // Check that XSecSystConv.h is setup correctly
@@ -159,6 +160,7 @@ private:
 
   void Init    (void);
   void CleanUp (void);
+
 
   // Reweight to best-fit value of input BANFF cross-section relared param. Weight is calculated for a single (input) parameter.
   // The calculated weight can not be applied directly to the MC template bins due to binning differences.

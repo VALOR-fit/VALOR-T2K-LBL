@@ -60,7 +60,9 @@ void plot_contours_dcp_many
  const char *fit_file_nh = "/home/phrdqd/VaLOR/analysis/tn/final/fit_oa2017_data_normal_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
  const char *fit_file_ih = "/home/phrdqd/VaLOR/analysis/tn/final/fit_oa2017_data_inverted_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
  const bool paper_style   = true,
- const bool two_sided = false
+ const bool two_sided = false,
+ const char *hybrid_file_nh = 0,
+ const char *hybrid_file_ih = 0
  )
 {
   str_preliminary = "T2K Run1-8 Preliminary";
@@ -89,6 +91,52 @@ void plot_contours_dcp_many
   TH1D *hchisq1D[Nfiles][Nmh];
   TH1D *hdeltachisq1D[Nfiles][Nmh];
   TH1D *hdeltachisq1D_GlobMin[Nfiles][Nmh];
+
+  // Hybrids
+  TH1D* hdeltachisq_hybrid_nh = 0;
+  TH1D* hdeltachisq_hybrid_ih = 0;
+  TH1D* hchisq_hybrid_nh = 0;
+  TH1D* hchisq_hybrid_ih = 0;
+  if(hybrid_file_nh)
+  {
+     TFile* hybrid_file = new TFile(hybrid_file_nh);
+     TTree* hybrid_tree = (TTree*)hybrid_file->Get("fitnt");
+     hchisq_hybrid_nh = new TH1D("hchisq_hybrid_nh", "hchisq_hybrid_nh", 1, 0, 1);
+     hybrid_tree->SetBranchAddress("hchisq1D", &hchisq_hybrid_nh);
+     hybrid_tree->GetEntry(0);
+     hchisq_hybrid_nh->SetDirectory(0);
+     hybrid_tree->SetDirectory(0);
+     delete hybrid_tree;
+     hybrid_file->Close();
+  }
+  if(hybrid_file_ih)
+  {
+     TFile* hybrid_file = new TFile(hybrid_file_ih);
+     TTree* hybrid_tree = (TTree*)hybrid_file->Get("fitnt");
+     hchisq_hybrid_ih = new TH1D("hchisq_hybrid_ih", "hchisq_hybrid_ih", 1, 0, 1);
+     hybrid_tree->SetBranchAddress("hchisq1D", &hchisq_hybrid_ih);
+     hybrid_tree->GetEntry(0);
+     hchisq_hybrid_ih->SetDirectory(0);
+     hybrid_tree->SetDirectory(0);
+     delete hybrid_tree;
+     hybrid_file->Close();
+  }
+  if(hchisq_hybrid_nh && hchisq_hybrid_ih)
+  {
+     hdeltachisq_hybrid_nh = (TH1D*)hchisq_hybrid_nh->Clone("hdeltachisq_hybrid_nh");
+     hdeltachisq_hybrid_nh->Reset();
+     hdeltachisq_hybrid_ih = (TH1D*)hchisq_hybrid_ih->Clone("hdeltachisq_hybrid_ih");
+     hdeltachisq_hybrid_ih->Reset();
+     double chisq_min_nh = hchisq_hybrid_nh->GetBinContent(hchisq_hybrid_nh->GetMinimumBin());
+     double chisq_min_ih = hchisq_hybrid_ih->GetBinContent(hchisq_hybrid_ih->GetMinimumBin());
+     double chisq_min = (chisq_min_nh < chisq_min_ih) ? chisq_min_nh : chisq_min_ih;
+     for(int i = 0; i < hchisq_hybrid_nh->GetNbinsX(); ++i)
+     {
+        hdeltachisq_hybrid_nh->SetBinContent(i + 1, hchisq_hybrid_nh->GetBinContent(i + 1) - chisq_min);
+        hdeltachisq_hybrid_ih->SetBinContent(i + 1, hchisq_hybrid_ih->GetBinContent(i + 1) - chisq_min);
+     }
+  }
+  // End hybrids
   
   double bestfit_x = -999.;
   double bestfit_mh = -999.;
@@ -1341,6 +1389,12 @@ void plot_contours_dcp_many
     TH1D *hdeltachisq1D_ih_m2sigma = hchisq1D_toy_ih->Clone("hdeltachisq1D_ih_m2sigma");
     hdeltachisq1D_ih_m2sigma->Reset();
 
+    // Median histograms
+    TH1D *hdeltachisq1D_nh_median = hchisq1D_toy_nh->Clone("hdeltachisq1D_nh_median");
+    hdeltachisq1D_nh_median->Reset();
+
+    TH1D *hdeltachisq1D_ih_median = hchisq1D_toy_ih->Clone("hdeltachisq1D_ih_median");
+    hdeltachisq1D_ih_median->Reset();
 
     // Build p-value histograms
     TH1D *hPvalueChisq_nh = hchisq1D_toy_nh->Clone("hPvalueChisq_nh");
@@ -1391,8 +1445,9 @@ void plot_contours_dcp_many
       }
       else
       {  // 2-sided critical values
-         std::pair<double, double> nh_1sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_nh[ibin], CLfrac_1sigma);
-         std::pair<double, double> nh_2sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_nh[ibin], CLfrac_2sigma);
+         double median = 0.0;
+         std::pair<double, double> nh_1sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_nh[ibin], CLfrac_1sigma, median);
+         std::pair<double, double> nh_2sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_nh[ibin], CLfrac_2sigma, median);
          if(nh_2sigma_new.second > maxy_nh)
          {
             maxy_nh = TMath::Ceil(nh_2sigma_new.second);
@@ -1402,9 +1457,10 @@ void plot_contours_dcp_many
          hdeltachisq1D_nh_p2sigma->SetBinContent(ibin + 1, nh_2sigma_new.second);
          hdeltachisq1D_nh_m1sigma->SetBinContent(ibin + 1, nh_1sigma_new.first);
          hdeltachisq1D_nh_m2sigma->SetBinContent(ibin + 1, nh_2sigma_new.first);
+         hdeltachisq1D_nh_median->SetBinContent(ibin + 1, median);
 
-         std::pair<double, double> ih_1sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_ih[ibin], CLfrac_1sigma);
-         std::pair<double, double> ih_2sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_ih[ibin], CLfrac_2sigma);
+         std::pair<double, double> ih_1sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_ih[ibin], CLfrac_1sigma, median);
+         std::pair<double, double> ih_2sigma_new = CalcDLcrit_binned(vec_deltachisq_bin_ih[ibin], CLfrac_2sigma, median);
          if(ih_2sigma_new.second > maxy_ih)
          {
             maxy_ih = TMath::Ceil(ih_2sigma_new.second);
@@ -1414,6 +1470,7 @@ void plot_contours_dcp_many
          hdeltachisq1D_ih_p2sigma->SetBinContent(ibin + 1, ih_2sigma_new.second);
          hdeltachisq1D_ih_m1sigma->SetBinContent(ibin + 1, ih_1sigma_new.first);
          hdeltachisq1D_ih_m2sigma->SetBinContent(ibin + 1, ih_2sigma_new.first);
+         hdeltachisq1D_ih_median->SetBinContent(ibin + 1, median);
       }
 
       // P-value of data wrt sensitivity on 1 true point of dcp
@@ -1525,6 +1582,18 @@ void plot_contours_dcp_many
        hdeltachisq1D_nh_m2sigma->SetLineColor(kYellow);
        hdeltachisq1D_nh_m2sigma->SetFillColor(10);
        hdeltachisq1D_nh_m2sigma->Draw("c same");
+
+       hdeltachisq1D_nh_median->SetLineColor(kBlack);
+       hdeltachisq1D_nh_median->SetLineStyle(2);
+       hdeltachisq1D_nh_median->Draw("c same");
+
+       if(hchisq_hybrid_nh)
+       {
+          cout << "Here" << endl;
+          hdeltachisq_hybrid_nh->SetLineColor(kBlue);
+          hdeltachisq_hybrid_nh->SetLineStyle(1);
+          hdeltachisq_hybrid_nh->Draw("c same");
+       }
     }
     
     hdeltachisq1D_nh_mean->SetLineWidth(2);
@@ -1571,6 +1640,8 @@ void plot_contours_dcp_many
       lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"2#sigma CL","l");
     }
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
+    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_median,"Median toy","l");
+    lBrazilianPlot_nh->AddEntry(hdeltachisq_hybrid_nh,"Hybrid","l");
     lBrazilianPlot_nh->DrawClone();
     
     TLatex *latNormal = new TLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy_ih*0.9,"Normal Ordering");
@@ -1620,6 +1691,17 @@ void plot_contours_dcp_many
        hdeltachisq1D_ih_m2sigma->SetLineColor(kYellow);
        hdeltachisq1D_ih_m2sigma->SetFillColor(10);
        hdeltachisq1D_ih_m2sigma->Draw("c same");
+
+       hdeltachisq1D_ih_median->SetLineColor(kBlack);
+       hdeltachisq1D_ih_median->SetLineStyle(2);
+       hdeltachisq1D_ih_median->Draw("c same");
+
+       if(hchisq_hybrid_ih)
+       {
+          hdeltachisq_hybrid_ih->SetLineColor(kBlue);
+          hdeltachisq_hybrid_ih->SetLineStyle(1);
+          hdeltachisq_hybrid_ih->Draw("c same");
+       }
     }
 
     hdeltachisq1D_ih_mean->SetLineWidth(2);
@@ -1663,6 +1745,8 @@ void plot_contours_dcp_many
     if(draw_2sigmaCL)
       lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"2#sigma CL","l");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
+    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_median,"Median toy","l");
+    lBrazilianPlot_ih->AddEntry(hdeltachisq_hybrid_ih,"Hybrid","l");
     lBrazilianPlot_ih->DrawClone();
     
     TLatex *latInverted = new TLatex(hdeltachisq1D_ih_mean->GetXaxis()->GetBinLowEdge(110),20.*0.9,"Inverted Ordering");
@@ -2423,7 +2507,7 @@ double CalcDLcrit_posterior(vector<double> dchisq, vector<double> weight, double
   return critval;
 }
 
-std::pair<double, double> CalcDLcrit_binned(vector<double> dchisq, double conflev)
+std::pair<double, double> CalcDLcrit_binned(vector<double> dchisq, double conflev, double& median)
 {
   int nelem = dchisq.size();
   double cut_off = conflev * nelem;
@@ -2464,6 +2548,17 @@ std::pair<double, double> CalcDLcrit_binned(vector<double> dchisq, double confle
      {
         break;
      }
+  }
+
+  std::sort(dchisq.begin(), dchisq.end());
+  int idx = nelem / 2;
+  if((nelem % 2) == 0)
+  {
+     median = (dchisq[idx - 1] + dchisq[idx]) / 2.0;
+  }
+  else
+  {
+     median = dchisq[idx];
   }
 
   return std::make_pair(min_dchisq, max_dchisq);

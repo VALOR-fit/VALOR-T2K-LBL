@@ -999,9 +999,57 @@ bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
     LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (not splines)!";
 #endif
+
     
     return true;
 }
+
+void NuXSec::PrintXSecSystApplication()
+{
+    cout << "Systematics:" << std::endl;
+    int nXSecSyst = 0;
+    for(int is = 0; is < kns; ++is)
+    {
+       SuperkSample_t s = kSKSamples[is];
+       if(s == kSKsUndefined)
+       {
+          continue;
+       }
+       cout << util::AsString(s) << std::endl;
+       bool is_rhc = util::IsRHCSample(s);
+       if(is_rhc)
+          nXSecSyst = kNumOfRHCXSecSyst;
+       else
+          nXSecSyst = kNumOfXSecSyst;
+       for(int im = 0; im < knm; ++im)
+       {
+          SuperkMode_t m = kSKReactionModes[is][im];
+          if(m == kSKmUndefined)
+          {
+             continue;
+          }
+          cout << "   " << util::AsString(m) << std::endl;
+          for(int ip = 0; ip < nXSecSyst; ++ip)
+          {
+             PhysParamId_t p = kPhypUndefined;
+             if(!is_rhc)
+             {
+                p = kListOfXSecSyst[ip];
+             }
+             else
+             {
+                p = kListOfRHCXSecSyst[ip];
+             }
+             if(p == kPhypUndefined)
+             {
+                continue;
+             }
+             cout << "      " << util::AsString(p) << ": " << this->ApplySystToSKMode(p, s, m) << std::endl;
+          }
+       }
+    }
+}
+
 //Todo: change these methods so that they return the correct BANFF fit
 //________________________________________________________________________________________
 void NuXSec::TellMeAboutTheBANFFfit(BANFF * banff)

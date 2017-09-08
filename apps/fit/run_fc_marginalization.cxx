@@ -122,6 +122,9 @@ int main(int argc, char ** argv)
   MyRunOpt *runopt = new MyRunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
   
   TString opt(runopt->Fit_param_list());
+  TH2D* penalty_hist = runopt->ToyPenaltyTerm2DHist();
+  // Normalize penalty histogram
+  penalty_hist->Scale(1.0 / penalty_hist->Integral());
   
   // Analysis configuration
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt->ConfigFile().c_str() ));
@@ -231,6 +234,9 @@ int main(int argc, char ** argv)
   int niterations_ih=-999;
   int fitstatus_nh=-999;
   int fitstatus_ih=-999;
+
+  // All parameters
+//  double* all_parameters = new double[fparm->Size()];
   
   // true variables
   double truepar0=-999;
@@ -461,6 +467,13 @@ int main(int argc, char ** argv)
   fitnt->Branch("hErecoExp_RHC1Re",   "TH2D",&hErecoExp_RHC1Re,   32000,0);
   fitnt->Branch("hErecoExp_MultiRe",   "TH2D",&hErecoExp_MultiRe,   32000,0);
 #endif
+
+/*  for(int ip = 0; ip < fparm->Size(); ++ip)
+  {
+     PhysParamId_t p = fparm->WhichParam(ip);
+     const char* name = util::AsString(p).c_str();
+     fitnt->Branch(Form("param_%d", p), &all_parameters[ip], Form("param_%d/D", p));
+  }*/
   
   valor::conv::PhysParamId_t x_penalty = kPhypUndefined;
   valor::conv::PhysParamId_t y_penalty = kPhypUndefined;
@@ -524,19 +537,25 @@ int main(int argc, char ** argv)
           
           // Set the mass hierarchy (to avoid conflicts with fitmarginalization mass hierarchy)
           util::SetMassHierarchy(skexp);
+          double val_x = 0.0;
+          double val_y = 0.0;
+          penalty_hist->GetRandom2(val_x, val_y);
+          util::OscParams::Instance()->Override(x_penalty, val_x);
+          util::OscParams::Instance()->Override(y_penalty, val_y);
           
           // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
           util::OscParams::Instance()->UpdatePhysHypothesis(ph);
           set_init = false;
           util::OscParams::Instance()->UpdateFitParamList(fparm,set_init);
           
-          double val_x = fparm->CurrValue(x_penalty);
+/*          double val_x = fparm->CurrValue(x_penalty);
           double val_y = fparm->CurrValue(y_penalty);
           double random_number = Rnd::Instance()->RndOther().Uniform(0,1);
           int xbin = runopt->ToyPenaltyTerm2DHist()->GetXaxis()->FindBin(val_x);
           int ybin = runopt->ToyPenaltyTerm2DHist()->GetYaxis()->FindBin(val_y);
           
-          if(runopt->ToyPenaltyTerm2DHist()->GetBinContent(xbin,ybin) > random_number) passed = true;
+          if(runopt->ToyPenaltyTerm2DHist()->GetBinContent(xbin,ybin) > random_number) passed = true;*/
+          passed = true;
         }
       }
       
@@ -582,7 +601,7 @@ int main(int argc, char ** argv)
          SuperkSample_t s = kSKSamples[is];
 //         if(util::IsMultiReSample(s) // Keep CC1pi MC)
 //         if(util::Is1ReSample(s) && util::IsRHCSample(s))   // Keep RHC1Re MC
-         if(util::Is1RMuSample(s) && util::IsRHCSample(s))   // Keep FHC1Rmu MC
+         if(util::Is1RMuSample(s) && util::IsFHCSample(s))   // Keep FHC1Rmu MC
          {
             replace_samples[is] = false;
          }
@@ -610,7 +629,8 @@ int main(int argc, char ** argv)
       }
     }
     
-    
+
+
     /////////////////// SET MARGINALIZATION FIT ////////////////
     
     FitMarginalization *fitmarg_nh = new FitMarginalization();
@@ -891,7 +911,15 @@ int main(int argc, char ** argv)
       cout << " - bestfitFullChisq1 = " << bestfitFullChisq1_ih << endl;
       cout << " - chisqminFullChisq = " << chisqminFullChisq_ih << endl;
       cout << endl;
-      
+
+/*      for(int ip = 0; ip < fparm->Size(); ++ip)
+      {
+         PhysParamId_t p = fparm->WhichParam(ip);
+         all_parameters[ip] = fparm->CurrValue(p);
+      }
+
+      cout << "Param: " << util::AsString(fparm->WhichParam(0)) << " = " << all_parameters[0] << endl;*/
+
       cout << "Build deltaChisqMarg distribution" << endl;
       fitmarg_nh->BuildDeltaChisqMarg();
       fitmarg_ih->BuildDeltaChisqMarg();
