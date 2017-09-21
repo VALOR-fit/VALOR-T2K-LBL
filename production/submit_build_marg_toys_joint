@@ -131,18 +131,24 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 40000                        unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long";
-      $npt_freepar0           = 97                       unless defined $npt_freepar0;
+#      $wqueue                 = "long";
+#      $npt_freepar0           = 97                       unless defined $npt_freepar0;
+      $wqueue                 = "xlong -W 24:00 -M 16384";
+      $npt_freepar0           = 201
    }
    else
    {
       $nexpts_marg            = 80000;#40000                        unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long -M 8192";#"long";
-      $npt_freepar0           = 97                       unless defined $npt_freepar0;
+#      $wqueue                 = "long -M 8192";#"long";
+      $wqueue                 = "xlong -W 24:00 -M 16384";
+#      $npt_freepar0           = 97                       unless defined $npt_freepar0;
+      $npt_freepar0           = 201
    }
-   $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
-   $maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+#   $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
+#   $maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar0            = -3.18686567    unless defined $minfreepar0;
+   $maxfreepar0            = +3.18686567    unless defined $maxfreepar0;
    $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
    $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
