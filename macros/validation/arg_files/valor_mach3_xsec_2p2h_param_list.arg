@@ -1,0 +1,6 @@
+# List of ('VALOR' , 'MaCh3'), parameters 
+
+  (  'f_banff2p2h_fhc_rhc'           , 'xsec_par_3'  ) ,      #3    | 2p2h_norm_nu                  
+  (  'f_banff2p2hbar_fhc_rhc'        , 'xsec_par_4'  ) ,      #4    | 2p2h_norm_nubar               
+  (  'f_banffnorm_2p2hCtoO_fhc_rhc'  , 'xsec_par_5'  ) ,      #5    | 2p2h_norm_CtoO
+  (  'f_banffshape_2p2hnu_fhc_rhc'   , 'xsec_par_7'  ) ,      #7    | 2p2h_shape_O                  
