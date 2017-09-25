@@ -152,25 +152,7 @@ namespace valor {
     
     void FillTemplateArrays(bool with_tuning_weights = false);
     bool DoTemplateArraysHaveNIWGTune(void) const;
-    
-    // NEW 2D TEMPLATES
-    
-    double CalcThetaDegrees(float dir[10][7][3], conv::SuperkSample_t s );
-    
-    double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
-    double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep);
-    double CalcEhad(double Enu,double Elep);
-    double CalcInelasticity(double Enu,double Elep);
-    double CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
-    double CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
-    double CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
-    double ErecoFunc_Nu(double Mom,double costh,double mass_lep);
-    double ErecoFunc_NuBar(double Mom,double costh,double mass_lep);
-    //
-    
-    double SmearMomentum(double fit_momentum,Option_t * opt = "") const;
-    
-    
+        
   private:
     
     // Init and clean-up
@@ -433,7 +415,23 @@ namespace valor {
     
     ClassDef(SuperkMC, 8);
   };
-  
+    
+  namespace util {
+    double CalcThetaDegrees(float dir[10][7][3], conv::SuperkSample_t s );
+    double CalcCosTheta(float dir[10][7][3], conv::SuperkSample_t s );
+    double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
+    double CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep);
+    double CalcEhad(double Enu,double Elep);
+    double CalcInelasticity(double Enu,double Elep);
+    double CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+    double CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+    double CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn);
+    double ErecoFunc_Nu(double Mom,double costh,double mass_lep);
+    double ErecoFunc_NuBar(double Mom,double costh,double mass_lep);
+    double ErecoFuncCCOnePi_Nu(double Mom,double costh,double mass_lep);
+    double SmearMomentum(double fit_momentum,Option_t * opt = "");
+  } //util
+
 } //valor
 
 #endif

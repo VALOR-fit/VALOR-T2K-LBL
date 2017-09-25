@@ -1535,8 +1535,9 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         fake_data_weight = util::UtlMakeFakeData::Instance()->GetWeight();
         ereco_fill = util::UtlMakeFakeData::Instance()->GetEreco();
 #ifdef FakeDataWeightDebug
-        LOG("SuperkMC",pDEBUG) << "SKMC/FillTemplateHistogram >> Fake data reweight: " << fake_data_weight << " Ereco: " << ereco_fill << " Sample: " << util::AsStringCompact(s)
-        << " mode: " << util::AsStringCompact(m);
+        LOG("SuperkMC",pDEBUG) << "Fake data reweight: " << util::UtlMakeFakeData::Instance()->GetReweightStyle() <<  " " << fake_data_weight
+                               << " Ereco: " << ereco_fill << " Sample: " << util::AsStringCompact(s)
+                               << " mode: " << util::AsStringCompact(m);
 #endif
       }
       
@@ -1936,10 +1937,10 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         double pmax_lepSmeared = ptrue_lep;
         
         if( (s == kSKsFCFV1RingELike) || (s == kSKsRHCFCFV1RingELike) ){ // e-like ring
-            pmax_lepSmeared = this->SmearMomentum(ptrue_lep,"electron");
+            pmax_lepSmeared = SmearMomentum(ptrue_lep,"electron");
         }
         else if( (s == kSKsFCFV1RingMuLike) || (s == kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
-            pmax_lepSmeared = this->SmearMomentum(ptrue_lep,"muon");
+            pmax_lepSmeared = SmearMomentum(ptrue_lep,"muon");
         }
 
 
@@ -1973,10 +1974,10 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         double ereco_nuSmeared = 0;
         
         if(util::IsRHCSample(s)){
-            ereco_nuSmeared = this->ErecoFunc_NuBar(pmax_lepSmeared,costhetaSmeared,mass_lep);
+            ereco_nuSmeared = ErecoFunc_NuBar(pmax_lepSmeared,costhetaSmeared,mass_lep);
         }
         else{
-            ereco_nuSmeared = this->ErecoFunc_Nu(pmax_lepSmeared,costhetaSmeared,mass_lep);
+            ereco_nuSmeared = ErecoFunc_Nu(pmax_lepSmeared,costhetaSmeared,mass_lep);
         }
         
         if(ereco_fill < 0) ereco_fill = 0;
@@ -7380,150 +7381,6 @@ bool SuperkMC::DoTemplateArraysHaveNIWGTune(void) const
 
 
 
-// NEW 2D TEMPLATES
-double SuperkMC::CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep)
-{
-    // Enu      --> neutrino reco energy
-    // Elep     --> lepton reco energy
-    // Plep     --> lepton reco momentum
-    // costheta --> angle between neutrino and lepton
-    
-    // Q2 in the laboratory reference system (Giunti section 5.3.1)
-    double Q2 = 2*Enu*(Elep-Plep*costheta) - Mlep*Mlep;
-    
-    return Q2;
-}
-//____________________________________________________________________________________
-double SuperkMC::CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep)
-{
-    // Qd^2 (variation of Q^2)
-    
-    // Enu      --> neutrino reco energy
-    // Elep     --> lepton reco energy
-    // Plep     --> lepton reco momentum
-    // costheta --> angle between neutrino and lepton
-    
-    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
-    
-    double Qd2 = TMath::Power(1+Q2/0.7, -1);
-    
-    return Qd2;
-}
-//____________________________________________________________________________________
-double SuperkMC::CalcEhad(double Enu,double Elep)
-{
-    // Energy of the hadronic recoil system
-    
-    // Enu      --> neutrino reco energy
-    // Elep     --> lepton reco energy
-    
-    double nu = Enu - Elep;
-    
-    return nu;
-}
-//____________________________________________________________________________________
-double SuperkMC::CalcInelasticity(double Enu,double Elep)
-{
-    // Inelasticity = (Enu - Elep) / Enu
-    
-    // Enu      --> neutrino reco energy
-    // Elep     --> lepton reco energy
-    
-    double Inel = (Enu - Elep) / Enu;
-    
-    return Inel;
-}
-//____________________________________________________________________________________
-double SuperkMC::CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
-{
-    // x = Q2 / (2*Mn*Enu*Inelasticity)
-    
-    // Enu      --> neutrino reco energy
-    // Elep     --> lepton reco energy
-    // Plep     --> lepton reco momentum
-    // costheta --> angle between neutrino and lepton
-    // Mn       --> nucleon mass
-    
-    double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
-    double Inel = this->CalcInelasticity(Enu,Elep);
-    double x = Q2 / (2*Mn*Enu*Inel);
-    
-    return x;
-}
-//____________________________________________________________________________________
-double SuperkMC::CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
-{
-  // x = Q2 / (2*Mn*Enu*Inelasticity)
-    
-  // Enu      --> neutrino reco energy
-  // Elep     --> lepton reco energy
-  // Plep     --> lepton reco momentum
-  // costheta --> angle between neutrino and lepton
-  // Mn       --> nucleon mass
-    
-  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
-  double nu = this->CalcEhad(Enu,Elep);
-  
-  double W = Mn*Mn + 2*Mn*nu - Q2;
-  
-  return W;
-}
-//____________________________________________________________________________________
-double SuperkMC::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn){
-  // Term of CCQE dsigma/dQ^2 which sign is different for nu/nubar (arXiv:1305.7513v1, eq. 57-61)
-
-  // Enu      --> neutrino reco energy 
-  // Elep     --> lepton reco energy 
-  // Plep     --> lepton reco momentum
-  // costheta --> angle between neutrino and lepton 
-  // Mn       --> nucleon mass
-
-  double MA = 1.2257; // Axial Mass, BANFF post-fit (GeV) 
-  double gA = 1.2694; // FA(Q2=0) 
-  
-  double Q2 = this->CalcQ2(Enu,Elep,Plep,costheta,Mlep);
-
-  double F1 = 0.5;
-  double F2 = 0.5;
-  double FA = gA / TMath::Power( 1 + Q2/(MA*MA), 2. );
-  double B = Q2/(Mn*Mn)*FA*(F1+F2);
-
-  double XSecTerm = (4*Mn*Enu - Q2 - Mlep*Mlep) / (Mn*Mn) * B;
- 
-  return XSecTerm;
-}
-//____________________________________________________________________________________
-double SuperkMC::CalcThetaDegrees(float dir[][7][3], conv::SuperkSample_t s ){
-
-  //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-  //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
-  // LOG("SuperkMC", pERROR) << "Filling theta for sample: " << util::SampleAsString(s)
-  //                         << " Is1RESample?: "  << util::Is1ReSample(s)
-  //                         << " Is1RMuSample?: " << util::Is1RMuSample(s);
-  
-  double costheta = -999;
-  if (util::Is1ReSample(s) || util::IsMultiReSample(s)) {
-    costheta = kBeamDir[0] * dir[0][1][0] + kBeamDir[1] * dir[0][1][1] + kBeamDir[2] * dir[0][1][2];
-  }
-  if (util::Is1RMuSample(s)) {
-    costheta = kBeamDir[0] * dir[0][2][0] + kBeamDir[1] * dir[0][2][1] + kBeamDir[2] * dir[0][2][2];    
-  }
-  if( costheta<-1.00001 || costheta>+1.00001 ){
-    LOG("SuperkMC",pERROR) << "SuperkMC::FillTemplateHistogram" ;
-    LOG("SuperkMC",pERROR) << "costheta = " << costheta << " --> outside allowed range" ;
-    util::Die(1); return 0;
-    exit(1);
-  }    
-  double LepTheta        = TMath::ACos(costheta); // radiant    
-  double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
-  if(LepTheta<0.){
-    LOG("SuperkMC",pERROR) << "Theta lepton is negative: " << LepThetaDegrees << " degrees" ;
-    exit(1);
-  }
-  return LepThetaDegrees;
-}
-
-//____________________________________________________________________________________
 
 
 
@@ -7668,10 +7525,176 @@ double SuperkMC::GetTemplateIntegral(TH2D *h2d){
     
     return integral;
 }
-//____________________________________________________________________________________
 
-double SuperkMC::ErecoFunc_Nu(double Mom,double costh,double mass_lep){
+//____________________________________________________________________________________
+double util::CalcThetaDegrees(float dir[][7][3], conv::SuperkSample_t s )
+{
+  //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+  //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
+  // LOG("util", pERROR) << "Filling theta for sample: " << util::SampleAsString(s)
+  //                         << " Is1RESample?: "  << util::Is1ReSample(s)
+  //                         << " Is1RMuSample?: " << util::Is1RMuSample(s);
+  
+  double costheta = -999;
+  if (util::Is1ReSample(s) || util::IsMultiReSample(s)) {
+    costheta = kBeamDir[0] * dir[0][1][0] + kBeamDir[1] * dir[0][1][1] + kBeamDir[2] * dir[0][1][2];
+  }
+  if (util::Is1RMuSample(s)) {
+    costheta = kBeamDir[0] * dir[0][2][0] + kBeamDir[1] * dir[0][2][1] + kBeamDir[2] * dir[0][2][2];    
+  }
+  if( costheta<-1.00001 || costheta>+1.00001 ){
+    LOG("util",pERROR) << "util::FillTemplateHistogram" ;
+    LOG("util",pERROR) << "costheta = " << costheta << " --> outside allowed range" ;
+    util::Die(1); return 0;
+    exit(1);
+  }    
+  double LepTheta        = TMath::ACos(costheta); // radiant    
+  double LepThetaDegrees = LepTheta / TMath::Pi() * 180.; // degrees   
+  if(LepTheta<0.){
+    LOG("util",pERROR) << "Theta lepton is negative: " << LepThetaDegrees << " degrees" ;
+    exit(1);
+  }
+  return LepThetaDegrees;
+}
+//____________________________________________________________________________________
+double util::CalcCosTheta(float dir[][7][3], conv::SuperkSample_t s )
+{
+  //double dir_nu[3] = {0.669764, -0.742179, 0.024223}; // T2K beam direction
+  //double costheta = dir_nu[0] * dir[0][0] + dir_nu[1] * dir[0][1] + dir_nu[2] * dir[0][2];
+  // LOG("util", pERROR) << "Filling theta for sample: " << util::SampleAsString(s)
+  //                         << " Is1RESample?: "  << util::Is1ReSample(s)
+  //                         << " Is1RMuSample?: " << util::Is1RMuSample(s);
+  
+  double costheta = -999;
+  if (util::Is1ReSample(s) || util::IsMultiReSample(s)) {
+    costheta = kBeamDir[0] * dir[0][1][0] + kBeamDir[1] * dir[0][1][1] + kBeamDir[2] * dir[0][1][2];
+  }
+  if (util::Is1RMuSample(s)) {
+    costheta = kBeamDir[0] * dir[0][2][0] + kBeamDir[1] * dir[0][2][1] + kBeamDir[2] * dir[0][2][2];    
+  }
+  if( costheta<-1.00001 || costheta>+1.00001 ){
+    LOG("util",pERROR) << "util::FillTemplateHistogram" ;
+    LOG("util",pERROR) << "costheta = " << costheta << " --> outside allowed range" ;
+    util::Die(1); return 0;
+    exit(1);
+  }    
+  return costheta;
+}
+//____________________________________________________________________________________
+double util::CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep)
+{
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    // Plep     --> lepton reco momentum
+    // costheta --> angle between neutrino and lepton
     
+    // Q2 in the laboratory reference system (Giunti section 5.3.1)
+    double Q2 = 2*Enu*(Elep-Plep*costheta) - Mlep*Mlep;
+    
+    return Q2;
+}
+//____________________________________________________________________________________
+double util::CalcQd2(double Enu,double Elep,double Plep,double costheta,double Mlep)
+{
+    // Qd^2 (variation of Q^2)
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    // Plep     --> lepton reco momentum
+    // costheta --> angle between neutrino and lepton
+    
+    double Q2 = CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+    
+    double Qd2 = TMath::Power(1+Q2/0.7, -1);
+    
+    return Qd2;
+}
+//____________________________________________________________________________________
+double util::CalcEhad(double Enu,double Elep)
+{
+    // Energy of the hadronic recoil system
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    
+    double nu = Enu - Elep;
+    
+    return nu;
+}
+//____________________________________________________________________________________
+double util::CalcInelasticity(double Enu,double Elep)
+{
+    // Inelasticity = (Enu - Elep) / Enu
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    
+    double Inel = (Enu - Elep) / Enu;
+    
+    return Inel;
+}
+//____________________________________________________________________________________
+double util::CalcBjorkenScale(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
+{
+    // x = Q2 / (2*Mn*Enu*Inelasticity)
+    
+    // Enu      --> neutrino reco energy
+    // Elep     --> lepton reco energy
+    // Plep     --> lepton reco momentum
+    // costheta --> angle between neutrino and lepton
+    // Mn       --> nucleon mass
+    
+    double Q2 = CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+    double Inel = CalcInelasticity(Enu,Elep);
+    double x = Q2 / (2*Mn*Enu*Inel);
+    
+    return x;
+}
+//____________________________________________________________________________________
+double util::CalcWhadr(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn)
+{
+  // x = Q2 / (2*Mn*Enu*Inelasticity)
+    
+  // Enu      --> neutrino reco energy
+  // Elep     --> lepton reco energy
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton
+  // Mn       --> nucleon mass
+    
+  double Q2 = CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+  double nu = CalcEhad(Enu,Elep);
+  
+  double W = Mn*Mn + 2*Mn*nu - Q2;
+  
+  return W;
+}
+//____________________________________________________________________________________
+double util::CalcXSecTerm(double Enu,double Elep,double Plep,double costheta,double Mlep,double Mn){
+  // Term of CCQE dsigma/dQ^2 which sign is different for nu/nubar (arXiv:1305.7513v1, eq. 57-61)
+
+  // Enu      --> neutrino reco energy 
+  // Elep     --> lepton reco energy 
+  // Plep     --> lepton reco momentum
+  // costheta --> angle between neutrino and lepton 
+  // Mn       --> nucleon mass
+
+  double MA = 1.2257; // Axial Mass, BANFF post-fit (GeV) 
+  double gA = 1.2694; // FA(Q2=0) 
+  
+  double Q2 = CalcQ2(Enu,Elep,Plep,costheta,Mlep);
+
+  double F1 = 0.5;
+  double F2 = 0.5;
+  double FA = gA / TMath::Power( 1 + Q2/(MA*MA), 2. );
+  double B = Q2/(Mn*Mn)*FA*(F1+F2);
+
+  double XSecTerm = (4*Mn*Enu - Q2 - Mlep*Mlep) / (Mn*Mn) * B;
+ 
+  return XSecTerm;
+}
+//____________________________________________________________________________________
+double util::ErecoFunc_Nu(double Mom,double costh,double mass_lep)
+{
     const double Eb = 27. / 1000.;     // oxygen
     const double mp = 938.272 / 1000.; // proton mass (MeV)
     const double mn = 939.565 / 1000.; // neutron mass (MeV)
@@ -7685,9 +7708,9 @@ double SuperkMC::ErecoFunc_Nu(double Mom,double costh,double mass_lep){
     
     return Ereco;  // GeV
 }
-
-double SuperkMC::ErecoFunc_NuBar(double Mom,double costh,double mass_lep){
-    
+//____________________________________________________________________________________
+double util::ErecoFunc_NuBar(double Mom,double costh,double mass_lep)
+{    
     const double Eb = 27. / 1000.;     // oxygen
     const double mp = 938.272 / 1000.; // proton mass (MeV)
     const double mn = 939.565 / 1000.; // neutron mass (MeV)
@@ -7701,8 +7724,23 @@ double SuperkMC::ErecoFunc_NuBar(double Mom,double costh,double mass_lep){
     
     return Ereco;  // GeV
 }
-
-double SuperkMC::SmearMomentum(double fit_momentum,Option_t * option ) const
+//____________________________________________________________________________________
+double util::ErecoFuncCCOnePi_Nu(double Mom,double costh,double mass_lep)
+{
+  const double m_start = 938.272 / 1000.; //initial nucleon mass
+  const double mn_end = 1232.0 / 1000.;   //final nucleon mass
+  
+  double Ereco=0.;
+  double E_lep=0.;
+  
+  E_lep = sqrt( Mom*Mom + mass_lep*mass_lep );    // Reco energy muon or electron
+  Ereco = mn_end*mn_end - (m_start)*(m_start) - mass_lep*mass_lep + 2*(m_start)*E_lep;   // right formula
+  Ereco /= 2*(m_start - E_lep + Mom*costh);
+  
+  return Ereco;  // GeV
+}
+//____________________________________________________________________________________
+double util::SmearMomentum(double fit_momentum,Option_t * option ) 
 {
   //Taken from T2K paper: http://arxiv.org/pdf/1502.01550v2.pdf (bottom of p53)
     TRandom3 & rndgen = Rnd::Instance()->RndOther();
@@ -7718,9 +7756,8 @@ double SuperkMC::SmearMomentum(double fit_momentum,Option_t * option ) const
     }
     
     return rndgen.Gaus(fit_momentum,error);
-    
 }
-//
+//____________________________________________________________________________________
 
 
 
