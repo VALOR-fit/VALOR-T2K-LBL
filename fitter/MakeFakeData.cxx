@@ -8,15 +8,18 @@
  */
 //____________________________________________________________________________
 #include <fstream>
+#include <iostream>
 
 #include <TROOT.h>
 #include <TGraph.h>
 #include <TF1.h>
 #include <TVector.h>
 #include <TMath.h>
+
 #include "MakeFakeData.h"
 #include "Utilities.h"
-#include <iostream>
+#include "SuperkMC.h"
+#include "valor/Messenger/Messenger.h"
 
 using std::cout;
 using std::cerr;
@@ -27,18 +30,27 @@ using std::ifstream;
 using namespace valor;
 
 // new 2017
+//____________________________________________________________________________
 double util::UtlMakeFakeData::WeightMEC2p2hPDD_2017()
 {
   if(util::Is2p2h(m))
     {
-      int lepton_int = 3; //lepton is at 3 in array of particles   
-      double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
-      double costheta = dir_nu[0] * fBrDirNu[lepton_int][0] + dir_nu[1] * fBrDirNu[lepton_int][1] + dir_nu[2] * fBrDirNu[lepton_int][2];
-      double weight =1;
-      //if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino PDD rescale
-      int binx = hMEC2p2hPDD_2017->GetYaxis()->FindBin(costheta);
-      int biny = hMEC2p2hPDD_2017->GetXaxis()->FindBin(fBrPtrue[lepton_int]);
-      weight = hMEC2p2hPDD_2017->GetBinContent(binx,biny);
+      double weight = 1;
+      double Q2       = 0;
+      double costheta = 0;
+      costheta = util::CalcCosTheta(fBrDir,s);
+      Q2 = util::CalcQ2(fErec,femax_lep,fpmax_lep,costheta,fmass_lep);
+      // LOG("MakeFakeData",pDEBUG) << "Q^2: " << Q2
+      //                            << " costheta: " << costheta;
+
+      if (Q2 > 2.0)      weight = 1;
+      if (fEtrue > 30.0) weight = 1;
+      int binx = hMEC2p2hPDD_2017->GetXaxis()->FindBin(fEtrue);
+      int biny = hMEC2p2hPDD_2017->GetYaxis()->FindBin(Q2);
+      weight   = hMEC2p2hPDD_2017->GetBinContent(binx,biny);
+
+      // LOG("MakeFakeData",pDEBUG) << "Histogram Weight: " << weight
+      //                            << " for bin " << binx  << ", " << biny ;
       //}
       //else{         //AntiNeutrino PDD rescale
       //}
@@ -47,6 +59,7 @@ double util::UtlMakeFakeData::WeightMEC2p2hPDD_2017()
   return 1;
 
 };
+//____________________________________________________________________________
 double util::UtlMakeFakeData::WeightMEC2p2hnonPDD_2017()
 {
   if(util::Is2p2h(m))
@@ -64,9 +77,9 @@ double util::UtlMakeFakeData::WeightMEC2p2hnonPDD_2017()
 };
 /////////
 
+//____________________________________________________________________________
 double util::UtlMakeFakeData::WeightMECPDD3D()
 {
-  
   if(util::Is2p2h(m))
   {
     int lepton_int = 3; //lepton is at 3 in array of particles
@@ -78,7 +91,7 @@ double util::UtlMakeFakeData::WeightMECPDD3D()
     double pdd_weight =1;
     if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino PDD rescale
 
-      int binz = PDD_ratio_nu_3D->GetZaxis()->FindBin(Etrue);
+      int binz = PDD_ratio_nu_3D->GetZaxis()->FindBin(fEtrue);
       int binx = PDD_ratio_nu_3D->GetXaxis()->FindBin(costheta);
       int biny = PDD_ratio_nu_3D->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
       
@@ -86,7 +99,7 @@ double util::UtlMakeFakeData::WeightMECPDD3D()
       
     }
     else{         //AntiNeutrino PDD rescale
-      int binz = PDD_ratio_nubar_3D->GetZaxis()->FindBin(Etrue);
+      int binz = PDD_ratio_nubar_3D->GetZaxis()->FindBin(fEtrue);
       int binx = PDD_ratio_nubar_3D->GetXaxis()->FindBin(costheta);
       int biny = PDD_ratio_nubar_3D->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
       
@@ -97,7 +110,8 @@ double util::UtlMakeFakeData::WeightMECPDD3D()
   }
   return 1;
 };
-
+  
+//____________________________________________________________________________  
 double util::UtlMakeFakeData::WeightMECPDD3DFlatFlux()
 {
   
@@ -117,7 +131,7 @@ double util::UtlMakeFakeData::WeightMECPDD3DFlatFlux()
     
     double pdd_weight =1.;
     
-    int binz = pdd_hist_used->GetZaxis()->FindBin(Etrue);
+    int binz = pdd_hist_used->GetZaxis()->FindBin(fEtrue);
     int binx = pdd_hist_used->GetXaxis()->FindBin(costheta);
     int biny = pdd_hist_used->GetYaxis()->FindBin(fBrPtrue[lepton_int]);
     
@@ -128,7 +142,7 @@ double util::UtlMakeFakeData::WeightMECPDD3DFlatFlux()
   
   return 1.;
 };
-
+//____________________________________________________________________________  
 double util::UtlMakeFakeData::WeightMECPDD2D()
 {
   
@@ -157,19 +171,19 @@ double util::UtlMakeFakeData::WeightMECPDD2D()
   
   return 1;
 };
-
+//____________________________________________________________________________  
 double util::UtlMakeFakeData::WeightMartini()
 {
   if(util::Is2p2h(m))
   {
     double martini_nieves_weight =1;
     if(util::SuperkMode2SKMCPdg(m) > 0){   //Neutrino MEC rescale
-      martini_nieves_weight = Martini_to_Nieves_MEC_ratio_Nu->Eval(Etrue);
-      if(Etrue > 1.5) martini_nieves_weight = 1;
+      martini_nieves_weight = Martini_to_Nieves_MEC_ratio_Nu->Eval(fEtrue);
+      if(fEtrue > 1.5) martini_nieves_weight = 1;
     }
     else{         //AntiNeutrino MEC rescale
-      martini_nieves_weight = Martini_to_Nieves_MEC_ratio_NuBar->Eval(Etrue);
-      if(Etrue > 1.5) martini_nieves_weight = 1;
+      martini_nieves_weight = Martini_to_Nieves_MEC_ratio_NuBar->Eval(fEtrue);
+      if(fEtrue > 1.5) martini_nieves_weight = 1;
     }
     
     return martini_nieves_weight;
@@ -177,8 +191,8 @@ double util::UtlMakeFakeData::WeightMartini()
   else
     return 1.;
 };
-
-double util::UtlMakeFakeData::EReco1P1H()
+//____________________________________________________________________________  
+double util::UtlMakeFakeData::Ereco1P1H()
 {
   double dir_nu[3]    = {0.669764, -0.742179, 0.024223}; // T2K beam direction
   double electronMass = 0.511   / 1000.; // GeV
@@ -195,7 +209,7 @@ double util::UtlMakeFakeData::EReco1P1H()
 //  
   double pmax_lep = 0.; // momentum of most energetic lepton
   double mass_lep = 0.;
-  int bin_etrue = NievesMomentumOffset->GetXaxis()->FindBin(Etrue*1000);
+  int bin_etrue = NievesMomentumOffset->GetXaxis()->FindBin(fEtrue*1000);
   int bin_theta = NievesMomentumOffset->GetYaxis()->FindBin(TMath::ACos(costheta)*180/TMath::Pi());
   double ereco_fill = 0;
   
@@ -203,44 +217,44 @@ double util::UtlMakeFakeData::EReco1P1H()
     mass_lep = electronMass; // GeV
     pmax_lep = fBrAmome[0] / 1000.; // GeV
     pmax_lep += NievesMomentumOffset->GetBinContent(bin_etrue,bin_theta)/1000.;
-    if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
-    else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
+    if(util::IsRHCSample(s))  ereco_fill = util::ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
+    else                      ereco_fill = util::ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
   }
   else if( s == conv::kSKsFCFVMultiRingELike ){ // MultiRingElike
     mass_lep = electronMass; // GeV
     pmax_lep = fBrAmome[0] / 1000.; // GeV
     pmax_lep += NievesMomentumOffset->GetBinContent(bin_etrue,bin_theta)/1000.;
-    ereco_fill = this->ErecoFuncCCOnePi_Nu(pmax_lep,costheta,mass_lep);
+    ereco_fill = util::ErecoFuncCCOnePi_Nu(pmax_lep,costheta,mass_lep);
   }
   else if( (s == conv::kSKsFCFV1RingMuLike) || (s == conv::kSKsRHCFCFV1RingMuLike) ){ // mu-like ring
     mass_lep = muonMass; // GeV
     pmax_lep = fBrAmomm[0] / 1000.; // GeV
     pmax_lep += NievesMomentumOffset->GetBinContent(bin_etrue,bin_theta)/1000.;
-    if(util::IsRHCSample(s))  ereco_fill = this->ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
-    else                      ereco_fill = this->ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
+    if(util::IsRHCSample(s))  ereco_fill = util::ErecoFunc_NuBar(pmax_lep,costheta,mass_lep);
+    else                      ereco_fill = util::ErecoFunc_Nu(pmax_lep,costheta,mass_lep);
   }
   
   return ereco_fill;
 
 };
-
+//____________________________________________________________________________  
 double util::UtlMakeFakeData::GetEreco()
 {
   switch (reweight_option)
   {
-    case util::UtlMakeFakeData::ReweightType::Nieves1P1H : return this->EReco1P1H();
+    case util::UtlMakeFakeData::ReweightType::Nieves1P1H : return this->Ereco1P1H();
       break;
-//    case util::UtlMakeFakeData::ReweightType::Martini : return ERec;
+//    case util::UtlMakeFakeData::ReweightType::Martini : return Erec;
 //      break;
-//    case util::UtlMakeFakeData::ReweightType::MECPDD3D : return ERec;
+//    case util::UtlMakeFakeData::ReweightType::MECPDD3D : return Erec;
 //      break;
-//    case util::UtlMakeFakeData::ReweightType::MECPDD2D : return ERec;
+//    case util::UtlMakeFakeData::ReweightType::MECPDD2D : return Erec;
 //      break;
     default:
-      return ERec;
+      return fErec;
   }
 }
-
+//____________________________________________________________________________  
 double util::UtlMakeFakeData::GetWeight()
 {
  
@@ -267,13 +281,13 @@ double util::UtlMakeFakeData::GetWeight()
   }
   
 };
-
-void util::UtlMakeFakeData::SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _fBrDir[10][7][3],float _Etrue,
-                                         conv::SuperkMode_t _m, double _ERec, conv::SuperkSample_t _s,
-                                        float _fBrAmome[10], float _fBrAmomm[10] )
+//____________________________________________________________________________  
+void util::UtlMakeFakeData::SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10][3],float _fBrDir[10][7][3],
+                                         float _fEtrue, conv::SuperkMode_t _m, double _Erec,
+                                         conv::SuperkSample_t _s, float _fBrAmome[10], float _fBrAmomm[10] )
 {
-  ERec = _ERec;
-  Etrue = _Etrue;
+  fErec  = _Erec;
+  fEtrue = _fEtrue;
   s = _s;
   m = _m;
   
@@ -290,8 +304,21 @@ void util::UtlMakeFakeData::SetEventInfo(float _fBrPtrue[10],float _fBrDirNu[10]
     }
   }
   
-};
+  if( (s == conv::kSKsFCFV1RingELike)    ||
+      (s == conv::kSKsRHCFCFV1RingELike) ||
+      (s == conv::kSKsFCFVMultiRingELike)  ){ // e-like samples including decay electron 
+    fmass_lep = conv::kElectronMassGeV; // GeV
+    fpmax_lep = fBrAmome[0] / 1000.; // GeV
+  }
+  if( (s == conv::kSKsFCFV1RingMuLike)   ||
+      (s == conv::kSKsRHCFCFV1RingMuLike)  ){ // mu-like ring
+    fmass_lep = conv::kMuonMassGeV; // GeV
+    fpmax_lep = fBrAmomm[0] / 1000.; // GeV
+  } 
 
+  femax_lep = sqrt( fpmax_lep*fpmax_lep + fmass_lep*fmass_lep );
+};
+//____________________________________________________________________________  
 void util::UtlMakeFakeData::SetReweightStyle(string _s)
 {
   fReweightString = _s;
@@ -319,7 +346,7 @@ void util::UtlMakeFakeData::SetReweightStyle(string _s)
   }
   //////
   else{
-    cerr << "UtlMakeFakeData/SetReweightStyle >> Can not match reweight option. " << endl;
+    cerr << "UtlMakeFakeData/SetReweightStyle >> Cannot match reweight option. " << endl;
     cerr << "Options are: " << endl;
     cerr << "\t Martini" << endl;
     cerr << "\t MECPDD3D" << endl;
@@ -332,73 +359,6 @@ void util::UtlMakeFakeData::SetReweightStyle(string _s)
   }
 
 };
-
-//____________________________________________________________________________________
-double util::UtlMakeFakeData::ErecoFunc_Nu(double Mom,double costh,double mass_lep){
-  
-  const double Eb = 27. / 1000;     // oxygen
-  const double mp = 938.272 / 1000.; // proton mass (GeV)
-  const double mn = 939.565 / 1000.; // neutron mass (GeV)
-  
-  double Ereco=0.;
-  double E_lep=0.;
-  
-  E_lep = sqrt( Mom*Mom + mass_lep*mass_lep );    // Reco energy muon or electron
-  Ereco = mp*mp - (mn - Eb)*(mn - Eb) - mass_lep*mass_lep + 2*(mn - Eb)*E_lep;   // right formula
-  Ereco /= 2*(mn - Eb - E_lep + Mom*costh);
-  
-  return Ereco;  // GeV
-}
-
-double util::UtlMakeFakeData::ErecoFunc_NuBar(double Mom,double costh,double mass_lep){
-  
-  const double Eb = 27. / 1000;     // oxygen
-  const double mp = 938.272 / 1000.; // proton mass (GeV)
-  const double mn = 939.565 / 1000.; // neutron mass (GeV)
-  
-  double Ereco=0.;
-  double E_lep=0.;
-  
-  E_lep = sqrt( Mom*Mom + mass_lep*mass_lep );    // Reco energy lepton
-  Ereco = mn*mn - (mp - Eb)*(mp - Eb) - mass_lep*mass_lep + 2*(mp - Eb)*E_lep;
-  Ereco /= 2*(mp - Eb - E_lep + Mom*costh);
-  
-  return Ereco;  // MeV
-}
-
-//____________________________________________________________________________________
-double util::UtlMakeFakeData::ErecoFuncCCOnePi_Nu(double Mom,double costh,double mass_lep){
-  
-  const double m_start = 938.272 / 1000.; //initial nucluon mass
-  const double mn_end = 1232.0 / 1000.;  //final nucleon mass
-  
-  double Ereco=0.;
-  double E_lep=0.;
-  
-  E_lep = sqrt( Mom*Mom + mass_lep*mass_lep );    // Reco energy muon or electron
-  Ereco = mn_end*mn_end - (m_start)*(m_start) - mass_lep*mass_lep + 2*(m_start)*E_lep;   // right formula
-  Ereco /= 2*(m_start - E_lep + Mom*costh);
-  
-  return Ereco;  // GeV
-}
-//________________________________________________________________________________________        
-
-
-// new 2017
-double util::UtlMakeFakeData::CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep)
-{
-  // Enu      --> neutrino energy 
-  // Elep     --> lepton energy
-  // Plep     --> lepton momentum
-  // costheta --> angle between neutrino and lepton
-
-  // Q2 in the laboratory reference system (Giunti section 5.3.1)
-  double Q2 = 2*Enu*(Elep-Plep*costheta) - Mlep*Mlep;
-
-  return Q2;
-}
-////////
-
 //________________________________________________________________________________________
 bool util::UtlMakeFakeData::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
@@ -441,13 +401,12 @@ bool util::UtlMakeFakeData::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
       PDD_ratio_nuebar =
       util::XML2TH3D(xml,root_node,"mc/fake_data/three_d/pdd_nuebar");
       // new 2017
-      case util::UtlMakeFakeData::ReweightType::MEC2p2hPDD_2017 :
-	hMEC2p2hPDD_2017 =
-	  util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/MEC2p2hPDD_2017");
-      case util::UtlMakeFakeData::ReweightType::MEC2p2hnonPDD_2017 :
-	hMEC2p2hnonPDD_2017 =
-	  util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/MEC2p2hnonPDD_2017");
-      /////
+    case util::UtlMakeFakeData::ReweightType::MEC2p2hPDD_2017 :
+      hMEC2p2hPDD_2017 =
+        util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/MEC2p2hPDD_2017");
+    case util::UtlMakeFakeData::ReweightType::MEC2p2hnonPDD_2017 :
+      hMEC2p2hnonPDD_2017 =
+        util::XML2TH2D(xml,root_node,"mc/fake_data/two_d/MEC2p2hnonPDD_2017");
 
       return true;
 
@@ -485,8 +444,8 @@ void util::UtlMakeFakeData::Init(void)
   PDD_ratio_nu_3D                     = 0;
   PDD_ratio_nubar_3D                  = 0;
   
-  hMEC2p2hPDD_2017                     = 0;
-  hMEC2p2hnonPDD_2017                  = 0;
+  hMEC2p2hPDD_2017                    = 0;
+  hMEC2p2hnonPDD_2017                 = 0;
  
   //NewReweighting
   PDD_ratio_numu                      = 0;
@@ -495,13 +454,16 @@ void util::UtlMakeFakeData::Init(void)
   PDD_ratio_nuebar                    = 0;
   
   reweight_option                     = util::UtlMakeFakeData::ReweightType::FDUndefined;
-  fActive                             = 0;
+  fActive                             = false;
   
   
   //Event info
-  Etrue     = 0;
-  ERec      = 0;
   m         = conv::kSKmUndefined;
   s         = conv::kSKsUndefined;
+  fEtrue    = 0;
+  fErec     = 0;
+  fmass_lep = 0; 
+  fpmax_lep = 0;
+  femax_lep = 0;
   
 }

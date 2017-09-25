@@ -93,33 +93,28 @@ namespace valor {
       double WeightMECPDD2D();
       double WeightNieves1P1H();
       double WeightMartini();
-      double ErecoFunc_Nu(double Mom,double costh,double mass_lep);
-      double ErecoFunc_NuBar(double Mom,double costh,double mass_lep);
-      double ErecoFuncCCOnePi_Nu(double Mom,double costh,double mass_lep);
-
-      // new 2017
-      double CalcQ2(double Enu,double Elep,double Plep,double costheta,double Mlep);
-      //
 
       void   Init(void);
       
-      double EReco1P1H();
+      double Ereco1P1H();
       static UtlMakeFakeData * fInstance;
       bool   fActive;
       string fReweightString;
-      float      fBrAmomm[10];                  ///< branch var for reading input MC mini-DST (1 mu-like ring)
-      float      fBrAmome[10];                  ///< branch var for reading input MC mini-DST (1 e-like ring)
+      float  fBrAmomm[10];                  ///< branch var for reading input MC mini-DST (1 mu-like ring)
+      float  fBrAmome[10];                  ///< branch var for reading input MC mini-DST (1 e-like ring)
       
       //Event info
       
-      float Etrue;
-      double ERec;
       conv::SuperkMode_t m;
-      conv::SuperkSample_t s;
-      float fBrDirNu[10][3];
-      float fBrDir[10][7][3];
-      float fBrPtrue[10];
-      
+      conv::SuperkSample_t s;      
+      float  fEtrue;
+      double fErec;
+      float  fBrDirNu[10][3];
+      float  fBrDir[10][7][3];
+      float  fBrPtrue[10];
+      double fmass_lep; 
+      double fpmax_lep;
+      double femax_lep;
       
       ReweightType reweight_option;
       
