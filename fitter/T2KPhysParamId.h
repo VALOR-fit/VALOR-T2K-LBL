@@ -513,8 +513,9 @@ namespace util {
   bool IsXSecNumuNue          (conv::PhysParamId_t p);
   bool IsEScale               (conv::PhysParamId_t p); 
   
-  conv::PhysParamId_t      PhysParamIdFromString     (string h);
-  conv::PhysParamId_t      PhysParamIdFromLongString (string h);
+  conv::PhysParamId_t      PhysParamIdFromString      (string h);
+  conv::PhysParamId_t      PhysParamIdFromLongString  (string h);
+  conv::PhysParamId_t      PhysParamIdFromSplineString(string h);  
   
   // Aliases to avoid overloading with enums
   string ParamAsString                   (conv::PhysParamId_t p);

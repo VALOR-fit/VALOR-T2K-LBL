@@ -4641,6 +4641,19 @@ valor::util::PhysParamIdFromLongString(string sh)
 }
 //____________________________________________________________________________
 valor::conv::PhysParamId_t
+valor::util::PhysParamIdFromSplineString(string sh)
+{
+  string lsh = util::ToLowerCase(sh);
+  for (int i = 0 ; i < conv::knppmax ; i++) {
+    conv::PhysParamId_t k = (conv::PhysParamId_t) i ;
+    if (!util::IsUsingSplines(k)) continue;
+    if (k != conv::kPhypUndefined && lsh == util::ToLowerCase(util::AsStringSpline(k)) ) return k;
+  }
+  std::cerr<<"util::PhysParamIdFromString >> Unmatched string: "<<sh<<std::endl;
+  return kPhypUndefined;
+}
+//____________________________________________________________________________
+valor::conv::PhysParamId_t
 valor::util::GetBarredVersionOfPhysParam(valor::conv::PhysParamId_t p)
 {
     switch(p) {
