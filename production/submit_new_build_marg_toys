@@ -1,0 +1,613 @@
+#!/usr/bin/perl
+  
+ 
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit a batch of build_marg_toys_joint.C jobs
+#
+# Inputs
+#  --resource               : Computer resource, <ETH-Monch, RAL, Oxford, Grid, interactive>. Default: interactive.
+#  --tag                    : Tag for output files.
+#  --config-file            : Analysis configuration file from the config/ directory. 
+#  --fit-param-list         : Fit parameter list. See FitParamList.h for allowed options.
+#  --physparam-freepar      : Free parameter 
+#  --nexpts-marg            : Number of toy MC expt for marginalization per free parameter.
+#  --npt-freepar            : Number of points of the free parameter to scan
+#  --step-freepar           : Step of the free parameter scan
+
+#  --tweak-systematics      : generate marginalization toy MC with randomized systematics 
+#  --cpu-time               : Required CPU time. Default: "6:00:00" for RAL, "11:50:00" for Oxford.
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
+#  --softw-dir              : Oscillation code top-level directory. Default: `pwd`.
+#  --dmsq-scheme            : abs23 or fogli
+#  --hierarchy              : normal or inverted
+#  --mix-param-choice       : sinsq2theta or sinsqtheta
+#  --mix-param-octant       : one or two
+#
+# D.Sgalaberna
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+
+$iarg=0;
+foreach (@ARGV) {
+  if($iarg % 2 == 1) {$iarg++; next;}
+  
+  if   ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config-file'            ) { $config_file           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-param-list'         ) { $fitparamlist          = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--dm23sq-nh'              ) { $dm23sq_nh             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm12sq-nh'              ) { $dm12sq_nh             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix23-nh'               ) { $mix23_nh              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix13-nh'               ) { $mix13_nh              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix12-nh'               ) { $mix12_nh              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--deltacp-nh'             ) { $deltacp_nh            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm23sq-ih'              ) { $dm23sq_ih             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm12sq-ih'              ) { $dm12sq_ih             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix23-ih'               ) { $mix23_ih              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix13-ih'               ) { $mix13_ih              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix12-ih'               ) { $mix12_ih              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--deltacp-ih'             ) { $deltacp_ih            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--betaBar'                ) { $betaBar               = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--freepar0'               ) { $freepar0               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--minfreepar0'            ) { $minfreepar0            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--maxfreepar0'            ) { $maxfreepar0            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--npt-freepar0'           ) { $npt_freepar0           = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--freepar1'               ) { $freepar1               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--minfreepar1'            ) { $minfreepar1            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--maxfreepar1'            ) { $maxfreepar1            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--npt-freepar1'           ) { $npt_freepar1           = $ARGV[$iarg+1]; }
+  
+  elsif($_ eq '--nexpts-marg'            ) { $nexpts_marg           = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--step-freepar0'          ) { $step_freepar0          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--step-freepar1'          ) { $step_freepar1          = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--tweak-systematics'      ) { $tweak_systematics     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--marginalize-hierarchy'  ) { $marg_hierarchy        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--prior-prob-nh'          ) { $prior_prob_nh         = $ARGV[$iarg+1]; }
+  
+  elsif($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--hierarchy'              ) { $masshierarchy         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-choice'       ) { $mixparamchoice        = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--use-reactors'           ) { $use_reactors          = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--file-prior'             ) { $file_prior            = $ARGV[$iarg+1]; }
+
+  elsif($_ eq '--fmwk-dir'               ) { $fmwk_dir              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--queue'                  ) { $queue                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--seed'                   ) { $seed                  = $ARGV[$iarg+1]; }
+  
+  else {
+      print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+
+$resource        = "interactive"               unless defined $resource;
+$config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
+$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
+$seed           = 999                   unless defined $seed;
+# Dummy mixing parameter values
+$dm23sq_nh       = 2.509E-3                           unless defined $dm23sq_nh; 
+$dm12sq_nh       = 7.53E-5                            unless defined $dm12sq_nh; 
+$mix13_nh        = 0.0219                             unless defined $mix13_nh;
+$mix12_nh        = 0.304                              unless defined $mix12_nh;
+$dm23sq_ih       = 2.509E-3                           unless defined $dm23sq_ih; 
+$dm12sq_ih       = 7.53E-5                            unless defined $dm12sq_ih; 
+$mix13_ih        = 0.0219                             unless defined $mix13_ih;
+$mix12_ih        = 0.304                              unless defined $mix12_ih;
+$betaBar         = -99                                unless defined $betaBar;
+$mix23_nh        = 0.528                              unless defined $mix23_nh;
+$deltacp_nh      = -1.601                             unless defined $deltacp_nh;
+$mix23_ih        = 0.528                              unless defined $mix23_ih;
+$deltacp_ih      = -1.601                             unless defined $deltacp_ih;
+
+if($use_reactors == 1)
+{
+   $tag             = "oa2017_${masshierarchy}_reactor"  unless defined $tag;
+}
+else
+{
+   $tag             = "oa2017_${masshierarchy}_t2k"  unless defined $tag;
+}
+
+# # 1D fit - dcp
+if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
+{
+   $tag = "${tag}_${freepar0}";
+   if($use_reactors == 1)
+   {
+      $nexpts_marg            = 40000                        unless defined $nexpts_marg;
+      $step_freepar0          = 1;
+      $queue                 = "long"                       unless defined $queue;
+      $npt_freepar0           = 97                       unless defined $npt_freepar0;
+   }
+   else
+   {
+      $nexpts_marg            = 80000                        unless defined $nexpts_marg;
+      $step_freepar0          = 1;
+      $queue                 = "long -M 8192"            unless defined $queue;
+      $npt_freepar0           = 97                       unless defined $npt_freepar0;
+   }
+   $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                    unless defined $masshierarchy;
+   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+}
+
+# # 1D fit - sinsqth13
+if(($freepar0 eq "mixing13") and ($freepar1 eq ""))
+{
+   $tag = "${tag}_${freepar0}";
+
+   $nexpts_marg            = 10000                        unless defined $nexpts_marg;     # of toys
+   $minfreepar0            = 0.007                          unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 0.053                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $npt_freepar0           = 201                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                    unless defined $masshierarchy;
+   $step_freepar0          = 5                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+   $queue                 = "long"      unless defined $queue;
+}
+
+# # 1D fit - sinsqth23
+if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
+{
+   $tag = "${tag}_${freepar0}";
+
+   if($use_reactors == 1)
+   {
+      $nexpts_marg            = 40000                        unless defined $nexpts_marg;
+      $step_freepar0          = 1;
+      $queue                 = "long" unless defined $queue;
+      $npt_freepar0           = 100;
+   }
+   else
+   {
+      $nexpts_marg            = 80000                        unless defined $nexpts_marg;
+      $step_freepar0          = 1;
+      $queue                 = "long -M 8192" unless defined $queue;
+      $npt_freepar0           = 100;
+   }
+   $minfreepar0            = 0.3    unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 0.7    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                    unless defined $masshierarchy;
+   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+}
+
+# # 1D fit - dmsq23
+if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
+{
+   $tag = "${tag}_${freepar0}";
+
+   if($use_reactors == 1)
+   {
+      $nexpts_marg            = 40000                        unless defined $nexpts_marg;
+      $step_freepar0          = 1;
+      $queue                 = "long" unless defined $queue;
+      $npt_freepar0           = 100;
+   }
+   else
+   {
+      $nexpts_marg            = 80000                        unless defined $nexpts_marg;
+      $step_freepar0          = 1;
+      $queue                 = "long -M 8192" unless defined $queue;
+      $npt_freepar0           = 100;
+   }
+   $minfreepar0            = 2.3e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 2.7e-3    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                    unless defined $masshierarchy;
+   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+}
+
+# # 2D fit - sinsqth13 Vs dcp
+if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "deltacp") and ($freepar1 eq "mixing13")))
+{
+   $tag = "${tag}_${freepar0}_${freepar1}";
+
+   $nexpts_marg = 10000;
+   if($freepar0 eq "deltacp")
+   {
+      $freepar0 = "mixing13";
+      $freepar1 = "deltacp";
+   }
+
+   if($use_reactors == 1)
+   {
+      $minfreepar0         = 0.015     unless defined $minfreepar0;     # Minimum free parameter allowed value
+      $maxfreepar0         = 0.036     unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+      $npt_freepar0        = 81        unless defined $npt_freepar0;    # of free parameter points to scan
+   }
+   else
+   {
+      $minfreepar0         = 0.007     unless defined $minfreepar0;     # Minimum free parameter allowed value
+      $maxfreepar0         = 0.053     unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+      $npt_freepar0        = 81        unless defined $npt_freepar0;    # of free parameter points to scan
+   }
+
+   $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;   # Minimum free parameter allowed value
+   $maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;   # Maximum free parameter allowed value 
+   $npt_freepar1      = 51                        unless defined $npt_freepar1; # of free parameter points to scan
+   $marg_hierarchy    = 0                         unless defined $marg_hierarchy;
+   $masshierarchy     = "normal"                  unless defined $masshierarchy;
+   $step_freepar0     = 3                         unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1     = 2                         unless defined $step_freepar1;   # of points for each job param1
+   $queue            = "long" unless defined $queue;
+}
+
+# # 2D fit - sinsqth23 Vs dmsq23
+if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
+{
+   $tag = "${tag}_${freepar0}_${freepar1}";
+
+   $nexpts_marg = 10000;
+   if($freepar0 eq "dmsq23")
+   {
+      $freepar0 = "mixing23";
+      $freepar1 = "dmsq23";
+   }
+   $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $npt_freepar0           = 81;#10;#81                         unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1            = 2.3e-3                  unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 2.7e-3                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 21;#10;#21                        unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0                          unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                   unless defined $masshierarchy;
+   $step_freepar0          = 3;#10;#4                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1          = 2;#10;#1                            unless defined $step_freepar1;   # of points for each job param1
+   $queue                  = "long" unless defined $queue;
+}
+
+					               
+$tweak_systematics      = 1                            unless defined $tweak_systematics;
+$prior_prob_nh          = 0.5                          unless defined $prior_prob_nh;
+$rethrow_unphysical     = 1                            unless defined $rethrow_unphysical;
+
+#$file_prior             = "../../inputs/priors/joint_T2Kreact_run14/valor/Priors_T2Kreact_run14_Valor.root" unless defined $file_prior;
+$file_prior             = "" unless defined $file_prior;
+
+$job_dir                = "."                  unless defined $job_dir;
+$softw_dir              = $ENV{'T2KOSCANA'}    unless defined $softw_dir;
+$fmwk_dir               = $ENV{'VALOR_FMWK'}   unless defined $fmwk_dir;
+$dmsqscheme             = "auto"               unless defined $dmsqscheme;
+$mixparamchoice         = "sinsqtheta"         unless defined $mixparamchoice;
+$mixparamoctant         = "two"                unless defined $mixparamoctant;
+
+$use_reactors           = 0                    unless defined $use_reactors;#1
+$queue                  = 0                    unless defined $queue;
+if( !defined $cput ) {
+    #takes approx 0.04 sec per sample
+    $sec = int ( $step_freepar0 *  $step_freepar1 * $nexpts_marg * 0.22 );
+    $sec_mins = $sec % 3600;
+    $seconds = $sec % 60;
+    $minutes = int($sec_mins/60);
+    $hours = int($sec/3600);
+    
+    if($hours > 1){
+        $cput = "$hours:$minutes:$seconds";
+    }
+    else{
+        $cput = "01:00:00";
+    }
+}
+ 
+mkpath ($job_dir, {verbose => 1, mode=>0777}); 
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+# Print job arguments to file
+($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+$year = $year+1900;
+$mon  = $mon+1;
+
+open(ARGS,">$job_dir/job_args_$year-$mon-$mday.txt");
+print ARGS "#!/bin/bash \n";
+print ARGS "# \n";
+print ARGS "# Submit toys $year/$mon/$mday \n";
+print ARGS "# \n";
+print ARGS "\$T2KOSCANA/production/submit_build_marg_toys_joint \\\n";
+print ARGS "--Resource               '$resource' \\\n";                              
+print ARGS "--tag                    '$tag' \\\n";                
+print ARGS "--config-file            '$config_file' \\\n";        
+print ARGS "--fit-param-list         '$fitparamlist' \\\n";       
+print ARGS "--dm23sq-nh               $dm23sq_nh \\\n";          
+print ARGS "--dm12sq-nh               $dm12sq_nh \\\n";          
+print ARGS "--mix23-nh                $mix23_nh \\\n";           
+print ARGS "--mix13-nh                $mix13_nh \\\n";           
+print ARGS "--mix12-nh                $mix12_nh \\\n";           
+print ARGS "--deltacp-nh              $deltacp_nh \\\n";         
+print ARGS "--dm23sq-ih               $dm23sq_ih \\\n";          
+print ARGS "--dm12sq-ih               $dm12sq_ih \\\n";          
+print ARGS "--mix23-ih                $mix23_ih \\\n";           
+print ARGS "--mix13-ih                $mix13_ih \\\n";           
+print ARGS "--mix12-ih                $mix12_ih \\\n";           
+print ARGS "--deltacp-ih              $deltacp_ih \\\n";         
+print ARGS "--betaBar                 $betaBar \\\n";            
+print ARGS "--freepar0               '$freepar0' \\\n";           
+print ARGS "--minfreepar0             $minfreepar0 \\\n";        
+print ARGS "--maxfreepar0             $maxfreepar0 \\\n";        
+print ARGS "--npt-freepar0            $npt_freepar0 \\\n";       
+print ARGS "--freepar1                $freepar1 \\\n";           
+print ARGS "--minfreepar1             $minfreepar1 \\\n";        
+print ARGS "--maxfreepar1             $maxfreepar1 \\\n";        
+print ARGS "--npt-freepar1            $npt_freepar1 \\\n";       
+print ARGS "--nexpts-marg             $nexpts_marg \\\n";        
+print ARGS "--step-freepar0           $step_freepar0 \\\n";      
+print ARGS "--step-freepar1           $step_freepar1 \\\n";      
+print ARGS "--tweak-systematics       $tweak_systematics \\\n";  
+print ARGS "--marginalize-hierarchy   $marg_hierarchy \\\n";     
+print ARGS "--prior-prob-nh           $prior_prob_nh \\\n";      
+print ARGS "--rethrow-unphysical      $rethrow_unphysical \\\n"; 
+print ARGS "--cpu-time                $cput \\\n";               
+print ARGS "--job-dir                '$job_dir' \\\n";            
+print ARGS "--softw-dir              '$softw_dir' \\\n";          
+print ARGS "--dmsq-scheme            '$dmsqscheme' \\\n";         
+print ARGS "--hierarchy              '$masshierarchy' \\\n";      
+print ARGS "--mix-param-choice       '$mixparamchoice' \\\n";     
+print ARGS "--use-reactors            $use_reactors \\\n";       
+print ARGS "--file-prior             '$file_prior' \\\n";         
+print ARGS "--fmwk-dir               '$fmwk_dir' \\\n";           
+close(ARGS); 
+
+$fileid=0;
+
+$imin0_p1=0; # param 0
+$imin1_p1=0; # param 1
+
+$ijob=0;
+$irun=0;
+
+for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) { 
+    for($imin1 = 0; $imin1 < $npt_freepar1; $imin1 = $imin1_p1) {
+	
+	$imin0_p1 = $imin0 + $step_freepar0;
+	$imin1_p1 = $imin1 + $step_freepar1;
+    
+	$imax0 = $imin0 + $step_freepar0-1;
+	$imax1 = $imin1 + $step_freepar1-1;
+    
+	# if exceed maximum allowed number set it to limit
+	if( $imax0 >= $npt_freepar0 ){
+	    $imax0 = $npt_freepar0-1; # loop in build_marg_toy is min <= bin <= max
+	}
+	if( $imax1 >= $npt_freepar1 ){
+	    $imax1 = $npt_freepar1-1; # loop in build_marg_toy is min <= bin <= max
+	}
+        
+	# loop in build_marg_toy is min <= bin <= max, avoid repetition of the last bin
+	if( $imin0_p1 == $imin0 ){
+	    last;
+	}
+	if( $imin1_p1 == $imin1 ){
+	    last;
+	}
+	
+	print "/////////////////////////////// \n \n";
+	
+	print "File output ID: $fileid $seed \n";
+	print "   - sub-range param 0: $imin0 - $imax0 \n"; 
+	print "   - sub-range param 1: $imin1 - $imax1 \n"; 
+	print "\n";
+	
+	$program = "root2k ";
+	
+	$arguments = " -l -b -q \'$softw_dir/macros/analysis/new_build_marg_toys.C($fileid,$imin0,$imax0,$imin1,$imax1,\"$tag\",\"$config_file\",\"$fitparamlist\",$mix12_nh,$mix13_nh,$mix23_nh,$deltacp_nh,$dm12sq_nh,$dm23sq_nh,$mix12_ih,$mix13_ih,$mix23_ih,$deltacp_ih,$dm12sq_ih,$dm23sq_ih,$betaBar,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$nexpts_marg,$tweak_systematics,$marg_hierarchy,$prior_prob_nh,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$seed,$use_reactors)\'";
+		
+	$command = "$program $arguments";
+	print "$command \n";
+	
+	$fileid = $fileid+1;
+	
+	#
+	# ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
+	#
+	if($resource eq "ETH-Monch") {
+	    open(PBS, ">/mnt/lnec/davides/VALOR/sbatch_files/run_fit-$ijob.sbatch") or die("Can not create the sbatch script");
+	    print PBS "#!/bin/bash -l  \n";
+	    #print PBS "#SBATCH --partition=dphys_compute_wk  \n";
+	    #print PBS "#SBATCH --partition=dphys_compute  \n";    	    
+	    print PBS "#SBATCH --partition=dphys_compute --mem-per-cpu=2000  \n"; # in MB. Same as dphys_largemem default RAM
+	    #print PBS "#SBATCH --partition=dphys_largemem --mem-per-cpu=2000  \n";
+	    print PBS "#SBATCH --nodes=1  \n";
+	    print PBS "#SBATCH --ntasks-per-node=1  \n";
+	    print PBS "#SBATCH --output=/mnt/lnec/davides/VALOR/outputs/out.%j.o  \n";
+	    print PBS "#SBATCH --error=/mnt/lnec/davides/VALOR/outputs/out.%j.e  \n";
+	    #print PBS "#SBATCH --exclusive \n";
+	    print PBS "$command \n";
+	    close(PBS);
+	    #`sbatch -t 23:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	    #`sbatch -t 2-00:00:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	    #`sbatch -t 09:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`; # 2D sinsqth13 Vs dcp 2x4 steps
+	    #`sbatch -t 05:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`; # not enough for 2D sinsqth13 Vs dcp 2x4 steps
+	    `sbatch -t 00:59:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`; # 1D 
+	    #`sbatch -t 00:05:00 /mnt/lnec/davides/VALOR/sbatch_files/run_fit-$irun.sbatch`;
+	}
+	
+	#
+	# ETH (Brutus cluster)
+	#
+	if($resource eq "ETH-Brutus") {
+	    open(PBS, ">$job_dir/$tag-$ijob.sh") or die("Can not create the PBS batch script");
+	    print PBS "#!/bin/bash \n";
+	    #print PBS "#PBS -N $tag-$ijob \n";
+	    #print PBS "#PBS -l cput=$cput \n";
+	    #print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+	    #print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
+	    #print PBS "#PBS -q prod \n";
+	    #print PBS "#PBS -l walltime=$cput \n";
+	    #print PBS "cd $job_dir \n";
+	    #print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
+	    print PBS "$command \n";
+	    close(PBS);
+	    `bsub -W 3:59 < $job_dir/$tag-$ijob.sh`;
+	    #`bsub -W 1:59 < $job_dir/$tag-$ijob.sh`;
+	    #`bsub -W 0:29 < $job_dir/$tag-$ijob.sh`;
+	}
+	
+	#
+	# RAL
+	#
+	if($resource eq "RAL") {
+	    $fullprogram = `which root2k`;
+	    $fullprogram = `readlink -m $fullprogram`;
+	    $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+	    $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+	    open(CND, ">$job_dir/$tag-$ijob.condor") or die("Cannot create the Condor batch script");
+	    print CND "Executable               = $fullprogram \n";
+	    print CND "Arguments                = $arguments \n";
+	    print CND "Error                    = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).err \n";
+	    print CND "Output                   = $job_dir/toys_proc_$tag-${ijob}_\$\(Process\).out \n";
+	    print CND "Universe                 = vanilla \n";
+	    print CND "Getenv                   = True \n";
+	    print CND "should_transfer_files    = YES \n";
+	    print CND "when_to_transfer_output  = ON_EXIT \n";
+	    print CND "\nqueue\n";
+	    
+	    close(CND);
+	    `condor_submit $job_dir/$tag-$ijob.condor`;
+	    
+	    $ijob++;
+	}	
+	
+	#
+	# RAL (SL5)
+	#
+	if($resource eq "OLDRAL") {
+	    open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
+	    print PBS "#!/bin/bash \n";
+	    print PBS "#PBS -N $tag-$ijob \n";
+	    print PBS "#PBS -l cput=$cput \n";
+	    print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+	    print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
+	    print PBS "#PBS -q prod \n";
+	    print PBS "#PBS -l walltime=$cput \n";
+	    print PBS "cd $job_dir \n";
+	    print PBS "source $softw_dir/setup/setup_at_ral.sh $softw_dir\n";
+	    print PBS "$command \n";
+	    close(PBS);
+	    #`qsub -q prod $job_dir/$tag-$ijob.pbs`;
+	}
+	
+	#
+	# Oxford
+	#
+	if($resource eq "Oxford") {
+	    open(PBS, ">$job_dir/$tag-$ijob.pbs") or die("Can not create the PBS batch script");
+	    print PBS "#!/bin/bash \n";
+	    print PBS "#PBS -N $tag-$ijob \n";
+	    print PBS "#PBS -l cput=$cput \n";
+	    print PBS "#PBS -l walltime=$cput \n";
+	    print PBS "#PBS -o $job_dir/$tag-$ijob.pbs.out \n";
+	    print PBS "#PBS -e $job_dir/$tag-$ijob.pbs.err \n";
+	    if($queue eq "outofhours")
+	    {
+		print PBS "#PBS -q outofhours \n";
+	    }
+	    print PBS "cd $job_dir \n";
+	    #  print PBS "source $fmwk_dir/setup_at_oxford.sh $fmwk_dir\n";
+	    print PBS "source $softw_dir/setup/setup_at_oxford.sh $softw_dir $fmwk_dir\n";
+	    print PBS "$command \n";
+	    close(PBS);
+	    `qsub  $job_dir/$tag-$ijob.pbs`;
+	    `sleep 0.0001`;
+	    $ijob++;
+	}
+	
+	#
+	# Liverpool
+	#
+	if($resource eq "Liverpool") {
+	    open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
+	    print PBS "#!/bin/bash \n";
+	    print PBS "#PBS -N $tag-$irun \n";
+	    print PBS "#PBS -q all64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
+	    print PBS "#PBS -l nodes=1:ppn=2 \n"; 
+	    print PBS "#PBS -o /scratch/cbarry/$tag-$irun.pbs.out \n";
+	    print PBS "#PBS -e /scratch/cbarry/$tag-$irun.pbs.err \n";
+	    print PBS "cd $job_dir \n";
+	    # print PBS "source $fmwk_dir/setup/setup_at_liverpool.sh $fmwk_dir\n";
+	    print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
+	    print PBS "$command \n";
+	    close(PBS);
+	    `qsub $job_dir/$tag-$irun.pbs`;
+	}
+	
+	#
+	# Grid
+	#
+	if($resource eq "Grid") {
+	    print "Not supported just yet!\n";
+	}
+	#
+	# interactive
+	#
+	if($resource eq "interactive") {
+	    system($command);
+	}
+
+        if($resource eq "warwick") {
+          $current = $queue;
+          if($npt_freepar1 == 1)
+          {  # 1D
+#             if(($imin0 == ($npt_freepar0 - 1)) && ($npt_freepar1 == 1))
+#             {  # Last job for 1D fit is small, use shorter queue
+#               $queue = "medium";
+#             }
+          }
+          else
+          {  # 2D
+            if($freepar0 eq "mixing23")
+            {
+               if(($imin0 == ($npt_freepar0 - 1)) && ($imin1 == ($npt_freepar1 - 1)))
+               {  # Both params on short "final" job
+                  $queue = "medium";
+               }
+               elsif(($imin0 == ($npt_freepar0 - 1)) || ($imin1 == ($npt_freepar1 - 1)))
+               {  # One param on short "final" job
+                  $queue = "long";
+               }
+            }
+            elsif($freepar0 eq "mixing13")
+            {
+               if(($imin0 == ($npt_freepar0 - 1)) && ($imin1 == ($npt_freepar1 - 1)))
+               {  # Both params on short "final" job
+                  $queue = "medium";
+               }
+            }
+
+          }
+
+          `bsub -q $queue -oo log_${tag}_${imin0}_${imin1}.log $softw_dir/production/warwick_submit_command.sh $command`;
+          $queue = $current;
+        }
+	
+	$irun++;
+
+    } # freepar 0
+} # freepar 1
