@@ -223,7 +223,7 @@ class FitMarginalization
   
   // THIS ISN"T IMPLEMENTED ANYMORE! void SetMargOscParam();
   void SetMargOscParam(FitParamList * infparm);
- 
+  
   // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,double par1,double par2);
   // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH1D *hprior);
   // THIS ISN"T IMPLEMENTED ANYMORE! void SetPrior(conv::PhysParamId_t physpar, std::string priorname,TH2D *hprior);
@@ -345,6 +345,12 @@ class FitMarginalization
   TH1D* GetNuEBarHisto(int i){return fNuEAppHisto[i];};
   // Histo below is required for p-value statistical uncertainty
   TH1D* GetNuEBarHistoUnscaled(int i){return fNuEAppHistoUnscaled[i];};
+
+private:
+  void SetNoOscillation(FitParamList* fparm);
+  bool TweakSystematics(SuperkExpectation* skexp, int tweak_systematics);
+  bool ProduceToys(SuperkObservation* skobs, SuperkExpectation* skexp,
+        FitParamList* fparm, int iexperiment);
 
 private:
 

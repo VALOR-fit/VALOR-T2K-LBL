@@ -1246,20 +1246,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     fparm_ih->ResetCurrToInitValues(); // Doesn't make sense if SetInitValue is used
                                        //
     
-    // Extract oscillation parameters to be marginalized
+/*    // Extract oscillation parameters to be marginalized
     
     this->SetMargOscParam(fparm_nh);
-    
-    // NEW OSC PRIOR
-    this->SetMargOscParam(fparm_ih);
-    //#ifndef __TOYS_SYNCHRONIZE_IH_TO_NH__
-    //this->SetMargOscParam(fparm_ih);
-    //#else
-    //fparm_ih->Copy(*fparm_nh);
-    //#endif
-    //
-    
-    ///
+    this->SetMargOscParam(fparm_ih);*/
+    this->SetNoOscillation(fparm_nh);
+    this->SetNoOscillation(fparm_ih);
     
 #ifdef  __print_oscparam_all__
     
@@ -1271,121 +1263,54 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
     for(int ip = 0; ip < np_print; ip++) {
       conv::PhysParamId_t p = fparm_nh->WhichParam(ip);
       if(util::IsSystematic(p)) continue; // not oscillation parameters
-      
-      // NEW FHC+RHC JOINT
-      //cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_nh->InitValue(p) << endl;
       cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_nh->CurrValue(p) << endl;
-      //
     }
     cout << "Inverted hierarchy parameters:" << endl;
     np_print = fparm_ih->GetNumberParameters();
     for(int ip = 0; ip < np_print; ip++) {
       conv::PhysParamId_t p = fparm_ih->WhichParam(ip);
       if(util::IsSystematic(p)) continue; // not oscillation parameters
-      
-      // NEW FHC+RHC JOINT
-      //cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->InitValue(p) << endl;
       cout << "Osc param " << p << " --> " << util::AsString(p) << " --> " << fparm_ih->CurrValue(p) << endl;
-      //
     }
     cout << endl;
 #endif
     
     // Set seed after oscillation parameter extraction
-    
-    UInt_t seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
-    UInt_t seedsyst = Rnd::Instance()->RndToyMCsyst().GetSeed();
-    UInt_t seedosc = Rnd::Instance()->RndToyMCosc().GetSeed();
-    UInt_t seedfit = Rnd::Instance()->RndFitter().GetSeed();
-    UInt_t seedoth = Rnd::Instance()->RndOther().GetSeed();
-    //cout << seedstat << " " << seedsyst << " " << seedosc << " " << seedfit << " " << seedoth << endl;
-    Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
-    
-    //
+    Rnd::Instance()->SetSeeds(
+          Rnd::Instance()->RndToyMCstat().GetSeed() + 1,
+          Rnd::Instance()->RndToyMCsyst().GetSeed() + 1,
+          Rnd::Instance()->RndToyMCosc().GetSeed() + 1,
+          Rnd::Instance()->RndFitter().GetSeed() + 1,
+          Rnd::Instance()->RndOther().GetSeed()+ 1);
     
     SuperkObservation * skobs = new SuperkObservation;
     
     bool applied_negevents_condition = true;
     bool unphysical_tweak = true;
-    while(applied_negevents_condition || unphysical_tweak) {
-      if(tweak_systematics) {
-        
-        // tweak all sources of systematic error
-        if(tweak_systematics == 1) {
-          //~ cout << "- Randomizing all systematic params in pdf..." << endl;
-          skexp->TweakAllSystematics();
+    while(applied_negevents_condition || unphysical_tweak)
+    {
+      if(tweak_systematics)
+      {
+        unphysical_tweak = this->TweakSystematics(skexp, tweak_systematics);
+        if(unphysical_tweak)
+        { // Repeat loop to get physical systematics
+          continue;
         }
-        else if(tweak_systematics == 2) {
-          //~ cout << "- Randomizing BANFF systematic params in pdf..." << endl;
-          skexp->TweakAllBANFFSystematics();
-        }
-        else if(tweak_systematics == 3) {
-          //~ cout << "- Randomizing uncorrelated-xsec systematic params in pdf..." << endl;
-          skexp->TweakAllUncorrelatedXSecSystematics();
-        }
-        else if(tweak_systematics == 4) {
-          //~ cout << "- Randomizing SKDetFSI systematic params in pdf..." << endl;
-          skexp->TweakAllSKDetectorFSISystematics();
-        }
-        
-        // tweak all sources of systematic error but fix 2p2h to its nominal value (only FHC+RHC joint fit)
-        if(tweak_systematics == 5) {
-#if defined(__RHC_RUNNING__) && defined(__FHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
-          //~ cout << "- Randomizing all systematic params except 2p2h in pdf..." << endl;
-          skexp->TweakAllSystematics();
-          //skexp->PrintSystematicVariations();
-          TVectorD twkv(skexp->GetBANFF()->CurrentValues());
-          double mecval = skexp->GetBANFF()->InitialValue(conv::kNuisBANFFNorm2p2h);
-          int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFNorm2p2h);
-          twkv[ip] = mecval;
-          //cout << "ip = " << ip << " --> " << mecval << endl;
-          skexp->GetBANFF()->Tweak(true,&twkv);
-          //skexp->PrintSystematicVariations();
-#else
-          cerr << endl;
-          cerr << "FitMarginalization::MakeToysMarginalization" << endl;
-          cerr << "Tweaking all systematics but fixing 2p2h is available only for FHC+RHC not fully correlated" << endl;
-          cerr << endl;
-          util::Die(1);
-#endif
-        }
-        
-#ifdef __print_systematic_variations__
-        skexp->PrintSystematicVariations();
-#endif
-        
-        // Re-throw the systematics if at least one in the unphysical region
-        PhysParamList true_nuisance_params = skexp->Tweaks();
-        if (this->fRethrowSystUnphysical) {
-          unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
-          if (unphysical_tweak) {
-            //~ cout<<"Parameters are unphysical - rethrowing"<<std::endl;
-            continue; // repeat the loop
-          }
-        }
-        else {
-          unphysical_tweak = false;
-        }
-        
-        
       }
-      else { // no toys
+      else
+      { // no toys
         skexp->ResetSystematicVariations();
         unphysical_tweak = false; // otherwise it doesn't exit the while
-                                  //~ cout << "- Generating toy-MC without systematic variation" << endl;
       }
       
-      // Set seeds after systematic parameter extraction
-      
-      seedstat = Rnd::Instance()->RndToyMCstat().GetSeed();
-      seedsyst = Rnd::Instance()->RndToyMCsyst().GetSeed();
-      seedosc = Rnd::Instance()->RndToyMCosc().GetSeed();
-      seedfit = Rnd::Instance()->RndFitter().GetSeed();
-      seedoth = Rnd::Instance()->RndOther().GetSeed();
-      //cout << seedstat << " " << seedsyst << " " << seedosc << " " << seedfit << " " << seedoth << endl;
-      Rnd::Instance()->SetSeeds(seedstat+1,seedsyst+1,seedosc+1,seedfit+1,seedoth+1); // stat, syst, osc, fitter, other
-      
-      
+      // Increment seeds after systematic parameter extraction
+      Rnd::Instance()->SetSeeds(
+            Rnd::Instance()->RndToyMCstat().GetSeed() + 1,
+            Rnd::Instance()->RndToyMCsyst().GetSeed() + 1,
+            Rnd::Instance()->RndToyMCosc().GetSeed() + 1,
+            Rnd::Instance()->RndFitter().GetSeed() + 1,
+            Rnd::Instance()->RndOther().GetSeed() + 1);
+
       // Marginalize the Mass Hierarchy
       
       conv::NuMassHierarchy_t hier;
@@ -1612,10 +1537,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       
 #endif // __FILL_OSCPARAM_TOY_HISTO__
       
-      
-      //
-      
-      
 #ifdef __print_masshierarchy__
       cout << endl;
       cout << "iMH = " << iMH << " - MH: " << util::HierarchyAsString(hier)
@@ -1636,168 +1557,8 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
       }
       cout << endl;
 #endif
-      
-      
-      
-      
-      
-      
-      // Produce toys for each osc param value
-      
-      for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-        for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-          
-          //cout << ipar0 << " - " << ipar1 << endl;
-          
-          double currval0 = fmin_param[0] + ipar0*fstep_param[0];
-          double currval1 = fmin_param[1] + ipar1*fstep_param[1];
-          //cout << "currval0 = " << currval0 << ", ";
-          //cout << "currval1 = " << currval1 << ", ";
-          
-          
-          // Update the expectation and produce the mock data
-          
-          // NEW FHC+RHC JOINT
-          fparm->Update(fPhysParamFree[0],currval0);
-          if(fIsFit2D) fparm->Update(fPhysParamFree[1],currval1);
-          //fparm->SetInitValue(fPhysParamFree[0],currval0);
-          //if(fIsFit2D) fparm->SetInitValue(fPhysParamFree[1],currval1);
-          //
-          
-          //cout << *fparm << endl;
-          
-          applied_negevents_condition = skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false); // build marginalization distribution w/ syst + osc param but no stat fluctuations
-          
-          // Loop over the used SK samples (This loop can be improved. Loop only over the used SK samples, pre-stored)
-          int iscount=0;
-          //for(int is = 0; is < kns; is++) {
-          //SuperkSample_t s = kSKSamples[is];
-          //if(s == kSKsUndefined) continue;
-          for(int is=0;is<fNSKsamples;is++){
-            SuperkSample_t s = this->GetSKSamples(is);
-            
-#ifndef __USE_2D_TEMPLATES__
-            double * obsErec = skobs->ErecoSpectrumArray(s);
-            // Build toy Ereco distributions
-            for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-              float bincont = (float)(obsErec[ib] / fNormPOT[is]);  // NEW PRECISION
-              
-              // NEW 2D TEMPLATES (VARRAY)
-              //fToyMargVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib);
-              this->GetToyMargVArraySample(s)->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib);
-              //
-              
-            }
-#else
-            
-            // NEW 2D TEMPLATES
-            
-            // const int nbins_q2    = util::NumQ2Bins(s);
-            // const int nbins_ereco = util::NumErecoBins(s);
-            // typedef double (erq2type)  [nbins_ereco][nbins_q2];
-            // const erq2type & arr = *reinterpret_cast< const erq2type * > (skobs->TwoDSpectrumArray(s));
-            // //const double * arr = CurrPredictedErecoSpectrumArrayMode(s,m);
-            // if (!arr){
-            //   cerr << endl;
-            //   cerr << "FitMarginalization::MakeToysMarginalization" << endl;
-            //   cerr << "const erq2type & arr = *reinterpret_cast< const erq2type * > (skobs->TwoDSpectrumArray(s)) doesn't work" << endl;
-            //   cerr << endl;
-            //   util::Die(1);
-            // }
-            // //double * obsErec = skobs->TwoDSpectrumArray(s);
-            
-            // Build toy 2D distributions (Ereco Vs Q2)
-            for(int iereco = 0; iereco < util::NumErecoBins(s); iereco++){
-              for(int iq2 = 0; iq2 < util::NumQ2Bins(s); iq2++){
-                
-                float bincont = (float) skobs->TwoDSpectrumVArray(s)->GetEntry(iereco,iq2); // Maybe it takes longer than using the array --> TO CHECK
-                                                                                            //float bincont = (float) (arr[iereco][iq2]);
-                bincont /= (float)fNormPOT[is];
-                
-                // NEW 2D TEMPLATES (VARRAY)
-                //fToyMargVArray->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,iereco,iq2);
-                this->GetToyMargVArraySample(s)->SetEntry(bincont,iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iereco,iq2);
-                //
-                
-              }
-            }
-            //
-#endif
-            
-            iscount++; // index of the toy array
-            
-          } // loop SK samples
-          
-#ifdef __print_array_toy_maketoys__
-          cout << endl;
-          cout << "toy=" << iexperiment << endl;
-          cout << " - ipar0 = " << ipar0
-          << " - currval0 = " << currval0 << endl;
-          if(fIsFit2D){
-            cout << " - ipar1 = " << ipar1
-            << " - currval1 = " << currval1 << endl;
-          }
-          cout << endl;
-          
-          // Build toy Ereco distributions
-          
-          iscount=0;
-          //for(int is = 0; is < kns; is++) {
-          //SuperkSample_t s = kSKSamples[is];
-          //if(s == kSKsUndefined) continue;
-          for(int is=0;is<fNSKsamples;is++){
-            SuperkSample_t s = this->GetSKSamples(is);
-            
-            
-#ifndef __USE_2D_TEMPLATES__
-            //cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() / fNormPOT[is]<< endl;
-            cout << util::AsStringCompact(s) << "\t"<<skobs->ErecoSpectrumVArray(s)->Integral() << endl;
-#else
-            // NEW 2D TEMPLATES
-            cout << util::AsStringCompact(s) << "\t"<<skobs->TwoDSpectrumVArray(s)->Integral() << endl;
-            //
-#endif
-            
-            
-#ifdef __print_array_toy_maketoys_verbose__
-            for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-              
-#ifndef __USE_2D_TEMPLATES__
-              
-              // NEW 2D TEMPLATES (VARRAY)
-              //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib);
-              double bincont = conv::kBadResult;
-              bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib);
-              //
-              
-              cout << bincont << " ";
-#else
-              // NEW 2D TEMPLATES
-              for(int iq2 = 0; iq2 < util::NumQ2Bins(s); iq2++){
-                
-                // NEW 2D TEMPLATES (VARRAY)
-                //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ib,iq2);
-                double bincont = conv::kBadResult;
-                bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ib,iq2);
-                //
-                
-                cout << bincont << " ";
-              }
-              //
-#endif
-              
-            }
-            
-#endif // verbose
-            
-            cout << endl;
-            
-            iscount++; // index of the toy array
-          } // loop SK samples
-#endif //__print_array_toy_maketoys__
-          
-        } // loop ipar1 (free parameter)
-      } // loop ipar0 (free parameter)
+   
+      applied_negevents_condition = this->ProduceToys(skobs, skexp, fparm, iexperiment);
     } // applied_negevents_condition
     
 #ifdef FILL_TREE_OSCPARAM_TOYS
@@ -1814,9 +1575,98 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   return;
 }
 //________________________________________________________________________________________
+bool FitMarginalization::TweakSystematics(SuperkExpectation* skexp, int tweak_systematics)
+{
+   if(tweak_systematics == 1)
+   {
+      skexp->TweakAllSystematics();
+   }
+   else if(tweak_systematics == 2)
+   {
+      skexp->TweakAllBANFFSystematics();
+   }
+   else if(tweak_systematics == 3)
+   {
+      skexp->TweakAllUncorrelatedXSecSystematics();
+   }
+   else if(tweak_systematics == 4)
+   {
+      skexp->TweakAllSKDetectorFSISystematics();
+   }
+   else if(tweak_systematics == 5)
+   {  // tweak all sources of systematic error but fix 2p2h to its nominal value (only FHC+RHC joint fit)
+      #if defined(__RHC_RUNNING__) && defined(__FHC_RUNNING__) && !defined(__FULLY_CORRELATED__)
+      skexp->TweakAllSystematics();
+      TVectorD twkv(skexp->GetBANFF()->CurrentValues());
+      double mecval = skexp->GetBANFF()->InitialValue(conv::kNuisBANFFNorm2p2h);
+      int ip = util::ArrIdx::Instance()->FHCpRHCBANFFSystIdx(conv::kNuisBANFFNorm2p2h);
+      twkv[ip] = mecval;
+      skexp->GetBANFF()->Tweak(true,&twkv);
+      #else
+      cerr << endl;
+      cerr << "FitMarginalization::MakeToysMarginalization" << endl;
+      cerr << "Tweaking all systematics but fixing 2p2h is available only for FHC+RHC not fully correlated" << endl;
+      cerr << endl;
+      util::Die(1);
+      #endif
+   }
+   #ifdef __print_systematic_variations__
+   skexp->PrintSystematicVariations();
+   #endif
 
+   PhysParamList true_nuisance_params = skexp->Tweaks();
+   if(this->fRethrowSystUnphysical)
+   {
+      return !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
+   }
+   else
+   {
+      return false;
+   }
+}
 
+bool FitMarginalization::ProduceToys(SuperkObservation* skobs,
+      SuperkExpectation* skexp, FitParamList* fparm, int iexperiment)
+{
+   // Update the expectation and produce the mock data
+   // Build marginalization distribution w/ systematic fluctations, but no stat fluctuations
+   if(skobs->CreateMockData(*skexp, PhysHypothesis(*fparm), false))
+   {
+      return true;
+   }
 
+   // Loop over the used SK samples (This loop can be improved. Loop only over the used SK samples, pre-stored)
+   int iscount = 0;
+   for(int is = 0; is < fNSKsamples; ++is)
+   {
+      SuperkSample_t s = this->GetSKSamples(is);
+      VALORArrayF* array = this->GetToyMargVArraySample(s);
+
+      #ifndef __USE_2D_TEMPLATES__
+      double* obsErec = skobs->ErecoSpectrumArray(s);
+      // Build toy Ereco distributions
+      for(int ib = 0; ib < util::NumErecoBins(s); ib++)
+      {
+         float bincont = (float)(obsErec[ib] / fNormPOT[is]);  // NEW PRECISION
+         array->SetEntry(bincont, iexperiment, 0, 0, ib);
+      }
+      #else
+      VALORArray* obs = skobs->TwoDSpectrumVArray(s);
+      // Build toy 2D distributions (Ereco Vs Q2)
+      for(int iereco = 0; iereco < util::NumErecoBins(s); iereco++)
+      {
+         for(int iq2 = 0; iq2 < util::NumQ2Bins(s); iq2++)
+         {
+            float bincont = (float) obs->GetEntry(iereco,iq2) / fNormPOT[is];
+            array->SetEntry(bincont, iexperiment, 0, 0, iereco, iq2);
+         }
+      }
+      #endif
+      iscount++; // index of the toy array
+   }
+
+   return false;
+}
 
 // NEW 2D TEMPLATES (VARRAY)
 VALORArrayF * FitMarginalization::GetToyMargVArraySample(conv::SuperkSample_t s)
@@ -4446,9 +4296,24 @@ void FitMarginalization::SetMargOscParam(FitParamList * infparm)
   
 }
 
-//
-
-
+void FitMarginalization::SetNoOscillation(FitParamList* fparm)
+{
+   int N = fparm->GetNumberParameters();
+   for(int ip = 0; ip < N; ++ip)
+   {
+      conv::PhysParamId_t p = fparm->WhichParam(ip);
+      if(!util::IsSystematic(p))
+      {
+         if(util::IsMixingAngle(p) || util::IsMixingAngleBar(p) ||
+               p == conv::kPhypCPV || p == conv::kPhypCPVBar)
+         {
+            cout << "Setting oscillation parameter to zero: " << util::AsString(p) << endl;
+            fparm->SetDoMarg(p, false);
+            fparm->SetInitValue(p, 0.0);
+         }
+      }
+   }
+}
 
 //________________________________________________________________________________________
 void FitMarginalization::BuildDefaultPriors(void)

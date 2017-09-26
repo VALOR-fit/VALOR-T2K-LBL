@@ -484,6 +484,7 @@ namespace util {
 
   bool IsSystematic  (conv::PhysParamId_t p);
   bool IsMixingAngle (conv::PhysParamId_t p);
+  bool IsMixingAngleBar (conv::PhysParamId_t p);
   
   bool IsSystematic       (conv::PhysParamId_t p);
   bool IsFHCSystematic    (conv::PhysParamId_t p);
