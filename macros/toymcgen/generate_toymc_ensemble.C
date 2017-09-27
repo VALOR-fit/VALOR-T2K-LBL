@@ -48,7 +48,7 @@ void generate_toymc_ensemble
  const char * tag                     = "toymc",                        /* */
  int          run                     = 0,                              /* */
  double       first_experiment        = 0,                
- double       last_experiment         = 0,
+ double       last_experiment         = 10000,
  const char * hypothesis              = "3f_osc",                       /* options: "2f_numu_disap", "3f_osc, 3f_oscbar" */
 
  //-999 randomize
@@ -88,7 +88,7 @@ void generate_toymc_ensemble
  string       file_priors             = "",    // file to get priors from (in $T2KOSCANA/inputs) Set to "" for no priors
  
  
- const char * config_file             = "analysis_configuration_Run1-7cPOT_1bin_martini.xml",
+ const char * config_file             = "analysis_configuration_oa2017_run1-8_prefit.xml",
 
  bool rethrow_if_parameters_unphysical = true, // rethrow unphysical toys
 
@@ -106,7 +106,7 @@ void generate_toymc_ensemble
  const char * mixparamoctant          = "one",                          /* one==kNuOctantOne two==kNuOctantTwo */
  const char * cpvphase                = "delta",                         /* delta==kNuDeltaCPPhase sindelta==kNuDeltaCPSin */
  bool         reset_xsec_values       = false,
- string       reweight_fake_data      = "Nieves1P1H"
+ string       reweight_fake_data      = "MEC2p2hPDD_2017"
 )
 {
   cout << "start" << endl;
@@ -311,6 +311,10 @@ void generate_toymc_ensemble
        }
        else {
 	 unphysical_tweak = false;
+       }
+       if  ( reweight_fake_data =="MEC2p2hPDD_2017") {
+         cout << "Setting the value of the 2p2h Shape Parameter to 1 " << endl;
+         skexp->GetBANFF()->SetCurrentValue(conv::kNuisBANFFShape2p2h, 1);
        }
        skexp->GetBANFF()->PrintSystematicVariations();
        applied_negevents_condition = skobs->CreateMockData(*skexp, ph, stat_fluctuations);
