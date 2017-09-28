@@ -1123,7 +1123,8 @@ void FitMarginalization::PrintPhysHypothesis(){
 }
 //________________________________________________________________________________________
 void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExpectation *skexp){
-  
+ 
+   TFile* toys_file = new TFile("toys.root", "recreate");
   
   
   // NEW 2D TEMPLATES (VARRAY)
@@ -1560,13 +1561,37 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
    
       applied_negevents_condition = this->ProduceToys(skobs, skexp, fparm, iexperiment);
     } // applied_negevents_condition
-    
+
+    for (int is = 0 ; is < conv::kns ; is++)
+    {
+      SuperkSample_t s = conv::kSKSamples[is];
+      if (s == conv::kSKsUndefined) continue;
+      #ifdef __USE_2D_TEMPLATES__ //1D templates
+      TH1D* spectrum_x = skobs->XSpectrum(s);
+      spectrum_x->SetDirectory(0);
+      spectrum_x->Write(Form("spectrum_x_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+      delete spectrum_x;
+      TH1D* spectrum_y = skobs->YSpectrum(s);
+      spectrum_y->SetDirectory(0);
+      spectrum_y->Write(Form("spectrum_y_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+      delete spectrum_y;
+      TH2D* spectrum_2D = skobs->TwoDSpectrum(s);
+      spectrum_2D->SetDirectory(0);
+      spectrum_2D->Write(Form("spectrum_2D_%s_%d", util::AsStringCompact(s).c_str(), iexperiment));
+      delete spectrum_2D;
+      #endif
+    }
+
+
 #ifdef FILL_TREE_OSCPARAM_TOYS
     treetoys->Fill(); // NEW OSC TREE
 #endif
     
     delete skobs;
   } // iexperiment
+
+  toys_file->Close();
+  delete toys_file;
   
   cout << endl;
   cout << "Toys for marginalization are extracted" << endl;
