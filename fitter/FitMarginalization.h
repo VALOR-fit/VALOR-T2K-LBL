@@ -103,11 +103,7 @@ class FitMarginalization
   void SetPhysParFree(conv::PhysParamId_t *parfree,int ntoys_marg,int *nbins_param,double *minpar,double *maxpar);
   void SetFreeParam(int ParID,conv::PhysParamId_t *parfree,double *minpar,double *maxpar);
   void SetFullRange();
-  void SetSubRange(int *submin,int *submax);
   
-  int GetFirstBinInSubRange(int par=0) const {return fmin_bin_sub_param[par];}
-  int GetLastBinInSubRange (int par=0) const {return fmax_bin_sub_param[par];}
-
   int GetFirstBinInFullRange(int par=0) const {return fmin_bin_param[par];}
   int GetLastBinInFullRange (int par=0) const {return fmax_bin_param[par];}
   
@@ -161,7 +157,7 @@ class FitMarginalization
   void InitTreeOscToys();
   //
 
-  void ResetChisqMarg(int *min_bin_sub_param,int *max_bin_sub_param);
+  void ResetChisqMarg();
 
   void BuildDeltaChisqMarg(void);
 
@@ -265,8 +261,6 @@ class FitMarginalization
   void SetRethrowSystUnphysical(bool dorethrow);
   
   double OscPhysicalRegion(conv::PhysParamId_t p,double oscval);
-
-  void MergeInputFiles();
 
   void SetNSKsamples();
   int GetNSKsamples ()  const {return fNSKsamples;};
@@ -423,18 +417,11 @@ private:
   UInt_t fSeed;
 
   int fnbins_param[2];
-  int fnbins_sub_param[2]; 
   
   int fntoys_marg;
   
   int fmin_bin_param[2]; // first bin of sub-range to scan (for partial toys and chisq marg)
   int fmax_bin_param[2]; // last bin of sub-range to scan (for partial toys and chisq marg)
-
-  int fmin_bin_sub_param[2]; // first bin of sub-range to scan (for partial toys and chisq marg)
-  int fmax_bin_sub_param[2]; // last bin of sub-range to scan (for partial toys and chisq marg)
-
-  double fmin_sub_param[2];  // first value of sub-range to scan (for partial toys and chisq marg)
-  double fmax_sub_param[2];  // last value of sub-range to scan (for partial toys and chisq marg)
 
   double fmin_param[2];  
   double fmax_param[2];  
@@ -481,9 +468,6 @@ private:
   int fMaxSampleQ2Bins;
   //
   
-  bool fMergeInputFiles_Called;
-  int fNmergedFiles;
-
   FitParamList * fparm;
   // NEW MARG MH
   FitParamList * fparm_nh;

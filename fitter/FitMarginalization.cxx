@@ -191,15 +191,9 @@ FitMarginalization::FitMarginalization()
   fSeed = 999;
   fnbins_param[0] = 0;
   fnbins_param[1] = 0;
-  fnbins_sub_param[0] = 0;
-  fnbins_sub_param[1] = 0;
   fntoys_marg = 0;
   fmin_bin_param[0] = 0;
   fmin_bin_param[1] = 0;
-  fmin_bin_sub_param[0] = 0;
-  fmin_bin_sub_param[1] = 0;
-  fmin_sub_param[0] = 0;
-  fmin_sub_param[1] = 0;
   fmin_param[0] = 0;
   fmin_param[1] = 0;
   fstep_param[0] = 0;
@@ -215,12 +209,6 @@ FitMarginalization::FitMarginalization()
   
   fnerecobins = 0;
   
-  
-  
-  // NEW 2D TEMPLATES (VARRAY)
-  
-  //fToyMargVArray = 0;
-  //fToyMargVArray_Clone = 0;
   fToyMargVArray_1Re = 0;
   fToyMargVArray_1Rmu = 0;
   fToyMargVArray_RHC1Rmu = 0;
@@ -232,7 +220,6 @@ FitMarginalization::FitMarginalization()
   fToyMargVArray_Clone_RHC1Rmu = 0;
   fToyMargVArray_Clone_RHC1Re = 0;
   fToyMargVArray_Clone_MultiRe = 0;
-  //
   
   for(int i=0;i<conv::kns;i++) fhToyMargCurr[i] = 0;
   fMaxSampleErecoBins = 0;
@@ -242,9 +229,6 @@ FitMarginalization::FitMarginalization()
   for(int i=0;i<conv::kns;i++) fhToyMargCurr2D[i] = 0;
   fMaxSampleQ2Bins = 0;
   //
-  
-  fMergeInputFiles_Called = true;
-  fNmergedFiles = 0;
   
   fparm = 0;
   fparm_nh = 0;
@@ -352,9 +336,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   sprintf(fnameoscfiletree,"%s","%s_osctoys_file%d_toy%d_x_oscpar%d_oscpar%d_MH%s%s");
   //
   
-  fMergeInputFiles_Called = true; // false the first time MergeInputFiles() is called
-  fNmergedFiles = 0; // fNmergedFiles++ everytime MergeInputFiles() is called (after reading each file)
-  
   fNCallsCalcChisqMargPt = 0; // Get track of the # of calls to CalcChisqMargPt
   
   const int nmh=2; // mass hierarchy
@@ -364,87 +345,48 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   
   this->SetNSKsamples(); // also defines fnerecobins
   
-  
-  
-  
-  
-  // NEW 2D TEMPLATES (VARRAY)
-  
-  // #ifndef __USE_2D_TEMPLATES__
-  //   fToyMargVArray = new VALORArrayF(1,1,1,1,1);
-  //   fToyMargVArray->SetAll(-1.);   // needed for MergeInputFiles()
-  //   fToyMargVArray->SetDimensionName(0,"# toys marginalization");
-  //   fToyMargVArray->SetDimensionName(1,"# bins free parameter 0");
-  //   fToyMargVArray->SetDimensionName(2,"# bins free parameter 1");
-  //   fToyMargVArray->SetDimensionName(3,"# sk samples");
-  //   fToyMargVArray->SetDimensionName(4,"# bins ereco");
-  // #else
-  //   // NEW 2D TEMPLATES
-  //   fToyMargVArray = new VALORArrayF(1,1,1,1,1,1);
-  //   fToyMargVArray->SetAll(-1.);   // needed for MergeInputFiles()
-  //   fToyMargVArray->SetDimensionName(0,"# toys marginalization");
-  //   fToyMargVArray->SetDimensionName(1,"# bins free parameter 0");
-  //   fToyMargVArray->SetDimensionName(2,"# bins free parameter 1");
-  //   fToyMargVArray->SetDimensionName(3,"# sk samples");
-  //   fToyMargVArray->SetDimensionName(4,"# bins ereco");
-  //   fToyMargVArray->SetDimensionName(5,"# bins q2"); // Follow same convention as SuperkMC. Q2 is the last element, opposite to histograms
-  //   //
-  // #endif
-  
 #ifndef __USE_2D_TEMPLATES__
-  fToyMargVArray_1Re     = new VALORArrayF(1,1,1,1);
-  fToyMargVArray_1Rmu    = new VALORArrayF(1,1,1,1);
-  fToyMargVArray_RHC1Re  = new VALORArrayF(1,1,1,1);
-  fToyMargVArray_RHC1Rmu = new VALORArrayF(1,1,1,1);
-  fToyMargVArray_MultiRe = new VALORArrayF(1,1,1,1);
+  fToyMargVArray_1Re     = new VALORArrayF(1,1);
+  fToyMargVArray_1Rmu    = new VALORArrayF(1,1);
+  fToyMargVArray_RHC1Re  = new VALORArrayF(1,1);
+  fToyMargVArray_RHC1Rmu = new VALORArrayF(1,1);
+  fToyMargVArray_MultiRe = new VALORArrayF(1,1);
 #else
-  fToyMargVArray_1Re     = new VALORArrayF(1,1,1,1,1);
-  fToyMargVArray_1Rmu    = new VALORArrayF(1,1,1,1,1);
-  fToyMargVArray_RHC1Re  = new VALORArrayF(1,1,1,1,1);
-  fToyMargVArray_RHC1Rmu = new VALORArrayF(1,1,1,1,1);
-  fToyMargVArray_MultiRe = new VALORArrayF(1,1,1,1,1);
+  fToyMargVArray_1Re     = new VALORArrayF(1,1,1);
+  fToyMargVArray_1Rmu    = new VALORArrayF(1,1,1);
+  fToyMargVArray_RHC1Re  = new VALORArrayF(1,1,1);
+  fToyMargVArray_RHC1Rmu = new VALORArrayF(1,1,1);
+  fToyMargVArray_MultiRe = new VALORArrayF(1,1,1);
 #endif
   
   fToyMargVArray_1Re->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargVArray_1Re->SetDimensionName(0,"# toys marginalization");
-  fToyMargVArray_1Re->SetDimensionName(1,"# bins free parameter 0");
-  fToyMargVArray_1Re->SetDimensionName(2,"# bins free parameter 1");
-  fToyMargVArray_1Re->SetDimensionName(3,"# bins ereco");
+  fToyMargVArray_1Re->SetDimensionName(1,"# bins ereco");
   
   fToyMargVArray_1Rmu->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargVArray_1Rmu->SetDimensionName(0,"# toys marginalization");
-  fToyMargVArray_1Rmu->SetDimensionName(1,"# bins free parameter 0");
-  fToyMargVArray_1Rmu->SetDimensionName(2,"# bins free parameter 1");
-  fToyMargVArray_1Rmu->SetDimensionName(3,"# bins ereco");
+  fToyMargVArray_1Rmu->SetDimensionName(1,"# bins ereco");
   
   fToyMargVArray_RHC1Re->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargVArray_RHC1Re->SetDimensionName(0,"# toys marginalization");
-  fToyMargVArray_RHC1Re->SetDimensionName(1,"# bins free parameter 0");
-  fToyMargVArray_RHC1Re->SetDimensionName(2,"# bins free parameter 1");
-  fToyMargVArray_RHC1Re->SetDimensionName(3,"# bins ereco");
+  fToyMargVArray_RHC1Re->SetDimensionName(1,"# bins ereco");
   
   fToyMargVArray_RHC1Rmu->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargVArray_RHC1Rmu->SetDimensionName(0,"# toys marginalization");
-  fToyMargVArray_RHC1Rmu->SetDimensionName(1,"# bins free parameter 0");
-  fToyMargVArray_RHC1Rmu->SetDimensionName(2,"# bins free parameter 1");
-  fToyMargVArray_RHC1Rmu->SetDimensionName(3,"# bins ereco");
+  fToyMargVArray_RHC1Rmu->SetDimensionName(1,"# bins ereco");
   
   fToyMargVArray_MultiRe->SetAll(-1.);   // needed for MergeInputFiles()
   fToyMargVArray_MultiRe->SetDimensionName(0,"# toys marginalization");
-  fToyMargVArray_MultiRe->SetDimensionName(1,"# bins free parameter 0");
-  fToyMargVArray_MultiRe->SetDimensionName(2,"# bins free parameter 1");
-  fToyMargVArray_MultiRe->SetDimensionName(3,"# bins ereco");
+  fToyMargVArray_MultiRe->SetDimensionName(1,"# bins ereco");
   
 #ifdef __USE_2D_TEMPLATES__
   // Follow same convention as SuperkMC. Q2 is the last element, opposite to histograms
-  fToyMargVArray_1Re    ->SetDimensionName(4,"# bins q2");
-  fToyMargVArray_1Rmu   ->SetDimensionName(4,"# bins q2");
-  fToyMargVArray_RHC1Re ->SetDimensionName(4,"# bins q2");
-  fToyMargVArray_RHC1Rmu->SetDimensionName(4,"# bins q2");
-  fToyMargVArray_MultiRe->SetDimensionName(4,"# bins q2");
+  fToyMargVArray_1Re    ->SetDimensionName(2,"# bins q2");
+  fToyMargVArray_1Rmu   ->SetDimensionName(2,"# bins q2");
+  fToyMargVArray_RHC1Re ->SetDimensionName(2,"# bins q2");
+  fToyMargVArray_RHC1Rmu->SetDimensionName(2,"# bins q2");
+  fToyMargVArray_MultiRe->SetDimensionName(2,"# bins q2");
 #endif
-  
-  //
   
   // need to declare array of histograms (then set to 0) because
   // problems with ROOT when declaring double pointers as global in header file
@@ -586,8 +528,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   cout << "Max # of Q2 bins = " << fMaxSampleQ2Bins << endl; // NEW 2D TEMPLATES
 #endif
   cout << endl;
-  cout << "fnbins_sub_param[0] = " << fnbins_sub_param[0] << endl;
-  cout << "fnbins_sub_param[1] = " << fnbins_sub_param[1] << endl;
   cout << "nmh = " << nmh << endl;
   cout << endl;
   
@@ -602,29 +542,6 @@ void FitMarginalization::Init(SuperkExpectation *skexp){
   }
   cout << endl;
   //
-  
-  
-  fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0]+1);
-  fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0]+1);
-  fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1]+1);
-  fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1]+1);
-  
-  cout << endl;
-  cout << "Free parameter 0 sub-range: ";
-  cout << "[" << fmin_sub_param[0] << "," << fmax_sub_param[0] << "]" << endl;
-  cout << "# of bins parameter 0 = " << fnbins_sub_param[0] << endl;
-  cout << endl;
-  cout << "Free parameter 1 sub-range: ";
-  cout << "[" << fmin_sub_param[1] << "," << fmax_sub_param[1] << "]" << endl;
-  cout << "# of bins parameter 1 = " << fnbins_sub_param[1] << endl;
-  cout << endl;
-  
-  cout << "fmin_bin_sub_param[0] = " << fmin_bin_sub_param[0] << endl;
-  cout << "fmax_bin_sub_param[0] = " << fmax_bin_sub_param[0] << endl;
-  cout << "fmin_bin_sub_param[1] = " << fmin_bin_sub_param[1] << endl;
-  cout << "fmax_bin_sub_param[1] = " << fmax_bin_sub_param[1] << endl;
-  
-  
   
   // Variables for minimization of the marginalized Chisq
   fUncorrXY = true; // by default if minimum found in Y keep it fixed and vary only X (viceversa)
@@ -814,71 +731,6 @@ void FitMarginalization::SetFullRange(){
     fmin_bin_param[1] = 0.;
     fmax_bin_param[1] = 0.;
     fnbins_param[1] = 1; // dimension of parameter ParId
-  }
-  
-  return;
-}
-//________________________________________________________________________________________
-void FitMarginalization::SetSubRange(int *submin,int *submax){
-  
-  // sub-range: scan all the range by default
-  fmin_bin_sub_param[0] = submin[0];
-  fmax_bin_sub_param[0] = submax[0];
-  fmin_bin_sub_param[1] = submin[1];
-  fmax_bin_sub_param[1] = submax[1];
-  
-  // default values
-  if(fmin_bin_sub_param[0] == conv::kBadResult) fmin_bin_sub_param[0] = 0;
-  if(fmax_bin_sub_param[0] == conv::kBadResult) fmax_bin_sub_param[0] = fnbins_param[0] - 1;
-  if(fmin_bin_sub_param[1] == conv::kBadResult) fmin_bin_sub_param[1] = 0;
-  if(fmax_bin_sub_param[1] == conv::kBadResult) fmax_bin_sub_param[1] = fnbins_param[1] - 1;
-  
-  // # of bins
-  fnbins_sub_param[0] = fmax_bin_sub_param[0] - fmin_bin_sub_param[0] + 1;
-  fnbins_sub_param[1] = fmax_bin_sub_param[1] - fmin_bin_sub_param[1] + 1;
-  
-  if(fPhysParamFree[0] == conv::kPhypUndefined){
-    fmin_bin_sub_param[0] = 0.;
-    fmax_bin_sub_param[0] = 0.;
-    fnbins_sub_param[0] = 1; // dimension of parameter ParId
-  }
-  if(fPhysParamFree[1] == conv::kPhypUndefined){
-    fmin_bin_sub_param[1] = 0.;
-    fmax_bin_sub_param[1] = 0.;
-    fnbins_sub_param[1] = 1; // dimension of parameter ParId
-  }
-  
-  // checks
-  if( (fPhysParamFree[0] != conv::kPhypUndefined) &&
-     ((fnbins_sub_param[0] > fnbins_param[0]) ||
-      (fmin_bin_sub_param[0] < 0) ||
-      (fmax_bin_sub_param[0] > fnbins_param[0] - 1) ))
-  {
-    cerr << endl;
-    cerr << "FitMarginalization::SetSubRange" << endl;
-    cerr << "Param 0 sub-range outside the entire free parameter range" << endl;
-    cerr << "fnbins_param[0] = " << fnbins_param[0] << endl;
-    cerr << "fnbins_sub_param[0] = " << fnbins_sub_param[0] << endl;
-    cerr << "fmin_bin_sub_param[0] = " << fmin_bin_sub_param[0] << endl;
-    cerr << "fmax_bin_sub_param[0] = " << fmax_bin_sub_param[0] << endl;
-    cerr << endl;
-    util::Die(1);
-  }
-  
-  if( (fPhysParamFree[1] != conv::kPhypUndefined) &&
-     ((fnbins_sub_param[1] > fnbins_param[1]) ||
-      (fmin_bin_sub_param[1] < 0) ||
-      (fmax_bin_sub_param[1] > fnbins_param[1] - 1) ))
-  {
-    cerr << endl;
-    cerr << "FitMarginalization::SetSubRange" << endl;
-    cerr << "Param 1 sub-range outside the entire free parameter range" << endl;
-    cerr << "fnbins_param[1] = " << fnbins_param[1] << endl;
-    cerr << "fnbins_sub_param[1] = " << fnbins_sub_param[1] << endl;
-    cerr << "fmin_bin_sub_param[1] = " << fmin_bin_sub_param[1] << endl;
-    cerr << "fmax_bin_sub_param[1] = " << fmax_bin_sub_param[1] << endl;
-    cerr << endl;
-    util::Die(1);
   }
   
   return;
@@ -1126,16 +978,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
  
    TFile* toys_file = new TFile("toys.root", "recreate");
   
-  
-  // NEW 2D TEMPLATES (VARRAY)
-  
-  // #ifndef __USE_2D_TEMPLATES__
-  //   fToyMargVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], fNSKsamples, fMaxSampleErecoBins);
-  // #else
-  //   // NEW 2D TEMPLATES
-  //   fToyMargVArray->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], fNSKsamples, fMaxSampleErecoBins, fMaxSampleQ2Bins);
-  // #endif
-  
   int nbins_ereco_1Re     = util::NumErecoBins(kSKsFCFV1RingELike);
   int nbins_ereco_1Rmu    = util::NumErecoBins(kSKsFCFV1RingMuLike);
   int nbins_ereco_RHC1Re  = util::NumErecoBins(kSKsRHCFCFV1RingELike);
@@ -1143,11 +985,11 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   int nbins_ereco_MultiRe = util::NumErecoBins(kSKsFCFVMultiRingELike);
   
 #ifndef __USE_2D_TEMPLATES__
-  fToyMargVArray_1Re    ->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Re);
-  fToyMargVArray_1Rmu   ->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Rmu);
-  fToyMargVArray_RHC1Re ->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Re);
-  fToyMargVArray_RHC1Rmu->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Rmu);
-  fToyMargVArray_MultiRe->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_MultiRe);
+  fToyMargVArray_1Re    ->Resize(fntoys_marg, nbins_ereco_1Re);
+  fToyMargVArray_1Rmu   ->Resize(fntoys_marg, nbins_ereco_1Rmu);
+  fToyMargVArray_RHC1Re ->Resize(fntoys_marg, nbins_ereco_RHC1Re);
+  fToyMargVArray_RHC1Rmu->Resize(fntoys_marg, nbins_ereco_RHC1Rmu);
+  fToyMargVArray_MultiRe->Resize(fntoys_marg, nbins_ereco_MultiRe);
 #else
   
   int nbins_q2_1Re     = util::NumQ2Bins(kSKsFCFV1RingELike);
@@ -1156,23 +998,12 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   int nbins_q2_RHC1Rmu = util::NumQ2Bins(kSKsRHCFCFV1RingMuLike);
   int nbins_q2_MultiRe = util::NumQ2Bins(kSKsFCFVMultiRingELike);
   
-  fToyMargVArray_1Re    ->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Re,     nbins_q2_1Re);
-  fToyMargVArray_1Rmu   ->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Rmu,    nbins_q2_1Rmu);
-  fToyMargVArray_RHC1Re ->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Re,  nbins_q2_RHC1Re);
-  fToyMargVArray_RHC1Rmu->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Rmu, nbins_q2_RHC1Rmu);
-  fToyMargVArray_MultiRe->Resize(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_MultiRe, nbins_q2_MultiRe);
+  fToyMargVArray_1Re    ->Resize(fntoys_marg, nbins_ereco_1Re,     nbins_q2_1Re);
+  fToyMargVArray_1Rmu   ->Resize(fntoys_marg, nbins_ereco_1Rmu,    nbins_q2_1Rmu);
+  fToyMargVArray_RHC1Re ->Resize(fntoys_marg, nbins_ereco_RHC1Re,  nbins_q2_RHC1Re);
+  fToyMargVArray_RHC1Rmu->Resize(fntoys_marg, nbins_ereco_RHC1Rmu, nbins_q2_RHC1Rmu);
+  fToyMargVArray_MultiRe->Resize(fntoys_marg, nbins_ereco_MultiRe, nbins_q2_MultiRe);
 #endif
-  
-  // const int *dimensions_1Re     = fToyMargVArray_1Re    ->GetDimensions();
-  // const int *dimensions_1Rmu    = fToyMargVArray_1Rmu   ->GetDimensions();
-  // const int *dimensions_RHC1Re  = fToyMargVArray_RHC1Re ->GetDimensions();
-  // const int *dimensions_RHC1Rmu = fToyMargVArray_RHC1Rmu->GetDimensions();
-  // cout << fToyMargVArray_1Re    ->GetNDim() << " --> " << dimensions_1Re[3]     << " " << dimensions_1Re[4]     << endl;
-  // cout << fToyMargVArray_1Rmu   ->GetNDim() << " --> " << dimensions_1Rmu[3]    << " " << dimensions_1Rmu[4]    << endl;
-  // cout << fToyMargVArray_RHC1Re ->GetNDim() << " --> " << dimensions_RHC1Re[3]  << " " << dimensions_RHC1Re[4]  << endl;
-  // cout << fToyMargVArray_RHC1Rmu->GetNDim() << " --> " << dimensions_RHC1Rmu[3] << " " << dimensions_RHC1Rmu[4] << endl;
-  
-  //
   
   cout << "////////////////////////////////////////////////////////" << endl;
   cout << endl;
@@ -1180,49 +1011,6 @@ void FitMarginalization::MakeToysMarginalization(int tweak_systematics,SuperkExp
   cout << endl;
   
   cout << endl;
-  cout << "Scan the parameter 0 range:" << endl
-  << "bin: ["
-  << fmin_bin_sub_param[0]
-  << ","
-  << fmax_bin_sub_param[0]
-  << "]"
-  << endl
-  << fnamefreeparam[0] << ": "
-  << "[";
-  cout << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1)
-  << ","
-  << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1);
-  cout << "]"
-  << endl;
-  
-  cout << endl;
-  cout << "Scan the parameter 1 range:" << endl
-  << "bin: ["
-  << fmin_bin_sub_param[1]
-  << ","
-  << fmax_bin_sub_param[1]
-  << "]"
-  << endl
-  << fnamefreeparam[1] << ": "
-  << "[";
-  cout << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1)
-  << ","
-  << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1);
-  cout << "]"
-  << endl;
-  
-  // if(!fIsFit2D){
-  //   fmin_bin_sub_param[1] = 0.;
-  //   fmax_bin_sub_param[1] = 0.;
-  // }
-  
-  cout << endl;
-  cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0]
-  << " - fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
-  cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1]
-  << " - fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
-  cout << endl;
-  
   
   // It can extract toys for sub-ranges of the free parameter
   
@@ -1743,46 +1531,14 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
   int NparTot1=0;
   
   cout << endl;
-  cout << "Fill marginalized Chisq in the parameter range:" << endl
-  << "bin: ["
-  << fmin_bin_sub_param[0]
-  << ","
-  << fmax_bin_sub_param[0]
-  << "]"
-  << endl
-  << fnamefreeparam[0] << ": "
-  << "["
-  << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1)
-  << ","
-  << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1)
-  << "]"
-  << endl;
-  cout << "bin: ["
-  << fmin_bin_sub_param[1]
-  << ","
-  << fmax_bin_sub_param[1]
-  << "]"
-  << endl
-  << fnamefreeparam[1] << ": "
-  << "["
-  << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1)
-  << ","
-  << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1)
-  << "]"
-  << endl;
-  
-  
-  // It can marginalize sub-ranges of the free parameter
-  // fmin_bin_sub_param_1 and fmax_bin_sub_param_1 read from the binary file
-  
   
   // Partial Chisq
   
   if(!readbinary){ // old approach: fill range of the read binary file
     NparTot0=0;
-    for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
+    for(int ipar0=fmin_bin_param[0];ipar0<=fmax_bin_param[0];ipar0++){
       NparTot1=0;
-      for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+      for(int ipar1=fmin_bin_param[1];ipar1<=fmax_bin_param[1];ipar1++){
         
         CalcChisqMargPtRead(skobs_data,ipar0,ipar1,readbinary);
         
@@ -1822,10 +1578,6 @@ void FitMarginalization::FillChisqMarg(SuperkObservation *skobs_data,bool readbi
 #ifdef __print_chisqmarg__
   cout << endl;
   cout << "Marginalized Chisq distribution:" << endl;
-  cout << "fmin_bin_sub_param 0 = " << fmin_bin_sub_param[0] << endl;
-  cout << "fmax_bin_sub_param 0 = " << fmax_bin_sub_param[0] << endl;
-  cout << "fmin_bin_sub_param 1 = " << fmin_bin_sub_param[1] << endl;
-  cout << "fmax_bin_sub_param 1 = " << fmax_bin_sub_param[1] << endl;
   for(int ipar0=fmin_bin_param[0];ipar0<=fmax_bin_param[0];ipar0++){
     for(int ipar1=fmin_bin_param[1];ipar1<=fmax_bin_param[1];ipar1++){
       cout << fChisqMargVArray->GetEntry(ipar0,ipar1) << ", ";
@@ -1951,11 +1703,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
         
         for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
           
-          // NEW PRECISION
-          
-          // NEW 2D TEMPLATES (VARRAY)
-          //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
-          double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibin);
+          double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibin);
           //
           
           nexp *= (double)fNormPOT[is];
@@ -1987,9 +1735,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 
           for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
             
-            // NEW 2D TEMPLATES (VARRAY)
-            //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibinEreco,ibinQ2);
-            double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibinEreco,ibinQ2);
+            double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibinEreco,ibinQ2);
             //
             
             nexp *= (double)fNormPOT[is];
@@ -2021,9 +1767,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 #ifndef __USE_2D_TEMPLATES__
         for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
           
-          // NEW 2D TEMPLATES (VARRAY)
-          //nexp += (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
-          nexp += (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibin);
+          nexp += (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibin);
           //
           
           nobs += (double)skobs_data->ErecoSpectrumArray(s)[ibin];
@@ -2034,8 +1778,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
           for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
             
             // NEW 2D TEMPLATES (VARRAY)
-            //nexp += (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibinEreco,ibinQ2);
-            nexp += (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibinEreco,ibinQ2);
+            nexp += (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibinEreco,ibinQ2);
             //
             
             nobs += (double)skobs_data->TwoDSpectrumVArray(s)->GetEntry(ibinEreco,ibinQ2);
@@ -2090,9 +1833,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
 #ifndef __USE_2D_TEMPLATES__
       for(int ib = 0; ib < util::NumErecoBins(s); ib++){
         
-        // NEW 2D TEMPLATES (VARRAY)
-        //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ib);
-        double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ib);
+        double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ib);
         //
         
         cout << bincont * (double)fNormPOT[is] << " ";
@@ -2103,9 +1844,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
       for(int ibEreco = 0; ibEreco < util::NumErecoBins(s); ibEreco++){
         for(int ibQ2 = 0; ibQ2 < util::NumQ2Bins(s); ibQ2++){
           
-          // NEW 2D TEMPLATES (VARRAY)
-          //double bincont = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibEreco,ibQ2);
-          double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibEreco,ibQ2);
+          double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibEreco,ibQ2);
           //
           
           cout << bincont * (double)fNormPOT[is] << " ";
@@ -2167,7 +1906,7 @@ double FitMarginalization::CalcChisqMargPtRead(SuperkObservation *skobs_data,int
       double nexp = 0.;
       for(int ibEreco = 0; ibEreco < util::NumErecoBins(s); ibEreco++){
         for(int ibQ2 = 0; ibQ2 < util::NumQ2Bins(s); ibQ2++){
-          double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibEreco,ibQ2);
+          double bincont = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibEreco,ibQ2);
           //cout << bincont * (double)fNormPOT[is] << " ";
           nexp += bincont;
         }
@@ -2350,7 +2089,6 @@ void FitMarginalization::SetPenaltyTerm(const double mean0, const double sigma0,
   conv::PhysParamId_t parfree0 = fPhysParamFree[0];
   conv::PhysParamId_t parfree1 = fPhysParamFree[1];
   bool IsPhysical0 = this->RethrowOscUnphysical(parfree0, fpenalty_mean0);
-  bool IsPhysical1 = this->RethrowOscUnphysical(parfree1, fpenalty_mean1);
   if(IsPhysical0){
     cerr << endl;
     cerr << "FitMarginalization::SetPenaltyTerm" << endl;
@@ -2614,140 +2352,6 @@ void FitMarginalization::WriteToys2Binary(int idfile, const char *tag){
   
   
   cout << " - Toy for marginalization are stored in " << soutname << endl;
-  
-  // Write store sub-range of the free parameter
-  
-  //int min_bin_sub_param0 = fmin_bin_sub_param[0];
-  //int max_bin_sub_param0 = fmax_bin_sub_param[0];
-  //int min_bin_sub_param1 = fmin_bin_sub_param[1];
-  //int max_bin_sub_param1 = fmax_bin_sub_param[1];
-  
-  char outname_range[256];
-  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
-  
-  std::string soutname_range(outname_range);
-  
-  ofstream os(soutname_range.c_str(),ios::binary|ios::out);
-  assert(os);
-  os.write( (char*)&fmin_bin_sub_param[0],sizeof(int));
-  os.write( (char*)&fmax_bin_sub_param[0],sizeof(int));
-  os.write( (char*)&fmin_bin_sub_param[1],sizeof(int));
-  os.write( (char*)&fmax_bin_sub_param[1],sizeof(int));
-  os.close();
-  
-  cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
-  cout << endl;
-  
-  //
-  
-  sprintf(outname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".txt");
-  
-  ofstream ostext(outname_range,ios::out);
-  ostext << endl;
-  
-  const char * config_file = T2KOpt::Instance()->fConfigFileName.c_str();
-  ostext << "Configuration file: " << config_file << endl;
-  
-  for(int is=0;is<fNSKsamples;is++){
-    SuperkSample_t s = this->GetSKSamples(is);
-    ostext << "  - POT ( " << util::AsString(s) << " ) = " << fPOT[is] << endl;
-    ostext << "  - Norm POT ( " << util::AsString(s) << " ) = " << fNormPOT[is] << endl;
-  }
-  
-  ostext << endl;
-  ostext << "Used sub-range of the free parameter 0: " << fnamefreeparam[0] << endl;
-  ostext << "First bin of free param: " << fmin_bin_sub_param[0] << endl;
-  ostext << "Last bin of free param: " << fmax_bin_sub_param[0] << endl;
-  ostext << "fnamefreeparam0: " << endl
-  << " - " << soutname << endl
-  << " - " << soutname_range << endl;
-  ostext << endl;
-  ostext << "Used sub-range of the free parameter 1: " << fnamefreeparam[1] << endl;
-  ostext << "First bin of free param: " << fmin_bin_sub_param[1] << endl;
-  ostext << "Last bin of free param: " << fmax_bin_sub_param[1] << endl;
-  ostext << "fnamefreeparam1: " << endl
-  << " - " << soutname << endl
-  << " - " << soutname_range << endl;
-  ostext << endl;
-  ostext << "Mass hierarchy: ";
-  if( this->fdoMargMassHierarchy ){
-    ostext << " Marginalize" << endl;
-    ostext << " Prob Normal Hierarchy = " << this->GetProbNormalHierarchy() << endl; // NEW MARG MH 2
-  }
-  else ostext << util::AsString(Opt::Instance()->gMassHierarchyAssumed) << endl;
-  ostext << endl;
-  if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
-  else ostext << "Don't rethrow unphysical systematic toys" << endl;
-  ostext << "fntoys_marg = " << fntoys_marg << endl;
-  ostext << endl;
-  ostext << "Initialize VALORArray fToyMargVArray with:"<< endl;
-  ostext << "fntoys_marg = " << fntoys_marg << endl;
-  
-  ostext << "fNSKsamples = " << fNSKsamples << endl;
-  ostext << "Used sub-samples:" << endl;
-  int iscount=0;
-  //for(int is = 0; is < kns; is++) {
-  //SuperkSample_t s = kSKSamples[is];
-  //if(s == kSKsUndefined) continue;
-  for(int is=0;is<fNSKsamples;is++){
-    SuperkSample_t s = this->GetSKSamples(is);
-    ostext << "   - " << util::AsStringCompact(s) << endl;
-    ostext << "     fnerecobins = " << fnerecobins->GetEntry(iscount) << endl;
-#ifdef __USE_2D_TEMPLATES__
-    // NEW 2D TEMPLATES
-    ostext << "     fnq2bins = " << fnq2bins->GetEntry(iscount) << endl;
-    //
-#endif
-    iscount++;
-  }
-  ostext << endl;
-  ostext << "fnbins_param0 = " << fnbins_param[0] << endl;
-  ostext << "fmin_bin_sub_param0 = " << fmin_bin_sub_param[0] << endl;
-  ostext << "fmax_bin_sub_param0 = " << fmax_bin_sub_param[0] << endl;
-  ostext << "fmin_sub_param0 = " << fmin_sub_param[0] << endl;
-  ostext << "fmax_sub_param0 = " << fmax_sub_param[0] << endl;
-  ostext << "fmin_param0 = " << fmin_param[0] << endl;
-  ostext << "fmax_param0 = " << fmax_param[0] << endl;
-  ostext << "fstep_param0 = " << fstep_param[0] << endl;
-  ostext << endl;
-  ostext << "fnbins_param1 = " << fnbins_param[1] << endl;
-  ostext << "fmin_bin_sub_param1 = " << fmin_bin_sub_param[1] << endl;
-  ostext << "fmax_bin_sub_param1 = " << fmax_bin_sub_param[1] << endl;
-  ostext << "fmin_sub_param1 = " << fmin_sub_param[1] << endl;
-  ostext << "fmax_sub_param1 = " << fmax_sub_param[1] << endl;
-  ostext << "fmin_param1 = " << fmin_param[1] << endl;
-  ostext << "fmax_param1 = " << fmax_param[1] << endl;
-  ostext << "fstep_param1 = " << fstep_param[1] << endl;
-  ostext << endl;
-  ostext << "fhypothesis = " << util::AsString(fhypothesis) << endl;
-  ostext << endl;
-  ostext << "FitParamList:" << endl;
-  ostext << *fparm << endl;
-  ostext << endl;
-  ostext << "Priors of oscillation parameters are:" << endl;
-  
-  for (int ip = 0 ; ip < conv::kNuis000 ; ip++) {
-    PhysParamId_t p = (PhysParamId_t)ip;
-    if (not fparm->Exists(p)) {continue;}
-    if (util::IsMixingAngle(p) || util::IsMassSplitting(p)) {
-      ostext << " - " << util::AsString(p) << " (NH) : " << endl;
-      ostext << "     Prior = " << this->GetPrior_NH(p) << endl;
-      ostext << "     Min Value = " << fparm_nh->GetMinValueFlat(p) << endl;
-      ostext << "     Max Value = " << fparm_nh->GetMaxValueFlat(p) << endl;
-      ostext << "     Mean Value = " << fparm_nh->GetMeanGaus(p) << endl;
-      ostext << "     Sigma Value = " << fparm_nh->GetSigmaGaus(p) << endl;
-      ostext << " - " << util::AsString(p) << " (IH) : " << endl;
-      ostext << "     Prior = " << this->GetPrior_NH(p) << endl;
-      ostext << "     Min Value = " << fparm_nh->GetMinValueFlat(p) << endl;
-      ostext << "     Max Value = " << fparm_nh->GetMaxValueFlat(p) << endl;
-      ostext << "     Mean Value = " << fparm_nh->GetMeanGaus(p) << endl;
-      ostext << "     Sigma Value = " << fparm_nh->GetSigmaGaus(p) << endl;
-    }
-  }
-  ostext << endl;
-  
-  
-  ostext.close();
 }
 //________________________________________________________________________________________
 
@@ -2828,39 +2432,12 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
   os_toys.close();
   
   //
-  
-  
-  
-  // Write store sub-range of the free parameter
-  
-  //int min_bin_sub_param0 = fmin_bin_sub_param[0];
-  //int max_bin_sub_param0 = fmax_bin_sub_param[0];
-  //int min_bin_sub_param1 = fmin_bin_sub_param[1];
-  //int max_bin_sub_param1 = fmax_bin_sub_param[1];
-  
-  char outname_range[256];
-  sprintf(outname_range,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
-  
-  std::string soutname_range(outname_range);
-  
+ 
   int min_bin0 = 0;
   int max_bin0 = fnbins_param[0] - 1;
   int min_bin1 = 0;
   int max_bin1 = fnbins_param[1] - 1;
-  
-  ofstream os(soutname_range.c_str(),ios::binary|ios::out);
-  assert(os);
-  os.write( (char*)&min_bin0,sizeof(int));
-  os.write( (char*)&max_bin0,sizeof(int));
-  os.write( (char*)&min_bin1,sizeof(int));
-  os.write( (char*)&max_bin1,sizeof(int));
-  os.close();
-  
-  cout << " - Free param sub-range for marginalization is stored in " << soutname_range << endl;
-  cout << endl;
-  
-  //
-  
+
   char outname_text[256];
   std::string soutname_text(outname_text);
   sprintf(outname_text,fnamefilebinary,outtag,0,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".txt");
@@ -2877,7 +2454,6 @@ void FitMarginalization::WriteToys2BinaryMerge(const char *tag){
   ostext << endl;
   if(fRethrowSystUnphysical) ostext << "Rethrow unphysical systematic toys" << endl;
   else ostext << "Don't rethrow unphysical systematic toys" << endl;
-  ostext << "# of merged files: " << fNmergedFiles << endl;
   ostext << "fntoys_marg = " << fntoys_marg << endl;
   
   ostext << "fNSKsamples = " << fNSKsamples << endl;
@@ -2936,87 +2512,6 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
     }
   }
   
-  // Write store sub-range of the free parameter
-  
-  int min_bin_sub_param0=0;
-  int max_bin_sub_param0=0;
-  int min_bin_sub_param1=0;
-  int max_bin_sub_param1=0;
-  //int nbins_param0=0;
-  //int nbins_param1=0;
-  
-  char inname_range[256];
-  sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
-  
-  std::string sinname_range(inname_range);
-  
-#ifdef __readtoys_debug__
-  cout << "Reading free param sub-range from binary file:" << sinname_range << endl;
-#endif
-  
-  ifstream is(sinname_range.c_str(),ios::binary|ios::in);
-  assert(is);
-  is.read( (char*)&min_bin_sub_param0,sizeof(int));
-  is.read( (char*)&max_bin_sub_param0,sizeof(int));
-  is.read( (char*)&min_bin_sub_param1,sizeof(int));
-  is.read( (char*)&max_bin_sub_param1,sizeof(int));
-  is.close();
-  
-#ifdef __readtoys_debug__
-  cout<<"Done!"<<endl;
-#endif
-  
-  fmin_bin_sub_param[0] = min_bin_sub_param0;
-  fmax_bin_sub_param[0] = max_bin_sub_param0;
-  fmin_bin_sub_param[1] = min_bin_sub_param1;
-  fmax_bin_sub_param[1] = max_bin_sub_param1;
-  
-  fmin_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1);
-  fmax_sub_param[0] = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1);
-  fmin_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1);
-  fmax_sub_param[1] = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1);
-  
-  // Check inputs
-  
-  if( !is.good() ){
-    cerr << endl;
-    cerr << "The input file " << sinname_range << " doesn't exist" << endl;
-    cerr << "Check the input parameters: " << endl;
-    cerr << "  - tag = " << tag << endl;
-    cerr << "  - fntoys_marg = " << fntoys_marg << endl;
-    cerr << "  - # of pt param 0 = " << fnbins_param[0] << endl;
-    cerr << "  - # of pt param 1 = " << fnbins_param[1] << endl;
-    //cerr << "  - MH = " << namemh << endl; // NEW MARG MH 2
-    //cerr << "  - # of binary files = " << << endl;
-    cerr << endl;
-    util::Die(1);
-  }
-  
-  // cout << fToyMargVArray->GetSize() << endl;
-  // cout << fToyMargVArray->GetNDim() << endl;
-  // cout << fToyMargVArray->GetSize(0) << endl; // # toys marginalization
-  // cout << fToyMargVArray->GetSize(1) << endl; // # bins free parameter 0
-  // cout << fToyMargVArray->GetSize(2) << endl; // # bins free parameter 1
-  // cout << fToyMargVArray->GetSize(3) << endl; // # mass hierarchies
-  // cout << fToyMargVArray->GetSize(4) << endl; // # sk samples
-  // cout << fToyMargVArray->GetSize(5) << endl; // # bins ereco
-  
-  // int NtoyVArray = fToyMargVArray->GetSize(0); // # toys marginalization
-  // int Nbins0VArray = fToyMargVArray->GetSize(1);  // # bins free parameter 0
-  // int Nbins1VArray = fToyMargVArray->GetSize(2);  // # bins free parameter 1
-  // int NmhVArray = fToyMargVArray->GetSize(3); // # mass hierarchies
-  // int NsksampleVArray = fToyMargVArray->GetSize(4); // # sk samples
-  // int NbinserecoVArray = fToyMargVArray->GetSize(5); // # bins ereco
-  
-  // if(NtoyVArray != fntoys_marg){
-  //   cerr << endl;
-  //   cerr << "# of toys from file = " << NtoyVArray << endl;
-  //   cerr << "# of toys from input = " << fntoys_marg << endl;
-  //   cerr << "If the chosen binary file is correct, set # of toys to " << NtoyVArray << endl;
-  //   cerr << endl;
-  //   util::Die(1);
-  // }
-  
   char inname[256];
   sprintf(inname,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"",".bin");
   
@@ -3041,9 +2536,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   // 1Re
   //this->GetToyMargVArraySample(kSKsFCFV1RingELike)->Cleanup();
 #ifndef __USE_2D_TEMPLATES__
-  this->GetToyMargVArraySample(kSKsFCFV1RingELike)->Resize(1,1,1,1);
+  this->GetToyMargVArraySample(kSKsFCFV1RingELike)->Resize(1,1);
 #else
-  this->GetToyMargVArraySample(kSKsFCFV1RingELike)->Resize(1,1,1,1,1);
+  this->GetToyMargVArraySample(kSKsFCFV1RingELike)->Resize(1,1,1);
 #endif
   int ndim_1Re = 0;
   int dims_1Re[6] = {};
@@ -3057,9 +2552,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   
   // 1Rmu
 #ifndef __USE_2D_TEMPLATES__
-  this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->Resize(1,1,1,1);
+  this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->Resize(1,1);
 #else
-  this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->Resize(1,1,1,1,1);
+  this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->Resize(1,1,1);
 #endif
   int ndim_1Rmu = 0;
   int dims_1Rmu[6] = {};
@@ -3072,9 +2567,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   
   // RHC1Re
 #ifndef __USE_2D_TEMPLATES__
-  this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->Resize(1,1,1,1);
+  this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->Resize(1,1);
 #else
-  this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->Resize(1,1,1,1,1);
+  this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->Resize(1,1,1);
 #endif
   int ndim_RHC1Re = 0;
   int dims_RHC1Re[6] = {};
@@ -3087,9 +2582,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   
   // RHC1Rmu
 #ifndef __USE_2D_TEMPLATES__
-  this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->Resize(1,1,1,1);
+  this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->Resize(1,1);
 #else
-  this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->Resize(1,1,1,1,1);
+  this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->Resize(1,1,1);
 #endif
   int ndim_RHC1Rmu = 0;
   int dims_RHC1Rmu[6] = {};
@@ -3103,9 +2598,9 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   //FHC MultiRing E
   //  cout << "MultiRe" << endl;
 #ifndef __USE_2D_TEMPLATES__
-  this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->Resize(1,1,1,1);
+  this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->Resize(1,1);
 #else
-  this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->Resize(1,1,1,1,1);
+  this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->Resize(1,1,1);
 #endif
   int ndim_MultiRe = 0;
   int dims_MultiRe[6] = {};
@@ -3119,63 +2614,8 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   
   is_toys.close();
   
-  
-  //
-  
-  
-  
-  
-  
 #ifdef __readtoys_debug__
   cout << "Done!"<<endl;
-#endif
-  
-  if(fmin_sub_param[0]<(fmin_param[0]-conv::kAVerySmallNum) || fmax_sub_param[0]>(fmax_param[0]+conv::kAVerySmallNum)){
-    cerr << endl;
-    cerr << "FitMarginalization::ReadToysFromBinary" << endl;
-    cerr << "The free parameter 0 sub-range ["
-    << fmin_sub_param[0] << "," << fmax_sub_param[0] << "] "
-    << "provided by the files "
-    << sinname << endl
-    << " and "
-    << sinname_range << endl
-    << " exceeds the total range set for"
-    << fnamefreeparam[0]
-    << " --> [" << fmin_param[0] << "," << fmax_param[0] << "]"
-    << endl;
-    util::Die(1);
-  }
-  
-  if(fmin_sub_param[1]<(fmin_param[1]-conv::kAVerySmallNum) || fmax_sub_param[1]>(fmax_param[1]+conv::kAVerySmallNum)){  // w/o conv::kAVerySmallNum it enters the loop if bounds are identical. To check
-    cerr << endl;
-    cerr << "FitMarginalization::ReadToysFromBinary" << endl;
-    cerr << "The free parameter 1 sub-range ["
-    << fmin_sub_param[1] << "," << fmax_sub_param[1] << "] "
-    << "provided by the files "
-    << sinname << endl
-    << " and "
-    << sinname_range << endl
-    << " exceeds the total range set for"
-    << fnamefreeparam[1]
-    << " --> [" << fmin_param[1] << "," << fmax_param[1] << "]"
-    << endl;
-    util::Die(1);
-  }
-  
-#ifdef __readtoys_debug__
-  cout << "File sub-range: ["
-  << fmin_sub_param[0] << "," << fmax_sub_param[0]
-  << "]" << endl;
-  cout << "File bin sub-range: ["
-  << fmin_bin_sub_param[0]+1 << "," << fmax_bin_sub_param[0]+1
-  << "]" << endl << endl;
-  
-  cout << "File sub-range: ["
-  << fmin_sub_param[1] << "," << fmax_sub_param[1]
-  << "]" << endl;
-  cout << "File bin sub-range: ["
-  << fmin_bin_sub_param[1]+1 << "," << fmax_bin_sub_param[1]+1
-  << "]" << endl << endl;
 #endif
   
   return;
@@ -3393,8 +2833,7 @@ TH1F * FitMarginalization::GetToyMargHisto(SuperkSample_t sksample,int itoy,int 
       for(int ibin=0;ibin<fnerecobins->GetEntry(is);ibin++){
         
         // NEW 2D TEMPLATES (VARRAY)
-        //float bincont = fToyMargVArray->GetEntry(itoy,ifreepar0-fmin_bin_sub_param[0],ifreepar1-fmin_bin_sub_param[1],is,ibin);
-        float bincont = this->GetToyMargVArraySample(s)->GetEntry(itoy,ifreepar0-fmin_bin_sub_param[0],ifreepar1-fmin_bin_sub_param[1],ibin);
+        float bincont = this->GetToyMargVArraySample(s)->GetEntry(itoy,ibin);
         //
         
         bincont *= (float)fNormPOT[is];
@@ -3450,9 +2889,7 @@ TH2F * FitMarginalization::GetToyMargHisto2D(SuperkSample_t sksample,int itoy,in
       for(int ibinEreco=0;ibinEreco<fnerecobins->GetEntry(is);ibinEreco++){
         for(int ibinQ2=0;ibinQ2<fnq2bins->GetEntry(is);ibinQ2++){
           
-          // NEW 2D TEMPLATES (VARRAY)
-          //float bincont = fToyMargVArray->GetEntry(itoy,ifreepar0-fmin_bin_sub_param[0],ifreepar1-fmin_bin_sub_param[1],is,ibinEreco,ibinQ2);
-          float bincont = this->GetToyMargVArraySample(s)->GetEntry(itoy,ifreepar0-fmin_bin_sub_param[0],ifreepar1-fmin_bin_sub_param[1],ibinEreco,ibinQ2);
+          float bincont = this->GetToyMargVArraySample(s)->GetEntry(itoy,ibinEreco,ibinQ2);
           //
           
           bincont *= (float)fNormPOT[is];
@@ -3535,10 +2972,10 @@ double FitMarginalization::GetPOT(conv::SuperkSample_t s) const
 
 
 //________________________________________________________________________________________
-void FitMarginalization::ResetChisqMarg(int * /*min_bin_sub_param*/ ,int * /*max_bin_sub_param*/)
+void FitMarginalization::ResetChisqMarg()
 {
-  for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-    for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
+  for(int ipar0=fmin_bin_param[0];ipar0<=fmax_bin_param[0];ipar0++){
+    for(int ipar1=fmin_bin_param[1];ipar1<=fmax_bin_param[1];ipar1++){
       double bincont = 0;
       fChisqMargVArray->SetEntry(bincont,ipar0,ipar1);
       fhchisq_marg_1D->SetBinContent(ipar0+1,bincont);
@@ -4652,273 +4089,6 @@ void FitMarginalization::SetRethrowSystUnphysical(bool dorethrow){
   return;
 }
 //________________________________________________________________________________________
-
-
-
-
-
-void FitMarginalization::MergeInputFiles(){
-  
-  // Initialize the clone VALORArray only the first time MergeInputFiles() is called
-  
-  if(fMergeInputFiles_Called){ // Initialize the VALORArray only the first time MergeInputFiles() is called
-    
-    
-    
-    
-    
-    // NEW 2D TEMPLATES (VARRAY)
-    
-    //     // NEW FHC+RHC JOINT
-    //     // Initialize the Clone array to the maximum # of ereco bins among all the sk samples
-    // #ifndef __USE_2D_TEMPLATES__
-    //     fToyMargVArray_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], fNSKsamples,fMaxSampleErecoBins); // total range of free parameter
-    // #else
-    //     // NEW 2D TEMPLATES
-    //     fToyMargVArray_Clone = new VALORArrayF(fntoys_marg, fnbins_param[0],fnbins_param[1], fNSKsamples,fMaxSampleErecoBins,fMaxSampleQ2Bins); // total range of free parameter
-    //     //
-    // #endif
-    //     //
-    //
-    // fToyMargVArray_Clone->SetAll(-1.);
-    //
-    
-    int nbins_ereco_1Re     = util::NumErecoBins(kSKsFCFV1RingELike);
-    int nbins_ereco_1Rmu    = util::NumErecoBins(kSKsFCFV1RingMuLike);
-    int nbins_ereco_RHC1Re  = util::NumErecoBins(kSKsRHCFCFV1RingELike);
-    int nbins_ereco_RHC1Rmu = util::NumErecoBins(kSKsRHCFCFV1RingMuLike);
-    int nbins_ereco_MultiRe = util::NumErecoBins(kSKsFCFVMultiRingELike);
-    
-#ifndef __USE_2D_TEMPLATES__
-    
-    fToyMargVArray_Clone_1Re     = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Re);
-    fToyMargVArray_Clone_1Rmu    = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Rmu);
-    fToyMargVArray_Clone_RHC1Re  = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Re);
-    fToyMargVArray_Clone_RHC1Rmu = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Rmu);
-    fToyMargVArray_Clone_MultiRe = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_MultiRe);
-    
-    fToyMargVArray_Clone_1Re    ->SetAll(-1.);
-    fToyMargVArray_Clone_1Rmu   ->SetAll(-1.);
-    fToyMargVArray_Clone_RHC1Re ->SetAll(-1.);
-    fToyMargVArray_Clone_RHC1Rmu->SetAll(-1.);
-    fToyMargVArray_Clone_MultiRe->SetAll(-1.);
-#else
-    
-    int nbins_q2_1Re     = util::NumQ2Bins(kSKsFCFV1RingELike);
-    int nbins_q2_1Rmu    = util::NumQ2Bins(kSKsFCFV1RingMuLike);
-    int nbins_q2_RHC1Re  = util::NumQ2Bins(kSKsRHCFCFV1RingELike);
-    int nbins_q2_RHC1Rmu = util::NumQ2Bins(kSKsRHCFCFV1RingMuLike);
-    int nbins_q2_MultiRe = util::NumQ2Bins(kSKsFCFVMultiRingELike);
-    
-    fToyMargVArray_Clone_1Re     = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Re,     nbins_q2_1Re);
-    fToyMargVArray_Clone_1Rmu    = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_1Rmu,    nbins_q2_1Rmu);
-    fToyMargVArray_Clone_RHC1Re  = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Re,  nbins_q2_RHC1Re);
-    fToyMargVArray_Clone_RHC1Rmu = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_RHC1Rmu, nbins_q2_RHC1Rmu);
-    fToyMargVArray_Clone_MultiRe = new VALORArrayF(fntoys_marg, fnbins_sub_param[0], fnbins_sub_param[1], nbins_ereco_MultiRe, nbins_q2_MultiRe);
-    
-    fToyMargVArray_Clone_1Re     ->SetAll(-1.);
-    fToyMargVArray_Clone_1Rmu    ->SetAll(-1.);
-    fToyMargVArray_Clone_RHC1Re  ->SetAll(-1.);
-    fToyMargVArray_Clone_RHC1Rmu ->SetAll(-1.);
-    fToyMargVArray_Clone_MultiRe ->SetAll(-1.);
-#endif
-    
-    //
-    
-    
-    
-    
-    fMergeInputFiles_Called = false;
-  }
-  
-  cout << endl;
-  cout << "Merge toys of input file:" << endl
-  << "bin: ["
-  << fmin_bin_sub_param[0]
-  << ","
-  << fmax_bin_sub_param[0]
-  << "]"
-  << endl
-  << fnamefreeparam[0] << ": "
-  << "["
-  << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmin_bin_sub_param[0] + 1)
-  << ","
-  << fhchisq_marg_2D->GetXaxis()->GetBinCenter(fmax_bin_sub_param[0] + 1)
-  << "]"
-  << endl;
-  cout << "bin: ["
-  << fmin_bin_sub_param[1]
-  << ","
-  << fmax_bin_sub_param[1]
-  << "]"
-  << endl
-  << fnamefreeparam[1] << ": "
-  << "["
-  << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmin_bin_sub_param[1] + 1)
-  << ","
-  << fhchisq_marg_2D->GetYaxis()->GetBinCenter(fmax_bin_sub_param[1] + 1)
-  << "]"
-  << endl;
-  
-  // Copy read array elements to the clone one. Same loop as in FillChisqMarg()
-  for(int iexperiment = 0; iexperiment < fntoys_marg; iexperiment++) {
-    
-    for(int ipar0=fmin_bin_sub_param[0];ipar0<=fmax_bin_sub_param[0];ipar0++){
-      for(int ipar1=fmin_bin_sub_param[1];ipar1<=fmax_bin_sub_param[1];ipar1++){
-        
-        // Loop over the used SK samples
-        int iscount=0;
-        //for(int is = 0; is < kns; is++) {
-        //SuperkSample_t s = kSKSamples[is];
-        //if(s == kSKsUndefined) continue;
-        for(int is=0;is<fNSKsamples;is++){
-          SuperkSample_t s = this->GetSKSamples(is);
-          
-          
-#ifndef __USE_2D_TEMPLATES__
-          
-          for(int ibin=0;ibin<util::NumErecoBins(s);ibin++){
-            
-            // NEW 2D TEMPLATES (VARRAY)
-            //float bincont = fToyMargVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ibin); // shift to sub-range // bincont = -1 by default
-            float bincont = this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ibin); // shift to sub-range // bincont = -1 by default
-                                                                                                                                                 //
-            
-            if(bincont >= 0.){
-              
-              // NEW 2D TEMPLATES (VARRAY)
-              //float bincont_clone = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ibin);  // total range
-              float bincont_clone = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ibin);  // total range
-                                                                                                                    //
-              
-              if(bincont_clone >= 0.){
-                cerr << endl;
-                cerr << "FitMarginalization::MergeInputFiles" << endl;
-                cerr << "Following bin has been already filled:" << endl;
-                cerr << " - iexperiment = " << iexperiment << endl;
-                cerr << " - ipar0 = " << ipar0 << endl;
-                cerr << " - ipar1 = " << ipar1 << endl;
-                cerr << " - sample = " << util::AsStringCompact(s) << endl;
-                cerr << " - iereco = " << ibin << endl;
-                util::Die(1);
-              }
-              else{
-                
-                // NEW 2D TEMPLATES (VARRAY)
-                //fToyMargVArray_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iscount,ibin); // Set to 0 if negative
-                this->GetToyMargVArraySample_Clone(s)->SetEntry(bincont,iexperiment,ipar0,ipar1,ibin); // Set to 0 if negative
-                                                                                                       //
-                
-              }
-            }
-          } // loop ibin
-#else
-          // NEW 2D TEMPLATES
-          for(int ibinEreco=0;ibinEreco<util::NumErecoBins(s);ibinEreco++){
-            for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
-              
-              
-              // NEW 2D TEMPLATES (VARRAY)
-              //float bincont = fToyMargVArray->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],iscount,ibinEreco,ibinQ2); // shift to sub-range // bincont = -1 by default
-              float bincont = this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ipar0-fmin_bin_sub_param[0],ipar1-fmin_bin_sub_param[1],ibinEreco,ibinQ2); // shift to sub-range // bincont = -1 by default
-                                                                                                                                                               //
-              
-              
-              if(bincont >= 0.){
-                
-                // NEW 2D TEMPLATES (VARRAY)
-                //float bincont_clone = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ibinEreco,ibinQ2);  // total range
-                float bincont_clone = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ibinEreco,ibinQ2);  // total range
-                                                                                                                                  //
-                
-                
-                if(bincont_clone >= 0.){
-                  cerr << endl;
-                  cerr << "FitMarginalization::MergeInputFiles" << endl;
-                  cerr << "Following bin has been already filled:" << endl;
-                  cerr << " - iexperiment = " << iexperiment << endl;
-                  cerr << " - ipar0 = " << ipar0 << endl;
-                  cerr << " - ipar1 = " << ipar1 << endl;
-                  cerr << " - sample = " << util::AsStringCompact(s) << endl;
-                  cerr << " - iereco = " << ibinEreco << endl;
-                  cerr << " - iq2 = " << ibinQ2 << endl;
-                  cerr << " - bincont = " << bincont << endl;
-                  cerr << " - bincont clone = " << bincont_clone << endl;
-                  util::Die(1);
-                }
-                else{
-                  
-                  // NEW 2D TEMPLATES (VARRAY)
-                  //fToyMargVArray_Clone->SetEntry(bincont,iexperiment,ipar0,ipar1,iscount,ibinEreco,ibinQ2); // Set to 0 if negative
-                  this->GetToyMargVArraySample_Clone(s)->SetEntry(bincont,iexperiment,ipar0,ipar1,ibinEreco,ibinQ2); // Set to 0 if negative
-                                                                                                                     //
-                  
-                }
-              }
-            } // loop ibinQ2
-          } // loop ibinEreco
-            //
-          
-#endif // __USE_2D_TEMPLATES__
-          
-          iscount++;
-        } // loop SK samples
-        
-        
-#ifdef __print_array_toy_merge__
-        cout << endl;
-        cout << "toy=" << iexperiment << " - ipar0 = " << ipar0 << " - ipar1 = " << ipar1 << " : ";
-        
-        // Loop over the used SK samples
-        iscount=0;
-        //for(int is = 0; is < kns; is++) {
-        //SuperkSample_t s = kSKSamples[is];
-        //if(s == kSKsUndefined) continue;
-        for(int is=0;is<fNSKsamples;is++){
-          SuperkSample_t s = this->GetSKSamples(is);
-          
-          cout << util::AsStringCompact(s) << endl;
-          
-#ifndef __USE_2D_TEMPLATES__
-          for(int ib = 0; ib < util::NumErecoBins(s); ib++){
-            
-            // NEW 2D TEMPLATES (VARRAY)
-            //double bincont = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ib);
-            float bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ib);
-            //
-            
-            cout << bincont << " ";
-          }
-#else
-          // NEW 2D TEMPLATES
-          for(int ibEreco = 0; ibEreco < util::NumErecoBins(s); ibEreco++){
-            for(int ibQ2 = 0; ibQ2 < util::NumQ2Bins(s); ibQ2++){
-              
-              // NEW 2D TEMPLATES (VARRAY)
-              //double bincont = fToyMargVArray_Clone->GetEntry(iexperiment,ipar0,ipar1,iscount,ibEreco,ibQ2);
-              float bincont = this->GetToyMargVArraySample_Clone(s)->GetEntry(iexperiment,ipar0,ipar1,ibEreco,ibQ2);
-              //
-              
-              cout << bincont << " ";
-            }
-          }
-#endif
-          cout << endl;
-          cout << endl;
-          
-          iscount++;
-        } // loop SK samples
-#endif
-        
-      } // loop ipar1
-    } // loop ipar0
-  } // loop iexperiment
-  
-  fNmergedFiles++;
-  
-  return;
-}
-//________________________________________________________________________________________
 void FitMarginalization::SetNSKsamples(){
   
   fNSKsamples = 0; // # of sk samples used in the fit
@@ -5125,39 +4295,39 @@ void FitMarginalization::SetMinimIntervalRead(double XvalFirst,double XvalLast,d
   if(!readbinary){
     
     // Don't exceed the allowed bins (N.B. Use histogram bins from 1 to NBins!!!)
-    if(fFirstMinimBin_X < fmin_bin_sub_param[0]+1){
+    if(fFirstMinimBin_X < fmin_bin_param[0]+1){
       cerr << "The first bin of the X interval is outside the sub-range limit" << endl;
-      cerr << "Set it to " << fmin_bin_sub_param[0]+1 << endl;
+      cerr << "Set it to " << fmin_bin_param[0]+1 << endl;
       cerr << endl;
-      fFirstMinimBin_X = fmin_bin_sub_param[0]+1;
+      fFirstMinimBin_X = fmin_bin_param[0]+1;
       if(fIsFit2D) fFirstMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fFirstMinimBin_X);
       else         fFirstMinimVal_X = fhchisq_marg_1D->GetBinCenter(fFirstMinimBin_X);
     }
-    if(fLastMinimBin_X > fmax_bin_sub_param[0]+1){
+    if(fLastMinimBin_X > fmax_bin_param[0]+1){
       cerr << endl;
       cerr << "The last bin of the X interval is outside the sub-range limit" << endl;
-      cerr << "Set it to " << fmax_bin_sub_param[0]+1 << endl;
+      cerr << "Set it to " << fmax_bin_param[0]+1 << endl;
       cerr << endl;
-      fLastMinimBin_X = fmax_bin_sub_param[0]+1;
+      fLastMinimBin_X = fmax_bin_param[0]+1;
       if(fIsFit2D) fLastMinimVal_X = fhchisq_marg_2D->GetXaxis()->GetBinCenter(fLastMinimBin_X);
       else         fLastMinimVal_X = fhchisq_marg_1D->GetBinCenter(fLastMinimBin_X);
     }
     if(fIsFit2D){
-      if(fFirstMinimBin_Y < fmin_bin_sub_param[1]+1){
+      if(fFirstMinimBin_Y < fmin_bin_param[1]+1){
         cerr << endl;
         cerr << "The first bin of the Y interval is outside the sub-range limit" << endl;
-        cerr << "Set it to " << fmin_bin_sub_param[1]+1 << endl;
+        cerr << "Set it to " << fmin_bin_param[1]+1 << endl;
         cerr << endl;
-        fFirstMinimBin_Y = fmin_bin_sub_param[1]+1;
+        fFirstMinimBin_Y = fmin_bin_param[1]+1;
         if(fIsFit2D) fFirstMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fFirstMinimBin_Y);
         else         fFirstMinimVal_Y = fhchisq_marg_1D->GetBinCenter(fFirstMinimBin_Y);
       }
-      if(fLastMinimBin_Y > fmax_bin_sub_param[1]+1){
+      if(fLastMinimBin_Y > fmax_bin_param[1]+1){
         cerr << endl;
         cerr << "The last bin of the Y interval is outside the sub-range limit" << endl;
-        cerr << "Set it to " << fmax_bin_sub_param[1]+1 << endl;
+        cerr << "Set it to " << fmax_bin_param[1]+1 << endl;
         cerr << endl;
-        fLastMinimBin_Y = fmax_bin_sub_param[1]+1;
+        fLastMinimBin_Y = fmax_bin_param[1]+1;
         if(fIsFit2D) fLastMinimVal_Y = fhchisq_marg_2D->GetYaxis()->GetBinCenter(fLastMinimBin_Y);
         else         fLastMinimVal_Y = fhchisq_marg_1D->GetBinCenter(fLastMinimBin_Y);
       }
@@ -5343,10 +4513,10 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
     if(fIsFit2D)
     bincont = fChisqMargVArray->GetEntry(binN_X-1,binN_Y-1);
     else
-    bincont = fChisqMargVArray->GetEntry(binN_X-1,fmin_bin_sub_param[1]);
+    bincont = fChisqMargVArray->GetEntry(binN_X-1,fmin_bin_param[1]);
     if( bincont<=0.){
       if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,binN_Y-1,readbinary); // CalcChisqMargPt takes the point not bin
-      else bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,fmin_bin_sub_param[1],readbinary);
+      else bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,fmin_bin_param[1],readbinary);
     }
     chisq_X[ilike_N] = bincont;
     chisq[ilike_N][ilike_N] = bincont;
@@ -5358,10 +4528,10 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
     if(fIsFit2D)
     bincont = fChisqMargVArray->GetEntry(binNm1_X-1,binN_Y-1);
     else
-    bincont = fChisqMargVArray->GetEntry(binNm1_X-1,fmin_bin_sub_param[1]);
+    bincont = fChisqMargVArray->GetEntry(binNm1_X-1,fmin_bin_param[1]);
     if( bincont<=0.){
       if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binNm1_X-1,binN_Y-1,readbinary);
-      else bincont = CalcChisqMargPtRead(skobs_data,binNm1_X-1,fmin_bin_sub_param[1],readbinary);
+      else bincont = CalcChisqMargPtRead(skobs_data,binNm1_X-1,fmin_bin_param[1],readbinary);
     }
     chisq_X[ilike_Nm1] = bincont;
     chisq[ilike_Nm1][ilike_N] = bincont;
@@ -5373,10 +4543,10 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
     if(fIsFit2D)
     bincont = fChisqMargVArray->GetEntry(binNp1_X-1,binN_Y-1);
     else
-    bincont = fChisqMargVArray->GetEntry(binNp1_X-1,fmin_bin_sub_param[1]);
+    bincont = fChisqMargVArray->GetEntry(binNp1_X-1,fmin_bin_param[1]);
     if( bincont<=0.){
       if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binNp1_X-1,binN_Y-1,readbinary);
-      else bincont = CalcChisqMargPtRead(skobs_data,binNp1_X-1,fmin_bin_sub_param[1],readbinary); // bin_y = 0
+      else bincont = CalcChisqMargPtRead(skobs_data,binNp1_X-1,fmin_bin_param[1],readbinary); // bin_y = 0
     }
     chisq_X[ilike_Np1] = bincont;
     chisq[ilike_Np1][ilike_N] = bincont;
@@ -5545,10 +4715,10 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
         if(fIsFit2D)
         bincont = fChisqMargVArray->GetEntry(binNm2_X-1,binN_Y-1);
         else
-        bincont = fChisqMargVArray->GetEntry(binNm2_X-1,fmin_bin_sub_param[1]);
+        bincont = fChisqMargVArray->GetEntry(binNm2_X-1,fmin_bin_param[1]);
         if( bincont<=0.) {
           if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binNm2_X-1,binN_Y-1,readbinary);
-          else bincont = CalcChisqMargPtRead(skobs_data,binNm2_X-1,fmin_bin_sub_param[1],readbinary);
+          else bincont = CalcChisqMargPtRead(skobs_data,binNm2_X-1,fmin_bin_param[1],readbinary);
         }
         chisq_X_Nm2 = bincont;
         
@@ -5559,10 +4729,10 @@ void FitMarginalization::MinimizeChisqIntervalRead(SuperkObservation *skobs_data
         if(fIsFit2D)
         bincont = fChisqMargVArray->GetEntry(binNp2_X-1,binN_Y-1);
         else
-        bincont = fChisqMargVArray->GetEntry(binNp2_X-1,fmin_bin_sub_param[1]);
+        bincont = fChisqMargVArray->GetEntry(binNp2_X-1,fmin_bin_param[1]);
         if( bincont<=0.) {
           if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binNp2_X-1,binN_Y-1,readbinary);
-          else bincont = CalcChisqMargPtRead(skobs_data,binNp2_X-1,fmin_bin_sub_param[1],readbinary);
+          else bincont = CalcChisqMargPtRead(skobs_data,binNp2_X-1,fmin_bin_param[1],readbinary);
         }
         chisq_X_Np2 = bincont;
         
@@ -6099,11 +5269,11 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
     if(fIsFit2D)
     bincont = fChisqMargVArray->GetEntry(binN_X-1,binN_Y-1);
     else
-    bincont = fChisqMargVArray->GetEntry(binN_X-1,fmin_bin_sub_param[1]);
+    bincont = fChisqMargVArray->GetEntry(binN_X-1,fmin_bin_param[1]);
     
     if( bincont<=0.){
       if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,binN_Y-1,readbinary); // CalcChisqMargPt takes the point not bin
-      else bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,fmin_bin_sub_param[1],readbinary);
+      else bincont = CalcChisqMargPtRead(skobs_data,binN_X-1,fmin_bin_param[1],readbinary);
     }
     
     chisq_X[ilike_N] = bincont;
@@ -6122,10 +5292,10 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       if(fIsFit2D)
       bincont = fChisqMargVArray->GetEntry(binNm1_X-1,binN_Y-1);
       else
-      bincont = fChisqMargVArray->GetEntry(binNm1_X-1,fmin_bin_sub_param[1]);
+      bincont = fChisqMargVArray->GetEntry(binNm1_X-1,fmin_bin_param[1]);
       if( bincont<=0.){
         if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binNm1_X-1,binN_Y-1,readbinary);
-        else bincont = CalcChisqMargPtRead(skobs_data,binNm1_X-1,fmin_bin_sub_param[1],readbinary);
+        else bincont = CalcChisqMargPtRead(skobs_data,binNm1_X-1,fmin_bin_param[1],readbinary);
       }
       chisq_X[ilike_Nm1] = bincont;
       chisq[ilike_Nm1][ilike_N] = bincont;
@@ -6144,10 +5314,10 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
       if(fIsFit2D)
       bincont = fChisqMargVArray->GetEntry(binNp1_X-1,binN_Y-1);
       else
-      bincont = fChisqMargVArray->GetEntry(binNp1_X-1,fmin_bin_sub_param[1]);
+      bincont = fChisqMargVArray->GetEntry(binNp1_X-1,fmin_bin_param[1]);
       if( bincont<=0.){
         if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binNp1_X-1,binN_Y-1,readbinary);
-        else bincont = CalcChisqMargPtRead(skobs_data,binNp1_X-1,fmin_bin_sub_param[1],readbinary); // bin_y = 0
+        else bincont = CalcChisqMargPtRead(skobs_data,binNp1_X-1,fmin_bin_param[1],readbinary); // bin_y = 0
       }
       chisq_X[ilike_Np1] = bincont;
       chisq[ilike_Np1][ilike_N] = bincont;
@@ -6385,9 +5555,9 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
             chisq_Min_1D[i] = conv::kALargeNum;
           }
           else{
-            bincont = fChisqMargVArray->GetEntry(binloop_1D-1,fmin_bin_sub_param[1]);
+            bincont = fChisqMargVArray->GetEntry(binloop_1D-1,fmin_bin_param[1]);
             if( bincont<=0.)
-            bincont = CalcChisqMargPtRead(skobs_data,binloop_1D-1,fmin_bin_sub_param[1],readbinary);
+            bincont = CalcChisqMargPtRead(skobs_data,binloop_1D-1,fmin_bin_param[1],readbinary);
           }
           chisq_Min_1D[i] = bincont;
         }
@@ -6418,10 +5588,10 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
               if(fIsFit2D)
               bincont = fChisqMargVArray->GetEntry(binloop_X-1,binloop_Y-1);
               else
-              bincont = fChisqMargVArray->GetEntry(binloop_X-1,fmin_bin_sub_param[1]);
+              bincont = fChisqMargVArray->GetEntry(binloop_X-1,fmin_bin_param[1]);
               if( bincont<=0.){
                 if(fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binloop_X-1,binloop_Y-1,readbinary);
-                else bincont = CalcChisqMargPtRead(skobs_data,binloop_X-1,fmin_bin_sub_param[1],readbinary);
+                else bincont = CalcChisqMargPtRead(skobs_data,binloop_X-1,fmin_bin_param[1],readbinary);
               }
               chisq_Min[i][j] = bincont;
             }
@@ -6515,7 +5685,7 @@ void FitMarginalization::MinimizeChisqStepRead(SuperkObservation *skobs_data,boo
         
         double bincontmin = conv::kALargeNum;
         if(fIsFit2D) bincontmin = CalcChisqMargPtRead(skobs_data,binN_X-1,binN_Y-1,readbinary);
-        else bincontmin = CalcChisqMargPtRead(skobs_data,binN_X-1,fmin_bin_sub_param[1],readbinary);
+        else bincontmin = CalcChisqMargPtRead(skobs_data,binN_X-1,fmin_bin_param[1],readbinary);
         
         cout << "Restart the fit from a new starting point:" << endl;
         cout << "chisq = " << bincontmin << endl;
@@ -6862,7 +6032,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
       //cout << "bs_x = " << bs_x << " - bs_y = " << bs_y << endl;
       
       if(!fIsFit2D)
-      bincont = CalcChisqMargPtRead(skobs_data,bs_x-1,fmin_bin_sub_param[1],readbinary);
+      bincont = CalcChisqMargPtRead(skobs_data,bs_x-1,fmin_bin_param[1],readbinary);
       else
       bincont = CalcChisqMargPtRead(skobs_data,bs_x-1,bs_y-1,readbinary);
       
@@ -6919,7 +6089,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
         
         bincont = conv::kBadResult;
         
-        if(!fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binX-1,fmin_bin_sub_param[1],readbinary);
+        if(!fIsFit2D) bincont = CalcChisqMargPtRead(skobs_data,binX-1,fmin_bin_param[1],readbinary);
         else bincont = CalcChisqMargPtRead(skobs_data,binX-1,binY-1,readbinary);
         
         if(bincont<ChisqMinStart){
@@ -7080,15 +6250,15 @@ double FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Su
   }
   
   // Check if the true point is included by the sub-range
-  // fmin_bin_sub_param is an index while bin* is the histogram bin number
+  // fmin_bin_param is an index while bin* is the histogram bin number
   
   // Do this check only if binary files were not read at each grid point step before.
   // Otherwise the range is not the entire one but the one corresponding to the last
   // read binary file.
   if(!readbinary){
     if(
-       (bin0 < (fmin_bin_sub_param[0]+1) || bin0 > (fmax_bin_sub_param[0]+1)) ||
-       ( fIsFit2D && ( bin1<(fmin_bin_sub_param[1]+1) || bin1>(fmax_bin_sub_param[1]+1) ) )
+       (bin0 < (fmin_bin_param[0]+1) || bin0 > (fmax_bin_param[0]+1)) ||
+       ( fIsFit2D && ( bin1<(fmin_bin_param[1]+1) || bin1>(fmax_bin_param[1]+1) ) )
        ){
       
       cout << endl;
@@ -7100,7 +6270,7 @@ double FitMarginalization::GetChisqMargTrueRead(double valpar0,double valpar1,Su
   
   double chisqtrue = conv::kBadResult;
   if(fIsFit2D) chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,bin1-1,readbinary);
-  else chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,fmin_bin_sub_param[1],readbinary);
+  else chisqtrue = CalcChisqMargPtRead(skobs,bin0-1,fmin_bin_param[1],readbinary);
   
   return chisqtrue;
 }
@@ -7161,15 +6331,15 @@ double FitMarginalization::GetLikeToyRead(double valpar0,double valpar1,int iexp
     }
     
     // Check if the true point is included by the sub-range
-    // fmin_bin_sub_param is an index while bin* is the histogram bin number
+    // fmin_bin_param is an index while bin* is the histogram bin number
     
     // Do this check only if binary files were not read at each grid point step before.
     // Otherwise the range is not the entire one but the one corresponding to the last
     // read binary file.
     if(!readbinary){
       if(
-         (bin0 < (fmin_bin_sub_param[0]+1) || bin0 > (fmax_bin_sub_param[0]+1)) ||
-         ( fIsFit2D && ( bin1<(fmin_bin_sub_param[1]+1) || bin1>(fmax_bin_sub_param[1]+1) ) )
+         (bin0 < (fmin_bin_param[0]+1) || bin0 > (fmax_bin_param[0]+1)) ||
+         ( fIsFit2D && ( bin1<(fmin_bin_param[1]+1) || bin1>(fmax_bin_param[1]+1) ) )
          ){
         
         cout << endl;
@@ -7181,7 +6351,7 @@ double FitMarginalization::GetLikeToyRead(double valpar0,double valpar1,int iexp
     
     double liketoy = conv::kBadResult;
     if(fIsFit2D) liketoy = flikeToyVArray->GetEntry(bin0-1,bin1-1,iexperiment);
-    else         liketoy = flikeToyVArray->GetEntry(bin0-1,fmin_bin_sub_param[1],iexperiment);
+    else         liketoy = flikeToyVArray->GetEntry(bin0-1,fmin_bin_param[1],iexperiment);
     
     return liketoy;
   }
@@ -7256,89 +6426,9 @@ void FitMarginalization::SetFileID(int nfiles){
     cout << "Reading free param sub-range from binary file: " << fnamefile[idfile] << endl;
 #endif
     
-    
-    
-    
-    // // Check # of binary files
-    // //cout << fnamefilebinary << endl;
-    // //cout << tag << endl;
-    // char numfiletag[256];
-    // char ext[256] = ".bin";
-    // sprintf(numfiletag,"%s","./");
-    // //sprintf(numfiletag,"../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit*");
-    // //TString snumfiletag(numfiletag);
-    // //TIter next(files);
-    // //util::Die(1);
-    // cout << numfiletag << endl;
-    // TSystemDirectory dir(numfiletag, numfiletag);
-    // TList *files = dir.GetListOfFiles();
-    // if (files) {
-    //   TSystemFile *file;
-    //   TString fname;
-    //   TIter next(files);
-    //   while ((file=(TSystemFile*)next())) {
-    //  fname = file->GetName();
-    //  if (!file->IsDirectory() &&
-    //      fname.BeginsWith("../../inputs/marginalization/toys/nueapp_2D_NormPOT_fixosc_10toys/submit_sinsqth13Vsdcp_NormPOT_postfit") //&&
-    //      //fname.EndsWith(".bin")
-    //      ){
-    //    cout << fname.Data() << endl;
-    //  }
-    //   }
-    // }
-    // util::Die(1);
-    
-    
-    
-    char inname_range[256];
-    sprintf(inname_range,fnamefilebinary,tag,idfile,fntoys_marg,fnbins_param[0],fnbins_param[1],namemh,"_subrange",".bin");
-    std::string sinname_range(inname_range);
-    
-    int min_bin_sub_param0=0;
-    int max_bin_sub_param0=0;
-    int min_bin_sub_param1=0;
-    int max_bin_sub_param1=0;
-    
-    ifstream is(sinname_range.c_str(),ios::binary|ios::in);
-    
-    // Check inputs
-    
-    if( !is.good() ){
-      cerr << endl;
-      cerr << "The input file " << sinname_range << " doesn't exist" << endl;
-      cerr << "Check the input parameters: " << endl;
-      cerr << "  - tag = " << tag << endl;
-      cerr << "  - fntoys_marg = " << fntoys_marg << endl;
-      cerr << "  - # of pt param 0 = " << fnbins_param[0] << endl;
-      cerr << "  - # of pt param 1 = " << fnbins_param[1] << endl;
-      //cerr << "  - MH = " << namemh << endl; // NEW MARG MH 2
-      //cerr << "  - # of binary files = " << << endl;
-      cerr << endl;
-      util::Die(1);
-    }
-    
-    assert(is);
-    is.read( (char*)&min_bin_sub_param0,sizeof(int));
-    is.read( (char*)&max_bin_sub_param0,sizeof(int));
-    is.read( (char*)&min_bin_sub_param1,sizeof(int));
-    is.read( (char*)&max_bin_sub_param1,sizeof(int));
-    is.close();
-    
-#ifdef __print_build_map_fileid__
-    cout << "min_bin_sub_0 = " << min_bin_sub_param0 << " - "
-    << "max_bin_sub_0 = " << max_bin_sub_param0 << " - "
-    << "min_bin_sub_1 = " << min_bin_sub_param1 << " - "
-    << "max_bin_sub_1 = " << max_bin_sub_param1 << endl;
-#endif
-    
     for(int iptX=0;iptX<fnbins_param[0];iptX++){
       for(int iptY=0;iptY<fnbins_param[1];iptY++){
-        if( iptX >= min_bin_sub_param0 &&
-           iptX <= max_bin_sub_param0 &&
-           iptY >= min_bin_sub_param1 &&
-           iptY <= max_bin_sub_param1 ){
           fhmap_chisqrange_fileid_2D->SetBinContent(iptX+1,iptY+1,(int)idfile);
-        }
       }
     }
     
@@ -7445,7 +6535,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
       
       double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin);
       if(bincont<=0.){
-        bincont = this->CalcChisqMargPtRead(skobs_data,ibin-1,fmin_bin_sub_param[1],readbinary);
+        bincont = this->CalcChisqMargPtRead(skobs_data,ibin-1,fmin_bin_param[1],readbinary);
         bincont -= this->GetChisqBestFit();
         fhdeltachisq_marg_1D->SetBinContent(ibin,bincont);
       }
@@ -7483,7 +6573,7 @@ void FitMarginalization::CalcBestFitErrorsMINOS(SuperkObservation *skobs_data,bo
     for(int ibin=bin_bf;ibin<=fhdeltachisq_marg_1D->GetNbinsX();ibin++){ // histogram convention
       double bincont = fhdeltachisq_marg_1D->GetBinContent(ibin);
       if(bincont<=0.){
-        bincont = this->CalcChisqMargPtRead(skobs_data,ibin-1,fmin_bin_sub_param[1],readbinary);
+        bincont = this->CalcChisqMargPtRead(skobs_data,ibin-1,fmin_bin_param[1],readbinary);
         bincont -= this->GetChisqBestFit();
         fhdeltachisq_marg_1D->SetBinContent(ibin,bincont);
       }
@@ -8537,8 +7627,7 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
           // NEW PRECISION
           
           // NEW 2D TEMPLATES (VARRAY)
-          //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibin);
-          double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibin);
+          double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibin);
           //
           
           nexp *= (double)fNormPOT[is];
@@ -8565,9 +7654,7 @@ double FitMarginalization::FillExpectedNuEBarAppHisto(SuperkObservation *skobs_d
         for(int ibinEreco=0;ibinEreco<util::NumErecoBins(s);ibinEreco++){
           for(int ibinQ2=0;ibinQ2<util::NumQ2Bins(s);ibinQ2++){
             
-            // NEW 2D TEMPLATES (VARRAY)
-            //double nexp = (double)fToyMargVArray->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],iscount,ibinEreco,ibinQ2);
-            double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,iterpar0-fmin_bin_sub_param[0],iterpar1-fmin_bin_sub_param[1],ibinEreco,ibinQ2);
+            double nexp = (double)this->GetToyMargVArraySample(s)->GetEntry(iexperiment,ibinEreco,ibinQ2);
             //
             
             nexp *= (double)fNormPOT[is];
