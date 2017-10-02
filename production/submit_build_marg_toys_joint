@@ -131,7 +131,7 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 40000                        unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long";
+      $wqueue                 = "express";#"long";
       $npt_freepar0           = 97                       unless defined $npt_freepar0;
    }
    else
