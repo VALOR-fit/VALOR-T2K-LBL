@@ -339,5 +339,5 @@ void test_osc_marginalization
 
    std::cout << *fparm << std::endl;
 
-   util::CalcOscProbabilities(10000, fparm);
+   util::CalcOscProbabilities(4000, fparm);
 }
