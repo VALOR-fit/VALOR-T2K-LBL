@@ -3851,36 +3851,24 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
 bool valor::util::IsMixingAngle(PhysParamId_t p)
 {
     switch(p) {
-        case ( kPhypMixing23              ) : return true;
-        case ( kPhypMixing13              ) : return true;
-        case ( kPhypMixing12              ) : return true;
-        case ( kPhypSinsq2ThetaDecay      ) : return true;
-        case ( kPhypSinsq2ThetaDecoh      ) : return true;
-        case ( kPhypMixing14              ) : return true;
-        case ( kPhypMixing15              ) : return true;
-        case ( kPhypMixing24              ) : return true;
-        case ( kPhypMixing25              ) : return true;
-        case ( kPhypMixing34              ) : return true;
-        case ( kPhypMixing35              ) : return true;
+        case ( kPhypMixing23              ) : return true; break;
+        case ( kPhypMixing13              ) : return true; break;
+        case ( kPhypMixing12              ) : return true; break;
+        case ( kPhypSinsq2ThetaDecay      ) : return true; break;
+        case ( kPhypSinsq2ThetaDecoh      ) : return true; break;
+        case ( kPhypMixing14              ) : return true; break;
+        case ( kPhypMixing15              ) : return true; break;
+        case ( kPhypMixing24              ) : return true; break;
+        case ( kPhypMixing25              ) : return true; break;
+        case ( kPhypMixing34              ) : return true; break;
+        case ( kPhypMixing35              ) : return true; break;
+            
         default :
             return false;
     }
     return false;
 }
 //________________________________________________________________________________________
-bool valor::util::IsMixingAngleBar(PhysParamId_t p)
-{
-    switch(p) {
-        case ( kPhypMixing23Bar              ) : return true;
-        case ( kPhypMixing13Bar              ) : return true;
-        case ( kPhypMixing12Bar              ) : return true;
-        default :
-            return false;
-    }
-    return false;
-}
-//________________________________________________________________________________________
-
 bool valor::util::IsSystematic(PhysParamId_t p)
 {
     if(p <= kPhypNSIepsMuTau) return false;

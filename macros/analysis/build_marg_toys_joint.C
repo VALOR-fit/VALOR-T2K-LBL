@@ -226,6 +226,7 @@ void build_marg_toys_joint
   // Implement the constructor giving the following input parameters:
   FitMarginalization *fitmarg = new FitMarginalization();   
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
+  fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
   fitmarg->SetSeed(seed);
 

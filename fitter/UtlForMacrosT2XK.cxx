@@ -347,6 +347,7 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   // Implement the constructor giving the following input parameters:
   //FitMarginalization *fitmarg = new FitMarginalization();   
   fitmarg->SetPhysParFree(parfree,ntoys,nbinspar,minpar,maxpar);
+  fitmarg->SetSubRange(subminbin,submaxbin); // By default it scans all the range
   fitmarg->SetTestStatistic(runopt->Teststat()); // Set Test Statistic ("rate-only" or "rate+shape")
   fitmarg->Init(skexp); // Before need SetPhysParFree() to initialize the arrays
   fitmarg->SetStoreLikeWeights(runopt->StoreLikeWeights()); // Set if to store full likelihood for each toy (after fitmarg->Init())
