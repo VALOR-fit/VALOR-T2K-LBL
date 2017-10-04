@@ -23,6 +23,8 @@
 namespace valor
 {
 
+OscProb *OscProb::instance = 0;
+
 OscProb::OscProb(const int Ntoys) :
    N(Ntoys),
    vProb_1Re(0),
@@ -47,6 +49,28 @@ OscProb::~OscProb()
    delete vProb_RHC1Re;
    delete vProb_RHC1Rmu;
    delete vProb_MultiRe;
+}
+
+OscProb* OscProb::Instance(const int Ntoys)
+{
+   if(instance == 0)
+   {
+      instance = new OscProb(Ntoys);
+   }
+
+   return instance;
+}
+
+OscProb* OscProb::Instance()
+{
+   if(instance == 0)
+   {
+      std::cerr << "Error: Attempt to access OscProb prior to initialisation" <<
+         " with Instance(const int Ntoys)." << std::endl;
+      exit(1);
+   }
+
+   return instance;
 }
 
 VALORArrayF* OscProb::GetToys(conv::SuperkSample_t s)
@@ -334,7 +358,7 @@ void CalcOscProbabilities(const int Ntoys, FitParamList* fparm, bool isbar)
    NuOsc3Flavour oscbar;
 
    TStopwatch watch;
-   OscProb osc_prob(Ntoys);
+   OscProb* osc_prob = OscProb::Instance(Ntoys);
    for(int n = 0; n < Ntoys; ++n)
    {
       Randomize(fparm);
@@ -377,35 +401,35 @@ void CalcOscProbabilities(const int Ntoys, FitParamList* fparm, bool isbar)
                {
                   if(util::IsNuMu(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc[1][1], n, it - 1, kFNuMu);
+                     osc_prob->GetToys(s)->SetEntry(p_osc[1][1], n, it - 1, kFNuMu);
                   }
                   else if(util::IsNuMuBar(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc_bar[1][1], n, it - 1, kFNuMuBar);
+                     osc_prob->GetToys(s)->SetEntry(p_osc_bar[1][1], n, it - 1, kFNuMuBar);
                   }
                   else if(util::IsNuE(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc[0][0], n, it - 1, kFNuE);
+                     osc_prob->GetToys(s)->SetEntry(p_osc[0][0], n, it - 1, kFNuE);
                   }
                   else if(util::IsNuEBar(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc_bar[0][0], n, it - 1, kFNuEBar);
+                     osc_prob->GetToys(s)->SetEntry(p_osc_bar[0][0], n, it - 1, kFNuEBar);
                   }
                   else if(util::IsOscNuMu(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc[0][1], n, it - 1, kFOscNuMu);
+                     osc_prob->GetToys(s)->SetEntry(p_osc[0][1], n, it - 1, kFOscNuMu);
                   }
                   else if(util::IsOscNuMuBar(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc_bar[0][1], n, it - 1, kFOscNuMuBar);
+                     osc_prob->GetToys(s)->SetEntry(p_osc_bar[0][1], n, it - 1, kFOscNuMuBar);
                   }
                   else if(util::IsOscNuE(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc[1][1], n, it - 1, kFOscNuE);
+                     osc_prob->GetToys(s)->SetEntry(p_osc[1][1], n, it - 1, kFOscNuE);
                   }
                   else if(util::IsOscNuEBar(m))
                   {
-                     osc_prob.GetToys(s)->SetEntry(p_osc[1][1], n, it - 1, kFOscNuEBar);
+                     osc_prob->GetToys(s)->SetEntry(p_osc[1][1], n, it - 1, kFOscNuEBar);
                   }
                }
             }

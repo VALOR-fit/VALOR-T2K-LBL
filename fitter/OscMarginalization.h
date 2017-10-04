@@ -52,6 +52,8 @@ class OscProb
 public:
    OscProb(const int Ntoys);
    virtual ~OscProb();
+   static OscProb* Instance(const int Ntoys);
+   static OscProb* Instance();
    VALORArrayF* GetToys(conv::SuperkSample_t s);
    void Write();
    int ModeIndex(conv::SuperkSample_t s, conv::SuperkMode_t m);
@@ -62,6 +64,7 @@ private:
    void InitModeMaps();
 
 private:
+   static OscProb* instance;
    const int N;
    VALORArrayF* vProb_1Re;
    VALORArrayF* vProb_1Rmu;
