@@ -125,7 +125,29 @@ int main(int argc, char ** argv)
   TH2D* penalty_hist = runopt->ToyPenaltyTerm2DHist();
   // Normalize penalty histogram
   penalty_hist->Scale(1.0 / penalty_hist->Integral());
-  
+  TH1D* penalty_hist_x = 0;
+  TH1D* penalty_hist_y = 0;
+
+  valor::conv::PhysParamId_t x_penalty = kPhypUndefined;
+  valor::conv::PhysParamId_t y_penalty = kPhypUndefined;
+  if(runopt->ToyPenaltyTerm2D()){
+    x_penalty = valor::util::PhysParamIdFromString(runopt->ToyPenaltyTerm2DHistX());
+    y_penalty = valor::util::PhysParamIdFromString(runopt->ToyPenaltyTerm2DHistY());
+  }
+
+  // If performing FC on a parameter that is usually part of the penalty histogram,
+  // reduce the 2D penalty histogram to 1D in the appropriate variable
+  if(util::GetFreePar(runopt->Freeparname0()) == x_penalty)
+  {
+    penalty_hist_y = penalty_hist->ProjectionY();
+    penalty_hist_y->Scale(1.0 / penalty_hist_y->Integral());
+  }
+  else if(util::GetFreePar(runopt->Freeparname0()) == y_penalty)
+  {
+    penalty_hist_x = penalty_hist->ProjectionX();
+    penalty_hist_x->Scale(1.0 / penalty_hist_x->Integral());
+  }
+
   // Analysis configuration
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt->ConfigFile().c_str() ));
   TString xmlfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), runopt->Xmlfile().c_str() ));
@@ -475,12 +497,6 @@ int main(int argc, char ** argv)
      fitnt->Branch(Form("param_%d", p), &all_parameters[ip], Form("param_%d/D", p));
   }*/
   
-  valor::conv::PhysParamId_t x_penalty = kPhypUndefined;
-  valor::conv::PhysParamId_t y_penalty = kPhypUndefined;
-  if(runopt->ToyPenaltyTerm2D()){
-    x_penalty = valor::util::PhysParamIdFromString(runopt->ToyPenaltyTerm2DHistX());
-    y_penalty = valor::util::PhysParamIdFromString(runopt->ToyPenaltyTerm2DHistY());
-  }
   
   // Update physics fitparamlist with chosen value of oscillation parameters
   bool set_init = false;
@@ -537,11 +553,24 @@ int main(int argc, char ** argv)
           
           // Set the mass hierarchy (to avoid conflicts with fitmarginalization mass hierarchy)
           util::SetMassHierarchy(skexp);
-          double val_x = 0.0;
-          double val_y = 0.0;
-          penalty_hist->GetRandom2(val_x, val_y);
-          util::OscParams::Instance()->Override(x_penalty, val_x);
-          util::OscParams::Instance()->Override(y_penalty, val_y);
+          if(penalty_hist_y)
+          {
+             double val = penalty_hist_y->GetRandom();
+             util::OscParams::Instance()->Override(y_penalty, val);
+          }
+          else if (penalty_hist_x)
+          {
+             double val = penalty_hist_x->GetRandom();
+             util::OscParams::Instance()->Override(x_penalty, val);
+          }
+          else
+          {
+             double val_x = 0.0;
+             double val_y = 0.0;
+             penalty_hist->GetRandom2(val_x, val_y);
+             util::OscParams::Instance()->Override(x_penalty, val_x);
+             util::OscParams::Instance()->Override(y_penalty, val_y);
+          }
           
           // Update physics hypothesis and fitparamlist with chosen value of oscillation parameters
           util::OscParams::Instance()->UpdatePhysHypothesis(ph);
@@ -836,7 +865,7 @@ int main(int argc, char ** argv)
     
     trueparname0 = runopt->Freeparname0();
     trueparname1 = runopt->Freeparname1();
-    
+
     
     // Not for BetaBar rate-only analysis with likelihood reweight method
     
