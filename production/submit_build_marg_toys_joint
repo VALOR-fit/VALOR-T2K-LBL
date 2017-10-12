@@ -237,15 +237,15 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
 # # 2D fit - sinsqth13 Vs dcp
 if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "deltacp") and ($freepar1 eq "mixing13")))
 {
-   $tag = "${tag}_${freepar0}_${freepar1}";
-
    $nexpts_marg = 10000;
    if($freepar0 eq "deltacp")
    {
       $freepar0 = "mixing13";
       $freepar1 = "deltacp";
    }
-
+   
+   $tag = "${tag}_${freepar0}_${freepar1}";
+   
    if($use_reactors == 1)
    {
       $minfreepar0         = 0.015     unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -268,18 +268,18 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    $step_freepar1     = 2                         unless defined $step_freepar1;   # of points for each job param1
    $wqueue            = "long";
 }
-
 # # 2D fit - sinsqth23 Vs dmsq23
 if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
 {
-   $tag = "${tag}_${freepar0}_${freepar1}";
-
    $nexpts_marg = 10000;
    if($freepar0 eq "dmsq23")
    {
       $freepar0 = "mixing23";
       $freepar1 = "dmsq23";
    }
+
+   $tag = "${tag}_${freepar0}_${freepar1}";
+
    $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
    $npt_freepar0           = 81;#10;#81                         unless defined $npt_freepar0;    # of free parameter points to scan
@@ -340,7 +340,7 @@ print ARGS "# \n";
 print ARGS "# Submit toys $year/$mon/$mday \n";
 print ARGS "# \n";
 print ARGS "\$T2KOSCANA/production/submit_build_marg_toys_joint \\\n";
-print ARGS "--Resource               '$resource' \\\n";                              
+print ARGS "--resource               '$resource' \\\n";                              
 print ARGS "--tag                    '$tag' \\\n";                
 print ARGS "--config-file            '$config_file' \\\n";        
 print ARGS "--fit-param-list         '$fitparamlist' \\\n";       
@@ -565,6 +565,24 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	    close(PBS);
 	    `qsub $job_dir/$tag-$irun.pbs`;
 	}
+        #
+        # Liverpool SLURM
+        #
+        
+        if($resource eq "Liverpool_SLURM") {
+            open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
+            print PBS "#!/bin/bash \n";
+            print PBS "#PBS -N $tag-$irun \n";
+            print PBS "#PBS -q compute \n"; 
+            print PBS "#PBS -l cput=$cput \n"; 
+            print PBS "#PBS -o /scratch/cbarry/$tag-$irun-slurm.pbs.out \n";
+            print PBS "#PBS -e /scratch/cbarry/$tag-$irun-slurm.pbs.err \n";
+            print PBS "cd $job_dir \n";
+            print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
+            print PBS "$command \n";
+            close(PBS);
+            `qsub $job_dir/$tag-$irun.pbs`;
+        }
 	
 	#
 	# Grid
