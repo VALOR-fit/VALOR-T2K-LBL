@@ -128,6 +128,30 @@ void SuperkExpectation::CleanUp(void)
   if (fNuFlux            ) delete fNuFlux; 
   if (fNuXSec            ) delete fNuXSec;
   if (fBANFF             ) delete fBANFF;
+
+  for (int is = 0 ; is < conv::kns ; is++)
+  {
+     if(fPredictErecoSpectrumArrayTot[is])
+     {
+        delete fPredictErecoSpectrumArrayTot[is];
+        fPredictErecoSpectrumArrayTot[is] = 0;
+     }
+     if(fPredictErecoSpectrumArray[is])
+     {
+        delete fPredictErecoSpectrumArray[is];
+        fPredictErecoSpectrumArray[is] = 0;
+     }
+     if(fPredictErecoVsQ2SpectrumArrayTot[is])
+     {
+        delete fPredictErecoVsQ2SpectrumArrayTot[is];
+        fPredictErecoVsQ2SpectrumArrayTot[is] = 0;
+     }
+     if(fPredictErecoVsQ2SpectrumArray[is])
+     {
+        delete fPredictErecoVsQ2SpectrumArray[is];
+        fPredictErecoVsQ2SpectrumArray[is] = 0;
+     }
+  }
 }
 //________________________________________________________________________________________
 void SuperkExpectation::CheckPhysParamId(void)

@@ -609,6 +609,12 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
     LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (splines only)!";
 #endif
+    delete spline_files[kSKsFCFV1RingMuLike    ];
+    delete spline_files[kSKsFCFV1RingELike     ];
+    delete spline_files[kSKsRHCFCFV1RingMuLike ];
+    delete spline_files[kSKsRHCFCFV1RingELike  ];
+    delete spline_files[kSKsFCFVMultiRingMuLike];
+    delete spline_files[kSKsFCFVMultiRingELike ];
     
     return true;
 }
@@ -884,6 +890,13 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
     LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (splines only)!";
 #endif
+
+  delete spline_files[kSKsFCFV1RingMuLike    ];
+  delete spline_files[kSKsFCFV1RingELike     ];
+  delete spline_files[kSKsRHCFCFV1RingMuLike ];
+  delete spline_files[kSKsRHCFCFV1RingELike  ];
+  delete spline_files[kSKsFCFVMultiRingMuLike];
+  delete spline_files[kSKsFCFVMultiRingELike ];
 
     // return splines_status(true);
   return true;

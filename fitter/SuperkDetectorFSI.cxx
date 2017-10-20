@@ -183,6 +183,8 @@ SuperkDetectorFSI::SuperkDetectorFSI()
   
   Registry & reg = Opt::Instance()->MutableGlobalRegistry();
   reg.Set("skdetfsi", this);
+
+  delete[] number_of_relevant_systematics;
 }
 //________________________________________________________________________________________
 SuperkDetectorFSI::~SuperkDetectorFSI()

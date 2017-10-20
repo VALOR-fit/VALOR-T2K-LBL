@@ -159,7 +159,25 @@ using namespace valor::util;
 ClassImp(SuperkMC)
 
 //________________________________________________________________________________________
-SuperkMC::SuperkMC()
+SuperkMC::SuperkMC() :
+   fMCPOTHistNuMu(0),
+   fMCPOTHistNuMuBar(0),
+   fMCPOTHistNuE(0),
+   fMCPOTHistNuEBar(0),
+   fMCPOTHistOscNuE(0),
+   fMCPOTHistOscNuEBar(0),
+   fMCPOTHistRHCNuMu(0),
+   fMCPOTHistRHCNuMuBar(0),
+   fMCPOTHistRHCNuE(0),
+   fMCPOTHistRHCNuEBar(0),
+   fMCPOTHistRHCOscNuE(0),
+   fMCPOTHistRHCOscNuEBar(0),
+   fMCPOTHistMultiRingNuMu(0),
+   fMCPOTHistMultiRingNuMuBar(0),
+   fMCPOTHistMultiRingNuE(0),
+   fMCPOTHistMultiRingNuEBar(0),
+   fMCPOTHistMultiRingOscNuE(0),
+   fMCPOTHistMultiRingOscNuEBar(0)
 {
     this->Init();
 }
@@ -229,6 +247,8 @@ void SuperkMC::Init(void)
             // NEW 2D TEMPLATES
             fMCTemplOri2D      [is][im] = 0;
             fMCTemplNom2D      [is][im] = 0;
+            fMCTemplPOT2D      [is][im] = 0;
+            fMCTemplRPA2D      [is][im] = 0;
             fMCErecoVsQ2Spectrum [is][im] = 0;
             fMCVariableTempl2D [is][im] = 0;
             //
@@ -448,10 +468,32 @@ void SuperkMC::CleanUp(void)
     for(int is = 0; is < kns; is++) {
         for(int im = 0; im < knm; im++) {
             //already deleted Ori & Nom (the if doesn't work!)
-            //if( fMCTemplOri     [is][im] ) delete fMCTemplOri     [is][im];
-            //if( fMCTemplNom     [is][im] ) delete fMCTemplNom     [is][im];
-            //if( fMCTemplPOT     [is][im] ) delete fMCTemplPOT     [is][im];
-            //if( fMCTemplRPA     [is][im] ) delete fMCTemplRPA     [is][im];
+            if( fMCTemplOri2D[is][im] )
+            {
+               delete fMCTemplOri2D[is][im];
+               fMCTemplOri2D[is][im] = 0;
+            }
+            if( fMCTemplNom2D[is][im] )
+            {
+               delete fMCTemplNom2D[is][im];
+               fMCTemplNom2D[is][im] = 0;
+            }
+            if( fMCTemplPOT2D[is][im] )
+            {
+               delete fMCTemplPOT2D[is][im];
+               fMCTemplPOT2D[is][im] = 0;
+            }
+            if( fMCTemplRPA2D[is][im] )
+            {
+               delete fMCTemplRPA2D[is][im];
+               fMCTemplRPA2D[is][im] = 0;
+            }
+
+            if( fMCErecoVsQ2Spectrum[is][im] )
+            {
+               delete fMCErecoVsQ2Spectrum[is][im];
+               fMCErecoVsQ2Spectrum[is][im] = 0;
+            }
             
             if( fMCErecoSpectrum[is][im] ) delete fMCErecoSpectrum[is][im];
             if( fMCVariableTempl[is][im] ) delete fMCVariableTempl[is][im];
@@ -479,7 +521,27 @@ void SuperkMC::CleanUp(void)
         if( fMCErecoVsQ2SpectrumTot [is] ) { delete fMCErecoVsQ2SpectrumTot [is]; fMCErecoVsQ2SpectrumTot [is] = 0; }
         //
     }
-    
+
+    if(fMCPOTHistNuMu) delete fMCPOTHistNuMu;
+    if(fMCPOTHistNuMuBar) delete fMCPOTHistNuMuBar;
+    if(fMCPOTHistNuE) delete fMCPOTHistNuE;
+    if(fMCPOTHistNuEBar) delete fMCPOTHistNuEBar;
+    if(fMCPOTHistOscNuE) delete fMCPOTHistOscNuE;
+    if(fMCPOTHistOscNuEBar) delete fMCPOTHistOscNuEBar;
+
+    if(fMCPOTHistRHCNuMu) delete fMCPOTHistRHCNuMu;
+    if(fMCPOTHistRHCNuMuBar) delete fMCPOTHistRHCNuMuBar;
+    if(fMCPOTHistRHCNuE) delete fMCPOTHistRHCNuE;
+    if(fMCPOTHistRHCNuEBar) delete fMCPOTHistRHCNuEBar;
+    if(fMCPOTHistRHCOscNuE) delete fMCPOTHistRHCOscNuE;
+    if(fMCPOTHistRHCOscNuEBar) delete fMCPOTHistRHCOscNuEBar;
+ 
+    if(fMCPOTHistMultiRingNuMu) delete fMCPOTHistMultiRingNuMu;
+    if(fMCPOTHistMultiRingNuMuBar) delete fMCPOTHistMultiRingNuMuBar;
+    if(fMCPOTHistMultiRingNuE) delete fMCPOTHistMultiRingNuE;
+    if(fMCPOTHistMultiRingNuEBar) delete fMCPOTHistMultiRingNuEBar;
+    if(fMCPOTHistMultiRingOscNuE) delete fMCPOTHistMultiRingOscNuE;
+    if(fMCPOTHistMultiRingOscNuEBar) delete fMCPOTHistMultiRingOscNuEBar;
 }
 //________________________________________________________________________________________
 bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
@@ -544,6 +606,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     fMCPOTNuEBar     = fMCPOTHistNuEBar   ->GetBinContent(2) / fMCPOTHistNuEBar   ->GetBinContent(1);
     fMCPOTOscNuE     = fMCPOTHistOscNuE   ->GetBinContent(2) / fMCPOTHistOscNuE   ->GetBinContent(1);
     fMCPOTOscNuEBar  = fMCPOTHistOscNuEBar->GetBinContent(2) / fMCPOTHistOscNuEBar->GetBinContent(1);
+
     
     // RHC
     fMCPOTHistRHCNuMu      = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot_rhc"         );
@@ -559,7 +622,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     fMCPOTRHCNuEBar    = fMCPOTHistRHCNuEBar   ->GetBinContent(2) / fMCPOTHistRHCNuEBar   ->GetBinContent(1);
     fMCPOTRHCOscNuE    = fMCPOTHistRHCOscNuE   ->GetBinContent(2) / fMCPOTHistRHCOscNuE   ->GetBinContent(1);
     fMCPOTRHCOscNuEBar = fMCPOTHistRHCOscNuEBar->GetBinContent(2) / fMCPOTHistRHCOscNuEBar->GetBinContent(1);
-    
+   
     // NEW MULTIRING
 #ifdef __MULTIRING_FHC_RUNNING__
     fMCPOTHistMultiRingNuMu       = util::XML2TH1D  (xml,root_node,"mc/superk/nominal/numu/pot_fhc_cc1pi");
@@ -575,6 +638,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     fMCPOTMultiRingNuEBar     = fMCPOTHistMultiRingNuEBar   ->GetBinContent(2) / fMCPOTHistMultiRingNuEBar   ->GetBinContent(1);
     fMCPOTMultiRingOscNuE     = fMCPOTHistMultiRingOscNuE   ->GetBinContent(2) / fMCPOTHistMultiRingOscNuE   ->GetBinContent(1);
     fMCPOTMultiRingOscNuEBar  = fMCPOTHistMultiRingOscNuEBar->GetBinContent(2) / fMCPOTHistMultiRingOscNuEBar->GetBinContent(1);
+
 #endif
     ////
     
