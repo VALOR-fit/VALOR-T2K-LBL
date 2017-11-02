@@ -97,7 +97,7 @@ void plot_brazilian
   TH1D* hdeltachisq_hybrid_ih = 0;
   TH1D* hchisq_hybrid_nh = 0;
   TH1D* hchisq_hybrid_ih = 0;
-  if(hybrid_file_nh)
+  if(hybrid_file_nh && hybrid_file_nh[0] != '\0')
   {
      TFile* hybrid_file = new TFile(hybrid_file_nh);
      TTree* hybrid_tree = (TTree*)hybrid_file->Get("fitnt");
@@ -109,7 +109,7 @@ void plot_brazilian
      delete hybrid_tree;
      hybrid_file->Close();
   }
-  if(hybrid_file_ih)
+  if(hybrid_file_ih && hybrid_file_ih[0] != '\0')
   {
      TFile* hybrid_file = new TFile(hybrid_file_ih);
      TTree* hybrid_tree = (TTree*)hybrid_file->Get("fitnt");
@@ -1108,6 +1108,7 @@ void plot_brazilian
   ////////////////////////////////////////////////////
   
   if(doBrazilian){
+     TGaxis::SetMaxDigits(2);
     
     if(do_fc==false){
       cout << endl;
@@ -1275,13 +1276,13 @@ void plot_brazilian
       
       // Apply cut on deltachisq
       
-      int bin_mpiover2 = hdeltachisq1D_toy_nh->FindBin(-TMath::Pi()/2.);
+/*      int bin_mpiover2 = hdeltachisq1D_toy_nh->FindBin(-TMath::Pi()/2.);
       double deltachisq_fluct_mpiover2_nh = hdeltachisq1D_toy_nh->GetBinContent(bin_mpiover2);
       double deltachisq_fluct_mpiover2_ih = hdeltachisq1D_toy_ih->GetBinContent(bin_mpiover2);
       
       int bin_ppiover2 = hdeltachisq1D_toy_nh->FindBin(+TMath::Pi()/2.);
       double deltachisq_fluct_ppiover2_nh = hdeltachisq1D_toy_nh->GetBinContent(bin_ppiover2);
-      double deltachisq_fluct_ppiover2_ih = hdeltachisq1D_toy_ih->GetBinContent(bin_ppiover2);
+      double deltachisq_fluct_ppiover2_ih = hdeltachisq1D_toy_ih->GetBinContent(bin_ppiover2);*/
       
       //if(deltachisq_fluct_mpiover2_nh < 4) continue;
       //if(deltachisq_fluct_ppiover2_nh < 4) continue;
@@ -1620,7 +1621,7 @@ void plot_brazilian
       braz_nh_title->Draw("same");
       braz_nh_caveat->Draw("same");
     }
-    TLegend *lBrazilianPlot_nh = new TLegend(0.15,0.64,0.35,0.92);
+    TLegend *lBrazilianPlot_nh = new TLegend(0.25,0.64,0.45,0.92);
     lBrazilianPlot_nh->SetFillColor(0);
     lBrazilianPlot_nh->SetLineColor(0);
     lBrazilianPlot_nh->SetTextFont(132);
@@ -1640,13 +1641,19 @@ void plot_brazilian
       lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"2#sigma CL","l");
     }
     lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
-    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_median,"Median toy","l");
-    lBrazilianPlot_nh->AddEntry(hdeltachisq_hybrid_nh,"Hybrid","l");
+    if(two_sided)
+    {
+      lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_median,"Median toy","l");
+    }
+    if(hdeltachisq_hybrid_nh)
+    {
+      lBrazilianPlot_nh->AddEntry(hdeltachisq_hybrid_nh,"Hybrid","l");
+    }
     lBrazilianPlot_nh->DrawClone();
     
     TLatex *latNormal = new TLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy_ih*0.9,"Normal Ordering");
     latNormal->SetTextSize(0.06);
-    latNormal->Draw("same");
+    //latNormal->Draw("same");
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.pdf",tag.c_str()));
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.png",tag.c_str()));
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.eps",tag.c_str()));
@@ -1728,7 +1735,7 @@ void plot_brazilian
       braz_ih_title->Draw("same");
       braz_ih_caveat->Draw("same");
     }
-    TLegend *lBrazilianPlot_ih = new TLegend(0.15,0.64,0.35,0.92);
+    TLegend *lBrazilianPlot_ih = new TLegend(0.25,0.64,0.45,0.92);
     lBrazilianPlot_ih->SetFillColor(0);
     lBrazilianPlot_ih->SetLineColor(0);
     lBrazilianPlot_ih->SetTextFont(132);
@@ -1745,13 +1752,19 @@ void plot_brazilian
     if(draw_2sigmaCL)
       lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"2#sigma CL","l");
     lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
-    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_median,"Median toy","l");
-    lBrazilianPlot_ih->AddEntry(hdeltachisq_hybrid_ih,"Hybrid","l");
+    if(two_sided)
+    {
+      lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_median,"Median toy","l");
+    }
+    if(hdeltachisq_hybrid_ih)
+    {
+      lBrazilianPlot_ih->AddEntry(hdeltachisq_hybrid_ih,"Hybrid","l");
+    }
     lBrazilianPlot_ih->DrawClone();
     
     TLatex *latInverted = new TLatex(hdeltachisq1D_ih_mean->GetXaxis()->GetBinLowEdge(110),20.*0.9,"Inverted Ordering");
     latInverted->SetTextSize(0.06);
-    latInverted->Draw("same");
+    //latInverted->Draw("same");
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.pdf",tag.c_str()));
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.png",tag.c_str()));
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.eps",tag.c_str()));

@@ -1,10 +1,9 @@
-//
 // ------------------------------------------------------------------------------------------------
 // Plot contributions from various event modes in the predicted SuperK 1Re or 1Rmu spectrum.
 //
 // Costas Andreopoulos
+// Andy Chappell
 // ------------------------------------------------------------------------------------------------
-//
 
 #include <iomanip.h>
 #include <vector>
@@ -34,7 +33,9 @@ void bievent_plot
    TGraph gN_events[N23][NMH];
    TGraph gN_events_1pt[N23][NMH][NDCP];
    TH2D* hEvents[dcp_npt][N23][NMH];
+   TH2D* hEventsSyst[dcp_npt][N23][NMH];
    TH1D* hFHCEvents[dcp_npt][N23][NMH];
+   TH1D* hRHCEvents[dcp_npt][N23][NMH];
    bool display_errors[dcp_npt][N23][NMH];
    display_errors[2][1][0] = true;  // Systematics at dcp = -pi/2, ss23 = 0.5, NH
 
@@ -86,10 +87,12 @@ void bievent_plot
             double dcp = deltaCP_first + idcp * deltaCP_width;
 
             hEvents[idcp][iss23][imh] = static_cast<TH2D*>(file->Get(Form("hEvents_%d_%d_%d", idcp, iss23, imh)));
+            hEventsSyst[idcp][iss23][imh] = static_cast<TH2D*>(file->Get(Form("hEventsSyst_%d_%d_%d", idcp, iss23, imh)));
             hFHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_fhc_%d_%d_%d", idcp, iss23, imh)));
+            hRHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_rhc_%d_%d_%d", idcp, iss23, imh)));
             Nfhc = hEvents[idcp][iss23][imh]->GetMean(1);
             Nrhc = hEvents[idcp][iss23][imh]->GetMean(2);
-            cout << idcp << " " << iss23 << " " << imh << " => " << Nfhc << " " << Nrhc << endl;
+            //cout << idcp << " " << iss23 << " " << imh << " => " << Nfhc << " " << Nrhc << endl;
             gN_events[iss23][imh].SetPoint(gN_events[iss23][imh].GetN(), Nfhc, Nrhc);
 
             if(fabs(dcp - (-TMath::Pi() / 2.)) < 1.E-4 ) 
@@ -113,10 +116,8 @@ void bievent_plot
             {
                double contours[1] = {get_contour_level(hEvents[idcp][iss23][imh])};
                hEvents[idcp][iss23][imh]->SetContour(1, contours);
-
-               contours[0] = get_contour_level(hFHCEvents[idcp][iss23][imh]);
-               hFHCEvents[idcp][iss23][imh]->SetContour(1, contours);
-               cout << "Contour: " << idcp << " " << iss23 << " " << imh << " = " << contours[0] << endl;
+               double syst_contours[1] = {get_contour_level(hEventsSyst[idcp][iss23][imh])};
+               hEventsSyst[idcp][iss23][imh]->SetContour(1, syst_contours);
             }
          }
       }
@@ -193,8 +194,14 @@ void bievent_plot
          {
             if(display_errors[idcp][iss23][imh])
             {
-               hEvents[idcp][iss23][imh]->SetFillColorAlpha(kRed, 0.5);
-               hEvents[idcp][iss23][imh]->Draw("cont0 same");
+//               hEvents[idcp][iss23][imh]->SetFillColorAlpha(kRed, 0.5);
+               hEvents[idcp][iss23][imh]->SetLineColor(kRed);
+               hEvents[idcp][iss23][imh]->SetLineStyle(3);
+               hEvents[idcp][iss23][imh]->Draw("cont3 same");
+//               hEventsSyst[idcp][iss23][imh]->SetFillColorAlpha(kBlue, 0.5);
+               hEventsSyst[idcp][iss23][imh]->SetLineColor(kBlue);
+               hEventsSyst[idcp][iss23][imh]->SetLineStyle(3);
+               hEventsSyst[idcp][iss23][imh]->Draw("cont3 same");
             }
          }
       }
@@ -226,6 +233,20 @@ void bievent_plot
    ldcp_all->AddEntry(&gN_events_1pt[1][0][2],"#delta_{CP} = +#pi/2","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][1],"#delta_{CP} = 0","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][0],"#delta_{CP} = -#pi/2","p");
+   for(int idcp = 0; idcp < dcp_npt; ++idcp)
+   {
+      for(int iss23 = 0; iss23 < N23; ++iss23)
+      {
+         for(int imh = 0; imh < NMH; ++imh)
+         {
+            if(display_errors[idcp][iss23][imh])
+            {
+               ldcp_all->AddEntry(hEventsSyst[idcp][iss23][imh], "syst err","f");
+               ldcp_all->AddEntry(hEvents[idcp][iss23][imh], "stat + syst err","f");
+            }
+         }
+      }
+   }
    ldcp_all->AddEntry(gN_events_data,"Data","p");
    ldcp_all->Draw();
 
@@ -233,9 +254,23 @@ void bievent_plot
    cEllipse_all->SaveAs(Form("%s.png", tag));
    cEllipse_all->SaveAs(Form("%s.eps", tag));
 
-   TCanvas *c_contour = new TCanvas("c_contour","c_contour");
+   TCanvas *c_fhc_contour = new TCanvas("c_contour","c_contour");
    hFHCEvents[2][1][0]->Draw("cont0");
-   c_contour->SaveAs("contour.pdf");
+   std::pair<double, double> interval_fhc = get_interval(hFHCEvents[2][1][0]);
+   TLine* l_low = new TLine(interval_fhc.first, 0.0, interval_fhc.first, hFHCEvents[2][1][0]->GetMaximum());
+   TLine* l_high = new TLine(interval_fhc.second, 0.0, interval_fhc.second, hFHCEvents[2][1][0]->GetMaximum());
+   l_low->Draw("same");
+   l_high->Draw("same");
+   c_fhc_contour->SaveAs("contour_fhc.pdf");
+
+   TCanvas *c_rhc_contour = new TCanvas("c_contour","c_contour");
+   hRHCEvents[2][1][0]->Draw("cont0");
+   std::pair<double, double> interval_rhc = get_interval(hRHCEvents[2][1][0]);
+   TLine* l_low2 = new TLine(interval_rhc.first, 0.0, interval_rhc.first, hRHCEvents[2][1][0]->GetMaximum());
+   TLine* l_high2 = new TLine(interval_rhc.second, 0.0, interval_rhc.second, hRHCEvents[2][1][0]->GetMaximum());
+   l_low2->Draw("same");
+   l_high2->Draw("same");
+   c_rhc_contour->SaveAs("contour_rhc.pdf");
 
    file->Close();
 
@@ -300,5 +335,38 @@ double get_contour_level(TH1D* histo)
    }
 
    return events[events.size() - 1];
+}
+
+std::pair<double, double> get_interval(TH1D* histo)
+{
+   int nx = histo->GetNbinsX();
+   double num_events = 0.0;
+
+   for(int x = 1; x <= nx; ++x)
+   {
+      double value = histo->GetBinContent(x);
+      num_events += value;
+   }
+   double num_events_low = num_events * 0.15865;
+   double num_events_high = num_events * 0.84135;
+
+   num_events = 0.0;
+   double low = 0.0;
+   double high = 0.0;
+   for(int x = 1; x <= nx; ++x)
+   {
+      double value = histo->GetBinContent(x);
+      num_events += value;
+      if(low == 0.0 && num_events >= num_events_low)
+      {
+         low = histo->GetBinLowEdge(x);
+      }
+      if(high == 0.0 && num_events >= num_events_high)
+      {
+         high = histo->GetBinLowEdge(x + 1);
+      }
+   }
+
+   return std::make_pair(low, high);
 }
 
