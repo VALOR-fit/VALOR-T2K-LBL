@@ -298,18 +298,15 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
 {
    if($penalty_freepar0 == 1)
    {
-#      $nfiles_margtoys   = 41           unless defined $nfiles_margtoys; # of marginalization files
-#      $ntoys_margtoys    = 10000         unless defined $ntoys_margtoys;     # of marginalization toys
-#      $npt_freepar0      = 201           unless defined $npt_freepar0; # of free parameter points to scan
-      $nfiles_margtoys   = 10;#97           unless defined $nfiles_margtoys; # of marginalization files
-      $ntoys_margtoys    = 100;#40000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 10;#97           unless defined $npt_freepar0; # of free parameter points to scan
+      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
    }
    else
    {
-      $nfiles_margtoys   = 100;#67           unless defined $nfiles_margtoys; # of marginalization files
-      $ntoys_margtoys    = 80000;#40000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100;#201           unless defined $npt_freepar0; # of free parameter points to scan
+      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
    }
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value

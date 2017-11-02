@@ -1234,7 +1234,9 @@ int main(int argc, char ** argv)
 #ifndef __USE_2D_TEMPLATES__
       cout << skobs_fakedata->ErecoSpectrum(s)->Integral() << endl;
 #else
-      cout << skobs_fakedata->TwoDSpectrum(s)->Integral() << endl;
+      TH2D* temp_spec = skobs_fakedata->TwoDSpectrum(s);
+      cout << temp_spec->Integral() << endl;
+      delete temp_spec;
 #endif
       cout << " - # of expected events = ";
 #ifndef __USE_2D_TEMPLATES__
@@ -1328,5 +1330,8 @@ int main(int argc, char ** argv)
   util::OscParams::Instance()->Write(f); // store the toy osc param histograms
   f->Close();
   delete f;
+  delete iparm;
+  delete fitnt;
+  delete fparm;
   delete runopt;
 }
