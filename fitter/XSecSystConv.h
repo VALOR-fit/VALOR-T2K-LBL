@@ -42,29 +42,6 @@ namespace valor {
     // Number of cross-section related systematics
         
     // NEW XSEC NIWG
-#if defined(__USE_NIWG2015__)
-    // NEW XSEC
-#  if BANFF_BINS == 1
-    static const int kNumOfXSecSyst = 18;
-    static const int kNumOfRHCXSecSyst = 18;
-#  elif BANFF_BINS == 2
-    static const int kNumOfXSecSyst = 15; //15   // no scca and sccv
-    static const int kNumOfRHCXSecSyst = 15; //15   // no scca and sccv
-#  elif BANFF_BINS == 3
-    static const int kNumOfXSecSyst = 17;
-    static const int kNumOfRHCXSecSyst = 17;
-#  endif
-#  ifdef __NUMUONLY__
-    static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
-    static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
-#  elif __NUEONLY__
-    static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
-    static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
-#  else
-    static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
-    static const int kNumOfRHCUncXSecSyst = 0; // no uncorr xsec
-#  endif      
-#endif
       
 #if defined(__USE_NIWG2017__)
     // NEW XSEC
@@ -484,87 +461,6 @@ namespace valor {
 #  endif             
 #endif
     };
-        
-        
-    //Fractional error of systematic parameters, as of BANFF 2012v8
-    // ONLY USE FOR: macros/misc/test_fitter_inputs/test_valor_kdi_splines.C
-    static const double kXSecSystFracErr[kNumOfXSecSyst] =
-    {
-          // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
-      // NEW XSEC
-      0.1,            // RPA tuning
-            
-      0.1,            // BANFF, 2p2h
-      0.1,            // BANFF, CA5
-      0.1,            // BANFF, BgRES
-      0.0716,         // BANFF, M_{A}QE
-      0.0675,         // BANFF, M_{A}RES
-      // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-      0.1,            // BANFF, SCCA
-      0.1,            // BANFF, SCCV
-#endif
-      0.13333,        // BANFF, Fermi momentum
-      0.4,            // BANFF, CC other shape
-      //0.33333,        // BANFF, Binding enery
-      1.0,            // BANFF, CC coherent norm
-      0.3,            // BANFF, NC coh norm
-      0.3,            // BANFF, NC other norm
-      0.03,           // BANFF, nue / numu cross section
-      0.5,	      // BANFF, NC 1 gamma
-      0.03            // BANFF, nuebar / numubar cross section
-#  if defined(__USE_NIWG2017__)      
-     -999,            //kNuisBANFFBeRPA_A     
-     -999,            //kNuisBANFFBeRPA_B     
-     -999,            //kNuisBANFFBeRPA_D     
-     -999,            //kNuisBANFFBeRPA_E     
-     -999,            //kNuisBANFFBeRPA_U     
-     -999,            //kNuisBANFFShape2p2h   
-     -999,            //kNuisBANFFNorm2p2hCtoO
-#  endif             
-#endif
-    };
-        
-    static const double kRHCXSecSystFracErr[kNumOfRHCXSecSyst] =
-    {
-      // NEW XSEC NIWG            
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
-      // NEW XSEC
-      0.1,            // RPA tuning
-            
-      0.1,            // BANFF, 2p2h
-      0.1,            // BANFF, CA5
-      0.1,            // BANFF, BgRES
-      0.0716,         // BANFF, M_{A}QE
-      0.0675,         // BANFF, M_{A}RES
-      // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-      0.1,            // BANFF, SCCA
-      0.1,            // BANFF, SCCV
-#endif
-      0.13333,        // BANFF, Fermi momentum
-      0.4,            // BANFF, CC other shape
-      0.33333,        // BANFF, Binding enery
-      1.0,            // BANFF, CC coherent norm
-      0.3,            // BANFF, NC coh norm
-      0.3,            // BANFF, NC other norm
-      0.03,           // BANFF, nue / numu cross section
-      0.5,	      // BANFF, NC 1 gamma
-      0.03            // BANFF, nuebar / numubar cross section
-#  if defined(__USE_NIWG2017__)      
-      -999,            //BANFF, BeRPA_A     
-      -999,            //BANFF, BeRPA_B     
-      -999,            //BANFF, BeRPA_D     
-      -999,            //BANFF, BeRPA_E     
-      -999,            //BANFF, BeRPA_U     
-      -999,            //BANFF, Shape2p2h   
-      -999,            //BANFF, Norm2p2h CtoO
-#  endif             
-
-#endif
-    };
-        
         
         
     // The following list describles in which MC templates we are supposed to apply the
