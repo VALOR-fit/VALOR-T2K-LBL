@@ -1,0 +1,22 @@
+# List of ('VALOR' , 'MaCh3'), parameters 
+
+  (  'f_banffmaqe_fhc_rhc'           , 'f_banffmaqe_fhc_rhc'  ) ,          #0    | MAQE                          
+  (  'f_banffpfermi_fhc_rhc'         , 'f_banffpfermi_fhc_rhc'  ) ,        #2    | pF_O                          
+  (  'f_banff2p2h_fhc_rhc'           , 'f_banff2p2h_fhc_rhc'  ) ,          #3    | 2p2h_norm_nu                  
+  (  'f_banff2p2hbar_fhc_rhc'        , 'f_banff2p2hbar_fhc_rhc'  ) ,       #4    | 2p2h_norm_nubar               
+  (  'f_banffnorm_2p2hCtoO_fhc_rhc'  , 'f_banffnorm_2p2hCtoO_fhc_rhc'  ) , #5    | 2p2h_norm_CtoO
+  (  'f_banffshape_2p2hnu_fhc_rhc'   , 'f_banffshape_2p2hnu_fhc_rhc'  ) ,  #7    | 2p2h_shape_O                  
+  (  'f_banffshape_berpa_A_fhc_rhc'  , 'f_banffshape_berpa_A_fhc_rhc'  ) , #8    | BeRPA_A                       
+  (  'f_banffshape_berpa_B_fhc_rhc'  , 'f_banffshape_berpa_B_fhc_rhc'  ) , #9    | BeRPA_B                       
+  (  'f_banffshape_berpa_D_fhc_rhc'  , 'f_banffshape_berpa_D_fhc_rhc' ) ,  #10   | BeRPA_D                       
+  (  'f_banffshape_berpa_E_fhc_rhc'  , 'f_banffshape_berpa_E_fhc_rhc' ) ,  #11   | BeRPA_E                       
+  (  'f_banffca5_fhc_rhc'            , 'f_banffca5_fhc_rhc' ) ,            #13   | CA5                           
+  (  'f_banffmares_fhc_rhc'          , 'f_banffmares_fhc_rhc' ) ,          #14   | MARES                         
+  (  'f_banffbgres_fhc_rhc'          , 'f_banffbgres_fhc_rhc' ) ,          #15   | ISO_BKG                       
+  (  'f_banffnorm_nuetonumu_fhc_rhc' , 'f_banffnorm_nuetonumu_fhc_rhc' ) , #16   | nue_numu                      
+  (  'f_banffnorm_nuebartonumubar_fhc_rhc' ,'f_banffnorm_nuebartonumubar_fhc_rhc' ) , #17   | nuebar_numubar                
+  (  'f_banffshapeCCoth_fhc_rhc'     , 'f_banffshapeCCoth_fhc_rhc' ) ,     #18   | CC_DIS                        
+  (  'f_banffnorm_cccoh_fhc_rhc'     , 'f_banffnorm_cccoh_fhc_rhc' ) ,     #20   | CC_Coh_O                      
+  (  'f_banffnorm_nccoh_fhc_rhc'     , 'f_banffnorm_nccoh_fhc_rhc' ) ,     #21   | NC_Coh                        
+  (  'f_banffnorm_nc1gamma_fhc_rhc'  , 'f_banffnorm_nc1gamma_fhc_rhc' ) ,  #22   | NC_1gamma                     
+  (  'f_banffnorm_ncoth_fhc_rhc'     , 'f_banffnorm_ncoth_fhc_rhc' ) ,     #24   | NC_other_far                  

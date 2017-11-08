@@ -138,9 +138,17 @@ static const PhysParamId_t kNuisBANFFBeRPA_E             = kNuis070;   // BeRPA 
 static const PhysParamId_t kNuisBANFFBeRPA_U             = kNuis071;   // BeRPA U
 static const PhysParamId_t kNuisBANFFShape2p2h           = kNuis072;   // 2p2h nu/nubar shape
 static const PhysParamId_t kNuisBANFFNorm2p2hCtoO        = kNuis073;   // 2p2h CtoO norm
-//
+// New nu/nubar CC
+static const PhysParamId_t kNuisBANFFNormCCNu            = kNuis074;   // nu CC 400-600 MeV
+static const PhysParamId_t kNuisBANFFNormCCNuBar         = kNuis075;   // nubar CC 400-600 MeV
+// New SK FSI
+static const PhysParamId_t kNuisBANFFSKFSIAbsorption     = kNuis076;   // SK FSI absorption (< 500 MeV)
+static const PhysParamId_t kNuisBANFFSKFSIQELow          = kNuis077;   // SK FSI QE low energy (< 500 MeV)
+static const PhysParamId_t kNuisBANFFSKFSICXLow          = kNuis078;   // SK FSI single charge exchange (<500 MeV)
+static const PhysParamId_t kNuisBANFFSKFSIQEHigh         = kNuis079;   // SK FSI QE high energy (>400 MeV)
+static const PhysParamId_t kNuisBANFFSKFSIInelastic      = kNuis080;   // SK FSI hadron (N + nPi) production (>400 MeV)
 
-static const PhysParamId_t kLastBANFFParam  = kNuis074; // Utility, should always come after last FHC BANFF
+static const PhysParamId_t kLastBANFFParam  = kNuis081; // Utility, should always come after last FHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -149,23 +157,23 @@ static const PhysParamId_t kLastBANFFParam  = kNuis074; // Utility, should alway
    //systematics which use splines
 
 // NEW XSEC
-static const PhysParamId_t kNuisXSecRPA            = kNuis080;   // RPA tuning
+static const PhysParamId_t kNuisXSecRPA            = kNuis085;   // RPA tuning
 
-static const PhysParamId_t kNuisXSecFermiMom       = kNuis081;   // Fermi momentum
-static const PhysParamId_t kNuisXSecSpecFunc       = kNuis082;   // spectral function on/off
-static const PhysParamId_t kNuisXSecWshape         = kNuis083;   // W-shape
-static const PhysParamId_t kNuisXSecShapeCCoth     = kNuis084;   // CC other shape
-static const PhysParamId_t kNuisXSecPiLessDelta    = kNuis085;   // Pion-less delta decay
-static const PhysParamId_t kNuisXSecBindE          = kNuis086;   // Binding energy
+static const PhysParamId_t kNuisXSecFermiMom       = kNuis086;   // Fermi momentum
+static const PhysParamId_t kNuisXSecSpecFunc       = kNuis087;   // spectral function on/off
+static const PhysParamId_t kNuisXSecWshape         = kNuis088;   // W-shape
+static const PhysParamId_t kNuisXSecShapeCCoth     = kNuis089;   // CC other shape
+static const PhysParamId_t kNuisXSecPiLessDelta    = kNuis090;   // Pion-less delta decay
+static const PhysParamId_t kNuisXSecBindE          = kNuis091;   // Binding energy
    //systematics that are normalisations
-static const PhysParamId_t kNuisXSecNormCCcoh      = kNuis087;   // CC coherent norm
-static const PhysParamId_t kNuisXSecNormNC1piC     = kNuis088;   // NC 1piC norm
-static const PhysParamId_t kNuisXSecNormNCcoh      = kNuis089;   // NC coh norm
-static const PhysParamId_t kNuisXSecNormNCoth      = kNuis090;   // NC other norm
-static const PhysParamId_t kNuisXSecNormNuEToNuMu  = kNuis091;   // nue / numu cross section
-static const PhysParamId_t kNuisXSecNormAntiNuToNu = kNuis092;   // antinu / nu cross section
+static const PhysParamId_t kNuisXSecNormCCcoh      = kNuis092;   // CC coherent norm
+static const PhysParamId_t kNuisXSecNormNC1piC     = kNuis093;   // NC 1piC norm
+static const PhysParamId_t kNuisXSecNormNCcoh      = kNuis094;   // NC coh norm
+static const PhysParamId_t kNuisXSecNormNCoth      = kNuis095;   // NC other norm
+static const PhysParamId_t kNuisXSecNormNuEToNuMu  = kNuis096;   // nue / numu cross section
+static const PhysParamId_t kNuisXSecNormAntiNuToNu = kNuis097;   // antinu / nu cross section
 
-static const PhysParamId_t kLastXSecParam = kNuis093;   // Utility, should always come after last FHC Xsec param
+static const PhysParamId_t kLastXSecParam = kNuis098;   // Utility, should always come after last FHC Xsec param
 
    /*
     * FSI parameters.
@@ -325,10 +333,17 @@ static const PhysParamId_t kRHCNuisBANFFBeRPA_E             = kNuis220;   // BeR
 static const PhysParamId_t kRHCNuisBANFFBeRPA_U             = kNuis221;   // BeRPA U
 static const PhysParamId_t kRHCNuisBANFFShape2p2h           = kNuis222;   // 2p2h nu shape
 static const PhysParamId_t kRHCNuisBANFFNorm2p2hCtoO        = kNuis223;   // 2p2h CtoO norm
-  
-//
-
-static const PhysParamId_t kRHCLastBANFFParam  = kNuis224; // Utility, should always come after last RHC BANFF
+// New nu/nubar CC
+static const PhysParamId_t kRHCNuisBANFFNormCCNu            = kNuis224;   // nu CC 400-600 MeV
+static const PhysParamId_t kRHCNuisBANFFNormCCNuBar         = kNuis225;   // nubar CC 400-600 MeV
+// New SK FSI
+static const PhysParamId_t kRHCNuisBANFFSKFSIAbsorption     = kNuis226;   // SK FSI absorption (< 500 MeV)
+static const PhysParamId_t kRHCNuisBANFFSKFSIQELow          = kNuis227;   // SK FSI QE low energy (< 500 MeV)
+static const PhysParamId_t kRHCNuisBANFFSKFSICXLow          = kNuis228;   // SK FSI single charge exchange (<500 MeV)
+static const PhysParamId_t kRHCNuisBANFFSKFSIQEHigh         = kNuis229;   // SK FSI QE high energy (>400 MeV)
+static const PhysParamId_t kRHCNuisBANFFSKFSIInelastic      = kNuis230;   // SK FSI hadron (N + nPi) production (>400 MeV)
+ 
+static const PhysParamId_t kRHCLastBANFFParam  = kNuis231; // Utility, should always come after last RHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)

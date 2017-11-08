@@ -1166,58 +1166,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // BANFF param, Eb
     //
     
-    if( p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
-        p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES       )
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        assert(wght_spl);
-        double untuned_value = 0;
-        if(p == kRHCNuisBANFFMAQE       ||
-           p == kRHCNuisBANFFMARES       )
-        {
-            tb = fBANFF->InitialValue(p);
-            untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
-        }
-        else
-        {
-            tb = fBANFF->InitialValue(p);
-            untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
-        }
-        
-        double spline_point = (tb-untuned_value);
-#ifdef check_spline_limits
-         if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
-            LOG("NuXSec",pINFO)<<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
-        }
-#endif
-        
-        
-#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
-        if (spline_point > wght_spl->GetXmax()) spline_point = wght_spl->GetXmax();
-        if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
-#endif
-
-        wght = wght_spl->Eval(spline_point);
-    }
-    
-    if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
-        // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-        p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
-        p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       ||
-#endif
-        p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
-        p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
-        p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
-        p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
-        p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
-        p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
-        p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
-        )
+    if( util::IsUsingSplines(p) )
     {
         //
 #if SPLINE_TYPE == -1
@@ -1227,23 +1176,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         assert(wght_spl);
         double untuned_value = 0;
         // NEW XSEC
-        if(p == kRHCNuisBANFFMAQE       ||
-           p == kRHCNuisBANFFMARES      ||
-           p == kRHCNuisBANFFFermiMom   ||
-           p == kRHCNuisBANFFShapeCCoth ||
-           // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-           p == kRHCNuisBANFFSCCA       ||
-           p == kRHCNuisBANFFSCCV       ||
-#endif
-           p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES      ||
-           p == kRHCNuisBANFFBeRPA_A    ||
-           p == kRHCNuisBANFFBeRPA_B    ||
-           p == kRHCNuisBANFFBeRPA_D    ||
-           p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
-           )
+        if(util::IsRHCBANFF(p))
         {
             tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
@@ -1275,19 +1208,15 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     
     
     // NORMALIZATION PARAMETERS
-    
-    // NEW XSEC NIWG
 #if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
-    //
-    // NEW XSEC
-    //
     // - BANFF param, 2p2h       normalization
     // - BANFF param, BgRES      normalization
     // - BANFF param, CCcoh      normalization
     // - BANFF param, NCcoh      normalization
     // - BANFF param, NCoth      normalization
     // - BANFF param, NuEToNuMu  normalization
-    //
+    // - BANFF param, CCNu       normalization
+    // - BANFF param, CCNuBar    normalization
     else if( util::IsNormXSecParam(p) ) {
       if (util::IsBeRPA(p)) wght = 1.0;
       else wght = fBANFF->InitialValue(p);
@@ -1451,78 +1380,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // BANFF param, Eb
     //
     
-    if( p == kNuisBANFFMAQE   || p == kRHCNuisBANFFMAQE   ||
-        p == kNuisBANFFMARES  || p == kRHCNuisBANFFMARES   )
+    if(util::IsUsingSplines(p))
     {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        std::string splname_debug = this->BuildSplineName(s,m,p,Ereco,Etrue,Q2);
-        if(!wght_spl){
-          LOG("NuXSec",pINFO) << "Couldn't find spline " << splname_debug;
-          LOG("NuXSec",pDEBUG) << AsString(s) << "\t" << AsString(m) << "\t" << AsString(p) << ",\t" << Ereco << ",\t" << Etrue << ",\t" << Q2;
-	}
-        assert(wght_spl);
-        double untuned_value = 0;
-        if(p == kRHCNuisBANFFMAQE       ||
-           p == kRHCNuisBANFFMARES       )
-        {
-            tb = fBANFF->InitialValue(p);
-            untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
-        }
-        else
-        {
-            tb = fBANFF->InitialValue(p);
-            untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
-        }
-        
-        //double spline_point = (tb-untuned_value);
-        spline_point = (tb-untuned_value);
-#ifdef check_spline_limits
-        if (spline_point > wght_spl->GetXmax() || spline_point < wght_spl->GetXmin()) {
-          LOG("NuXSec",pERROR) <<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spline_point
-                               <<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax() ;
-          if (util::IsRHCBANFF(p)) {
-            LOG("NuXSec",pERROR) << "tb = " << fBANFF->InitialValue(p) 
-                                 << "untuned_value = " << (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
-          }
-          if (util::IsBANFF(p)) {
-            LOG("NuXSec",pERROR) << "tb = " << fBANFF->InitialValue(p) 
-                                 << "untuned_value = " << (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
-          }
-        }
-#endif
-        
-        
-#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
-        if (spline_point > wght_spl->GetXmax()) spline_point = wght_spl->GetXmax();
-        if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
-#endif
-        
-        wght = wght_spl->Eval(spline_point);
-        LOG("NuXSec",pDEBUG) << "Spline name, title: "<< wght_spl->GetName() << " , " <<wght_spl->GetTitle()
-                             <<  " Evaluated at " << spline_point ;
-
-    }
-    
-    if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
-        // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-        p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
-        p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCV       ||
-#endif
-        p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom   ||
-        p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
-        p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
-        p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
-        p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
-        p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
-        p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
-        )
-    {
-        //
 #if SPLINE_TYPE == -1
         return wght;
 #endif
@@ -1530,23 +1389,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         assert(wght_spl);
         double untuned_value = 0;
         // NEW XSEC
-        if(p == kRHCNuisBANFFMAQE       ||
-           p == kRHCNuisBANFFMARES      ||
-           p == kRHCNuisBANFFFermiMom   ||
-           p == kRHCNuisBANFFShapeCCoth ||
-           // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-           p == kRHCNuisBANFFSCCA       ||
-           p == kRHCNuisBANFFSCCV       ||
-#endif
-           p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES      ||
-           p == kRHCNuisBANFFBeRPA_A    ||
-           p == kRHCNuisBANFFBeRPA_B    ||
-           p == kRHCNuisBANFFBeRPA_D    ||
-           p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
-           )
+        if(util::IsRHCBANFF(p))
         {
             tb = fBANFF->InitialValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
@@ -1574,34 +1417,15 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         }
 #endif
         
-        
 #ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
         if (spline_point > wght_spl->GetXmax()) spline_point = wght_spl->GetXmax();
         if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
 #endif
-
         wght = wght_spl->Eval(spline_point);
-        // LOG("NuXSec",pDEBUG) << "Spline name, title: "<< wght_spl->GetName() << " , " <<wght_spl->GetTitle()
-        //                      <<  "Evaluated at " << spline_point ;
-        
     }
 #endif
-    
-    
     // NORMALIZATION PARAMETERS
-    
-    // NEW XSEC NIWG
 #if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
-    //
-    // NEW XSEC
-    //
-    // - BANFF param, 2p2h       normalization
-    // - BANFF param, BgRES      normalization
-    // - BANFF param, CCcoh      normalization
-    // - BANFF param, NCcoh      normalization
-    // - BANFF param, NCoth      normalization
-    // - BANFF param, NuEToNuMu  normalization
-    //
     else if( util::IsNormXSecParam(p) ) {
       if (util::IsBeRPA(p)) wght = 1.0;
       else wght = fBANFF->InitialValue(p);
@@ -1764,63 +1588,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 
 
     // Axial masses
-    if (p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
-        p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES      )
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        
-        double untuned_value = 1;
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        assert(wght_spl);
-        
-        // NEW XSEC NIWG
-        // NEW XSEC
-        if(p == kRHCNuisBANFFMAQE          ||
-           p == kRHCNuisBANFFMARES          )
-        {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
-        }
-        else {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
-        }
-        double spl_tb = (tb-untuned_value);
-        double spl_tc = (tc-untuned_value);
-#ifdef check_spline_limits
-        if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-            LOG("NuXSec",pDEBUG) << "EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc<<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
-        }
-#endif
-        
-        
-#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
-        if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
-        if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
-#endif
-        
-        wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
-    } // end of MAQE
-    
-    // Other systematics where we check spline limits
-    else if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
-             // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-             p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
-             p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
-#endif
-             p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
-             p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
-             p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
-             p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
-             p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
-             p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
-             )
+    if (util::IsUsingSplines(p))
     {
 #if SPLINE_TYPE == -1
         return wght;
@@ -1829,22 +1597,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
         assert(wght_spl);
         
-        // NEW XSEC NIWG
-        // NEW XSEC
-        if(p == kRHCNuisBANFFShapeCCoth ||
-           // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-           p == kRHCNuisBANFFSCCA       ||
-           p == kRHCNuisBANFFSCCV       ||
-#endif
-           p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES      ||
-           p == kRHCNuisBANFFBeRPA_A    || 
-           p == kRHCNuisBANFFBeRPA_B    ||
-           p == kRHCNuisBANFFBeRPA_D    ||
-           p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
-           )
+        if(util::IsRHCBANFF(p))
         {
             tb = fBANFF->InitialValue(p);
             tc = fBANFF->CurrentValue(p);
@@ -1870,68 +1623,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         
         wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
     }    
-    
-    // Response functions where we expect to exceed the splines range.
-    else if (p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom 
-                                                                             )
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        double untuned_value = 0;
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
-        assert(wght_spl);
-        
-        // NEW XSEC NIWG
-        // NEW XSEC
-        if(p == kRHCNuisBANFFFermiMom  
-                                      )
-        {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
-        }
-        else {
-            tb = fBANFF->InitialValue(p);
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
-        }
-        double spl_tb = tb-untuned_value;
-        double spl_tc = tc-untuned_value;
-        
-#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
-        if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
-        if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
-#endif
-        
-        wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
-    } // end of response functions
-    
-    //
-    // BANFF param normalization:
-    //
-    
-    // NEW XSEC
-    //
-    // BANFF param normalization:
-    //
-    // - BANFF param, 2p2h        normalization
-    // - BANFF param, BgRES      normalization
-    // - BANFF param, CCcoh      normalization
-    // - BANFF param, NCcoh      normalization
-    // - BANFF param, NCoth      normalization
-    // - BANFF param, NuEToNuMu  normalization
-    //
-    
     else if( util::IsNormXSecParam(p) ) { wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p); }
-#endif // NIWG2015
-    
-    // NEW XSEC NIWG
-    
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
-    //
-    // RPA tuning
-    //
     else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
     {
         return 1; // This is implented in SKMC for now
@@ -2068,88 +1760,8 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     //
     // BANFF param w/ response functions:
     //
-    
-    // NEW XSEC NIWG
 #if ( defined(__USE_NIWG2015__) || defined(__USE_NIWG2017__) )
-    //
-    // NEW XSEC
-    //
-    // BANFF param, M_{A} QE
-    // BANFF param, M_{A} RES
-    // BANFF param, CA5
-    // BANFF param, SCCA (not for numu disappearance)
-    // BANFF param, SCCV (not for numu disappearance)
-    // BANFF param, Pf
-    // BANFF param, CCothShape
-    // BANFF param, Eb
-    
-    if (p == kNuisBANFFMAQE          || p == kRHCNuisBANFFMAQE       ||
-        p == kNuisBANFFMARES         || p == kRHCNuisBANFFMARES      )
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        double untuned_value = 1;
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        assert(wght_spl);
-        
-        // NEW XSEC NIWG
-        // NEW XSEC
-        if(p == kRHCNuisBANFFMAQE          ||
-           p == kRHCNuisBANFFMARES          )
-        {
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
-        }
-        else {
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
-        }
-        spl_tc = (tc-untuned_value);
-
-#ifdef check_spline_limits
-        if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
-          LOG("NuXSec", pERROR) <<"EVALUATING SPLINE OUTSIDE LIMITS!: "<<util::AsString(p)<<"\t"<<spl_tc
-                                <<"\tlimits: "<<wght_spl->GetXmin()<<" , "<<wght_spl->GetXmax();
-        }
-#endif
-
-/*        if(fBANFF->CurrentValue(p) != fBANFF->InitialValue(p))
-        {
-         double centre = fBANFF->InitialValue(p) - untuned_value;
-         LOG("NuXSeC", pWARN) << "xsec spline: " << util::AsString(p) << "\n" <<
-           " => N: " << fBANFF->InitialValue(p) << "\n" <<
-           " :: U: " << untuned_value << " :: C: " << tc << "\n" <<
-           " :: V: " << spl_tc <<"\n" <<
-           " :: 1s: [" << (centre - fBANFF->OneSigmaError(p)) << "," <<
-           (centre + fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
-           " :: 3s: [" << (centre - 3*fBANFF->OneSigmaError(p)) << "," <<
-           (centre + 3*fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
-           " :: L: [" << wght_spl->GetXmin() << "," << wght_spl->GetXmax() << "]";
-        }*/
-#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
-        if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
-        if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
-#endif
-        
-        wght = wght_spl->Eval(spl_tc);
-    } // end of MAQE
-    
-    // Other systematics where we check spline limits
-    else if (p == kNuisBANFFCA5           || p == kRHCNuisBANFFCA5        ||
-             // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-             p == kNuisBANFFSCCA          || p == kRHCNuisBANFFSCCA       ||
-             p == kNuisBANFFSCCV          || p == kRHCNuisBANFFSCCA       ||
-#endif
-             p == kNuisBANFFShapeCCoth    || p == kRHCNuisBANFFShapeCCoth ||
-             p == kNuisBANFFBgRES         || p == kRHCNuisBANFFBgRES      ||
-             p == kNuisBANFFBeRPA_A       || p == kRHCNuisBANFFBeRPA_A    ||
-             p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
-             p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
-             p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
-             )
+    if (util::IsUsingSplines(p))
     {
 #if SPLINE_TYPE == -1
         return wght;
@@ -2158,22 +1770,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
         assert(wght_spl);
         
-        // NEW XSEC NIWG
-        // NEW XSEC
-        if(p == kRHCNuisBANFFShapeCCoth ||
-           // NEW SPLIT ANA
-#if (BANFF_BINS != 2)
-           p == kRHCNuisBANFFSCCA       ||
-           p == kRHCNuisBANFFSCCV       ||
-#endif
-           p == kRHCNuisBANFFCA5        ||
-           p == kRHCNuisBANFFBgRES      ||
-           p == kRHCNuisBANFFBeRPA_A    || 
-           p == kRHCNuisBANFFBeRPA_B    ||
-           p == kRHCNuisBANFFBeRPA_D    ||
-           p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
-           )
+        if(util::IsRHCBANFF(p))
         {
             tc = fBANFF->CurrentValue(p);
             untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
@@ -2183,19 +1780,6 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
             untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
         }
         spl_tc = tc-untuned_value;
-/*        if(fBANFF->CurrentValue(p) != fBANFF->InitialValue(p) && (p == kNuisBANFFBeRPA_A || p == kRHCNuisBANFFBeRPA_B || p == kRHCNuisBANFFBeRPA_D || p == kRHCNuisBANFFBeRPA_E))
-        {
-         double centre = fBANFF->InitialValue(p) - untuned_value;
-         LOG("NuXSeC", pFATAL) << "xsec spline: " << util::AsString(p) << "\n" <<
-           " => N: " << fBANFF->InitialValue(p) << "\n" <<
-           " :: U: " << untuned_value << " :: C: " << tc << "\n" <<
-           " :: V: " << spl_tc <<"\n" <<
-           " :: 1s: [" << (centre - fBANFF->OneSigmaError(p)) << "," <<
-           (centre + fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
-           " :: 3s: [" << (centre - 3*fBANFF->OneSigmaError(p)) << "," <<
-           (centre + 3*fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
-           " :: L: [" << wght_spl->GetXmin() << "," << wght_spl->GetXmax() << "]";
-        }*/
 
 #ifdef check_spline_limits
         if (spl_tc > wght_spl->GetXmax() || spl_tc < wght_spl->GetXmin()) {
@@ -2213,67 +1797,6 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         LOG("NuXSec", pDEBUG) << "Parameter: " << util::AsString(p) 
                               <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
     }
-    
-    // Response functions where we expect to exceed the splines range.
-    else if (p == kNuisBANFFFermiMom      || p == kRHCNuisBANFFFermiMom)
-    {
-#if SPLINE_TYPE == -1
-        return wght;
-#endif
-        double untuned_value = 0;
-        wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue,Q2);
-        assert(wght_spl);
-        
-        // NEW XSEC NIWG
-        // NEW XSEC
-        if(p == kRHCNuisBANFFFermiMom )
-        {
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
-        }
-        else {
-            tc = fBANFF->CurrentValue(p);
-            untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
-        }
-        double spl_tc = tc-untuned_value;
-/*        if(fBANFF->CurrentValue(p) != fBANFF->InitialValue(p))
-        {
-         double centre = fBANFF->InitialValue(p) - untuned_value;
-         LOG("NuXSeC", pFATAL) << "xsec spline: " << util::AsString(p) << "\n" <<
-           " => N: " << fBANFF->InitialValue(p) << "\n" <<
-           " :: U: " << untuned_value << " :: C: " << tc << "\n" <<
-           " :: V: " << spl_tc <<"\n" <<
-           " :: 1s: [" << (centre - fBANFF->OneSigmaError(p)) << "," <<
-           (centre + fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
-           " :: 3s: [" << (centre - 3*fBANFF->OneSigmaError(p)) << "," <<
-           (centre + 3*fBANFF->OneSigmaError(p)) << "]" <<"\n" <<
-           " :: L: [" << wght_spl->GetXmin() << "," << wght_spl->GetXmax() << "]";
-        }*/
-
-#ifndef __ALLOW_SPLINES_OUTSIDE_LIMIT__
-        if (spl_tc > wght_spl->GetXmax()) spl_tc = wght_spl->GetXmax();
-        if (spl_tc < wght_spl->GetXmin()) spl_tc = wght_spl->GetXmin();
-#endif
-        
-        wght = wght_spl->Eval(spl_tc);
-    } // end of response functions
-    
-    //
-    // BANFF param normalization:
-    //
-    
-    // NEW XSEC
-    //
-    // BANFF param normalization:
-    //
-    // - BANFF param, 2p2h       normalization
-    // - BANFF param, BgRES      normalization
-    // - BANFF param, CCcoh      normalization
-    // - BANFF param, NCcoh      normalization
-    // - BANFF param, NCoth      normalization
-    // - BANFF param, NuEToNuMu  normalization
-    //
-                
     else if( util::IsNormXSecParam(p))
     {
       if (util::IsBeRPA(p))
@@ -2285,13 +1808,6 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
          wght = fBANFF->CurrentValue(p);
       }
     }
-#endif // NIWG2015
-    
-    // NEW XSEC NIWG
-#if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
-    //
-    // RPA tuning
-    //
     else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA) {
         return 1; // This is implented in SKMC for now
     }

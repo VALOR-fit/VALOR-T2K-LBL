@@ -34,10 +34,12 @@ abnormal_untuned_central_values["2p2h_shape_O"] = 0.0
 # Set up files
 assert(len(sys.argv)==2)
 
-for beam_mode_name in ["fhc","rhc","all"]:
+#for beam_mode_name in ["fhc","rhc","all"]:
+for beam_mode_name in ["all"]:
   infile_name = sys.argv[1]
   
   outfile_name = infile_name.replace(".root","_valor_order_"+beam_mode_name+".root")
+  print "File names", infile_name, outfile_name
 
   infile  = ROOT.TFile(infile_name)
   outfile = ROOT.TFile(outfile_name,"RECREATE")
@@ -46,20 +48,30 @@ for beam_mode_name in ["fhc","rhc","all"]:
   for key in infile.GetListOfKeys():
     key_name = key.GetName()
     if key_name not in ["param_list","prefit_params","prefit_cov","postfit_params","postfit_cov"]:
+      print "Copying", key_name
       o = key.ReadObj()
       outfile.cd()
       o.Write(key_name)
       
   # Get the input parameters and count out the ones we need
   input_param_list = [str(s) for s in infile.Get("param_list")]
-
-
+  # BEGIN HACK
+  # This is a temporary hack to add the 2018 parameters to the list of 2017 input parameters
+  # This should be removed when the actual 2018 BANFF matrix is provided
+  print "Input params", input_param_list
+  input_param_list.append("CC_nu")
+  input_param_list.append("CC_nubar")
+  input_param_list.append("SKFSI_Absorption")
+  input_param_list.append("SKFSI_QEl")
+  input_param_list.append("SKFSI_CXl")
+  input_param_list.append("SKFSI_QEh")
+  input_param_list.append("SKFSI_Inel")
+  # END HACK
   n_banff_flux_params = 0
   for s in input_param_list:
     if "SKNuMode" in s or "SKANuMode" in s:
       n_banff_flux_params += 1
 
-  
   n_banff_params = len(input_param_list)
   n_banff_xsec_params = sum([int(conv.kXSecSystIncludedInBANFF[i]) for i in xrange(conv.kNumOfXSecSyst)])
   
@@ -77,7 +89,8 @@ for beam_mode_name in ["fhc","rhc","all"]:
 
   print "n_banff_params", n_banff_params  
   print "n_banff_flux_params", n_banff_flux_params
-  print "n_banff_xsec_params", n_banff_xsec_params, " ,",  (n_banff_params)
+  print "n_banff_xsec_params", n_banff_xsec_params, "from", first_xsec_param
+
   
   assert(n_banff_flux_params%2 == 0)
   
@@ -91,13 +104,16 @@ for beam_mode_name in ["fhc","rhc","all"]:
   if (beam_mode_name == "all"):
     first_flux_param = 0
     last_flux_param  = first_xsec_param-1
-  
+ 
+  print "Flux parameters"
   print input_param_list[first_flux_param:last_flux_param+1]
+  print "xsec parameters"
   print input_param_list[first_xsec_param:n_banff_params]
   
   # Build a list of the order of the parameters we want to select
   # first grab all the flux params, in order
   param_order_list = list(xrange(first_flux_param,last_flux_param+1))
+  print "Param ordered list", param_order_list
   
   # Now look at xsec params
   # just use the FHC versions here, will need to change if RHC/FHC systematics differ
@@ -109,6 +125,9 @@ for beam_mode_name in ["fhc","rhc","all"]:
     #print param_name
     position_in_banff_list = input_param_list.index(param_name)
     param_order_list.append(position_in_banff_list)
+    print "iv", phys_param_id, "V:", util.ParamAsString(phys_param_id), "N:", param_name, "inpos:", position_in_banff_list
+
+  print "Complete ordered list", param_order_list
 
   reordered_list = [ input_param_list[i] for i in param_order_list]
 
@@ -130,6 +149,21 @@ for beam_mode_name in ["fhc","rhc","all"]:
   for fit in ["prefit","postfit"]:
     orig_cov    = infile.Get(fit+"_cov")
     orig_params = infile.Get(fit+"_params")
+
+    # BEGIN HACK
+    # Add 2018 parameters to 2017 BANFF matrix
+    orig_cov_2018 = ROOT.TMatrixD(n_elements, n_elements)
+    orig_params_2018 = ROOT.TVectorD(n_elements)
+    for i in range(n_elements - 7):
+      orig_params_2018[i] = orig_params[i]
+      for j in range(n_elements - 7):
+        orig_cov_2018[i][j] = orig_cov[i][j]
+    for i in range(n_elements - 7, n_elements):
+      orig_params_2018[i] = 1.0
+      orig_cov_2018[i][i] = 0.0
+    orig_cov = orig_cov_2018
+    orig_params = orig_params_2018
+    # END HACK
     
     reordered_cov    = ROOT.TMatrixD(n_elements,n_elements)
     reordered_params = ROOT.TVectorD(n_elements)
@@ -185,8 +219,8 @@ for beam_mode_name in ["fhc","rhc","all"]:
   outfile.Close()
   
   # Start SCC injection
-  
   injected_outfile_name = outfile_name.replace(".root","_plus_scc.root")
+  print "Writing output file", injected_outfile_name
   injected_outfile = ROOT.TFile(injected_outfile_name,"RECREATE")
   injected_output_names = ROOT.TObjArray()
   for i,p in enumerate(param_order_list):

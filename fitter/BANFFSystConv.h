@@ -40,43 +40,19 @@ namespace valor {
     // NEW XSEC NIWG
 #if defined(__USE_NIWG2015__)
 #  if BANFF_BINS == 1 //joint
-    static const int kNumOfParamsInBANFFfit = 42;
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 17;
-    static const int kNumOfRHCParamsInBANFFfit = 42;
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 17;
-    // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 67;
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 17;
-    //
 #  elif BANFF_BINS == 2 //disap (no scca and sccv)
-    static const int kNumOfParamsInBANFFfit = 38;
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 13; //25
-    static const int kNumOfRHCParamsInBANFFfit = 38;
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 13; //25
-    // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 63;
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - 13; //50;
-    //
 #  elif BANFF_BINS == 3 //app
-    static const int kNumOfParamsInBANFFfit = 40;
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - 15;
-    static const int kNumOfRHCParamsInBANFFfit = 40;
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 15;
-    // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 65;
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - 15;
-    //
 #  endif
 #endif
 #if defined(__USE_NIWG2017__)
 #  if BANFF_BINS == 1 //joint
-    static const int kNumOfParamsInBANFFfit = 48;
-    static const int kNumOfXSecParamsInBANFFfit = 23;
+    static const int kNumOfParamsInBANFFfit = 55;
+    static const int kNumOfXSecParamsInBANFFfit = 30;
     static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - kNumOfXSecParamsInBANFFfit;
-    static const int kNumOfRHCParamsInBANFFfit = 48;
+    static const int kNumOfRHCParamsInBANFFfit = 55;
     static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - kNumOfXSecParamsInBANFFfit;
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 73;
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 80;
     static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - kNumOfXSecParamsInBANFFfit ;     
 #  endif
 #endif
@@ -140,7 +116,14 @@ namespace valor {
       kNuisBANFFBeRPA_E     , //
       kNuisBANFFBeRPA_U     , //
       kNuisBANFFShape2p2h   , //
-      kNuisBANFFNorm2p2hCtoO  //
+      kNuisBANFFNorm2p2hCtoO, //
+      kNuisBANFFNormCCNu,
+      kNuisBANFFNormCCNuBar,
+      kNuisBANFFSKFSIAbsorption,
+      kNuisBANFFSKFSIQELow,
+      kNuisBANFFSKFSICXLow,
+      kNuisBANFFSKFSIQEHigh,
+      kNuisBANFFSKFSIInelastic
 #  endif      
 #endif
     };
@@ -202,7 +185,14 @@ namespace valor {
       kRHCNuisBANFFBeRPA_E     ,
       kRHCNuisBANFFBeRPA_U     ,
       kRHCNuisBANFFShape2p2h   ,
-      kRHCNuisBANFFNorm2p2hCtoO
+      kRHCNuisBANFFNorm2p2hCtoO,
+      kRHCNuisBANFFNormCCNu,
+      kRHCNuisBANFFNormCCNuBar,
+      kRHCNuisBANFFSKFSIAbsorption,
+      kRHCNuisBANFFSKFSIQELow,
+      kRHCNuisBANFFSKFSICXLow,
+      kRHCNuisBANFFSKFSIQEHigh,
+      kRHCNuisBANFFSKFSIInelastic
 #  endif
       
 #endif
@@ -292,7 +282,14 @@ namespace valor {
       kNuisBANFFBeRPA_E     ,
       kNuisBANFFBeRPA_U     ,
       kNuisBANFFShape2p2h   ,
-      kNuisBANFFNorm2p2hCtoO
+      kNuisBANFFNorm2p2hCtoO,
+      kNuisBANFFNormCCNu,
+      kNuisBANFFNormCCNuBar,
+      kNuisBANFFSKFSIAbsorption,
+      kNuisBANFFSKFSIQELow,
+      kNuisBANFFSKFSICXLow,
+      kNuisBANFFSKFSIQEHigh,
+      kNuisBANFFSKFSIInelastic
 #  endif
 #endif
     };
@@ -365,6 +362,13 @@ namespace valor {
       false,                // kNuisBANFFBeRPA_U     
       false,                // kNuisBANFFShape2p2h   
       false,                // kNuisBANFFNorm2p2hCtoO
+      false,                // kNuisBANFFNormCCNu,
+      false,                // kNuisBANFFNormCCNuBar,
+      false,                // kNuisBANFFSKFSIAbsorption,
+      false,                // kNuisBANFFSKFSIQELow,
+      false,                // kNuisBANFFSKFSICXLow,
+      false,                // kNuisBANFFSKFSIQEHigh,
+      false                 // kNuisBANFFSKFSIInelastic
 #  endif
 
 #endif
@@ -421,13 +425,20 @@ namespace valor {
       false,                // kRHCNuisBANFFNormNuEBarToNuMuBar
       false,                // kRHCNuisBANFF2p2hBar
 #  if defined(__USE_NIWG2017__)      
-      false,                // kNuisBANFFBeRPA_A     
-      false,                // kNuisBANFFBeRPA_B     
-      false,                // kNuisBANFFBeRPA_D     
-      false,                // kNuisBANFFBeRPA_E     
-      false,                // kNuisBANFFBeRPA_U     
-      false,                // kNuisBANFFShape2p2h   
-      false,                // kNuisBANFFNorm2p2hCtoO
+      false,                // kRHCNuisBANFFBeRPA_A     
+      false,                // kRHCNuisBANFFBeRPA_B     
+      false,                // kRHCNuisBANFFBeRPA_D     
+      false,                // kRHCNuisBANFFBeRPA_E     
+      false,                // kRHCNuisBANFFBeRPA_U     
+      false,                // kRHCNuisBANFFShape2p2h   
+      false,                // kRHCNuisBANFFNorm2p2hCtoO
+      false,                // kRHCNuisBANFFNormCCNu,
+      false,                // kRHCNuisBANFFNormCCNuBar,
+      false,                // kRHCNuisBANFFSKFSIAbsorption,
+      false,                // kRHCNuisBANFFSKFSIQELow,
+      false,                // kRHCNuisBANFFSKFSICXLow,
+      false,                // kRHCNuisBANFFSKFSIQEHigh,
+      false                 // kRHCNuisBANFFSKFSIInelastic
 #  endif
 
 #endif
@@ -521,6 +532,14 @@ namespace valor {
       false,                // kNuisBANFFBeRPA_U     
       false,                // kNuisBANFFShape2p2h   
       false,                // kNuisBANFFNorm2p2hCtoO
+      false,                // kNuisBANFFNormCCNu,
+      false,                // kNuisBANFFNormCCNuBar,
+      false,                // kNuisBANFFSKFSIAbsorption,
+      false,                // kNuisBANFFSKFSIQELow,
+      false,                // kNuisBANFFSKFSICXLow,
+      false,                // kNuisBANFFSKFSIQEHigh,
+      false                 // kNuisBANFFSKFSIInelastic
+
 #  endif            
                   
 #endif
@@ -589,6 +608,14 @@ namespace valor {
       0,                    // kNuisBANFFBeRPA_U     
       0,                    // kNuisBANFFShape2p2h   
       0,                    // kNuisBANFFNorm2p2hCtoO
+      0,                    // kNuisBANFFNormCCNu,
+      0,                    // kNuisBANFFNormCCNuBar,
+      0,                    // kNuisBANFFSKFSIAbsorption,
+      0,                    // kNuisBANFFSKFSIQELow,
+      0,                    // kNuisBANFFSKFSICXLow,
+      0,                    // kNuisBANFFSKFSIQEHigh,
+      0                     // kNuisBANFFSKFSIInelastic
+
 #  endif
             
 #endif
@@ -646,13 +673,21 @@ namespace valor {
       0,                    // kRHCNuisBANFFNormNuEBarToNuMuBar
       0,                    // kRHCNuisBANFF2p2hBar
 #  if defined(__USE_NIWG2017__)      
-      0,                    // kNuisBANFFBeRPA_A     
-      0,                    // kNuisBANFFBeRPA_B     
-      0,                    // kNuisBANFFBeRPA_D     
-      0,                    // kNuisBANFFBeRPA_E     
-      0,                    // kNuisBANFFBeRPA_U     
-      0,                    // kNuisBANFFShape2p2h   
-      0,                    // kNuisBANFFNorm2p2hCtoO
+      0,                    // kRHCNuisBANFFBeRPA_A     
+      0,                    // kRHCNuisBANFFBeRPA_B     
+      0,                    // kRHCNuisBANFFBeRPA_D     
+      0,                    // kRHCNuisBANFFBeRPA_E     
+      0,                    // kRHCNuisBANFFBeRPA_U     
+      0,                    // kRHCNuisBANFFShape2p2h   
+      0,                    // kRHCNuisBANFFNorm2p2hCtoO
+      0,                    // kRHCNuisBANFFNormCCNu,
+      0,                    // kRHCNuisBANFFNormCCNuBar,
+      0,                    // kRHCNuisBANFFSKFSIAbsorption,
+      0,                    // kRHCNuisBANFFSKFSIQELow,
+      0,                    // kRHCNuisBANFFSKFSICXLow,
+      0,                    // kRHCNuisBANFFSKFSIQEHigh,
+      0                     // kRHCNuisBANFFSKFSIInelastic
+
 #  endif
       
 #endif
@@ -749,6 +784,14 @@ namespace valor {
       0,                    // kNuisBANFFBeRPA_U     
       0,                    // kNuisBANFFShape2p2h   
       0,                    // kNuisBANFFNorm2p2hCtoO
+      0,                    // kNuisBANFFNormCCNu,
+      0,                    // kNuisBANFFNormCCNuBar,
+      0,                    // kNuisBANFFSKFSIAbsorption,
+      0,                    // kNuisBANFFSKFSIQELow,
+      0,                    // kNuisBANFFSKFSICXLow,
+      0,                    // kNuisBANFFSKFSIQEHigh,
+      0                     // kNuisBANFFSKFSIInelastic
+
 #  endif            
 #endif
     };
@@ -819,6 +862,14 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFBeRPA_U     
       {  -1,   -1 },        // kNuisBANFFShape2p2h   
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
+      {  -1,   -1 },        // kNuisBANFFNormCCNu,
+      {  -1,   -1 },        // kNuisBANFFNormCCNuBar,
+      {  -1,   -1 },        // kNuisBANFFSKFSIAbsorption,
+      {  -1,   -1 },        // kNuisBANFFSKFSIQELow,
+      {  -1,   -1 },        // kNuisBANFFSKFSICXLow,
+      {  -1,   -1 },        // kNuisBANFFSKFSIQEHigh,
+      {  -1,   -1 }         // kNuisBANFFSKFSIInelastic
+
 #  endif            
 #endif
     };
@@ -889,6 +940,14 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFBeRPA_U     
       {  -1,   -1 },        // kNuisBANFFShape2p2h   
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
+      {  -1,   -1 },        // kNuisBANFFNormCCNu,
+      {  -1,   -1 },        // kNuisBANFFNormCCNuBar,
+      {  -1,   -1 },        // kNuisBANFFSKFSIAbsorption,
+      {  -1,   -1 },        // kNuisBANFFSKFSIQELow,
+      {  -1,   -1 },        // kNuisBANFFSKFSICXLow,
+      {  -1,   -1 },        // kNuisBANFFSKFSIQEHigh,
+      {  -1,   -1 }         // kNuisBANFFSKFSIInelastic
+
 #  endif                  
 #endif
     };
@@ -992,6 +1051,14 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFBeRPA_U     
       {  -1,   -1 },        // kNuisBANFFShape2p2h   
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
+      {  -1,   -1 },        // kNuisBANFFNormCCNu,
+      {  -1,   -1 },        // kNuisBANFFNormCCNuBar,
+      {  -1,   -1 },        // kNuisBANFFSKFSIAbsorption,
+      {  -1,   -1 },        // kNuisBANFFSKFSIQELow,
+      {  -1,   -1 },        // kNuisBANFFSKFSICXLow,
+      {  -1,   -1 },        // kNuisBANFFSKFSIQEHigh,
+      {  -1,   -1 }         // kNuisBANFFSKFSIInelastic
+
 #  endif                        
 #endif
     };
