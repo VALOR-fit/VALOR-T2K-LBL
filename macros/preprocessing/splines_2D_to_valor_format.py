@@ -25,11 +25,10 @@ rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
 
-pattern = "spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
+pattern = "WithFSI_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
 #pattern = "[TYPE]_[SELECTION]_[CURRENT].root" # The file naming convention
 
-#location = os.environ[env_var]+"/inputs/official/2015/xsec/2d_splines/theta/1bin/float" # Location of the spline files
-location = os.environ[env_var]+"/inputs/official/2017/xsec/splines2017fitqunv9"
+location = os.environ[env_var]+"/inputs/official/2018/xsec/splines2018fitqunv9_withFSI"
 
 types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, second entry is VALOR type names.
          ("nue_x_nue"        ,"nue"       ),
@@ -64,7 +63,57 @@ systematics = [("maqe_ccqe"       , False ),
                ("erpa_A_ccqe"     , False ),
                ("erpa_B_ccqe"     , False ),
                ("erpa_D_ccqe"     , False ),
-               ("erpa_E_ccqe"     , False )
+               ("erpa_E_ccqe"     , False ),
+               ("NC1gam_EtrueEreco_FEFQE"   , False ),
+               ("2p2h_EtrueEreco_FEFQE"     , False ),
+               ("NCoth_EtrueEreco_FEFQE"    , False ),
+               ("NCcoh_EtrueEreco_FEFQE"    , False ),
+               ("NC1pipm_EtrueEreco_FEFQE"  , False ),
+               ("NC1pi0_EtrueEreco_FEFQE"   , False ),
+               ("CCDIS_EtrueEreco_FEFQE"    , False ),
+               ("CCcoh_EtrueEreco_FEFQE"    , False ),
+               ("CC1pi_EtrueEreco_FEFQE"    , False ),
+               ("CCQE_EtrueEreco_FEFQE"     , False ),
+               ("NC1gam_EtrueEreco_FEFCX"   , False ),
+               ("2p2h_EtrueEreco_FEFCX"     , False ),
+               ("NCoth_EtrueEreco_FEFCX"    , False ),
+               ("NCcoh_EtrueEreco_FEFCX"    , False ),
+               ("NC1pipm_EtrueEreco_FEFCX"  , False ),
+               ("NC1pi0_EtrueEreco_FEFCX"   , False ),
+               ("CCDIS_EtrueEreco_FEFCX"    , False ),
+               ("CCcoh_EtrueEreco_FEFCX"    , False ),
+               ("CC1pi_EtrueEreco_FEFCX"    , False ),
+               ("CCQE_EtrueEreco_FEFCX"     , False ),
+               ("NC1gam_EtrueEreco_FEFQEH"  , False ),
+               ("2p2h_EtrueEreco_FEFQEH"    , False ),
+               ("NCoth_EtrueEreco_FEFQEH"   , False ),
+               ("NCcoh_EtrueEreco_FEFQEH"   , False ),
+               ("NC1pipm_EtrueEreco_FEFQEH" , False ),
+               ("NC1pi0_EtrueEreco_FEFQEH"  , False ),
+               ("CCDIS_EtrueEreco_FEFQEH"   , False ),
+               ("CCcoh_EtrueEreco_FEFQEH"   , False ),
+               ("CC1pi_EtrueEreco_FEFQEH"   , False ),
+               ("CCQE_EtrueEreco_FEFQEH"    , False ),
+               ("NC1gam_EtrueEreco_FEFABS"  , False ),
+               ("2p2h_EtrueEreco_FEFABS"    , False ),
+               ("NCoth_EtrueEreco_FEFABS"   , False ),
+               ("NCcoh_EtrueEreco_FEFABS"   , False ),
+               ("NC1pipm_EtrueEreco_FEFABS" , False ),
+               ("NC1pi0_EtrueEreco_FEFABS"  , False ),
+               ("CCDIS_EtrueEreco_FEFABS"   , False ),
+               ("CCcoh_EtrueEreco_FEFABS"   , False ),
+               ("CC1pi_EtrueEreco_FEFABS"   , False ),
+               ("CCQE_EtrueEreco_FEFABS"    , False ),
+               ("NC1gam_EtrueEreco_FEFINEL" , False ),
+               ("2p2h_EtrueEreco_FEFINEL"   , False ),
+               ("NCoth_EtrueEreco_FEFINEL"  , False ),
+               ("NCcoh_EtrueEreco_FEFINEL"  , False ),
+               ("NC1pipm_EtrueEreco_FEFINEL", False ),
+               ("NC1pi0_EtrueEreco_FEFINEL" , False ),
+               ("CCDIS_EtrueEreco_FEFINEL"  , False ),
+               ("CCcoh_EtrueEreco_FEFINEL"  , False ),
+               ("CC1pi_EtrueEreco_FEFINEL"  , False ),
+               ("CCQE_EtrueEreco_FEFINEL"   , False )
 #              ("erpa_U_ccqe"     , False )               
 ]
                
@@ -94,20 +143,31 @@ ereco_bin_offsets["1Re"]      = 0 #-1 # bin 0 of the 1Re samples from Kirsty are
 ereco_bin_offsets["RHC1Re" ]  = 0 #-1 # bin 0 of the 1Re samples from Kirsty are negative energy, remove it.
 ereco_bin_offsets["MultiRe" ] = 0 #-1 # bin 0 of the 1Re samples from Kirsty are negative energy, remove it.
 
-replacements = [("pipm","1piC"),
-                ("piz" ,"1pi0") ] # VALOR modes have pi0 instead of piz
+# Mapping between VALOR modes and input modes
+replacements = [("NC1pipm","nc1piC"),
+                ("NC1gam" ,"nc1gamma"),
+                ("2p2h" ,"mec"),
+                ("NCoth" ,"ncoth"),
+                ("NCcoh" ,"nccoh"),
+                ("NC1" ,"nc1"),
+                ("CCDIS" ,"ccoth"),
+                ("CCcoh" ,"cccoh"),
+                ("CC1pi" ,"cc1pi"),
+                ("CCQE" ,"ccqe"),
+                ("pipm","1piC"),
+                ("piz" ,"1pi0")]
 
 nknots_sigma = 13
 sigmas = np.array([0.5*i - 3. for i in xrange(nknots_sigma)])
 #______________________________________________________________________________________________________________________________
 
 def main(version, loc):
-  location = os.environ[env_var]+"/inputs/official/2017/xsec/" + loc
+  location = os.environ[env_var]+"/inputs/official/2018/xsec/" + loc
   for sample in samples:
     current   = currents  [sample]
     selection = selections[sample]
     
-    output_file  = ROOT.TFile("splines_"+version+"_"+sample+".root","RECREATE") # Output for this sample's splines
+    output_file  = ROOT.TFile(version+"_"+sample+".root","RECREATE") # Output for this sample's splines
     
     for orig_type,valor_type in types:
       
@@ -133,6 +193,8 @@ def main(version, loc):
         if "erpa" in syst:
           ppar,coeff,mode = syst.split("_")
           par = ppar +"_"+ coeff
+        elif "FEF" in syst:
+          mode, _, par = syst.split("_")
         else:  
           par,mode = syst.split("_")
 
@@ -145,18 +207,14 @@ def main(version, loc):
         spline_dict = dict()
         for key in tf.GetListOfKeys():
           name = key.GetName()
-          if not (syst in name and "_sp_" in name): continue
+          if not (syst in name and ("_sp_" in name or ("FEF" in syst and "sp_" in name))): continue
           spline_dict[name] = key.ReadObj()
-          print "Splines:", name, " Title in obj:", spline_dict[name].GetName(),spline_dict[name].GetTitle()
       
         output_file.cd()
         
         # Loop over the splines - rename them and write them to the file.
         for orig_spl_name, spline in spline_dict.iteritems():
-          
-          junk,bins = orig_spl_name.rsplit("_sp_")
-          
-          true_bin,reco_bin,q2bin = map(int,bins.split("_"))
+          true_bin,reco_bin,q2bin = map(int, orig_spl_name.split("_")[-3:])
           
           reco_bin += ereco_bin_offsets[sample]
           if reco_bin < 0: continue

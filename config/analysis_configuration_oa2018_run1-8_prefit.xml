@@ -505,35 +505,35 @@
     <weight_splines>
       <one_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_1Rmu.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_1Rmu.root
         </filename>
       </one_mu_ring>
       <one_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_1Re.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_1Re.root
         </filename>
       </one_e_ring>
 
       <one_mu_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_RHC1Rmu.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_RHC1Rmu.root
         </filename>
       </one_mu_ring_rhc>
       <one_e_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_RHC1Re.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_RHC1Re.root
         </filename>
       </one_e_ring_rhc>
 
       <!-- MultiRing sample splines -->
       <multi_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_1Rmu.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_1Rmu.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_MultiRe.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_MultiRe.root
         </filename>
       </multi_e_ring>
 
@@ -544,35 +544,35 @@
     <weight_splines_2d>
       <one_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_1Rmu.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_1Rmu.root
         </filename>
       </one_mu_ring>
       <one_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9erectheta_1Re.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9erectheta_1Re.root
         </filename>
       </one_e_ring>
 
       <one_mu_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_RHC1Rmu.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_RHC1Rmu.root
         </filename>
       </one_mu_ring_rhc>
       <one_e_ring_rhc>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9erectheta_RHC1Re.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9erectheta_RHC1Re.root
         </filename>
       </one_e_ring_rhc>
 
       <!-- Input the single ring splines into the MultiRing samples -->
       <multi_mu_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9_1Rmu.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9_1Rmu.root
         </filename>
       </multi_mu_ring>
       <multi_e_ring>
         <filename>
-          official/2017/xsec/splines2017fitqunv9/valor_format/splines_fitqunv9erectheta_MultiRe.root
+          official/2018/xsec/splines2017fitqunv9_withFSI/valor_format/fitqunv9erectheta_MultiRe.root
         </filename>
       </multi_e_ring>
 
@@ -589,7 +589,7 @@
     </normalisations>
 
     <untuned_parameter_central_values>
-      <filename>   official/2018/banff/test_banff_valor_order_all_plus_scc.root </filename>
+      <filename>   official/2018/banff/test_banff_fsi_valor_order_all_plus_scc.root </filename>
       <objname>    banff_xsec_untuned_central_values    </objname>
       <objtype>    TVectorD                             </objtype>
     </untuned_parameter_central_values>
@@ -609,7 +609,7 @@
           Covariance matrix of SKDet FSI parameters
       -->
       <covariance_matrix>
-        <filename>  official/2017/skdetfsi/SKJointErrorMatrix2017_Total_fitqun_v4_16thJun2017_VALOR_order.root</filename>
+        <filename>  official/2018/skdetfsi/SKJointErrorMatrix2017_SIPN_Aug16th_VALOR_order.root</filename>
         <objname>   skdetfsi    </objname>
         <objtype>   TMatrixD                                  </objtype>
       </covariance_matrix>
@@ -627,7 +627,7 @@
           Parameter untuned central values
       -->
       <untuned_values>
-        <filename>   official/2018/banff/test_banff_valor_order_all_plus_scc.root </filename>
+        <filename>   official/2018/banff/test_banff_fsi_valor_order_all_plus_scc.root </filename>
         <objname>    banff_untuned_central_values  </objname>
         <objtype>    TVectorD                      </objtype>
       </untuned_values>
@@ -638,7 +638,7 @@
           Central values from BANFF fit
       -->
       <initial_values>
-        <filename>   official/2018/banff/test_banff_valor_order_all_plus_scc.root </filename>
+        <filename>   official/2018/banff/test_banff_fsi_valor_order_all_plus_scc.root </filename>
         <objname>    prefit_params   </objname>
         <objtype>    TVectorD         </objtype>
       </initial_values>
@@ -646,7 +646,7 @@
           Covariance of fit parameters
       -->
       <covariance_matrix>
-        <filename>   official/2018/banff/test_banff_valor_order_all_plus_scc.root </filename>
+        <filename>   official/2018/banff/test_banff_fsi_valor_order_all_plus_scc.root </filename>
         <objname>    prefit_cov       </objname>
         <objtype>    TMatrixD          </objtype>
       </covariance_matrix>

@@ -4635,19 +4635,19 @@ string valor::util::AsStringSpline(PhysParamId_t p)
 
   case kNuisBANFFSKFSIAbsorption :
   case kRHCNuisBANFFSKFSIAbsorption :
-    return "fefabs";
+    return "FEFABS";
   case kNuisBANFFSKFSIQELow :
   case kRHCNuisBANFFSKFSIQELow :
-    return "fefqe";
+    return "FEFQE";
   case kNuisBANFFSKFSICXLow :
   case kRHCNuisBANFFSKFSICXLow :
-    return "fefcx";
+    return "FEFCX";
   case kNuisBANFFSKFSIQEHigh :
   case kRHCNuisBANFFSKFSIQEHigh :
-    return "fefqeh";
+    return "FEFQEH";
   case kNuisBANFFSKFSIInelastic :
   case kRHCNuisBANFFSKFSIInelastic :
-    return "fefinel";
+    return "FEFINEL";
 
   default:
     break;
@@ -4736,14 +4736,14 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case (kNuisBANFFShape2p2h        ) :return "2p2h_shape_O";  
   case (kNuisBANFFNorm2p2hCtoO     ) :return "2p2h_normCtoO";
 
-  case (kNuisBANFFNormCCNu         ) :return "CC_nu";
-  case (kNuisBANFFNormCCNuBar      ) :return "CC_nubar";
+  case (kNuisBANFFNormCCNu         ) :return "CCnu";
+  case (kNuisBANFFNormCCNuBar      ) :return "CCnubar";
 
-  case kNuisBANFFSKFSIAbsorption : return "SKFSI_Absorption";
-  case kNuisBANFFSKFSIQELow      : return "SKFSI_QEl";
-  case kNuisBANFFSKFSICXLow      : return "SKFSI_CXl";
-  case kNuisBANFFSKFSIQEHigh     : return "SKFSI_QEh";
-  case kNuisBANFFSKFSIInelastic  : return "SKFSI_Inel";
+  case kNuisBANFFSKFSIAbsorption : return "FEFABS";
+  case kNuisBANFFSKFSIQELow      : return "FEFQE";
+  case kNuisBANFFSKFSICXLow      : return "FEFCX";
+  case kNuisBANFFSKFSIQEHigh     : return "FEFQEH";
+  case kNuisBANFFSKFSIInelastic  : return "FEFINEL";
 
   case (kRHCNuisBANFF2p2h          ): return "2p2h_norm_O";
   case (kRHCNuisBANFF2p2hBar       ): return "2p2h_norm_nubar_O";

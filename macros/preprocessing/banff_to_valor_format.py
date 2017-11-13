@@ -55,18 +55,6 @@ for beam_mode_name in ["all"]:
       
   # Get the input parameters and count out the ones we need
   input_param_list = [str(s) for s in infile.Get("param_list")]
-  # BEGIN HACK
-  # This is a temporary hack to add the 2018 parameters to the list of 2017 input parameters
-  # This should be removed when the actual 2018 BANFF matrix is provided
-  print "Input params", input_param_list
-  input_param_list.append("CC_nu")
-  input_param_list.append("CC_nubar")
-  input_param_list.append("SKFSI_Absorption")
-  input_param_list.append("SKFSI_QEl")
-  input_param_list.append("SKFSI_CXl")
-  input_param_list.append("SKFSI_QEh")
-  input_param_list.append("SKFSI_Inel")
-  # END HACK
   n_banff_flux_params = 0
   for s in input_param_list:
     if "SKNuMode" in s or "SKANuMode" in s:
@@ -150,21 +138,6 @@ for beam_mode_name in ["all"]:
     orig_cov    = infile.Get(fit+"_cov")
     orig_params = infile.Get(fit+"_params")
 
-    # BEGIN HACK
-    # Add 2018 parameters to 2017 BANFF matrix
-    orig_cov_2018 = ROOT.TMatrixD(n_elements, n_elements)
-    orig_params_2018 = ROOT.TVectorD(n_elements)
-    for i in range(n_elements - 7):
-      orig_params_2018[i] = orig_params[i]
-      for j in range(n_elements - 7):
-        orig_cov_2018[i][j] = orig_cov[i][j]
-    for i in range(n_elements - 7, n_elements):
-      orig_params_2018[i] = 1.0
-      orig_cov_2018[i][i] = 0.0
-    orig_cov = orig_cov_2018
-    orig_params = orig_params_2018
-    # END HACK
-    
     reordered_cov    = ROOT.TMatrixD(n_elements,n_elements)
     reordered_params = ROOT.TVectorD(n_elements)
     for i,orig_i in enumerate(param_order_list):

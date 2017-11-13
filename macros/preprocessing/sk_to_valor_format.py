@@ -31,7 +31,7 @@ def main(skdet_file, output_file="skdetfsi.root",escale=0.024):
   print "Reading", skdet_file 
   skdet_tf  = ROOT.TFile(skdet_file)
 
-  fsi_only_matrix = skdet_tf.Get("FSI_SI_PN_Total")
+  fsi_only_matrix = skdet_tf.Get("SI_PN_Total")
   sk_only_matrix = skdet_tf.Get("SKJointError_Erec_Only")
   summed_matrix = skdet_tf.Get("SKJointError_Erec_Total")
 
