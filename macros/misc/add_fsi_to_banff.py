@@ -38,8 +38,8 @@ def copy_banff(N, Nbanff, banff_matrix, banff_nominal):
     return banff_matrix_fsi, banff_nominal_fsi 
 
 def copy_cc_to_banff(Nbanff, banff_matrix_fsi, banff_nominal_fsi):
-#    cc_cov = [ [0.02**2, -1.00], [ -1.00, 0.01**2 ] ]
-    cc_cov = [ [0.02**2, 0.00], [ 0.0, 0.01**2 ] ]
+    cc_cov = [ [0.02 ** 2, 0.02 * 0.01 * -0.999999], [ 0.02 * 0.01 * -0.999999, 0.01 ** 2 ] ]
+#    cc_cov = [ [0.02**2, 0.00], [ 0.0, 0.01**2 ] ]
     for x in range(len(cc_params)):
         for y in range(len(cc_params)):
             banff_matrix_fsi[Nbanff + y][Nbanff + x] = cc_cov[y][x]
