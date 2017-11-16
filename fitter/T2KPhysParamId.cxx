@@ -4077,6 +4077,20 @@ bool valor::util::IsBeRPA(PhysParamId_t p)
   
 }
 //________________________________________________________________________________________
+bool valor::util::IsNormCC(PhysParamId_t p)
+{
+   switch (p)
+   {
+      case kNuisBANFFNormCCNu:
+      case kNuisBANFFNormCCNuBar:
+      case kRHCNuisBANFFNormCCNu:
+      case kRHCNuisBANFFNormCCNuBar:
+         return true;
+      default:
+         return false;
+   }
+}
+//________________________________________________________________________________________
 bool valor::util::IsRHCSystematic(PhysParamId_t p)
 {
     // if(!IsSystematic(p))
@@ -4652,8 +4666,8 @@ string valor::util::AsStringSpline(PhysParamId_t p)
   default:
     break;
   }
-  std::cerr<<"util/AsStringSpline failed for parameter: "<<util::AsString(p)
-           <<" ("<<util::RawParamAsString(p)<<")"<<std::endl;
+  std::cerr<<"util/AsStringSpline failed for parameter: "<<util::AsString(p) << " " <<
+     util::AsStringCompact(p) <<" ("<<util::RawParamAsString(p)<<")"<<std::endl;
   return "--";
 }
 //____________________________________________________________________________

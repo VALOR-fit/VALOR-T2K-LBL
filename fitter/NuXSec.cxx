@@ -739,6 +739,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                         
             for(int iv = 0; iv < kNXsQ2Bins[is]; iv++) {
               double Q2     = util::XsecQ2BinEdges(s,iv) + kOneMeV; // Edit this for diff Q2 bins per mode
+              std::cout << "\nSpline populated::[" << is << "," << im << "," << ip << "," << ir << "," << it << "," << iv << "]: ";
                             
               bool bin_is_beyond_end_of_etrue_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
               bool bin_is_beyond_end_of_q2_range = (util::XsecQ2BinEdges(s,iv+1) < 0.);
@@ -826,6 +827,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                      << splname;
                 util::Die(1);
               }
+              std::cout << idx;
                             
 #ifdef __show_init_mesg_debug__
               LOG("NuXSec",pDEBUG) << "Storing cross-section weight spline at slot: "
@@ -890,6 +892,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
     LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (splines only)!";
 #endif
+    std::cout << std::endl;
 
   delete spline_files[kSKsFCFV1RingMuLike    ];
   delete spline_files[kSKsFCFV1RingELike     ];
@@ -1172,6 +1175,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 #if SPLINE_TYPE == -1
         return wght;
 #endif
+
         wght_spl = this->FindWghtSpline(p,s,m,Ereco,Etrue);
         assert(wght_spl);
         double untuned_value = 0;
@@ -1217,9 +1221,20 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // - BANFF param, NuEToNuMu  normalization
     // - BANFF param, CCNu       normalization
     // - BANFF param, CCNuBar    normalization
-    else if( util::IsNormXSecParam(p) ) {
-      if (util::IsBeRPA(p)) wght = 1.0;
-      else wght = fBANFF->InitialValue(p);
+    else if( util::IsNormXSecParam(p) )
+    {
+      if (util::IsBeRPA(p))
+      {
+         wght = 1.0;
+      }
+      else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+      {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
+         wght = 1.0;
+      }
+      else
+      {
+         wght = fBANFF->InitialValue(p);
+      }
     }
 
 #endif
@@ -1287,7 +1302,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 //________________________________________________________________________________________
 double NuXSec::FinTuningWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2) const
 {
-
+   std::cout << "Call to FinTuningWght" << std::endl;
     double tot_wght = 1.;
     
     int nXSecSyst;
@@ -1427,8 +1442,18 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // NORMALIZATION PARAMETERS
 #if ( defined(__USE_NIWG2015__) || defined (__USE_NIWG2017__) )
     else if( util::IsNormXSecParam(p) ) {
-      if (util::IsBeRPA(p)) wght = 1.0;
-      else wght = fBANFF->InitialValue(p);
+      if (util::IsBeRPA(p))
+      {
+         wght = 1.0;
+      }
+      else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+      {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
+         wght = 1.0;
+      }
+      else
+      {
+         wght = fBANFF->InitialValue(p);
+      }
     }
 #endif
     
@@ -1623,7 +1648,21 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
         
         wght = wght_spl->Eval(spl_tc) / wght_spl->Eval(spl_tb);
     }    
-    else if( util::IsNormXSecParam(p) ) { wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p); }
+    else if( util::IsNormXSecParam(p) )
+    {
+       if(util::IsBeRPA(p))
+       {
+          wght = 1.0;
+       }
+       else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+       {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
+          wght = 1.0;
+       }
+       else
+       {
+          wght = fBANFF->CurrentValue(p) / fBANFF->InitialValue(p);
+       }
+    }
     else if(p == kNuisXSecRPA || p == kRHCNuisXSecRPA)
     {
         return 1; // This is implented in SKMC for now
@@ -1691,7 +1730,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 //________________________________________________________________________________________
 double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2) const
 {
-
+   std::cout << "Call to SystWght" << std::endl;
     double tot_wght = 1.;
     
     int nXSecSyst;
@@ -1802,6 +1841,10 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
       if (util::IsBeRPA(p))
       {
          wght = 1.0; 
+      }
+      else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+      {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
+         wght = 1.0;
       }
       else
       {

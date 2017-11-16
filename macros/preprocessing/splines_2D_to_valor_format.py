@@ -28,7 +28,7 @@ arridx= util.ArrIdx.Instance()
 pattern = "WithFSI_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
 #pattern = "[TYPE]_[SELECTION]_[CURRENT].root" # The file naming convention
 
-location = os.environ[env_var]+"/inputs/official/2018/xsec/splines2018fitqunv9_withFSI"
+location = os.environ[env_var]+"/inputs/official/2018/xsec/splines2017fitqunv9_withFSI"
 
 types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, second entry is VALOR type names.
          ("nue_x_nue"        ,"nue"       ),
@@ -41,7 +41,6 @@ types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, 
 # Name/mode as first entry, whether or not to reformat the spline to use sigmas is in second
 systematics = [("maqe_ccqe"       , False ),
                ("pfo_ccqe"        , False ),
-#               ("ebo_ccqe"        , False ),
                ("ca5_cc1pi"       , False ),
                ("ca5_ncpiz"       , False ),
                ("ca5_ncpipm"      , False ),
@@ -64,57 +63,56 @@ systematics = [("maqe_ccqe"       , False ),
                ("erpa_B_ccqe"     , False ),
                ("erpa_D_ccqe"     , False ),
                ("erpa_E_ccqe"     , False ),
-               ("NC1gam_EtrueEreco_FEFQE"   , False ),
-               ("2p2h_EtrueEreco_FEFQE"     , False ),
-               ("NCoth_EtrueEreco_FEFQE"    , False ),
-               ("NCcoh_EtrueEreco_FEFQE"    , False ),
-               ("NC1pipm_EtrueEreco_FEFQE"  , False ),
-               ("NC1pi0_EtrueEreco_FEFQE"   , False ),
-               ("CCDIS_EtrueEreco_FEFQE"    , False ),
-               ("CCcoh_EtrueEreco_FEFQE"    , False ),
-               ("CC1pi_EtrueEreco_FEFQE"    , False ),
-               ("CCQE_EtrueEreco_FEFQE"     , False ),
-               ("NC1gam_EtrueEreco_FEFCX"   , False ),
-               ("2p2h_EtrueEreco_FEFCX"     , False ),
-               ("NCoth_EtrueEreco_FEFCX"    , False ),
-               ("NCcoh_EtrueEreco_FEFCX"    , False ),
-               ("NC1pipm_EtrueEreco_FEFCX"  , False ),
-               ("NC1pi0_EtrueEreco_FEFCX"   , False ),
-               ("CCDIS_EtrueEreco_FEFCX"    , False ),
-               ("CCcoh_EtrueEreco_FEFCX"    , False ),
-               ("CC1pi_EtrueEreco_FEFCX"    , False ),
-               ("CCQE_EtrueEreco_FEFCX"     , False ),
-               ("NC1gam_EtrueEreco_FEFQEH"  , False ),
-               ("2p2h_EtrueEreco_FEFQEH"    , False ),
-               ("NCoth_EtrueEreco_FEFQEH"   , False ),
-               ("NCcoh_EtrueEreco_FEFQEH"   , False ),
-               ("NC1pipm_EtrueEreco_FEFQEH" , False ),
-               ("NC1pi0_EtrueEreco_FEFQEH"  , False ),
-               ("CCDIS_EtrueEreco_FEFQEH"   , False ),
-               ("CCcoh_EtrueEreco_FEFQEH"   , False ),
-               ("CC1pi_EtrueEreco_FEFQEH"   , False ),
-               ("CCQE_EtrueEreco_FEFQEH"    , False ),
-               ("NC1gam_EtrueEreco_FEFABS"  , False ),
-               ("2p2h_EtrueEreco_FEFABS"    , False ),
-               ("NCoth_EtrueEreco_FEFABS"   , False ),
-               ("NCcoh_EtrueEreco_FEFABS"   , False ),
-               ("NC1pipm_EtrueEreco_FEFABS" , False ),
-               ("NC1pi0_EtrueEreco_FEFABS"  , False ),
-               ("CCDIS_EtrueEreco_FEFABS"   , False ),
-               ("CCcoh_EtrueEreco_FEFABS"   , False ),
-               ("CC1pi_EtrueEreco_FEFABS"   , False ),
-               ("CCQE_EtrueEreco_FEFABS"    , False ),
-               ("NC1gam_EtrueEreco_FEFINEL" , False ),
-               ("2p2h_EtrueEreco_FEFINEL"   , False ),
-               ("NCoth_EtrueEreco_FEFINEL"  , False ),
-               ("NCcoh_EtrueEreco_FEFINEL"  , False ),
-               ("NC1pipm_EtrueEreco_FEFINEL", False ),
-               ("NC1pi0_EtrueEreco_FEFINEL" , False ),
-               ("CCDIS_EtrueEreco_FEFINEL"  , False ),
-               ("CCcoh_EtrueEreco_FEFINEL"  , False ),
-               ("CC1pi_EtrueEreco_FEFINEL"  , False ),
-               ("CCQE_EtrueEreco_FEFINEL"   , False )
-#              ("erpa_U_ccqe"     , False )               
+               ("NC1gam_EtrueErecoTheta_FEFQE"   , False ),
+               ("2p2h_EtrueErecoTheta_FEFQE"     , False ),
+               ("NCoth_EtrueErecoTheta_FEFQE"    , False ),
+               ("NCcoh_EtrueErecoTheta_FEFQE"    , False ),
+               ("NC1pipm_EtrueErecoTheta_FEFQE"  , False ),
+               ("NC1pi0_EtrueErecoTheta_FEFQE"   , False ),
+               ("CCDIS_EtrueErecoTheta_FEFQE"    , False ),
+               ("CCcoh_EtrueErecoTheta_FEFQE"    , False ),
+               ("CC1pi_EtrueErecoTheta_FEFQE"    , False ),
+               ("CCQE_EtrueErecoTheta_FEFQE"     , False ),
+               ("NC1gam_EtrueErecoTheta_FEFCX"   , False ),
+               ("2p2h_EtrueErecoTheta_FEFCX"     , False ),
+               ("NCoth_EtrueErecoTheta_FEFCX"    , False ),
+               ("NCcoh_EtrueErecoTheta_FEFCX"    , False ),
+               ("NC1pipm_EtrueErecoTheta_FEFCX"  , False ),
+               ("NC1pi0_EtrueErecoTheta_FEFCX"   , False ),
+               ("CCDIS_EtrueErecoTheta_FEFCX"    , False ),
+               ("CCcoh_EtrueErecoTheta_FEFCX"    , False ),
+               ("CC1pi_EtrueErecoTheta_FEFCX"    , False ),
+               ("CCQE_EtrueErecoTheta_FEFCX"     , False ),
+               ("NC1gam_EtrueErecoTheta_FEFQEH"  , False ),
+               ("2p2h_EtrueErecoTheta_FEFQEH"    , False ),
+               ("NCoth_EtrueErecoTheta_FEFQEH"   , False ),
+               ("NCcoh_EtrueErecoTheta_FEFQEH"   , False ),
+               ("NC1pipm_EtrueErecoTheta_FEFQEH" , False ),
+               ("NC1pi0_EtrueErecoTheta_FEFQEH"  , False ),
+               ("CCDIS_EtrueErecoTheta_FEFQEH"   , False ),
+               ("CCcoh_EtrueErecoTheta_FEFQEH"   , False ),
+               ("CC1pi_EtrueErecoTheta_FEFQEH"   , False ),
+               ("CCQE_EtrueErecoTheta_FEFQEH"    , False ),
+               ("NC1gam_EtrueErecoTheta_FEFABS"  , False ),
+               ("2p2h_EtrueErecoTheta_FEFABS"    , False ),
+               ("NCoth_EtrueErecoTheta_FEFABS"   , False ),
+               ("NCcoh_EtrueErecoTheta_FEFABS"   , False ),
+               ("NC1pipm_EtrueErecoTheta_FEFABS" , False ),
+               ("NC1pi0_EtrueErecoTheta_FEFABS"  , False ),
+               ("CCDIS_EtrueErecoTheta_FEFABS"   , False ),
+               ("CCcoh_EtrueErecoTheta_FEFABS"   , False ),
+               ("CC1pi_EtrueErecoTheta_FEFABS"   , False ),
+               ("CCQE_EtrueErecoTheta_FEFABS"    , False ),
+               ("NC1gam_EtrueErecoTheta_FEFINEL" , False ),
+               ("2p2h_EtrueErecoTheta_FEFINEL"   , False ),
+               ("NCoth_EtrueErecoTheta_FEFINEL"  , False ),
+               ("NCcoh_EtrueErecoTheta_FEFINEL"  , False ),
+               ("NC1pipm_EtrueErecoTheta_FEFINEL", False ),
+               ("NC1pi0_EtrueErecoTheta_FEFINEL" , False ),
+               ("CCDIS_EtrueErecoTheta_FEFINEL"  , False ),
+               ("CCcoh_EtrueErecoTheta_FEFINEL"  , False ),
+               ("CC1pi_EtrueErecoTheta_FEFINEL"  , False ),
+               ("CCQE_EtrueErecoTheta_FEFINEL"   , False )
 ]
                
 #samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re","MultiRe"]
@@ -198,8 +196,6 @@ def main(version, loc):
         else:  
           par,mode = syst.split("_")
 
-        #print par, mode  
-        
         for (old,new) in replacements:
           mode = mode.replace(old,new)
         
@@ -209,7 +205,7 @@ def main(version, loc):
           name = key.GetName()
           if not (syst in name and ("_sp_" in name or ("FEF" in syst and "sp_" in name))): continue
           spline_dict[name] = key.ReadObj()
-      
+     
         output_file.cd()
         
         # Loop over the splines - rename them and write them to the file.
@@ -217,7 +213,8 @@ def main(version, loc):
           true_bin,reco_bin,q2bin = map(int, orig_spl_name.split("_")[-3:])
           
           reco_bin += ereco_bin_offsets[sample]
-          if reco_bin < 0: continue
+          if reco_bin < 0:
+            continue
           
           new_spl_name = "spl_"+sample+"_"+par+"_"+valor_type+mode+"_"+`true_bin`+"_"+`reco_bin`+"_"+`q2bin`
           
