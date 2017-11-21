@@ -19,7 +19,7 @@
 //#define __show_syst_var_wght_mesg_debug__
 //#define __show_build_xsbinning_template_mesg_info__
 //#define __show_build_xsbinning_template_mesg_debug__
-//#define __show_wght_spline_idx_mesg_debug__
+#define __show_wght_spline_idx_mesg_debug__
 //#define __show_isanevent_mesg_debug__
 //#define __show_find_wght_spline_mesg_debug__
 //#define __save_ori_templates_init_debug__
@@ -272,7 +272,7 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
 void NuXSec::Init(void)
 {
     fBANFF = 0;
-    
+   
     for(int ispl = 0; ispl < knwspl1Rmu; ispl++)    { fXSecWghtSpl1Rmu[ispl]    = 0; }
     for(int ispl = 0; ispl < knwspl1Re; ispl++)     { fXSecWghtSpl1Re[ispl]     = 0; }
     for(int ispl = 0; ispl < kRHCnwspl1Rmu; ispl++) { fRHCXSecWghtSpl1Rmu[ispl] = 0; }
@@ -730,6 +730,10 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
         bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];       
                 
         if(!is_applied) continue;
+
+        std::string splname = this->BuildSplineName(s, m, p);
+        TObjArray* splineArray = static_cast<TObjArray*>(spline_files[s]->Get(splname.c_str()));
+
         // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
         for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
           double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
@@ -739,7 +743,6 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                         
             for(int iv = 0; iv < kNXsQ2Bins[is]; iv++) {
               double Q2     = util::XsecQ2BinEdges(s,iv) + kOneMeV; // Edit this for diff Q2 bins per mode
-              std::cout << "\nSpline populated::[" << is << "," << im << "," << ip << "," << ir << "," << it << "," << iv << "]: ";
                             
               bool bin_is_beyond_end_of_etrue_range = (kXsEtrueBinEdges[is][im][it+1] < 0.);
               bool bin_is_beyond_end_of_q2_range = (util::XsecQ2BinEdges(s,iv+1) < 0.);
@@ -752,8 +755,9 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               if(!bin_is_not_empty)
                 continue;
 #endif
+              int inIdx = it * kNXsErecoBins[is] * kNXsQ2Bins[is] + ir * kNXsQ2Bins[is] + iv;
                             
-              std::string splname = this->BuildSplineName(s,m,p,ir,it,iv);
+//              std::string splname = this->BuildSplineName(s,m,p,ir,it,iv);
                             
 #ifdef __show_init_mesg_debug__
               LOG("NuXSec",pINFO) << "Loading cross-section weight spline: "
@@ -762,9 +766,8 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                             
               // Copy spline from input file
               TSpline3 * spl = NULL;
-              //Todo: add separate splines for RHC running if necessary
-              spl = (TSpline3 *) spline_files[s]->Get(splname.c_str());
-                            
+              spl = static_cast<TSpline3*>(splineArray->At(inIdx));
+
               if(!spl) {
                 if(!bin_is_not_empty) {
 #ifdef __show_init_mesg_debug__
@@ -827,7 +830,6 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                                      << splname;
                 util::Die(1);
               }
-              std::cout << idx;
                             
 #ifdef __show_init_mesg_debug__
               LOG("NuXSec",pDEBUG) << "Storing cross-section weight spline at slot: "
@@ -892,7 +894,6 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 #ifdef __show_init_mesg_info__
     LOG("NuXSec",pDEBUG) << "Done reading neutrino cross-section inputs (splines only)!";
 #endif
-    std::cout << std::endl;
 
   delete spline_files[kSKsFCFV1RingMuLike    ];
   delete spline_files[kSKsFCFV1RingELike     ];
@@ -904,6 +905,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
     // return splines_status(true);
   return true;
 }
+
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
@@ -1302,7 +1304,6 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
 //________________________________________________________________________________________
 double NuXSec::FinTuningWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2) const
 {
-   std::cout << "Call to FinTuningWght" << std::endl;
     double tot_wght = 1.;
     
     int nXSecSyst;
@@ -1730,7 +1731,6 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 //________________________________________________________________________________________
 double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2) const
 {
-   std::cout << "Call to SystWght" << std::endl;
     double tot_wght = 1.;
     
     int nXSecSyst;
@@ -2182,15 +2182,21 @@ TSpline3 * NuXSec::FindWghtSpline(PhysParamId_t p, SuperkSample_t s, SuperkMode_
     
     /// NEW MULTIRING (use 1 ring splines for multiring sample)
     if(s == kSKsRHCFCFV1RingMuLike)
+    {
         return fRHCXSecWghtSpl1Rmu[idx];
+    }
     else if(s == kSKsRHCFCFV1RingELike)
+    {
         return fRHCXSecWghtSpl1Re[idx];
-    
+    }
     else if(s == kSKsFCFV1RingELike)
+    {
         return fXSecWghtSpl1Re[idx];
+    }
     else if(s == kSKsFCFV1RingMuLike)
+    {
         return fXSecWghtSpl1Rmu[idx];
-    
+    }
     else if(s == kSKsFCFVMultiRingELike){ // multiring
         assert(fXSecWghtSplMultiRe[idx]);
         return fXSecWghtSplMultiRe[idx];
@@ -2814,6 +2820,16 @@ void NuXSec::SyncRHCToFHCSystematics()
     fRHCNormNuEToNuMuTwkDial  = fNormNuEToNuMuTwkDial ;
     fRHCNormAntiNuToNuTwkDial = fNormAntiNuToNuTwkDial;
 }
+//________________________________________________________________________________________
+std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p) const
+{
+   ostringstream splname;
+   splname << "spl_" << util::AsStringCompact(s) << "_" <<
+      util::AsStringSpline(p)  << "_" << util::AsStringCompact(m);
+
+   return splname.str();
+}
+
 //________________________________________________________________________________________
 std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const
 {

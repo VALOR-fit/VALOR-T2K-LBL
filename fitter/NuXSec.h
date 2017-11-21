@@ -184,7 +184,8 @@ private:
   
   int  HowManyEvents(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
   int  HowManyEvents(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
-  
+
+  std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p) const;
   std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const;  
   std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin, int q2bin) const;
   

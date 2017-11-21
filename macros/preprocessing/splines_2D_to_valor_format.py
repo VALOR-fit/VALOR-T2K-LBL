@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import ROOT
+import argparse
 import math
 import array
 import numpy as np
@@ -115,11 +116,6 @@ systematics = [("maqe_ccqe"       , False ),
                ("CCQE_EtrueErecoTheta_FEFINEL"   , False )
 ]
                
-#samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re","MultiRe"]
-samples   = ["1Re","RHC1Re","MultiRe"]
-#samples = ["MultiRe"]
-
-
 selections = dict()
 selections["1Rmu"]    = "numuselec" # Our samples to Kirsty's selection names
 selections["RHC1Rmu"] = "numuselec"
@@ -159,103 +155,97 @@ nknots_sigma = 13
 sigmas = np.array([0.5*i - 3. for i in xrange(nknots_sigma)])
 #______________________________________________________________________________________________________________________________
 
-def main(version, loc):
-  location = os.environ[env_var]+"/inputs/official/2018/xsec/" + loc
-  for sample in samples:
+def main(version, loc, sample):
+    location = os.environ[env_var]+"/inputs/official/2018/xsec/" + loc
+
+    all_splines = dict()
+    for _, valor_type in types:
+        for syst, _ in systematics:
+            par  = ""
+            mode = ""
+            if "erpa" in syst:
+                ppar, coeff, mode = syst.split("_")
+                par = ppar + "_" + coeff
+            elif "FEF" in syst:
+                mode, _, par = syst.split("_")
+            else:  
+                par,mode = syst.split("_") 
+            for (old, new) in replacements:
+                mode = mode.replace(old, new)
+            key = "spl_" + sample + "_" + par + "_" + valor_type + mode
+            idxs = util.SKSampleFromString(sample)
+            Nereco = conv.kNXsErecoBins[idxs]
+            Netrue = conv.kXsNEtrueBins
+            Nq2 = conv.kNXsQ2Bins[idxs]
+            all_splines[key] = ROOT.TObjArray(Nereco * Netrue * Nq2)
+
     current   = currents  [sample]
     selection = selections[sample]
     
-    output_file  = ROOT.TFile(version+"_"+sample+".root","RECREATE") # Output for this sample's splines
-    
     for orig_type,valor_type in types:
+        # Find the right input file
+        infile = pattern
+        indir  = location
+        for old,new in [("[CURRENT]"  ,current),
+                        ("[TYPE]"     ,orig_type),
+                        ("[SELECTION]",selection),
+                        ("[VERSION]"  ,version) ]:
+            infile   = infile .replace(old,new)
+            indir    = indir.replace(old,new)
       
-      # Find the right input file
-      infile = pattern
-      indir  = location
-      for old,new in [("[CURRENT]"  ,current),
-                      ("[TYPE]"     ,orig_type),
-                      ("[SELECTION]",selection),
-                      ("[VERSION]"  ,version) ]:
-        infile   = infile .replace(old,new)
-        indir    = indir.replace(old,new)
+        print "Processing file: ",infile
+        path = indir+"/"+infile
+        tf = ROOT.TFile(path)
+        if not tf: print "Failed to open file:\n",path
       
-      print "Processing file: ",infile
-      path = indir+"/"+infile
-      tf = ROOT.TFile(path)
-      if not tf: print "Failed to open file:\n",path
-      
-      # Loop over spline types - systematic+mode
-      for syst, change_spline_limits in systematics:
-        par  = ""
-        mode = ""
-        if "erpa" in syst:
-          ppar,coeff,mode = syst.split("_")
-          par = ppar +"_"+ coeff
-        elif "FEF" in syst:
-          mode, _, par = syst.split("_")
-        else:  
-          par,mode = syst.split("_")
+        # Loop over spline types - systematic+mode
+        for syst, change_spline_limits in systematics:
+            par  = ""
+            mode = ""
+            if "erpa" in syst:
+                ppar,coeff,mode = syst.split("_")
+                par = ppar +"_"+ coeff
+            elif "FEF" in syst:
+                mode, _, par = syst.split("_")
+            else:  
+                par,mode = syst.split("_")
 
-        for (old,new) in replacements:
-          mode = mode.replace(old,new)
+            for (old,new) in replacements:
+                mode = mode.replace(old,new)
         
-        # Get all the splines for this systematic+mode
-        spline_dict = dict()
-        for key in tf.GetListOfKeys():
-          name = key.GetName()
-          if not (syst in name and ("_sp_" in name or ("FEF" in syst and "sp_" in name))): continue
-          spline_dict[name] = key.ReadObj()
+            # Get all the splines for this systematic+mode
+            spline_dict = dict()
+            for key in tf.GetListOfKeys():
+                name = key.GetName()
+                if not (syst in name and ("_sp_" in name or ("FEF" in syst and "sp_" in name))): continue
+                spline_dict[name] = key.ReadObj()
      
-        output_file.cd()
-        
-        # Loop over the splines - rename them and write them to the file.
-        for orig_spl_name, spline in spline_dict.iteritems():
-          true_bin,reco_bin,q2bin = map(int, orig_spl_name.split("_")[-3:])
+            # Loop over the splines - rename them and write them to the file.
+            for orig_spl_name, spline in spline_dict.iteritems():
+                true_bin, reco_bin, q2bin = map(int, orig_spl_name.split("_")[-3:])
           
-          reco_bin += ereco_bin_offsets[sample]
-          if reco_bin < 0:
-            continue
+                reco_bin += ereco_bin_offsets[sample]
+                if reco_bin < 0:
+                    continue
+
+                new_spl_name = "spl_" + sample + "_" + par + "_" + valor_type + mode
+                idx = true_bin * Nereco * Nq2 + reco_bin * Nq2 + q2bin
           
-          new_spl_name = "spl_"+sample+"_"+par+"_"+valor_type+mode+"_"+`true_bin`+"_"+`reco_bin`+"_"+`q2bin`
-          
-          nknots = spline.GetNp()
-          knots = np.zeros(nknots,dtype=float)
-          
-          if change_spline_limits:
-            if nknots != nknots_sigma:
-              print "Warning: trying to attempt to remake spline with wrong number of knots: ",par,nknots
-              
-            x = ROOT.Double()
-            y = ROOT.Double()
-            
-            for i in xrange(nknots):
-              spline.GetKnot(i,x,y)
-              knots[i] = y
-          
-            new_spline = ROOT.TSpline3(new_spl_name,sigmas,knots,nknots)
-          
-          else:
-            new_spline = ROOT.TSpline3(spline)
-            new_spline.SetName(new_spl_name)
-            
-          new_spline.Write(new_spl_name)
-      
-      tf.Close()
-      # end of input file loop
-      
+                all_splines[new_spl_name].AddAt(ROOT.TSpline3(spline), idx)
+        tf.Close()
+
+    output_file  = ROOT.TFile(version+"_"+sample+".root","RECREATE")
+    for key in all_splines:
+        all_splines[key].Write(key, 1)
     output_file.Close()
   
 if __name__=="__main__":
+  parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
+  parser.add_argument("sample", choices=set(("1Re", "RHC1Re", "MultiRe")), help="The sample for which splines are to be processed")
+  parser.add_argument('-v', '--version', dest='version', default="v9", help="Current spline version.")
+  parser.add_argument('-l', '--location', dest='location', default="fitqunv9", help="Input spline location.")
   
-  import optparse
-  parser = optparse.OptionParser(usage="%prog [options]..",description="Reformat splines")
+  args = parser.parse_args()
   
-  parser.add_option('-v', '--version', dest='version', default="fitqunv9", help="Current spline version.")
-  parser.add_option('-l', '--location', dest='location', default="fitqunv9", help="Input spline location.")
-  
-  o,other = parser.parse_args()
-  
-  main(o.version, o.location)
-  
-  if other:
-    print "Warning - ignored arguments: ",other
+  main(args.version, args.location, args.sample)
+
