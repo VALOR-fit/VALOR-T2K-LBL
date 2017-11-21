@@ -26,12 +26,9 @@ rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
 
-pattern = "WithFSI_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
+pattern = "WithFSI_1117_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
 #pattern = "[TYPE]_[SELECTION]_[CURRENT].root" # The file naming convention
 #pattern = "splines_[TYPE].root"
-
-#location = os.environ[env_var]+"/inputs/official/2015/xsec/new" # Location of the spline files
-location = os.environ[env_var]+"/inputs/official/2018/xsec/splines2017fitqunv9_withFSI" # Location of the spline files
 
 types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, second entry is VALOR type names.
          ("nue_x_nue"        ,"nue"       ),

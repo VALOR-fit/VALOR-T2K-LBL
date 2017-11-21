@@ -29,8 +29,6 @@ arridx= util.ArrIdx.Instance()
 pattern = "WithFSI_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
 #pattern = "[TYPE]_[SELECTION]_[CURRENT].root" # The file naming convention
 
-location = os.environ[env_var]+"/inputs/official/2018/xsec/splines2017fitqunv9_withFSI"
-
 types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, second entry is VALOR type names.
          ("nue_x_nue"        ,"nue"       ),
          ("numubar_x_nuebar" ,"oscnuebar" ),
