@@ -215,6 +215,14 @@ def main(mach3_filename,valor_filename,mach3_selection,tag,sample,parameter_file
         valor_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
         option = "same"
         mach3_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
+        legend = ROOT.TLegend(0.91, 0.77, 1.0, 0.88)
+        legend.SetTextSize(0.035)
+        legend.SetFillColor(0)
+        legend.SetLineColor(0)
+        legend.AddEntry(valor_hists_binno[valor_mode][valor_param][valor_var], "VALOR", "l")
+        legend.AddEntry(mach3_ratio_hists_binno[valor_mode][valor_param][valor_var], "MaCh3", "l")
+        legend.Draw()
+
 
       canvases[canv_name].SetLeftMargin(0.125)   
       canvases[canv_name].SetBottomMargin(0.125)  

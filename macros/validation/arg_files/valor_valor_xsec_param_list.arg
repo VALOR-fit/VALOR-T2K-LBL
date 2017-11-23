@@ -20,3 +20,10 @@
   (  'f_banffnorm_nccoh_fhc_rhc'     , 'f_banffnorm_nccoh_fhc_rhc' ) ,     #21   | NC_Coh                        
   (  'f_banffnorm_nc1gamma_fhc_rhc'  , 'f_banffnorm_nc1gamma_fhc_rhc' ) ,  #22   | NC_1gamma                     
   (  'f_banffnorm_ncoth_fhc_rhc'     , 'f_banffnorm_ncoth_fhc_rhc' ) ,     #24   | NC_other_far                  
+  (  'f_banffnorm_cc_nu_fhc_rhc'     , 'f_banffnorm_cc_nu_fhc_rhc' ) ,
+  (  'f_banffnorm_cc_nubar_fhc_rhc'  , 'f_banffnorm_cc_nubar_fhc_rhc' ) ,
+  (  'f_banff_skfsi_abs_fhc_rhc'     , 'f_banff_skfsi_abs_fhc_rhc' ) ,
+  (  'f_banff_skfsi_qel_fhc_rhc'     , 'f_banff_skfsi_qel_fhc_rhc' ) ,
+  (  'f_banff_skfsi_cxl_fhc_rhc'     , 'f_banff_skfsi_cxl_fhc_rhc' ) ,
+  (  'f_banff_skfsi_qeh_fhc_rhc'     , 'f_banff_skfsi_qeh_fhc_rhc' ) ,
+  (  'f_banff_skfsi_inel_fhc_rhc'    , 'f_banff_skfsi_inel_fhc_rhc' ) ,

@@ -4750,8 +4750,8 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case (kNuisBANFFShape2p2h        ) :return "2p2h_shape_O";  
   case (kNuisBANFFNorm2p2hCtoO     ) :return "2p2h_normCtoO";
 
-  case (kNuisBANFFNormCCNu         ) :return "CCnu";
-  case (kNuisBANFFNormCCNuBar      ) :return "CCnubar";
+  case (kNuisBANFFNormCCNu         ) :return "CC_norm_nu";
+  case (kNuisBANFFNormCCNuBar      ) :return "CC_norm_nubar";
 
   case kNuisBANFFSKFSIAbsorption : return "FEFABS";
   case kNuisBANFFSKFSIQELow      : return "FEFQE";
@@ -4787,8 +4787,8 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case (kRHCNuisBANFFShape2p2h     ) :return "2p2h_shape_O_nu";  
   case (kRHCNuisBANFFNorm2p2hCtoO  ) :return "2p2h_normCtoO";
 
-  case (kRHCNuisBANFFNormCCNu      ) :return "CC_nu";
-  case (kRHCNuisBANFFNormCCNuBar   ) :return "CC_nubar";
+  case (kRHCNuisBANFFNormCCNu      ) :return "CC_norm_nu";
+  case (kRHCNuisBANFFNormCCNuBar   ) :return "CC_norm_nubar";
 
   case kRHCNuisBANFFSKFSIAbsorption : return "SKFSI_Absorption";
   case kRHCNuisBANFFSKFSIQELow      : return "SKFSI_QEl";

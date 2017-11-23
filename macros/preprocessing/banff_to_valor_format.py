@@ -92,7 +92,9 @@ for beam_mode_name in ["all"]:
   if (beam_mode_name == "all"):
     first_flux_param = 0
     last_flux_param  = first_xsec_param-1
- 
+
+  print "All parameters"
+  print input_param_list
   print "Flux parameters"
   print input_param_list[first_flux_param:last_flux_param+1]
   print "xsec parameters"
@@ -110,7 +112,6 @@ for beam_mode_name in ["all"]:
     param_name = util.ParamAsStringNIWG(phys_param_id)
     if param_name == "--": continue
     if "SCC" in param_name: continue
-    #print param_name
     position_in_banff_list = input_param_list.index(param_name)
     param_order_list.append(position_in_banff_list)
     print "iv", phys_param_id, "V:", util.ParamAsString(phys_param_id), "N:", param_name, "inpos:", position_in_banff_list

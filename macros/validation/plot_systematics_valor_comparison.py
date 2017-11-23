@@ -215,6 +215,16 @@ def main(compare, valor_filename, other_filename, valor_selection, other_selecti
         valor_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
         option = "same"
         other_ratio_hists_binno[valor_mode][valor_param][valor_var].Draw(option)
+        legend = ROOT.TLegend(0.7, 0.6, 0.9, 0.8)
+        legend.AddEntry(valor_hists_binno[valor_mode][valor_param][valor_var], "VALOR", "l")
+        legend.AddEntry(other_ratio_hists_binno[valor_mode][valor_param][valor_var], "MaCh3", "l")
+        legend.Draw()
+        print "Drawing legend"
+        
+#  lchisq->SetFillColor(0);
+#  lchisq->SetLineColor(0);
+#  lchisq->SetTextFont(132);
+#  lchisq->SetTextSize(0.07);
 
       canvases[canv_name].SetLeftMargin(0.125)   
       canvases[canv_name].SetBottomMargin(0.125)  
