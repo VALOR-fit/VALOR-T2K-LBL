@@ -1170,7 +1170,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // BANFF param, CCothShape
     // BANFF param, Eb
     //
-    
+   
     if( util::IsUsingSplines(p) )
     {
         //
@@ -1229,7 +1229,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
       {
          wght = 1.0;
       }
-      else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+      else if(util::IsNormCC(p) && (Etrue < 0.4 || Etrue > 0.6))
       {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
          wght = 1.0;
       }
@@ -1327,6 +1327,7 @@ double NuXSec::FinTuningWght(SuperkSample_t s, SuperkMode_t m, double Ereco, dou
             p = kListOfXSecSyst[isyst];
             is_banff_xsec_param = kXSecSystIncludedInBANFF[isyst];
         }
+
         if(!is_banff_xsec_param) continue;
         // Is the current systematic parameter applied to current sample/mode end energy bin?
         bool apply = this->ApplySyst(p,s,m,Ereco,Etrue);
@@ -1395,7 +1396,6 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
     // BANFF param, CCothShape
     // BANFF param, Eb
     //
-    
     if(util::IsUsingSplines(p))
     {
 #if SPLINE_TYPE == -1
@@ -1447,7 +1447,7 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
       {
          wght = 1.0;
       }
-      else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+      else if(util::IsNormCC(p) && (Etrue < 0.4 || Etrue > 0.6))
       {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
          wght = 1.0;
       }
@@ -1655,7 +1655,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
        {
           wght = 1.0;
        }
-       else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+       else if(util::IsNormCC(p) && (Etrue < 0.4 || Etrue > 0.6))
        {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
           wght = 1.0;
        }
@@ -1833,6 +1833,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 #endif
         
         wght = wght_spl->Eval(spl_tc);
+
         LOG("NuXSec", pDEBUG) << "Parameter: " << util::AsString(p) 
                               <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
     }
@@ -1842,7 +1843,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
       {
          wght = 1.0; 
       }
-      else if(util::IsNormCC(p) && (Ereco < 0.4 || Ereco > 0.6))
+      else if(util::IsNormCC(p) && (Etrue < 0.4 || Etrue > 0.6))
       {  // Apply spline for CC nu/nubar only in 400-600 MeV neutrino energy
          wght = 1.0;
       }
