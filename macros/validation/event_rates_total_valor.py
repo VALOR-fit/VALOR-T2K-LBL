@@ -17,7 +17,8 @@ modes=[ "CCQE",
         "NC1pi0",
         "NC1piPM",
         "NCcoherent",
-        "NCother"]
+        "NCother",
+        "NC1gamma"]
 
 sheet_order = ["CCQE",
                "CC1pi",
@@ -34,10 +35,9 @@ sum_modes = { "CCQE"        :["CCQE"     ],
               "CCcoherent"  :["CCcoherent" ],
               "2p2h"        :["2p2h"       ],
               "CCother"     :["CCother"    ],
-              "NC1pi"       :["NC1pi"      ],
               "NCcoherent"  :["NCcoherent" ],
               "NCother"     :["NCother"    ],
-              "NC1gamma$"   :["NC1gamma"],
+              "NC1gamma"   :["NC1gamma"],
               "NC1pi"       :["NC1pi0", "NC1piPM"],
               "CCother"     :["CCother"]} 
 
@@ -102,7 +102,7 @@ def list_mode(filename):
         print "\nComparison Sheet Order Nu_mu\n"
 
 
-        sum_print(nu_mu)
+        # sum_print(nu_mu)
         # sum_print(nu_e)
         # sum_print(nu_mu_bar)
         # sum_print(nu_e_bar)
@@ -130,10 +130,8 @@ def sum_print(dictionary):
         mode_total = 0
         for values in sum_modes[s_key]:
           t_key = values.replace("\\","")
-          #print "------------------>{}".format(t_key)                
           if t_key in dictionary:
             mode_total += float(dictionary[t_key])
-            #print "The value {0:20s}: {1:.4f}".format(values, dictionary[t_key])
         print "{0:14s} {1:.4f}".format(key, mode_total)
 
 

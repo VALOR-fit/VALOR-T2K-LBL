@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 
 samples =["1Rmu",
           "1Re",
@@ -21,30 +22,30 @@ modes=["CCQE",
 
 sheet_order = ["CCQE",
                "CC1$\pi$",
-               "CC coherent",
+               "CCcoherent",
                "2p-2h",
-               "CC other",
-               "NC 1pi",
-               "NC coherent",
-               "NC other",
-               "NC 1$\gamma$"]
+               "CCother",
+               "NC1pi",
+               "NCcoherent",
+               "NCother",
+               "NC1$\gamma$"]
 
 sum_modes = { "CCQE"         :["CCQE"        ],
               "CC1$\pi$"     :["CC1$\pi$"    ],
-              "CC coherent"  :["CC coherent" ],
+              "CCcoherent"  :["CC coherent" ],
               "2p-2h"        :["2p-2h"       ],
-              "CC other"     :["CC other"    ],
-              "NC 1pi"       :["NC 1pi"      ],
-              "NC coherent"  :["NC coherent" ],
-              "NC other"     :["NC other"    ],
-              "NC 1$\gamma$" :["NC 1$\gamma$"],
-              "NC 1pi"       :["NC$pi^{0}$", "NC$pi^{+/-}$"],
-              "CC other"     :["CCn$pi$", "CC other"]} 
+              "CCother"     :["CC other"    ],
+              "NC1pi"       :["NC 1pi"      ],
+              "NCcoherent"  :["NC coherent" ],
+              "NCother"     :["NC other"    ],
+              "NC1$\gamma$" :["NC 1$\gamma$"],
+              "NC1pi"       :["NC$pi^{0}$", "NC$pi^{+/-}$"],
+              "CCother"     :["CCn$pi$", "CC other"]} 
 
 
-def main():
+def main(filename):
 
-  list_mode("/Users/chrisbarry/Downloads/rates_RHC_postbanff_splinesv6_280417_1155.txt")
+  list_mode(filename)
     
   return
 
@@ -59,6 +60,8 @@ def list_mode(filename):
 
   osc_nu_e     = {}
   osc_nu_e_bar = {}
+
+  total = {}
   
   sample_str = ""
   sheet_sum = {}
@@ -87,6 +90,8 @@ def list_mode(filename):
 
           osc_nu_e     [entries[0].replace("\\","")] = float(entries[5])
           osc_nu_e_bar [entries[0].replace("\\","")] = float(entries[6])
+
+          total[entries[0].replace("\\","")] = float(entries[1]) + float(entries[2]) + float(entries[3]) + float(entries[4]) + float(entries[5]) + float(entries[6])
 
           
           sum_dict = dict((k, sum(i for i in v)) for k, v in raw_dict.items())
@@ -117,7 +122,8 @@ def list_mode(filename):
         print "\nComparison Sheet Order Nu_mu\n"
 
 
-        sum_print(nu_mu)
+        sum_print(total)
+        # sum_print(nu_mu)
         # sum_print(nu_e)
         # sum_print(nu_mu_bar)
         # sum_print(nu_e_bar)
@@ -150,5 +156,9 @@ def sum_print(dictionary):
 
 
 if __name__=="__main__":
-
-    main()
+  parser = argparse.ArgumentParser(description="Get input file")
+  parser.add_argument('-f', '--latex-file', dest='filename', help="LaTeX file containing event rates")
+  
+  args = parser.parse_args()
+  
+  main(args.filename)

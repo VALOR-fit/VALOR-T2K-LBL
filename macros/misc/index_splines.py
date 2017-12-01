@@ -35,9 +35,22 @@ def temp(filename):
     f = ROOT.TFile(filename)
     names = [ key.GetName() for key in f.GetListOfKeys() ]
     names.sort()
+    spline_set = set()
     for name in names:
-        if "maqe" in name and "_sp_" in name:
-            print(name)
+        if "_sp_" in name:
+            tuple = name.split("_")
+            systematic, mode = tuple[1], tuple[2]
+            if "erpa" in systematic:
+                systematic, mode = tuple[1] + "_" + tuple[2], tuple[3]
+            spline_set.add(systematic + "_" + mode)
+        elif "sp_" in name:
+            tuple = name.split("_")
+            systematic, mode = tuple[3], tuple[1]
+            spline_set.add(systematic + "_" + mode)
+    splines = list(spline_set)
+    splines.sort()
+    for spline in splines:
+        print(spline)
 
 import numpy as np
 import matplotlib.pyplot as plt
