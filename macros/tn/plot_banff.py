@@ -50,7 +50,7 @@ def plot_banff(filename, matrixname, outputname):
     for i in range(xsec_names.GetEntries()):
         histo.GetYaxis().SetBinLabel(i + 1, xsec_names[i].GetName())
         histo.GetXaxis().SetBinLabel(i + 1, xsec_names[i].GetName())
-        print(banff_names[i + start_index], nominal[i + start_index])
+        print banff_names[i + start_index], "Nom:", nominal[i + start_index], "Err:", np.sqrt(banff_matrix[i + start_index][i + start_index])
 
     histo.LabelsOption("v")        
     canvas = ROOT.TCanvas("canvas", "canvas", 10, 10, 1000, 1000)

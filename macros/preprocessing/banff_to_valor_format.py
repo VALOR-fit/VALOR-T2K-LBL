@@ -30,6 +30,11 @@ abnormal_untuned_central_values["CC_DIS"] = 0.0
 #abnormal_untuned_central_values["CA5"] = 1.01
 #abnormal_untuned_central_values["ISO_BKG"] = 1.30
 abnormal_untuned_central_values["2p2h_shape_O"] = 0.0
+abnormal_untuned_central_values["FEFQE"] = 0.0
+abnormal_untuned_central_values["FEFQEH"] = 0.0
+abnormal_untuned_central_values["FEFINEL"] = 0.0
+abnormal_untuned_central_values["FEFABS"] = 0.0
+abnormal_untuned_central_values["FEFCX"] = 0.0
 
 # Set up files
 assert(len(sys.argv)==2)
