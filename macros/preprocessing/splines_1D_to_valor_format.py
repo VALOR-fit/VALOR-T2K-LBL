@@ -218,6 +218,8 @@ def main(version, loc, sample):
             for key in tf.GetListOfKeys():
                 name = key.GetName()
                 if not (syst in name and ("_sp_" in name or ("FEF" in syst and "sp_" in name))): continue
+                # Deals with potential mismatching of FEFQEH to FEFQE
+                if "FEFQE" in syst and not ("FEFQEH" in syst) and "FEFQEH" in name: continue
                 spline_dict[name] = key.ReadObj()
     
             # Loop over the splines - rename them and write them to the file.

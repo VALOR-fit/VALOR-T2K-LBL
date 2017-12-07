@@ -1,30 +1,30 @@
 # List of ('VALOR' , 'MaCh3'), parameters 
 
-#  (  'f_banffmaqe_fhc_rhc'           , 'xsec_par_0'  ) ,      #0    | MAQE                          
-#  (  'f_banffpfermi_fhc_rhc'         , 'xsec_par_2'  ) ,      #2    | pF_O                          
-#  (  'f_banff2p2h_fhc_rhc'           , 'xsec_par_3'  ) ,      #3    | 2p2h_norm_nu                  
-#  (  'f_banff2p2hbar_fhc_rhc'        , 'xsec_par_4'  ) ,      #4    | 2p2h_norm_nubar               
-#  (  'f_banffnorm_2p2hCtoO_fhc_rhc'  , 'xsec_par_5'  ) ,      #5    | 2p2h_norm_CtoO
-#  (  'f_banffshape_2p2hnu_fhc_rhc'   , 'xsec_par_7'  ) ,      #7    | 2p2h_shape_O                  
-#  (  'f_banffshape_berpa_A_fhc_rhc'  , 'xsec_par_8'  ) ,      #8    | BeRPA_A                       
-#  (  'f_banffshape_berpa_B_fhc_rhc'  , 'xsec_par_9'  ) ,      #9    | BeRPA_B                       
-#  (  'f_banffshape_berpa_D_fhc_rhc'  , 'xsec_par_10' ) ,      #10   | BeRPA_D                       
-#  (  'f_banffshape_berpa_E_fhc_rhc'  , 'xsec_par_11' ) ,      #11   | BeRPA_E                       
-#  (  'f_banffca5_fhc_rhc'            , 'xsec_par_13' ) ,      #13   | CA5                           
-#  (  'f_banffmares_fhc_rhc'          , 'xsec_par_14' ) ,      #14   | MARES                         
-#  (  'f_banffbgres_fhc_rhc'          , 'xsec_par_15' ) ,      #15   | ISO_BKG                       
-#  (  'f_banffnorm_cc_nu_fhc_rhc'     , 'xsec_par_16' ) ,      #16   | CC_norm_nu
-#  (  'f_banffnorm_cc_nubar_fhc_rhc'  , 'xsec_par_17' ) ,      #17   | CC_norm_nubar
-#  (  'f_banffnorm_nuetonumu_fhc_rhc' , 'xsec_par_18' ) ,      #18   | nue_numu                      
-#  (  'f_banffnorm_nuebartonumubar_fhc_rhc' ,'xsec_par_19' ) , #19   | nuebar_numubar                
-#  (  'f_banffshapeCCoth_fhc_rhc'     , 'xsec_par_20' ) ,      #20   | CC_DIS                        
- # (  'f_banffnorm_cccoh_fhc_rhc'     , 'xsec_par_22' ) ,      #22   | CC_Coh_O                      
- ## (  'f_banffnorm_nccoh_fhc_rhc'     , 'xsec_par_23' ) ,      #23   | NC_Coh                        
- # (  'f_banffnorm_nc1gamma_fhc_rhc'  , 'xsec_par_24' ) ,      #24   | NC_1gamma                     
- # (  'f_banffnorm_ncoth_fhc_rhc'     , 'xsec_par_26' ) ,      #26   | NC_other_far                  
+  (  'f_banffmaqe_fhc_rhc'           , 'xsec_par_0'  ) ,      #0    | MAQE                          
+  (  'f_banffpfermi_fhc_rhc'         , 'xsec_par_2'  ) ,      #2    | pF_O                          
+  (  'f_banff2p2h_fhc_rhc'           , 'xsec_par_3'  ) ,      #3    | 2p2h_norm_nu                  
+  (  'f_banff2p2hbar_fhc_rhc'        , 'xsec_par_4'  ) ,      #4    | 2p2h_norm_nubar               
+  (  'f_banffnorm_2p2hCtoO_fhc_rhc'  , 'xsec_par_5'  ) ,      #5    | 2p2h_norm_CtoO
+  (  'f_banffshape_2p2hnu_fhc_rhc'   , 'xsec_par_7'  ) ,      #7    | 2p2h_shape_O                  
+  (  'f_banffshape_berpa_A_fhc_rhc'  , 'xsec_par_8'  ) ,      #8    | BeRPA_A                       
+  (  'f_banffshape_berpa_B_fhc_rhc'  , 'xsec_par_9'  ) ,      #9    | BeRPA_B                       
+  (  'f_banffshape_berpa_D_fhc_rhc'  , 'xsec_par_10' ) ,      #10   | BeRPA_D                       
+  (  'f_banffshape_berpa_E_fhc_rhc'  , 'xsec_par_11' ) ,      #11   | BeRPA_E                       
+  (  'f_banffca5_fhc_rhc'            , 'xsec_par_13' ) ,      #13   | CA5                           
+  (  'f_banffmares_fhc_rhc'          , 'xsec_par_14' ) ,      #14   | MARES                         
+  (  'f_banffbgres_fhc_rhc'          , 'xsec_par_15' ) ,      #15   | ISO_BKG                       
+  (  'f_banffnorm_cc_nu_fhc_rhc'     , 'xsec_par_16' ) ,      #16   | CC_norm_nu
+  (  'f_banffnorm_cc_nubar_fhc_rhc'  , 'xsec_par_17' ) ,      #17   | CC_norm_nubar
+  (  'f_banffnorm_nuetonumu_fhc_rhc' , 'xsec_par_18' ) ,      #18   | nue_numu                      
+  (  'f_banffnorm_nuebartonumubar_fhc_rhc' ,'xsec_par_19' ) , #19   | nuebar_numubar                
+  (  'f_banffshapeCCoth_fhc_rhc'     , 'xsec_par_20' ) ,      #20   | CC_DIS                        
+  (  'f_banffnorm_cccoh_fhc_rhc'     , 'xsec_par_22' ) ,      #22   | CC_Coh_O                      
+  (  'f_banffnorm_nccoh_fhc_rhc'     , 'xsec_par_23' ) ,      #23   | NC_Coh                        
+  (  'f_banffnorm_nc1gamma_fhc_rhc'  , 'xsec_par_24' ) ,      #24   | NC_1gamma                     
+  (  'f_banffnorm_ncoth_fhc_rhc'     , 'xsec_par_26' ) ,      #26   | NC_other_far                  
   (  'f_banff_skfsi_qel_fhc_rhc'     , 'xsec_par_27' ) ,      #27   | FEFQE
- # (  'f_banff_skfsi_qeh_fhc_rhc'     , 'xsec_par_28' ) ,      #28   | FEFQEH
- # (  'f_banff_skfsi_inel_fhc_rhc'    , 'xsec_par_29' ) ,      #29   | FEFINEL
- # (  'f_banff_skfsi_abs_fhc_rhc'     , 'xsec_par_30' ) ,      #30   | FEFABS
- # (  'f_banff_skfsi_cxl_fhc_rhc'     , 'xsec_par_31' ) ,      #29   | FEFCX
+  (  'f_banff_skfsi_qeh_fhc_rhc'     , 'xsec_par_28' ) ,      #28   | FEFQEH
+  (  'f_banff_skfsi_inel_fhc_rhc'    , 'xsec_par_29' ) ,      #29   | FEFINEL
+  (  'f_banff_skfsi_abs_fhc_rhc'     , 'xsec_par_30' ) ,      #30   | FEFABS
+  (  'f_banff_skfsi_cxl_fhc_rhc'     , 'xsec_par_31' ) ,      #29   | FEFCX
   

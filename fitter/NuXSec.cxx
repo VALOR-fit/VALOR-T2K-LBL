@@ -1438,6 +1438,53 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         if (spline_point < wght_spl->GetXmin()) spline_point = wght_spl->GetXmin();
 #endif
         wght = wght_spl->Eval(spline_point);
+/*        if(p == kNuisBANFFSKFSIQELow && m == kSKmNuMuCCQE)
+        {
+           int isamp = -1;
+           for(int is = 0; is < kns; is++) {
+              if(s == kSKSamples[is])
+              {
+                 isamp = is;
+                 break;
+              }
+           }
+           int imode = -1;
+           for(int im = 0; im < knm; im++) {
+              if(m == kSKReactionModes[isamp][im])
+              {
+                 imode = im;
+                 break;
+              }
+           }
+           int ireco = -1;
+           const double * ErecoBinEdges = util::XsecErecoBinEdges(s);
+           for (int i = 0; i < kNXsErecoBins[isamp] ; i++) {
+              if(ErecoBinEdges[i] <= Ereco && ErecoBinEdges[i+1] >  Ereco)
+              {
+                 ireco = i;
+                 break;
+              }
+           }
+           int itrue = -1;
+           for (int i = 0; i < kXsNEtrueBins; i++) {
+              if(kXsEtrueBinEdges[isamp][imode][i] <= Etrue && kXsEtrueBinEdges[isamp][imode][i+1] >  Etrue)
+              {
+                 itrue = i;
+                 break;
+              }
+           }
+           int iq2 = -1;
+           for (int i = 0; i < kNXsQ2Bins[isamp]; i++) {
+              if(util::XsecQ2BinEdges(s,i) <= Q2 && util::XsecQ2BinEdges(s,i+1) >  Q2)
+              {
+                 iq2 = i;
+                 break;
+              }
+           }
+           std::cout << util::AsStringCompact(s) << ":" << util::AsStringCompact(m) << " " <<
+              Etrue << " (" << itrue << ")" << " " << Ereco << " (" << ireco << ")" << " " <<
+              Q2 << " (" << iq2 << ") : " << spline_point << " = " << wght << std::endl;
+        }*/
     }
 #endif
     // NORMALIZATION PARAMETERS
@@ -1836,6 +1883,58 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
 
         LOG("NuXSec", pDEBUG) << "Parameter: " << util::AsString(p) 
                               <<" fBANFF->CurrentValue(p): "<< wght_spl->Eval(spl_tc) << " @ " <<  spl_tc;
+/*        if(p == kNuisBANFFSKFSIQELow || p == kRHCNuisBANFFSKFSIQELow)
+        {
+           int isamp = -1;
+           for(int is = 0; is < kns; is++) {
+              if(s == kSKSamples[is])
+              {
+                 isamp = is;
+                 break;
+              }
+           }
+           int imode = -1;
+           for(int im = 0; im < knm; im++) {
+              if(m == kSKReactionModes[isamp][im])
+              {
+                 imode = im;
+                 break;
+              }
+           }
+           int ireco = -1;
+           const double * ErecoBinEdges = util::XsecErecoBinEdges(s);
+           for (int i = 0; i < kNXsErecoBins[isamp] ; i++) {
+              if(ErecoBinEdges[i] <= Ereco && ErecoBinEdges[i+1] >  Ereco)
+              {
+                 ireco = i;
+                 break;
+              }
+           }
+           int itrue = -1;
+           for (int i = 0; i < kXsNEtrueBins; i++) {
+              if(kXsEtrueBinEdges[isamp][imode][i] <= Etrue && kXsEtrueBinEdges[isamp][imode][i+1] >  Etrue)
+              {
+                 itrue = i;
+                 break;
+              }
+           }
+           int iq2 = -1;
+           for (int i = 0; i < kNXsQ2Bins[isamp]; i++) {
+              if(util::XsecQ2BinEdges(s,i) <= Q2 && util::XsecQ2BinEdges(s,i+1) >  Q2)
+              {
+                 iq2 = i;
+                 break;
+              }
+           }
+           std::cout << util::AsStringCompact(s) << ":" << util::AsStringCompact(m) << " " <<
+              Etrue << " (" << itrue << " [" << kXsEtrueBinEdges[isamp][imode][itrue] << "," <<
+              kXsEtrueBinEdges[isamp][imode][itrue + 1] << "])" <<
+              " " << Ereco << " (" << ireco << " ["  << ErecoBinEdges[ireco] << "," <<
+              ErecoBinEdges[ireco + 1] << "])" <<
+              " " << Q2 << " (" << iq2 << " [" << util::XsecQ2BinEdges(s, iq2) << "," <<
+              util::XsecQ2BinEdges(s, iq2 + 1) << "]) : " <<
+              spl_tc << " = " << wght << " " << wght_spl->GetName() << std::endl;
+        }*/
     }
     else if( util::IsNormXSecParam(p))
     {
