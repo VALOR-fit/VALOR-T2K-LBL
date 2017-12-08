@@ -42,11 +42,20 @@ void make_spectra
  //const char * rootfile = "data_run1to4/SKdata_Run14.root",
  // const char * rootfile = "data_run1to6/SKdata_Run16.root",
  const char * rootfile = "", 
- const bool draw_data_spectra = false
+ const bool draw_data_spectra = false,
+ const bool swap_axes         = false,  /* If true, swaps the axes of the 2D hists (e.g. to draw theta vs. Erec vs. counts instead of Erec vs. theta vs. counts) */
+ const bool draw_text         = false   /* If true, writes the number of entries in each 2D hist bin on top of the colour plot of the hist */
 )
 {
   using namespace std;
   using namespace valor;
+
+  std::string draw_opt = "colz";
+  if(draw_text) {
+    gStyle->SetPaintTextFormat("4.2f");
+    gStyle->SetHistMinimumZero();
+    draw_opt += ",text";
+  }
 
   char name[200];
   
@@ -54,8 +63,16 @@ void make_spectra
 
   double postlatex_X = 120.; // Theta
   double postlatex_Y = 0.05;
+  if(swap_axes) {
+    postlatex_X = 0.05;
+    postlatex_Y = 165.; // Theta
+  }
   double postlatex_reac_X = 120.; 
   double postlatex_reac_Y = 0.05;
+  if(swap_axes) {
+    postlatex_reac_X = 0.05;
+    postlatex_reac_Y = 165.;
+  }
   char titleX[200] = "#theta (degrees)";
   TLegend *legX = new TLegend(0.6, 0.4, 0.9, 0.9); 
   TLegend *legX_reac = new TLegend(0.6, 0.4, 0.9, 0.9); 
@@ -322,9 +339,19 @@ void make_spectra
   }
 
   TCanvas *cErecoVsQ2Tot = new TCanvas("cErecoVsQ2Tot","cErecoVsQ2Tot");
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Tot->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
-  hErecoVsQ2Tot->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Tot);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Tot->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Tot->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+   hErecoVsQ2Tot ->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Tot->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
   }
@@ -464,13 +491,23 @@ void make_spectra
 
   // Draw 2D templates
 
-  TCanvas *cErecoVsQ2_NumuBarBeam = new TCanvas("cErecoVsQ2_NumuBarBeam","cErecoVsQ2_NumuBarBeam"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  TCanvas *cErecoVsQ2_NumuBarBeam = new TCanvas("cErecoVsQ2_NumuBarBeam","cErecoVsQ2_NumuBarBeam");
   hErecoVsQ2Mode_NumuBarBeam->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuBarBeam->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_NumuBarBeam->Draw("colz"); 
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_NumuBarBeam);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuBarBeam->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuBarBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_NumuBarBeam->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_NumuBarBeam->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
   }
@@ -478,27 +515,47 @@ void make_spectra
   lErecoVsQ2Mode_NumuBarBeam->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuBarBeam->Draw("same");
 
-  TCanvas *cErecoVsQ2_NumuBeam = new TCanvas("cErecoVsQ2_NumuBeam","cErecoVsQ2_NumuBeam"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  TCanvas *cErecoVsQ2_NumuBeam = new TCanvas("cErecoVsQ2_NumuBeam","cErecoVsQ2_NumuBeam");
   hErecoVsQ2Mode_NumuBeam->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuBeam->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_NumuBeam->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_NumuBeam);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuBeam->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_NumuBeam->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_NumuBeam->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
-  }  
+  }
   TLatex *lErecoVsQ2Mode_NumuBeam = new TLatex(postlatex_X,postlatex_Y,"#nu_{#mu} intrinsic");
   lErecoVsQ2Mode_NumuBeam->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuBeam->Draw("same");
 
-  TCanvas *cErecoVsQ2_NueBeam = new TCanvas("cErecoVsQ2_NueBeam","cErecoVsQ2_NueBeam"); 
-  if(ErecoRangeLow!=ErecoRangeUp)   
-    hErecoVsQ2Mode_NueBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  TCanvas *cErecoVsQ2_NueBeam = new TCanvas("cErecoVsQ2_NueBeam","cErecoVsQ2_NueBeam");
   hErecoVsQ2Mode_NueBeam->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NueBeam->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NueBeam->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_NueBeam->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_NueBeam);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NueBeam->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NueBeam->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_NueBeam->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_NueBeam->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
   }
@@ -506,27 +563,47 @@ void make_spectra
   lErecoVsQ2Mode_NueBeam->SetTextSize(0.07);
   lErecoVsQ2Mode_NueBeam->Draw("same");
 
-  TCanvas *cErecoVsQ2_NumuBarToNueBar = new TCanvas("cErecoVsQ2_NumuBarToNueBar","cErecoVsQ2_NumuBarToNueBar"); 
-  if(ErecoRangeLow!=ErecoRangeUp)   
-    hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  TCanvas *cErecoVsQ2_NumuBarToNueBar = new TCanvas("cErecoVsQ2_NumuBarToNueBar","cErecoVsQ2_NumuBarToNueBar");
   hErecoVsQ2Mode_NumuBarToNueBar->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuBarToNueBar->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_NumuBarToNueBar->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_NumuBarToNueBar);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuBarToNueBar->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuBarToNueBar->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_NumuBarToNueBar->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_NumuBarToNueBar->Draw(draw_opt.c_str());
   if(draw_data){
-    h_data->Draw("same");
+    h_data->Draw(draw_opt.c_str());
   }
   TLatex *lErecoVsQ2Mode_NumuBarToNueBar = new TLatex(postlatex_X,postlatex_Y,"#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e}");
   lErecoVsQ2Mode_NumuBarToNueBar->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuBarToNueBar->Draw("same");
 
-  TCanvas *cErecoVsQ2_NumuToNue = new TCanvas("cErecoVsQ2_NumuToNue","cErecoVsQ2_NumuToNue"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco  
+  TCanvas *cErecoVsQ2_NumuToNue = new TCanvas("cErecoVsQ2_NumuToNue","cErecoVsQ2_NumuToNue");
   hErecoVsQ2Mode_NumuToNue->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NumuToNue->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_NumuToNue->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_NumuToNue);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuToNue->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NumuToNue->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_NumuToNue->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_NumuToNue->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
   }
@@ -534,13 +611,23 @@ void make_spectra
   lErecoVsQ2Mode_NumuToNue->SetTextSize(0.07);
   lErecoVsQ2Mode_NumuToNue->Draw("same");
 
-  TCanvas *cErecoVsQ2_NC = new TCanvas("cErecoVsQ2_NC","cErecoVsQ2_NC"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Mode_NC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
+  TCanvas *cErecoVsQ2_NC = new TCanvas("cErecoVsQ2_NC","cErecoVsQ2_NC");
   hErecoVsQ2Mode_NC->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_NC->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_NC->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_NC->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_NC);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NC->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_NC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_NC->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_NC->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
   }
@@ -548,13 +635,23 @@ void make_spectra
   lErecoVsQ2Mode_NC->SetTextSize(0.07);
   lErecoVsQ2Mode_NC->Draw("same");
 
-  TCanvas *cErecoVsQ2_MEC = new TCanvas("cErecoVsQ2_MEC","cErecoVsQ2_MEC"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Mode_MEC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
+  TCanvas *cErecoVsQ2_MEC = new TCanvas("cErecoVsQ2_MEC","cErecoVsQ2_MEC");
   hErecoVsQ2Mode_MEC->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_MEC->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_MEC->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_MEC->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_MEC);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_MEC->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_MEC->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_MEC->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_MEC->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
   }
@@ -562,13 +659,23 @@ void make_spectra
   lErecoVsQ2Mode_MEC->SetTextSize(0.07);
   lErecoVsQ2Mode_MEC->Draw("same");
 
-  TCanvas *cErecoVsQ2_CCQE = new TCanvas("cErecoVsQ2_CCQE","cErecoVsQ2_CCQE"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Mode_CCQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
+  TCanvas *cErecoVsQ2_CCQE = new TCanvas("cErecoVsQ2_CCQE","cErecoVsQ2_CCQE");
   hErecoVsQ2Mode_CCQE->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_CCQE->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_CCQE->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_CCQE->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_CCQE);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_CCQE->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_CCQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+   hErecoVsQ2Mode_CCQE->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_CCQE->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
   }
@@ -576,16 +683,26 @@ void make_spectra
   lErecoVsQ2Mode_CCQE->SetTextSize(0.07);
   lErecoVsQ2Mode_CCQE->Draw("same");
 
-  TCanvas *cErecoVsQ2_CCnQE = new TCanvas("cErecoVsQ2_CCnQE","cErecoVsQ2_CCnQE"); 
-  if(ErecoRangeLow!=ErecoRangeUp) 
-    hErecoVsQ2Mode_CCnQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco 
+  TCanvas *cErecoVsQ2_CCnQE = new TCanvas("cErecoVsQ2_CCnQE","cErecoVsQ2_CCnQE");
   hErecoVsQ2Mode_CCnQE->GetXaxis()->SetTitle(titleX);
   hErecoVsQ2Mode_CCnQE->GetYaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
   hErecoVsQ2Mode_CCnQE->GetZaxis()->SetTitle("Number of events");
-  hErecoVsQ2Mode_CCnQE->Draw("colz");
+  if(swap_axes) {
+    util::SwapAxes(hErecoVsQ2Mode_CCnQE);
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_CCnQE->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  else {
+    if(ErecoRangeLow!=ErecoRangeUp)
+      hErecoVsQ2Mode_CCnQE->GetYaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco
+  }
+  if(draw_text) {
+    hErecoVsQ2Mode_CCnQE->SetMarkerSize(0.8);
+  }
+  hErecoVsQ2Mode_CCnQE->Draw(draw_opt.c_str());
   if(draw_data){
     h_data->Draw("same");
-  }  
+  }
   TLatex *lErecoVsQ2Mode_CCnQE = new TLatex(postlatex_reac_X,postlatex_reac_Y,"CCnQE");
   lErecoVsQ2Mode_CCnQE->SetTextSize(0.07);
   lErecoVsQ2Mode_CCnQE->Draw("same");
