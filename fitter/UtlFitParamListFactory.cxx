@@ -250,6 +250,13 @@ FitParamList * util::NamedParameterList(string name)
 #endif
     //
   }
+  if(name == "nuosc3f_nueapp+nuisance") {
+    fp = FitParamList::NuOsc3FlavourFit(kNumOfNuisanceParams+1);
+    fp->AppendNormBar(fp, 6);
+    util::AppendAllSystematicsTo(fp, 7);
+    fp -> SetParListName(name);
+    fp -> SetSystMode(1);
+  }
 
   if(name == "nuosc3f_dcpsensitivity_fix5") {
     fp = FitParamList::NuOsc3FlavourFit();
