@@ -238,7 +238,6 @@ void make_spectra
 
   // Generate prediction
   cout << "- Generating predictions..." << endl;
-  skexp.GetSuperkMC()->SetX2p2h(1);
   skexp.Generate(ph);
 
   //Get energy spectra
