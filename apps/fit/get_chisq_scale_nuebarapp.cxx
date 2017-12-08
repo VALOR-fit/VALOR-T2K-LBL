@@ -86,7 +86,22 @@ private:
 int main(int argc, char ** argv)
 {
   TStopwatch sw;
-  TH1D* chisq_distribution = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
+  TH1D* chisq_distribution   = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
+  TH1D* chisq_distribution_samples[conv::kns] = {};
+  //TH1D* chisq_distribution_1Rmu = new TH1D("chisq_distribution_1Rmu","chisq_distribution_1Rmu",100000,0,1000);
+  //TH1D* chisq_distribution_1Re = new TH1D("chisq_distribution_1Re","chisq_distribution_1Re",100000,0,1000);
+  //TH1D* chisq_distribution_RHC1Rmu = new TH1D("chisq_distribution_RHC1Rmu","chisq_distribution_RHC1Rmu",100000,0,1000);
+  //TH1D* chisq_distribution_RHC1Re = new TH1D("chisq_distribution_RHC1Re","chisq_distribution_RHC1Re",100000,0,1000);
+  //TH1D* chisq_distribution_MultiRe = new TH1D("chisq_distribution_MultiRe","chisq_distribution_MultiRe",100000,0,1000);
+  
+  for (int is = 0 ; is < conv::kns ; is++) {
+    stringstream ss;
+    ss << is;
+    std::string name = "chisq_distribution_sample" + ss.str();
+    TH1D* chisq_dist = new TH1D(name.c_str(),name.c_str(),100000,0,1000);
+    chisq_distribution_samples[is] = chisq_dist;
+  }
+  
   double chisq_min = 9999999; //Starting value of minimum chisq. This macro will fill this double with the min chisq from all of the toys
   Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
@@ -146,7 +161,7 @@ int main(int argc, char ** argv)
   
   for (int is = 0 ; is < conv::kns ; is++) {
     SuperkSample_t s = conv::kSKSamples[is];
-    if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;
+    if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;   // TODO: why continue on RHC 1 ring e-like?
     real_data[is] = skobs_data->TwoDSpectrum(s);
   }
   
@@ -228,7 +243,9 @@ int main(int argc, char ** argv)
     for (int is = 0 ; is < conv::kns ; is++) {
       SuperkSample_t s = conv::kSKSamples[is];
       if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;
-      chisq += valor::util::Chisq_Penalty_TH2D(real_data[is],exp_data[is]);
+      double chisq_sample = valor::util::Chisq_Penalty_TH2D(real_data[is],exp_data[is]);
+      chisq += chisq_sample;
+      chisq_distribution_samples[is]->Fill(chisq_sample);
     }
     chisq_distribution->Fill(chisq);
     if(chisq < chisq_min) chisq_min = chisq;
@@ -253,9 +270,13 @@ int main(int argc, char ** argv)
   << "      chisq min = " << chisq_min << endl
   << " ************************************" << endl
   << endl;
-  
-  TFile output("output.root","recreate");
+
+  std::string output_name = runopt->FileTag() + ".root";
+  TFile output(output_name.c_str(),"recreate");
   chisq_distribution->Write();
+  for (int is = 0 ; is < conv::kns ; is++) {
+    chisq_distribution_samples[is]->Write();
+  }
   output.Close();
   
   sw.Stop();

@@ -101,7 +101,8 @@ $config_file     = "analysis_configuration_run1to6_test_app.xml"  unless defined
 #$fitparamlist   = "nuosc3fbar_normbar_fitdcpbar+nuisance"    unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3f_normbar_fitdcp+nuisance"    unless defined $fitparamlist;
 #$fitparamlist   = "nuosc3f_normbar_fit23_fitdcp+nuisance"    unless defined $fitparamlist;
-$fitparamlist   = "nuosc3f_normbar_fit23_fitdcp+nuisance"    unless defined $fitparamlist;
+#$fitparamlist   = "nuosc3f_normbar_fit23_fitdcp+nuisance"    unless defined $fitparamlist;
+$fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;
 
 # Default
 $dm23sq_nh       = -99                         unless defined $dm23sq_nh; 
@@ -128,7 +129,7 @@ $minfreepar1            = 0.                   unless defined $minfreepar1;     
 $maxfreepar1            = 0.                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
 $npt_freepar1           = 1                    unless defined $npt_freepar1;    # of free parameter points to scan
 
-$nexpts_marg            = 10                unless defined $nexpts_marg;    # of toy
+$nexpts_marg            = 40000                unless defined $nexpts_marg;    # of toy
 
 $step_freepar0          = 1                  unless defined $step_freepar0;   # of points for each job param0
 $step_freepar1          = 1                  unless defined $step_freepar1;   # of points for each job param1
@@ -139,7 +140,7 @@ $prior_prob_nh          = 0.5                  unless defined $prior_prob_nh;
 
 $rethrow_unphysical     = 1                    unless defined $rethrow_unphysical;
 
-$file_prior             = "../../inputs/priors/joint_T2Kreact_run14/valor/Priors_T2Kreact_run14_Valor.root" unless defined $file_prior;
+#$file_prior             = "../../inputs/priors/joint_T2Kreact_run14/valor/Priors_T2Kreact_run14_Valor.root" unless defined $file_prior;
 
 $job_dir                = "."                  unless defined $job_dir;
 $softw_dir              = $ENV{'T2KOSCANA'}    unless defined $softw_dir;
