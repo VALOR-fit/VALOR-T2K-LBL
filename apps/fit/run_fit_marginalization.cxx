@@ -174,8 +174,10 @@ int main(int argc, char ** argv)
   
   string oscstr;// = util::AsString(hyp,input_mixing12,input_mixing13,input_mixing23,input_deltacp,input_dm12sq,input_dm23sq);
   
-  TFile *ftoys = new TFile(Form("Toys_%s-%s_%d_%d.root", runopt->FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
-  TFile *f = new TFile(Form("%s-%s_%d_%d.root", runopt->FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
+  std::string out_tag = runopt->FileTag() + "_" + runopt->AdditionalFileTag();
+  
+  TFile *ftoys = new TFile(Form("Toys_%s-%s_%d_%d.root", out_tag.c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
+  TFile *f = new TFile(Form("%s-%s_%d_%d.root", out_tag.c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
   
   // Set Tree toy/fit
   
@@ -487,7 +489,7 @@ int main(int argc, char ** argv)
     
     // Perform the fit w/ marginalization
     util::PerformMargFit(argc,argv,runopt,fitmarg,skexp,skobs_fakedata);
-    
+
     cout << endl;
     cout << "CPU time" << endl;
     cout << endl;
@@ -799,7 +801,7 @@ int main(int argc, char ** argv)
       delete exp_data[is];
       delete mock_data[is];
     }//is
-    
+   
     //
     
     // int npt_chisq_x = hchisq1D_out->GetNbinsX();
