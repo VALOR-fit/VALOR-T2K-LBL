@@ -732,10 +732,12 @@ void FitMarginalization::CleanUp(void){
   if (fToyMargVArray_1Rmu               ) { delete fToyMargVArray_1Rmu               ; fToyMargVArray_1Rmu           = 0;}
   if (fToyMargVArray_RHC1Re             ) { delete fToyMargVArray_RHC1Re             ; fToyMargVArray_RHC1Re         = 0;}
   if (fToyMargVArray_RHC1Rmu            ) { delete fToyMargVArray_RHC1Rmu            ; fToyMargVArray_RHC1Rmu        = 0;}
+  if (fToyMargVArray_MultiRe            ) { delete fToyMargVArray_MultiRe            ; fToyMargVArray_MultiRe        = 0;}
   if (fToyMargVArray_Clone_1Re          ) { delete fToyMargVArray_Clone_1Re          ; fToyMargVArray_Clone_1Re      = 0;}
   if (fToyMargVArray_Clone_1Rmu         ) { delete fToyMargVArray_Clone_1Rmu         ; fToyMargVArray_Clone_1Rmu     = 0;}
   if (fToyMargVArray_Clone_RHC1Re       ) { delete fToyMargVArray_Clone_RHC1Re       ; fToyMargVArray_Clone_RHC1Re   = 0;}
   if (fToyMargVArray_Clone_RHC1Rmu      ) { delete fToyMargVArray_Clone_RHC1Rmu      ; fToyMargVArray_Clone_RHC1Rmu  = 0;}
+  if (fToyMargVArray_Clone_MultiRe      ) { delete fToyMargVArray_Clone_MultiRe      ; fToyMargVArray_Clone_MultiRe  = 0;}
   //
   
   // NEW PENALTY TERM
@@ -789,6 +791,8 @@ void FitMarginalization::CleanUp(void){
       fNuEAppHistoUnscaled[i] = 0;
     }
   }
+
+  delete[] fnamefile; fnamefile = 0;
 }
 //________________________________________________________________________________________
 void FitMarginalization::SetFullRange(){
@@ -3174,6 +3178,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   int dims_1Re[6] = {};
   is_toys.read( (char*)&ndim_1Re  ,sizeof(int));
   is_toys.read( (char*)dims_1Re   ,sizeof(int)*6);
+  if(fToyMargVArray_1Re)
+  {
+     delete fToyMargVArray_1Re;
+  }
   fToyMargVArray_1Re = new VALORArrayF(ndim_1Re,dims_1Re);
   NDim = this->GetToyMargVArraySample(kSKsFCFV1RingELike)->GetNDim();
   Size = this->GetToyMargVArraySample(kSKsFCFV1RingELike)->GetSize(-1);
@@ -3190,6 +3198,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   int dims_1Rmu[6] = {};
   is_toys.read( (char*)&ndim_1Rmu  ,sizeof(int));
   is_toys.read( (char*)dims_1Rmu   ,sizeof(int)*6);
+  if(fToyMargVArray_1Rmu)
+  {
+     delete fToyMargVArray_1Rmu;
+  }
   fToyMargVArray_1Rmu = new VALORArrayF(ndim_1Rmu,dims_1Rmu);
   NDim = this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->GetNDim();
   Size = this->GetToyMargVArraySample(kSKsFCFV1RingMuLike)->GetSize(-1);
@@ -3205,6 +3217,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   int dims_RHC1Re[6] = {};
   is_toys.read( (char*)&ndim_RHC1Re  ,sizeof(int));
   is_toys.read( (char*)dims_RHC1Re   ,sizeof(int)*6);
+  if(fToyMargVArray_RHC1Re)
+  {
+     delete fToyMargVArray_RHC1Re;
+  }
   fToyMargVArray_RHC1Re = new VALORArrayF(ndim_RHC1Re,dims_RHC1Re);
   NDim = this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->GetNDim();
   Size = this->GetToyMargVArraySample(kSKsRHCFCFV1RingELike)->GetSize(-1);
@@ -3220,6 +3236,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   int dims_RHC1Rmu[6] = {};
   is_toys.read( (char*)&ndim_RHC1Rmu  ,sizeof(int));
   is_toys.read( (char*)dims_RHC1Rmu   ,sizeof(int)*6);
+  if(fToyMargVArray_RHC1Rmu)
+  {
+     delete fToyMargVArray_RHC1Rmu;
+  }
   fToyMargVArray_RHC1Rmu = new VALORArrayF(ndim_RHC1Rmu,dims_RHC1Rmu);
   NDim = this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->GetNDim();
   Size = this->GetToyMargVArraySample(kSKsRHCFCFV1RingMuLike)->GetSize(-1);
@@ -3236,6 +3256,10 @@ void FitMarginalization::ReadToysFromBinary(int idfile, const char *tag){
   int dims_MultiRe[6] = {};
   is_toys.read( (char*)&ndim_MultiRe  ,sizeof(int));
   is_toys.read( (char*)dims_MultiRe   ,sizeof(int)*6);
+  if(fToyMargVArray_RHC1Rmu)
+  {
+     delete fToyMargVArray_MultiRe;
+  }
   fToyMargVArray_MultiRe = new VALORArrayF(ndim_MultiRe,dims_MultiRe);
   NDim = this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetNDim();
   Size = this->GetToyMargVArraySample(kSKsFCFVMultiRingELike)->GetSize(-1);
@@ -6940,8 +6964,6 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
   int binStart_X = fStartBin_X;
   int binStart_Y = fStartBin_Y;
   
-  TRandom3 *r = new TRandom3(0);
-  
   //double like_iter = conv::kBadResult;
   //double like_prev = conv::kBadResult;
   
@@ -6956,6 +6978,7 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
   // Random extraction
   
   else if(fExtractStartPt=="GridRnd"){
+    TRandom3 r(0);
     
     cout << "Find the starting point from a extracted grid of ";
     cout << NThrowsExtrBin << " points in the range:"<< endl;
@@ -6965,8 +6988,8 @@ void FitMarginalization::GridStartBinRead(SuperkObservation *skobs_data,bool rea
     
     for(int iStartPt=0;iStartPt<NThrowsExtrBin;iStartPt++){
       
-      double r_X = r->Uniform(UniFirstBin_X,UniLastBin_X+1); // +1 because it's then truncated into a int. Extract 21th bin as well
-      double r_Y = r->Uniform(UniFirstBin_Y,UniLastBin_Y+1); // +1 because it's then truncated into a int. Extract 21th bin as well
+      double r_X = r.Uniform(UniFirstBin_X,UniLastBin_X+1); // +1 because it's then truncated into a int. Extract 21th bin as well
+      double r_Y = r.Uniform(UniFirstBin_Y,UniLastBin_Y+1); // +1 because it's then truncated into a int. Extract 21th bin as well
       int bs_x = (int)r_X;
       int bs_y = (int)r_Y;
       //cout << "bs_x = " << bs_x << " - bs_y = " << bs_y << endl;
@@ -7350,6 +7373,7 @@ void FitMarginalization::SetFileID(int nfiles){
   const char *tag = ftagfile.c_str(); // Get the file tag name
   
   // Store file names in a vector
+  if(fnamefile) cout << "Name file array being created where it already exists" << endl;
   fnamefile = new string[nfiles];
   
   // Loop over the sub-range binary files

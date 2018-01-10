@@ -1153,6 +1153,7 @@ void SuperkObservation::ReplaceSamplesWithData(SuperkObservation& new_data, bool
       }
       if(replace_sample[is])
       {
+         cout << "Replacing generated " << util::AsStringCompact(s) << " with data" << endl;
          for(int xbin = 0; xbin < util::NumErecoBins(s); ++xbin)
          {
             for(int ybin = 0; ybin < util::NumQ2Bins(s); ++ybin)
@@ -1161,6 +1162,10 @@ void SuperkObservation::ReplaceSamplesWithData(SuperkObservation& new_data, bool
                this->TwoDSpectrumVArray(s)->SetEntry(nobs, xbin, ybin);
             }
          }
+      }
+      else
+      {
+         cout << "Keeping generated " << util::AsStringCompact(s) << endl;
       }
    }
 }
