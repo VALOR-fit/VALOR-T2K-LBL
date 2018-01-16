@@ -856,7 +856,17 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               }
 #endif
                             
-              if     (s == kSKsFCFV1RingMuLike)    fXSecWghtSpl1Rmu   [idx] = new TSpline3(*spl);
+              if(s == kSKsFCFV1RingMuLike)
+              {
+                 if(spl == 0)
+                 {
+                  std::cout << "Spline details: " << util::AsStringCompact(p) <<
+                    " (" << util::AsStringCompact(s) << ":" <<
+                    util::AsStringCompact(m) << ") " << it << " " << ir << " " << iv << " " <<
+                    splname << " " << idx << "(" << conv::knwspl1Rmu << ") " << spl << std::endl;
+                 }
+                 fXSecWghtSpl1Rmu   [idx] = new TSpline3(*spl);
+              }
               else if(s == kSKsFCFV1RingELike)     fXSecWghtSpl1Re    [idx] = new TSpline3(*spl);
               else if(s == kSKsRHCFCFV1RingMuLike) fRHCXSecWghtSpl1Rmu[idx] = new TSpline3(*spl);
               else if(s == kSKsRHCFCFV1RingELike)  fRHCXSecWghtSpl1Re [idx] = new TSpline3(*spl);
@@ -1216,7 +1226,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
         p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
         p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
+        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  || 
+        p == kNuisBANFFEb            || p == kRHCNuisBANFFEb
         )
     {
         //
@@ -1242,7 +1253,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
            p == kRHCNuisBANFFBeRPA_B    ||
            p == kRHCNuisBANFFBeRPA_D    ||
            p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
+           p == kRHCNuisBANFFShape2p2h  ||
+           p == kRHCNuisBANFFEb
            )
         {
             tb = fBANFF->InitialValue(p);
@@ -1519,7 +1531,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
         p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
         p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
         p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
+        p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  ||
+        p == kNuisBANFFEb            || p == kRHCNuisBANFFEb
         )
     {
         //
@@ -1545,7 +1558,8 @@ double NuXSec::FinTuningWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t 
            p == kRHCNuisBANFFBeRPA_B    ||
            p == kRHCNuisBANFFBeRPA_D    ||
            p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
+           p == kRHCNuisBANFFShape2p2h  ||
+           p == kRHCNuisBANFFEb
            )
         {
             tb = fBANFF->InitialValue(p);
@@ -1819,7 +1833,8 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
              p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
              p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
              p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
+             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  ||
+             p == kNuisBANFFEb            || p == kRHCNuisBANFFEb
              )
     {
 #if SPLINE_TYPE == -1
@@ -1843,7 +1858,8 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
            p == kRHCNuisBANFFBeRPA_B    ||
            p == kRHCNuisBANFFBeRPA_D    ||
            p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
+           p == kRHCNuisBANFFShape2p2h  ||
+           p == kRHCNuisBANFFEb
            )
         {
             tb = fBANFF->InitialValue(p);
@@ -2148,7 +2164,8 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
              p == kNuisBANFFBeRPA_B       || p == kRHCNuisBANFFBeRPA_B    ||
              p == kNuisBANFFBeRPA_D       || p == kRHCNuisBANFFBeRPA_D    ||
              p == kNuisBANFFBeRPA_E       || p == kRHCNuisBANFFBeRPA_E    ||
-             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  
+             p == kNuisBANFFShape2p2h     || p == kRHCNuisBANFFShape2p2h  ||
+             p == kNuisBANFFEb            || p == kRHCNuisBANFFEb
              )
     {
 #if SPLINE_TYPE == -1
@@ -2172,7 +2189,8 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
            p == kRHCNuisBANFFBeRPA_B    ||
            p == kRHCNuisBANFFBeRPA_D    ||
            p == kRHCNuisBANFFBeRPA_E    ||
-           p == kRHCNuisBANFFShape2p2h  
+           p == kRHCNuisBANFFShape2p2h  ||
+           p == kRHCNuisBANFFEb
            )
         {
             tc = fBANFF->CurrentValue(p);
