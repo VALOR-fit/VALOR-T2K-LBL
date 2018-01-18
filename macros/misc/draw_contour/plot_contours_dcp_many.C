@@ -97,7 +97,7 @@ void plot_contours_dcp_many
   TH1D* hdeltachisq_hybrid_ih = 0;
   TH1D* hchisq_hybrid_nh = 0;
   TH1D* hchisq_hybrid_ih = 0;
-  if(hybrid_file_nh)
+  if(hybrid_file_nh && hybrid_file_nh[0] != '\0')
   {
      TFile* hybrid_file = new TFile(hybrid_file_nh);
      TTree* hybrid_tree = (TTree*)hybrid_file->Get("fitnt");
@@ -109,7 +109,7 @@ void plot_contours_dcp_many
      delete hybrid_tree;
      hybrid_file->Close();
   }
-  if(hybrid_file_ih)
+  if(hybrid_file_ih && hybrid_file_ih[0] != '\0')
   {
      TFile* hybrid_file = new TFile(hybrid_file_ih);
      TTree* hybrid_tree = (TTree*)hybrid_file->Get("fitnt");
@@ -1108,6 +1108,7 @@ void plot_contours_dcp_many
   ////////////////////////////////////////////////////
   
   if(doBrazilian){
+     TGaxis::SetMaxDigits(2);
     
     if(do_fc==false){
       cout << endl;
@@ -1275,13 +1276,13 @@ void plot_contours_dcp_many
       
       // Apply cut on deltachisq
       
-      int bin_mpiover2 = hdeltachisq1D_toy_nh->FindBin(-TMath::Pi()/2.);
+/*      int bin_mpiover2 = hdeltachisq1D_toy_nh->FindBin(-TMath::Pi()/2.);
       double deltachisq_fluct_mpiover2_nh = hdeltachisq1D_toy_nh->GetBinContent(bin_mpiover2);
       double deltachisq_fluct_mpiover2_ih = hdeltachisq1D_toy_ih->GetBinContent(bin_mpiover2);
       
       int bin_ppiover2 = hdeltachisq1D_toy_nh->FindBin(+TMath::Pi()/2.);
       double deltachisq_fluct_ppiover2_nh = hdeltachisq1D_toy_nh->GetBinContent(bin_ppiover2);
-      double deltachisq_fluct_ppiover2_ih = hdeltachisq1D_toy_ih->GetBinContent(bin_ppiover2);
+      double deltachisq_fluct_ppiover2_ih = hdeltachisq1D_toy_ih->GetBinContent(bin_ppiover2);*/
       
       //if(deltachisq_fluct_mpiover2_nh < 4) continue;
       //if(deltachisq_fluct_ppiover2_nh < 4) continue;
@@ -1552,7 +1553,21 @@ void plot_contours_dcp_many
        maxy_nh = TMath::Ceil(maxdchisq_nh);
     }
 
+    int minbin = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->FindBin(0.4);
+    int maxbin = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->FindBin(0.65);
+    maxy_nh = 0.0;
+    for(int x = minbin; x <= maxbin; ++x)
+    {
+       double val = hdeltachisq1D_GlobMin[0][0]->GetBinContent(x);
+       if(val > maxy_nh)
+       {
+          maxy_nh = val;
+       }
+    }
+    maxy_nh += 5;
+
     TCanvas *cBrazilianPlot_nh = new TCanvas("cBrazilianPlot_nh","cBrazilianPlot_nh");
+    hInit->GetXaxis()->SetRangeUser(0.4, 0.65);
     hInit->GetYaxis()->SetRangeUser(0.,maxy_nh);
     if(paper_style) format_hist(hInit);
     hInit->Draw();
@@ -1603,7 +1618,7 @@ void plot_contours_dcp_many
     //hdeltachisq1D_GlobMin[0][0]->SetLineStyle(1); // 0 --> Normal Hierarchy
     hdeltachisq1D_GlobMin[0][0]->SetLineWidth(2);
     hdeltachisq1D_GlobMin[0][0]->SetLineColor(kBlack);
-    hdeltachisq1D_GlobMin[0][0]->Draw("c same");
+//    hdeltachisq1D_GlobMin[0][0]->Draw("c same");
     if(do_fc){
       if(draw_90CL)     gFC90CL_nh->Draw("l same");
       if(draw_2sigmaCL) gFC2sigma_nh->Draw("l same");
@@ -1617,10 +1632,10 @@ void plot_contours_dcp_many
       TLatex *braz_nh_caveat = new TLatex(nx, maxy_nh * 1.01, "Final systematics pending");
       braz_nh_caveat->SetTextSize(0.025);
 
-      braz_nh_title->Draw("same");
-      braz_nh_caveat->Draw("same");
+//      braz_nh_title->Draw("same");
+//      braz_nh_caveat->Draw("same");
     }
-    TLegend *lBrazilianPlot_nh = new TLegend(0.15,0.64,0.35,0.92);
+    TLegend *lBrazilianPlot_nh = new TLegend(0.25,0.64,0.45,0.92);
     lBrazilianPlot_nh->SetFillColor(0);
     lBrazilianPlot_nh->SetLineColor(0);
     lBrazilianPlot_nh->SetTextFont(132);
@@ -1639,14 +1654,20 @@ void plot_contours_dcp_many
     if(draw_2sigmaCL){
       lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"2#sigma CL","l");
     }
-    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
-    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_median,"Median toy","l");
-    lBrazilianPlot_nh->AddEntry(hdeltachisq_hybrid_nh,"Hybrid","l");
+//    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
+    if(two_sided)
+    {
+      lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_median,"Median toy","l");
+    }
+    if(hdeltachisq_hybrid_nh)
+    {
+      lBrazilianPlot_nh->AddEntry(hdeltachisq_hybrid_nh,"Hybrid","l");
+    }
     lBrazilianPlot_nh->DrawClone();
     
     TLatex *latNormal = new TLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy_ih*0.9,"Normal Ordering");
     latNormal->SetTextSize(0.06);
-    latNormal->Draw("same");
+//    latNormal->Draw("same");
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.pdf",tag.c_str()));
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.png",tag.c_str()));
     cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.eps",tag.c_str()));
@@ -1712,7 +1733,7 @@ void plot_contours_dcp_many
 
     hdeltachisq1D_GlobMin[0][1]->SetLineWidth(2);
     hdeltachisq1D_GlobMin[0][1]->SetLineColor(kBlack);
-    hdeltachisq1D_GlobMin[0][1]->Draw("c same");
+//    hdeltachisq1D_GlobMin[0][1]->Draw("c same");
     if(do_fc){
       if(draw_90CL)     gFC90CL_ih->Draw("l same");
       if(draw_2sigmaCL) gFC2sigma_ih->Draw("l same");
@@ -1725,10 +1746,10 @@ void plot_contours_dcp_many
       TLatex *braz_ih_caveat = new TLatex(nx, maxy_ih * 1.01, "Final systematics pending");
       braz_ih_caveat->SetTextSize(0.025);
 
-      braz_ih_title->Draw("same");
-      braz_ih_caveat->Draw("same");
+//      braz_ih_title->Draw("same");
+//      braz_ih_caveat->Draw("same");
     }
-    TLegend *lBrazilianPlot_ih = new TLegend(0.15,0.64,0.35,0.92);
+    TLegend *lBrazilianPlot_ih = new TLegend(0.25,0.64,0.45,0.92);
     lBrazilianPlot_ih->SetFillColor(0);
     lBrazilianPlot_ih->SetLineColor(0);
     lBrazilianPlot_ih->SetTextFont(132);
@@ -1744,14 +1765,20 @@ void plot_contours_dcp_many
       lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"90% CL","l");
     if(draw_2sigmaCL)
       lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"2#sigma CL","l");
-    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
-    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_median,"Median toy","l");
-    lBrazilianPlot_ih->AddEntry(hdeltachisq_hybrid_ih,"Hybrid","l");
+//    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
+    if(two_sided)
+    {
+      lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_median,"Median toy","l");
+    }
+    if(hdeltachisq_hybrid_ih)
+    {
+      lBrazilianPlot_ih->AddEntry(hdeltachisq_hybrid_ih,"Hybrid","l");
+    }
     lBrazilianPlot_ih->DrawClone();
     
     TLatex *latInverted = new TLatex(hdeltachisq1D_ih_mean->GetXaxis()->GetBinLowEdge(110),20.*0.9,"Inverted Ordering");
     latInverted->SetTextSize(0.06);
-    latInverted->Draw("same");
+    //latInverted->Draw("same");
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.pdf",tag.c_str()));
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.png",tag.c_str()));
     cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.eps",tag.c_str()));

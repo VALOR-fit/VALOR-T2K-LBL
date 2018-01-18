@@ -20,3 +20,4 @@
   (  'f_banffnorm_nccoh_fhc_rhc'     , 'xsec_par_21' ) ,      #21   | NC_Coh                        
   (  'f_banffnorm_nc1gamma_fhc_rhc'  , 'xsec_par_22' ) ,      #22   | NC_1gamma                     
   (  'f_banffnorm_ncoth_fhc_rhc'     , 'xsec_par_24' ) ,      #24   | NC_other_far                  
+  (  'f_banffshape_eb_fhc_rhc'       , 'xsec_par_25' ) ,      #25   | Eb
