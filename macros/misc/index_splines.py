@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+
+import ROOT
+import sys
+import argparse
+
+def index(filename):
+    f = ROOT.TFile(filename)
+    names = [ key.GetName() for key in f.GetListOfKeys() ]
+    names.sort()
+    spline_set = set()
+    for name in names:
+        if "ebo" in name:
+            print name
+        tuple = name.split("_")
+        prefix, sample, systematic, mode = tuple[0], tuple[1], tuple[2], tuple[3]
+        spline_set.add(prefix + "_" + sample + "_" + systematic + "_" + mode)
+    splines = list(spline_set)
+    splines.sort()
+    for spline in splines:
+        print(spline)
+
+def index_single(filename, sample, systematic, mode):
+    f = ROOT.TFile(filename)
+    names = [ key.GetName() for key in f.GetListOfKeys() ]
+    names.sort()
+    key = "spl_" + sample + "_" + systematic + "_" + mode
+    splines = []
+    for name in names:
+        if name.startswith(key):
+            splines.append(name)
+    splines.sort()
+    for spline in splines:
+        print(spline)
+
+def temp(filename):
+    f = ROOT.TFile(filename)
+    names = [ key.GetName() for key in f.GetListOfKeys() ]
+    names.sort()
+    spline_set = set()
+    for name in names:
+        if "_sp_" in name:
+            tuple = name.split("_")
+            systematic, mode = tuple[1], tuple[2]
+            if "erpa" in systematic:
+                systematic, mode = tuple[1] + "_" + tuple[2], tuple[3]
+            spline_set.add(systematic + "_" + mode)
+        elif "sp_" in name:
+            tuple = name.split("_")
+            systematic, mode = tuple[3], tuple[1]
+            spline_set.add(systematic + "_" + mode)
+    splines = list(spline_set)
+    splines.sort()
+    for spline in splines:
+        print(spline)
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.backends.backend_pdf
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Index splines")
+    parser.add_argument("-f", "--file", dest="filename", default="", help="Input file containing splines.")
+    args = parser.parse_args()
+    index(args.filename)
+#    index_single(args.filename, "1Rmu", "ebo", "nuemec")

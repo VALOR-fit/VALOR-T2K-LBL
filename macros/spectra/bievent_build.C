@@ -196,15 +196,24 @@ void bievent_build
    const int NMH = 2;
    const int NDCP = 4;
 
+   TH2D* hEventsSyst[dcp_npt][N23][NMH];
    TH2D* hEvents[dcp_npt][N23][NMH];
+   TH1D* hFHCEvents[dcp_npt][N23][NMH];
+   TH1D* hRHCEvents[dcp_npt][N23][NMH];
    for(int idcp=0; idcp < dcp_npt; idcp++)
    {
       for(int iss23 = 0; iss23 < N23; ++iss23)
       {
          for(int imh = 0; imh < NMH; ++imh)
          {
+            const char* name_syst = Form("hEventsSyst_%d_%d_%d", idcp, iss23, imh);
+            hEventsSyst[idcp][iss23][imh] = new TH2D(name_syst, name_syst, 600, 0, 150, 100, 0, 25);
             const char* name = Form("hEvents_%d_%d_%d", idcp, iss23, imh);
             hEvents[idcp][iss23][imh] = new TH2D(name, name, 150, 0, 150, 25, 0, 25);
+            const char* fhcname = Form("hEvents_fhc_%d_%d_%d", idcp, iss23, imh);
+            hFHCEvents[idcp][iss23][imh] = new TH1D(fhcname, fhcname, 150, 0, 150);
+            const char* rhcname = Form("hEvents_rhc_%d_%d_%d", idcp, iss23, imh);
+            hRHCEvents[idcp][iss23][imh] = new TH1D(rhcname, rhcname, 25, 0, 25);
          }
       }
    }
@@ -229,10 +238,10 @@ void bievent_build
       {
          skexp.ResetSystematics();
          skexp.RandomizeSystematics();
+         RandomizeOsc(ph);
 
          PhysParamList paramTweaks = skexp.Tweaks();
          isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
-
       }
 
       for(int idcp=0; idcp < dcp_npt; idcp++)
@@ -248,9 +257,12 @@ void bievent_build
                double dcp = deltaCP_first + idcp * deltaCP_width;
        
                // Set NH oscillation parameter values
+               // Solar parameters and theta13 are now marginalized
+               /*
                ph.SetCurrValue(conv::kPhypMixing12, ss12[imh]);
                ph.SetCurrValue(conv::kPhypMixing13, ss13[imh]);
                ph.SetCurrValue(conv::kPhypDm12sq, dm12[imh]);
+               */
                ph.SetCurrValue(conv::kPhypDm23sq, dm23[imh]);
 
                if(imh == 0)
@@ -272,7 +284,15 @@ void bievent_build
                GetN_1re(ph,skexp,Nfhc,Nrhc);
                GetN_cc1pi(ph,skexp,Ncc1pi);
                Nfhc += Ncc1pi;
+               hEventsSyst[idcp][iss23][imh]->Fill(Nfhc, Nrhc);
+
+               // Apply statistical fluctuations
+               Nfhc = Rnd::Instance()->RndToyMCstat().Poisson(Nfhc);
+               Nrhc = Rnd::Instance()->RndToyMCstat().Poisson(Nrhc);
                hEvents[idcp][iss23][imh]->Fill(Nfhc, Nrhc);
+
+               hFHCEvents[idcp][iss23][imh]->Fill(Nfhc);
+               hRHCEvents[idcp][iss23][imh]->Fill(Nrhc);
             }
          }
       }
@@ -286,6 +306,9 @@ void bievent_build
          for(int imh = 0; imh < NMH; ++imh)
          {
             hEvents[idcp][iss23][imh]->Write();
+            hEventsSyst[idcp][iss23][imh]->Write();
+            hFHCEvents[idcp][iss23][imh]->Write();
+            hRHCEvents[idcp][iss23][imh]->Write();
          }
       }
    }
@@ -319,14 +342,6 @@ void GetN_1re(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc,double &Nr
    Nrhc = hErecoVsQ2Tot->Integral();
 
    cout << "Events: " << Nfhc << " => ";
-
-   // Apply statistical fluctuations
-   Nfhc = Rnd::Instance()->RndToyMCstat().Poisson(Nfhc);
-   Nrhc = Rnd::Instance()->RndToyMCstat().Poisson(Nrhc);
-
-   cout << Nfhc << endl;
-
-   return;
 }
 
 void GetN_cc1pi(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc)
@@ -341,10 +356,47 @@ void GetN_cc1pi(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc)
    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
    hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));  
    Nfhc = hErecoVsQ2Tot->Integral();
+}
 
-   // Apply statistical fluctuation
-   Nfhc = Rnd::Instance()->RndToyMCstat().Poisson(Nfhc);
-  
-   return;
+bool OscParamsPhysical(double mix12val, double mix13val, double dm12val)
+{
+   using namespace valor::conv;
+   if(mix12val < 0 || mix12val > 1)
+   {
+      return false;
+   }
+   if(mix13val < 0 || mix13val > 1)
+   {
+      return false;
+   }
+   if(dm12val < kMinFitDm12sq || dm12val > kMaxFitDm12sq)
+   {
+      return false;
+   }
+
+   return true;
+}
+
+void RandomizeOsc(valor::PhysHypothesis& ph)
+{
+   using namespace valor::conv;
+   for( ; ; )
+   {
+      double mix12val = Rnd::Instance()->RndToyMCosc().Gaus(kPrior_Sinsq2th12_Used_Mean, kPrior_Sinsq2th12_Used_RMS);
+      double mix13val = Rnd::Instance()->RndToyMCosc().Gaus(kPrior_Sinsq2th13_Used_Mean, kPrior_Sinsq2th13_Used_RMS);
+      double dm12val = Rnd::Instance()->RndToyMCosc().Gaus(kPrior_Dm12sq_Used_Mean, kPrior_Dm12sq_Used_RMS);
+
+      mix12val = util::FromSinsq2thToSinsqth(mix12val);
+      mix13val = util::FromSinsq2thToSinsqth(mix13val);
+
+      // Leave the atmospheric parameters fixed
+      ph.SetCurrValue(conv::kPhypMixing12, mix12val);
+      ph.SetCurrValue(conv::kPhypMixing13, mix13val);
+      ph.SetCurrValue(conv::kPhypDm12sq, dm12val);
+      if(OscParamsPhysical(mix12val, mix13val, dm12val))
+      {
+         break;
+      }
+   }
 }
 
