@@ -276,6 +276,24 @@ if($freepar0 eq "deltacp"){
     $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
     $init_freepar0  = $deltacp;
 }
+elsif($freepar0 eq "mixing23")
+{
+    $freepar0_first = 0.3;
+    $freepar0_last  = 0.7;
+    $i_freepar0     = 0;
+    $n_freepar0     = 9;
+    $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+    $init_freepar0  = $mix23;
+}
+elsif($freepar0 eq "dmsq23")
+{
+    $freepar0_first = 0.0023;
+    $freepar0_last  = 0.0027;
+    $i_freepar0     = 0;
+    $n_freepar0     = 9;
+    $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+    $init_freepar0  = $dmsq23;
+}
 else{
     print "\n The grid of $freepar0 for Feldman-Cousins is not defined\n";
     exit;

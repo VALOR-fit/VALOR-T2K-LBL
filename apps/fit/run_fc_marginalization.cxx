@@ -173,7 +173,7 @@ int main(int argc, char ** argv)
   SuperkObservation new_data = SuperkObservation();
   new_data.Read(data_file, 0, false);
   // End testing*/
-  
+
   // Get superk spectrum predictor & configure
   SuperkExpectation * skexp = new SuperkExpectation;
   skexp->Read(runopt->ConfigFile().c_str());
@@ -628,9 +628,11 @@ int main(int argc, char ** argv)
       for(int is = 0; is < conv::kns; ++is)
       {
          SuperkSample_t s = kSKSamples[is];
-//         if(util::IsMultiReSample(s) // Keep CC1pi MC)
+//         if(util::IsMultiReSample(s)) // Keep CC1pi MC
+//         if(util::Is1ReSample(s) && util::IsFHCSample(s))   // Keep FHC1Re MC
 //         if(util::Is1ReSample(s) && util::IsRHCSample(s))   // Keep RHC1Re MC
-         if(util::Is1RMuSample(s) && util::IsFHCSample(s))   // Keep FHC1Rmu MC
+//         if(util::Is1RMuSample(s) && util::IsFHCSample(s))   // Keep FHC1Rmu MC
+         if(util::Is1RMuSample(s) && util::IsRHCSample(s))   // Keep RHC1Rmu MC
          {
             replace_samples[is] = false;
          }
