@@ -129,32 +129,26 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    $tag = "${tag}_${freepar0}";
    if($use_reactors == 1)
    {
-      $nexpts_marg            = 40000                        unless defined $nexpts_marg;
+      $nexpts_marg            = 40000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
-#      $wqueue                 = "long";
-#      $npt_freepar0           = 97                       unless defined $npt_freepar0;
-      $wqueue                 = "xlong -W 24:00 -M 16384";
-      $npt_freepar0           = 201
+      $wqueue                 = "long -R rusage[mem=3584,swap=3584]";
+      $npt_freepar0           = 100                      unless defined $npt_freepar0;
    }
    else
    {
-      $nexpts_marg            = 80000;#40000                        unless defined $nexpts_marg;
+      $nexpts_marg            = 80000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
-#      $wqueue                 = "long -M 8192";#"long";
-      $wqueue                 = "xlong -W 24:00 -M 16384";
-#      $npt_freepar0           = 97                       unless defined $npt_freepar0;
-      $npt_freepar0           = 201
+      $wqueue                 = "long -M 8192";
+      $npt_freepar0           = 100                      unless defined $npt_freepar0;
    }
-#   $minfreepar0            = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
-#   $maxfreepar0            = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $minfreepar0            = -3.18686567    unless defined $minfreepar0;
-   $maxfreepar0            = +3.18686567    unless defined $maxfreepar0;
-   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
-   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
-   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
-   $masshierarchy          = "normal"                    unless defined $masshierarchy;
-   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+   $minfreepar0    = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0    = +3.14159265358979312e+00    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar1    = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1    = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1   = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy = 0                           unless defined $marg_hierarchy;
+   $masshierarchy  = "normal"                    unless defined $masshierarchy;
+   $step_freepar1  = 1                           unless defined $step_freepar1;   # of points for each job param1
 }
 
 # # 1D fit - sinsqth13
@@ -162,18 +156,18 @@ if(($freepar0 eq "mixing13") and ($freepar1 eq ""))
 {
    $tag = "${tag}_${freepar0}";
 
-   $nexpts_marg            = 10000                        unless defined $nexpts_marg;     # of toys
-   $minfreepar0            = 0.007                          unless defined $minfreepar0;     # Minimum free parameter allowed value
-   $maxfreepar0            = 0.053                      unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $npt_freepar0           = 201                         unless defined $npt_freepar0;    # of free parameter points to scan
-   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
-   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
-   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
-   $masshierarchy          = "normal"                    unless defined $masshierarchy;
-   $step_freepar0          = 5                unless defined $step_freepar0;   # of points for each job param0
-   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
-   $wqueue                 = "long";#"long -M 8192";
+   $nexpts_marg    = 40000            unless defined $nexpts_marg;     # of toys
+   $minfreepar0    = 0.007            unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0    = 0.053            unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $npt_freepar0   = 100              unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1    = 0.               unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1    = 0.               unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1   = 1                unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy = 0                unless defined $marg_hierarchy;
+   $masshierarchy  = "normal"         unless defined $masshierarchy;
+   $step_freepar0  = 1                unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1  = 1                unless defined $step_freepar1;   # of points for each job param1
+   $wqueue         = "long -R rusage[mem=3584,swap=3584]";
 }
 
 # # 1D fit - sinsqth23
@@ -183,26 +177,26 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
 
    if($use_reactors == 1)
    {
-      $nexpts_marg            = 40000                        unless defined $nexpts_marg;
-      $step_freepar0          = 1;
-      $wqueue                 = "long";
-      $npt_freepar0           = 100;
+      $nexpts_marg    = 40000            unless defined $nexpts_marg;
+      $step_freepar0  = 1;
+      $wqueue         = "long -R rusage[mem=3584,swap=3584]";
+      $npt_freepar0   = 100;
    }
    else
    {
-      $nexpts_marg            = 80000                        unless defined $nexpts_marg;
-      $step_freepar0          = 1;
-      $wqueue                 = "long -M 8192";
-      $npt_freepar0           = 100;
+      $nexpts_marg    = 80000            unless defined $nexpts_marg;
+      $step_freepar0  = 1;
+      $wqueue         = "long -M 8192";
+      $npt_freepar0   = 100;
    }
-   $minfreepar0            = 0.3    unless defined $minfreepar0;     # Minimum free parameter allowed value
-   $maxfreepar0            = 0.7    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
-   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
-   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
-   $masshierarchy          = "normal"                    unless defined $masshierarchy;
-   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+   $minfreepar0       = 0.3         unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0       = 0.7         unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar1       = 0.          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1       = 0.          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1      = 1           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy    = 0           unless defined $marg_hierarchy;
+   $masshierarchy     = "normal"    unless defined $masshierarchy;
+   $step_freepar1     = 1           unless defined $step_freepar1;   # of points for each job param1
 }
 
 # # 1D fit - dmsq23
@@ -212,26 +206,26 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
 
    if($use_reactors == 1)
    {
-      $nexpts_marg            = 40000                        unless defined $nexpts_marg;
+      $nexpts_marg            = 40000           unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long";
+      $wqueue                 = "long -R rusage[mem=3584,swap=3584]";
       $npt_freepar0           = 100;
    }
    else
    {
-      $nexpts_marg            = 80000                        unless defined $nexpts_marg;
+      $nexpts_marg            = 80000           unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "long -M 8192";
       $npt_freepar0           = 100;
    }
    $minfreepar0            = 2.3e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = 2.7e-3    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
-   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
-   $marg_hierarchy         = 0                           unless defined $marg_hierarchy;
-   $masshierarchy          = "normal"                    unless defined $masshierarchy;
-   $step_freepar1          = 1                            unless defined $step_freepar1;   # of points for each job param1
+   $minfreepar1            = 0.        unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 0.        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1           = 1         unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 0         unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"  unless defined $masshierarchy;
+   $step_freepar1          = 1         unless defined $step_freepar1;   # of points for each job param1
 }
 
 # # 2D fit - sinsqth13 Vs dcp
@@ -266,7 +260,7 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    $masshierarchy     = "normal"                  unless defined $masshierarchy;
    $step_freepar0     = 3                         unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1     = 2                         unless defined $step_freepar1;   # of points for each job param1
-   $wqueue            = "long";
+   $wqueue            = "long -R rusage[mem=3072,swap=3072]";
 }
 # # 2D fit - sinsqth23 Vs dmsq23
 if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
@@ -277,20 +271,19 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
       $freepar0 = "mixing23";
       $freepar1 = "dmsq23";
    }
+   $minfreepar0      = 0.3        unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0      = 0.7        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $npt_freepar0     = 81         unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1      = 2.3e-3     unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1      = 2.7e-3     unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $npt_freepar1     = 21         unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy   = 0          unless defined $marg_hierarchy;
+   $masshierarchy    = "normal"   unless defined $masshierarchy;
+   $step_freepar0    = 3          unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1    = 2          unless defined $step_freepar1;   # of points for each job param1
+   $wqueue           = "long -R rusage[mem=3072,swap=3072]";
 
    $tag = "${tag}_${freepar0}_${freepar1}";
-
-   $minfreepar0            = 0.3                        unless defined $minfreepar0;     # Minimum free parameter allowed value
-   $maxfreepar0            = 0.7                        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
-   $npt_freepar0           = 81;#10;#81                         unless defined $npt_freepar0;    # of free parameter points to scan
-   $minfreepar1            = 2.3e-3                  unless defined $minfreepar1;     # Minimum free parameter allowed value
-   $maxfreepar1            = 2.7e-3                   unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-   $npt_freepar1           = 21;#10;#21                        unless defined $npt_freepar1;    # of free parameter points to scan
-   $marg_hierarchy         = 0                          unless defined $marg_hierarchy;
-   $masshierarchy          = "normal"                   unless defined $masshierarchy;
-   $step_freepar0          = 3;#10;#4                unless defined $step_freepar0;   # of points for each job param0
-   $step_freepar1          = 2;#10;#1                            unless defined $step_freepar1;   # of points for each job param1
-   $wqueue                  = "long";
 }
 
 					               
@@ -620,6 +613,13 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	}
 
         if($resource eq "warwick") {
+#          if($imin0 == 5 || $imin0 == 27 || $imin0 == 72 || $imin0 == 81 || $imin0 == 98)
+#          {
+#          }
+#          else
+#          {
+#             next;
+#          }
           $current = $wqueue;
           if($npt_freepar1 == 1)
           {  # 1D

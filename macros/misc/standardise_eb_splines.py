@@ -54,7 +54,7 @@ def standardise_filename(in_filename):
         selection = "_numuselec"
         out_filename = spline_version + t2k_version + current + flavour + selection + ".root"
     elif "nue" in root_dir: # erec/theta
-        if "cc1pi" in sub_dir:
+        if "1pi" in sub_dir:
             selection = "_cc1piselec"
         else:
             selection = "_nueselec"
@@ -135,8 +135,13 @@ def graph_to_spline(in_filename, out_filename):
             print "Error: Unrecognised graph name:", name
             sys.exit(0)
         graph = fin.Get(name)
+        # Add extra points
+        xx = np.array([ -3.0, -1.0, 0.0, 2.0, 6.0, 10 ])
+        yy = np.array([ graph.Eval(x)  for x in xx ])
+        N = len(xx)
         for spline_name in spline_names:
-            spline = ROOT.TSpline3(spline_name, graph)
+#            spline = ROOT.TSpline3(spline_name, graph)
+            spline = ROOT.TSpline3(spline_name, xx, yy, N)
             spline.Write(spline_name)
     fout.Close()
     fin.Close()

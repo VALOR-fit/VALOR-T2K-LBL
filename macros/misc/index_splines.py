@@ -20,6 +20,14 @@ def index(filename):
     for spline in splines:
         print(spline)
 
+def index_systematic(filename, systematic):
+    f = ROOT.TFile(filename)
+    names = [ key.GetName() for key in f.GetListOfKeys() if systematic in key.GetName() ]
+    names.sort()
+    spline_set = set()
+    for name in names:
+        print name
+
 def index_single(filename, sample, systematic, mode):
     f = ROOT.TFile(filename)
     names = [ key.GetName() for key in f.GetListOfKeys() ]
@@ -64,3 +72,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     index(args.filename)
 #    index_single(args.filename, "1Rmu", "ebo", "nuemec")
+#    index_systematic(args.filename, "ebo")
