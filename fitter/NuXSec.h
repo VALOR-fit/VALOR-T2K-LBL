@@ -187,6 +187,7 @@ private:
   
   std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin) const;  
   std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p, int reco_bin, int true_bin, int q2bin) const;
+  std::string BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p) const;
   
   //
   // Private data members

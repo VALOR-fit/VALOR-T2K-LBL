@@ -466,6 +466,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
                 //~ bool is_applied = this->ApplySystToSKMode(p,s,m);
                 bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
                 if(!is_applied) continue;
+
                 // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
                 for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
                     double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
@@ -730,6 +731,10 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
         bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];       
                 
         if(!is_applied) continue;
+
+        std::string splname = this->BuildSplineName(s, m, p);
+        TObjArray* splineArray = static_cast<TObjArray*>(spline_files[s]->Get(splname.c_str()));
+
         // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
         for(int ir = 0; ir < kNXsErecoBins[is]; ir++) {
           double Ereco     = util::XsecErecoBinEdges(s,ir) + kOneMeV;
@@ -751,8 +756,8 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               if(!bin_is_not_empty)
                 continue;
 #endif
-                            
-              std::string splname = this->BuildSplineName(s,m,p,ir,it,iv);
+
+              int inIdx = it * kNXsErecoBins[is] * kNXsQ2Bins[is] + ir * kNXsQ2Bins[is] + iv;
                             
 #ifdef __show_init_mesg_debug__
               LOG("NuXSec",pINFO) << "Loading cross-section weight spline: "
@@ -761,8 +766,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
                             
               // Copy spline from input file
               TSpline3 * spl = NULL;
-              //Todo: add separate splines for RHC running if necessary
-              spl = (TSpline3 *) spline_files[s]->Get(splname.c_str());
+              spl = static_cast<TSpline3*>(splineArray->At(inIdx));
                             
               if(!spl) {
                 if(!bin_is_not_empty) {
@@ -911,6 +915,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
     // return splines_status(true);
   return true;
 }
+
 //________________________________________________________________________________________
 bool NuXSec::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 {
@@ -3316,3 +3321,11 @@ std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m
     return splname.str();
 }
 //________________________________________________________________________________________
+std::string NuXSec::BuildSplineName(conv::SuperkSample_t s, conv::SuperkMode_t m, conv::PhysParamId_t p) const
+{
+   ostringstream splname;
+   splname << "spl_" << util::AsStringCompact(s) << "_" <<
+      util::AsStringSpline(p)  << "_" << util::AsStringCompact(m);
+          
+   return splname.str();
+}

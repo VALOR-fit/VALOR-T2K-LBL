@@ -266,8 +266,8 @@ int main(int argc, char ** argv)
   hErecoExp_sample[conv::kSKsFCFV1RingMuLike   ] = hErecoExp_1Rmu;
   hErecoExp_sample[conv::kSKsFCFV1RingELike    ] = hErecoExp_1Re ;
   hErecoExp_sample[conv::kSKsRHCFCFV1RingMuLike] = hErecoExp_RHC1Rmu;
-  hErecoExp_sample[conv::kSKsRHCFCFV1RingELike ] = hErecoToy_RHC1Re ;
-  hErecoExp_sample[conv::kSKsFCFVMultiRingELike ] = hErecoToy_MultiRe ;
+  hErecoExp_sample[conv::kSKsRHCFCFV1RingELike ] = hErecoExp_RHC1Re ;
+  hErecoExp_sample[conv::kSKsFCFVMultiRingELike ] = hErecoExp_MultiRe ;
   
   // Object for storing input oscillation and nuisance params in each toy-MC
   PhysParamList * iparm = new PhysParamList;
