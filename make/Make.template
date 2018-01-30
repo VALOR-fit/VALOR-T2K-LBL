@@ -32,7 +32,7 @@ rootcint: $(DICTIONARY).o
 $(DICTIONARY).cc: LinkDef.h $(DICTGEN_OBJECTS)
 	$(RM) $(DICTIONARY).*
 	@echo "[package: $(PACKAGE)] Generating ROOT dictionary ..."
-	rootcint -f $(DICTIONARY).cc -c $(ROOT_INCLUDES) $(T2KANA_INCLUDES) $(VALOR_INCLUDES) $(DICTGEN_HEADERS) LinkDef.h
+	rootcint -f $(DICTIONARY).cc $(ROOT_CINT_FLAGS) $(ROOT_INCLUDES) $(T2KANA_INCLUDES) $(VALOR_INCLUDES) $(DICTGEN_HEADERS) LinkDef.h
 
 #
 #
