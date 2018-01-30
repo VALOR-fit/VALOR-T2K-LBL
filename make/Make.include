@@ -56,6 +56,7 @@ VALOR_FMWK_LIBRARIES = $(shell $(VALOR_FMWK)/make/valor_fmwk-config --libs)
 # ROOT headers and libraries
 ROOT_INCLUDES  = -I$(shell root-config --incdir)
 ROOT_LIBRARIES = $(shell root-config --glibs) -lMinuit -lMinuit2 -lMathMore -lXMLIO -lXMLParser
+ROOT_CINT_FLAGS = -c -p
 
 #-------------------------------------------------------------------
 #                             log4cpp
