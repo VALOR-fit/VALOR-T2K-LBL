@@ -128,21 +128,23 @@ def smear(input, error=3.556768e-5):
                     input.Fill(x_smear, y_temp, integral * likelihood)
 
 def chisq_to_likelihood(input):
-    height = input.shape[0]
-    width = input.shape[1]
-    output = np.zeros_like(input)
-    for r in range(height):
-        for c in range(width):
-            output[r][c] = np.exp(-0.5 * input[r][c])
+    output = input.Clone()
+    output.SetDirectory(0)
+    NXbins = input.GetNbinsX()
+    NYbins = input.GetNbinsY()
+    for i in range(1, NXbins + 1):
+        for j in range(1, NYbins + 1):
+            output.SetBinContent(i, j, np.exp(-0.5 * input.GetBinContent(i, j)))
     return output
 
 def likelihood_to_chisq(input):
-    height = input.shape[0]
-    width = input.shape[1]
-    output = np.zeros_like(input)
-    for r in range(height):
-        for c in range(width):
-            output[r][c] = -2.0 * np.log(input[r][c])
+    output = input.Clone()
+    output.SetDirectory(0)
+    NXbins = input.GetNbinsX()
+    NYbins = input.GetNbinsY()
+    for i in range(1, NXbins + 1):
+        for j in range(1, NYbins + 1):
+            output.SetBinContent(i, j, -2.0 * np.log(input.GetBinContent(i, j)))
     return output
 
 
@@ -157,7 +159,28 @@ def fill_histo(input):
     NYbins = input.GetNbinsY()
     for i in range(1, NXbins + 1):
         for j in range(1, NYbins + 1):
-            input.SetBinContent(i, j, np.random.uniform())
+            input.SetBinContent(i, j, ((j - 1) * NYbins + i) / 25.0)
+
+def histo_to_nparray(input):
+    NXbins = input.GetNbinsX()
+    NYbins = input.GetNbinsY()
+    output = np.zeros((NYbins, NXbins))
+    for i in range(1, NXbins + 1):
+        for j in range(1, NYbins + 1):
+            output[j - 1][i - 1] = input.GetBinContent(i, j)
+    return output
+
+def copy_nparray_to_histo(input_array, output_histo):
+    NXbins = output_histo.GetNbinsX()
+    NYbins = output_histo.GetNbinsY()
+    if NXbins != input_array.shape[1] or NYbins != input_array.shape[0]:
+        print "Error: Shape mismatch between array and histogram:"
+        print "Array %dx%d Histogram %d%d (row x column)" % (input_array.shape[0], input_array.shape[1], NYbins, NXbins)
+        sys.exit()
+    for i in range(1, NXbins + 1):
+        for j in range(1, NYbins + 1):
+            output_histo.SetBinContent(i, j, input_array[j - 1][i - 1])
+    return output_histo
 
 def print_histo(input):
     NXbins = input.GetNbinsX()
@@ -173,17 +196,28 @@ if __name__=="__main__":
 #    parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input p-theta fake data file.")
 #    parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output Valor fake data file.")
 #    args = parser.parse_args()
-    image = np.reshape(np.array([range(1,26)]), (5, 5))
-    image = image / 25.0
-#    image = np.ones((5, 5))
-    output = resample(image, 3.0)
-    chisq = likelihood_to_chisq(output)
-    likelihood = chisq_to_likelihood(chisq)
+    original = ROOT.TH2D("atmos", "atmos", 5, 0.296, 0.704, 5, 1.975e-3, 3.025e-3)
+    fill_histo(original)
+    original_array = histo_to_nparray(original)
+    resampled_array = resample(original_array, 3.0)
+    resampled_histogram = ROOT.TH2D("atmos", "atmos", 15, 0.296, 0.704, 15, 1.975e-3, 3.025e-3)
+    copy_nparray_to_histo(resampled_array, resampled_histogram)
+    likelihood_histogram = chisq_to_likelihood(resampled_histogram)
+    smeared_histogram = likelihood_histogram.Clone()
+    smeared_histogram.SetDirectory(0)
+    smear(smeared_histogram)
+    chisq_histogram = likelihood_to_chisq(smeared_histogram)
 
-    histo = ROOT.TH2D("atmos", "atmos", 5, 0.296, 0.704, 5, 1.975e-3, 3.025e-3)
-    fill_histo(histo)
-    print_histo(histo)
-    print ""
-    smear(histo)
-    print_histo(histo)
+    print "Original:"
+    print_histo(original)
+    print "Resampled:"
+    print_histo(resampled_histogram)
+    print "Likelihood:"
+    print_histo(likelihood_histogram)
+    print "Smeared:"
+    print_histo(smeared_histogram)
+    print "Chisq:"
+    print_histo(chisq_histogram)
+#    smear(histo)
+#    print_histo(histo)
 
