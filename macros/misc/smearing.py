@@ -99,10 +99,72 @@ def resample(input, scale):
         print "Error, input %dD. 1D or 2D resampling only" % len(input.shape)
         sys.exit()
 
+def smear(input, error=3.556768e-5):
+    # Smear the input TH2D - assumes smear variable is Y
+    NXbins = input.GetNbinsX()
+    xaxis = input.GetXaxis()
+    x_low = xaxis.GetBinLowEdge(1)
+    x_high = xaxis.GetBinUpEdge(NXbins)
+
+    NYbins = input.GetNbinsY()
+    yaxis = input.GetYaxis()
+    y_low = yaxis.GetBinLowEdge(1)
+    y_high = yaxis.GetBinUpEdge(NYbins)
+
+    norm = 1.0 / (error * np.sqrt(2 * np.pi))
+
+    for i in range(1, NXbins + 1):
+        x_smear = xaxis.GetBinCenter(i)
+        for j in range(1, NYbins + 1):
+            y_smear = yaxis.GetBinCenter(j)
+            bin_width = yaxis.GetBinWidth(1)
+            likelihood = input.GetBinContent(i, j)
+            gauss_bin = ROOT.TF1("gauss_bin", "gaus(0)", y_low, y_high)
+            gauss_bin.SetParameters(norm, y_smear, error)
+            for k in range(1, NYbins + 1):
+                if j != k:
+                    y_temp = yaxis.GetBinCenter(k)
+                    integral = gauss_bin.Integral(y_temp - 0.5 * bin_width, y_temp + 0.5 * bin_width)
+                    input.Fill(x_smear, y_temp, integral * likelihood)
+
+def chisq_to_likelihood(input):
+    height = input.shape[0]
+    width = input.shape[1]
+    output = np.zeros_like(input)
+    for r in range(height):
+        for c in range(width):
+            output[r][c] = np.exp(-0.5 * input[r][c])
+    return output
+
+def likelihood_to_chisq(input):
+    height = input.shape[0]
+    width = input.shape[1]
+    output = np.zeros_like(input)
+    for r in range(height):
+        for c in range(width):
+            output[r][c] = -2.0 * np.log(input[r][c])
+    return output
+
+
 def print_matrix(input):
     for r in range(input.shape[1]):
         for c in range(input.shape[0]):
             print "%.4f " % input[r][c],
+        print ""
+
+def fill_histo(input):
+    NXbins = input.GetNbinsX()
+    NYbins = input.GetNbinsY()
+    for i in range(1, NXbins + 1):
+        for j in range(1, NYbins + 1):
+            input.SetBinContent(i, j, np.random.uniform())
+
+def print_histo(input):
+    NXbins = input.GetNbinsX()
+    NYbins = input.GetNbinsY()
+    for j in range(1, NYbins + 1):
+        for i in range(1, NXbins + 1):
+            print "%.4f" % input.GetBinContent(i, j),
         print ""
 
 
@@ -111,10 +173,17 @@ if __name__=="__main__":
 #    parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input p-theta fake data file.")
 #    parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output Valor fake data file.")
 #    args = parser.parse_args()
-    print ""
     image = np.reshape(np.array([range(1,26)]), (5, 5))
+    image = image / 25.0
 #    image = np.ones((5, 5))
-    print_matrix(image)
-    print ""
     output = resample(image, 3.0)
-    print_matrix(output)
+    chisq = likelihood_to_chisq(output)
+    likelihood = chisq_to_likelihood(chisq)
+
+    histo = ROOT.TH2D("atmos", "atmos", 5, 0.296, 0.704, 5, 1.975e-3, 3.025e-3)
+    fill_histo(histo)
+    print_histo(histo)
+    print ""
+    smear(histo)
+    print_histo(histo)
+
