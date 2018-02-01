@@ -443,7 +443,7 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    $maxfreepar1       = 2.7e-3  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 21;#10            unless defined $npt_freepar1; # of free parameter points to scan
 
-   $wqueue = "long -W 3:00";
+   $wqueue = "medium";
 }
 
 if(($freepar0 ne "") && ($freepar1 eq ""))

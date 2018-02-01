@@ -46,14 +46,14 @@ def sub_sample(input, row, col):
         y = row + dy
         if y < 0:
             y = 0
-        elif y >= input.shape[1]:
-            y = input.shape[1] - 1
+        elif y >= input.shape[0]:
+            y = input.shape[0] - 1
         for dx in range(-1, 3):
             x = col + dx
             if x < 0:
                 x = 0
-            elif x >= input.shape[0]:
-                x = input.shape[0] - 1
+            elif x >= input.shape[1]:
+                x = input.shape[1] - 1
             sample[dy + 1][dx + 1] = input[y][x]
     return sample
 
@@ -192,32 +192,85 @@ def print_histo(input):
 
 
 if __name__=="__main__":
-#    parser = argparse.ArgumentParser(description="Index splines")
-#    parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input p-theta fake data file.")
-#    parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output Valor fake data file.")
-#    args = parser.parse_args()
-    original = ROOT.TH2D("atmos", "atmos", 5, 0.296, 0.704, 5, 1.975e-3, 3.025e-3)
-    fill_histo(original)
+    parser = argparse.ArgumentParser(description="Index splines")
+    parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input contour file.")
+    parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output contour file.")
+    parser.add_argument("-r", "--root-filename", dest="root_filename", default="", help="Output root file.")
+    args = parser.parse_args()
+    in_file = ROOT.TFile(args.in_filename, "READ")
+    original = in_file.Get("chisq_map_2D")
+#    original = ROOT.TH2D("atmos", "atmos", 5, 0.296, 0.704, 5, 1.975e-3, 3.025e-3)
+#    fill_histo(original)
     original_array = histo_to_nparray(original)
-    resampled_array = resample(original_array, 3.0)
-    resampled_histogram = ROOT.TH2D("atmos", "atmos", 15, 0.296, 0.704, 15, 1.975e-3, 3.025e-3)
+    scale = 10.0
+    resampled_array = resample(original_array, scale)
+#    resampled_histogram = ROOT.TH2D("atmos", "atmos", 15, 0.296, 0.704, 15, 1.975e-3, 3.025e-3)
+    resampled_histogram = ROOT.TH2D("atmos", "atmos", int(scale * original.GetNbinsX()), original.GetXaxis().GetXmin(), original.GetXaxis().GetXmax(), int(scale * original.GetNbinsY()), original.GetYaxis().GetXmin(), original.GetYaxis().GetXmax())
     copy_nparray_to_histo(resampled_array, resampled_histogram)
     likelihood_histogram = chisq_to_likelihood(resampled_histogram)
     smeared_histogram = likelihood_histogram.Clone()
     smeared_histogram.SetDirectory(0)
     smear(smeared_histogram)
     chisq_histogram = likelihood_to_chisq(smeared_histogram)
+    chisqmin = chisq_histogram.GetMinimum()
+    chisq_histogram.SetContour(2)
+    chisq_histogram.SetContourLevel(0, chisqmin + 2.3)
+    chisq_histogram.SetContourLevel(1, chisqmin + 4.61)
+    canvas = ROOT.TCanvas("c", "c", 700, 500)
+    canvas.Print(args.out_filename + "[")
+    likelihood_histogram.Draw("COLZ")
+    canvas.Print(args.out_filename)
+    smeared_histogram.Draw("COLZ")
+    canvas.Print(args.out_filename)
 
-    print "Original:"
-    print_histo(original)
-    print "Resampled:"
-    print_histo(resampled_histogram)
-    print "Likelihood:"
-    print_histo(likelihood_histogram)
-    print "Smeared:"
-    print_histo(smeared_histogram)
-    print "Chisq:"
-    print_histo(chisq_histogram)
-#    smear(histo)
-#    print_histo(histo)
+    root_out_file = ROOT.TFile(args.root_filename, "RECREATE")
+    root_out_file.cd()
+    likelihood_histogram.Write("likelihood_2D")
+    chisq_histogram.Draw("CONT LIST")
+    canvas.Update()
+    contours = ROOT.gROOT.GetListOfSpecials().FindObject("contours")
+    list68 = contours.At(0)
+    iter = ROOT.TIter(list68)
+    opt = ""
+    for i, g in enumerate(iter):
+        print "68", i
+        name = "g68_valor_" + str(i)
+        g.SetLineWidth(2)
+        g.SetLineStyle(2)
+        g.SetLineColor(ROOT.kRed)
+        root_out_file.cd()
+        g.Draw(opt + "CONT3")
+        g.Write(name)
+        opt = "SAME"
+
+    list90 = contours.At(1)
+    iter = ROOT.TIter(list90)
+    opt = "SAME"
+    for i, g in enumerate(iter):
+        name = "g90_valor_" + str(i)
+        print "90", i
+        g.SetLineWidth(2)
+        g.SetLineStyle(1)
+        g.SetLineColor(ROOT.kRed)
+        root_out_file.cd()
+        g.Draw(opt + "CONT3")
+        g.Write(name)
+        opt = "SAME"
+    canvas.Print(args.out_filename)
+
+    canvas.Print(args.out_filename + "]")
+    root_out_file.Close()
+    in_file.Close()
+
+
+#    print "Original:"
+#    print_histo(original)
+#    print "Resampled:"
+#    print_histo(resampled_histogram)
+#    print "Likelihood:"
+#    print_histo(likelihood_histogram)
+#    print "Smeared:"
+#    print_histo(smeared_histogram)
+#    print "Chisq:"
+#    print_histo(chisq_histogram)
 
