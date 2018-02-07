@@ -94,7 +94,7 @@ foreach (@ARGV) {
 }
 
 $resource        = "interactive"               unless defined $resource;
-$config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
+$config_file     = "analysis_configuration_oa2017b_run1-8_postfit.xml"  unless defined $config_file;
 $fitparamlist   = "nuosc3f+nuisance"    unless defined $fitparamlist;  # standard joint fit
 $seed           = 999                   unless defined $seed;
 # Dummy mixing parameter values
@@ -114,11 +114,11 @@ $deltacp_ih      = -1.601                             unless defined $deltacp_ih
 
 if($use_reactors == 1)
 {
-   $tag             = "oa2017_${masshierarchy}_reactor"  unless defined $tag;
+   $tag             = "oa2017b_${masshierarchy}_reactor"  unless defined $tag;
 }
 else
 {
-   $tag             = "oa2017_${masshierarchy}_t2k"  unless defined $tag;
+   $tag             = "oa2017b_${masshierarchy}_t2k"  unless defined $tag;
 }
 
 $wqueue = "medium";
@@ -589,13 +589,13 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	    print PBS "#\$ -o $job_dir/$tag-$irun.pbs.out \n";
 	    print PBS "#\$ -e $job_dir/$tag-$irun.pbs.err \n";
 	    print PBS "#\$ -l ct=$cput,sps=1,s_rss=4G \n";
-	    print PBS "source $softw_dir/setup/setup_at_cvmfs_in2p3.sh $softw_dir $fmwk_dir \n";
+	    print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
 	    print PBS "cd $job_dir \n";
 	    # print PBS "cd ${TMPDIR}";
 	    print PBS "$command \n";
 	    # print PBS "cp ${TMPDIR}/*.root $job_dir";
 	    close(PBS);
-	    $job_submission_command = "qsub -V";
+	    $job_submission_command = "qsub";
 	    `$job_submission_command  $job_dir/$tag-$irun.pbs`;
 	} #LyonPBS
 
