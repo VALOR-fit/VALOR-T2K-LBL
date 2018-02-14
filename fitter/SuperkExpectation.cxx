@@ -358,7 +358,7 @@ bool SuperkExpectation::Read(string config_file, Option_t * /*opt*/)
   XMLNodePointer_t root_node = xml->DocGetRootElement(xmldoc);
 
   // Configure each of the components 
-  
+ 
   if ( ! this->GetBANFF() -> Read (xml, root_node) ) return false;
   if ( ! this->GetSuperkDetectorFSI() -> Read (xml, root_node) ) return false;
 
@@ -795,6 +795,62 @@ TH1D* SuperkExpectation::CurrPredictedErecoSpectrum(
     
   return h;
 }
+//________________________________________________________________________________________
+TH1D* SuperkExpectation::CurrPredictedQ2Spectrum(valor::conv::SuperkSample_t s) const 
+{
+  const int dimension = 1 ; // 0 = Ereco, 1 = Q2, theta, etc
+  const VALORArray * va = 0;
+  va = this->CurrPredictedErecoVsQ2VArray(s);
+  if (!va) {
+    std::cerr<<"SuperkExpectation/CurrPredictedQ2Spectrum(s) >> Failed to get VALORArray for "<<util::AsString(s)<<endl;
+    return 0;
+  }
+  
+  // Name left at ereco to avoid many changes to the systematic variations code
+  string name (Form("curr_ereco_%s"                       ,util::AsStringCompact(s).c_str() ) );
+  string title(Form("Current Predicted Theta Spectrum: %s",util::AsString(s).c_str() ) );
+  
+  const double * bin_edges = util::Q2BinEdges(s);
+  
+  TH1D * h = new TH1D(util::Make1DHistogramFromArray(*va,bin_edges,dimension));
+  util::FormatQ2Hist(h);
+  h->SetName(name.c_str());
+  h->SetTitle(title.c_str());
+  
+  return h;
+}
+//________________________________________________________________________________________
+TH1D* SuperkExpectation::CurrPredictedQ2Spectrum(
+  valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const 
+{
+  const int dimension = 1 ; // 0 = Ereco, 1 = Q2, theta, etc
+  const VALORArray * va = 0;
+  va = this->CurrPredictedErecoVsQ2VArrayMode(s);
+  if (!va) {
+    std::cerr<<"SuperkExpectation/CurrPredictedQ2Spectrum(s,m) >> Failed to get VALORArray for "<<util::AsString(s)<<" - "<<util::AsString(m)<<endl;
+    return 0;
+  }
+  
+  int midx = util::ArrIdx::Instance()->SuperkModeIdx(s,m);
+  if(midx == -1) {
+    std::cerr<<"SuperkExpectation/CurrPredictedQ2Spectrum(s,m) >> Failed to get mode for "<<util::AsString(s)<<" - "<<util::AsString(m)<<endl;
+    return 0;
+  }
+  
+  // Name left at ereco to avoid many changes to the systematic variations code
+  string name  (Form("curr_ereco_%s_%s"                       ,util::AsStringCompact(s).c_str(), util::AsStringCompact(m).c_str()) );
+  string title (Form("Current Predicted Theta Spectrum: %s %s",util::AsString(s).c_str()       , util::AsString(m).c_str()       ) );
+  const double * bin_edges = util::Q2BinEdges(s);
+    
+  TH1D * h = new TH1D(util::Make1DHistogramFromArray(va->GetSlice(0,midx,midx),bin_edges,dimension));
+  util::FormatQ2Hist(h);
+  util::SetDefaultSKSpectrumStyle(s,m,h);
+  h->SetName(name.c_str());
+  h->SetTitle(title.c_str());
+    
+  return h;
+}
+
 //________________________________________________________________________________________
 VALORArray * SuperkExpectation::CurrPredictedErecoVArray(valor::conv::SuperkSample_t s) 
 {

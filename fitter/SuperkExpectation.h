@@ -108,6 +108,9 @@ public:
   // As histograms
   TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
   TH1D*   CurrPredictedErecoSpectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+  TH1D*   CurrPredictedQ2Spectrum      (valor::conv::SuperkSample_t s) const; // Returns new object, mut be deleted
+  TH1D*   CurrPredictedQ2Spectrum      (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m) const; // Returns new object, mut be deleted
+
   // Double array getters
   double* CurrPredictedErecoSpectrumArray     (valor::conv::SuperkSample_t s);
   double* CurrPredictedErecoSpectrumArrayMode (valor::conv::SuperkSample_t s, valor::conv::SuperkMode_t m);
