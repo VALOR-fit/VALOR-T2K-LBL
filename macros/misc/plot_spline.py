@@ -4,22 +4,34 @@ import ROOT
 import sys
 import argparse
 
-def plot(filename, var, point):
-    f = ROOT.TFile(filename)
+ROOT.gROOT.SetBatch(1)
+
+def plot(in_filename, out_filename):
+    f = ROOT.TFile(in_filename)
     drawn = False
-    names = [ key.GetName() for key in f.GetListOfKeys() if var in key.GetName() ]
+    names = [ key.GetName() for key in f.GetListOfKeys() ]
     names.sort()
     canvas = ROOT.TCanvas("c1","c1", 700, 500)
-    canvas.Print("spline_" + str(point) + ".pdf[")
+    canvas.Print(out_filename + "[")
     for name in names:
-        spline = f.Get(name)
-        spline.Eval(point)
-        spline.Draw("LP")
-        canvas.Modified()
-        canvas.Print("spline_" + str(point) + ".pdf")
-    canvas.Print("spline_" + str(point) + ".pdf]")
-    for name in names:
-        print name
+        objarray = f.Get(name)
+        for spline in objarray:
+            N = spline.GetNp()
+            is_flat = True
+            for i in range(N):
+                x = ROOT.Double(0)
+                y = ROOT.Double(0)
+                spline.GetKnot(i, x, y)
+                if y != 1.0:
+                    is_flat = False
+                    break
+            if not is_flat:
+                spline.SetTitle(name)
+                spline.Draw("LP")
+                canvas.Modified()
+                canvas.Print(out_filename)
+    canvas.Print(out_filename + "]")
+    f.Close()
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -164,13 +176,14 @@ def state(filename, var, mode, flav, etbin, erbin, thetabin):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot splines")
-    parser.add_argument("-f", "--file", dest="filename", default="", help="Input file containing splines.")
+    parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input file containing splines.")
     parser.add_argument("-s", "--systematic", dest="systematic", default="", help="Systematic to generate spline for.")
     parser.add_argument("-m", "--mode", dest="mode", default="ccqe", help="Mode to generate spline for.")
     parser.add_argument("-t", "--etrue-bin", dest="etbin", default="*", help="Etrue bin.")
     parser.add_argument("-e", "--ereco-bin", dest="erbin", default="*", help="Ereco bin.")
     parser.add_argument("-p", "--theta-bin", dest="thetabin", default="*", help="theta bin.")
     parser.add_argument("-v", "--flavour", dest="flavour", default="", help="Neutrino flavour.")
+    parser.add_argument("-o", "--out-filename", dest="out_filename", default="", help="Output filename.")
     args = parser.parse_args()
-    state(args.filename, args.systematic, args.mode, args.flavour, args.etbin, args.erbin, args.thetabin)
-#    plot(args.filename, args.systematic, float(args.point))
+#    state(args.in_filename, args.systematic, args.mode, args.flavour, args.etbin, args.erbin, args.thetabin)
+    plot(args.in_filename, args.out_filename)

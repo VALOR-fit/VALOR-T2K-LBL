@@ -45,6 +45,7 @@ def temp(filename):
             spline_set.add(systematic + "_" + mode)
         elif "sp_" in name:
             tuple = name.split("_")
+            print name
             systematic, mode = tuple[3], tuple[1]
             spline_set.add(systematic + "_" + mode)
     splines = list(spline_set)
@@ -60,6 +61,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Index splines")
     parser.add_argument("-f", "--file", dest="filename", default="", help="Input file containing splines.")
     args = parser.parse_args()
-#    index(args.filename)
+    index(args.filename)
 #    index_single(args.filename, "1Rmu", "maqe", "numubarccqe")
-    temp(args.filename)
+#    temp(args.filename)

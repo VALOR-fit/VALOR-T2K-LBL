@@ -26,7 +26,8 @@ rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
 
-pattern = "WithFSI_1117_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
+#pattern = "WithFSI_1117_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
+pattern = "Eb_FSI_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root"
 #pattern = "[TYPE]_[SELECTION]_[CURRENT].root" # The file naming convention
 #pattern = "splines_[TYPE].root"
 
@@ -70,7 +71,7 @@ systematics = [("maqe_ccqe"       , False ),
                ("NCcoh_EtrueEreco_FEFQE"    , False ),
                ("NC1pipm_EtrueEreco_FEFQE"  , False ),
                ("NC1pi0_EtrueEreco_FEFQE"   , False ),
-               ("CCDIS_EtrueEreco_FEFQE"    , False ),
+               ("ccoth_EtrueEreco_FEFQE"    , False ),
                ("CCcoh_EtrueEreco_FEFQE"    , False ),
                ("CC1pi_EtrueEreco_FEFQE"    , False ),
                ("CCQE_EtrueEreco_FEFQE"     , False ),
@@ -80,7 +81,7 @@ systematics = [("maqe_ccqe"       , False ),
                ("NCcoh_EtrueEreco_FEFCX"    , False ),
                ("NC1pipm_EtrueEreco_FEFCX"  , False ),
                ("NC1pi0_EtrueEreco_FEFCX"   , False ),
-               ("CCDIS_EtrueEreco_FEFCX"    , False ),
+               ("ccoth_EtrueEreco_FEFCX"    , False ),
                ("CCcoh_EtrueEreco_FEFCX"    , False ),
                ("CC1pi_EtrueEreco_FEFCX"    , False ),
                ("CCQE_EtrueEreco_FEFCX"     , False ),
@@ -90,7 +91,7 @@ systematics = [("maqe_ccqe"       , False ),
                ("NCcoh_EtrueEreco_FEFQEH"   , False ),
                ("NC1pipm_EtrueEreco_FEFQEH" , False ),
                ("NC1pi0_EtrueEreco_FEFQEH"  , False ),
-               ("CCDIS_EtrueEreco_FEFQEH"   , False ),
+               ("ccoth_EtrueEreco_FEFQEH"   , False ),
                ("CCcoh_EtrueEreco_FEFQEH"   , False ),
                ("CC1pi_EtrueEreco_FEFQEH"   , False ),
                ("CCQE_EtrueEreco_FEFQEH"    , False ),
@@ -100,7 +101,7 @@ systematics = [("maqe_ccqe"       , False ),
                ("NCcoh_EtrueEreco_FEFABS"   , False ),
                ("NC1pipm_EtrueEreco_FEFABS" , False ),
                ("NC1pi0_EtrueEreco_FEFABS"  , False ),
-               ("CCDIS_EtrueEreco_FEFABS"   , False ),
+               ("ccoth_EtrueEreco_FEFABS"   , False ),
                ("CCcoh_EtrueEreco_FEFABS"   , False ),
                ("CC1pi_EtrueEreco_FEFABS"   , False ),
                ("CCQE_EtrueEreco_FEFABS"    , False ),
@@ -110,7 +111,7 @@ systematics = [("maqe_ccqe"       , False ),
                ("NCcoh_EtrueEreco_FEFINEL"  , False ),
                ("NC1pipm_EtrueEreco_FEFINEL", False ),
                ("NC1pi0_EtrueEreco_FEFINEL" , False ),
-               ("CCDIS_EtrueEreco_FEFINEL"  , False ),
+               ("ccoth_EtrueEreco_FEFINEL"  , False ),
                ("CCcoh_EtrueEreco_FEFINEL"  , False ),
                ("CC1pi_EtrueEreco_FEFINEL"  , False ),
                ("CCQE_EtrueEreco_FEFINEL"   , False )
@@ -145,7 +146,7 @@ replacements = [("NC1pipm","nc1piC"),
                 ("NCoth" ,"ncoth"),
                 ("NCcoh" ,"nccoh"),
                 ("NC1" ,"nc1"),
-                ("CCDIS" ,"ccoth"),
+                ("ccoth" ,"ccoth"),
                 ("CCcoh" ,"cccoh"),
                 ("CC1pi" ,"cc1pi"),
                 ("CCQE" ,"ccqe"),
@@ -231,7 +232,7 @@ def main(version, loc, sample):
           
                 new_spl_name = "spl_" + sample + "_" + par + "_" + valor_type + mode
                 idx = true_bin * Nereco + reco_bin 
-          
+
                 all_splines[new_spl_name].AddAt(ROOT.TSpline3(spline), idx)
         tf.Close()
 

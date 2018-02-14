@@ -57,6 +57,7 @@ branches_we_care_about = ["iclass",
                           "wgtBeRPA_nom",
                           "wgtsfrfg",
                           "wght_CCcoh",
+                          "wght_NCgm",
                           "amomm",
                           "amome",
                           "dir",
@@ -87,7 +88,7 @@ def main(input_dir,simplify_tree):
   else:
     print "Unknown horn current"
   
-  output_head = files[0].split("fine")[0]
+  output_head = f.split("fine")[0]
 
   print "Output_file head"
   print output_head

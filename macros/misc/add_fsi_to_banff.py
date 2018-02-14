@@ -158,6 +158,46 @@ def get_flux_from_banff(banff_filename):
 
     return (flux_matrix, flux_nominal, flux_names)
 
+def get_xsec_from_banff(banff_filename, type="prefit"):
+    banff_file = ROOT.TFile(banff_filename, "READ")
+
+    # Copy flux parameter names
+    banff_names = banff_file.Get("param_list")
+    Nflux = banff_names.IndexOf(ROOT.TObjString("SKANuModeNueb6"))
+    Nnames = banff_names.GetEntries()
+    xsec_names = ROOT.TObjArray()
+    for i in range(Nflux + 1, Nnames):
+        xsec_names.Add(banff_names[i])
+
+    # Copy flux parameters from BANFF matrix to new matrix
+    banff_matrix = banff_file.Get(type + "_cov")
+
+    N = xsec_names.GetEntries()
+    xsec_matrix = ROOT.TMatrixD(N, N)
+    for x in range(N):
+        for y in range(N):
+            xsec_matrix[y][x] = banff_matrix[y + Nflux + 1][x + Nflux + 1]
+    
+    banff_nominal = banff_file.Get(type + "_params")
+    xsec_nominal = ROOT.TVectorD(N)
+    for i in range(N):
+        xsec_nominal[i] = banff_nominal[i + Nflux + 1]
+
+    return (xsec_matrix, xsec_nominal, xsec_names)
+
+def add_2018_params_to_postfit(xsec_matrix, xsec_nominal, xsec_names, new_matrix, new_nominal, new_names):
+    banff_matrix = new_matrix.Clone()
+    banff_nominal = new_nominal.Clone()
+    banff_names = new_names.Clone()
+    N = xsec_names.GetEntries()
+    for x in range(N):
+        a = new_names.IndexOf(xsec_names[x])
+        banff_nominal[a] = xsec_nominal[x]
+        for y in range(N):
+            b = new_names.IndexOf(xsec_names[y])
+            banff_matrix[b][a] = xsec_matrix[y][x]
+    return (banff_matrix, banff_nominal, banff_names)
+
 def streamline_xsec(xsec_filename):
     unused_params = [ "pF_C", "2p2h_shape_C", "NC_other_near", "CC_Coh_C" ]
 
@@ -242,6 +282,11 @@ def replace_xsec_in_banff_2017(banff_filename, xsec_filename, outputname):
     # Nothing provided for postfit matrix yet, so just copy the prefit matrix
     # and nominal to ensure that reformatting to valor doesn't crash due to matrix
     # size mismatch
+    banff_cov, banff_nom, banff_name = get_xsec_from_banff(banff_filename, "postfit")
+    xsec_cov, xsec_nom, xsec_name = add_2018_params_to_postfit(banff_cov, banff_nom, banff_name, xsec_cov, xsec_nom, xsec_name)
+    banff_cov, banff_nom, banff_name = build_banff_from_flux_and_xsec(flux_cov, flux_nom, flux_name, xsec_cov, xsec_nom, xsec_name)
+
+    output_file.cd()
     banff_nom.Write("postfit_params")
     banff_cov.Write("postfit_cov");
 

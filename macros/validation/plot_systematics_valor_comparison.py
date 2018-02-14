@@ -218,8 +218,7 @@ def main(compare, valor_filename, other_filename, valor_selection, other_selecti
         legend = ROOT.TLegend(0.7, 0.6, 0.9, 0.8)
         legend.AddEntry(valor_hists_binno[valor_mode][valor_param][valor_var], "VALOR", "l")
         legend.AddEntry(other_ratio_hists_binno[valor_mode][valor_param][valor_var], "MaCh3", "l")
-        legend.Draw()
-        print "Drawing legend"
+        #legend.Draw()
         
 #  lchisq->SetFillColor(0);
 #  lchisq->SetLineColor(0);

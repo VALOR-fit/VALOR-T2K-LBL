@@ -58,6 +58,7 @@ void vary_systematics
  string tablesyst_name           = "f_tamesu", //"f_banff17", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
  const bool   per_mode           = true,
+ const bool   erec_binning       = true,
  const char*  tag                = "postbanff_osc"
  ){
   using namespace std;
@@ -254,7 +255,14 @@ void vary_systematics
   skexp.GetBANFF()->Tweak(0,0,"untuned");
   skexp.ResetSystematics();
   skexp.Generate(ph);
-  hErecoTun = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  if(erec_binning)
+  {
+    hErecoTun = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  }
+  else
+  {
+    hErecoTun = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+  }
   //hErecoTun = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
   hErecoTun->SetName("hErecoTun");
   cout << endl;
@@ -269,7 +277,14 @@ void vary_systematics
     if(m == conv::kSKmUndefined) continue;
     if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
     string modestr = util::AsStringCompact(m);
-    hErecoTunMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    if(erec_binning)
+    {
+      hErecoTunMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    }
+    else
+    {
+      hErecoTunMode[im] = skexp.CurrPredictedQ2Spectrum(s,m);
+    }
     //hErecoTunMode[im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY(); // NEW 2D TEMPLATES
     hErecoTunMode[im]->SetFillStyle(0);
     char name[200];
@@ -291,7 +306,14 @@ void vary_systematics
   skexp.GetBANFF()->Tweak(0,0,"untuned");
   skexp.Generate(ph);
   
-  hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  if(erec_binning)
+  {
+    hErecoNom = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  }
+  else
+  {
+     hErecoNom = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+  }
   //hErecoNom = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY()); // NEW 2D TEMPLATES
   hErecoNom->SetName("hErecoNom");
     
@@ -302,7 +324,14 @@ void vary_systematics
     string modestr = util::AsStringCompact(m);
     const char * mname = modestr.c_str();
         
-    hErecoNomMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    if(erec_binning)
+    {
+      hErecoNomMode[im] = skexp.CurrPredictedErecoSpectrum(s,m);
+    }
+    else
+    {
+      hErecoNomMode[im] = skexp.CurrPredictedQ2Spectrum(s,m);
+    }
     //hErecoNomMode[im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY(); // NEW 2D TEMPLATES
     hErecoNomMode[im]->SetFillStyle(0);
     char name[200];
@@ -487,7 +516,14 @@ void vary_systematics
     }
     skexp.Generate(ph);
     
-    hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    if(erec_binning)
+    {
+      hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    }
+    else
+    {
+      hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+    }
     //hErecoTun_p1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_p1sigma_%s",sysstr.c_str());
@@ -522,7 +558,14 @@ void vary_systematics
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
         
-      hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      if(erec_binning)
+      {
+        hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      }
+      else
+      {
+        hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedQ2Spectrum(s,m);
+      }
       //hErecoTunMode_p1sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_p1sigma[ip][im]->SetFillStyle(0);
         
@@ -562,8 +605,16 @@ void vary_systematics
       exit(1);
     }
     skexp.Generate(ph);
-    
-    hErecoTun_m1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+
+    if(erec_binning)
+    {
+      hErecoTun_m1sigma[ip] = skexp.CurrPredictedErecoSpectrum(s);
+    }
+    else
+    {
+      hErecoTun_m1sigma[ip] = skexp.CurrPredictedQ2Spectrum(s);
+    }
+
     //hErecoTun_m1sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_m1sigma_%s",sysstr.c_str());
@@ -597,8 +648,15 @@ void vary_systematics
       if(util::ArrIdx::Instance()->SuperkModeIdx(s,m) < 0) continue;
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
-        
-      hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+       
+      if(erec_binning)
+      {
+        hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      }
+      else
+      {
+        hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedQ2Spectrum(s,m);
+      }
       //hErecoTunMode_m1sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_m1sigma[ip][im]->SetFillStyle(0);
         
@@ -639,7 +697,14 @@ void vary_systematics
     }
     skexp.Generate(ph);
     
-    hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    if(erec_binning)
+    {
+      hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    }
+    else
+    {
+      hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+    }
     //hErecoTun_p3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_p3sigma_%s",sysstr.c_str());
@@ -665,7 +730,14 @@ void vary_systematics
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
         
-      hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      if(erec_binning)
+      {
+        hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      }
+      else
+      {
+        hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedQ2Spectrum(s,m);
+      }
       //hErecoTunMode_p3sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_p3sigma[ip][im]->SetFillStyle(0);
         
@@ -707,7 +779,14 @@ void vary_systematics
     }
     skexp.Generate(ph);
     
-    hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    if(erec_binning)
+    {
+      hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+    }
+    else
+    {
+      hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+    }
     //hErecoTun_m3sigma[ip] = new TH1D(*skexp.CurrPredictedErecoVsQ2Spectrum(s)->ProjectionY());
     char name[200];
     sprintf(name,"hErecoTun_m3sigma_%s",sysstr.c_str());
@@ -733,7 +812,14 @@ void vary_systematics
       string modestr = util::AsStringCompact(m);
       const char * mname = modestr.c_str();
         
-      hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      if(erec_binning)
+      {
+        hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoSpectrum(s,m);
+      }
+      else
+      {
+        hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedQ2Spectrum(s,m);
+      }
       //hErecoTunMode_m3sigma[ip][im] = skexp.CurrPredictedErecoVsQ2Spectrum(s,m)->ProjectionY();
       hErecoTunMode_m3sigma[ip][im]->SetFillStyle(0);
         
@@ -774,8 +860,16 @@ void vary_systematics
   skexp.GetBANFF()->Tweak(1,twkv_banff_p1sigma,"");
   skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_p1sigma,"");
   skexp.Generate(ph);    
-    
-  hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  
+  if(erec_binning)
+  {
+    hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  }
+  else
+  {
+    hErecoTun_p1sigma_all = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+  }
+
   char name[200];
   sprintf(name,"hErecoTun_p1sigma_all");
   hErecoTun_p1sigma_all->SetName(name);
@@ -794,7 +888,14 @@ void vary_systematics
   skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_p3sigma,"");
   skexp.Generate(ph);    
     
-  hErecoTun_p3sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  if(erec_binning)
+  {
+    hErecoTun_p3sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  }
+  else
+  {
+    hErecoTun_p3sigma_all = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+  }
   char name[200];
   sprintf(name,"hErecoTun_p3sigma_all");
   hErecoTun_p3sigma_all->SetName(name);
@@ -816,7 +917,14 @@ void vary_systematics
   skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_m1sigma,"");
   skexp.Generate(ph);
     
-  hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  if(erec_binning)
+  {
+    hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  }
+  else
+  {
+    hErecoTun_m1sigma_all = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+  }
   char name[200];
   sprintf(name,"hErecoTun_m1sigma_all");
   hErecoTun_m1sigma_all->SetName(name);
@@ -835,7 +943,14 @@ void vary_systematics
   skexp.GetSuperkDetectorFSI()->Tweak(1,twkv_skdetfsi_m3sigma,"");
   skexp.Generate(ph);    
     
-  hErecoTun_m3sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  if(erec_binning)
+  {
+    hErecoTun_m3sigma_all = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+  }
+  else
+  {
+    hErecoTun_m3sigma_all = new TH1D(*skexp.CurrPredictedQ2Spectrum(s));
+  }
   char name[200];
   sprintf(name,"hErecoTun_m3sigma_all");
   hErecoTun_m3sigma_all->SetName(name);
