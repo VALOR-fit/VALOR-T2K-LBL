@@ -39,6 +39,7 @@ def temp(filename):
     for name in names:
         if "_sp_" in name:
             tuple = name.split("_")
+            print name
             systematic, mode = tuple[1], tuple[2]
             if "erpa" in systematic:
                 systematic, mode = tuple[1] + "_" + tuple[2], tuple[3]
@@ -50,8 +51,8 @@ def temp(filename):
             spline_set.add(systematic + "_" + mode)
     splines = list(spline_set)
     splines.sort()
-    for spline in splines:
-        print(spline)
+#    for spline in splines:
+#        print(spline)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -61,6 +62,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Index splines")
     parser.add_argument("-f", "--file", dest="filename", default="", help="Input file containing splines.")
     args = parser.parse_args()
-    index(args.filename)
+#    index(args.filename)
 #    index_single(args.filename, "1Rmu", "maqe", "numubarccqe")
-#    temp(args.filename)
+    temp(args.filename)

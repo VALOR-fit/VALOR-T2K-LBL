@@ -26,9 +26,7 @@ rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
 
-#pattern = "WithFSI_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root" # The file naming convention
-pattern = "Eb_FSI_spline2017[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root"
-#pattern = "[TYPE]_[SELECTION]_[CURRENT].root" # The file naming convention
+pattern = "Eb_FSI_spline2018[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root"
 
 types = [("nuebar_x_nuebar"  ,"nuebar"    ),  # First entry is new-style names, second entry is VALOR type names.
          ("nue_x_nue"        ,"nue"       ),
@@ -112,7 +110,17 @@ systematics = [("maqe_ccqe"       , False ),
                ("ccoth_EtrueEreco_FEFINEL"  , False ),
                ("CCcoh_EtrueEreco_FEFINEL"  , False ),
                ("CC1pi_EtrueEreco_FEFINEL"  , False ),
-               ("CCQE_EtrueEreco_FEFINEL"   , False )
+               ("CCQE_EtrueEreco_FEFINEL"   , False ),
+               ("ebo_cc1pi"       , False ),
+               ("ebo_cccoh"       , False ),
+               ("ebo_ccoth"       , False ),
+               ("ebo_ccqe"        , False ),
+               ("ebo_mec"         , False ),
+               ("ebo_nc1gamma"    , False ),
+               ("ebo_nccoh"       , False ),
+               ("ebo_ncoth"       , False ),
+               ("ebo_ncpiz"       , False ),
+               ("ebo_ncpipm"      , False )
 ]
                
 selections = dict()

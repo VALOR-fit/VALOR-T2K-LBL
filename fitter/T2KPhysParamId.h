@@ -147,8 +147,9 @@ static const PhysParamId_t kNuisBANFFSKFSIQELow          = kNuis077;   // SK FSI
 static const PhysParamId_t kNuisBANFFSKFSICXLow          = kNuis078;   // SK FSI single charge exchange (<500 MeV)
 static const PhysParamId_t kNuisBANFFSKFSIQEHigh         = kNuis079;   // SK FSI QE high energy (>400 MeV)
 static const PhysParamId_t kNuisBANFFSKFSIInelastic      = kNuis080;   // SK FSI hadron (N + nPi) production (>400 MeV)
+static const PhysParamId_t kNuisBANFFEb                  = kNuis081;   // Binding energy
 
-static const PhysParamId_t kLastBANFFParam  = kNuis081; // Utility, should always come after last FHC BANFF
+static const PhysParamId_t kLastBANFFParam  = kNuis082; // Utility, should always come after last FHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -342,8 +343,9 @@ static const PhysParamId_t kRHCNuisBANFFSKFSIQELow          = kNuis227;   // SK 
 static const PhysParamId_t kRHCNuisBANFFSKFSICXLow          = kNuis228;   // SK FSI single charge exchange (<500 MeV)
 static const PhysParamId_t kRHCNuisBANFFSKFSIQEHigh         = kNuis229;   // SK FSI QE high energy (>400 MeV)
 static const PhysParamId_t kRHCNuisBANFFSKFSIInelastic      = kNuis230;   // SK FSI hadron (N + nPi) production (>400 MeV)
+static const PhysParamId_t kRHCNuisBANFFEb                  = kNuis231;   // SK FSI hadron (N + nPi) production (>400 MeV)
  
-static const PhysParamId_t kRHCLastBANFFParam  = kNuis231; // Utility, should always come after last RHC BANFF
+static const PhysParamId_t kRHCLastBANFFParam  = kNuis232; // Utility, should always come after last RHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)

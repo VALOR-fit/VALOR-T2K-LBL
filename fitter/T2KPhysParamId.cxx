@@ -151,6 +151,7 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kNuisBANFFSKFSICXLow ) : return "BANFF; SK FSI; Single charge exchange";  break;
   case ( kNuisBANFFSKFSIQEHigh ) : return "BANFF; SK FSI; QE high energy";  break;
   case ( kNuisBANFFSKFSIInelastic ) : return "BANFF; SK FSI; Hadron production";  break;
+  case ( kNuisBANFFEb ) : return "BANFF; Binding energy";  break;
 
     //
 
@@ -548,6 +549,7 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFSKFSICXLow ) : return "BANFF; SK FSI; Single charge exchange; RHC";  break;
   case ( kRHCNuisBANFFSKFSIQEHigh ) : return "BANFF; SK FSI; QE high energy; RHC";  break;
   case ( kRHCNuisBANFFSKFSIInelastic ) : return "BANFF; SK FSI; Hadron production; RHC";  break;
+  case ( kRHCNuisBANFFEb) : return "BANFF; Binding energy; RHC";  break;
 
     //
 
@@ -1162,6 +1164,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
   case ( kNuisBANFFSKFSICXLow ) : return "BANFF; SK FSI; Single charge exchange";  break;
   case ( kNuisBANFFSKFSIQEHigh ) : return "BANFF; SK FSI; QE high energy";  break;
   case ( kNuisBANFFSKFSIInelastic ) : return "BANFF; SK FSI; Hadron production";  break;
+  case ( kNuisBANFFEb ) : return "BANFF; Binding energy";  break;
 
     //
             
@@ -1561,6 +1564,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
   case ( kRHCNuisBANFFSKFSICXLow ) : return "BANFF; SK FSI; Single charge exchange; RHC";  break;
   case ( kRHCNuisBANFFSKFSIQEHigh ) : return "BANFF; SK FSI; QE high energy; RHC";  break;
   case ( kRHCNuisBANFFSKFSIInelastic ) : return "BANFF; SK FSI; Hadron production; RHC";  break;
+  case ( kRHCNuisBANFFEb ) : return "BANFF; Binding energy; RHC";  break;
            
     //
             
@@ -2430,6 +2434,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFSKFSICXLow ) : return "f_banff_skfsi_cxl_fhc_rhc";  break;
         case ( kNuisBANFFSKFSIQEHigh ) : return "f_banff_skfsi_qeh_fhc_rhc";  break;
         case ( kNuisBANFFSKFSIInelastic ) : return "f_banff_skfsi_inel_fhc_rhc";  break;
+        case ( kNuisBANFFEb ) : return "f_banffshape_eb_fhc_rhc";  break;
            
 #else
 #ifndef ONEOVERMAQE
@@ -2481,6 +2486,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kNuisBANFFSKFSICXLow ) : return "f_banff_skfsi_cxl";  break;
         case ( kNuisBANFFSKFSIQEHigh ) : return "f_banff_skfsi_qeh";  break;
         case ( kNuisBANFFSKFSIInelastic ) : return "f_banff_skfsi_inel";  break;
+        case ( kNuisBANFFEb ) : return "f_banffshape_eb";  break;
 
             //
             
@@ -2665,6 +2671,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
         case ( kRHCNuisBANFFSKFSICXLow ) : return "f_banff_skfsi_cxl_rhc";  break;
         case ( kRHCNuisBANFFSKFSIQEHigh ) : return "f_banff_skfsi_qeh_rhc";  break;
         case ( kRHCNuisBANFFSKFSIInelastic ) : return "f_banff_skfsi_inel_rhc";  break;
+        case ( kRHCNuisBANFFEb ) : return "f_banffshape_eb_rhc";  break;
            
             //
             
@@ -3149,6 +3156,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kNuisBANFFSKFSICXLow ) : return "$f_{SKFSI_{CXlow}}^{banff}$";  break;
         case ( kNuisBANFFSKFSIQEHigh ) : return "$f_{SKFSI_{QEhigh}}^{banff}$";  break;
         case ( kNuisBANFFSKFSIInelastic ) : return "$f_{SKFSI_{Inel}}^{banff}$";  break;
+        case ( kNuisBANFFEb ) : return "f_{Shape_{Eb}}^{banff}";  break;
 
             //
             
@@ -3380,7 +3388,8 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
         case ( kRHCNuisBANFFSKFSICXLow ) : return "$f_{SKFSI_{CXlow}}^{banff} RHC$";  break;
         case ( kRHCNuisBANFFSKFSIQEHigh ) : return "$f_{SKFSI_{QEhigh}}^{banff} RHC$";  break;
         case ( kRHCNuisBANFFSKFSIInelastic ) : return "$f_{SKFSI_{Inel}}^{banff} RHC$";  break;
-           
+        case ( kRHCNuisBANFFEb ) : return "f_{Shape_{Eb}}^{banff} RHC";  break;
+
             //
             // XSec params not correlated with flux
             //
@@ -3676,6 +3685,9 @@ string valor::util::AsStringPaperTable(PhysParamId_t p)
     case ( kNuisBANFFSKFSIInelastic ) :
     case ( kRHCNuisBANFFSKFSIInelastic ) :
       return "SK FSI hadron production";  break;
+    case ( kNuisBANFFEb) :
+    case ( kRHCNuisBANFFEb ) :
+      return "Binding energy";  break;
 
                 
     default:
@@ -3823,6 +3835,7 @@ string valor::util::AsStringCompact_splinehack(PhysParamId_t p)
         case ( kRHCNuisBANFFSKFSICXLow ) : return "f_banff_skfsi_cxl";  break;
         case ( kRHCNuisBANFFSKFSIQEHigh ) : return "f_banff_skfsi_qeh";  break;
         case ( kRHCNuisBANFFSKFSIInelastic ) : return "f_banff_skfsi_inel";  break;
+        case ( kRHCNuisBANFFEb ) : return "f_banffshape_eb";  break;
            
             //
             
@@ -4183,6 +4196,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
   case ( kNuisBANFFSKFSICXLow ) : return true;
   case ( kNuisBANFFSKFSIQEHigh ) : return true;
   case ( kNuisBANFFSKFSIInelastic ) : return true;
+  case ( kNuisBANFFEb ) : return true;
     
   case ( kRHCNuisBANFF2p2hBar       ) : return true;
   case ( kRHCNuisBANFF2p2h          ) : return true;
@@ -4219,6 +4233,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
   case ( kRHCNuisBANFFSKFSICXLow ) : return true;
   case ( kRHCNuisBANFFSKFSIQEHigh ) : return true;
   case ( kRHCNuisBANFFSKFSIInelastic ) : return true;
+  case ( kRHCNuisBANFFEb ) : return true;
            
   default                           : return false;
   }
@@ -4327,6 +4342,7 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
   case kNuisBANFFSKFSICXLow :
   case kNuisBANFFSKFSIQEHigh :
   case kNuisBANFFSKFSIInelastic :
+  case kNuisBANFFEb:
 
     return true;
             
@@ -4353,6 +4369,7 @@ bool valor::util::IsUsingSplines(PhysParamId_t p)
   case kRHCNuisBANFFSKFSICXLow :
   case kRHCNuisBANFFSKFSIQEHigh :
   case kRHCNuisBANFFSKFSIInelastic :
+  case kRHCNuisBANFFEb:
 
     return true;
             
@@ -4662,6 +4679,10 @@ string valor::util::AsStringSpline(PhysParamId_t p)
   case kNuisBANFFSKFSIInelastic :
   case kRHCNuisBANFFSKFSIInelastic :
     return "FEFINEL";
+  case kNuisBANFFEb :
+  case kRHCNuisBANFFEb :
+    return "ebo";
+
 
   default:
     break;
@@ -4758,6 +4779,7 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case kNuisBANFFSKFSICXLow      : return "FEFCX";
   case kNuisBANFFSKFSIQEHigh     : return "FEFQEH";
   case kNuisBANFFSKFSIInelastic  : return "FEFINEL";
+  case kNuisBANFFEb : return "ebo";
 
   case (kRHCNuisBANFF2p2h          ): return "2p2h_norm_O";
   case (kRHCNuisBANFF2p2hBar       ): return "2p2h_norm_nubar_O";
@@ -4795,6 +4817,7 @@ string valor::util::AsStringNIWG(PhysParamId_t p)
   case kRHCNuisBANFFSKFSICXLow      : return "SKFSI_CXl";
   case kRHCNuisBANFFSKFSIQEHigh     : return "SKFSI_QEh";
   case kRHCNuisBANFFSKFSIInelastic  : return "SKFSI_Inel";
+  case kRHCNuisBANFFEb : return "ebo";
 
   default                           : return "--";
   }

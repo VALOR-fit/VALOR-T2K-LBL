@@ -35,6 +35,7 @@ abnormal_untuned_central_values["FEFQEH"] = 0.0
 abnormal_untuned_central_values["FEFINEL"] = 0.0
 abnormal_untuned_central_values["FEFABS"] = 0.0
 abnormal_untuned_central_values["FEFCX"] = 0.0
+abnormal_untuned_central_values["ebo"] = 0.0
 
 # Set up files
 assert(len(sys.argv)==2)

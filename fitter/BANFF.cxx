@@ -53,7 +53,7 @@ CorrelatedSystematics()
   reg.Set("banff", this);
   
   // Somewhat hacky handling of the fact that some of our code still thinks there are RHC specific BANFF-XSEC params.
-  for (int irhcp = kRHCNuisBANFFMAQE ; irhcp <= kRHCNuisBANFFSKFSIInelastic; irhcp++) {
+  for (int irhcp = kRHCNuisBANFFMAQE ; irhcp <= kRHCNuisBANFFEb; irhcp++) {
     int ifhcp = irhcp - (kRHCNuisBANFFMAQE-kNuisBANFFMAQE);
     fParam2Idx[irhcp] = fParam2Idx[ifhcp];
   }
