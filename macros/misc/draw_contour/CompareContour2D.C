@@ -186,7 +186,8 @@ void CompareContour2D(char* file_1 = "test1",
     gbest_fit_global[ifile]->Draw("same");
   }
   
-  TLegend *lcontours = new TLegend(0.65,0.73,0.88,0.88);
+//  TLegend *lcontours = new TLegend(0.65,0.73,0.88,0.88);
+  TLegend *lcontours = new TLegend(0.15,0.23,0.38,0.38);
   lcontours->SetFillColor(0);
   lcontours->SetLineColor(0);
   lcontours->SetTextFont(132);
@@ -201,7 +202,8 @@ void CompareContour2D(char* file_1 = "test1",
     lcontours->AddEntry(g90_valor[0][ifile],name,"l");
   }
   
-  TLegend *lcontours_2 = new TLegend(0.5,0.77,0.65,0.84);
+//  TLegend *lcontours_2 = new TLegend(0.5,0.77,0.65,0.84);
+  TLegend *lcontours_2 = new TLegend(0.15,0.42,0.3,0.49);
   lcontours_2->SetFillColor(0);
   lcontours_2->SetLineColor(0);
   lcontours_2->SetTextFont(132);
@@ -224,7 +226,7 @@ void CompareContour2D(char* file_1 = "test1",
   title->Draw("same");
   TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");
   note->SetTextSize(0.025);
-  note->Draw("same");
+//  note->Draw("same");
 
   ccontours->SaveAs(Form("%s.pdf",tag));
   ccontours->SaveAs(Form("%s.png",tag));

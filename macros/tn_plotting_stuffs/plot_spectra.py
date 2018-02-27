@@ -318,7 +318,7 @@ def plot_ereco_spectrum(histos, data, outfile):
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
     caveat.SetTextSize(0.025);
-    caveat.Draw("same");
+#    caveat.Draw("same");
 
     canvas.SaveAs(outfile + ".pdf")
     canvas.SaveAs(outfile + ".eps")
@@ -377,7 +377,7 @@ def plot_theta_spectrum(histos, data, outfile):
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
     caveat.SetTextSize(0.025);
-    caveat.Draw("same");
+#    caveat.Draw("same");
 
     canvas.SaveAs(outfile + ".pdf")
     canvas.SaveAs(outfile + ".eps")
@@ -429,7 +429,7 @@ def plot_ereco_theta_spectrum(histos, data, outfile):
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
     caveat.SetTextSize(0.025);
-    caveat.Draw("same");
+#    caveat.Draw("same");
 
     canvas.SaveAs(outfile + ".pdf")
     canvas.SaveAs(outfile + ".eps")

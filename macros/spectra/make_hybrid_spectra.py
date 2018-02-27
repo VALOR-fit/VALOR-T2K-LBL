@@ -19,6 +19,7 @@ ROOT.gROOT.SetBatch(1)
 
 samples=["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
 mcfileprefix="spectra_osc_asimova_"
+#mcfileprefix="spectra_valor_hybrid_"
 
 def make_full_hybrid(outfile, datafile, mcsamples=[]):
     df = ROOT.TFile(datafile)
@@ -77,13 +78,20 @@ if __name__=="__main__":
     parser.parse_args(values = v)
     o, other = parser.parse_args()
   
-    make_full_hybrid("hybrid_1Re.root", o.datafile, ["1Re"])
-    make_full_hybrid("hybrid_1Rmu.root", o.datafile, ["1Rmu"])
-    make_full_hybrid("hybrid_RHC1Re.root", o.datafile, ["RHC1Re"])
-    make_full_hybrid("hybrid_RHC1Rmu.root", o.datafile, ["RHC1Rmu"])
-    make_full_hybrid("hybrid_MultiRe.root", o.datafile, ["MultiRe"])
+#    make_full_hybrid("hybrid_1Re.root", o.datafile, ["1Re"])
+#    make_full_hybrid("hybrid_1Rmu.root", o.datafile, ["1Rmu"])
+#    make_full_hybrid("hybrid_RHC1Re.root", o.datafile, ["RHC1Re"])
+#    make_full_hybrid("hybrid_RHC1Rmu.root", o.datafile, ["RHC1Rmu"])
+#    make_full_hybrid("hybrid_MultiRe.root", o.datafile, ["MultiRe"])
 
-    make_full_hybrid("hybrid_4mc_cc1pi_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
+#    make_full_hybrid("hybrid_4mc_cc1pi_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
+#    make_full_hybrid("valor_hybrid.root", o.datafile, ["1Rmu","MultiRe"])
+#    make_full_hybrid("valor_bestfit.root", o.datafile, ["1Re","1Rmu","RHC1Re", "RHC1Rmu","MultiRe"])
+    make_full_hybrid("valor_hybrid_fhc1rmu_data.root", o.datafile, ["1Re","RHC1Re","RHC1Rmu","MultiRe"])
+    make_full_hybrid("valor_hybrid_fhc1re_data.root", o.datafile, ["1Rmu","RHC1Re","RHC1Rmu","MultiRe"])
+    make_full_hybrid("valor_hybrid_rhc1rmu_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","MultiRe"])
+    make_full_hybrid("valor_hybrid_rhc1re_data.root", o.datafile, ["1Re","1Rmu","RHC1Rmu","MultiRe"])
+    make_full_hybrid("valor_hybrid_fhc1pi_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
 
     if other:
         print "Warning - ignored arguments: ", other

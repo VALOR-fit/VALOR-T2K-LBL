@@ -59,6 +59,7 @@ void plot_contours_dcp_many
  const char *infilename_toys = "/home/phrdqd/VaLOR/analysis/tn/final/fitmarg_fc_dcp_normal_final_10k_-1.833_FullChisq.root",
  const char *fit_file_nh = "/home/phrdqd/VaLOR/analysis/tn/final/fit_oa2017_data_normal_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
  const char *fit_file_ih = "/home/phrdqd/VaLOR/analysis/tn/final/fit_oa2017_data_inverted_reactor_deltacp_nexp_1_-1.601_-999.000-job0-_0_0.root",
+ const char *fcname = "/home/phrdqd/VaLOR/analysis/tn/final/FCgraphs.root",
  const bool paper_style   = true,
  const bool two_sided = false,
  const char *hybrid_file_nh = 0,
@@ -76,9 +77,6 @@ void plot_contours_dcp_many
     }
   };
     
-  // File names of Feldman-Cousins
-  char *fcname = "/home/phrdqd/VaLOR/analysis/tn/final/FCgraphs.root"; 
-   
   char *latexname[Nfiles][Nmh] = {
     {"Normal","Inverted"}
   };
@@ -383,22 +381,16 @@ void plot_contours_dcp_many
       gFC90CL_ih_m1->SetLineColor(kBlue);
     }
     
-    gFC2sigma_nh   ->SetLineColor(kOrange-4);
-    gFC2sigma_nh_p1->SetLineColor(kOrange-4);
-    gFC2sigma_nh_m1->SetLineColor(kOrange-4);
-    gFC2sigma_ih   ->SetLineColor(kOrange-4);
-    gFC2sigma_ih_p1->SetLineColor(kOrange-4);
-    gFC2sigma_ih_m1->SetLineColor(kOrange-4);
-    gFC1sigma_nh   ->SetLineColor(kOrange-4);
-    gFC1sigma_nh_p1->SetLineColor(kOrange-4);
-    gFC1sigma_nh_m1->SetLineColor(kOrange-4);
-    gFC1sigma_ih   ->SetLineColor(kOrange-4);
-    gFC1sigma_ih_p1->SetLineColor(kOrange-4);
-    gFC1sigma_ih_m1->SetLineColor(kOrange-4);
+    gFC1sigma_nh   ->SetLineColor(kBlack);
+    gFC1sigma_nh_p1->SetLineColor(kBlack);
+    gFC1sigma_nh_m1->SetLineColor(kBlack);
+    gFC1sigma_ih   ->SetLineColor(kRed);
+    gFC1sigma_ih_p1->SetLineColor(kRed);
+    gFC1sigma_ih_m1->SetLineColor(kRed);
 
     gFC2sigma_nh   ->SetLineColor(kBlack);
     gFC2sigma_nh_p1->SetLineColor(kBlack);
-   gFC2sigma_nh_m1->SetLineColor(kBlack);
+    gFC2sigma_nh_m1->SetLineColor(kBlack);
     gFC2sigma_ih   ->SetLineColor(kRed);
     gFC2sigma_ih_p1->SetLineColor(kRed);
     gFC2sigma_ih_m1->SetLineColor(kRed);
@@ -1005,10 +997,23 @@ void plot_contours_dcp_many
   if(draw_preliminary)
   {
      title->Draw("same");
-     caveat->Draw("same");
+//     caveat->Draw("same");
   }
   // deltacp_critval.*, deltacp_interval_1sigma.*, deltacp_interval_90.*, deltacp_interval_2sigma.*
   const char* plotname = "interval_1sigma";
+  if(draw_1sigmaCL)
+  {
+     plotname = "FC_1sigma_CL";
+  }
+  else if(draw_90CL)
+  {
+     plotname = "FC_90_CL";
+  }
+  else if(draw_2sigmaCL)
+  {
+     plotname = "FC_2sigma_CL";
+  }
+
   cDeltaChisq->SaveAs(Form("deltacp_%s.pdf",plotname));
   cDeltaChisq->SaveAs(Form("deltacp_%s.png",plotname));
   cDeltaChisq->SaveAs(Form("deltacp_%s.eps",plotname));
@@ -1802,7 +1807,7 @@ void plot_contours_dcp_many
     hPvalueChisq_ih->Draw("same");
     if(draw_preliminary){
       title->Draw("same");
-      caveat->Draw("same");
+//      caveat->Draw("same");
     }
     TLegend *lPvalueChisq = new TLegend(0.6,0.4,0.8,0.65);
     lPvalueChisq->SetFillColor(0);
@@ -1830,7 +1835,7 @@ void plot_contours_dcp_many
     hZscoreChisq_ih->Draw("same");
     if(draw_preliminary){
       title->Draw("same");
-      caveat->Draw("same");
+//      caveat->Draw("same");
     }
     TLegend *lZscoreChisq = new TLegend(0.6,0.4,0.8,0.65);
     lZscoreChisq->SetFillColor(0);
@@ -1842,7 +1847,7 @@ void plot_contours_dcp_many
     lZscoreChisq->Draw();
     if(draw_preliminary){
       title->Draw("same");
-      caveat->Draw("same");
+//      caveat->Draw("same");
     }
     //
     
@@ -1878,7 +1883,7 @@ void plot_contours_dcp_many
       prob_caveat->SetTextSize(0.025);
 
       prob_title->Draw("same");
-      prob_caveat->Draw("same");
+//      prob_caveat->Draw("same");
     }
     TLegend *lProbChisq = new TLegend(0.488,0.1937,0.882,0.4);
     lProbChisq->SetFillColor(0);

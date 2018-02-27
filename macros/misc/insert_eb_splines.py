@@ -12,7 +12,8 @@ def file_listing(dir):
 def combine_files(main_dir, eb_dir, filename):
     eb_listing = file_listing(eb_dir)
     check = "eb" + filename
-    out_filename = filename.replace("v9", "v10")
+#    out_filename = filename.replace("v9", "v10")
+    out_filename = filename.replace("v9", "v11")
     fmain = ROOT.TFile(join(main_dir, filename), "READ")
     fout = ROOT.TFile(out_filename, "RECREATE")
     names = [ key.GetName() for key in fmain.GetListOfKeys() ]

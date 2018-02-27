@@ -233,7 +233,7 @@ void CompareContour1D
   title->Draw("same");
   TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");
   note->SetTextSize(0.025);
-  note->Draw("same");
+//  note->Draw("same");
 
   if(draw_preliminary)
   {

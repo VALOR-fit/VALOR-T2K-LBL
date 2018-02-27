@@ -58,6 +58,18 @@ def sub_sample(input, row, col):
             sample[dy + 1][dx + 1] = input[y][x]
     return sample
 
+def sub_sample_1d(input, idx):
+    """Exract an 4 x 4 sample around input[row][col]"""
+    sample = np.zeros(4)
+    for dx in range(-1, 3):
+        x = idx + dx
+        if x < 0:
+            x = 0
+        elif x >= len(input):
+            x = len(input) - 1
+        sample[dx + 1] = input[x]
+    return sample
+
 def make_filter(row, col, scale_row, scale_col):
     temp = (row - scale_row * 0.5) / scale_row
     pixel_row = int(temp)
@@ -73,6 +85,17 @@ def make_filter(row, col, scale_row, scale_col):
             filter[dy + 1][dx + 1] = catmull_rom(y) * catmull_rom(x)
     return filter
 
+def make_filter_1d(idx, scale):
+    temp = (idx - scale * 0.5) / scale
+    pixel = int(temp)
+    shift = temp - pixel
+    filter = np.zeros(4)
+    for dx in range(-1, 3):
+        x = -(dx - shift)
+        filter[dx + 1] = catmull_rom(x)
+    return filter
+
+
 def convolve(sub_sample, filter):
     return np.sum(sub_sample * filter)
 
@@ -80,7 +103,14 @@ def resample(input, scale):
     """Apply Catmull-Rom cubic interpolation"""
     if len(input.shape) == 1:
         # 1D resampling
-        None
+        width = int(scale * len(input))
+        output = np.zeros(width)
+        for c in range(width):
+            mc = int((c - scale * 0.5) / scale)
+            sample = sub_sample_1d(input, mc)
+            filter = make_filter_1d(c, scale)
+            output[c] = convolve(sample, filter)
+        return output
     elif len(input.shape) == 2:
         # 2D resampling
         width = int(scale * input.shape[1])
@@ -94,7 +124,6 @@ def resample(input, scale):
                 sample = sub_sample(input, mr, mc)
                 filter = make_filter(r, c, scale, scale)
                 output[r][c] = convolve(sample, filter)
-
         return output
     else:
         print "Error, input %dD. 1D or 2D resampling only" % len(input.shape)
@@ -195,60 +224,30 @@ def smear(input, error=3.556768e-5):
     canvas.Print("gaus.pdf]")
     return output
 
-def smear_new(input, error=3.556768e-5):
-    # Smear the input TH2D - assumes smear variable is Y
+def smear_1d(input, error=3.556768e-5):
+    # Smear the input TH1D
     NXbins = input.GetNbinsX()
     xaxis = input.GetXaxis()
     x_low = xaxis.GetBinLowEdge(1)
     x_high = xaxis.GetBinUpEdge(NXbins)
-
-    NYbins = input.GetNbinsY()
-    yaxis = input.GetYaxis()
-    y_low = yaxis.GetBinLowEdge(1)
-    y_high = yaxis.GetBinUpEdge(NYbins)
-    bin_width = yaxis.GetBinWidth(1)
+    bin_width = xaxis.GetBinWidth(1)
 
     norm = 1.0 / (error * np.sqrt(2 * np.pi))
-    
-    for i in range(1, NXbins + 1):
-        x_smear = xaxis.GetBinCenter(i)
-        for j in range(1, NYbins + 1):
-            y_smear = yaxis.GetBinCenter(j)
-            for k in range(1, NYbins + 1):
-                likelihood = input.GetBinContent(i + 1, j + 1)
-                gauss_bin = ROOT.TF1("gauss_bin", "gaus(0)", y_low, y_high)
-                gauss_bin.SetParameters(norm, y_smear, error)
-                if j != k:
-                    y_temp = yaxis.GetBinCenter(k)
-                    integral = gauss_bin.Integral(y_temp - 0.5 * bin_width, y_temp + 0.5 * bin_width)
-                    likelihood = input.GetBinContent(i, k)
-                    input.Fill(x_smear, y_smear, integral * likelihood)
-                    if i == max_x:
-                        smear_contrib.SetBinContent(k, integral * likelihood)
-                        receive[k - 1].SetBinContent(j, integral * likelihood)
-                else:
-                    if i == max_x:
-                        smear_contrib.SetBinContent(k, 0)
-            if i == max_x:
-                smear_contrib.SetTitle("Spread of " + str(x_smear) + " " + str(y_smear))
-                smear_contrib.Draw()
-                canvas.Print("gaus.pdf")
-    for i in range(1, NYbins + 1):
-        receive[i - 1].SetTitle("Inputs into " + str(xaxis.GetBinCenter(max_x)) + " " + str(yaxis.GetBinCenter(i)))
-        receive[i - 1].Draw()
-        canvas.Print("gaus.pdf")
-    bestfit_slice.SetTitle("Likelihood through sin^{2}#theta_{23} best fit")
-    bestfit_slice.Draw()
-    opt = "SAME"
-    for i in (left, right, right + 1):
-        receive[i - 1].Scale(10)
-        receive[i - 1].SetLineColor(ROOT.kRed)
-        receive[i - 1].Draw(opt)
-        receive[i - 1].SetTitle("Gaussian at 90CL")
+    output = input.Clone()
+    output.SetDirectory(0)
 
-    canvas.Print("gaus.pdf")
+    for i in range(0, NXbins):
+        x_smear = xaxis.GetBinCenter(i + 1)
+        likelihood = input.GetBinContent(i + 1)
+        gauss_bin = ROOT.TF1("gauss_bin", "gaus(0)", x_low, x_high)
+        gauss_bin.SetParameters(norm, x_smear, error)
+        for k in range(0, NXbins):
+            if i != k:
+                x_temp = xaxis.GetBinCenter(k + 1)
+                integral = gauss_bin.Integral(x_temp - 0.5 * bin_width, x_temp + 0.5 * bin_width)
+                output.Fill(x_temp, integral * likelihood)
+    return output
 
-    canvas.Print("gaus.pdf]")
 
 def marginalise(input, axis="x"):
     # Smear the input TH2D - assumes smear variable is Y
@@ -312,6 +311,30 @@ def make_delta_chisq(input):
             output.SetBinContent(i, j, input.GetBinContent(i, j) - minval)
     return output
 
+def chisq_to_likelihood_1d(input):
+    output = input.Clone()
+    output.SetDirectory(0)
+    NXbins = input.GetNbinsX()
+    for i in range(1, NXbins + 1):
+        output.SetBinContent(i, np.exp(-0.5 * input.GetBinContent(i)))
+    return output
+
+def likelihood_to_chisq_1d(input):
+    output = input.Clone()
+    output.SetDirectory(0)
+    NXbins = input.GetNbinsX()
+    for i in range(1, NXbins + 1):
+        output.SetBinContent(i, -2.0 * np.log(input.GetBinContent(i)))
+    return output
+
+def make_delta_chisq_1d(input):
+    output = input.Clone()
+    output.SetDirectory(0)
+    minval = input.GetMinimum()
+    NXbins = input.GetNbinsX()
+    for i in range(1, NXbins + 1):
+        output.SetBinContent(i, input.GetBinContent(i) - minval)
+    return output
 
 def print_matrix(input):
     for r in range(input.shape[1]):
@@ -347,6 +370,23 @@ def copy_nparray_to_histo(input_array, output_histo):
             output_histo.SetBinContent(i, j, input_array[j - 1][i - 1])
     return output_histo
 
+def histo_to_nparray_1d(input):
+    NXbins = input.GetNbinsX()
+    output = np.zeros(NXbins)
+    for i in range(1, NXbins + 1):
+        output[i - 1] = input.GetBinContent(i)
+    return output
+
+def copy_nparray_to_histo_1d(input_array, output_histo):
+    NXbins = output_histo.GetNbinsX()
+    if NXbins != len(input_array):
+        print "Error: Shape mismatch between array and histogram:"
+        print "Array %d Histogram %d" % (len(input_array), NXbins)
+        sys.exit()
+    for i in range(1, NXbins + 1):
+        output_histo.SetBinContent(i, input_array[i - 1])
+    return output_histo
+
 def print_histo(input):
     NXbins = input.GetNbinsX()
     NYbins = input.GetNbinsY()
@@ -355,19 +395,7 @@ def print_histo(input):
             print "%.4f" % input.GetBinContent(i, j),
         print ""
 
-
-if __name__=="__main__":
-    parser = argparse.ArgumentParser(description="Index splines")
-    parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input contour file.")
-    parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output contour file.")
-    parser.add_argument("-r", "--root-filename", dest="root_filename", default="", help="Output root file.")
-    args = parser.parse_args()
-    canvas = ROOT.TCanvas("c", "c", 700, 500)
-    canvas.Print(args.out_filename + "[")
-
-    in_file = ROOT.TFile(args.in_filename, "READ")
-    original = in_file.Get("chisq_map_2D")
-
+def process_2d(original, root_filename, pdf_filename):
     NXbins = original.GetNbinsX()
     xaxis = original.GetXaxis()
     x_low = xaxis.GetBinLowEdge(1)
@@ -379,31 +407,7 @@ if __name__=="__main__":
     y_high = yaxis.GetBinUpEdge(NYbins)
     bin_width = yaxis.GetBinWidth(1)
 
-    min = float(np.inf)
-    for i in range(1, NXbins + 1):
-        for j in range(1, NYbins + 1):
-            val = original.GetBinContent(i, j)
-            if val < min:
-                min = val
-                min_x = i
-                min_y = j
-
-    left_bin = 0
-    right_bin = 0
-    i = min_x
-    for j in range(1, NYbins + 1):
-        if left_bin == 0:
-            if (original.GetBinContent(i, j) - min) < 4.61:
-                left_bin = j
-        elif right_bin == 0:
-            if (original.GetBinContent(i, j) - min) > 4.61:
-                right_bin = j
-    print "2 sigma interval [", original.GetYaxis().GetBinCenter(left_bin), original.GetYaxis().GetBinCenter(right_bin), "]"
-
     temp = chisq_to_likelihood(original)
-    temp.SetTitle("Original likelihood surface")
-    temp.Draw("COLZ")
-    canvas.Print(args.out_filename)
     original_array = histo_to_nparray(original)
     scale = 10.0
     resampled_array = resample(original_array, scale)
@@ -412,12 +416,12 @@ if __name__=="__main__":
     likelihood_histogram = chisq_to_likelihood(resampled_histogram)
     likelihood_histogram.SetTitle("Resampled likelihood surface")
     likelihood_histogram.Draw("COLZ")
-    canvas.Print(args.out_filename)
+    canvas.Print(pdf_filename)
 
     smeared_histogram = smear(likelihood_histogram)
     smeared_histogram.SetTitle("Smeared likelihood surface")
     smeared_histogram.Draw("COLZ")
-    canvas.Print(args.out_filename)
+    canvas.Print(pdf_filename)
 
     chisq_histogram = likelihood_to_chisq(smeared_histogram)
     chisqmin = chisq_histogram.GetMinimum()
@@ -425,57 +429,12 @@ if __name__=="__main__":
     chisq_histogram.SetContourLevel(0, chisqmin + 2.3)
     chisq_histogram.SetContourLevel(1, chisqmin + 4.61)
 
-    dmsq_original = marginalise(temp)
-    dmsq_original.SetTitle("Original likelihood")
-    dmsq_original.Draw()
-    canvas.Print(args.out_filename)
-    dmsq_smeared = marginalise(smeared_histogram)
-    dmsq_smeared.SetTitle("Smeared likelihood")
-    dmsq_smeared.Draw()
-    canvas.Print(args.out_filename)
-
-    theta23_original = marginalise(temp, "y")
-    theta23_original.SetTitle("Original likelihood")
-    theta23_original.Draw()
-    canvas.Print(args.out_filename)
-    theta23_smeared = marginalise(smeared_histogram, "y")
-    theta23_smeared.SetTitle("Smeared likelihood")
-    theta23_smeared.Draw()
-    canvas.Print(args.out_filename)
-
-    root_out_file = ROOT.TFile(args.root_filename, "RECREATE")
+    root_out_file = ROOT.TFile(root_filename, "RECREATE")
     root_out_file.cd()
     likelihood_histogram.Write("likelihood_2D")
     chisq_histogram.Write("chisq_map_2D")
     dchisq_histogram = make_delta_chisq(chisq_histogram)
     dchisq_histogram.Write("dchisq_map_2D")
-    contours = array.array('d', [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 ])
-    dchisq_histogram.SetContour(len(contours), contours)
-    dchisq_histogram.Draw("COLZ")
-
-    dmsq_original = likelihood_to_chisq(dmsq_original)
-    dmsq_original = make_delta_chisq(dmsq_original)
-    dmsq_original.SetTitle("Original #Delta#chi^{2} surface")
-    dmsq_original.Draw()
-    canvas.Print(args.out_filename)
-
-    theta23_original = likelihood_to_chisq(theta23_original)
-    theta23_original = make_delta_chisq(theta23_original)
-    theta23_original.SetTitle("Original #Delta#chi^{2} surface")
-    theta23_original.Draw()
-    canvas.Print(args.out_filename)
-
-    dmsq_smeared = likelihood_to_chisq(dmsq_smeared)
-    dmsq_smeared = make_delta_chisq(dmsq_smeared)
-    dmsq_smeared.SetTitle("Smeared #Delta#chi^{2} surface")
-    dmsq_smeared.Draw()
-    canvas.Print(args.out_filename)
-
-    theta23_smeared = likelihood_to_chisq(theta23_smeared)
-    theta23_smeared = make_delta_chisq(theta23_smeared)
-    theta23_smeared.SetTitle("Smeared #Delta#chi^{2} surface")
-    theta23_smeared.Draw()
-    canvas.Print(args.out_filename)
 
     minbin = chisq_histogram.GetMinimumBin()
     binx = ROOT.Long(0)
@@ -520,19 +479,66 @@ if __name__=="__main__":
         g.Write(name)
         opt = "SAME"
 
-    canvas.Print(args.out_filename + "]")
+    canvas.Print(pdf_filename + "]")
     root_out_file.Close()
+
+def process_1d(original, root_filename, pdf_filename):
+    NXbins = original.GetNbinsX()
+    xaxis = original.GetXaxis()
+    x_low = xaxis.GetBinLowEdge(1)
+    x_high = xaxis.GetBinUpEdge(NXbins)
+
+    original_dchisq_histogram = make_delta_chisq_1d(original)
+    original_dchisq_histogram.SetTitle("Original #Delta#chi^2 surface")
+    original_dchisq_histogram.Draw("")
+    canvas.Print(pdf_filename)
+
+    temp = chisq_to_likelihood_1d(original)
+    original_array = histo_to_nparray_1d(original)
+    scale = 10.0
+    resampled_array = resample(original_array, scale)
+    resampled_histogram = ROOT.TH1D("atmos", "atmos", int(scale * original.GetNbinsX()), original.GetXaxis().GetXmin(), original.GetXaxis().GetXmax())
+    copy_nparray_to_histo_1d(resampled_array, resampled_histogram)
+    likelihood_histogram = chisq_to_likelihood_1d(resampled_histogram)
+
+    smeared_histogram = smear_1d(likelihood_histogram)
+
+    chisq_histogram = likelihood_to_chisq_1d(smeared_histogram)
+    chisqmin = chisq_histogram.GetMinimum()
+    chisq_histogram.SetContour(2)
+    chisq_histogram.SetContourLevel(0, chisqmin + 2.3)
+    chisq_histogram.SetContourLevel(1, chisqmin + 4.61)
+
+    root_out_file = ROOT.TFile(root_filename, "RECREATE")
+    root_out_file.cd()
+    likelihood_histogram.Write("likelihood")
+    chisq_histogram.Write("h_chisq")
+    dchisq_histogram = make_delta_chisq_1d(chisq_histogram)
+    dchisq_histogram.Write("h_deltachisq")
+
+    dchisq_histogram.SetTitle("Smeared #Delta#chi^2 surface")
+    dchisq_histogram.Draw("")
+    canvas.Print(pdf_filename)
+
+    canvas.Print(pdf_filename + "]")
+    root_out_file.Close()
+
+if __name__=="__main__":
+    parser = argparse.ArgumentParser(description="Index splines")
+    parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input contour file.")
+    parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output contour file.")
+    parser.add_argument("-r", "--root-filename", dest="root_filename", default="", help="Output root file.")
+    args = parser.parse_args()
+    canvas = ROOT.TCanvas("c", "c", 700, 500)
+    canvas.Print(args.out_filename + "[")
+
+    in_file = ROOT.TFile(args.in_filename, "READ")
+    if in_file.GetListOfKeys().Contains("chisq_map_2D"):
+        original = in_file.Get("chisq_map_2D")
+        process_2d(original, args.root_filename, args.out_filename)
+    else:
+        original = in_file.Get("h_chisq")
+        process_1d(original, args.root_filename, args.out_filename)
+
     in_file.Close()
-
-
-#    print "Original:"
-#    print_histo(original)
-#    print "Resampled:"
-#    print_histo(resampled_histogram)
-#    print "Likelihood:"
-#    print_histo(likelihood_histogram)
-#    print "Smeared:"
-#    print_histo(smeared_histogram)
-#    print "Chisq:"
-#    print_histo(chisq_histogram)
 
