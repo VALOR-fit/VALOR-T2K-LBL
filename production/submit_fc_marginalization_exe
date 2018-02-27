@@ -697,9 +697,14 @@ while($i_freepar1 < $n_freepar1) {
 		system($command);
 	    }
 	    
-	    if($resource eq "warwick") {
-#            `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/warwick_submit_command.sh $command`
-            `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/warwick_submit_command_preserve_quotes.sh $command`;
+	    if($resource eq "warwick")
+            {
+               `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/submit_fc.sh $command`;
+               $sleep_time = int(rand(10)) + 20;
+               print "Sleeping for $sleep_time seconds";
+               sleep($sleep_time);
+
+               #`bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/warwick_submit_command_preserve_quotes.sh $command`;
         }
     
 	    $irun++;

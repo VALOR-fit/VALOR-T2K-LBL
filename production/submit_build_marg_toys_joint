@@ -218,8 +218,8 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
       $wqueue                 = "long -M 8192";
       $npt_freepar0           = 100;
    }
-   $minfreepar0            = 2.3e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value
-   $maxfreepar0            = 2.7e-3    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
+   $minfreepar0            = 2.2e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 2.8e-3    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
    $minfreepar1            = 0.        unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1            = 0.        unless defined $maxfreepar1;     # Maximum free parameter allowed value 
    $npt_freepar1           = 1         unless defined $npt_freepar1;    # of free parameter points to scan
@@ -274,8 +274,8 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $minfreepar0      = 0.3        unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0      = 0.7        unless defined $maxfreepar0;     # Maximum free parameter allowed value 
    $npt_freepar0     = 81         unless defined $npt_freepar0;    # of free parameter points to scan
-   $minfreepar1      = 2.3e-3     unless defined $minfreepar1;     # Minimum free parameter allowed value
-   $maxfreepar1      = 2.7e-3     unless defined $maxfreepar1;     # Maximum free parameter allowed value 
+   $minfreepar1      = 2.2e-3     unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1      = 2.8e-3     unless defined $maxfreepar1;     # Maximum free parameter allowed value 
    $npt_freepar1     = 21         unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy   = 0          unless defined $marg_hierarchy;
    $masshierarchy    = "normal"   unless defined $masshierarchy;
