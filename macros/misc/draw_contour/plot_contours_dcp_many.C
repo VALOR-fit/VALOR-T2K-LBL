@@ -629,10 +629,6 @@ void plot_contours_dcp_many
     if(Status_range_nh==conv::kBadResult){
       cout << "Range not found" << endl;
     }
-    //cout << "lim_min_nh = " << lim_min_nh << endl;
-    //cout << "lim_max_nh = " << lim_max_nh << endl;
-    
-    
     
     // // Normal Hierarchy interval (second part)
     // cout << endl;
@@ -657,7 +653,7 @@ void plot_contours_dcp_many
     cout << endl;
     
     hdeltachisq1D_shifted_fc[0][1] = (TH1D*)hdeltachisq1D_GlobMin[0][1]->Clone(TString::Format("hdeltachisq1D_shifted_fc_file0_mh1"));
-    
+
     for(int ibin=0;ibin<hdeltachisq1D_shifted_fc[0][1]->GetNbinsX();ibin++){
       double bincenter = hdeltachisq1D_shifted_fc[0][1]->GetBinCenter(ibin+1);
       double bincont = hdeltachisq1D_shifted_fc[0][1]->GetBinContent(ibin+1);
@@ -686,10 +682,9 @@ void plot_contours_dcp_many
     if(Status_range_ih==conv::kBadResult){
       cout << "Range not found" << endl;
     }
-    //cout << "lim_min_ih = " << lim_min_ih << endl;
-    //cout << "lim_max_ih = " << lim_max_ih << endl;
-      
-    
+    cout << "Interval NH = [" << lim_min_nh << "," << lim_max_nh << "]" << endl;
+    cout << "Interval IH = [" << lim_min_ih << "," << lim_max_ih << "]" << endl;
+
     // //
     // // Useful to check whether the method is correct
     // //

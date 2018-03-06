@@ -209,7 +209,7 @@ void CompareContour1D
   if(draw_3sigmaCL) latLine3Sigma->Draw("same");
   if(draw_4sigmaCL) latLine4Sigma->Draw("same");
   if(draw_5sigmaCL) latLine5Sigma->Draw("same");
-  TLegend *lcontours = new TLegend(0.6,0.77,0.75,0.9);
+  TLegend *lcontours = new TLegend(0.5,0.77,0.65,0.9);
   lcontours->SetFillColor(0);
   lcontours->SetLineColor(0);
   lcontours->SetTextFont(132);
