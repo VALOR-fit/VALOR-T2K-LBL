@@ -431,9 +431,17 @@ def process_2d(original, root_filename, pdf_filename):
 
     root_out_file = ROOT.TFile(root_filename, "RECREATE")
     root_out_file.cd()
+    xaxis_label = xaxis.GetTitle()
+    yaxis_label = yaxis.GetTitle()
+    likelihood_histogram.GetXaxis().SetTitle(xaxis_label)
+    likelihood_histogram.GetYaxis().SetTitle(yaxis_label)
     likelihood_histogram.Write("likelihood_2D")
+    chisq_histogram.GetXaxis().SetTitle(xaxis_label)
+    chisq_histogram.GetYaxis().SetTitle(yaxis_label)
     chisq_histogram.Write("chisq_map_2D")
     dchisq_histogram = make_delta_chisq(chisq_histogram)
+    dchisq_histogram.GetXaxis().SetTitle(xaxis_label)
+    dchisq_histogram.GetYaxis().SetTitle(yaxis_label)
     dchisq_histogram.Write("dchisq_map_2D")
 
     minbin = chisq_histogram.GetMinimumBin()
@@ -511,9 +519,13 @@ def process_1d(original, root_filename, pdf_filename):
 
     root_out_file = ROOT.TFile(root_filename, "RECREATE")
     root_out_file.cd()
+    xaxis_label = xaxis.GetTitle()
+    likelihood_histogram.GetXaxis().SetTitle(xaxis_label)
     likelihood_histogram.Write("likelihood")
+    chisq_histogram.GetXaxis().SetTitle(xaxis_label)
     chisq_histogram.Write("h_chisq")
     dchisq_histogram = make_delta_chisq_1d(chisq_histogram)
+    dchisq_histogram.GetXaxis().SetTitle(xaxis_label)
     dchisq_histogram.Write("h_deltachisq")
 
     dchisq_histogram.SetTitle("Smeared #Delta#chi^2 surface")
