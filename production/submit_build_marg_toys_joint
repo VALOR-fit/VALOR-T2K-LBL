@@ -138,7 +138,7 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 80000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long -M 8192";
+      $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
       $npt_freepar0           = 100                      unless defined $npt_freepar0;
    }
    $minfreepar0    = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -186,7 +186,7 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
    {
       $nexpts_marg    = 80000            unless defined $nexpts_marg;
       $step_freepar0  = 1;
-      $wqueue         = "long -M 8192";
+      $wqueue         = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
       $npt_freepar0   = 100;
    }
    $minfreepar0       = 0.3         unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -215,7 +215,7 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 80000           unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long -M 8192";
+      $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
       $npt_freepar0           = 100;
    }
    $minfreepar0            = 2.2e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value

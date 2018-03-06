@@ -301,12 +301,14 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
       $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $wqueue = "short";
    }
    else
    {
       $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $wqueue = "medium";
    }
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
@@ -315,8 +317,6 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
-
-   $wqueue = "short";
 }
 
 # 1D fit - sinsqth13
@@ -335,7 +335,7 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
       $minfreepar0       = 0.007  unless defined $minfreepar0;  # Min free param allowed value
       $maxfreepar0       = 0.053  unless defined $maxfreepar0;  # Max free param allowed value
       $npt_freepar0      = 100    unless defined $npt_freepar0;
-      $ntoys_margtoys   = 80000   unless defined $ntoys_margtoys;
+      $ntoys_margtoys   = 40000   unless defined $ntoys_margtoys;
       $nfiles_margtoys   = 100    unless defined $nfiles_margtoys;
    }
 
@@ -355,12 +355,14 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
       $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $wqueue = "short";
    }
    else
    {
       $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $wqueue = "medium";
    }
 
 
@@ -370,8 +372,6 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
-
-   $wqueue = "short";
 }
 
 # 1D fit - dmsq23
@@ -382,22 +382,22 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
       $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $wqueue = "short";
    }
    else
    {
       $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $wqueue = "medium";
    }
 
-   $minfreepar0       = 2.3e-3  unless defined $minfreepar0;  # Min free param allowed value
-   $maxfreepar0       = 2.7e-3  unless defined $maxfreepar0;  # Max free param allowed value
+   $minfreepar0       = 2.2e-3  unless defined $minfreepar0;  # Min free param allowed value
+   $maxfreepar0       = 2.8e-3  unless defined $maxfreepar0;  # Max free param allowed value
    $freepar1          = ""     unless defined $freepar1;
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
-
-   $wqueue = "short";
 }
 
 # 2D fit - dcp v mixing13
@@ -424,7 +424,7 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
    $maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 51            unless defined $npt_freepar1; # of free parameter points to scan
 
-   $wqueue = "long -W 4:00";
+   $wqueue = "long";
 }
 
 # 2D fit - mixing23 v dmsq23
@@ -443,7 +443,7 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    $maxfreepar1       = 2.8e-3  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 21;#10            unless defined $npt_freepar1; # of free parameter points to scan
 
-   $wqueue = "medium";
+   $wqueue = "long";
 }
 
 if(($freepar0 ne "") && ($freepar1 eq ""))
