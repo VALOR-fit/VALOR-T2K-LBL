@@ -1553,7 +1553,7 @@ void plot_contours_dcp_many
        maxy_nh = TMath::Ceil(maxdchisq_nh);
     }
 
-    int minbin = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->FindBin(0.4);
+/*    int minbin = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->FindBin(0.4);
     int maxbin = hdeltachisq1D_GlobMin[0][0]->GetXaxis()->FindBin(0.65);
     maxy_nh = 0.0;
     for(int x = minbin; x <= maxbin; ++x)
@@ -1564,10 +1564,10 @@ void plot_contours_dcp_many
           maxy_nh = val;
        }
     }
-    maxy_nh += 5;
+//    maxy_nh += 5;*/
 
     TCanvas *cBrazilianPlot_nh = new TCanvas("cBrazilianPlot_nh","cBrazilianPlot_nh");
-    hInit->GetXaxis()->SetRangeUser(0.4, 0.65);
+/*    hInit->GetXaxis()->SetRangeUser(0.4, 0.65);*/
     hInit->GetYaxis()->SetRangeUser(0.,maxy_nh);
     if(paper_style) format_hist(hInit);
     hInit->Draw();
@@ -1615,10 +1615,10 @@ void plot_contours_dcp_many
     hdeltachisq1D_nh_mean->SetLineColor(kRed);
     hdeltachisq1D_nh_mean->SetLineStyle(1);
     //    hdeltachisq1D_nh_mean->Draw("same"); //remove mean
-    //hdeltachisq1D_GlobMin[0][0]->SetLineStyle(1); // 0 --> Normal Hierarchy
+    hdeltachisq1D_GlobMin[0][0]->SetLineStyle(1); // 0 --> Normal Hierarchy
     hdeltachisq1D_GlobMin[0][0]->SetLineWidth(2);
     hdeltachisq1D_GlobMin[0][0]->SetLineColor(kBlack);
-//    hdeltachisq1D_GlobMin[0][0]->Draw("c same");
+    hdeltachisq1D_GlobMin[0][0]->Draw("c same");
     if(do_fc){
       if(draw_90CL)     gFC90CL_nh->Draw("l same");
       if(draw_2sigmaCL) gFC2sigma_nh->Draw("l same");
@@ -1654,7 +1654,7 @@ void plot_contours_dcp_many
     if(draw_2sigmaCL){
       lBrazilianPlot_nh->AddEntry(gFC2sigma_nh,"2#sigma CL","l");
     }
-//    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
+    lBrazilianPlot_nh->AddEntry(hdeltachisq1D_GlobMin[0][0],"Data","l");
     if(two_sided)
     {
       lBrazilianPlot_nh->AddEntry(hdeltachisq1D_nh_median,"Median toy","l");
@@ -1729,11 +1729,10 @@ void plot_contours_dcp_many
     hdeltachisq1D_ih_mean->SetLineColor(kRed);
     hdeltachisq1D_ih_mean->SetLineStyle(1);
     //hdeltachisq1D_ih_mean->Draw("same"); //remove mean
-    //hdeltachisq1D_GlobMin[0][1]->SetLineStyle(1); // 1 --> Inverted Hierarchy
-
+    hdeltachisq1D_GlobMin[0][1]->SetLineStyle(1); // 1 --> Inverted Hierarchy
     hdeltachisq1D_GlobMin[0][1]->SetLineWidth(2);
     hdeltachisq1D_GlobMin[0][1]->SetLineColor(kBlack);
-//    hdeltachisq1D_GlobMin[0][1]->Draw("c same");
+    hdeltachisq1D_GlobMin[0][1]->Draw("c same");
     if(do_fc){
       if(draw_90CL)     gFC90CL_ih->Draw("l same");
       if(draw_2sigmaCL) gFC2sigma_ih->Draw("l same");
@@ -1765,7 +1764,7 @@ void plot_contours_dcp_many
       lBrazilianPlot_ih->AddEntry(gFC90CL_ih,"90% CL","l");
     if(draw_2sigmaCL)
       lBrazilianPlot_ih->AddEntry(gFC2sigma_ih,"2#sigma CL","l");
-//    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
+    lBrazilianPlot_ih->AddEntry(hdeltachisq1D_GlobMin[0][1],"Data","l");
     if(two_sided)
     {
       lBrazilianPlot_ih->AddEntry(hdeltachisq1D_ih_median,"Median toy","l");
