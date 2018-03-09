@@ -37,13 +37,14 @@ valor = ROOT.valor
 conv = valor.conv
 util = valor.util
 opt    = valor.Opt.Instance()
+env    = valor.Env.Instance()
 t2kopt = valor.T2KOpt.Instance()
 rnd    = valor.Rnd.Instance()
 arridx = util.ArrIdx.Instance()
 physlim = util.T2KPhysicalParameterLimits.Instance()
 nr = util.NameRegistry.Instance()
 
-opt.gDoNotDie = True # We're interactive, so don't die unless you have to.
+env.SetDie(False) # We're interactive, so don't die unless you have to.
 
 # Make float formatting strings
 for n in xrange(1,9):
