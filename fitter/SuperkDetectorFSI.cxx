@@ -43,7 +43,7 @@
 #include "valor/FitCore/PhysParamList.h"
 #include "valor/Messenger/Messenger.h"
 #include "valor/Registry/Registry.h"
-#include "valor/Utilities/UtlPrint.h"
+#include "valor/DerivedUtilities/UtlPrint.h"
 #include "valor/Utilities/UtlSystem.h"
 
 #include "SuperkDetectorFSI.h"

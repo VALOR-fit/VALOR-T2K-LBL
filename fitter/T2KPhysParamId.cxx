@@ -21,7 +21,7 @@
 #include "T2KPhysParamId.h"
 #include "Utilities.h"
 #include "Enumerations.h"
-#include "valor/Utilities/NameRegistry.h"
+#include "valor/Conventions/NameRegistry.h"
 #include "valor/Messenger/Messenger.h"
 //~ #include "NuOscMixParam.h"
 

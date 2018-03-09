@@ -39,7 +39,7 @@ Added samples for multiring forward horn current
 #include "Utilities.h"
 #include "valor/Conventions/Opt.h"
 #include "valor/Utilities/Rnd.h"
-#include "valor/Utilities/UtlHist.h"
+#include "valor/DerivedUtilities/UtlHist.h"
 #include "valor/Messenger/Messenger.h"
 
 using std::cout;

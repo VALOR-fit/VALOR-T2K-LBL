@@ -49,7 +49,7 @@ class TAxis;
 
 #include "valor/Conventions/Opt.h"
 #include "valor/Utilities/UtlNumStat.h"
-#include "valor/Utilities/UtlPrint.h"
+#include "valor/DerivedUtilities/UtlPrint.h"
 #include "valor/Utilities/UtlStr.h"
 #include "valor/Utilities/UtlStyle.h"
 #include "valor/Utilities/UtlSystem.h"
