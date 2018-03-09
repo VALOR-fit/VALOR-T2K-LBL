@@ -72,7 +72,8 @@
 
 #include "valor/Conventions/Opt.h"
 #include "valor/Utilities/Rnd.h"
-#include "valor/Utilities/UtlHist.h"
+#include "valor/DerivedUtilities/UtlHist.h"
+#include "valor/Oscillation/OscUtils.h"
 
 #include "AnalysisOptions.h"
 #include "Build.h"
