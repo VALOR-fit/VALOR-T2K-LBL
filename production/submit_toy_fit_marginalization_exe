@@ -286,11 +286,11 @@ $penalty_freepar1 = 0         unless defined $penalty_freepar1;
 
 if($penalty_freepar0 == 1)
 {
-   $tag             = "oa2017b_${masshierarchy_marg}_reactor"  unless defined $tag;
+   $tag             = "oa2018_${masshierarchy_marg}_reactor"  unless defined $tag;
 }
 else
 {
-   $tag             = "oa2017b_${masshierarchy_marg}_t2k"  unless defined $tag;
+   $tag             = "oa2018_${masshierarchy_marg}_t2k"  unless defined $tag;
 }
 
 # 1D fit - dcp
@@ -298,16 +298,16 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
 {
    if($penalty_freepar0 == 1)
    {
-      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
    }
    else
    {
-      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "medium";
    }
 
@@ -326,17 +326,17 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
    {  # Reactor constraint applied
       $minfreepar0       = 0.015  unless defined $minfreepar0;
       $maxfreepar0       = 0.036  unless defined $maxfreepar0;
-      $npt_freepar0      = 100    unless defined $npt_freepar0;
+      $npt_freepar0      = 101    unless defined $npt_freepar0;
       $ntoys_margtoys   = 40000   unless defined $ntoys_margtoys;
-      $nfiles_margtoys   = 100    unless defined $nfiles_margtoys;
+      $nfiles_margtoys   = 101    unless defined $nfiles_margtoys;
    }
    else
    {  # T2K only
       $minfreepar0       = 0.007  unless defined $minfreepar0;  # Min free param allowed value
       $maxfreepar0       = 0.053  unless defined $maxfreepar0;  # Max free param allowed value
-      $npt_freepar0      = 100    unless defined $npt_freepar0;
+      $npt_freepar0      = 101    unless defined $npt_freepar0;
       $ntoys_margtoys   = 40000   unless defined $ntoys_margtoys;
-      $nfiles_margtoys   = 100    unless defined $nfiles_margtoys;
+      $nfiles_margtoys   = 101    unless defined $nfiles_margtoys;
    }
 
    $freepar1          = ""     unless defined $freepar1;
@@ -352,16 +352,16 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
 {
    if($penalty_freepar0 == 1)
    {
-      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
    }
    else
    {
-      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "medium";
    }
 
@@ -379,16 +379,16 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
 {
    if($penalty_freepar0 == 1)
    {
-      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
    }
    else
    {
-      $nfiles_margtoys   = 100           unless defined $nfiles_margtoys; # of marginalization files
+      $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
-      $npt_freepar0      = 100           unless defined $npt_freepar0; # of free parameter points to scan
+      $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "medium";
    }
 
