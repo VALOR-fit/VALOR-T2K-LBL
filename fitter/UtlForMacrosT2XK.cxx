@@ -986,16 +986,14 @@ void valor::util::MargFit_1D_betaBar(RunOpt *runopt,FitMarginalization *fitmarg,
   cout << endl;
   cout << "################# Fit #################" << endl;
   
-  double valsecondbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(2);
-  
   int nbinsX = fitmarg->GetMapChisqRangeFileID_2D()->GetNbinsX();
   double valfirstbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(1);
   double vallastbin_X = fitmarg->GetMapChisqRangeFileID_2D()->GetXaxis()->GetBinCenter(nbinsX);
-  
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.,true);
+
+  fitmarg->SetMinimIntervalRead(valfirstbin_X,vallastbin_X,0.,0.,true);
   fitmarg->SetStartBin(0.,1.);
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetMinimIntervalRead(valsecondbin_X+conv::kASmallNum,vallastbin_X,0.,0.);
+  fitmarg->SetGridStartRange(valfirstbin_X,vallastbin_X,0.,0.);
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);  
 
