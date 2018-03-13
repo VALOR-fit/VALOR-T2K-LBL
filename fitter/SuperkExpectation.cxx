@@ -1052,7 +1052,8 @@ double SuperkExpectation::CurrPredictedErecoVsQ2SpectrumArray(valor::conv::Super
 //________________________________________________________________________________________
 void SuperkExpectation::PrintSystematicVariations(std::ostream & stream) const
 {
-
+  stream << "SKExp >> Printing BANFF systematics:" << std::endl;
+  stream << this->Tweaks() << std::endl;
 }
 //________________________________________________________________________________________
 bool SuperkExpectation::Write(TObjArray * array, const char * pdf_tag, Option_t * write_opt)
