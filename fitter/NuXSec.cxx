@@ -158,7 +158,7 @@ void NuXSec::CheckIsBANFFParam(int nparams, int nbanffxsecparams, const conv::Ph
       nbanff++;
   }//ix
   if(nbanff != nbanffxsecparams) {
-    LOG("NuXSec",pDEBUG) << vname << " has " << nbanff
+    LOG("NuXSec",pFATAL) << vname << " has " << nbanff
          << " parameters. Expected " << nbanffxsecparams;
     util::Die(-1);
   }
