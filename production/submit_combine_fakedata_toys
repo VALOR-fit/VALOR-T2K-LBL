@@ -1,0 +1,109 @@
+#!/usr/bin/perl
+
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit a batch of reformat_2015_spline_inputs.py or reformat_2015_spline_inputs_2D.py jobs
+#
+# Inputs
+#  --resource               : Computer resource, <Liverpool_Slurm>. Default: interactive.
+#  --tag                    : Tag for output files.
+#  --infile-pattern         : Pattern of input filenames
+#  --output                 : Output file name
+#  --nfiles                 : Number of input files
+#  --ntoys                  : Number of toys per file
+#
+#  --cpu-time               : Required CPU time. Default: "6:00:00" for RAL, "11:50:00" for Oxford.
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
+#  --softw-dir              : Oscillation code top-level directory. Default: `pwd`.
+#
+# F. Bench
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+
+$iarg=0;
+foreach (@ARGV) {
+    if($iarg % 2 == 1) {$iarg++; next;}
+    if   ($_ eq '--resource'         ) { $resource        = $ARGV[$iarg+1]; }
+    elsif($_ eq '--cpu-time'         ) { $cput            = $ARGV[$iarg+1]; }
+    elsif($_ eq '--tag'              ) { $tag             = $ARGV[$iarg+1]; }
+    elsif($_ eq '--job-dir'          ) { $job_dir         = $ARGV[$iarg+1]; }
+    elsif($_ eq '--softw-dir'        ) { $softw_dir       = $ARGV[$iarg+1]; }
+    elsif($_ eq '--fmwk-dir'         ) { $fmwk_dir        = $ARGV[$iarg+1]; }
+    elsif($_ eq '--infile-pattern'   ) { $infile_pattern  = $ARGV[$iarg+1]; }
+    elsif($_ eq '--output'           ) { $output          = $ARGV[$iarg+1]; }
+    elsif($_ eq '--nfiles'           ) { $nfiles          = $ARGV[$iarg+1]; }
+    elsif($_ eq '--ntoys'            ) { $ntoys           = $ARGV[$iarg+1]; }
+
+    else {
+	print "Unrecognised argument ".$_."\n"; exit;
+    }
+    $iarg++;
+}
+
+$resource        = "Liverpool_Slurm"           unless defined $resource;
+$job_dir         = "."                         unless defined $job_dir;
+$softw_dir       = $ENV{'T2KOSCANA'}           unless defined $softw_dir;
+$fmwk_dir        = $ENV{'VALOR_FMWK'}          unless defined $fmwk_dir;
+$tag             = "combine_fake-data"         unless defined $tag;
+$infile_pattern  = ""                          unless defined $infile_pattern;
+$output          = "combine.root"              unless defined $output;
+$nfiles          = "40"                        unless defined $nfiles;
+$ntoys           = "2500"                      unless defined $ntoys;
+if( !defined $cput ) {
+    if($resource eq "Liverpool_Slurm") { $cput = "1440"; }
+    if($resource eq "Liverpool_PBS"  ) { $cput = "1440"; }
+}
+
+
+$command = "python ${softw_dir}/macros/studies/nuebarapp/combine_fake_data.py --infile-pattern ${infile_pattern} --nfiles ${nfiles} --ntoys ${ntoys} --outfile-name ${output}";
+print "Submitting: \n";
+print "$command \n";
+print "\n////////////////////////////// \n\n";
+
+#
+# Liverpool PBS
+#
+if($resource eq "Liverpool_PBS") {
+  open(PBS, ">$job_dir/$tag.pbs") or die("Cannot create the PBS batch script");
+  print PBS "#!/bin/bash \n";
+  print PBS "#PBS -N $tag \n";
+  print PBS "#PBS -q medium64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
+  #print PBS "#PBS -l nodes=1:ppn=2 \n";
+  print PBS "#PBS -o $job_dir/$tag.pbs.out \n";
+  print PBS "#PBS -e $job_dir/$tag.pbs.err \n";
+  print PBS "cd $job_dir \n";
+
+  print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
+  print PBS "/usr/bin/time $command \n";
+  close(PBS);
+  `qsub $job_dir/$tag.pbs`;
+}
+#
+# Liverpool_Slurm
+#
+if($resource eq "Liverpool_Slurm") {
+  open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
+  print Slurm "#!/bin/bash \n";
+  print Slurm "#SBATCH -J $tag \n";
+  print Slurm "#SBATCH -o $job_dir/$tag.slurm.out \n";
+  print Slurm "#SBATCH -e $job_dir/$tag.slurm.err \n";
+  print Slurm "#SBATCH -t $cput \n";
+  print Slurm "cd $job_dir \n";
+  print Slurm "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
+  print Slurm "/usr/bin/time $command \n";
+  close(Slurm);
+  `sbatch -p compute $job_dir/$tag.slurm`;
+}
+#
+# Grid
+#
+if($resource eq "Grid") {
+print "Not supported just yet!\n";
+}
+#
+# interactive
+#
+if($resource eq "interactive") {
+system($command);
+}
