@@ -123,6 +123,35 @@ else
 
 $wqueue = "medium";
 
+# # 1D fit - beta bar
+if(($freepar0 eq "betaBar") and ($freepar1 eq ""))
+{
+   $tag = "${tag}_${freepar0}";
+   if($use_reactors == 1)
+   {
+      $nexpts_marg            = 40000                    unless defined $nexpts_marg;     # num toy experimnents
+      $step_freepar0          = 1;  # step size
+      $wqueue                 = "long";
+      $npt_freepar0           = 2                        unless defined $npt_freepar0;    # n points
+   }
+   else
+   {
+      $nexpts_marg            = 80000                    unless defined $nexpts_marg;     #40000
+      $step_freepar0          = 1;
+      $wqueue                 = "long -M 8192";#"long";
+      $npt_freepar0           = 2                        unless defined $npt_freepar0;
+   }
+   $minfreepar0            = 0                           unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0            = 1                           unless defined $maxfreepar0;     # Maximum free parameter allowed value
+   $minfreepar1            = 0.                          unless defined $minfreepar1;     # Minimum free parameter allowed value
+   $maxfreepar1            = 0.                          unless defined $maxfreepar1;     # Maximum free parameter allowed value
+   $npt_freepar1           = 1                           unless defined $npt_freepar1;    # of free parameter points to scan
+   $marg_hierarchy         = 1                           unless defined $marg_hierarchy;
+   $masshierarchy          = "normal"                    unless defined $masshierarchy;
+   $step_freepar1          = 1                           unless defined $step_freepar1;   # of points for each job param1
+   $betaBar         =    0;
+}
+
 # # 1D fit - dcp
 if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
 {
@@ -558,23 +587,23 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	    close(PBS);
 	    `qsub $job_dir/$tag-$irun.pbs`;
 	}
-        #
-        # Liverpool SLURM
-        #
-        
-        if($resource eq "Liverpool_Slurm") {
-            open(PBS, ">$job_dir/$tag-$irun.slurm") or die("Cannot create the Slurm batch script");
-            print PBS "#!/bin/bash \n";
-            print PBS "#SBATCH -J $tag-$irun \n";
-            print PBS "#SBATCH -t $cput \n"; 
-            print PBS "#SBATCH -o $job_dir/$tag-$irun-slurm.out \n";
-            print PBS "#SBATCH -e $job_dir/$tag-$irun-slurm.err \n";
-            print PBS "cd $job_dir \n";
-            print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
-            print PBS "/usr/bin/time $command \n";
-            close(PBS);
-            `sbatch -p compute $job_dir/$tag-$irun.slurm`;
-        }
+	#
+  # Liverpool_Slurm
+  #
+  if($resource eq "Liverpool_Slurm") {
+     open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
+     print Slurm "#!/bin/bash \n";
+     print Slurm "#SBATCH -J $tag-$irun \n";
+     print Slurm "#SBATCH -o $job_dir/$tag-$irun.slurm.out \n";
+     print Slurm "#SBATCH -e $job_dir/$tag-$irun.slurm.err \n";
+     print Slurm "#SBATCH -t $cput \n";
+     print Slurm "#SBATCH --mem=7G \n";  #     TODO: test memory usage
+     print Slurm "cd $job_dir \n"; 
+     print Slurm "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
+     print Slurm "/usr/bin/time $command \n";
+     close(Slurm);
+     `sbatch -p compute $job_dir/$tag.slurm`;
+  }
 	#
 	# LyonPBS case
 	#
