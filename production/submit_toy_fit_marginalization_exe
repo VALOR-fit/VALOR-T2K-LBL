@@ -88,28 +88,30 @@ foreach (@ARGV) {
     #####################################################################################
 
     ####################### Only for run_fit_marginalization*.C #########################
-    elsif($_ eq '--fit-param-list'     ) { $fitparamlist        = $ARGV[$iarg+1]; }
-    elsif($_ eq '--file-margtoys'      ) { $file_margtoys       = $ARGV[$iarg+1]; }
-    elsif($_ eq '--nfiles-margtoys'    ) { $nfiles_margtoys     = $ARGV[$iarg+1]; }
+    elsif($_ eq '--fit-param-list'         ) { $fitparamlist            = $ARGV[$iarg+1]; }
+    elsif($_ eq '--file-margtoys'          ) { $file_margtoys           = $ARGV[$iarg+1]; }
+    elsif($_ eq '--nfiles-margtoys'        ) { $nfiles_margtoys         = $ARGV[$iarg+1]; }
     elsif($_ eq '--marginalize-mh-margtoys') { $marg_hierarchy_margtoys = $ARGV[$iarg+1]; }
-    elsif($_ eq '--hierarchy-marg'     ) { $masshierarchy_marg  = $ARGV[$iarg+1]; }
-    elsif($_ eq '--ntoys-margtoys'     ) { $ntoys_margtoys      = $ARGV[$iarg+1]; }
-    elsif($_ eq '--freepar0'           ) { $freepar0            = $ARGV[$iarg+1]; }
-    elsif($_ eq '--minfreepar0'        ) { $minfreepar0         = $ARGV[$iarg+1]; }
-    elsif($_ eq '--maxfreepar0'        ) { $maxfreepar0         = $ARGV[$iarg+1]; }
-    elsif($_ eq '--npt-freepar0'       ) { $npt_freepar0        = $ARGV[$iarg+1]; }
-    elsif($_ eq '--freepar1'           ) { $freepar1            = $ARGV[$iarg+1]; }
-    elsif($_ eq '--minfreepar1'        ) { $minfreepar1         = $ARGV[$iarg+1]; }
-    elsif($_ eq '--maxfreepar1'        ) { $maxfreepar1         = $ARGV[$iarg+1]; }
-    elsif($_ eq '--npt-freepar1'       ) { $npt_freepar1        = $ARGV[$iarg+1]; }
-    elsif($_ eq '--type-error'         ) { $type_error          = $ARGV[$iarg+1]; }
-    elsif($_ eq '--draw-full-chisq'    ) { $draw_full_chisq     = $ARGV[$iarg+1]; }
-    elsif($_ eq '--test-stat'          ) { $test_stat           = $ARGV[$iarg+1]; }
-    elsif($_ eq '--store-like-weights' ) { $store_like_weights  = $ARGV[$iarg+1]; }
-    elsif($_ eq '--penalty-par0'       ) { $penalty_freepar0    = $ARGV[$iarg+1]; }
-    elsif($_ eq '--penatly-par1'       ) { $penalty_freepar1    = $ARGV[$iarg+1]; }
-    elsif($_ eq '--read-skexp'         ) { $read_skexp          = $ARGV[$iarg+1]; }
-    elsif($_ eq '--queue'              ) { $queue               = $ARGV[$iarg+1]; }
+    elsif($_ eq '--hierarchy-marg'         ) { $masshierarchy_marg      = $ARGV[$iarg+1]; }
+    elsif($_ eq '--ntoys-margtoys'         ) { $ntoys_margtoys          = $ARGV[$iarg+1]; }
+    elsif($_ eq '--freepar0'               ) { $freepar0                = $ARGV[$iarg+1]; }
+    elsif($_ eq '--minfreepar0'            ) { $minfreepar0             = $ARGV[$iarg+1]; }
+    elsif($_ eq '--maxfreepar0'            ) { $maxfreepar0             = $ARGV[$iarg+1]; }
+    elsif($_ eq '--npt-freepar0'           ) { $npt_freepar0            = $ARGV[$iarg+1]; }
+    elsif($_ eq '--freepar1'               ) { $freepar1                = $ARGV[$iarg+1]; }
+    elsif($_ eq '--minfreepar1'            ) { $minfreepar1             = $ARGV[$iarg+1]; }
+    elsif($_ eq '--maxfreepar1'            ) { $maxfreepar1             = $ARGV[$iarg+1]; }
+    elsif($_ eq '--npt-freepar1'           ) { $npt_freepar1            = $ARGV[$iarg+1]; }
+    elsif($_ eq '--type-error'             ) { $type_error              = $ARGV[$iarg+1]; }
+    elsif($_ eq '--draw-full-chisq'        ) { $draw_full_chisq         = $ARGV[$iarg+1]; }
+    elsif($_ eq '--test-stat'              ) { $test_stat               = $ARGV[$iarg+1]; }
+    elsif($_ eq '--store-like-weights'     ) { $store_like_weights      = $ARGV[$iarg+1]; }
+    elsif($_ eq '--penalty-par0'           ) { $penalty_freepar0        = $ARGV[$iarg+1]; }
+    elsif($_ eq '--penatly-par1'           ) { $penalty_freepar1        = $ARGV[$iarg+1]; }
+    elsif($_ eq '--read-skexp'             ) { $read_skexp              = $ARGV[$iarg+1]; }
+    elsif($_ eq '--queue'                  ) { $queue                   = $ARGV[$iarg+1]; }
+    elsif($_ eq '--additional-tag'         ) { $additional_tag          = $ARGV[$iarg+1]; }   # run_fit_marginalization.cxx uses the tag to determine which marginalisation toy files to read, but results in the output files being overwritten (for the nuebar appearance analysis), so this option is another tag that is appended to the regular tag when saving output files
+    elsif($_ eq '--param-set'              ) { $param_set               = $ARGV[$iarg+1]; }    # Choose from "AsimovA", "AsimovB", or "random" (default) to randomly throw params that weren't set individually
     #####################################################################################
     
     else {
@@ -171,61 +173,105 @@ $nexpts          = 1   unless defined $nexpts;  # number of toy experiments and 
 
 $first_expt      = 0   unless defined $first_exp; # first toy experiment id 
 
-#$dmsq23          = -999                    unless defined $dmsq23;
-#$dmsq12          = -999                     unless defined $dmsq12;
-#$mix23           = -999                       unless defined $mix23;
-#$mix13           = -999                      unless defined $mix13;
-##$mix13           = 0.028                      unless defined $mix13;
-#$mix12           = -999                       unless defined $mix12;      
-#$deltacp         = -999                      unless defined $deltacp;
-#$betaBar         = 0.                          unless defined $betaBar;
+$param_set       = "random" unless defined $param_set;
 
-# Asimov Common
-$dmsq23          = 2.509E-3                        unless defined $dmsq23;
-$dmsq12          = 7.53E-5                        unless defined $dmsq12;
-$mix13           = 0.0219                        unless defined $mix13;
-$mix12           = 0.304                        unless defined $mix12;
-$betaBar         = -99.                          unless defined $betaBar;
-
-# Asimov A
-$mix23           = 0.528                        unless defined $mix23;
-$deltacp         = -1.601                        unless defined $deltacp;
-$mixparamoctant  = "two"                       unless defined $mixparamoctant;
-
-# Asimov B
-#$mix23           = 0.450                        unless defined $mix23;
-#$deltacp         = 0                        unless defined $deltacp;
-#$mixparamoctant  = "one"                       unless defined $mixparamoctant;
-
-# Asimov C
-#$mix23           = 0.528                        unless defined $mix23;
-#$deltacp         = 0                        unless defined $deltacp;
-
-# Asimov D
-#$mix23           = 0.528                        unless defined $mix23;
-#$deltacp         = 3.14159265358979312                  unless defined $deltacp;
-
-# Asimov E
-#$mix23           = 0.528                        unless defined $mix23;
-#$deltacp         = 1.5707963267948966           unless defined $deltacp;
-
-# Asimov FC NH - Feldman-Cousins NH Asimov from data best-fit
-#$dmsq23          = 2.460E-3;
-#$mix13           = 0.0219;
-#$mix23           = 0.530;
-#$mixparamoctant  = "two";
-#$dmsq12          = 7.53E-5;
-#$mix12           = 0.304;
-#$deltacp         = -1.601;
-
-# Asimov FC IH - Feldman-Cousins IH Asimov from data best-fit
-#$dmsq23          = 2.440E-3;
-#$mix13           = 0.0219;
-#$mix23           = 0.530;
-#$mixparamoctant  = "two";
-#$dmsq12          = 7.53E-5;
-#$mix12           = 0.304;
-#$deltacp         = -1.601;
+if($param_set eq "random"){
+  $dmsq23          = -999                      unless defined $dmsq23;
+  $dmsq12          = -999                      unless defined $dmsq12;
+  $mix23           = -999                      unless defined $mix23;
+  $mix13           = -999                      unless defined $mix13;
+  $mix12           = -999                      unless defined $mix12;
+  $deltacp         = -999                      unless defined $deltacp;
+  $betaBar         = 0.                        unless defined $betaBar;
+}
+elsif($param_set eq "AsimovA"){
+  $dmsq23          = 2.509E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.528                     unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = -1.601                    unless defined $deltacp;
+  $mixparamoctant  = "two"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}   
+elsif($param_set eq "AsimovB"){
+  $dmsq23          = 2.509E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.45                      unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = 0.                        unless defined $deltacp;
+  $mixparamoctant  = "one"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+elsif($param_set eq "AsimovC"){
+  $dmsq23          = 2.509E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.528                     unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = 0.                        unless defined $deltacp;
+  #$mixparamoctant  = "one"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+elsif($param_set eq "AsimovD"){
+  $dmsq23          = 2.509E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.528                     unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = 3.14159265358979312       unless defined $deltacp;
+  #$mixparamoctant  = "one"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+elsif($param_set eq "AsimovE"){
+  $dmsq23          = 2.509E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.528                     unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = 1.5707963267948966        unless defined $deltacp;
+  #$mixparamoctant  = "one"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+elsif($param_set eq "AsimovFCNH"){
+  $dmsq23          = 2.460E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.530                     unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = -1.601                    unless defined $deltacp;
+  $mixparamoctant  = "two"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+elsif($param_set eq "AsimovFCIH"){
+  $dmsq23          = 2.440E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.530                     unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = -1.601                    unless defined $deltacp;
+  $mixparamoctant  = "two"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+else{
+  print "Unrecognised param set [$param_set]. Exiting.";
+  exit;
+}
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # toys for mass hierarchy in fake data sets
 $masshierarchy   = "normal"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
@@ -241,7 +287,8 @@ $fmwk_dir        = $ENV{'VALOR_FMWK'}          unless defined $fmwk_dir;
 if( !defined $cput ) {
     if($resource eq "RAL"   ) { $cput = "6:00:00";  }
     if($resource eq "OLDRAL") { $cput = "6:00:00";  }
-    if($resource eq "Oxford") { $cput = "1:50:00"; }
+    if($resource eq "Oxford") { $cput = "1:50:00";  }
+    if($resource eq "Liverpool_Slurm") { $cput = "1440"; }
 }
 ########################################################################################
 
@@ -317,6 +364,32 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
    $minfreepar1       = 0  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 0  unless defined $maxfreepar1;  # Max free param allowed value
    $npt_freepar1      = 1            unless defined $npt_freepar1; # of free parameter points to scan
+}
+
+# 1D fit - betaBar
+if($freepar0 eq "betaBar" && $freepar1 eq "")
+{
+   if($penalty_freepar0 == 1)
+   {
+      $nfiles_margtoys   = 2        unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 40000    unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 2        unless defined $npt_freepar0; # of free parameter points to scan
+   }
+   else
+   {
+      $nfiles_margtoys   = 2        unless defined $nfiles_margtoys; # of marginalization files
+      $ntoys_margtoys    = 80000    unless defined $ntoys_margtoys;     # of marginalization toys
+      $npt_freepar0      = 2        unless defined $npt_freepar0; # of free parameter points to scan
+   }
+
+   $minfreepar0       = 0           unless defined $minfreepar0;  # Min free param allowed value
+   $maxfreepar0       = 1           unless defined $maxfreepar0;  # Max free param allowed value
+   $freepar1          = ""          unless defined $freepar1;
+   $minfreepar1       = 0           unless defined $minfreepar1;  # Min free param allowed value
+   $maxfreepar1       = 0           unless defined $maxfreepar1;  # Max free param allowed value
+   $npt_freepar1      = 1           unless defined $npt_freepar1; # of free parameter points to scan
+
+   $wqueue = "short";
 }
 
 # 1D fit - sinsqth13
@@ -490,6 +563,10 @@ if($freepar0 eq "deltacp")
 {
    $init_freepar0  = $deltacp;
 }
+if($freepar0 eq "betaBar")
+{
+   $init_freepar0  = $betaBar;
+}
 if($freepar0 eq "mixing13")
 {
    $init_freepar0  = $mix13;
@@ -641,10 +718,11 @@ while($i_freepar1 < $n_freepar1) {
 	
 	# set the running point to the pt of the grid
 	else{
-	    if   ($freepar0 eq "deltacp") { $deltacp  = $pt_freepar0; }
+	    if   ($freepar0 eq "deltacp" ){ $deltacp  = $pt_freepar0; }
 	    elsif($freepar0 eq "mixing13"){ $mix13    = $pt_freepar0; }
 	    elsif($freepar0 eq "mixing23"){ $mix23    = $pt_freepar0; }
-	    elsif($freepar0 eq "dmsq23")  { $dmsq23   = $pt_freepar0; }    
+	    elsif($freepar0 eq "dmsq23"  ){ $dmsq23   = $pt_freepar0; }
+	    elsif($freepar0 eq "betaBar" ){ $betaBar  = $pt_freepar0; }    
 	    elsif($freepar0 eq ""){}
 	    else{
 		print "\n $freepar0 is not defined\n";
@@ -721,8 +799,8 @@ while($i_freepar1 < $n_freepar1) {
 	    $do_fc                   = 0;        # flag to perform Feldman-Cousins --> make the following 2 variables useless  
 	    $dominimize              = 1;        # only true chisq values are computed --> if 1 then it only takes more time computing also betabar=0 stuffs
 
-	    $arguments = "$softw_dir//bin/run_fit_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --verbose-fit $verbose_fit --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy_margtoys --mass-hierarchy-margtoys \"$masshierarchy_marg\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights --penalty-freepar0 $penalty_freepar0 --penalty-freepar1 $penalty_freepar1 --do-fc $do_fc --do-minimize $dominimize --read-skexp $read_skexp";
-	    
+	    $arguments = "$softw_dir//bin/run_fit_marginalization --file-tag \"$tag_freepar\" --additional-file-tag \"$additional_tag\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --verbose-fit $verbose_fit --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy_margtoys --mass-hierarchy-margtoys \"$masshierarchy_marg\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights --penalty-freepar0 $penalty_freepar0 --penalty-freepar1 $penalty_freepar1 --do-fc $do_fc --do-minimize $dominimize --read-skexp $read_skexp";
+
 	    #$command = "$program $arguments $arguments_bool";
 	    $command = "$program $arguments";
 
@@ -859,25 +937,41 @@ while($i_freepar1 < $n_freepar1) {
 		close(PBS);
 		`qsub $job_dir/$tag-$irun.pbs`;
 	    }
-            #
-            # Liverpool
-            #
-            if($resource eq "Liverpool") {
-                open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
-                print PBS "#!/bin/bash \n";
-                print PBS "#PBS -N $tag-$irun \n";
-                print PBS "#PBS -q all64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
-                print PBS "#PBS -l nodes=1:ppn=2 \n"; 
-                print PBS "#PBS -o /scratch/cbarry/$tag-$irun.pbs.out \n";
-                print PBS "#PBS -e /scratch/cbarry/$tag-$irun.pbs.err \n";
-                print PBS "cd $job_dir \n";
+      #
+      # Liverpool PBS
+      #
+      if($resource eq "Liverpool") {
+          open(PBS, ">$job_dir/$tag-$additional_tag-$irun.pbs") or die("Cannot create the PBS batch script");
+          print PBS "#!/bin/bash \n";
+          print PBS "#PBS -N $tag-$irun \n";
+          print PBS "#PBS -q medium64 \n"; # Max walltime of 24h, may be possible to specify -l, untested
+          print PBS "#PBS -l nodes=1:ppn=2 \n"; 
+          print PBS "#PBS -o $job_dir/$tag-$additional_tag-$irun.pbs.out \n";
+          print PBS "#PBS -e $job_dir/$tag-$additional_tag-$irun.pbs.err \n";
+          print PBS "cd $job_dir \n";
 
-                print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
-                print PBS "$command \n";
-                close(PBS);
-                `qsub $job_dir/$tag-$irun.pbs`;
-            }            
-            #
+          print PBS "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir \n";
+          print PBS "$command \n";
+          close(PBS);
+          `qsub $job_dir/$tag-$additional_tag-$irun.pbs`;
+      }    
+      #
+      # Liverpool_Slurm
+      #
+      if($resource eq "Liverpool_Slurm") {
+          open(Slurm, ">$job_dir/$tag-$additional_tag-$irun.slurm") or die("Can not create the Slurm batch script");
+          print Slurm "#!/bin/bash \n";
+          print Slurm "#SBATCH -J $tag-$additional_tag-$irun \n";
+          print Slurm "#SBATCH -o $job_dir/$tag-$additional_tag-$irun.slurm.out \n";
+          print Slurm "#SBATCH -e $job_dir/$tag-$additional_tag-$irun.slurm.err \n";
+          print Slurm "#SBATCH -t $cput \n";
+          print Slurm "cd $job_dir \n";
+          print Slurm "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
+          print Slurm "/usr/bin/time $command \n";
+          close(Slurm);
+          `sbatch -p compute $job_dir/$tag-$additional_tag-$irun.slurm`;
+      }        
+      #
 	    # Grid
 	    #
 	    if($resource eq "Grid") {
