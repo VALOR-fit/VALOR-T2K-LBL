@@ -27,10 +27,13 @@
 #ifndef sk_fsi_syst_conv_h
 #define sk_fsi_syst_conv_h
 
+#include <iostream>
 #include "AnalysisOptions.h"
 #include "Enumerations.h"
 #include "SamplesAndModes.h"
 #
+
+using namespace std;
 
 namespace valor {
   namespace conv   {
