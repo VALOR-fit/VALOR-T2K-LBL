@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit a batch of build_marg_toys_joint.C jobs
+#
+# Inputs
+#  --resource               : Computer resource, <ETH-Monch, RAL, Oxford, Grid, interactive>. Default: interactive.
+# F. Bench
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+
+$iarg=0;
+foreach (@ARGV) {
+  if($iarg % 2 == 1) {$iarg++; next;}
+  if   ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--file-in'                ) { $filein                = $ARGV[$iarg+1]; }
+  elsif($_ eq '--file-in-data'           ) { $filein_data           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--ntoys'                  ) { $ntoys                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nthrows'                ) { $nthrows               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nruns'                  ) { $nruns                 = $ARGV[$iarg+1]; }
+  else {
+    print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+
+$resource        = "interactive"               unless defined $resource;
+$job_dir         = "/scratch/fbench/"          unless defined $job_dir;
+$tag             = "stat_throws_beta=0"        unless defined $tag;
+$filein          = ""                          unless defined $filein;
+$ntoys           = 100000                      unless defined $ntoys;
+$nthrows         = 10000                       unless defined $nthrows;
+$nruns           = 1                           unless defined $nruns;
+$cput            = "24:00:00"                  unless defined $cput;
+$softw_dir       = $ENV{'T2KOSCANA'}           unless defined $softw_dir;
+$fmwk_dir        = $ENV{'VALOR_FMWK'}          unless defined $fmwk_dir;
+$filein_data     = ""                          unless defined $filein_data;
+
+
+mkpath ($job_dir, {verbose => 1, mode=>0777});
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+for (my $irun=0; $irun < $nruns; $irun++) {
+    $itoy_start = $irun * $ntoys;
+
+    $command = "python $softw_dir/macros/studies/nuebarapp/rate-only_stat_throw.py --infilename $filein --ntoys $ntoys --nthrows $nthrows --outfilename $tag-$irun --itoy-start $itoy_start --infilename-data $filein_data";
+    print "\nSubmitting:\n$command \n";
+
+    #
+    # Liverpool_Slurm
+    #
+    if($resource eq "Liverpool_Slurm") {
+      open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
+      print Slurm "#!/bin/bash \n";
+      print Slurm "#SBATCH -J $tag-$irun \n";
+      print Slurm "#SBATCH -o $job_dir/$tag-$irun.slurm.out \n";
+      print Slurm "#SBATCH -e $job_dir/$tag-$irun.slurm.err \n";
+      print Slurm "#SBATCH -t $cput \n";
+      print Slurm "cd $job_dir \n";
+      print Slurm "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
+      print Slurm "/usr/bin/time $command \n";
+      close(Slurm);
+      `sbatch -p compute $job_dir/$tag-$irun.slurm`;
+    }
+
+    #
+    # interactive
+    #
+    if($resource eq "interactive") {
+        system($command);
+    }
+
+} # irun
