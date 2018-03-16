@@ -29,6 +29,7 @@
 #  --mix-param-choice       : sinsq2theta or sinsqtheta
 #  --mix-param-octant       : one or two
 #  --seed                   : Set the random number seed
+#  --param-set              : Choose from "AsimovA", "AsimovB", or "random" (default) to randomly throw params that weren't set individually
 #
 # D.Sgalaberna
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -94,6 +95,7 @@ foreach (@ARGV) {
     elsif($_ eq '--save-fluct-xml'          ) { $save_fluct_xml        = $ARGV[$iarg+1]; }
     elsif($_ eq '--save-root'               ) { $save_root             = $ARGV[$iarg+1]; }
     elsif($_ eq '--file-priors'             ) { $file_priors           = $ARGV[$iarg+1]; }
+    elsif($_ eq '--param-set'               ) { $param_set             = $ARGV[$iarg+1]; }
     #####################################################################################
 
     ####################### Only for run_fit_marginalization*.C #########################
@@ -212,36 +214,51 @@ $nexpts          = 10000   unless defined $nexpts;  # number of toy experiments 
 
 $first_expt      = 0   unless defined $first_expt; # first toy experiment id
 
- $dmsq23          = -999                    unless defined $dmsq23;
- $dmsq12          = -999                     unless defined $dmsq12;
- $mix23           = -999                       unless defined $mix23;
- $mix13           = -999                      unless defined $mix13;
- #$mix13          = -999                     unless defined $mix13;
- $mix12           = -999                       unless defined $mix12;
- $deltacp         = -999                      unless defined $deltacp;
- $betaBar         = 0.                          unless defined $betaBar;
+$param_set       = "random" unless defined $param_set;
 
-
-#ASIMOV A
-
-# $dmsq23          = 2.509E-3                        unless defined $dmsq23;
-# $dmsq12          = 7.53E-5                        unless defined $dmsq12;
-# $mix23           = 0.528                        unless defined $mix23;
-# $mix13           = 0.0219                        unless defined $mix13;
-# $mix12           = 0.304                        unless defined $mix12;
-# $deltacp         = -1.601                        unless defined $deltacp;
-# $betaBar         = 1.                          unless defined $betaBar;
-
-#
-# ASIMOV B
-#
-#$dmsq23          = 2.509E-3                        unless defined $dmsq23;
-#$dmsq12          = 7.53E-5                        unless defined $dmsq12;
-#$mix23           = 0.45                          unless defined $mix23;
-#$mix13           = 0.0217                        unless defined $mix13; # PDG 2015
-#$mix12           = 0.304                        unless defined $mix12;
-#$deltacp         = 0.                        unless defined $deltacp;
-#$betaBar         = 1.                          unless defined $betaBar;
+if($param_set eq "random"){
+  $dmsq23          = -999                      unless defined $dmsq23;
+  $dmsq12          = -999                      unless defined $dmsq12;
+  $mix23           = -999                      unless defined $mix23;
+  $mix13           = -999                      unless defined $mix13;
+  $mix12           = -999                      unless defined $mix12;
+  $deltacp         = -999                      unless defined $deltacp;
+  $betaBar         = 0.                        unless defined $betaBar;
+}
+elsif($param_set eq "AsimovA"){
+  #
+  #ASIMOV A
+  #
+  $dmsq23          = 2.509E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.528                     unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = -1.601                    unless defined $deltacp;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $prior_prob_nh   = 1.                        unless defined $prior_prob_nh;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+elsif($param_set eq "AsimovB"){
+  #
+  # ASIMOV B
+  #
+  $dmsq23          = 2.509E-3                  unless defined $dmsq23;
+  $dmsq12          = 7.53E-5                   unless defined $dmsq12;
+  $mix23           = 0.45                      unless defined $mix23;
+  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix12           = 0.304                     unless defined $mix12;
+  $deltacp         = 0.                        unless defined $deltacp;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $prior_prob_nh   = 1.                        unless defined $prior_prob_nh;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}
+else{
+  print "Unrecognised param set [$param_set]. Exiting.";
+  exit;
+}
 
 $marg_hierarchy  = 1                           unless defined $marg_hierarchy; # toys for mass hierarchy in fake data sets
 $masshierarchy   = "normal"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
@@ -261,7 +278,8 @@ if( !defined $cput ) {
     if($resource eq "RAL"   )        { $cput = "6:00:00" ; }
     if($resource eq "OLDRAL")        { $cput = "6:00:00" ; }
     if($resource eq "Oxford")        { $cput = "1:50:00" ; }
-    if($resource eq "Liverpool_PBS") { $cput = "24:00:00"; }    # TODO: Add Liverpool_Slurm as an option too
+    if($resource eq "Liverpool_PBS") { $cput = "24:00:00"; }
+    if($resource eq "Liverpool_Slurm") { $cput = "1440"    ; }
 }
 ########################################################################################
 
@@ -292,8 +310,6 @@ $file_priors            = ""                   unless defined $file_priors;
 
 $fitparamlist    = "nuosc3f+nuisance"          unless defined $fitparamlist; # standard joint fit
 #$fitparamlist   = "nuosc3f_normbar+nuisance"  unless defined $fitparamlist; # nuebar appearance analysis  /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */
-
-
 
 #
 # NEW MARGINALIZATION FILES (BANFF RELEASE 14/3/16 WITH FIT BIAS)
@@ -922,6 +938,41 @@ while($i_freepar1 < $n_freepar1) {
            close(PBS);
            `qsub -q medium64 $job_dir/$tag.pbs`;
         }
+        #
+        # Liverpool_Slurm
+        #
+        if($resource eq "Liverpool_Slurm") {
+           open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
+           print Slurm "#!/bin/bash \n";
+           print Slurm "#SBATCH -J $tag \n";
+           print Slurm "#SBATCH -o $job_dir/$tag.slurm.out \n";
+           print Slurm "#SBATCH -e $job_dir/$tag.slurm.err \n";
+           print Slurm "#SBATCH -t $cput \n";
+           print Slurm "cd $job_dir \n";
+           print Slurm "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
+           print Slurm "/usr/bin/time $command \n";
+           close(Slurm);
+           `sbatch -p compute $job_dir/$tag.slurm`;
+        }
+        #
+        # Compute Canada Cedar
+        #
+        if($resource eq "Cedar") {
+             open(PBS, ">$job_dir/$tag-$irun.slurm") or die("Cannot create the Slurm batch script");
+             print PBS "#!/bin/bash \n";
+             print PBS "#SBATCH -J $tag-$irun \n";
+             print PBS "#SBATCH --time=$cput \n";
+             print PBS "#SBATCH --account=def-tanaka-ac";
+             print PBS "#SBATCH --mem=4000M";
+             print PBS "#SBATCH -o $job_dir/$tag-$irun-slurm.out \n";
+             print PBS "#SBATCH -e $job_dir/$tag-$irun-slurm.err \n";
+             print PBS "cd $job_dir \n";
+             print PBS "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir \n";
+             print PBS "time $command \n";
+             close(PBS);
+             `sbatch $job_dir/$tag-$irun.slurm`;
+        }
+
 
 	    #
 	    # interactive
@@ -942,6 +993,3 @@ while($i_freepar1 < $n_freepar1) {
     $i_freepar1++;
     
 } # loop over i_freepar1
-       
-
-
