@@ -7,7 +7,7 @@ import sys
 ROOT.gROOT.SetBatch(1)
 
 samples = ["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
-groups = ["skdet", "skfsi", "banff_constrained", "xsec_nue", "xsec_ncgamma", "xsec_ncoth", "osc", "allsyst", "all"]
+groups = ["skdet", "skfsi", "banff_constrained", "xsec_nue", "xsec_ncgamma", "xsec_ncoth", "xsec_eb", "osc", "allsyst", "all"]
 banff_fits = ["prefit", "postfit"]
 names = [
     "SK Detector",
@@ -16,6 +16,7 @@ names = [
     r"$\sigma(\nu_e)/\sigma(\bar{\nu}_e)$",
     r"NC1$\gamma$",
     "NC Other",
+    r"E$_\text{b}$",
     "Osc",
     "All Systematics",
     "All with osc"
@@ -258,8 +259,9 @@ def CreateSummaryTable():
             target.close()
 
 if __name__=="__main__":
-#    CreateSummaryTable()
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 1:
+        CreateSummaryTable()
+    elif len(sys.argv) == 3:
         CreateEnvelope(10000, sys.argv[1], sys.argv[2])
         CreateFractionalError(10000, sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 4:

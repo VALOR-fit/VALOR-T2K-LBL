@@ -133,7 +133,7 @@ void VaryOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, val
       RandomizeOsc(ph);
 
       skexp.Generate(ph);
-      TH1D *hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D *hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -157,7 +157,7 @@ void VaryFlux(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, va
       }
 
       skexp.Generate(ph);
-      TH1D *hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D *hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -182,7 +182,7 @@ void VaryXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, va
          isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
       }
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -209,7 +209,7 @@ void VaryFluxAndXsec(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
       }
 
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -232,7 +232,7 @@ void VaryConstrained(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
       }
 
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -255,7 +255,7 @@ void VaryXsecNumuNue(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
       }
 
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -278,7 +278,7 @@ void VaryXsecNCGamma(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_
       }
 
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -301,7 +301,30 @@ void VaryXsecNCoth(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t 
       }
 
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
+      events[e] = hEvents->GetEntries();
+      binnedEvents[e] = hEvents;
+   }
+}
+
+void VaryXsecEb(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents)
+{
+   for(int e = 0; e < N; ++e)
+   {
+      // stat, syst, osc, fitter, other
+      Rnd::Instance()->SetSeeds(seed + e + 10, seed + e + 20, seed + e + 30, seed + e + 40, seed + e + 50);
+
+      bool isPhysical = false;
+      while(!isPhysical)
+      {
+         skexp.ResetSystematics();
+         skexp.GetBANFF()->TweakSampleEb();
+         PhysParamList paramTweaks = skexp.Tweaks();
+         isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
+      }
+
+      skexp.Generate(ph);
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -324,7 +347,7 @@ void VarySKFSI(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, v
          isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
       }
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -348,11 +371,11 @@ void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, val
       }
 
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
 
-      TH2D* hEvents2 = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));
+      TH2D* hEvents2 = skexp.CurrPredictedErecoVsQ2Spectrum(s)->Clone(Form("spectrum2d_%d", e));
       binnedEvents2D[e] = hEvents2;
    }
 }
@@ -376,7 +399,7 @@ void VaryAllWithOsc(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t
       RandomizeOsc(ph);
 
       skexp.Generate(ph);
-      TH1D* hEvents = new TH1D(*skexp.CurrPredictedErecoSpectrum(s));
+      TH1D* hEvents = skexp.CurrPredictedErecoSpectrum(s)->Clone(Form("spectrum_%d", e));
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
    }
@@ -477,7 +500,7 @@ void make_table_systematic_effects
       SuperkExpectation skexp;
       skexp.Read(sconfig);
 
-      int N = 10000;
+      int N = 40000;
       double* events = new double[N];
     
       if(group_str == "skdet" || group_str == "skfsi")
@@ -633,6 +656,40 @@ void make_table_systematic_effects
          double rms = TMath::RMS(N, events);
          double frac = 100 * rms / mean;
          std::string name = "NC Other";
+         if(banff[b] == "prefit")
+         {
+            streamer << name << " & - & - & - & ";
+         }
+         else
+         {
+            streamer << mean << " & " << rms << " & " << frac << " \\\\ \\hline" << endl;
+         }
+      }
+      else if (group_str == "xsec_eb")
+      {
+         // Xsec NCoth variations
+         if(banff[b] != "prefit")
+         {
+            TH1D** binnedEvents = new TH1D*[N];
+            VaryXsecEb(skexp, s, ph, 700000, N, events, binnedEvents);
+            CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
+            TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
+
+            for(int i = 0; i < N; ++i)
+            {
+               binnedEvents[i]->Write(Form("events_%d", i));
+               events[i] = binnedEvents[i]->GetEntries();
+               delete binnedEvents[i];
+            }
+            delete[] binnedEvents;
+
+            file->Close();
+            delete file;
+         }
+         double mean = TMath::Mean(N, events);
+         double rms = TMath::RMS(N, events);
+         double frac = 100 * rms / mean;
+         std::string name = "E$_\\text{b}$";
          if(banff[b] == "prefit")
          {
             streamer << name << " & - & - & - & ";

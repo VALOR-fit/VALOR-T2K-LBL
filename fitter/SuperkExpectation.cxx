@@ -12,9 +12,9 @@ Added samples for multiring forward horn current
 */
 //________________________________________________________________________________________
 
-#define __show_syst_reset_mesg__
+//#define __show_syst_reset_mesg__
 //#define __show_syst_tweak_mesg__
-#define __show_syst_tweak_debug__
+//#define __show_syst_tweak_debug__
 #define __show_physparamid__
 
 #include <cassert>

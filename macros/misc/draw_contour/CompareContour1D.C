@@ -47,10 +47,28 @@ void CompareContour1D
   if(tag1 != "") latexname[0] = tag1;
   if(tag2 != "") latexname[1] = tag2;
   
-
   TFile f1(file_1,"read");
   TFile f2(file_2,"read");
-  
+
+  const char* trueMH1;
+  const char* trueMH2;
+  if(strstr(file_1, "normal") != NULL)
+  {
+     trueMH1 = "normal";
+  }
+  else
+  {
+     trueMH2 = "inverted";
+  }
+  if(strstr(file_2, "normal") != NULL)
+  {
+     trueMH1 = "normal";
+  }
+  else
+  {
+     trueMH2 = "inverted";
+  }
+
   string histname;
   
   if(doGlobalMin) histname = "h_chisq";
@@ -91,12 +109,14 @@ void CompareContour1D
   find_root2->PrintRoots();
   delete find_root2;
   
-  double max;
   double max1 = h1->GetMaximum();
   double max2 = h2->GetMaximum();
   double max_hist = (max1>max2)? max1 : max2;
-  if(max_hist>17) max = 30;
-  else max = max_hist*1.4;
+  double max = TMath::Ceil(max_hist);
+  if(max > 25)
+  {  // No need to go past 5 sigma for the plot
+     max = 25.0;
+  }
   
   if(max_hist<1.3){
     draw_1sigmaCL=false;
@@ -135,8 +155,25 @@ void CompareContour1D
     draw_5sigmaCL=false;
   }
 
-  
-
+  const char* xaxis_title = h1->GetXaxis()->GetTitle();
+  if(strstr(xaxis_title, "Delta m^{2}") != NULL)
+  {
+     if(strcmp(trueMH1, trueMH2) == 0)
+     {  // Same hierarchy
+        if(strcmp(trueMH1, "normal") == 0)
+        {  // Normal hierarchy
+           h1->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})");
+        }
+        else
+        {  // Inverted hierarchy
+           h1->GetXaxis()->SetTitle("|#Deltam^{2}_{13}| (eV^{2}c^{-4})");
+        }
+     }
+     else
+     {  // Different hierarchies
+        h1->GetXaxis()->SetTitle("|#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH)| (eV^{2}c^{-4})");
+     }
+  }
 
   h1->GetYaxis()->SetTitle("-2#Deltaln(L)");
 //  h1->GetYaxis()->SetLabelSize(0.04);
@@ -228,7 +265,7 @@ void CompareContour1D
   double nx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 10);
   double ty = max;
 
-  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run1-8 Preliminary");
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9c Preliminary");
   title->SetTextSize(0.05);
   title->Draw("same");
   TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");

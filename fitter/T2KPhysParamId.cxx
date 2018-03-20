@@ -3908,6 +3908,7 @@ bool valor::util::IsBANFFUnconstrained(PhysParamId_t p)
         case (kNuisBANFFNormNuEBarToNuMuBar) :
         case (kNuisBANFFNormNC1Gamma   )   :
         case (kNuisBANFFNormNCoth   )   :
+        case (kNuisBANFFEb) :
 	  //case (kNuisBANFFNormNuEBarToNuMuBar) :
 	  //case (kNuisBANFFNorm2p2hBar     )   :
             
@@ -3919,6 +3920,7 @@ bool valor::util::IsBANFFUnconstrained(PhysParamId_t p)
         case (kRHCNuisBANFFNormNuEBarToNuMuBar) :
         case (kRHCNuisBANFFNormNC1Gamma   )   :
         case (kRHCNuisBANFFNormNCoth   )   :
+        case (kRHCNuisBANFFEb ) :
 	  //case (kRHCNuisBANFFNormNuEBarToNuMuBar) :
 	  //case (kRHCNuisBANFF2p2hBar     )   :
             

@@ -138,10 +138,70 @@ void CompareContour2D(char* file_1 = "test1",
     get_contour_90(h2_2,1);
     
   }
+
+  const char* trueMH1;
+  const char* trueMH2;
+  if(strstr(file_1, "normal") != NULL)
+  {
+     trueMH1 = "normal";
+  }
+  else
+  {
+     trueMH2 = "inverted";
+  }
+  if(strstr(file_2, "normal") != NULL)
+  {
+     trueMH1 = "normal";
+  }
+  else
+  {
+     trueMH2 = "inverted";
+  }
+
   // Global scan contours
   
   TCanvas *ccontours = new TCanvas("ccontours","ccontours");
   ccontours->SetTopMargin(0.1);
+
+  const char* xaxis_title = hchisq_valor[0]->GetXaxis()->GetTitle();
+  if(strstr(xaxis_title, "Delta m^{2}") != NULL)
+  {
+     if(strcmp(trueMH1, trueMH2) == 0)
+     {  // Same hierarchy
+        if(strcmp(trueMH1, "normal") == 0)
+        {  // Normal hierarchy
+           hchisq_valor[0]->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})");
+        }
+        else
+        {  // Inverted hierarchy
+           hchisq_valor[0]->GetXaxis()->SetTitle("|#Deltam^{2}_{13}| (eV^{2}c^{-4})");
+        }
+     }
+     else
+     {  // Different hierarchies
+        hchisq_valor[0]->GetXaxis()->SetTitle("|#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH)| (eV^{2}c^{-4})");
+     }
+  }
+
+  const char* yaxis_title = hchisq_valor[0]->GetXaxis()->GetTitle();
+  if(strstr(yaxis_title, "Delta m^{2}") != NULL)
+  {
+     if(strcmp(trueMH1, trueMH2) == 0)
+     {  // Same hierarchy
+        if(strcmp(trueMH1, "normal") == 0)
+        {  // Normal hierarchy
+           hchisq_valor[0]->GetYaxis()->SetTitle("|#Delta m^{2}_{32}| (eV^{2}c^{-4})");
+        }
+        else
+        {  // Inverted hierarchy
+           hchisq_valor[0]->GetYaxis()->SetTitle("|#Delta m^{2}_{13}| (eV^{2}c^{-4})");
+        }
+     }
+     else
+     {  // Different hierarchies
+        hchisq_valor[0]->GetYaxis()->SetTitle("|#Delta m^{2}_{32} (NH),#Delta m^{2}_{13} (IH)| (eV^{2}c^{-4})");
+     }
+  }
 
   hchisq_valor[0]->GetYaxis()->SetLabelSize(0.04);
   hchisq_valor[0]->GetXaxis()->SetLabelSize(0.04);
@@ -219,7 +279,7 @@ void CompareContour2D(char* file_1 = "test1",
   double nx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 10);
   double ty = Y2;
 
-  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run1-8 Preliminary");
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9c Preliminary");
   title->SetTextSize(0.05);
   title->Draw("same");
   TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");
