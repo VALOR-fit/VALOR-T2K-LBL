@@ -30,6 +30,7 @@ if [ ! -d "${T2KOSCANA}/setup/lib_cedar" ]; then
 	ln -s /usr/lib64/libssl.so.10 libssl.so.10 
 	ln -s /cvmfs/soft.computecanada.ca/nix/var/nix/profiles/16.09/lib/libssl.so libssl.so.10.bak
 	ln -s /cvmfs/soft.computecanada.ca/nix/var/nix/profiles/16.09/lib/libz.so.1 libz.so.1 
+        ln -s /cvmfs/soft.computecanada.ca/nix/var/nix/profiles/16.09/lib/libXpm.so.4 libXpm.so.4
 	cd -
 fi
 

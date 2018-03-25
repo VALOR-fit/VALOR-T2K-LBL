@@ -122,6 +122,8 @@ else
 }
 
 $wqueue = "medium";
+$cedar_time = "12:00:00";
+$cedar_mem = "3500M";
 
 # # 1D fit - beta bar
 if(($freepar0 eq "betaBar") and ($freepar1 eq ""))
@@ -161,6 +163,8 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
       $nexpts_marg            = 40000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "long -R rusage[mem=3584,swap=3584]";
+      $cedar_time             = "12:00:00";
+      $cedar_mem              = "3500M";
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
    }
    else
@@ -168,6 +172,8 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
       $nexpts_marg            = 80000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
+      $cedar_time             = "12:00:00";
+      $cedar_mem              = "5000M";
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
    }
    $minfreepar0    = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -197,6 +203,8 @@ if(($freepar0 eq "mixing13") and ($freepar1 eq ""))
    $step_freepar0  = 1                unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1  = 1                unless defined $step_freepar1;   # of points for each job param1
    $wqueue         = "long -R rusage[mem=3584,swap=3584]";
+   $cedar_time     = "12:00:00";
+   $cedar_mem      = "3500M";
 }
 
 # # 1D fit - sinsqth23
@@ -210,6 +218,8 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
       $step_freepar0  = 1;
       $wqueue         = "long -R rusage[mem=3584,swap=3584]";
       $npt_freepar0   = 101;
+      $cedar_time     = "12:00:00";
+      $cedar_mem      = "3500M";
    }
    else
    {
@@ -217,6 +227,8 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
       $step_freepar0  = 1;
       $wqueue         = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
       $npt_freepar0   = 101;
+      $cedar_time     = "12:00:00";
+      $cedar_mem      = "5000M";
    }
    $minfreepar0       = 0.3         unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0       = 0.7         unless defined $maxfreepar0;     # Maximum free parameter allowed value 
@@ -239,6 +251,8 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
       $step_freepar0          = 1;
       $wqueue                 = "long -R rusage[mem=3584,swap=3584]";
       $npt_freepar0           = 101;
+      $cedar_time             = "12:00:00";
+      $cedar_mem              = "3500M";
    }
    else
    {
@@ -246,6 +260,8 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
       $step_freepar0          = 1;
       $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
       $npt_freepar0           = 101;
+      $cedar_time             = "12:00:00";
+      $cedar_mem              = "5000M";
    }
    $minfreepar0            = 2.2e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = 2.8e-3    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
@@ -290,6 +306,8 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    $step_freepar0     = 3                         unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1     = 2                         unless defined $step_freepar1;   # of points for each job param1
    $wqueue            = "long -R rusage[mem=3072,swap=3072]";
+   $cedar_time        = "12:00:00";
+   $cedar_mem         = "3000M";
 }
 # # 2D fit - sinsqth23 Vs dmsq23
 if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
@@ -311,6 +329,8 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $step_freepar0    = 3          unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1    = 2          unless defined $step_freepar1;   # of points for each job param1
    $wqueue           = "long -R rusage[mem=3072,swap=3072]";
+   $cedar_time       = "12:00:00";
+   $cedar_mem        = "3000M";
 
    $tag = "${tag}_${freepar0}_${freepar1}";
 }
@@ -639,6 +659,24 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	if($resource eq "interactive") {
 	    system($command);
 	}
+
+         if($resource eq "cedar")
+         {
+            open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
+            print Slurm "#!/bin/bash \n";
+            print Slurm "#SBATCH --account=def-tanaka-ac \n";
+            print Slurm "#SBATCH --nodes=1 \n";
+            print Slurm "#SBATCH --time=$cedar_time \n";
+            print Slurm "#SBATCH --mem=$cedar_mem \n";
+            print Slurm "#SBATCH --job-name=$tag-$irun \n";
+            print Slurm "#SBATCH --output=$job_dir/$tag-$irun.slurm.log \n";
+            print Slurm "cd $job_dir \n"; 
+            print Slurm "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
+            print Slurm "$command \n";
+            close(Slurm);
+            `sbatch $job_dir/$tag.slurm`;
+         }
+
 
         if($resource eq "warwick") {
 #          if($imin0 == 5 || $imin0 == 27 || $imin0 == 72 || $imin0 == 81 || $imin0 == 98)
