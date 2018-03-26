@@ -73,14 +73,14 @@ CorrelatedSystematics()
 
 }
 //________________________________________________________________________________________
-void BANFF::TweakSampleConstrainedOnly  (bool force_inputs, TVectorD * input_vec, bool unconstrained)
+void BANFF::TweakSampleConstrainedOnly  (bool force_inputs, TVectorD * input_vec)
 {
   
   this->Tweak(force_inputs, input_vec);
   
   for(unsigned int ip=0;ip<fNSystParameters;ip++){
     PhysParamId_t p = fSystParameters[ip];
-    if (unconstrained!=util::IsBANFFUnconstrained(p)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
+    if (util::IsBANFFUnconstrained(p)) {(*fCurrentValues)[ip]=(*fInitialValues)[ip];};
   }
   return;
 }

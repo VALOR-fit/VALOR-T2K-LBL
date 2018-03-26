@@ -225,7 +225,7 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
    {
       $nexpts_marg    = 80000            unless defined $nexpts_marg;
       $step_freepar0  = 1;
-      $wqueue         = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
+      $wqueue         = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120]";
       $npt_freepar0   = 101;
       $cedar_time     = "12:00:00";
       $cedar_mem      = "5000M";
@@ -258,7 +258,7 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 80000           unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
+      $wqueue                 = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120]";
       $npt_freepar0           = 101;
       $cedar_time             = "12:00:00";
       $cedar_mem              = "5000M";
@@ -679,7 +679,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 
 
         if($resource eq "warwick") {
-#          if($imin0 == 5 || $imin0 == 27 || $imin0 == 72 || $imin0 == 81 || $imin0 == 98)
+#          if($imin0 == 51 || $imin0 == 90)
 #          {
 #          }
 #          else

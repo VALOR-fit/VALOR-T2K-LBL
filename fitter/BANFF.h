@@ -34,7 +34,7 @@ public:
  ~BANFF();
 
   // Need to be removed  Replace with Tweak calls and the function 
-  void TweakSampleConstrainedOnly  (bool force_inputs = false, TVectorD * input_vec = 0, bool unconstrainted=false);
+  void TweakSampleConstrainedOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleFluxOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleXSecOnly  (bool force_inputs = false, TVectorD * input_vec = 0);
   void TweakSampleXSecNumuNueOnly     (bool force_inputs = false, TVectorD * input_vec = 0);

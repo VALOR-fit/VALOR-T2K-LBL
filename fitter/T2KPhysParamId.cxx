@@ -4375,8 +4375,8 @@ bool valor::util::IsSKDetFSI(PhysParamId_t p)
 //____________________________________________________________________________
 bool valor::util::IsFlux(PhysParamId_t p)
 {
-    if ( (p >= kNuisBANFF00    && p < kNuisBANFFMAQE) ||
-        (p >= kRHCNuisBANFF00 && p < kRHCNuisBANFFMAQE) ) {
+    if ( (p >= kNuisBANFF00    && p <= kNuisBANFF24) ||
+        (p >= kRHCNuisBANFF00 && p <= kRHCNuisBANFF24) ) {
         return true;
     }
     

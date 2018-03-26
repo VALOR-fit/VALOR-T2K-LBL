@@ -110,7 +110,7 @@ def CreateEnvelope(N, outfile, filename1, filename2=None):
     ty = nominal.GetMaximum() * 1.01
     caveat = ROOT.TLatex(tx, ty,"Final systematics pending");
     caveat.SetTextSize(0.025);
-    caveat.Draw("same");
+#    caveat.Draw("same");
 
     c.SaveAs(outfile + ".pdf")
     c.SaveAs(outfile + ".png")
@@ -203,7 +203,7 @@ def CreateFractionalError(N, outfile, filename1, filename2=None):
 
     tx = upper.GetXaxis().GetBinLowEdge(upper.GetXaxis().GetLast()) * 0.5
     ty = upper.GetMaximum() * 1.01
-    title = ROOT.TLatex(tx, ty,"T2K Run1-8 Preliminary");
+    title = ROOT.TLatex(tx, ty,"T2K Run1-9c Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
 
@@ -211,13 +211,13 @@ def CreateFractionalError(N, outfile, filename1, filename2=None):
     ty = upper.GetMaximum() * 1.01
     caveat = ROOT.TLatex(tx, ty,"Final systematics pending");
     caveat.SetTextSize(0.025);
-    caveat.Draw("same");
+#    caveat.Draw("same");
 
     c.SaveAs(outfile + "_fractional.pdf")
     c.SaveAs(outfile + "_fractional.png")
     c.SaveAs(outfile + "_fractional.eps")
 
-def CreateSummaryTable():
+def CreateSummaryTable(N):
     for b, banff in enumerate(banff_fits):
         for g, group in enumerate(groups):
             line = names[g]
@@ -234,7 +234,7 @@ def CreateSummaryTable():
                 f = ROOT.TFile(histofilename)
                 if not f:
                     continue
-                for i in range(10000):
+                for i in range(N):
                     histo = f.Get("events_%d" % i)
                     histos.append(histo)
                     events.append(histo.GetEntries())
@@ -259,12 +259,13 @@ def CreateSummaryTable():
             target.close()
 
 if __name__=="__main__":
+    N = 10000
     if len(sys.argv) == 1:
-        CreateSummaryTable()
+        CreateSummaryTable(N)
     elif len(sys.argv) == 3:
-        CreateEnvelope(10000, sys.argv[1], sys.argv[2])
-        CreateFractionalError(10000, sys.argv[1], sys.argv[2])
+        CreateEnvelope(N, sys.argv[1], sys.argv[2])
+        CreateFractionalError(N, sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 4:
-        CreateEnvelope(10000, sys.argv[1], sys.argv[2], sys.argv[3])
-        CreateFractionalError(10000, sys.argv[1], sys.argv[2], sys.argv[3])
+        CreateEnvelope(N, sys.argv[1], sys.argv[2], sys.argv[3])
+        CreateFractionalError(N, sys.argv[1], sys.argv[2], sys.argv[3])
         
