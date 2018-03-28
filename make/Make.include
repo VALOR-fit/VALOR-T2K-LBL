@@ -82,6 +82,15 @@ LOG_INCLUDES  := -I$(LOG_INC_DIR)
 LOG_LIBRARIES := -L$(LOG_LIB_DIR) -llog4cpp
 
 #-------------------------------------------------------------------
+#                             GSL
+#-------------------------------------------------------------------
+#
+# GSL libraries and headers
+GSL_INCLUDES := $(shell gsl-config --cflags)
+GSL_LIBRARIES := $(shell gsl-config --libs)
+
+
+#-------------------------------------------------------------------
 #                   PROFILING / DEBUGING OPTIONS
 #-------------------------------------------------------------------
 # Linking in the Google Profiling Tool library
@@ -270,7 +279,7 @@ endif
 
 # LINUX / 64-bit x86 / with gcc
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ifeq ($(strip $(ARCH)),linuxx8664gcc) 
+ifeq (linuxx8664,$(findstring linuxx8664,$(strip $(ARCH)))) 
 ARCH_OK       = YES
 CXXFLAGS      = -Wall -std=c++11 -fPIC \
 		$(OPT_WITH_CXX_DEBUG_FLAG) \
@@ -309,7 +318,8 @@ INCLUDES  := $(VALOR_APP_INCLUDES) \
              $(VALOR_FMWK_INCLUDES) \
              $(LOG_INCLUDES) \
              $(ROOT_INCLUDES) \
-             $(LINUX_SYS_INCLUDES)
+             $(LINUX_SYS_INCLUDES)\
+             $(GSL_INCLUDES)
 
 LIBRARIES := $(SYSLIBS) \
              $(VALOR_APP_LIBRARIES) \
@@ -317,6 +327,7 @@ LIBRARIES := $(SYSLIBS) \
              $(LOG_LIBRARIES) \
              $(ROOT_LIBRARIES) \
              $(GPROF_LIBRARIES) \
+             $(GSL_LIBRARIES) \
              $(OPT_WITH_MISC_LIBS)
 
 # Default compiler and preprocessor flags
@@ -366,3 +377,6 @@ CFLAGS    = $(OPT_WITH_CXX_DEBUG_FLAG)
 	$(AR) $(ARFLAGS) $@ $*.o
 	$(RANLIB) $@
 	$(RM) $*.o
+
+# Print variable name for debugging MakeFile, eg make print-INCLUDES
+print-%  : ; @echo $* = $($*)
