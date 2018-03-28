@@ -88,10 +88,10 @@ def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start):
             hist_nevents_unweighted_itoy.Fill(Nevents_fluct)
         # Calculate p-values for this fake-data toy
         Nevents_fakedata     [0] = int(Nevents_nuebar)
-        pval_left_unweighted [0] = p_value(hist_nevents_unweighted_itoy, Nevents_data, "left" )
-        pval_right_unweighted[0] = p_value(hist_nevents_unweighted_itoy, Nevents_data, "right")
-        pval_left_weighted   [0] = p_value(hist_nevents_weighted_itoy  , Nevents_data, "left" )
-        pval_right_weighted  [0] = p_value(hist_nevents_weighted_itoy  , Nevents_data, "right")
+        pval_left_unweighted [0] = p_value(hist_nevents_unweighted_itoy, math.floor(Nevents_data), "left" )
+        pval_right_unweighted[0] = p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "right")
+        pval_left_weighted   [0] = p_value(hist_nevents_weighted_itoy  , math.floor(Nevents_data), "left" )
+        pval_right_weighted  [0] = p_value(hist_nevents_weighted_itoy  , math.ceil(Nevents_data) , "right")
         tree_out.Fill()
 
     # Write out
