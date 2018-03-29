@@ -313,7 +313,7 @@ def plot_ereco_spectrum(histos, data, outfile):
 
     tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
     ty = max * 1.05
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-8 Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9c Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -372,7 +372,7 @@ def plot_theta_spectrum(histos, data, outfile):
 
     tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
     ty = max * 1.05
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-8 Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9c Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -424,7 +424,7 @@ def plot_ereco_theta_spectrum(histos, data, outfile):
 
     tx = swappedTotal.GetXaxis().GetBinLowEdge(swappedTotal.GetXaxis().GetLast())
     ty = 180 
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-8 Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9c Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -473,7 +473,7 @@ def plot_data_ereco_theta_spectrum(histo, outfile):
 
 def asimov(infile, outfile, datafile, sample):
     file = ROOT.TFile(infile)
-    if not datafile == "":
+    if not datafile is None:
         dfile = ROOT.TFile(datafile)
         data = dfile.Get("mock_data_" + sample + "_0")
         graph = dfile.Get("g" + sample)
@@ -534,7 +534,7 @@ if __name__=="__main__":
     v = optparse.Values()
     parser.parse_args(values = v)   # v contains only the values that were specified, not defaults
     o, other = parser.parse_args()
-  
+ 
     asimov(o.infile, o.outfile, o.datafile, o.sample)
     #data(o.infile, o.outfile, o.sample)
 

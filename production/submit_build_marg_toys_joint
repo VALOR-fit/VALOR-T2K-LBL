@@ -162,7 +162,7 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 40000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long -R rusage[mem=3584,swap=3584]";
+      $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
       $cedar_time             = "12:00:00";
       $cedar_mem              = "3500M";
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
@@ -171,7 +171,7 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 80000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120]";
+      $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
       $cedar_time             = "12:00:00";
       $cedar_mem              = "5000M";
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
@@ -202,7 +202,7 @@ if(($freepar0 eq "mixing13") and ($freepar1 eq ""))
    $masshierarchy  = "normal"         unless defined $masshierarchy;
    $step_freepar0  = 1                unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1  = 1                unless defined $step_freepar1;   # of points for each job param1
-   $wqueue         = "long -R rusage[mem=3584,swap=3584]";
+   $wqueue         = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
    $cedar_time     = "12:00:00";
    $cedar_mem      = "3500M";
 }
@@ -216,7 +216,7 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
    {
       $nexpts_marg    = 40000            unless defined $nexpts_marg;
       $step_freepar0  = 1;
-      $wqueue         = "long -R rusage[mem=3584,swap=3584]";
+      $wqueue         = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
       $npt_freepar0   = 101;
       $cedar_time     = "12:00:00";
       $cedar_mem      = "3500M";
@@ -225,7 +225,7 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
    {
       $nexpts_marg    = 80000            unless defined $nexpts_marg;
       $step_freepar0  = 1;
-      $wqueue         = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120]";
+      $wqueue         = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
       $npt_freepar0   = 101;
       $cedar_time     = "12:00:00";
       $cedar_mem      = "5000M";
@@ -249,7 +249,7 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 40000           unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "long -R rusage[mem=3584,swap=3584]";
+      $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
       $npt_freepar0           = 101;
       $cedar_time             = "12:00:00";
       $cedar_mem              = "3500M";
@@ -258,7 +258,7 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
    {
       $nexpts_marg            = 80000           unless defined $nexpts_marg;
       $step_freepar0          = 1;
-      $wqueue                 = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120]";
+      $wqueue                 = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
       $npt_freepar0           = 101;
       $cedar_time             = "12:00:00";
       $cedar_mem              = "5000M";
@@ -305,7 +305,7 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    $masshierarchy     = "normal"                  unless defined $masshierarchy;
    $step_freepar0     = 3                         unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1     = 2                         unless defined $step_freepar1;   # of points for each job param1
-   $wqueue            = "long -R rusage[mem=3072,swap=3072]";
+   $wqueue            = "long -R rusage[mem=3072,swap=3072,tmp=1000]";
    $cedar_time        = "12:00:00";
    $cedar_mem         = "3000M";
 }
@@ -328,7 +328,7 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $masshierarchy    = "normal"   unless defined $masshierarchy;
    $step_freepar0    = 3          unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1    = 2          unless defined $step_freepar1;   # of points for each job param1
-   $wqueue           = "long -R rusage[mem=3072,swap=3072]";
+   $wqueue           = "long -R rusage[mem=3072,swap=3072,tmp=1000]";
    $cedar_time       = "12:00:00";
    $cedar_mem        = "3000M";
 
@@ -678,46 +678,21 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
          }
 
 
-        if($resource eq "warwick") {
-#          if($imin0 == 51 || $imin0 == 90)
-#          {
-#          }
-#          else
-#          {
-#             next;
-#          }
-          $current = $wqueue;
-          if($npt_freepar1 == 1)
-          {  # 1D
-#             if(($imin0 == ($npt_freepar0 - 1)) && ($npt_freepar1 == 1))
-#             {  # Last job for 1D fit is small, use shorter queue
-#               $wqueue = "medium";
-#             }
-          }
-          else
-          {  # 2D
-#            if($freepar0 eq "mixing23")
+         if($resource eq "warwick")
+         {
+#            if(($imin0 == 6 && ($imin1 == 44))
+#            )
 #            {
-#               if(($imin0 == ($npt_freepar0 - 1)) && ($imin1 == ($npt_freepar1 - 1)))
-#               {  # Both params on short "final" job
-#                  $wqueue = "medium";
-#               }
-#               elsif(($imin0 == ($npt_freepar0 - 1)) || ($imin1 == ($npt_freepar1 - 1)))
-#               {  # One param on short "final" job
-#                  $wqueue = "long";
-#               }
 #            }
-#            elsif($freepar0 eq "mixing13")
+#            else
 #            {
-#               if(($imin0 == ($npt_freepar0 - 1)) && ($imin1 == ($npt_freepar1 - 1)))
-#               {  # Both params on short "final" job
-#                  $wqueue = "medium";
-#               }
+#               next;
 #            }
-
+             $current = $wqueue;
           }
 
-          `bsub -q $wqueue -oo log_${tag}_${imin0}_${imin1}.log $softw_dir/production/warwick_submit_command.sh $command`;
+#          `bsub -q $wqueue -oo log_${tag}_${imin0}_${imin1}.log $softw_dir/production/warwick_submit_command.sh $command`;
+          `bsub -q $wqueue -oo log_${tag}_${imin0}_${imin1}.log $softw_dir/production/submit_build_warwick_opt.sh $command`;
           $wqueue = $current;
         }
 	
