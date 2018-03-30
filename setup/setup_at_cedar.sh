@@ -9,7 +9,7 @@
 export T2KOSCANA="$(readlink -m $1)"
 export VALOR_FMWK="$(readlink -m $2)"
 
-log4cpp_lib_path=$(find ~ -name "liblog4cpp.so" -print -quit)
+log4cpp_lib_path=$(find $HOME -name "liblog4cpp.so" -print -quit)
 log4cpp_lib_path=$(dirname "$log4cpp_lib_path")
 
 source "${VALOR_FMWK}/setup/setup_at_cedar.sh" "${VALOR_FMWK}"

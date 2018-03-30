@@ -662,7 +662,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 
          if($resource eq "cedar")
          {
-            open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
+            open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
             print Slurm "#!/bin/bash \n";
             print Slurm "#SBATCH --account=def-tanaka-ac \n";
             print Slurm "#SBATCH --nodes=1 \n";
@@ -674,8 +674,58 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
             print Slurm "source $softw_dir/setup/setup_at_cvmfs.sh $softw_dir $fmwk_dir\n";
             print Slurm "$command \n";
             close(Slurm);
-            `sbatch $job_dir/$tag.slurm`;
+            `sbatch $job_dir/$tag-$irun.slurm`;
          }
+
+         if($resource eq "cedar_opt")
+         {
+            open(Slurm, ">$job_dir/temp_${irun}.txt") or die("Cannot create temp");
+            print Slurm "$command";
+            close(Slurm);
+            print Slurm "rm -rf \$node_dir \n";
+            open(Slurm, ">$job_dir/${tag}_${irun}.slurm") or die("Can not create the Slurm batch script");
+            print Slurm "#!/bin/bash \n";
+            print Slurm "#SBATCH --account=def-tanaka-ac \n";
+            print Slurm "#SBATCH --nodes=1 \n";
+            print Slurm "#SBATCH --time=$cedar_time \n";
+            print Slurm "#SBATCH --mem=$cedar_mem \n";
+            print Slurm "#SBATCH --job-name=$tag-$irun \n";
+            print Slurm "#SBATCH --output=$job_dir/$tag-$irun.slurm.log \n";
+            print Slurm "the_command=\$(cat $job_dir/temp_${irun}.txt) \n";
+
+            print Slurm "IFS=',' read -r -a tokens <<< \"\$the_command\" \n";
+            print Slurm "rm -f $job_dir/temp_${irun}.txt \n";
+            print Slurm "newarray=() \n";
+            print Slurm "numtok=\$\{#tokens[@]\} \n";
+            print Slurm "for (( i=0; i<\$\{#tokens[@]\}; i++ )); do \n";
+            print Slurm "   if [ \$i == 5 ]; then \n";
+            print Slurm "      tag=`eval echo -e \$\{tokens[i]\}` \n";
+            print Slurm "      newarray+=\"\\\"\$\{SLURM_TMPDIR\}/${tag}\\\",\" \n";
+            print Slurm "      echo -e \"spec \$i \$\{tokens[i]\}\" \n";
+            print Slurm "   elif [ \$i == \$\[\$\{numtok\} - 1\] ]; then \n";
+            print Slurm "      newarray+=\"\$\{tokens[i]\}\" \n";
+            print Slurm "      echo -e \"last \$i \$\{tokens[i]\}\" \n";
+            print Slurm "   else \n";
+            print Slurm "      newarray+=\"\$\{tokens[i]\},\" \n";
+            print Slurm "      echo -e \"stan \$i \$\{tokens[i]\}\" \n";
+            print Slurm "   fi \n";
+            print Slurm "done \n";
+
+            print Slurm "cmd=\"\$\{newarray[*]\}\" \n";
+            print Slurm "echo -e \"The command \\\"\$cmd\\\"\" \n";
+
+            print Slurm "export node_dir=\$SLURM_TMPDIR \n";
+            print Slurm "cd $job_dir \n";
+            print Slurm "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir\n";
+            print Slurm "echo -e \"T2XK \$\{T2KOSCANA\}   FMWK \$\{VALOR_FMWK\}\" \n";
+            print Slurm "\$cmd \n";
+
+            print Slurm "cp -r \$node_dir/* . \n";
+
+            close(Slurm);
+            `sbatch $job_dir/${tag}_${irun}.slurm`;
+         }
+
 
 
          if($resource eq "warwick")
