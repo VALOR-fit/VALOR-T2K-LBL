@@ -349,6 +349,8 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
    else
    {
@@ -356,6 +358,8 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "medium";
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
@@ -402,6 +406,8 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
       $npt_freepar0      = 101    unless defined $npt_freepar0;
       $ntoys_margtoys   = 40000   unless defined $ntoys_margtoys;
       $nfiles_margtoys   = 101    unless defined $nfiles_margtoys;
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
    else
    {  # T2K only
@@ -410,6 +416,8 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
       $npt_freepar0      = 101    unless defined $npt_freepar0;
       $ntoys_margtoys   = 40000   unless defined $ntoys_margtoys;
       $nfiles_margtoys   = 101    unless defined $nfiles_margtoys;
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
 
    $freepar1          = ""     unless defined $freepar1;
@@ -429,6 +437,8 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
    else
    {
@@ -436,6 +446,8 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "medium";
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
 
 
@@ -456,6 +468,8 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
    else
    {
@@ -463,6 +477,8 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "medium";
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
 
    $minfreepar0       = 2.2e-3  unless defined $minfreepar0;  # Min free param allowed value
@@ -983,6 +999,24 @@ while($i_freepar1 < $n_freepar1) {
 	    if($resource eq "interactive") {
 		system($command);
 	    }
+
+         if($resource eq "cedar")
+         {
+            open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
+            print Slurm "#!/bin/bash \n";
+            print Slurm "#SBATCH --account=def-tanaka-ac \n";
+            print Slurm "#SBATCH --nodes=1 \n";
+            print Slurm "#SBATCH --time=$cedar_time \n";
+            print Slurm "#SBATCH --mem=$cedar_mem \n";
+            print Slurm "#SBATCH --job-name=$tag-$irun \n";
+            print Slurm "#SBATCH --output=$job_dir/$tag-$irun.slurm.log \n";
+            print Slurm "cd $job_dir \n"; 
+            print Slurm "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir\n";
+            print Slurm "$command \n";
+            close(Slurm);
+            `sbatch $job_dir/$tag-$irun.slurm`;
+         }
+
 
             if($resource eq "warwick") {
                 `bsub -q $wqueue -R "select[hname != 'comp20']" -oo log_${tag}_${irun}_${i_freepar0}_${ifreepar1}.log $command`
