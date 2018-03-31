@@ -27,18 +27,18 @@ env     = valor.Env.Instance()
 rnd     = valor.Rnd.Instance()
 arridx  = util.ArrIdx.Instance()
 
-def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, infilename_comp_nobs_beta0, infilename_comp_nobs_beta1, infilename_comp_Dchisq_beta0, infilename_comp_Dchisq_beta1, test_statistic, prior_predictive):
-    #
-    # Histogram parameters to tweak
-    #
-    nbins_dchisq  = 50
-    low_dchisq    = -30.
-    high_dchisq   = 80.
-    low_nevents   = -1
-    high_nevents  = 65
-    scale_max     = 5   #2
-    leg_text_size = 0.03
-    
+#
+# Histogram parameters to tweak
+#
+nbins_dchisq  = 50
+low_dchisq    = -30.
+high_dchisq   = 80.
+low_nevents   = -1
+high_nevents  = 65
+scale_max     = 5   #2
+leg_text_size = 0.03
+
+def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, infilename_comp_nobs_beta0, infilename_comp_nobs_beta1, infilename_comp_Dchisq_beta0, infilename_comp_Dchisq_beta1, test_statistic, prior_predictive, valor_comp, label, label_comp):    
     tstat = True
     if not test_statistic == "rate+shape":
         if test_statistic == "rate-only":
@@ -124,8 +124,8 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
             leg_ylow = 0.78
         leg = ROOT.TLegend(0.6,leg_ylow,0.9,0.95)
         leg.SetTextSize(leg_text_size)
-        leg.AddEntry(hist_deltachisq01_beta0,"#Delta #chi^{2} (Fake-data #beta = 0)","l")
-        leg.AddEntry(hist_deltachisq01_beta1,"#Delta #chi^{2} (Fake-data #beta = 1)","l")
+        leg.AddEntry(hist_deltachisq01_beta0, label+" (Fake-data #beta = 0)","l")
+        leg.AddEntry(hist_deltachisq01_beta1, label+" (Fake-data #beta = 1)","l")
         if infilename_data != "":
             leg.AddEntry(data_line_dchisq,"#Delta #chi^{2} ("+data_label+") = "+str("{0:.2f}".format(Delta_chisq_data)),"l")
 
@@ -157,7 +157,9 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         canv.SaveAs(outfile_name2,"recreate")
 
         # If we have comparison data, plot it too
-        plot_comparison_both(hist_deltachisq01_beta0, infilename_comp_Dchisq_beta0, 0, hist_deltachisq01_beta1, infilename_comp_Dchisq_beta1, 1, "rate+shape", canv, leg, tag)
+        plot_comparison_both(hist_deltachisq01_beta0, infilename_comp_Dchisq_beta0, 0, hist_deltachisq01_beta1,
+                             infilename_comp_Dchisq_beta1, 1, "rate+shape", canv, leg, tag, valor_comp,
+                             prior_predictive, label_comp)
         
         #
         # Check for any overflow points that won't have been plot
@@ -262,8 +264,8 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
 
         leg_nevents = ROOT.TLegend(0.58,0.8,0.9,0.95)
         leg_nevents.SetTextSize(leg_text_size)
-        leg_nevents.AddEntry(hist_nevents_beta0,"Events (Fake-data #beta = 0)","l")
-        leg_nevents.AddEntry(hist_nevents_beta1,"Events (Fake-data #beta = 1)","l")
+        leg_nevents.AddEntry(hist_nevents_beta0, label+" (Fake-data #beta = 0)","l")
+        leg_nevents.AddEntry(hist_nevents_beta1, label+" (Fake-data #beta = 1)","l")
         if infilename_data != "":
             leg_nevents.AddEntry(data_line_nevents,"Events ("+data_label+") = "+str("{0:.2f}".format(nevents_data)),"l")
 
@@ -285,7 +287,9 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         canv_nevents.SaveAs(outfile_name_nevents2,"recreate")
 
         # If we have comparison data, plot it too
-        plot_comparison_both(hist_nevents_beta0, infilename_comp_nobs_beta0, 0, hist_nevents_beta1, infilename_comp_nobs_beta1, 1, "rate-only", canv_nevents, leg_nevents, tag)
+        plot_comparison_both(hist_nevents_beta0, infilename_comp_nobs_beta0, 0, hist_nevents_beta1,
+                             infilename_comp_nobs_beta1, 1, "rate-only", canv_nevents, leg_nevents,
+                             tag, valor_comp, prior_predictive, label_comp)
         
 
         #
@@ -307,10 +311,10 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         #print "Rate only  (true beta = 1) p-value (left  tail) =", p_val, "=", sigma(p_val), "sigma"
 
         p_val = hist_pval_nolog_beta0.ProjectionX().GetMean()
-        err_pval = err_pvalue(p_val, hist_pval_nolog_beta0, prior_predictive)     # TODO: need to do errors for each toy and average? Or is total okay?
+        err_pval = err_pvalue(p_val, hist_pval_nolog_beta0, prior_predictive)
         print "Rate only (true beta = 0) p-value (right tail) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"    # TODO: error on sigma
         p_val = hist_pval_nolog_beta1.ProjectionX().GetMean()
-        err_pval = err_pvalue(p_val, hist_pval_nolog_beta1, prior_predictive)     # TODO: need to do errors for each toy and average? Or is total okay?
+        err_pval = err_pvalue(p_val, hist_pval_nolog_beta1, prior_predictive)
         print "Rate only (true beta = 1) p-value (left tail) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
 
         #
@@ -320,6 +324,10 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         plot_pval_dist(hist_pval_beta1, 1, "log_"+tag)
         plot_pval_dist(hist_pval_nolog_beta0, 0, tag)
         plot_pval_dist(hist_pval_nolog_beta1, 1, tag)
+        print "Test: full rate-only distribution p-val (true beta = 0) (right tail) =", p_value(hist_nevents_beta0, nevents_data, "right")
+        print "Test: rounded data full rate-only distribution p-val (true beta = 0) (right tail) =", p_value(hist_nevents_beta0, math.ceil(nevents_data), "right")
+        print "Test: full rate-only distribution p-val (true beta = 1) (left tail)  =", p_value(hist_nevents_beta1, nevents_data, "left")
+        print "Test: rounded data full rate-only distribution p-val (true beta = 1) (left tail)  =", p_value(hist_nevents_beta1, math.floor(nevents_data), "left")
 
     print "Test: p=0.317=",sigma(0.317)
     print "Test: p=0.0455=",sigma(0.0455)
@@ -332,6 +340,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
 def p_value(distribution, data, tail):
     ntot = distribution.Integral()
     ibin_data = distribution.FindBin(data)
+    print "*** test pval: data bin =", ibin_data, "; data bin low = ", distribution.GetBinCenter(ibin_data) - distribution.GetBinWidth(ibin_data)/2.0, "; data bin high = ", distribution.GetBinCenter(ibin_data) + distribution.GetBinWidth(ibin_data)/2.0, "; data bin centre = ", distribution.GetBinCenter(ibin_data)
     pval = -999
     #print "For", distribution.GetName(), "total integral =", ntot
     if tail == "right":
@@ -366,21 +375,19 @@ def warn_over_under_flow(hist):
         print text1, "underflow", text2
 
 
-def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2, infile2name_comp, beta_file2, statistic, canv, leg, tag):
+def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2, infile2name_comp, beta_file2, statistic, canv, leg, tag, valor_comp, prior_predictive, label_comp):
     outtag = ""
-    label  = ""
+    label = label_comp + " (Fake-data #beta = "
     hname  = ""
     draw_opt = "same"
     if statistic == "rate-only":
         outtag = "_comparison_nevents"
         hname = "Nobs"
-        label = "P-theta Events (Fake-data #beta = "
         #draw_opt = draw_opt + ",B"
         draw_opt = draw_opt + ",hist"
     elif statistic == "rate+shape":
         outtag = "_comparison_Deltachisq_logscale"
         hname = "Dchisq"
-        label = "P-theta #Delta #chi^{2} (Fake-data #beta = "
     else:
         print "Test statistic", statistic, "not understood. Exiting."
         util.Die(-1)
@@ -388,7 +395,7 @@ def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2,
     comp_h1 = ROOT.TH1D()
     comp_h2 = ROOT.TH1D()
     if infile1name_comp != "":
-        comp_h1 = plot_comparison_single(valor_hist1, infile1name_comp, beta_file1, statistic, leg, hname, label)
+        comp_h1 = plot_comparison_single(valor_hist1, infile1name_comp, beta_file1, statistic, leg, hname, label, valor_comp, prior_predictive)
         comp_h1.Draw(draw_opt)
         print "*** nbins in comp_h1 =", comp_h1.GetNbinsX()
         print "*** bin width in comp_h1 =", comp_h1.GetXaxis().GetBinWidth(1)
@@ -396,12 +403,13 @@ def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2,
         print "*** bin width in valor_hist1 =", valor_hist1.GetXaxis().GetBinWidth(1)
 
     if infile2name_comp != "":
-        comp_h2 = plot_comparison_single(valor_hist2, infile2name_comp, beta_file2, statistic, leg, hname, label)
+        comp_h2 = plot_comparison_single(valor_hist2, infile2name_comp, beta_file2, statistic, leg, hname, label, valor_comp, prior_predictive)
         comp_h2.Draw(draw_opt)
 
         
     if infile1name_comp != "" or infile2name_comp != "":
-        leg.SetX1NDC(0.8*leg.GetX1NDC())
+        leg.SetX1NDC(0.82*leg.GetX1NDC())
+        leg.SetY1NDC(0.92*leg.GetY1NDC())
         canv.Update()
         ext1 = ".pdf"
         ext2 = ".png"
@@ -412,27 +420,59 @@ def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2,
         canv.SaveAs(outfile_name2,"recreate")
 
 
-def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hname, label):
+def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hname, label, valor_comp, prior_predictive):
     label = label + str(beta) + ")"
     col = 0
     style = 3
     if beta == 0:
         col = 40
-        hname += "_beta0"
+        #hname += "_beta0"
     elif beta == 1:
         col = 41
-        hname += "_beta1"
+        #hname += "_beta1"
     else:
         print "beta = ", beta, "not understood. Exiting."
         util.Die(-1)
     
     file_comp = ROOT.TFile(infilename_comp,"READ")
-    hist_comp = file_comp.Get(hname)
-    if statistic == "rate-only":
-        if beta == 0:
-            area_norm(hist_comp, valor_hist, 1, 30)     # the P-theta beta = 0 hist only extends up to 30 events. both hists have n = 0 missing.
+    hist_comp = 0
+    if valor_comp == False or valor_comp == "False" or valor_comp == "":
+        # If reading a digitized P-Theta histogram, directly get the hist
+        hname = "h0"
+        hist_comp = file_comp.Get(hname)
+    else:
+        # If comparing to another VALOR result, read the Dchisq or Nevents values into a hist
+        if statistic == "rate-only":
+            hist_comp = ROOT.TH1D("comprison_"+str(beta), "comparison_"+str(beta), high_nevents - low_nevents, low_nevents, high_nevents)
+            hname = "Nevents_nuebar_weighted"
+            if prior_predictive:
+                hname = "Nevents_nuebar_unweighted"
+            histfill_nevents = file_comp.Get(hname)
+            bin_width = histfill_nevents.GetBinCenter(2) - histfill_nevents.GetBinCenter(1)
+            for ibin in range(0, histfill_nevents.GetNbinsX()+2):           
+                nev = histfill_nevents.GetBinCenter(ibin) - bin_width/2.
+                nentries = histfill_nevents.GetBinContent(ibin)
+                hist_comp.Fill(nev, nentries)
         else:
-            area_norm(hist_comp, valor_hist, 1, 65)     # the P-theta beta = 0 hist only extends up to 30 events. both hists have n = 0 missing.
+            hist_comp = ROOT.TH1D("comparison_"+str(beta), "comparison_"+str(beta), nbins_dchisq, low_dchisq, high_dchisq)
+            tree_name = "fitnt"
+            tree = file_comp.Get(tree_name)
+            ievent = 0
+            for event in tree:
+                hist_comp.Fill(event.deltachisq01)
+                if ievent % 10000 == 0 and not ievent == 0:
+                    print "reading the beta =", str(beta), "comparison tree, event #", ievent
+                ievent += 1
+    if statistic == "rate-only":
+        #if valor_comp == False or valor_comp == "False" or valor_comp == "":
+        #    if beta == 0:
+        #        area_norm(hist_comp, valor_hist, 0, 29)     # the P-theta beta = 0 hist only extends up to 30 events. both hists have n = 0 missing.
+        #    else:
+        #        area_norm(hist_comp, valor_hist, 0, 49)     # the P-theta beta = 1 hist only extends up to 65 events. both hists have n = 0 missing.
+        #else:
+        #    print "*** Test: Area norm full"
+        #    area_norm(hist_comp, valor_hist)
+        area_norm(hist_comp, valor_hist)
     elif statistic == "rate+shape":
         area_norm(hist_comp, valor_hist)
     else:
@@ -458,6 +498,7 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
         print "RMS value (axis 0) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(0)
         print "RMS value (axis 0) for rate-only distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(0)
         print "RMS value (axis 1) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
+        print "RMS value (axis 1) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
         print "RMS value (axis 1) for rate-only distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(1)
     elif statistic == "rate+shape":
         # draw as a hist
@@ -467,7 +508,7 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
         print "RMS value (axis 1) for rate+shape distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
         print "RMS value (axis 1) for rate+shape distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(1)
 
-
+    print "*** test: valor_Hist integral =", valor_hist.Integral(), "; comp_hist integral =",  hist_comp.Integral()
     new_hist = copy.deepcopy(hist_comp)
     leg.AddEntry(new_hist,label,"l")
     return new_hist
@@ -543,8 +584,12 @@ if __name__=="__main__":
     parser.add_option('--infilename_comp_Dchisq_beta1', dest='infilename_comp_Dchisq_beta1', default="", help='Root file containing histogram of a fake data distribution to be compared with ours for beta = 1')
     parser.add_option('--data_label', dest='data_label', default="data", help='Label to be put in the legend entry corresponding to the data')
     parser.add_option('--tag', dest='tag', default="nuebarapp_deltachisq", help='Tag used as the output file name')
+    parser.add_option('--label', dest='label', default="Events", help='Label used for the legend')
+    parser.add_option('--label-comp', dest='label_comp', default="P-theta Events", help='Label used for the legend for comparison hists')
     parser.add_option('--test-statistic', dest='test_statistic', default="rate+shape", help='The test statistic used in the marginalisation and fit')
     parser.add_option('--prior-predictive', dest='prior_predictive', action='store_true', default="False", help='Include this flag to make the rate-only analysis prior-predictive (for rate+shape, the input file determines this)')
+    parser.add_option('--valor-comp', dest='valor_comp', action='store_true', default="False", help='Include this flag to compare to another VALOR file isntead of the default P-Theta file')
+
 
     v = optparse.Values()
     parser.parse_args(values=v) # v contains only the values that were specified, not defaults
@@ -553,7 +598,7 @@ if __name__=="__main__":
 
     main(o.infilename_beta0, o.infilename_beta1, o.tag, o.infilename_data, o.data_label,
          o.infilename_comp_nobs_beta0, o.infilename_comp_nobs_beta1,
-         o.infilename_comp_Dchisq_beta0, o.infilename_comp_Dchisq_beta1, o.test_statistic, o.prior_predictive)
+         o.infilename_comp_Dchisq_beta0, o.infilename_comp_Dchisq_beta1, o.test_statistic, o.prior_predictive, o.valor_comp, o.label, o.label_comp)
 
     if other:
         print "Warning - ignored arguments: ",other
