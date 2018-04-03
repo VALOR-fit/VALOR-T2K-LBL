@@ -61,8 +61,8 @@ def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start):
             print "itoy =", itoy - itoy_start, "of", ntoys
         chisq = 0
         Nevents_nuebar = 0
-        hist_nevents_weighted_itoy   = ROOT.TH1D("Nevents_weighted_itoy"  , "Nevents_weighted_itoy"  , Nevents_max, 0, Nevents_max)
-        hist_nevents_unweighted_itoy = ROOT.TH1D("Nevents_unweighted_itoy", "Nevents_unweighted_itoy", Nevents_max, 0, Nevents_max)
+        hist_nevents_weighted_itoy   = ROOT.TH1D("Nevents_weighted_" + str(itoy)  , "Nevents_weighted_" + str(itoy)  , Nevents_max, 0, Nevents_max)
+        hist_nevents_unweighted_itoy = ROOT.TH1D("Nevents_unweighted_" + str(itoy), "Nevents_unweighted_" + str(itoy), Nevents_max, 0, Nevents_max)
         for isample in range(0, conv.kns):
             s = util.GetSKSample(isample)
             sample_name = util.SampleAsStringCompact(s)
@@ -93,6 +93,8 @@ def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start):
         pval_left_weighted   [0] = p_value(hist_nevents_weighted_itoy  , math.floor(Nevents_data), "left" )
         pval_right_weighted  [0] = p_value(hist_nevents_weighted_itoy  , math.ceil(Nevents_data) , "right")
         tree_out.Fill()
+        del hist_nevents_weighted_itoy
+        del hist_nevents_unweighted_itoy
 
     # Write out
     fout.cd()
