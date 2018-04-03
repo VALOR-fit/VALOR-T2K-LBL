@@ -30,12 +30,12 @@ arridx  = util.ArrIdx.Instance()
 #
 # Histogram parameters to tweak
 #
-nbins_dchisq  = 50
+nbins_dchisq  = 1100#50
 low_dchisq    = -30.
 high_dchisq   = 80.
 low_nevents   = -1
 high_nevents  = 65
-scale_max     = 5   #2
+scale_max     = 5
 leg_text_size = 0.03
 
 def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, infilename_comp_nobs_beta0, infilename_comp_nobs_beta1, infilename_comp_Dchisq_beta0, infilename_comp_Dchisq_beta1, test_statistic, prior_predictive, valor_comp, label, label_comp):    
@@ -124,12 +124,13 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
             leg_ylow = 0.78
         leg = ROOT.TLegend(0.6,leg_ylow,0.9,0.95)
         leg.SetTextSize(leg_text_size)
-        leg.AddEntry(hist_deltachisq01_beta0, label+" (Fake-data #beta = 0)","l")
-        leg.AddEntry(hist_deltachisq01_beta1, label+" (Fake-data #beta = 1)","l")
+        leg.AddEntry(hist_deltachisq01_beta0, "Fake-data #beta = 0","l")
+        leg.AddEntry(hist_deltachisq01_beta1, "Fake-data #beta = 1","l")
         if infilename_data != "":
             leg.AddEntry(data_line_dchisq,"#Delta #chi^{2} ("+data_label+") = "+str("{0:.2f}".format(Delta_chisq_data)),"l")
 
         canv = ROOT.TCanvas("Delta chisq", "#Delta #chi^{2}", 800, 600)
+        hist_deltachisq01_beta0.SetMinimum(0.5)
         hist_deltachisq01_beta0.Draw()
         hist_deltachisq01_beta1.Draw("same")
         if infilename_data != "":
@@ -262,10 +263,10 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         data_line_nevents = ROOT.TLine(nevents_data, 0, nevents_data, maximum_nevents)
         data_line_nevents.SetLineStyle(2)
 
-        leg_nevents = ROOT.TLegend(0.58,0.8,0.9,0.95)
+        leg_nevents = ROOT.TLegend(0.50,0.8,0.9,0.95)
         leg_nevents.SetTextSize(leg_text_size)
-        leg_nevents.AddEntry(hist_nevents_beta0, label+" (Fake-data #beta = 0)","l")
-        leg_nevents.AddEntry(hist_nevents_beta1, label+" (Fake-data #beta = 1)","l")
+        leg_nevents.AddEntry(hist_nevents_beta0, "Fake-data #beta = 0","l")
+        leg_nevents.AddEntry(hist_nevents_beta1, "Fake-data #beta = 1","l")
         if infilename_data != "":
             leg_nevents.AddEntry(data_line_nevents,"Events ("+data_label+") = "+str("{0:.2f}".format(nevents_data)),"l")
 
@@ -273,6 +274,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         canv_nevents.SetLogy(1)
         #hist_nevents_beta0.Draw("B")
         #hist_nevents_beta1.Draw("same,B")
+        hist_nevents_beta0.SetMinimum(0.5)
         hist_nevents_beta0.Draw("hist")
         hist_nevents_beta1.Draw("same,hist")
         leg_nevents.Draw("same")
@@ -399,16 +401,25 @@ def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2,
         comp_h1.Draw(draw_opt)
         print "*** nbins in comp_h1 =", comp_h1.GetNbinsX()
         print "*** bin width in comp_h1 =", comp_h1.GetXaxis().GetBinWidth(1)
+        print "*** first filled bin edge in comp_h1 = ", comp_h1.GetBinCenter(comp_h1.FindLastBinAbove(0)) + 0.5*comp_h1.GetBinWidth(1)
+        print "*** last filled bin edge in comp_h1 = ", comp_h1.GetBinCenter(comp_h1.FindFirstBinAbove(0)) - 0.5*comp_h1.GetBinWidth(1)
         print "*** nbins in valor_hist1 =", valor_hist1.GetNbinsX()
         print "*** bin width in valor_hist1 =", valor_hist1.GetXaxis().GetBinWidth(1)
 
     if infile2name_comp != "":
         comp_h2 = plot_comparison_single(valor_hist2, infile2name_comp, beta_file2, statistic, leg, hname, label, valor_comp, prior_predictive)
         comp_h2.Draw(draw_opt)
+        print "*** nbins in comp_h2 =", comp_h2.GetNbinsX()
+        print "*** bin width in comp_h2 =", comp_h2.GetXaxis().GetBinWidth(1)
+        print "*** first filled bin edge in comp_h2 = ", comp_h2.GetBinCenter(comp_h2.FindLastBinAbove(0)) + 0.5*comp_h2.GetBinWidth(1)
+        print "*** last filled bin edge in comp_h2 = ", comp_h2.GetBinCenter(comp_h2.FindFirstBinAbove(0)) - 0.5*comp_h2.GetBinWidth(1)
+        print "*** nbins in valor_hist2 =", valor_hist2.GetNbinsX()
+        print "*** bin width in valor_hist2 =", valor_hist2.GetXaxis().GetBinWidth(1)
 
         
     if infile1name_comp != "" or infile2name_comp != "":
-        leg.SetX1NDC(0.82*leg.GetX1NDC())
+        if statistic == "rate+shape":
+            leg.SetX1NDC(0.9*leg.GetX1NDC())
         leg.SetY1NDC(0.92*leg.GetY1NDC())
         canv.Update()
         ext1 = ".pdf"
@@ -488,13 +499,13 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
         #hist_comp.SetBarWidth(0.1)
         #hist_comp.SetFillStyle(3003)
         #hist_comp.SetFillColor(col)
-        hist_comp.SetBarWidth(0.2)
-        if beta == 0:
+        #hist_comp.SetBarWidth(0.2)
+        #if beta == 0:
             #hist_comp.SetBarOffset(0.2)
-            hist_comp.SetBarOffset(0.)
-        elif beta ==1:
+            #hist_comp.SetBarOffset(0.)
+        #elif beta ==1:
             #hist_comp.SetBarOffset(0.3)
-            hist_comp.SetBarOffset(0.2)
+            #hist_comp.SetBarOffset(0.2)
         print "RMS value (axis 0) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(0)
         print "RMS value (axis 0) for rate-only distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(0)
         print "RMS value (axis 1) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
