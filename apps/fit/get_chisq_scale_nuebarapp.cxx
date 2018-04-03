@@ -42,7 +42,6 @@
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
@@ -57,10 +56,10 @@ public:
   ~MyRunOpt() {}
   void   Print (ostream & stream, const int w = 40) const {
     RunOpt::Print(stream, w);
-    stream << "Macro-specific running options:" << endl
-	   << " - " << setw(w) << "Random seed for position inside bin:" <<  fToySeed << endl
-	   << "Output: Minimum chisq from all toy throws"  << endl;
-    stream << endl;
+    stream << "Macro-specific running options:" << std::endl
+	   << " - " << setw(w) << "Random seed for position inside bin:" <<  fToySeed << std::endl
+	   << "Output: Minimum chisq from all toy throws"  << std::endl;
+    stream << std::endl;
   }
   int      ToySeed        () { return fToySeed; }
 private:
@@ -77,9 +76,9 @@ private:
   
   void Usage(const int w = 40) {
     RunOpt::Usage(w);
-    cout << "Macro-specific running options:" << endl
-    << " " << setw(w) << "--toy-random-seed"           << "Random seed used to specify where inside the bin the toys are generated" << endl
-    << endl;
+    std::cout << "Macro-specific running options:" << std::endl
+    << " " << setw(w) << "--toy-random-seed"           << "Random seed used to specify where inside the bin the toys are generated" << std::endl
+    << std::endl;
   }
 };
 
@@ -89,11 +88,9 @@ int main(int argc, char ** argv)
   TH1D* chisq_distribution = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
   double chisq_min = 9999999; //Starting value of minimum chisq. This macro will fill this double with the min chisq from all of the toys
   Env::Instance()->AutoSet("t2xk");
-  cout << *Env::Instance() << endl;
+  std::cout << *Env::Instance() << std::endl;
   gROOT->SetBatch(true);
   MyRunOpt *runopt = new MyRunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
-  
-  TRandom3 rand(runopt->ToySeed()); //random number to see where inside a bin a toy is generated
   
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt->ConfigFile().c_str() ));
   TString xmlfile2(runopt->Xmlfile().c_str() );
@@ -105,18 +102,18 @@ int main(int argc, char ** argv)
   Opt::Instance()->gOscMixingParamChoice = util::MixingTypeFromString(runopt->GlobalMixParamScheme());
   Opt::Instance()->gOscOctantChoice      = util::OctantFromString(runopt->GlobalMixParamOctant());
   if(Opt::Instance()->Undefined()) {
-    cerr << "Global options not defined correctly. Exiting..." << endl;
-    cerr << *Opt::Instance() << endl;
+    std::cerr << "Global options not defined correctly. Exiting..." << std::endl;
+    std::cerr << *Opt::Instance() << std::endl;
     exit(1);
   }
   Opt::Instance()->SetDefaultParameterValues();
   
   if(!runopt->DoToys()){
-    cout << "- Reading analysis configuration from: " << config << endl;
-    cout << "- Toy-MC" << endl;
-    if(runopt->Using_xml_file()) cout << "   - Reading experiments from: " << xmlfile2 << endl;
-    else cout << "   - Reading experiments from: " << rootfile2 << endl;
-    cout << "   - Using experiments in range: [" << 0 << ", " << 0 << "]" << endl;
+    std::cout << "- Reading analysis configuration from: " << config << std::endl;
+    std::cout << "- Toy-MC" << std::endl;
+    if(runopt->Using_xml_file()) std::cout << "   - Reading experiments from: " << xmlfile2 << std::endl;
+    else std::cout << "   - Reading experiments from: " << rootfile2 << std::endl;
+    std::cout << "   - Using experiments in range: [" << 0 << ", " << 0 << "]" << std::endl;
   }
   
   // Create & config superk spectrum predictor
@@ -131,11 +128,11 @@ int main(int argc, char ** argv)
       if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;
       
       if(runopt->Using_xml_file()){
-        cout << "Use xml file" << endl; // Only read 1st toy
+	std::cout << "Use xml file" << std::endl; // Only read 1st toy
         skobs_data->ReadSample(xmlfile2.Data(),0,runopt->Using_xml_file(),s);
       }
       else{
-        cout << "Use root file" << endl; // Only read 1st toy
+	std::cout << "Use root file" << std::endl; // Only read 1st toy
         skobs_data->ReadSample(rootfile2.Data(),0,runopt->Using_xml_file(),s);
       }
     }
@@ -153,32 +150,34 @@ int main(int argc, char ** argv)
   int weird_applied_neg      = 0;
   int weird_unphysical_tweak = 0;
   for(int iexperiment = runopt->FirstExperiment(), last_experiment = runopt->LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
-    cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
+    std::cout << "\n\n*** Pseudo-experiment = " << iexperiment << std::endl;
     
+    // Set seeds
+    Rnd* rand = Rnd::Instance();
+    if(runopt->ToySeed() != 0){
+      // 0 is a special case - set all Rnd::Instance() according to the input seed and iexperiment unless the input seed is 0
+      UInt_t seed = runopt->ToySeed() + iexperiment;
+      rand->SetSeeds(seed, seed+1, seed+2, seed+3, seed+4);
+    }
+
     // Generate mock data
-    cout << "- Generating toy-MC..." << endl;
+    std::cout << "- Generating toy-MC..." << std::endl;
     SuperkObservation * skobs = new SuperkObservation();
     PhysHypothesis ph(runopt->Hypothesis());
-    
-    
-    //util::OscParams::Instance()->Print(cout);
-    
-    // Randomize specified osc params for current toy MC expt
-    util::OscParams::Instance()->Randomize();
-    
-    // Set the mass hierarchy
-    util::SetMassHierarchy(skexp);
-    
-    // Update physics hypothesis with chosen value of oscillation parameters
-    util::OscParams::Instance()->UpdatePhysHypothesis(ph);
-    
-    // Fill toy histograms of osc params
-    util::OscParams::Instance()->FillOscToyHisto(ph);
-    
+        
     bool applied_negevents_condition = true;
     bool unphysical_tweak = true;
     while(applied_negevents_condition || unphysical_tweak) {
       
+      // Randomize specified osc params for current toy MC expt
+      util::OscParams::Instance()->Randomize();
+
+      // Set the mass hierarchy
+      util::SetMassHierarchy(skexp);
+
+      // Update physics hypothesis with chosen value of oscillation parameters
+      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
+
       util::PerformSysThrow(runopt->SystTweakMode(), skexp, runopt->VerboseSystThrows());
       
       // Rethrow unphysical parameters
@@ -186,7 +185,7 @@ int main(int argc, char ** argv)
       if (runopt->RethrowIfUnphysical()) {
         unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
         if (unphysical_tweak) {
-          cout << "Parameters are unphysical - rethrowing" << std::endl;
+		std::cout << "Parameters are unphysical - rethrowing" << std::endl;
           weird_unphysical_tweak++;
           continue;
         }
@@ -196,13 +195,15 @@ int main(int argc, char ** argv)
       }
       
       applied_negevents_condition = skobs->CreateMockData(*skexp, ph, runopt->StatFluctuations());
-      cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+      std::cout << "applied_negevents_condition = " << applied_negevents_condition << std::endl;
       if(applied_negevents_condition)
       weird_applied_neg++;
       
       
     }//applied_negevents_condition
-    
+    // Fill toy histograms of osc params
+    util::OscParams::Instance()->FillOscToyHisto(ph);
+    util::OscParams::Instance()->Print(cout);   
     
     //Get exp data
 #ifndef __USE_2D_TEMPLATES__ //1D templates
@@ -222,7 +223,7 @@ int main(int argc, char ** argv)
       exp_data[is]->SetDirectory(0);
     }//is
     
-    //Calculate the chisq for 3 samples
+    //Calculate the chisq for 4 samples
     double chisq = 0;
     
     for (int is = 0 ; is < conv::kns ; is++) {
@@ -243,18 +244,19 @@ int main(int argc, char ** argv)
   }//iexperiment
   
   
-  cout << endl
-  << " - Summary - " << endl
-  << "    * Created " << runopt->NExperiments() << " toys" << endl
-  << "    * " << weird_unphysical_tweak << " unphysical_tweaks rethrown" << endl
-  << "    * " << weird_applied_neg << " applied_negevents_condition rethrown" << endl
-  << endl
-  << " ************************************" << endl
-  << "      chisq min = " << chisq_min << endl
-  << " ************************************" << endl
-  << endl;
-  
-  TFile output("output.root","recreate");
+  std::cout << std::endl
+  << " - Summary - " << std::endl
+  << "    * Created " << runopt->NExperiments() << " toys" << std::endl
+  << "    * " << weird_unphysical_tweak << " unphysical_tweaks rethrown" << std::endl
+  << "    * " << weird_applied_neg << " applied_negevents_condition rethrown" << std::endl
+  << std::endl
+  << " ************************************" << std::endl
+  << "      chisq min = " << chisq_min << std::endl
+  << " ************************************" << std::endl
+  << std::endl;
+ 
+  std::string out_name = runopt->FileTag() + ".root"; 
+  TFile output(out_name.c_str(), "recreate");
   chisq_distribution->Write();
   output.Close();
   
