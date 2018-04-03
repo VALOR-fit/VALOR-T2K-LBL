@@ -156,7 +156,6 @@ int main(int argc, char ** argv)
   gROOT->SetBatch(true);
   MyRunOpt *runopt = new MyRunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
   
-  TRandom3 rand(runopt->ToySeed()); //random number to see where inside a bin a toy is generated
   double scale_toys_based_on_samples_scale =  runopt->Scale_toys_based_on_samples_scale();
   TH1D* chisq_distribution = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
 
@@ -281,25 +280,18 @@ int main(int argc, char ** argv)
   for(int iexperiment = runopt->FirstExperiment(), last_experiment = runopt->LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
     
+    // Set Seeds
+    Rnd* rand = Rnd::Instance();
+    if(runopt->ToySeed() != 0){
+      // 0 is a special case - set all Rnd::Instance() according to the input seed and iexperiment unless the input seed is 0
+      UInt_t seed = runopt->ToySeed() + iexperiment;
+      rand->SetSeeds(seed, seed+1, seed+2, seed+3, seed+4);
+    }  
+
     // Generate mock data
     cout << "- Generating toy-MC..." << endl;
     SuperkObservation * skobs = new SuperkObservation();
     PhysHypothesis ph(runopt->Hypothesis());
-    
-    
-    //util::OscParams::Instance()->Print(cout);
-    
-    // Randomize specified osc params for current toy MC expt
-    util::OscParams::Instance()->Randomize();
-    
-    // Set the mass hierarchy
-    util::SetMassHierarchy(skexp);
-    
-    // Update physics hypothesis with chosen value of oscillation parameters
-    util::OscParams::Instance()->UpdatePhysHypothesis(ph);
-    
-    // Fill toy histograms of osc params
-    util::OscParams::Instance()->FillOscToyHisto(ph);
     
     bool applied_negevents_condition = true;
     bool unphysical_tweak = true;
@@ -359,7 +351,7 @@ int main(int argc, char ** argv)
           exp_data[is]->SetDirectory(0);
         }//is
         
-        //Calculate the chisq for 3 samples
+        //Calculate the chisq for 4 samples
         double chisq = 0;
         
         for (int is = 0 ; is < conv::kns ; is++) {
@@ -371,7 +363,6 @@ int main(int argc, char ** argv)
         double random_number = Rnd::Instance()->RndOther().Uniform(0,1);
         double prob = exp(-(chisq-scale_toys_based_on_samples_scale)/2);
         chisq_distribution->Fill(chisq);
-        cout << "chisq: " << chisq << " Scale: " << scale_toys_based_on_samples_scale <<  " Prob: " << prob << " Random: " << random_number << endl;
         if(random_number <= prob){
           scale_throws_accepted++;
         }
@@ -395,6 +386,7 @@ int main(int argc, char ** argv)
     
     // Fill toy histograms of osc params. Needs to be done after toy is chosen
     util::OscParams::Instance()->FillOscToyHisto(ph);
+    util::OscParams::Instance()->Print(cout);
     
     if(!runopt->DoToys()){
       for (int is = 0 ; is < conv::kns ; is++) {
@@ -458,7 +450,7 @@ int main(int argc, char ** argv)
       for (int is = 0 ; is < conv::kns ; is++) {
         SuperkSample_t s = conv::kSKSamples[is];
         if (s == conv::kSKsUndefined) continue;
-        valor::util::AddEventsToXML(fxml, ftxt, mock_data[is], s, full_points_to_add[is], rand);
+        valor::util::AddEventsToXML(fxml, ftxt, mock_data[is], s, full_points_to_add[is], rand->RndToyMCsyst());
       }//is
       
       fxml << "      " << Form("</data_set_%d>\n",iexperiment) << endl;
@@ -469,7 +461,7 @@ int main(int argc, char ** argv)
       for (int is = 0 ; is < conv::kns ; is++) {
         SuperkSample_t s = conv::kSKSamples[is];
         if (s == conv::kSKsUndefined) continue;
-        valor::util::AddEventsToXML(fxml, ftxt, exp_data[is], s, full_points_to_add[is], rand);
+        valor::util::AddEventsToXML(fxml, ftxt, exp_data[is], s, full_points_to_add[is], rand->RndToyMCsyst());
       }//is
       
       fxml << "      " << Form("</exp_data_%d>\n",iexperiment) << endl;
