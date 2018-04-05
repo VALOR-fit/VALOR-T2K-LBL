@@ -106,7 +106,6 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
                 Delta_chisq_data = event.deltachisq01   # There'll be a better way to do this than a for loop with only one iteration...
                 print "# nuebar data Dchisq =", Delta_chisq_data
 
-
         #
         # Plot the Delta chisq histograms
         #
@@ -171,18 +170,24 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         #
         # Calculate p-values
         #
+        print "\n\n***** p-values & Bayes factor *****"
+        print "nuebar data Dchisq =", Delta_chisq_data
         p_val = p_value(hist_deltachisq01_beta0, Delta_chisq_data, "right")
         err_pval = err_pvalue(p_val, hist_deltachisq01_beta0, prior_predictive)
-        print "Rate+shape (true beta = 0) p-value (right tail) =", p_val, "=", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
-        p_val = p_value(hist_deltachisq01_beta0, Delta_chisq_data, "left" )
-        err_pval = err_pvalue(p_val, hist_deltachisq01_beta0, prior_predictive)
-        print "Rate+shape (true beta = 0) p-value (left  tail) =", p_val, "=", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
-        p_val = p_value(hist_deltachisq01_beta1, Delta_chisq_data, "right")
-        err_pval = err_pvalue(p_val, hist_deltachisq01_beta1, prior_predictive)
-        print "Rate+shape (true beta = 1) p-value (right tail) =", p_val, "=", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate+shape (true beta = 0) p-value (right tail) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
         p_val = p_value(hist_deltachisq01_beta1, Delta_chisq_data, "left" )
         err_pval = err_pvalue(p_val, hist_deltachisq01_beta1, prior_predictive)
-        print "Rate+shape (true beta = 1) p-value (left  tail) =", p_val, "=", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate+shape (true beta = 1) p-value (left  tail) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Bayes factor = exp(- Delta chisq / 2) =", ROOT.TMath.Exp(-0.5*Delta_chisq_data)
+        print "\n\n"
+
+        # Save outputs
+        fout = ROOT.TFile(tag+"_rate+shape_hists.root","recreate")
+        hist_deltachisq01_beta0.Write("rate+shape_stat_beta0")
+        hist_deltachisq01_beta1.Write("rate+shape_stat_beta1")
+        canv.Write("rate+shape_canvas")
+        fout.Close()
+
     else:
         #
         # rate-only
@@ -196,12 +201,10 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         for ibin in range(0, histfill_nevents_beta0.GetNbinsX()+2):           
             nev = histfill_nevents_beta0.GetBinCenter(ibin) - bin_width/2.
             nentries = histfill_nevents_beta0.GetBinContent(ibin)
-            #print "test fill0: nev =", nev, "; nentries =", nentries
             hist_nevents_beta0.Fill(nev, nentries)
         for ibin in range(0, histfill_nevents_beta1.GetNbinsX()+2):           
             nev = histfill_nevents_beta1.GetBinCenter(ibin) - bin_width/2.
             nentries = histfill_nevents_beta1.GetBinContent(ibin)
-            #print "test fill1: nev =", nev, "; nentries =", nentries
             hist_nevents_beta1.Fill(nev, nentries)
         
         if infilename_data != "":
@@ -303,21 +306,16 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         #
         # Calculate p-values
         #
-        #p_val = p_value(hist_nevents_beta0     , nevents_data    , "right")
-        #print "Rate only  (true beta = 0) p-value (right tail) =", p_val, "=", sigma(p_val), "sigma"
-        #p_val = p_value(hist_nevents_beta0     , nevents_data    , "left" )
-        #print "Rate only  (true beta = 0) p-value (left  tail) =", p_val, "=", sigma(p_val), "sigma"
-        #p_val = p_value(hist_nevents_beta1     , nevents_data    , "right")
-        #print "Rate only  (true beta = 1) p-value (right tail) =", p_val, "=", sigma(p_val), "sigma"
-        #p_val = p_value(hist_nevents_beta1     , nevents_data    , "left" )
-        #print "Rate only  (true beta = 1) p-value (left  tail) =", p_val, "=", sigma(p_val), "sigma"
-
+        print "\n\n***** p-values *****"
+        print "# nuebar data events =", nevents_data
         p_val = hist_pval_nolog_beta0.ProjectionX().GetMean()
         err_pval = err_pvalue(p_val, hist_pval_nolog_beta0, prior_predictive)
-        print "Rate only (true beta = 0) p-value (right tail) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"    # TODO: error on sigma
+        print "Rate only (true beta = 0) p-value (right tail) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"    # TODO: error on sigma?
         p_val = hist_pval_nolog_beta1.ProjectionX().GetMean()
         err_pval = err_pvalue(p_val, hist_pval_nolog_beta1, prior_predictive)
         print "Rate only (true beta = 1) p-value (left tail) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "\n\n"
+
 
         #
         # Plot the p-value distributions
@@ -326,15 +324,14 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         plot_pval_dist(hist_pval_beta1, 1, "log_"+tag)
         plot_pval_dist(hist_pval_nolog_beta0, 0, tag)
         plot_pval_dist(hist_pval_nolog_beta1, 1, tag)
-        print "Test: full rate-only distribution p-val (true beta = 0) (right tail) =", p_value(hist_nevents_beta0, nevents_data, "right")
-        print "Test: rounded data full rate-only distribution p-val (true beta = 0) (right tail) =", p_value(hist_nevents_beta0, math.ceil(nevents_data), "right")
-        print "Test: full rate-only distribution p-val (true beta = 1) (left tail)  =", p_value(hist_nevents_beta1, nevents_data, "left")
-        print "Test: rounded data full rate-only distribution p-val (true beta = 1) (left tail)  =", p_value(hist_nevents_beta1, math.floor(nevents_data), "left")
 
-    print "Test: p=0.317=",sigma(0.317)
-    print "Test: p=0.0455=",sigma(0.0455)
-    print "Test: p=0.00270=",sigma(0.00270)
-    # TODO: p-value errors
+        # Save outputs
+        fout = ROOT.TFile(tag+"_rate-only_hists.root","recreate")
+        hist_nevents_beta0.Write("rate-only_stat_beta0")
+        hist_nevents_beta1.Write("rate-only_stat_beta1")
+        canv_nevents.Write("rate-only_canvas")
+        fout.Close()
+
     print "Done!"
 
 
@@ -342,9 +339,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
 def p_value(distribution, data, tail):
     ntot = distribution.Integral()
     ibin_data = distribution.FindBin(data)
-    print "*** test pval: data bin =", ibin_data, "; data bin low = ", distribution.GetBinCenter(ibin_data) - distribution.GetBinWidth(ibin_data)/2.0, "; data bin high = ", distribution.GetBinCenter(ibin_data) + distribution.GetBinWidth(ibin_data)/2.0, "; data bin centre = ", distribution.GetBinCenter(ibin_data)
     pval = -999
-    #print "For", distribution.GetName(), "total integral =", ntot
     if tail == "right":
         pval = distribution.Integral(ibin_data,distribution.GetNbinsX())
     elif tail == "left":
@@ -399,23 +394,9 @@ def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2,
     if infile1name_comp != "":
         comp_h1 = plot_comparison_single(valor_hist1, infile1name_comp, beta_file1, statistic, leg, hname, label, valor_comp, prior_predictive)
         comp_h1.Draw(draw_opt)
-        print "*** nbins in comp_h1 =", comp_h1.GetNbinsX()
-        print "*** bin width in comp_h1 =", comp_h1.GetXaxis().GetBinWidth(1)
-        print "*** first filled bin edge in comp_h1 = ", comp_h1.GetBinCenter(comp_h1.FindLastBinAbove(0)) + 0.5*comp_h1.GetBinWidth(1)
-        print "*** last filled bin edge in comp_h1 = ", comp_h1.GetBinCenter(comp_h1.FindFirstBinAbove(0)) - 0.5*comp_h1.GetBinWidth(1)
-        print "*** nbins in valor_hist1 =", valor_hist1.GetNbinsX()
-        print "*** bin width in valor_hist1 =", valor_hist1.GetXaxis().GetBinWidth(1)
-
     if infile2name_comp != "":
         comp_h2 = plot_comparison_single(valor_hist2, infile2name_comp, beta_file2, statistic, leg, hname, label, valor_comp, prior_predictive)
         comp_h2.Draw(draw_opt)
-        print "*** nbins in comp_h2 =", comp_h2.GetNbinsX()
-        print "*** bin width in comp_h2 =", comp_h2.GetXaxis().GetBinWidth(1)
-        print "*** first filled bin edge in comp_h2 = ", comp_h2.GetBinCenter(comp_h2.FindLastBinAbove(0)) + 0.5*comp_h2.GetBinWidth(1)
-        print "*** last filled bin edge in comp_h2 = ", comp_h2.GetBinCenter(comp_h2.FindFirstBinAbove(0)) - 0.5*comp_h2.GetBinWidth(1)
-        print "*** nbins in valor_hist2 =", valor_hist2.GetNbinsX()
-        print "*** bin width in valor_hist2 =", valor_hist2.GetXaxis().GetBinWidth(1)
-
         
     if infile1name_comp != "" or infile2name_comp != "":
         if statistic == "rate+shape":
@@ -437,10 +418,8 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
     style = 3
     if beta == 0:
         col = 40
-        #hname += "_beta0"
     elif beta == 1:
         col = 41
-        #hname += "_beta1"
     else:
         print "beta = ", beta, "not understood. Exiting."
         util.Die(-1)
@@ -474,24 +453,11 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
                 if ievent % 10000 == 0 and not ievent == 0:
                     print "reading the beta =", str(beta), "comparison tree, event #", ievent
                 ievent += 1
-    if statistic == "rate-only":
-        #if valor_comp == False or valor_comp == "False" or valor_comp == "":
-        #    if beta == 0:
-        #        area_norm(hist_comp, valor_hist, 0, 29)     # the P-theta beta = 0 hist only extends up to 30 events. both hists have n = 0 missing.
-        #    else:
-        #        area_norm(hist_comp, valor_hist, 0, 49)     # the P-theta beta = 1 hist only extends up to 65 events. both hists have n = 0 missing.
-        #else:
-        #    print "*** Test: Area norm full"
-        #    area_norm(hist_comp, valor_hist)
-        area_norm(hist_comp, valor_hist)
-    elif statistic == "rate+shape":
-        area_norm(hist_comp, valor_hist)
-    else:
-        print "Test statistic", statistic, "not understood. Exiting."
-        util.Die(-1)
+    area_norm(hist_comp, valor_hist)
     hist_comp.SetLineColor(col)
     hist_comp.SetLineStyle(2)
 
+    print "\n\n ***** Compare RMS values and integral between the VALOR and P-Theta histograms *****"
     if statistic == "rate-only":
         # Draw as a bar chart
         #hist_comp.SetFillColor(col)
@@ -519,7 +485,8 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
         print "RMS value (axis 1) for rate+shape distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
         print "RMS value (axis 1) for rate+shape distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(1)
 
-    print "*** test: valor_Hist integral =", valor_hist.Integral(), "; comp_hist integral =",  hist_comp.Integral()
+    print "valor_Hist integral =", valor_hist.Integral(), "; comp_hist integral =",  hist_comp.Integral()
+    print "\n\n"
     new_hist = copy.deepcopy(hist_comp)
     leg.AddEntry(new_hist,label,"l")
     return new_hist
