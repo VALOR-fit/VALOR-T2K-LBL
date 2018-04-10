@@ -72,6 +72,24 @@ def shift_dmsq(g68, g90, bestfit):
 
     return (g68_out, g90_out, bestfit_out)
 
+def make_graph_local_minimum(graph):
+    N = graph.GetN()
+    xx = np.zeros(N)
+    yy = np.zeros(N)
+    for j in range(N):
+        x = np.zeros(1)
+        y = np.zeros(1)
+        graph.GetPoint(j, x, y)
+        xx[j] = x
+        yy[j] = y
+    minval = np.min(yy)
+    yy -= minval
+    graph_out = ROOT.TGraph(N, xx, yy)
+    graph_out.SetLineColor(graph.GetLineColor())
+    graph_out.SetLineStyle(graph.GetLineStyle())
+
+    return graph_out
+
 def get_mach3_1d_contour(f, object_name):
     histo_in = f.Get(object_name)
     dchisq = histo_in.Clone()
@@ -319,7 +337,7 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
     if not ptheta_filename is None:
         p_contour1, p_contour2, p_bestfit = get_ptheta_contour(ptheta_filename, is_normal)
         if p_bestfit is None:
-            p_dchisq = p_contour1
+            p_dchisq = make_graph_local_minimum(p_contour1)
             p_max = ROOT.TMath.MaxElement(p_dchisq.GetN(), p_dchisq.GetY())
             if p_max > max_chisq:
                 max_chisq = p_max
@@ -379,15 +397,15 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
             plot(m_dchisq, x_axis_label, y_axis_label, opt)
             legend.AddEntry(m_dchisq, "MaCh3", "l")
             opt = "lsame"
-        if not ptheta_filename is None:
-            p_dchisq.GetYaxis().SetRangeUser(0, np.ceil(max_chisq))
-            plot(p_dchisq, x_axis_label, y_axis_label, opt)
-            legend.AddEntry(p_dchisq, "p-theta", "l")
-            opt = "lsame"
         if not valor_filename is None:
             v_dchisq.GetYaxis().SetRangeUser(0, np.ceil(max_chisq))
             plot(v_dchisq, x_axis_label, y_axis_label, opt)
             legend.AddEntry(v_dchisq, "VALOR", "l")
+            opt = "lsame"
+        if not ptheta_filename is None:
+            p_dchisq.GetYaxis().SetLimits(0, np.ceil(max_chisq))
+            plot(p_dchisq, x_axis_label, y_axis_label, opt)
+            legend.AddEntry(p_dchisq, "p-theta", "l")
             opt = "lsame"
     else:
         axis_histo = get_axis_histogram(valor_filename)
