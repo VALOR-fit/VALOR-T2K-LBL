@@ -55,18 +55,22 @@ void CompareContour1D
   if(strstr(file_1, "normal") != NULL)
   {
      trueMH1 = "normal";
+     std::cout << "File 1:" << file_1 << " " << trueMH1 << std::endl;
   }
   else
   {
-     trueMH2 = "inverted";
+     trueMH1 = "inverted";
+     std::cout << "File 1:" << file_1 << " " << trueMH1 << std::endl;
   }
   if(strstr(file_2, "normal") != NULL)
   {
-     trueMH1 = "normal";
+     trueMH2 = "normal";
+     std::cout << "File 2:" << file_2 << " " << trueMH1 << std::endl;
   }
   else
   {
      trueMH2 = "inverted";
+     std::cout << "File 2:" << file_2 << " " << trueMH1 << std::endl;
   }
 
   string histname;

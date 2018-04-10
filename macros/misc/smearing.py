@@ -419,6 +419,14 @@ def process_2d(original, root_filename, pdf_filename):
     canvas.Print(pdf_filename)
 
     smeared_histogram = smear(likelihood_histogram)
+    xaxis_label = xaxis.GetTitle()
+    yaxis_label = yaxis.GetTitle()
+
+    smeared_histogram.GetXaxis().SetTitle(xaxis_label)
+    smeared_histogram.GetYaxis().SetTitle(yaxis_label)
+    smeared_histogram.GetXaxis().SetTitleOffset(1.2)
+    smeared_histogram.GetYaxis().SetTitleOffset(1.8)
+
     smeared_histogram.SetTitle("Smeared likelihood surface")
     smeared_histogram.Draw("COLZ")
     canvas.Print(pdf_filename)
@@ -431,11 +439,7 @@ def process_2d(original, root_filename, pdf_filename):
 
     root_out_file = ROOT.TFile(root_filename, "RECREATE")
     root_out_file.cd()
-    xaxis_label = xaxis.GetTitle()
-    yaxis_label = yaxis.GetTitle()
-    likelihood_histogram.GetXaxis().SetTitle(xaxis_label)
-    likelihood_histogram.GetYaxis().SetTitle(yaxis_label)
-    likelihood_histogram.Write("likelihood_2D")
+    smeared_histogram.Write("likelihood_2D")
     chisq_histogram.GetXaxis().SetTitle(xaxis_label)
     chisq_histogram.GetYaxis().SetTitle(yaxis_label)
     chisq_histogram.Write("chisq_map_2D")
@@ -520,8 +524,8 @@ def process_1d(original, root_filename, pdf_filename):
     root_out_file = ROOT.TFile(root_filename, "RECREATE")
     root_out_file.cd()
     xaxis_label = xaxis.GetTitle()
-    likelihood_histogram.GetXaxis().SetTitle(xaxis_label)
-    likelihood_histogram.Write("likelihood")
+    smeared_histogram.GetXaxis().SetTitle(xaxis_label)
+    smeared_histogram.Write("likelihood")
     chisq_histogram.GetXaxis().SetTitle(xaxis_label)
     chisq_histogram.Write("h_chisq")
     dchisq_histogram = make_delta_chisq_1d(chisq_histogram)
@@ -536,12 +540,16 @@ def process_1d(original, root_filename, pdf_filename):
     root_out_file.Close()
 
 if __name__=="__main__":
+    ROOT.gStyle.SetOptStat(0)
     parser = argparse.ArgumentParser(description="Index splines")
     parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input contour file.")
     parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output contour file.")
     parser.add_argument("-r", "--root-filename", dest="root_filename", default="", help="Output root file.")
     args = parser.parse_args()
     canvas = ROOT.TCanvas("c", "c", 700, 500)
+    canvas.SetLeftMargin(0.125)
+    canvas.SetBottomMargin(0.125)
+    canvas.SetRightMargin(0.125)
     canvas.Print(args.out_filename + "[")
 
     in_file = ROOT.TFile(args.in_filename, "READ")
