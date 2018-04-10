@@ -357,7 +357,7 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
       $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
-      $wqueue = "medium";
+      $wqueue = "short";
       $cedar_time = "00:15:00";
       $cedar_mem = "2500M";
    }
@@ -445,7 +445,7 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
       $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
-      $wqueue = "medium";
+      $wqueue = "short";
       $cedar_time = "00:15:00";
       $cedar_mem = "2500M";
    }
@@ -476,7 +476,7 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
       $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
-      $wqueue = "medium";
+      $wqueue = "short";
       $cedar_time = "00:15:00";
       $cedar_mem = "2500M";
    }
