@@ -358,8 +358,8 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      $cedar_time = "00:30:00";
+      $cedar_mem = "3500M";
    }
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
@@ -446,8 +446,8 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      $cedar_time = "00:30:00";
+      $cedar_mem = "3500M";
    }
 
 
@@ -477,8 +477,8 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      $cedar_time = "00:30:00";
+      $cedar_mem = "3500M";
    }
 
    $minfreepar0       = 2.2e-3  unless defined $minfreepar0;  # Min free param allowed value

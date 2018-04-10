@@ -227,8 +227,8 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
       $step_freepar0  = 1;
       $wqueue         = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
       $npt_freepar0   = 101;
-      $cedar_time     = "10:00:00";
-      $cedar_mem      = "5000M";
+      $cedar_time     = "15:00:00";
+      $cedar_mem      = "5500M";
    }
    $minfreepar0       = 0.3         unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0       = 0.7         unless defined $maxfreepar0;     # Maximum free parameter allowed value 
@@ -251,8 +251,8 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
       $step_freepar0          = 1;
       $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
       $npt_freepar0           = 101;
-      $cedar_time             = "5:00:00";
-      $cedar_mem              = "3500M";
+      $cedar_time             = "6:00:00";
+      $cedar_mem              = "4000M";
    }
    else
    {
@@ -260,8 +260,8 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
       $step_freepar0          = 1;
       $wqueue                 = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
       $npt_freepar0           = 101;
-      $cedar_time             = "10:00:00";
-      $cedar_mem              = "5000M";
+      $cedar_time             = "15:00:00";
+      $cedar_mem              = "5500M";
    }
    $minfreepar0            = 2.2e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = 2.8e-3    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
@@ -329,7 +329,7 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $step_freepar0    = 3          unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1    = 2          unless defined $step_freepar1;   # of points for each job param1
    $wqueue           = "long -R rusage[mem=3072,swap=3072,tmp=1000]";
-   $cedar_time       = "07:00:00";
+   $cedar_time       = "10:00:00";
    $cedar_mem        = "3000M";
 
    $tag = "${tag}_${freepar0}_${freepar1}";
@@ -662,6 +662,15 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 
          if($resource eq "cedar")
          {
+#            if($imin0 == 40 || $imin0 == 41 || $imin0 == 42)
+#            {
+#            }
+#            else
+#            {
+#               $irun++;
+#               next;
+#            }
+
             open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
             print Slurm "#!/bin/bash \n";
             print Slurm "#SBATCH --account=def-tanaka-ac \n";
