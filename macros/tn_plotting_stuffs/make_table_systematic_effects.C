@@ -1,6 +1,96 @@
 #include <iomanip.h>
 #include <TXMLEngine.h>
 
+const int NInteractionModes = 10;
+typedef enum EInteractionMode 
+{
+   CCQE,
+   CC2p2h,
+   CCcoh,
+   CC1pi,
+   CCoth,
+   NC1pi0,
+   NC1piC,
+   NCcoh,
+   NC1gamma,
+   NCoth
+}
+InteractionMode_t;
+
+InteractionMode_t GetInteractionMode(valor::conv::SuperkMode_t m)
+{
+   switch(m)
+   {
+      case valor::conv::kSKmNuMuCCQE:
+      case valor::conv::kSKmOscNuMuCCQE:
+      case valor::conv::kSKmNuMuBarCCQE:
+      case valor::conv::kSKmOscNuMuBarCCQE:
+      case valor::conv::kSKmNuECCQE:
+      case valor::conv::kSKmOscNuEBarCCQE:
+      case valor::conv::kSKmNuEBarCCQE:
+      case valor::conv::kSKmOscNuECCQE:
+         return CCQE;
+      case valor::conv::kSKmNuMuCC1pi:
+      case valor::conv::kSKmOscNuMuCC1pi:
+      case valor::conv::kSKmNuMuBarCC1pi:
+      case valor::conv::kSKmOscNuMuBarCC1pi:
+      case valor::conv::kSKmNuECC1pi:
+      case valor::conv::kSKmOscNuEBarCC1pi:
+      case valor::conv::kSKmNuEBarCC1pi:
+      case valor::conv::kSKmOscNuECC1pi:
+         return CC1pi;
+      case valor::conv::kSKmNuMuCCcoh:
+      case valor::conv::kSKmOscNuMuCCcoh:
+      case valor::conv::kSKmNuMuBarCCcoh:
+      case valor::conv::kSKmOscNuMuBarCCcoh:
+      case valor::conv::kSKmNuECCcoh:
+      case valor::conv::kSKmOscNuEBarCCcoh:
+      case valor::conv::kSKmNuEBarCCcoh:
+      case valor::conv::kSKmOscNuECCcoh:
+         return CCcoh;
+      case valor::conv::kSKmNuMuCC2p2h:
+      case valor::conv::kSKmOscNuMuCC2p2h:
+      case valor::conv::kSKmNuMuBarCC2p2h:
+      case valor::conv::kSKmOscNuMuBarCC2p2h:
+      case valor::conv::kSKmNuECC2p2h:
+      case valor::conv::kSKmOscNuEBarCC2p2h:
+      case valor::conv::kSKmNuEBarCC2p2h:
+      case valor::conv::kSKmOscNuECC2p2h:
+         return CC2p2h;
+      case valor::conv::kSKmNuMuCCoth:
+      case valor::conv::kSKmOscNuMuCCoth:
+      case valor::conv::kSKmNuMuBarCCoth:
+      case valor::conv::kSKmOscNuMuBarCCoth:
+      case valor::conv::kSKmNuECCoth:
+      case valor::conv::kSKmOscNuEBarCCoth:
+      case valor::conv::kSKmNuEBarCCoth:
+      case valor::conv::kSKmOscNuECCoth:
+         return CCoth;
+      case valor::conv::kSKmNuMuNC1piC:
+      case valor::conv::kSKmNuMuBarNC1piC:
+      case valor::conv::kSKmNuENC1piC:
+      case valor::conv::kSKmNuEBarNC1piC:
+         return NC1piC;
+      case valor::conv::kSKmNuMuNC1pi0:
+      case valor::conv::kSKmNuMuBarNC1pi0:
+      case valor::conv::kSKmNuENC1pi0:
+      case valor::conv::kSKmNuEBarNC1pi0:
+         return NC1pi0;
+      case valor::conv::kSKmNuMuNCcoh:
+      case valor::conv::kSKmNuMuBarNCcoh:
+      case valor::conv::kSKmNuENCcoh:
+      case valor::conv::kSKmNuEBarNCcoh:
+         return NCcoh;
+      case valor::conv::kSKmNuMuNCoth:
+      case valor::conv::kSKmNuMuBarNCoth:
+      case valor::conv::kSKmNuENCoth:
+      case valor::conv::kSKmNuEBarNCoth:
+         return NCoth;
+      default:
+         return NC1gamma;
+   }
+}
+
 void CreateEnvelope(const int N, TH1D** binnedEvents, const char* filename)
 {
    double* binEvents = new double[N];
@@ -353,7 +443,7 @@ void VarySKFSI(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, v
    }
 }
 
-void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents, TH2D** binnedEvents2D)
+void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, valor::PhysHypothesis& ph, const int seed, const int N, double* events, TH1D** binnedEvents, TH1D*** binnedEventsByMode)
 {
    for(int e = 0; e < N; ++e)
    {
@@ -375,8 +465,34 @@ void VaryAll(valor::SuperkExpectation& skexp, valor::conv::SuperkSample_t s, val
       events[e] = hEvents->GetEntries();
       binnedEvents[e] = hEvents;
 
-      TH2D* hEvents2 = skexp.CurrPredictedErecoVsQ2Spectrum(s)->Clone(Form("spectrum2d_%d", e));
-      binnedEvents2D[e] = hEvents2;
+      TH1D** hEventsByMode = new TH1D*[NInteractionModes];
+      for(int p = 0; p < NInteractionModes; ++p)
+      {
+         hEventsByMode[p] = 0;
+      }
+      for(int im = 0; im < valor::conv::kNSuperkModes; ++im)
+      {
+         valor::conv::SuperkMode_t m = valor::conv::kSKReactionModes[(int)s][im];
+         if(m == kSKmUndefined)
+         {
+            continue;
+         }
+         InteractionMode_t mode = GetInteractionMode(m);
+         TH1D* hEventsMode = skexp.CurrPredictedErecoSpectrum(s, m);
+         if(hEventsMode == 0)
+         {
+            continue;
+         }
+         if(hEventsByMode[(int)mode] == 0)
+         {
+            hEventsByMode[(int)mode] = hEventsMode->Clone(Form("spectrum_%d_%d", e, (int)mode));
+         }
+         else
+         {
+            hEventsByMode[(int)mode]->Add(hEventsMode);
+         }
+      }
+      binnedEventsByMode[e] = hEventsByMode;
    }
 }
 
@@ -738,8 +854,8 @@ void make_table_systematic_effects
       {
          // All variations
          TH1D** binnedEvents = new TH1D*[N];
-         TH2D** binnedEvents2 = new TH2D*[N];
-         VaryAll(skexp, s, ph, 500000, N, events, binnedEvents, binnedEvents2);
+         TH1D*** binnedEventsByMode = new TH1D**[N];
+         VaryAll(skexp, s, ph, 500000, N, events, binnedEvents, binnedEventsByMode);
          CreateEnvelope(N, binnedEvents, Form("%s_%s_envelope.pdf", output_file, group));
          TFile* file = new TFile(Form("%s_%s_%s_histos.root", output_file, group, banff[b].c_str()), "RECREATE");
 
@@ -749,16 +865,18 @@ void make_table_systematic_effects
             events[i] = binnedEvents[i]->GetEntries();
             delete binnedEvents[i];
 
-            binnedEvents2[i]->Write(Form("erecoQ2Events_%d", i));
-            delete binnedEvents2[i];
+            for(int p = 0; p < NInteractionModes; ++p)
+            {
+               binnedEventsByMode[i][p]->Write(Form("events_%d_%d", i, p));
+               delete binnedEventsByMode[i][p];
+            }
+            delete[] binnedEventsByMode[i];
          }
          delete[] binnedEvents;
-         delete[] binnedEvents2;
+         delete[] binnedEventsByMode;
 
          file->Close();
          delete file;
-
-
 
          double mean = TMath::Mean(N, events);
          double rms = TMath::RMS(N, events);

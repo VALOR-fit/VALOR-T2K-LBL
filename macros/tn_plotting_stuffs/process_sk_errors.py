@@ -21,6 +21,18 @@ names = [
     "All Systematics",
     "All with osc"
     ]
+modes = [
+   "CCQE",
+   "CC2p2h",
+   "CCcoh",
+   "CC1pi",
+   "CCoth",
+   "NC1pi0",
+   "NC1piC",
+   "NCcoh",
+   "NC1gamma",
+   "NCoth"
+]
 
 def CreateEnvelope(N, outfile, filename1, filename2=None):
     ROOT.gStyle.SetOptTitle(0)
@@ -258,10 +270,50 @@ def CreateSummaryTable(N):
             target.write(line)
             target.close()
 
+def CreateByModeSummaryTable(N):
+    banff = "postfit"
+    group = "allsyst"
+    line = ""
+    for p in range(len(modes)):
+        line += modes[p]
+        for s, sample in enumerate(samples):
+            events = []
+            histofilename = "sk_error_table_%s_%s_%s_histos.root" % (sample, group, banff)
+            f = ROOT.TFile(histofilename)
+            if not f:
+                continue
+            for i in range(N):
+                histo = f.Get("events_%d_%d" % (i,p))
+                events.append(histo.GetEntries())
+            events = np.array(events)
+            mean = ROOT.TMath.Mean(len(events), events)
+            rms = ROOT.TMath.RMS(len(events), events)
+
+            totevents = []
+            for i in range(N):
+                tothisto = f.Get("events_%d" % i)
+                totevents.append(tothisto.GetEntries())
+            totevents = np.array(totevents)
+            totmean = ROOT.TMath.Mean(len(totevents), totevents)
+
+            if mean != 0:
+                line += " & %.2f" % (100 * rms / totmean)
+            else:
+                line += " & -"
+            f.Close()
+        line += r" \\ \hline" + "\n"
+    filename = "sk_by_mode_error_table.tex"
+    target = open(filename, 'w')
+    target.truncate()
+    target.write(line)
+    target.close()
+
+
 if __name__=="__main__":
     N = 10000
     if len(sys.argv) == 1:
-        CreateSummaryTable(N)
+#        CreateSummaryTable(N)
+        CreateByModeSummaryTable(N)
     elif len(sys.argv) == 3:
         CreateEnvelope(N, sys.argv[1], sys.argv[2])
         CreateFractionalError(N, sys.argv[1], sys.argv[2])
