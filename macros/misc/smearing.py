@@ -129,7 +129,7 @@ def resample(input, scale):
         print "Error, input %dD. 1D or 2D resampling only" % len(input.shape)
         sys.exit()
 
-def smear(input, error=3.556768e-5):
+def smear(input, error=4.083384e-5):
     # Smear the input TH2D - assumes smear variable is Y
     NXbins = input.GetNbinsX()
     xaxis = input.GetXaxis()
@@ -224,7 +224,7 @@ def smear(input, error=3.556768e-5):
     canvas.Print("gaus.pdf]")
     return output
 
-def smear_1d(input, error=3.556768e-5):
+def smear_1d(input, error=4.083384e-5):
     # Smear the input TH1D
     NXbins = input.GetNbinsX()
     xaxis = input.GetXaxis()
@@ -419,11 +419,11 @@ def process_2d(original, root_filename, pdf_filename):
     canvas.Print(pdf_filename)
 
     smeared_histogram = smear(likelihood_histogram)
-    xaxis_label = xaxis.GetTitle()
-    yaxis_label = yaxis.GetTitle()
-
-    smeared_histogram.GetXaxis().SetTitle(xaxis_label)
-    smeared_histogram.GetYaxis().SetTitle(yaxis_label)
+    smeared_histogram.GetXaxis().SetTitle("sin^{2}#theta_{23}")
+    if "nh" in root_filename or "normal" in root_filename:
+        smeared_histogram.GetYaxis().SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})")
+    else:
+        smeared_histogram.GetYaxis().SetTitle("|#Deltam^{2}_{13}| (eV^{2}c^{-4})")
     smeared_histogram.GetXaxis().SetTitleOffset(1.2)
     smeared_histogram.GetYaxis().SetTitleOffset(1.8)
 
@@ -439,6 +439,8 @@ def process_2d(original, root_filename, pdf_filename):
 
     root_out_file = ROOT.TFile(root_filename, "RECREATE")
     root_out_file.cd()
+    xaxis_label = xaxis.GetTitle()
+    yaxis_label = yaxis.GetTitle()
     smeared_histogram.Write("likelihood_2D")
     chisq_histogram.GetXaxis().SetTitle(xaxis_label)
     chisq_histogram.GetYaxis().SetTitle(yaxis_label)

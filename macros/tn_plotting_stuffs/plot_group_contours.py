@@ -9,6 +9,12 @@ import numpy as np
 ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptStat(0)
 
+def is_fit_1d(fit):
+    if fit == "dcp" or fit == "th23" or fit == "th13" or fit == "dmsq":
+        return True
+    else:
+        return False
+
 def get_axis_histogram(valor_filename):
     f = ROOT.TFile(valor_filename, "READ")
     axis_histo = f.Get("dchisq_map_2D")
@@ -80,8 +86,8 @@ def make_graph_local_minimum(graph):
         x = np.zeros(1)
         y = np.zeros(1)
         graph.GetPoint(j, x, y)
-        xx[j] = x
-        yy[j] = y
+        xx[j] = x[0]
+        yy[j] = y[0]
     minval = np.min(yy)
     yy -= minval
     graph_out = ROOT.TGraph(N, xx, yy)
@@ -89,6 +95,17 @@ def make_graph_local_minimum(graph):
     graph_out.SetLineStyle(graph.GetLineStyle())
 
     return graph_out
+
+def make_histo_local_minimum(histo):
+    N = histo.GetNbinsX()
+    minval = histo.GetMinimum()
+    histo_out = histo.Clone(histo.GetName() + "_clone")
+    histo_out.SetDirectory(0)
+    histo_out.Reset()
+    for i in range(1, N + 1):
+        histo_out.SetBinContent(i, histo.GetBinContent(i) - minval)
+
+    return histo_out
 
 def get_mach3_1d_contour(f, object_name):
     histo_in = f.Get(object_name)
@@ -106,7 +123,7 @@ def get_mach3_1d_contour(f, object_name):
     dchisq.SetFillStyle(0)
     return dchisq
 
-def get_mach3_contour(filename):
+def get_mach3_contour(filename, fit):
     """Retrieve the MaCh3 contour from file.
 
     Keyword arguments:
@@ -114,12 +131,12 @@ def get_mach3_contour(filename):
     """
     f = ROOT.TFile(filename, "READ")
     keys = [key.GetName() for key in f.GetListOfKeys()]
-    if "h_dcp" in keys:
+    if is_fit_1d(fit):
         # 1D deltacp contour, implies th13 present as well
         dchisq_dcp = get_mach3_1d_contour(f, "h_dcp")
         dchisq_th13 = get_mach3_1d_contour(f, "h_th13")
         ret_val = (dchisq_dcp, dchisq_th13, None)
-    elif "g90_conf_0" in keys:
+    else:
         # 2D contour
         i = 0
         g68_contours = []
@@ -158,7 +175,7 @@ def get_mach3_contour(filename):
     f.Close()
     return ret_val
 
-def get_ptheta_contour(filename, is_normal):
+def get_ptheta_contour(filename, fit, is_normal):
     """Retrieve the p-theta contour from file.
 
     Keyword arguments:
@@ -167,16 +184,23 @@ def get_ptheta_contour(filename, is_normal):
     f = ROOT.TFile(filename, "READ")
     keys = [key.GetName() for key in f.GetListOfKeys()]
 
-    if "cont_like_all_conv_0" in keys:
-        # 1D deltacp contour, implies IH as well
+    if is_fit_1d(fit):
         if is_normal:
-            dchisq = f.Get("cont_like_all_conv_0")
+            mh = "_0"
         else:
-            dchisq = f.Get("cont_like_all_conv_1")
+            mh = "_1"
+        if fit == "dcp":
+            dchisq = f.Get("cont_like_all_conv" + mh)
+        elif fit == "th13":
+            dchisq = f.Get("T13_1D" + mh)
+        elif fit == "th23":
+            dchisq = f.Get("T23_1D" + mh)
+        else:
+            dchisq = f.Get("Dm32_1D" + mh)
         dchisq.SetLineColor(ROOT.kBlack)
         dchisq.SetLineWidth(1)
         ret_val = (dchisq, None, None)
-    elif "cont_like_all_conv_68_0_0" in keys or "cont_like_all_conv_68_0" in keys:
+    else:
         # 2D contour
         if is_normal:
             bestfit = f.Get("BestFit_Point_All")
@@ -256,7 +280,7 @@ def get_valor_2d_contours(dchisq):
         g90.append(g.Clone())
     return (g68, g90)
 
-def get_valor_contour(filename):
+def get_valor_contour(filename, fit):
     """Retrieve the VALOR contour from file.
 
     Keyword arguments:
@@ -264,13 +288,13 @@ def get_valor_contour(filename):
     """
     f = ROOT.TFile(filename, "READ")
     keys = [key.GetName() for key in f.GetListOfKeys()]
-    if "h_deltachisq" in keys:
+    if is_fit_1d(fit):
         # 1D contour
         dchisq = f.Get("h_deltachisq")
         dchisq.SetDirectory(0)
         dchisq.SetLineColor(ROOT.kRed)
         ret_val = (dchisq, None, None)
-    elif "dchisq_map_2D" in keys:
+    else:
         # 2D contour
         dchisq = f.Get("dchisq_map_2D")
         dchisq.SetDirectory(0)
@@ -280,10 +304,6 @@ def get_valor_contour(filename):
         bestfit.SetMarkerStyle(34)
         bestfit.SetMarkerSize(1)
         ret_val = (g68_contours, g90_contours, bestfit)
-    else:
-        # Did not find expected key
-        print "Error: Cannot find dchisq surface in VALOR file."
-        sys.exit()
     f.Close()
     return ret_val
 
@@ -320,13 +340,15 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
     p_is_1d = True
     v_is_1d = True
     max_chisq = -sys.float_info.max
+    num_fitters = 0
     if not mach3_filename is None:
-        m_contour1, m_contour2, m_bestfit = get_mach3_contour(mach3_filename)
+        num_fitters += 1
+        m_contour1, m_contour2, m_bestfit = get_mach3_contour(mach3_filename, fit)
         if m_bestfit is None:
             if fit == "dcp":
-                m_dchisq = m_contour1
+                m_dchisq = make_histo_local_minimum(m_contour1)
             elif fit == "th13":
-                m_dchisq = m_contour2
+                m_dchisq = make_histo_local_minimum(m_contour2)
             if m_dchisq.GetMaximum() > max_chisq:
                 max_chisq = m_dchisq.GetMaximum()
         else:
@@ -335,7 +357,8 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
             m_g90 = m_contour2
 
     if not ptheta_filename is None:
-        p_contour1, p_contour2, p_bestfit = get_ptheta_contour(ptheta_filename, is_normal)
+        num_fitters += 1
+        p_contour1, p_contour2, p_bestfit = get_ptheta_contour(ptheta_filename, fit, is_normal)
         if p_bestfit is None:
             p_dchisq = make_graph_local_minimum(p_contour1)
             p_max = ROOT.TMath.MaxElement(p_dchisq.GetN(), p_dchisq.GetY())
@@ -347,33 +370,16 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
             p_g90 = p_contour2
 
     if not valor_filename is None:
-        v_contour1, v_contour2, v_bestfit = get_valor_contour(valor_filename)
+        num_fitters += 1
+        v_contour1, v_contour2, v_bestfit = get_valor_contour(valor_filename, fit)
         if v_bestfit is None:
-            v_dchisq = v_contour1
+            v_dchisq = make_histo_local_minimum(v_contour1)
             if v_dchisq.GetMaximum() > max_chisq:
                 max_chisq = v_dchisq.GetMaximum()
         else:
             v_is_1d = False
             v_g68 = v_contour1
             v_g90 = v_contour2
-
-    num_fitters = 0
-    num_1d = 0
-    if not mach3_filename is None:
-        num_fitters += 1
-        if m_is_1d:
-            num_1d += 1
-    if not valor_filename is None:
-        num_fitters += 1
-        if v_is_1d:
-            num_1d += 1
-    if not ptheta_filename is None:
-        num_fitters += 1
-        if p_is_1d:
-            num_1d += 1
-    if num_fitters != num_1d and num_1d != 0:
-        print "Mismatch in dimensionality of fits between groups"
-        sys.exit()
 
     x_axis_label, y_axis_label = get_axis_labels(fit, is_normal, not mach3_filename is None)
     opt = "l"
@@ -391,7 +397,7 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
     legend.SetTextFont(132);
     legend.SetTextSize(0.03);
 
-    if num_1d > 0:
+    if is_fit_1d(fit):
         if not mach3_filename is None:
             m_dchisq.GetYaxis().SetRangeUser(0, np.ceil(max_chisq))
             plot(m_dchisq, x_axis_label, y_axis_label, opt)
