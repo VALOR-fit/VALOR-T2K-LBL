@@ -957,13 +957,13 @@ while($i_freepar1 < $n_freepar1) {
         #
         # Compute Canada Cedar
         #
-        if($resource eq "Cedar") {
+        if($resource eq "cedar") {
              open(PBS, ">$job_dir/$tag-$irun.slurm") or die("Cannot create the Slurm batch script");
              print PBS "#!/bin/bash \n";
              print PBS "#SBATCH -J $tag-$irun \n";
              print PBS "#SBATCH --time=$cput \n";
-             print PBS "#SBATCH --account=def-tanaka-ac";
-             print PBS "#SBATCH --mem=4000M";
+             print PBS "#SBATCH --account=def-tanaka-ac \n";
+             print PBS "#SBATCH --mem=4G \n";
              print PBS "#SBATCH -o $job_dir/$tag-$irun-slurm.out \n";
              print PBS "#SBATCH -e $job_dir/$tag-$irun-slurm.err \n";
              print PBS "cd $job_dir \n";
