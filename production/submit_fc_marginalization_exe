@@ -199,7 +199,7 @@ if( !defined $cput ) {
 $hypothesis             = "3f_osc"             unless defined $hypothesis;  
 $do_toys                = 1                   unless defined $do_toys;
 $using_xml_file         = 0                    unless defined $using_xml_file;
-$fakedata_root_file     = "data_run1to8/SKdata_Run18.root" unless defined $fakedata_root_file;
+$fakedata_root_file     = "official/2018/data/SK_data_Run19c_valor.root" unless defined $fakedata_root_file;
 $fakedata_xml_file      = ""                   unless defined $fakedata_xml_file;
 $print_syst_variation   = 0                    unless defined $print_syst_variation;
 $rethrow_unphysical     = 1                    unless defined $hrow_unphysical;

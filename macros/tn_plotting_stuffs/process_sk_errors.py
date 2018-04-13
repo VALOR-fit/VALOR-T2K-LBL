@@ -5,6 +5,7 @@ import numpy as np
 import sys
   
 ROOT.gROOT.SetBatch(1)
+ROOT.gStyle.SetOptStat(0)
 
 samples = ["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
 groups = ["skdet", "skfsi", "banff_constrained", "xsec_nue", "xsec_ncgamma", "xsec_ncoth", "xsec_eb", "osc", "allsyst", "all"]
@@ -270,10 +271,109 @@ def CreateSummaryTable(N):
             target.write(line)
             target.close()
 
+def CreateByModeErecPlots(N):
+    banff = "postfit"
+    group = "allsyst"
+
+    tot_events_by_erec_mean = dict()
+    for s, sample in enumerate(samples):
+        histofilename = "sk_error_table_%s_%s_%s_histos.root" % (sample, group, banff)
+        f = ROOT.TFile(histofilename)
+        if not f:
+            continue
+        dummy = f.Get("events_0")
+        Nbins = dummy.GetNbinsX()
+        tot_events_by_erec = np.zeros((N,Nbins))
+        for i in range(N):
+            histo = f.Get("events_%d" % i)
+            for j in range(1, Nbins + 1):
+                tot_events_by_erec[i, j - 1] = histo.GetBinContent(j)
+        tot_events_by_erec_mean[s] = np.mean(tot_events_by_erec, axis=0)
+        print "%s sum bin means %f" % (samples[s], np.sum(tot_events_by_erec_mean[s]))
+        f.Close()
+
+    sample_erec = dict()
+    for s, sample in enumerate(samples):
+        histofilename = "sk_error_table_%s_%s_%s_histos.root" % (sample, group, banff)
+        f = ROOT.TFile(histofilename)
+        if not f:
+            continue
+        dummy = f.Get("events_0")
+        Nbins = dummy.GetNbinsX()
+        for p in range(len(modes)):
+            mode_events_by_erec = np.zeros((N,Nbins))
+            for i in range(N):
+                histo = f.Get("events_%d_%d" % (i,p))
+                for j in range(1, Nbins + 1):
+                    mode_events_by_erec[i, j - 1] = histo.GetBinContent(j)
+            mode_events_by_erec_rms = np.zeros(Nbins)
+            for i in range(Nbins):
+                events = np.array(mode_events_by_erec[:,i])
+                #mode_events_by_erec_rms[i] = ROOT.TMath.Mean(len(events), events)
+                mode_events_by_erec_rms[i] = np.std(events)
+            err_histo = ROOT.TH1D("err_histo_" + str(s) + "_" + str(p), samples[s] + " " + modes[p], Nbins, histo.GetXaxis().GetXmin(), histo.GetXaxis().GetXmax())
+            if p == len(modes) - 1:
+                err_histo.SetLineColor(p + 2)
+            else:
+                err_histo.SetLineColor(p + 1)
+            for j in range(Nbins):
+                if tot_events_by_erec_mean[s][j] != 0:
+                    err_histo.SetBinContent(j + 1, mode_events_by_erec_rms[j] / tot_events_by_erec_mean[s][j])
+                else:
+                    err_histo.SetBinContent(j + 1, 0)
+            err_histo.SetDirectory(0)
+            sample_erec[str(s) + "_" + str(p)] = err_histo
+        f.Close()
+
+    canvas = ROOT.TCanvas("err_canvas", "err_canvas", 1024, 768)
+    canvas.SetTopMargin(0.1)
+    canvas.SetLeftMargin(0.15)
+    canvas.SetBottomMargin(0.15)
+    canvas.SetRightMargin(0.2)
+
+    sample_max = np.zeros(len(samples))
+
+    for s, sample in enumerate(samples):
+        for p in range(len(modes)):
+            histo = sample_erec[str(s) + "_" + str(p)]
+            if histo.GetMaximum() > sample_max[s]:
+                sample_max[s] = histo.GetMaximum()
+
+    for s, sample in enumerate(samples):
+        opt = ""
+        dummy = sample_erec["0_0"]
+        thesum = np.zeros(dummy.GetNbinsX())
+        legend = ROOT.TLegend(0.85, 0.5, 0.95, 0.8)
+        legend.SetFillColor(0);
+        legend.SetLineColor(0);
+        legend.SetTextFont(132);
+        legend.SetTextSize(0.03);
+
+        for p in range(len(modes)):
+            histo = sample_erec[str(s) + "_" + str(p)]
+            histo.SetTitle(samples[s])
+            histo.GetYaxis().SetRangeUser(0, sample_max[s])
+            histo.Draw(opt)
+            legend.AddEntry(histo, modes[p], "l")
+            opt = "same"
+            for i in range(1, histo.GetNbinsX()):
+                thesum[i - 1] += histo.GetBinContent(i)
+        legend.Draw()
+        if s == 0:
+            canvas.Print("mode_errors.pdf(")
+        elif s == (len(samples) - 1):
+            canvas.Print("mode_errors.pdf)")
+        else:
+            canvas.Print("mode_errors.pdf")
+
 def CreateByModeSummaryTable(N):
     banff = "postfit"
     group = "allsyst"
-    line = ""
+    line = r"\begin{tabular}{|l|l|l|l|l|l|}" + "\n"
+    line += r"\hline" + "\n"
+    line += r"& \multicolumn{2}{c||}{\textbf{1-Ring $\mu$}} & \multicolumn{3}{c|}{\textbf{1-Ring $e$}} \\ \hline" + "\n"
+    line += r"Interaction mode & FHC & RHC & FHC & RHC & FHC 1 d.e. \\ \hline\hline" + "\n"
+
     for p in range(len(modes)):
         line += modes[p]
         for s, sample in enumerate(samples):
@@ -287,7 +387,8 @@ def CreateByModeSummaryTable(N):
                 events.append(histo.GetEntries())
             events = np.array(events)
             mean = ROOT.TMath.Mean(len(events), events)
-            rms = ROOT.TMath.RMS(len(events), events)
+#            rms = ROOT.TMath.RMS(len(events), events)
+            rms = np.std(events)
 
             totevents = []
             for i in range(N):
@@ -297,23 +398,24 @@ def CreateByModeSummaryTable(N):
             totmean = ROOT.TMath.Mean(len(totevents), totevents)
 
             if mean != 0:
-                line += " & %.2f" % (100 * rms / totmean)
+                line += " & %.4f" % (rms / totmean)
             else:
                 line += " & -"
             f.Close()
         line += r" \\ \hline" + "\n"
+    line += r"\end{tabular}"
     filename = "sk_by_mode_error_table.tex"
     target = open(filename, 'w')
     target.truncate()
     target.write(line)
     target.close()
 
-
 if __name__=="__main__":
     N = 10000
     if len(sys.argv) == 1:
 #        CreateSummaryTable(N)
-        CreateByModeSummaryTable(N)
+#        CreateByModeSummaryTable(N)
+        CreateByModeErecPlots(N)
     elif len(sys.argv) == 3:
         CreateEnvelope(N, sys.argv[1], sys.argv[2])
         CreateFractionalError(N, sys.argv[1], sys.argv[2])
