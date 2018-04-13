@@ -96,6 +96,24 @@ if($resource eq "Liverpool_Slurm") {
   `sbatch -p compute $job_dir/$tag.slurm`;
 }
 #
+# Compute Canada Slurm
+#
+if($resource eq "cedar") {
+	open(PBS, ">$job_dir/$tag.slurm") or die("Cannot create the Slurm batch script");
+	print PBS "#!/bin/bash \n";
+	print PBS "#SBATCH -J $tag \n";
+	print PBS "#SBATCH --time=$cput \n";
+	print PBS "#SBATCH --account=def-tanaka-ac \n";
+	print PBS "#SBATCH --mem=10G \n";
+	print PBS "#SBATCH -o $job_dir/$tag-slurm.out \n";
+	print PBS "#SBATCH -e $job_dir/$tag-slurm.err \n";
+	print PBS "cd $job_dir \n";
+	print PBS "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir \n";
+	print PBS "time $command \n";
+	close(PBS);
+	`sbatch $job_dir/$tag.slurm`;
+}
+#
 # Grid
 #
 if($resource eq "Grid") {
