@@ -17,9 +17,9 @@ using namespace valor::conv;
 
 void bievent_plot
 (
- const char * tag                  = "ellipse_Run18",
+ const char * tag                  = "ellipse_Run1_9c",
  int          iexperiment         = 0,
- const char * rootfile = "data_run1to8/SKdata_Run18.root", 
+ const char * rootfile = "official/2018/data/SK_data_Run19c_valor.root", 
  const bool draw_data = true
 )
 {
@@ -127,10 +127,10 @@ void bievent_plot
    // Init histogram
   
    TH2D *hInit = new TH2D("hInit", "hInit", 150, 0, 150, 25, 0, 25);
-   double xmax = 100.0;
-   double xmin = 25.0;
-   double ymin = 2.0;
-   double ymax = 14.0;
+   double xmax = 150.0;
+   double xmin = 0.0;
+   double ymin = 0.0;
+   double ymax = 25.0;
    hInit->GetXaxis()->SetRangeUser(xmin,xmax);
    hInit->GetYaxis()->SetRangeUser(ymin,ymax);
    double ttx = (xmax + xmin) * 0.5;

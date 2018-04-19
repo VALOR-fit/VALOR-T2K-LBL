@@ -699,6 +699,15 @@ while($i_freepar1 < $n_freepar1) {
 	    
 	    if($resource eq "warwick")
             {
+#               if($irun == 57 || $irun == 96 || $irun == 97)
+#               {
+#               }
+#               else
+#               {
+#                  $irun++;
+#                  next;
+#               }
+
                `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/submit_fc.sh $command`;
                $sleep_time = int(rand(10)) + 20;
                print "Sleeping for $sleep_time seconds";

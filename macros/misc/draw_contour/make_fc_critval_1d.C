@@ -27,8 +27,10 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
 
   cout << "Making the F&C Critical Values" << endl;
   
-  const int Nmh = 2;
-  const int NFCpts = 8; // # of points of Feldman-Cousins
+//  const int Nmh = 2;
+//  const int NFCpts = 8; // # of points of Feldman-Cousins
+   const int Nmh = 1;
+   const int NFCpts = 1;
    bool fixed_hierarchy = 0;
   
    // RUN 1-8
@@ -78,22 +80,15 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    cout << "Reading file names with F&C Fits" << endl;
   
    const char * infilename_fc[NFCpts][Nmh] = {
-      {"fit_deltacp_0_full.root","fit_deltacp_0_full.root"},
+      {"fc_deltacp_0_normal_merged.root"}
+/*      {"fit_deltacp_0_full.root","fit_deltacp_0_full.root"},
       {"fit_deltacp_mpi4_full.root","fit_deltacp_mpi4_full.root"},
       {"fit_deltacp_ppi4_full.root","fit_deltacp_ppi4_full.root"},
       {"fit_deltacp_mpi2_full.root","fit_deltacp_mpi2_full.root"},
       {"fit_deltacp_ppi2_full.root","fit_deltacp_ppi2_full.root"},
       {"fit_deltacp_m3pi4_full.root","fit_deltacp_m3pi4_full.root"},
       {"fit_deltacp_p3pi4_full.root","fit_deltacp_p3pi4_full.root"},
-      {"fit_deltacp_ppi_full.root","fit_deltacp_ppi_full.root"}
-/*    {"fitmarg_fc_dcp_normal_final_10k_0.0.root","fitmarg_fc_dcp_inverted_final_10k_0.0.root"},
-    {"fitmarg_fc_dcp_normal_final_10k_-0.785.root","fitmarg_fc_dcp_inverted_final_11k_-0.785.root"},
-    {"fitmarg_fc_dcp_normal_final_10k_0.785.root","fitmarg_fc_dcp_inverted_final_10k_0.785.root"},
-    {"fitmarg_fc_dcp_normal_final_15k_-1.571.root","fitmarg_fc_dcp_inverted_final_10k_-1.571.root"},
-    {"fitmarg_fc_dcp_normal_final_31k_1.571.root","fitmarg_fc_dcp_inverted_final_14k_1.571.root"},
-    {"fitmarg_fc_dcp_normal_final_10k_-2.356.root","fitmarg_fc_dcp_inverted_final_10k_-2.356.root"},
-    {"fitmarg_fc_dcp_normal_final_10k_2.356.root","fitmarg_fc_dcp_inverted_final_10k_2.356.root"},    
-    {"fitmarg_fc_dcp_normal_final_10k_3.142.root","fitmarg_fc_dcp_inverted_final_10k_3.142.root"}*/
+      {"fit_deltacp_ppi_full.root","fit_deltacp_ppi_full.root"}*/
   };
 
    const int nptcpy = 1;

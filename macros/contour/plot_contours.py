@@ -46,6 +46,8 @@ def plot_contours_2d(dchisq_objs, labels, pdf_filename):
     legend.SetLineColor(0);
     legend.SetTextFont(132);
     legend.SetTextSize(0.03);
+    dchisq_objs[-1].GetYaxis().SetTitleOffset(1.25)
+    dchisq_objs[-1].SetTitle("")
     dchisq_objs[-1].Draw("axis")
 
     multigraph = ROOT.TMultiGraph()

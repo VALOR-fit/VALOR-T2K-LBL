@@ -16,7 +16,7 @@ void bievent_build
 (
  const int ntoys = 100,
  const int seed = 10000,
- const char * tag                  = "ellipse_Run18",
+ const char * tag                  = "ellipse_Run1_9c",
  const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
  const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
  // Best fit values NH
@@ -28,13 +28,13 @@ void bievent_build
  double       input_dm23sq         = 2.460E-3,
  double       input_betabar        = -99., //0., //-99,
  bool         disable_banff_tuning = false,                          /* */
- const char * config_file = "analysis_configuration_oa2017_run1-8_postfit.xml",
+ const char * config_file = "analysis_configuration_oa2018_run1-9c_v1_postfit.xml",
  const char * mixparamchoice      = "sinsqtheta",
  const char * hierarchy           = "normal"   ,
  const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
  int          iexperiment         = 0,
- const char * rootfile = "data_run1to8/SKdata_Run18.root", 
+ const char * rootfile = "official/2018/data/SK_data_Run19c_valor.root", 
  const bool draw_data_spectra = true,
  const bool scale_mc = false
 )
@@ -327,8 +327,7 @@ void GetN_1re(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc,double &Nr
       return;
    }
    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
-   hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));  
-   Nfhc = hErecoVsQ2Tot->Integral();
+   Nfhc = skexp.CurrPredictedErecoVsQ2Spectrum(s)->Integral();
   
    // RHC1Re # of events 
    s = util::SKSampleFromString("RHC1Re"); // requested sample
@@ -338,8 +337,7 @@ void GetN_1re(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc,double &Nr
       return;
    }
    is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
-   hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));  
-   Nrhc = hErecoVsQ2Tot->Integral();
+   Nrhc = skexp.CurrPredictedErecoVsQ2Spectrum(s)->Integral();
 
    cout << "Events: " << Nfhc << " => ";
 }
@@ -354,8 +352,7 @@ void GetN_cc1pi(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc)
       return;
    }
    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
-   hErecoVsQ2Tot = new TH2D(*skexp.CurrPredictedErecoVsQ2Spectrum(s));  
-   Nfhc = hErecoVsQ2Tot->Integral();
+   Nfhc = skexp.CurrPredictedErecoVsQ2Spectrum(s)->Integral();
 }
 
 bool OscParamsPhysical(double mix12val, double mix13val, double dm12val)
