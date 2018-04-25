@@ -22,10 +22,10 @@ void bievent_build
  // Best fit values NH
  double       input_mixing12       = 0.304,
  double       input_mixing13       = 0.02235,
- double       input_mixing23       = 0.530,
+ double       input_mixing23       = 0.535,
  double       input_deltacp        = 0,
  double       input_dm12sq         = 7.53E-5,
- double       input_dm23sq         = 2.460E-3,
+ double       input_dm23sq         = 2.440E-3,
  double       input_betabar        = -99., //0., //-99,
  bool         disable_banff_tuning = false,                          /* */
  const char * config_file = "analysis_configuration_oa2018_run1-9c_v1_postfit.xml",
@@ -41,6 +41,18 @@ void bievent_build
 {
    using namespace std;
    using namespace valor;
+
+   const int N23 = 3;
+   const int NMH = 2;
+   const int NDCP = 4;
+   // PDG 2016 best fits
+   double ss12[NMH] = {0.304, 0.304};
+   double dm12[NMH] = {7.53E-5, 7.53E-5};
+   // 2018 best fit values from 2D fits (including IH shift for dmsq23)
+   double ss13[NMH] = {0.02235, 0.02235};
+   double dm23[NMH] = {2.440E-3, 2.410E-3 - dm12[2]};
+   // Alternative values to use for sinsqtheta23
+   double ss23[N23] = {0.450, 0.500, 0.550};
 
    // Global options
    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -150,26 +162,6 @@ void bievent_build
    cout << "- Physics hypothesis: " << ph << endl;
    cout << *Opt::Instance() << endl;
 
-   // Data files
-
-   TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
-   SuperkObservation * skobs_fakedata = new SuperkObservation;
-   cout << "Use root file" << endl;
-   bool draw_data = true;
-   TFile *infile = new TFile(rootfile2.Data(),"READ");
-   if(!infile->IsOpen())
-   {
-      cout << endl;
-      cout << "The data root file doesn't exist: don't draw data spectra" << endl;
-      cout << endl;
-      draw_data = false;
-   }
-   if(!draw_data_spectra)
-   {
-      draw_data = false;
-   }
-   infile->Close();
-
    // Create & config superk spectrum predictor
    SuperkExpectation skexp;
    skexp.Read(sconfig);
@@ -192,9 +184,6 @@ void bievent_build
    double deltaCP_last = +TMath::Pi();
    const int dcp_npt = 9;
    double deltaCP_width = (deltaCP_last - deltaCP_first) / (dcp_npt-1);
-   const int N23 = 3;
-   const int NMH = 2;
-   const int NDCP = 4;
 
    TH2D* hEventsSyst[dcp_npt][N23][NMH];
    TH2D* hEvents[dcp_npt][N23][NMH];
@@ -218,16 +207,10 @@ void bievent_build
       }
    }
 
-   double ss12[NMH] = {0.304, 0.304};
-   double ss13[NMH] = {0.02235, 0.0226125};
-   double dm12[NMH] = {7.53E-5, 7.53E-5};
-   double dm23[NMH] = {2.460E-3, 2.440E-3};
-   double ss23[N23] = {0.450, 0.500, 0.550};
-
    for(int e = 0; e < ntoys; ++e)
    {
       // stat, syst, osc, fitter, other
-      if(e % 10 == 0)
+      if(e % 100 == 0)
       {
          cout << "Throwing toy " << e << endl;
       }
@@ -256,24 +239,17 @@ void bievent_build
     
                double dcp = deltaCP_first + idcp * deltaCP_width;
        
-               // Set NH oscillation parameter values
-               // Solar parameters and theta13 are now marginalized
-               /*
-               ph.SetCurrValue(conv::kPhypMixing12, ss12[imh]);
-               ph.SetCurrValue(conv::kPhypMixing13, ss13[imh]);
-               ph.SetCurrValue(conv::kPhypDm12sq, dm12[imh]);
-               */
-               ph.SetCurrValue(conv::kPhypDm23sq, dm23[imh]);
-
                if(imh == 0)
                {
                   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
                   skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhNormal);
+                  ph.SetCurrValue(conv::kPhypDm23sq, dm23[imh]);
                }
                else
                {
                   Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
                   skexp.GetSuperkMC()->SetMassHierarchy(conv::kNmhInverted);
+                  ph.SetCurrValue(conv::kPhypDm23sq, dm23[imh]);
                }
                ph.SetCurrValue(conv::kPhypCPV, dcp);
                ph.SetCurrValue(conv::kPhypMixing23, ss23[iss23]);
@@ -298,7 +274,7 @@ void bievent_build
       }
    }
 
-   TFile file(Form("events_%d.root", seed), "RECREATE");
+   TFile file(Form("%s_%d.root", tag, seed), "RECREATE");
    for(int idcp=0; idcp < dcp_npt; ++idcp)
    {
       for(int iss23 = 0; iss23 < N23; ++iss23)
@@ -338,8 +314,6 @@ void GetN_1re(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc,double &Nr
    }
    is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
    Nrhc = skexp.CurrPredictedErecoVsQ2Spectrum(s)->Integral();
-
-   cout << "Events: " << Nfhc << " => ";
 }
 
 void GetN_cc1pi(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc)

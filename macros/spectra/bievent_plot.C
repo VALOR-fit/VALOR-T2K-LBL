@@ -44,10 +44,13 @@ void bievent_plot
    double deltaCP_last = +TMath::Pi();
    double deltaCP_width = (deltaCP_last - deltaCP_first) / (dcp_npt - 1);
 
+   // PDG 2016 best fits
    double ss12[NMH] = {0.304, 0.304};
-   double ss13[NMH] = {0.02235, 0.0226125};
    double dm12[NMH] = {7.53E-5, 7.53E-5};
-   double dm23[NMH] = {2.460E-3, 2.440E-3};
+   // 2018 best fit values from 2D fits (including IH shift for dmsq23)
+   double ss13[NMH] = {0.02235, 0.02235};
+   double dm23[NMH] = {2.440E-3, 2.410E-3 - dm12[2]};
+   // Alternative values to use for sinsqtheta23
    double ss23[N23] = {0.450, 0.500, 0.550};
 
    TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
@@ -127,10 +130,10 @@ void bievent_plot
    // Init histogram
   
    TH2D *hInit = new TH2D("hInit", "hInit", 150, 0, 150, 25, 0, 25);
-   double xmax = 150.0;
-   double xmin = 0.0;
-   double ymin = 0.0;
-   double ymax = 25.0;
+   double xmax = 100.0;
+   double xmin = 25.0;
+   double ymin = 4.0;
+   double ymax = 18.0;
    hInit->GetXaxis()->SetRangeUser(xmin,xmax);
    hInit->GetYaxis()->SetRangeUser(ymin,ymax);
    double ttx = (xmax + xmin) * 0.5;
@@ -213,23 +216,23 @@ void bievent_plot
    gN_events_data->SetMarkerStyle(23);
    gN_events_data->Draw("p");
 
-   TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-8 Preliminary");
+   TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-9c Preliminary");
    title->SetTextSize(0.05);
    title->Draw();
    TLatex* caveat = new TLatex(ctx, 1.01 * ty, "Final systematics pending");
    caveat->SetTextSize(0.025);
-   caveat->Draw();
+//   caveat->Draw();
 
-   TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.64);
+   TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.58);
    ldcp_all->SetFillColor(0);
    ldcp_all->SetLineColor(0);
    ldcp_all->SetTextFont(132);
    ldcp_all->SetTextSize(0.035);
-   ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = 0.50","l");
-   ldcp_all->AddEntry(&gN_events[0][0],"sin^{2} #theta_{23} = 0.45","l");
-   ldcp_all->AddEntry(&gN_events[2][0],"sin^{2} #theta_{23} = 0.55","l");
-   ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.46#times10^{-3} eV^{2}/c^{4}","l");
-   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{31} = -2.44#times10^{-3} eV^{2}/c^{4}","l");
+   ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1]{0.50}, #color[2]{0.45}, #color[4]{0.55}","l");
+//   ldcp_all->AddEntry(&gN_events[0][0],"sin^{2} #theta_{23} = 0.45","l");
+//   ldcp_all->AddEntry(&gN_events[2][0],"sin^{2} #theta_{23} = 0.55","l");
+   ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.44#times10^{-3} eV^{2}/c^{4}","l");
+   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{13} = 2.41#times10^{-3} eV^{2}/c^{4}","l");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][3],"#delta_{CP} = #pi","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][2],"#delta_{CP} = +#pi/2","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][1],"#delta_{CP} = 0","p");
