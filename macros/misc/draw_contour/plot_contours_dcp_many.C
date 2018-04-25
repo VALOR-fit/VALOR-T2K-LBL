@@ -995,23 +995,9 @@ void plot_contours_dcp_many
 //     caveat->Draw("same");
   }
   // deltacp_critval.*, deltacp_interval_1sigma.*, deltacp_interval_90.*, deltacp_interval_2sigma.*
-  const char* plotname = "interval_1sigma";
-  if(draw_1sigmaCL)
-  {
-     plotname = "FC_1sigma_CL";
-  }
-  else if(draw_90CL)
-  {
-     plotname = "FC_90_CL";
-  }
-  else if(draw_2sigmaCL)
-  {
-     plotname = "FC_2sigma_CL";
-  }
-
-  cDeltaChisq->SaveAs(Form("deltacp_%s.pdf",plotname));
-  cDeltaChisq->SaveAs(Form("deltacp_%s.png",plotname));
-  cDeltaChisq->SaveAs(Form("deltacp_%s.eps",plotname));
+  cDeltaChisq->SaveAs(Form("%s.pdf", tag.c_str()));
+  cDeltaChisq->SaveAs(Form("%s.png", tag.c_str()));
+  cDeltaChisq->SaveAs(Form("%s.eps", tag.c_str()));
   
   // Store in root file
   if(SaveRootFile){
@@ -1668,10 +1654,10 @@ void plot_contours_dcp_many
     TLatex *latNormal = new TLatex(hInit->GetXaxis()->GetBinLowEdge(110),maxy_ih*0.9,"Normal Ordering");
     latNormal->SetTextSize(0.06);
 //    latNormal->Draw("same");
-    cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.pdf",tag.c_str()));
-    cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.png",tag.c_str()));
-    cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.eps",tag.c_str()));
-    cBrazilianPlot_nh->SaveAs(Form("%s_braz_nh.root",tag.c_str()));
+    cBrazilianPlot_nh->SaveAs(Form("%s_nh.pdf",tag.c_str()));
+    cBrazilianPlot_nh->SaveAs(Form("%s_nh.png",tag.c_str()));
+    cBrazilianPlot_nh->SaveAs(Form("%s_nh.eps",tag.c_str()));
+    cBrazilianPlot_nh->SaveAs(Form("%s_nh.root",tag.c_str()));
     
     // Brazilian plot Inverted Hierarchy
  
@@ -1778,10 +1764,10 @@ void plot_contours_dcp_many
     TLatex *latInverted = new TLatex(hdeltachisq1D_ih_mean->GetXaxis()->GetBinLowEdge(110),20.*0.9,"Inverted Ordering");
     latInverted->SetTextSize(0.06);
     //latInverted->Draw("same");
-    cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.pdf",tag.c_str()));
-    cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.png",tag.c_str()));
-    cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.eps",tag.c_str()));
-    cBrazilianPlot_ih->SaveAs(Form("%s_braz_ih.root",tag.c_str()));
+    cBrazilianPlot_ih->SaveAs(Form("%s_ih.pdf",tag.c_str()));
+    cBrazilianPlot_ih->SaveAs(Form("%s_ih.png",tag.c_str()));
+    cBrazilianPlot_ih->SaveAs(Form("%s_ih.eps",tag.c_str()));
+    cBrazilianPlot_ih->SaveAs(Form("%s_ih.root",tag.c_str()));
 
     //
     

@@ -27,11 +27,9 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
 
   cout << "Making the F&C Critical Values" << endl;
   
-//  const int Nmh = 2;
-//  const int NFCpts = 8; // # of points of Feldman-Cousins
-   const int Nmh = 1;
-   const int NFCpts = 1;
-   bool fixed_hierarchy = 0;
+  const int Nmh = 2;
+  const int NFCpts = 8; // # of points of Feldman-Cousins
+  bool fixed_hierarchy = 0;
   
    // RUN 1-8
    // Root path to toys location, for convenience specifying path in "infilename_fc"
@@ -80,20 +78,19 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    cout << "Reading file names with F&C Fits" << endl;
   
    const char * infilename_fc[NFCpts][Nmh] = {
-      {"fc_deltacp_0_normal_merged.root"}
-/*      {"fit_deltacp_0_full.root","fit_deltacp_0_full.root"},
-      {"fit_deltacp_mpi4_full.root","fit_deltacp_mpi4_full.root"},
-      {"fit_deltacp_ppi4_full.root","fit_deltacp_ppi4_full.root"},
-      {"fit_deltacp_mpi2_full.root","fit_deltacp_mpi2_full.root"},
-      {"fit_deltacp_ppi2_full.root","fit_deltacp_ppi2_full.root"},
-      {"fit_deltacp_m3pi4_full.root","fit_deltacp_m3pi4_full.root"},
-      {"fit_deltacp_p3pi4_full.root","fit_deltacp_p3pi4_full.root"},
-      {"fit_deltacp_ppi_full.root","fit_deltacp_ppi_full.root"}*/
+      {"fc_deltacp_mpi_normal_merged.root", "fc_deltacp_mpi_inverted_merged.root"},
+      {"fc_deltacp_m3pi4_normal_merged.root", "fc_deltacp_m3pi4_inverted_merged.root"},
+      {"fc_deltacp_mpi2_normal_merged.root", "fc_deltacp_mpi2_inverted_merged.root"},
+      {"fc_deltacp_mpi4_normal_merged.root", "fc_deltacp_mpi4_inverted_merged.root"},
+      {"fc_deltacp_0_normal_merged.root", "fc_deltacp_0_inverted_merged.root"},
+      {"fc_deltacp_ppi4_normal_merged.root", "fc_deltacp_ppi4_inverted_merged.root"},
+      {"fc_deltacp_ppi2_normal_merged.root", "fc_deltacp_ppi2_inverted_merged.root"},
+      {"fc_deltacp_p3pi4_normal_merged.root", "fc_deltacp_p3pi4_inverted_merged.root"}
   };
 
    const int nptcpy = 1;
    double copypt[nptcpy][2] = {
-      { TMath::Pi(), -TMath::Pi() } // copy crit val of TMath::Pi() in -TMath::Pi()
+      { -TMath::Pi(), TMath::Pi() } // copy crit val of -TMath::Pi() in TMath::Pi()
    };
   
    TGraph *gFC90CL_nh = new TGraph();
