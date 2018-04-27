@@ -64,14 +64,16 @@ def get_ratio(data_filename, asimov_filename):
     f = ROOT.TFile(data_filename, "READ")
     data_histograms = dict()
     for s in samples:
-        data_histograms[s] = make_coarse(get_erec(f.Get("mock_data_" + s + "_0")))
+#        data_histograms[s] = make_coarse(get_erec(f.Get("mock_data_" + s + "_0")))
+        data_histograms[s] = get_erec(f.Get("mock_data_" + s + "_0"))
         data_histograms[s].SetDirectory(0)
     f.Close()
 
     f = ROOT.TFile(asimov_filename, "READ")
     asimov_histograms = dict()
     for s in samples:
-        asimov_histograms[s] = make_coarse(get_erec(f.Get("mock_data_" + s + "_0")))
+#        asimov_histograms[s] = make_coarse(get_erec(f.Get("mock_data_" + s + "_0")))
+        asimov_histograms[s] = get_erec(f.Get("mock_data_" + s + "_0"))
         asimov_histograms[s].SetDirectory(0)
     f.Close()
 
@@ -94,8 +96,8 @@ def plot_ratios(ratio_histograms1, ratio_histograms2, output_filename):
         legend.SetTextSize(0.03);
         xaxis = ratio_histograms1[s].GetXaxis()
         ratio_histograms1[s].SetTitle(titles[i])
-        if xaxis.GetBinUpEdge(xaxis.GetNbins()) > 3.0:
-            xaxis.SetRangeUser(0, 3.0)
+        if xaxis.GetBinUpEdge(xaxis.GetNbins()) > 1.2:
+            xaxis.SetRangeUser(0, 1.2)
         xaxis.SetTitle("Erec (GeV)")
         xaxis.SetLabelSize(0.02)
         yaxis = ratio_histograms1[s].GetYaxis()

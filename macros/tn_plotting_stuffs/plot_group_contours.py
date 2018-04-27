@@ -158,7 +158,7 @@ def make_histo_local_minimum(histo):
     histo_out.Reset()
     for i in range(1, N + 1):
         histo_out.SetBinContent(i, histo.GetBinContent(i) - minval)
-
+    minval = histo_out.GetMinimum()
     return histo_out
 
 def get_mach3_1d_contour(f, object_name):
@@ -350,8 +350,26 @@ def get_valor_contour(filename, fit):
     keys = [key.GetName() for key in f.GetListOfKeys()]
     if is_fit_1d(fit):
         # 1D contour
-        dchisq = f.Get("h_deltachisq")
-        dchisq.SetDirectory(0)
+        if "_normal.root" in filename:
+            f2 = ROOT.TFile(filename.replace("_normal.root", "_inverted.root"), "READ")
+            chisq_nh = f.Get("h_chisq")
+            chisq_ih = f2.Get("h_chisq")
+            minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+            dchisq = chisq_nh.Clone("h_dchisq")
+            dchisq.SetDirectory(0)
+            for i in range(1, dchisq.GetNbinsX() + 1):
+                dchisq.SetBinContent(i, dchisq.GetBinContent(i) - minval)
+            f2.Close()
+        else:
+            f2 = ROOT.TFile(filename.replace("_inverted.root", "_normal.root"), "READ")
+            chisq_ih = f.Get("h_chisq")
+            chisq_nh = f2.Get("h_chisq")
+            minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+            dchisq = chisq_ih.Clone("h_dchisq")
+            dchisq.SetDirectory(0)
+            for i in range(1, dchisq.GetNbinsX() + 1):
+                dchisq.SetBinContent(i, dchisq.GetBinContent(i) - minval)
+            f2.Close()
         dchisq.SetLineColor(ROOT.kRed)
         ret_val = (dchisq, None, None)
     else:
@@ -385,7 +403,7 @@ def plot2d(g68, g90, bestfit, x_axis_label, y_axis_label, opt):
         g.Draw("same")
     bestfit.Draw("same")
 
-def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, output_filename):
+def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plot_fc, use_global_min, output_filename):
     """Produce comparisons of the specified contours.
     
     Keyword arguments:
@@ -406,7 +424,10 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
         num_fitters += 1
         m_contour1, m_contour2, m_bestfit = get_mach3_contour(mach3_filename, fit)
         if m_bestfit is None:
-            m_dchisq = make_histo_local_minimum(m_contour1)
+            if not use_global_min:
+                m_dchisq = make_histo_local_minimum(m_contour1)
+            else:
+                m_dchisq = m_contour1
             if m_dchisq.GetMaximum() > max_chisq:
                 max_chisq = m_dchisq.GetMaximum()
         else:
@@ -418,7 +439,10 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
         num_fitters += 1
         p_contour1, p_contour2, p_bestfit = get_ptheta_contour(ptheta_filename, fit, is_normal)
         if p_bestfit is None:
-            p_dchisq = make_graph_local_minimum(p_contour1)
+            if not use_global_min:
+                p_dchisq = make_graph_local_minimum(p_contour1)
+            else:
+                p_dchisq = p_contour1
             p_max = ROOT.TMath.MaxElement(p_dchisq.GetN(), p_dchisq.GetY())
             if p_max > max_chisq:
                 max_chisq = p_max
@@ -435,7 +459,10 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
         num_fitters += 1
         v_contour1, v_contour2, v_bestfit = get_valor_contour(valor_filename, fit)
         if v_bestfit is None:
-            v_dchisq = make_histo_local_minimum(v_contour1)
+            if not use_global_min:
+                v_dchisq = make_histo_local_minimum(v_contour1)
+            else:
+                v_dchisq = v_contour1
             if v_dchisq.GetMaximum() > max_chisq:
                 max_chisq = v_dchisq.GetMaximum()
             if fit == "dmsq" and not is_normal and not mach3_filename is None:
@@ -482,12 +509,33 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, out
             if fit == "dmsq":
                 v_dchisq.GetXaxis().SetNdivisions(7);
             plot(v_dchisq, x_axis_label, y_axis_label, opt)
+            if fit == "dcp" and plot_fc:
+                fc_file = ROOT.TFile("FCgraphs.root")
+                if is_normal:
+                    fc_graph = fc_file.Get("gFC2sigma_nh")
+                else:
+                    fc_graph = fc_file.Get("gFC2sigma_ih")
+                fc_graph.SetLineColor(ROOT.kRed)
+                fc_graph.SetLineStyle(2)
+                fc_graph.Draw("same")
+                fc_file.Close()
             legend.AddEntry(v_dchisq, "VALOR", "l")
             opt = "lsame"
         if not ptheta_filename is None:
             p_dchisq.GetYaxis().SetLimits(0, np.ceil(max_chisq))
             p_dchisq.GetXaxis().SetLimits(x_min, x_max)
             plot(p_dchisq, x_axis_label, y_axis_label, opt)
+            if fit == "dcp" and plot_fc:
+                fc_file = ROOT.TFile("ptheta_fc.root")
+                if is_normal:
+                    fc_graph = fc_file.Get("g2sigma_nh")
+                else:
+                    fc_graph = fc_file.Get("g2sigma_ih")
+                fc_graph.SetLineColor(ROOT.kBlack)
+                fc_graph.SetLineStyle(2)
+                fc_graph.Draw("same")
+                fc_file.Close()
+
             legend.AddEntry(p_dchisq, "p-theta", "l")
             opt = "lsame"
     else:
@@ -538,6 +586,8 @@ if __name__ == "__main__":
     group.add_argument("--dmsq", action="store_true", help="1D dmsq fit")
     group.add_argument("--appearance", action="store_true", help="Appearance fit")
     group.add_argument("--disappearance", action="store_true", help="Disappearance fit")
+    parser.add_argument("--fc", action="store_true", help="Display FC critical values")
+    parser.add_argument("--global_min", action="store_true", help="Use global hierarchy minima")
     args = parser.parse_args()
     if not args.mach3 is None or not args.ptheta is None or not args.valor is None:
         # At least one group specified
@@ -557,7 +607,7 @@ if __name__ == "__main__":
             fit = "app"
         else:
             fit = "disapp"
-        compare(fit, is_normal, args.mach3, args.ptheta, args.valor, args.output)
+        compare(fit, is_normal, args.mach3, args.ptheta, args.valor, args.fc, args.global_min, args.output)
     else:
         print "Error: No contours specified. Countour files should be specified via"
         print "   -m mach3_file"
