@@ -200,13 +200,18 @@ def summarise(hists, names, weights_nominal_fine_beta0, weights_nominal_fine_bet
             hist_wghts_fine_nominal = weights_nominal_fine_beta0
         if beta == 1:
             hist_wghts_fine_nominal = weights_nominal_fine_beta1
+        ntoys_tot = -999
         for i in range(0,len(hists)):
             if i % 2 == 0:
                 print "  For prior =",rootex_name(param) + " [" + str(names.values()[i/2][0]) + ", "  + str(names.values()[i/2][1]) + "]"
-                print "    total toys =", hists[i][beta].Integral()
+                ntoys_tot = hists[i][beta].Integral()
+                print "    total toys =", ntoys_tot
             else:
-                print "    accepted toys =", hists[i][beta].Integral()
-            
+                ntoys_accepted = hists[i][beta].Integral()
+                print "    accepted toys =", ntoys_accepted
+                accept_rate = float(ntoys_accepted) / float(ntoys_tot)
+                toys_required = float(ntoys_accepted_target) / float(accept_rate)
+                print "    total required toys for", ntoys_accepted_target, "accepted toys =", toys_required
 
 def rootex_name(param):
     if param == "dcp":
