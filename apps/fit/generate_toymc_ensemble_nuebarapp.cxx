@@ -42,7 +42,8 @@
 #include <fstream>
 #include <iomanip>
 
-using namespace std;
+using std::cout;
+using std::endl;
 using namespace valor;
 using namespace valor::conv;
 
@@ -147,6 +148,213 @@ private:
   }
 };
 
+//____________________________________________________________________________
+TH1D *hToyHisto_dcp_nh;
+TH1D *hToyHisto_Mix13_nh;
+TH1D *hToyHisto_Mix23_nh;
+TH1D *hToyHisto_Dm23_nh;
+TH1D *hToyHisto_Mix12_nh;
+TH1D *hToyHisto_Dm12_nh;
+TH1D *hToyHisto_dcp_ih;
+TH1D *hToyHisto_Mix13_ih;
+TH1D *hToyHisto_Mix23_ih;
+TH1D *hToyHisto_Dm23_ih;
+TH1D *hToyHisto_Mix12_ih;
+TH1D *hToyHisto_Dm12_ih;
+TH1D *hToyHisto_MH;
+
+//NuBar
+TH1D *hToyHisto_dcpBar_nh;
+TH1D *hToyHisto_Mix13Bar_nh;
+TH1D *hToyHisto_Mix23Bar_nh;
+TH1D *hToyHisto_Dm23Bar_nh;
+TH1D *hToyHisto_Mix12Bar_nh;
+TH1D *hToyHisto_Dm12Bar_nh;
+TH1D *hToyHisto_dcpBar_ih;
+TH1D *hToyHisto_Mix13Bar_ih;
+TH1D *hToyHisto_Mix23Bar_ih;
+TH1D *hToyHisto_Dm23Bar_ih;
+TH1D *hToyHisto_Mix12Bar_ih;
+TH1D *hToyHisto_Dm12Bar_ih;
+
+//____________________________________________________________________________
+// Re-implemented from valor::util::OscParams::FillOscToyHisto (as that class is a singleton and I need to look at rejected throws too)
+// TODO: Do this in a smarter way instead of re-implementing the needed methods
+void FillOscToyHisto(PhysHypothesis &ph)
+{
+  // Fill toy osc params histograms
+  double mix12 = conv::kBadResult;
+  double mix13 = conv::kBadResult;
+  double mix23 = conv::kBadResult;
+  double dm12  = conv::kBadResult;
+  double dm23  = conv::kBadResult;
+  double dcp   = conv::kBadResult;
+  double mix12bar = conv::kBadResult;
+  double mix13bar = conv::kBadResult;
+  double mix23bar = conv::kBadResult;
+  double dm12bar  = conv::kBadResult;
+  double dm23bar  = conv::kBadResult;
+  double dcpbar   = conv::kBadResult;
+
+  if(ph.Contains(kPhypMixing12)) mix12 = ph.CurrValue(kPhypMixing12);
+  if(ph.Contains(kPhypMixing13)) mix13 = ph.CurrValue(kPhypMixing13);
+  if(ph.Contains(kPhypMixing23)) mix23 = ph.CurrValue(kPhypMixing23);
+  if(ph.Contains(kPhypDm12sq))   dm12 = ph.CurrValue(kPhypDm12sq);
+  if(ph.Contains(kPhypDm23sq))   dm23 = ph.CurrValue(kPhypDm23sq);
+  if(ph.Contains(kPhypCPV))      dcp = ph.CurrValue(kPhypCPV);
+
+  if(ph.Contains(kPhypMixing12Bar)) mix12bar = ph.CurrValue(kPhypMixing12Bar);
+  if(ph.Contains(kPhypMixing13Bar)) mix13bar = ph.CurrValue(kPhypMixing13Bar);
+  if(ph.Contains(kPhypMixing23Bar)) mix23bar = ph.CurrValue(kPhypMixing23Bar);
+  if(ph.Contains(kPhypDm12sqBar))   dm12bar = ph.CurrValue(kPhypDm12sqBar);
+  if(ph.Contains(kPhypDm23sqBar))   dm23bar = ph.CurrValue(kPhypDm23sqBar);
+  if(ph.Contains(kPhypCPVBar))      dcpbar = ph.CurrValue(kPhypCPVBar);
+
+  int mh = Opt::Instance()->gMassHierarchyAssumed;
+
+  if(mh==conv::kNmhNormal){
+    hToyHisto_Mix12_nh->Fill(mix12);
+    hToyHisto_Mix13_nh->Fill(mix13);
+    hToyHisto_Mix23_nh->Fill(mix23);
+    hToyHisto_Dm12_nh->Fill(dm12);
+    hToyHisto_Dm23_nh->Fill(dm23);
+    hToyHisto_dcp_nh->Fill(dcp);
+    hToyHisto_Mix12Bar_nh->Fill(mix12bar);
+    hToyHisto_Mix13Bar_nh->Fill(mix13bar);
+    hToyHisto_Mix23Bar_nh->Fill(mix23bar);
+    hToyHisto_Dm12Bar_nh->Fill(dm12bar);
+    hToyHisto_Dm23Bar_nh->Fill(dm23bar);
+    hToyHisto_dcpBar_nh->Fill(dcpbar);
+  }
+  else if(mh==conv::kNmhInverted){
+    hToyHisto_Mix12_ih->Fill(mix12);
+    hToyHisto_Mix13_ih->Fill(mix13);
+    hToyHisto_Mix23_ih->Fill(mix23);
+    hToyHisto_Dm12_ih->Fill(dm12);
+    hToyHisto_Dm23_ih->Fill(dm23);
+    hToyHisto_dcp_ih->Fill(dcp);
+    hToyHisto_Mix12Bar_ih->Fill(mix12bar);
+    hToyHisto_Mix13Bar_ih->Fill(mix13bar);
+    hToyHisto_Mix23Bar_ih->Fill(mix23bar);
+    hToyHisto_Dm12Bar_ih->Fill(dm12bar);
+    hToyHisto_Dm23Bar_ih->Fill(dm23bar);
+    hToyHisto_dcpBar_ih->Fill(dcpbar);
+  }
+  hToyHisto_MH->Fill(mh);
+}
+//____________________________________________________________________________
+// Re-implemented from valor::util::OscParams::Write
+void WriteAllThrows(TFile * f)
+{
+  f->cd();
+
+  //toys used
+  if(hToyHisto_dcp_nh) {
+    hToyHisto_dcp_nh->SetDirectory(0);
+    hToyHisto_dcp_nh->Write();
+  }
+  if(hToyHisto_Mix13_nh) {
+    hToyHisto_Mix13_nh->SetDirectory(0);
+    hToyHisto_Mix13_nh->Write();
+  }
+  if(hToyHisto_Mix23_nh) {
+    hToyHisto_Mix23_nh->SetDirectory(0);
+    hToyHisto_Mix23_nh->Write();
+  }
+  if(hToyHisto_Dm23_nh) {
+    hToyHisto_Dm23_nh->SetDirectory(0);
+    hToyHisto_Dm23_nh->Write();
+  }
+  if(hToyHisto_Mix12_nh) {
+    hToyHisto_Mix12_nh->SetDirectory(0);
+    hToyHisto_Mix12_nh->Write();
+  }
+  if(hToyHisto_Dm12_nh) {
+    hToyHisto_Dm12_nh->SetDirectory(0);
+    hToyHisto_Dm12_nh->Write();
+  }
+  if(hToyHisto_dcp_ih) {
+    hToyHisto_dcp_ih->SetDirectory(0);
+    hToyHisto_dcp_ih->Write();
+  }
+  if(hToyHisto_Mix13_ih) {
+    hToyHisto_Mix13_ih->SetDirectory(0);
+    hToyHisto_Mix13_ih->Write();
+  }
+  if(hToyHisto_Mix23_ih) {
+    hToyHisto_Mix23_ih->SetDirectory(0);
+    hToyHisto_Mix23_ih->Write();
+  }
+  if(hToyHisto_Dm23_ih) {
+    hToyHisto_Dm23_ih->SetDirectory(0);
+    hToyHisto_Dm23_ih->Write();
+  }
+  if(hToyHisto_Mix12_ih) {
+    hToyHisto_Mix12_ih->SetDirectory(0);
+    hToyHisto_Mix12_ih->Write();
+  }
+  if(hToyHisto_Dm12_ih) {
+    hToyHisto_Dm12_ih->SetDirectory(0);
+    hToyHisto_Dm12_ih->Write();
+  }
+  if(hToyHisto_MH) {
+    hToyHisto_MH->SetDirectory(0);
+    hToyHisto_MH->Write();
+  }
+  if(hToyHisto_dcpBar_nh) {
+    hToyHisto_dcpBar_nh->SetDirectory(0);
+    hToyHisto_dcpBar_nh->Write();
+  }
+  if(hToyHisto_Mix13Bar_nh) {
+    hToyHisto_Mix13Bar_nh->SetDirectory(0);
+    hToyHisto_Mix13Bar_nh->Write();
+  }
+  if(hToyHisto_Mix23Bar_nh) {
+    hToyHisto_Mix23Bar_nh->SetDirectory(0);
+    hToyHisto_Mix23Bar_nh->Write();
+  }
+  if(hToyHisto_Dm23Bar_nh) {
+    hToyHisto_Dm23Bar_nh->SetDirectory(0);
+    hToyHisto_Dm23Bar_nh->Write();
+  }
+  if(hToyHisto_Mix12Bar_nh) {
+    hToyHisto_Mix12Bar_nh->SetDirectory(0);
+    hToyHisto_Mix12Bar_nh->Write();
+  }
+  if(hToyHisto_Dm12Bar_nh) {
+    hToyHisto_Dm12Bar_nh->SetDirectory(0);
+    hToyHisto_Dm12Bar_nh->Write();
+  }
+  if(hToyHisto_dcpBar_ih) {
+    hToyHisto_dcpBar_ih->SetDirectory(0);
+    hToyHisto_dcpBar_ih->Write();
+  }
+  if(hToyHisto_Mix13Bar_ih) {
+    hToyHisto_Mix13Bar_ih->SetDirectory(0);
+    hToyHisto_Mix13Bar_ih->Write();
+  }
+  if(hToyHisto_Mix23Bar_ih) {
+    hToyHisto_Mix23Bar_ih->SetDirectory(0);
+    hToyHisto_Mix23Bar_ih->Write();
+  }
+  if(hToyHisto_Dm23Bar_ih) {
+    hToyHisto_Dm23Bar_ih->SetDirectory(0);
+    hToyHisto_Dm23Bar_ih->Write();
+  }
+  if(hToyHisto_Mix12Bar_ih) {
+    hToyHisto_Mix12Bar_ih->SetDirectory(0);
+    hToyHisto_Mix12Bar_ih->Write();
+  }
+  if(hToyHisto_Dm12Bar_ih) {
+    hToyHisto_Dm12Bar_ih->SetDirectory(0);
+    hToyHisto_Dm12Bar_ih->Write();
+  }
+
+}
+//____________________________________________________________________________
+
+
+
 int main(int argc, char ** argv)
 {
   TStopwatch sw;
@@ -155,9 +363,37 @@ int main(int argc, char ** argv)
   cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
   MyRunOpt *runopt = new MyRunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
+  if(runopt->CountFailedToys()){
+    hToyHisto_dcp_nh = new TH1D("hToyHisto_dcp_nh_accepted","hToyHisto_dcp_nh_accepted",100,-3.1416,+3.1416);
+    hToyHisto_Mix13_nh = new TH1D("hToyHisto_Mix13_nh_accepted","hToyHisto_Mix13_nh_accepted",100,0.,0.04);
+    hToyHisto_Mix23_nh = new TH1D("hToyHisto_Mix23_nh_accepted","hToyHisto_Mix23_nh_accepted",100,0.3,0.7);
+    hToyHisto_Dm23_nh = new TH1D("hToyHisto_Dm23_nh_accepted","hToyHisto_Dm23_nh_accepted",100,2.3E-3,2.7E-3);
+    hToyHisto_Mix12_nh = new TH1D("hToyHisto_Mix12_nh_accepted","hToyHisto_Mix12_nh_accepted",100,0.2,0.4);
+    hToyHisto_Dm12_nh = new TH1D("hToyHisto_Dm12_nh_accepted","hToyHisto_Dm12_nh_accepted",100,6.E-5,9.E-5);
+    hToyHisto_dcp_ih = new TH1D("hToyHisto_dcp_ih_accepted","hToyHisto_dcp_ih_accepted",100,-3.1416,+3.1416);
+    hToyHisto_Mix13_ih = new TH1D("hToyHisto_Mix13_ih_accepted","hToyHisto_Mix13_ih_accepted",100,0.,0.04);
+    hToyHisto_Mix23_ih = new TH1D("hToyHisto_Mix23_ih_accepted","hToyHisto_Mix23_ih_accepted",100,0.3,0.7);
+    hToyHisto_Dm23_ih = new TH1D("hToyHisto_Dm23_ih_accepted","hToyHisto_Dm23_ih_accepted",100,2.3E-3,2.7E-3);
+    hToyHisto_Mix12_ih = new TH1D("hToyHisto_Mix12_ih_accepted","hToyHisto_Mix12_ih_accepted",100,0.2,0.4);
+    hToyHisto_Dm12_ih = new TH1D("hToyHisto_Dm12_ih_accepted","hToyHisto_Dm12_ih_accepted",100,6.E-5,9.E-5);
+    hToyHisto_dcpBar_nh = new TH1D("hToyHisto_dcpBar_nh_accepted","hToyHisto_dcpBar_nh_accepted",100,-3.1416,+3.1416);
+    hToyHisto_Mix13Bar_nh = new TH1D("hToyHisto_Mix13Bar_nh_accepted","hToyHisto_Mix13Bar_nh_accepted",100,0.,0.04);
+    hToyHisto_Mix23Bar_nh = new TH1D("hToyHisto_Mix23Bar_nh_accepted","hToyHisto_Mix23Bar_nh_accepted",100,0.3,0.7);
+    hToyHisto_Dm23Bar_nh = new TH1D("hToyHisto_Dm23Bar_nh_accepted","hToyHisto_Dm23Bar_nh_accepted",100,2.3E-3,2.7E-3);
+    hToyHisto_Mix12Bar_nh = new TH1D("hToyHisto_Mix12Bar_nh_accepted","hToyHisto_Mix12Bar_nh_accepted",100,0.2,0.4);
+    hToyHisto_Dm12Bar_nh = new TH1D("hToyHisto_Dm12Bar_nh_accepted","hToyHisto_Dm12Bar_nh_accepted",100,6.E-5,9.E-5);
+    hToyHisto_dcpBar_ih = new TH1D("hToyHisto_dcpBar_ih_accepted","hToyHisto_dcpBar_ih_accepted",100,-3.1416,+3.1416);
+    hToyHisto_Mix13Bar_ih = new TH1D("hToyHisto_Mix13Bar_ih_accepted","hToyHisto_Mix13Bar_ih_accepted",100,0.,0.04);
+    hToyHisto_Mix23Bar_ih = new TH1D("hToyHisto_Mix23Bar_ih_accepted","hToyHisto_Mix23Bar_ih_accepted",100,0.3,0.7);
+    hToyHisto_Dm23Bar_ih = new TH1D("hToyHisto_Dm23Bar_ih_accepted","hToyHisto_Dm23Bar_ih_accepted",100,2.3E-3,2.7E-3);
+    hToyHisto_Mix12Bar_ih = new TH1D("hToyHisto_Mix12Bar_ih_accepted","hToyHisto_Mix12Bar_ih_accepted",100,0.2,0.4);
+    hToyHisto_Dm12Bar_ih = new TH1D("hToyHisto_Dm12Bar_ih_accepted","hToyHisto_Dm12Bar_ih_accepted",100,6.E-5,9.E-5);
+    hToyHisto_MH = new TH1D("hToyHisto_MH_accepted","hToyHisto_MH_accepted",2,0,2);
+  }
   
   double scale_toys_based_on_samples_scale =  runopt->Scale_toys_based_on_samples_scale();
-  TH1D* chisq_distribution = new TH1D("chisq_distribution","chisq_distribution",100000,0,1000);
+  TH1D* chisq_distribution          = new TH1D("chisq_distribution"         ,"chisq_distribution"         ,100000,0,1000);
+  TH1D* chisq_distribution_accepted = new TH1D("chisq_distribution_accepted","chisq_distribution_accepted",100000,0,1000);
 
   TString config  (Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), runopt->ConfigFile().c_str() ));
   TString xmlfile2(runopt->Xmlfile().c_str() );
@@ -281,6 +517,8 @@ int main(int argc, char ** argv)
     cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
     
     // Set Seeds
+    // Because the seed is dependant on iexperiment, using the CountFailedToys option will cause the generated toys to
+    // be different than if this option was not used.
     Rnd* rand = Rnd::Instance();
     if(runopt->ToySeed() != 0){
       // 0 is a special case - set all Rnd::Instance() according to the input seed and iexperiment unless the input seed is 0
@@ -360,28 +598,54 @@ int main(int argc, char ** argv)
           chisq += valor::util::Chisq_Penalty_TH2D(real_data[is],exp_data[is]);
         }
         
-        double random_number = Rnd::Instance()->RndOther().Uniform(0,1);
-        double prob = exp(-(chisq-scale_toys_based_on_samples_scale)/2);
+        double exponent = -(chisq-scale_toys_based_on_samples_scale)/2;
+        double prob = exp(exponent);
         chisq_distribution->Fill(chisq);
-        if(random_number <= prob){
-          scale_throws_accepted++;
+        if(runopt->UseMCSampling()){
+          double random_number = Rnd::Instance()->RndOther().Uniform(0,1);
+          if(random_number <= prob){
+            scale_throws_accepted++;
+          }
+          else{
+            scale_throws_rejected++;
+            use_it = 0;
+          }
         }
-        else{
-          scale_throws_rejected++;
-          use_it = 0;
+        else {
+          // Cut out the most unlikely toys, as they will barely contribute to the p-value calculation
+          // The p-theta group performed a study (in 2018) and found that cutting out toys with weight < e^{-10} is optimal
+          if(exponent < -10){
+            scale_throws_rejected++;
+            use_it = 0;
+          }
+          else{
+            scale_throws_accepted++;
+          }
         }
+        if(!use_it) {
+          //When the CountFailedToys option is enabled, don't re-throw the toy (even if it was not accepted) because
+          //with this option, we're interested in a fixed total number of throws, not a fixed number of accepted toys
+          if(!runopt->CountFailedToys()){
+            //Redo throw if toy throw fails test
+            unphysical_tweak = true;
+          }
+        }
+        else {
+          chisq_distribution_accepted->Fill(chisq);
+          if(runopt->CountFailedToys()){
+            // If CountFailedToys is enabled, we store osc par throws for all toys, but here I need to look
+            // at the throws of accepted toys too
+            FillOscToyHisto(ph);
+          }
+        }
+        std::cout << "chisq = " << chisq << ", min chisq = " << scale_toys_based_on_samples_scale << ", prob = " << prob << std::endl;
         
         for (int is = 0 ; is < conv::kns ; is++) {
           SuperkSample_t s = conv::kSKSamples[is];
           if (s == conv::kSKsUndefined) continue;
           delete exp_data[is];
-        }
-        
-      }
-      
-      if(!use_it) unphysical_tweak = true; //Redo throw if toy throw failes test
-      
-      
+        }//is 
+      }//Scale_toys_based_on_samples      
     }//applied_negevents_condition
     
     // Fill toy histograms of osc params. Needs to be done after toy is chosen
@@ -515,7 +779,11 @@ int main(int argc, char ** argv)
   }
   if(f) {
     util::OscParams::Instance()->Write(f);
+    if(runopt->CountFailedToys()){
+      WriteAllThrows(f);
+    }
     chisq_distribution->Write();
+    chisq_distribution_accepted->Write();
     f->Close();
     delete f;
   }//f
