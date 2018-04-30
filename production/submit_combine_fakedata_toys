@@ -34,6 +34,8 @@ foreach (@ARGV) {
     elsif($_ eq '--output'           ) { $output          = $ARGV[$iarg+1]; }
     elsif($_ eq '--nfiles'           ) { $nfiles          = $ARGV[$iarg+1]; }
     elsif($_ eq '--ntoys'            ) { $ntoys           = $ARGV[$iarg+1]; }
+    elsif($_ eq '--count-failed-toys') { $count_failed    = $ARGV[$iarg+1]; }
+    elsif($_ eq '--ignore-spectra'   ) { $ignore_spectra  = $ARGV[$iarg+1]; }
 
     else {
 	print "Unrecognised argument ".$_."\n"; exit;
@@ -50,13 +52,15 @@ $infile_pattern  = ""                          unless defined $infile_pattern;
 $output          = "combine.root"              unless defined $output;
 $nfiles          = "40"                        unless defined $nfiles;
 $ntoys           = "2500"                      unless defined $ntoys;
+$count_failed    = 0                           unless defined $ntoys;
+$ignore_spectra  = 0                           unless defined $ignore_spectra;
 if( !defined $cput ) {
     if($resource eq "Liverpool_Slurm") { $cput = "1440"; }
     if($resource eq "Liverpool_PBS"  ) { $cput = "1440"; }
 }
 
 
-$command = "python ${softw_dir}/macros/studies/nuebarapp/combine_fake_data.py --infile-pattern ${infile_pattern} --nfiles ${nfiles} --ntoys ${ntoys} --outfile-name ${output}";
+$command = "python ${softw_dir}/macros/studies/nuebarapp/combine_fake_data.py --infile-pattern ${infile_pattern} --nfiles ${nfiles} --ntoys ${ntoys} --outfile-name ${output} --count-failed-toys ${count_failed} --ignore-spectra ${ignore_spectra}";
 print "Submitting: \n";
 print "$command \n";
 print "\n////////////////////////////// \n\n";
