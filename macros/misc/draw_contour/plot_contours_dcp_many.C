@@ -1200,6 +1200,9 @@ void plot_contours_dcp_many
     //TH2D *hchisq1D_Vs_deltachisq_nh = new TH2D("hchisq1D_Vs_deltachisq_nh","hchisq1D_Vs_deltachisq_nh",hchisq1D_ih_mean->GetNbinsX(),hchisq1D_ih_mean->GetXaxis()->GetXbins()->GetArray(),100,0,20);
     TH2D *hdcp_Vs_deltachisq_nh = new TH2D("hdcp_Vs_deltachisq_nh","hdcp_Vs_deltachisq_nh",nbins,lowedge,upedge,100,0,40);
     TH2D *hdcp_Vs_deltachisq_ih = new TH2D("hdcp_Vs_deltachisq_ih","hdcp_Vs_deltachisq_ih",nbins,lowedge,upedge,100,0,40);
+
+    std::vector<double> vchisq_gof_nh;
+    std::vector<double> vchisq_gof_ih;
     
     cout << "Enter the loop of " << Nentries << " entries" << endl;
     
@@ -1232,6 +1235,12 @@ void plot_contours_dcp_many
         min_dcp = hchisq1D_toy_nh->GetBinCenter(hchisq1D_toy_ih->GetMinimumBin());
         //continue;
       }
+
+      // Get best fit minimum for GoF
+      double chisq_gof_nh = hchisq1D_toy_nh->GetBinContent(XminBin_0);
+      double chisq_gof_ih = hchisq1D_toy_ih->GetBinContent(XminBin_1);
+      vchisq_gof_nh.push_back(chisq_gof_nh);
+      vchisq_gof_ih.push_back(chisq_gof_ih);
       
       // Build mean sensitivity
       hchisq1D_nh_mean->Add(hchisq1D_toy_nh,1.);
@@ -1321,7 +1330,48 @@ void plot_contours_dcp_many
       hNevts_RHC1Re->Fill(nevents_rhc1re);
       
     } // end loop over events
-    
+
+    double min_chisq_gof_nh = *min_element(vchisq_gof_nh.begin(), vchisq_gof_nh.end());
+    double max_chisq_gof_nh = *max_element(vchisq_gof_nh.begin(), vchisq_gof_nh.end());
+    double diff_chisq_gof_nh = max_chisq_gof_nh - min_chisq_gof_nh;
+    double min_chisq_gof_ih = *min_element(vchisq_gof_ih.begin(), vchisq_gof_ih.end());
+    double max_chisq_gof_ih = *max_element(vchisq_gof_ih.begin(), vchisq_gof_ih.end());
+    double diff_chisq_gof_ih = max_chisq_gof_ih - min_chisq_gof_ih;
+    TH1D* hchisq1D_nh_gof = new TH1D("hchisq1D_nh_gof", "hchisq1D_nh_gof", 50, 0.0, TMath::Ceil(diff_chisq_gof_nh));
+    TH1D* hchisq1D_ih_gof = new TH1D("hchisq1D_ih_gof", "hchisq1D_ih_gof", 50, 0.0, TMath::Ceil(diff_chisq_gof_ih));
+
+    for(int i = 0; i < Nentries; i++)
+    {
+        hchisq1D_nh_gof->Fill(vchisq_gof_nh[i] - min_chisq_gof_nh);
+        hchisq1D_ih_gof->Fill(vchisq_gof_ih[i] - min_chisq_gof_ih);
+    }
+    hchisq1D_nh_gof->Scale(1.0 / hchisq1D_nh_gof->Integral());
+    hchisq1D_ih_gof->Scale(1.0 / hchisq1D_ih_gof->Integral());
+    double chisq_data_gof_nh = ChisqMin_0 - min_chisq_gof_nh;
+    double chisq_data_gof_ih = ChisqMin_1 - min_chisq_gof_ih;
+    int chisq_data_bin_gof_nh = hchisq1D_nh_gof->FindBin(chisq_data_gof_nh);
+    int chisq_data_bin_gof_ih = hchisq1D_ih_gof->FindBin(chisq_data_gof_ih);
+
+    hchisq1D_nh_gof->Fit("gaus", "0");
+    TF1* fit_gof_nh = hchisq1D_nh_gof->GetFunction("gaus");
+    fit_gof_nh->SetLineColor(kBlue);
+    fit_gof_nh->SetLineWidth(2);
+    double gof_int_low = hchisq1D_nh_gof->GetXaxis()->GetBinLowEdge(0);
+    double gof_int_best = chisq_data_gof_nh;
+    double gof_int_high = hchisq1D_nh_gof->GetXaxis()->GetBinUpEdge(hchisq1D_nh_gof->GetNbinsX());
+    double pval_fit_nh = fit_gof_nh->Integral(gof_int_best, gof_int_high) / fit_gof_nh->Integral(gof_int_low, gof_int_high);
+    double pval_gof_nh = hchisq1D_nh_gof->Integral(chisq_data_bin_gof_nh + 1, hchisq1D_nh_gof->GetNbinsX());
+
+    hchisq1D_ih_gof->Fit("gaus", "0");
+    TF1* fit_gof_ih = hchisq1D_ih_gof->GetFunction("gaus");
+    fit_gof_ih->SetLineColor(kBlue);
+    fit_gof_ih->SetLineWidth(2);
+    gof_int_low = hchisq1D_ih_gof->GetXaxis()->GetBinLowEdge(0);
+    gof_int_best = chisq_data_gof_ih;
+    gof_int_high = hchisq1D_ih_gof->GetXaxis()->GetBinUpEdge(hchisq1D_ih_gof->GetNbinsX());
+    double pval_fit_ih = fit_gof_ih->Integral(gof_int_best, gof_int_high) / fit_gof_ih->Integral(gof_int_low, gof_int_high);
+    double pval_gof_ih = hchisq1D_ih_gof->Integral(chisq_data_bin_gof_ih + 1, hchisq1D_ih_gof->GetNbinsX());
+
     // Scale mean chisq to # of toys and get mean deltachisq (global mean nh and ih)
     
     hchisq1D_nh_mean->Scale(1./Nentries);
@@ -1508,7 +1558,39 @@ void plot_contours_dcp_many
     // for(int itoy=0;itoy<Nentries;itoy++){
     //   hdeltachisq1D_toy_nh_store[itoy]->Draw("same");
     // }
-    
+   
+    TCanvas *c_gof_nh = new TCanvas("c_gof_nh","c_gof_nh");
+    hchisq1D_nh_gof->SetLineColor(kBlack);
+    hchisq1D_nh_gof->Draw();
+    fit_gof_nh->Draw("same");
+    TLine* ldata_nh = new TLine(chisq_data_gof_nh, 0, chisq_data_gof_nh, hchisq1D_nh_gof->GetMaximum());
+    ldata_nh->SetLineColor(kRed);
+    ldata_nh->SetLineWidth(2);
+    ldata_nh->Draw("same");
+    TLatex text_nh;
+    text_nh.SetTextSize(0.04);
+    text_nh.DrawLatex(hchisq1D_nh_gof->GetBinCenter((int)(hchisq1D_nh_gof->GetNbinsX() * 0.75)),
+          hchisq1D_nh_gof->GetMaximum() * 0.75, Form("p-value = %.2f", pval_fit_nh));
+    c_gof_nh->SaveAs(Form("%s_gof_nh.pdf", tag.c_str()));
+
+    TCanvas *c_gof_ih = new TCanvas("c_gof_ih","c_gof_ih");
+    hchisq1D_ih_gof->SetLineColor(kBlack);
+    hchisq1D_ih_gof->Draw();
+    fit_gof_ih->Draw("same");
+    TLine* ldata_ih = new TLine(chisq_data_gof_ih, 0, chisq_data_gof_ih, hchisq1D_ih_gof->GetMaximum());
+    ldata_ih->SetLineColor(kRed);
+    ldata_ih->SetLineWidth(2);
+    ldata_ih->Draw("same");
+    TLatex text_ih;
+    text_ih.SetTextSize(0.04);
+    text_ih.DrawLatex(hchisq1D_ih_gof->GetBinCenter((int)(hchisq1D_ih_gof->GetNbinsX() * 0.75)),
+          hchisq1D_ih_gof->GetMaximum() * 0.75, Form("p-value = %.2f", pval_fit_ih));
+    c_gof_ih->SaveAs(Form("%s_gof_ih.pdf", tag.c_str()));
+
+    delete c_gof_nh;
+    delete c_gof_ih;
+    delete hchisq1D_nh_gof;
+    delete hchisq1D_ih_gof;
     
     // Mean sensitivity
     

@@ -112,7 +112,7 @@ def compute_bias(fakedata_filename, asimov_filename, label, output_filename):
             tag += "_smeared"
         if "nosyst" in output_filename:
             tag += "_nosyst"
-        f.write("%s,%.5f,%.5f,%.5f,%.5f,%.3f,%.3f\n" % (tag, fakedata_bestfit, fd_int_size, asimov_bestfit, av_int_size, bias_bf, bias_int))
+        f.write("%s,%.5f,(%.5f,%.5f),%.5f,(%.5f,%.5f),%.3f,%.3f\n" % (tag, fakedata_bestfit, fd_interval[0], fd_interval[1], asimov_bestfit, av_interval[0], av_interval[1], bias_bf, bias_int))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot fake data and asimov contours and compute the bias")
