@@ -385,15 +385,22 @@ def get_valor_contour(filename, fit):
     f.Close()
     return ret_val
 
+def format_plot(haxis):
+    ROOT.TGaxis.SetMaxDigits(2)
+    textsize = 0.04
+    haxis.SetTitle("")
+    haxis.GetXaxis().SetTitleSize(textsize)
+    haxis.GetYaxis().SetTitleSize(textsize)
+    haxis.GetXaxis().SetLabelSize(textsize)
+    haxis.GetYaxis().SetLabelSize(textsize)
+    haxis.GetXaxis().SetTitleOffset(1.5)
+    haxis.GetYaxis().SetTitleOffset(1.5)
+
 def plot(dchisq, x_axis_label, y_axis_label, opt):
-    dchisq.SetTitle("")
+    format_plot(dchisq)
     dchisq.GetXaxis().SetTitle(x_axis_label)
     dchisq.GetYaxis().SetTitle(y_axis_label)
     dchisq.Draw(opt)
-#    dchisq.GetXaxis().SetLabelSize(0.02)
-#    dchisq.GetXaxis().SetTitleOffset(0.5)
-#    dchisq.GetYaxis().SetLabelSize(0.02)
-#    dchisq.GetYaxis().SetTitleOffset(0.5)
 
 def plot2d(g68, g90, bestfit, x_axis_label, y_axis_label, opt):
     for g in g68:
@@ -482,13 +489,14 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
     canvas.SetLeftMargin(0.15)
     canvas.SetBottomMargin(0.15)
     canvas.SetRightMargin(0.2)
+    textsize = 0.05
     lymin = 0.7
-    lymax = lymin + num_fitters * 0.03
-    legend = ROOT.TLegend(0.85, lymin, 0.95, lymax)
+    lymax = lymin + num_fitters * textsize
+    legend = ROOT.TLegend(0.82, lymin, 0.92, lymax)
     legend.SetFillColor(0);
     legend.SetLineColor(0);
     legend.SetTextFont(132);
-    legend.SetTextSize(0.03);
+    legend.SetTextSize(textsize);
 
     if is_fit_1d(fit):
         x_min, x_max = get_common_axis_range(m_dchisq, p_dchisq, v_dchisq)
@@ -548,11 +556,10 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
             ymin = -(axis_histo.GetYaxis().GetXmax() + 7.53E-5)
             ymax = -(axis_histo.GetYaxis().GetXmin() + 7.53E-5)
             axis_histo = ROOT.TH2D("dummy", "", nx, xmin, xmax, ny, ymin, ymax)
-        axis_histo.SetTitle("")
-        axis_histo.GetXaxis().SetTitleOffset(2.0)
-        axis_histo.GetYaxis().SetTitleOffset(2.0)
+        format_plot(axis_histo)
         axis_histo.GetXaxis().SetTitle(x_axis_label)
         axis_histo.GetYaxis().SetTitle(y_axis_label)
+
         axis_histo.Draw("axis")
         if not mach3_filename is None:
             plot2d(m_g68, m_g90, m_bestfit, x_axis_label, y_axis_label, opt)

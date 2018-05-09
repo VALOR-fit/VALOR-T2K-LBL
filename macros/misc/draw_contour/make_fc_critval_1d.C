@@ -753,7 +753,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
 
    lDeltaChisq_p1sigma->Draw();
 
-   TLatex* title = new TLatex(0.0, 1.01 * 5.0, "T2K Run1-8 Preliminary");
+   TLatex* title = new TLatex(0.0, 1.01 * 5.0, "T2K Run1-9c Preliminary");
    title->SetTextSize(0.05);
    title->Draw();
    TLatex* caveat = new TLatex(-2.5, 1.01 * 5.0, "Final systematics pending");

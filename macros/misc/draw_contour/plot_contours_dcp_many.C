@@ -22,6 +22,15 @@ const double CLfrac_90CL   = 0.9;  // 90% CL
 const double CLfrac_95CL   = 0.95;  // 95% CL
 const double CLfrac_2sigma = 0.9545;  // 2sigma% CL
 
+double chi2(double* xx, double* p)
+{
+   double x = xx[0];
+   double dof2 = 0.5 * p[0];
+   double numerator = TMath::Exp(-0.5 * x) * TMath::Power(x, dof2 - 1.0);
+   double denominator = TMath::Power(2.0, dof2) * TMath::Gamma(dof2);
+   return numerator / denominator;
+}
+
 void plot_contours_dcp_many
 (
  const bool SaveRootFile = true,
@@ -34,7 +43,7 @@ void plot_contours_dcp_many
  const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
  const bool draw_preliminary = true,
- TString str_preliminary = "T2K Run1-8 Preliminary",
+ TString str_preliminary = "T2K Run1-9c Preliminary",
  const bool do_fc = true,
  const bool draw_fc_err = false,
  const bool do_fc_critval = true,
@@ -66,7 +75,7 @@ void plot_contours_dcp_many
  const char *hybrid_file_ih = 0
  )
 {
-  str_preliminary = "T2K Run1-8 Preliminary";
+  str_preliminary = "T2K Run1-9c Preliminary";
   gStyle->SetOptTitle(0);
   const int Nfiles = 1;
   const int Nmh = 2;
@@ -1337,36 +1346,60 @@ void plot_contours_dcp_many
     double min_chisq_gof_ih = *min_element(vchisq_gof_ih.begin(), vchisq_gof_ih.end());
     double max_chisq_gof_ih = *max_element(vchisq_gof_ih.begin(), vchisq_gof_ih.end());
     double diff_chisq_gof_ih = max_chisq_gof_ih - min_chisq_gof_ih;
-    TH1D* hchisq1D_nh_gof = new TH1D("hchisq1D_nh_gof", "hchisq1D_nh_gof", 50, 0.0, TMath::Ceil(diff_chisq_gof_nh));
-    TH1D* hchisq1D_ih_gof = new TH1D("hchisq1D_ih_gof", "hchisq1D_ih_gof", 50, 0.0, TMath::Ceil(diff_chisq_gof_ih));
+    TH1D* hchisq1D_nh_gof = new TH1D("hchisq1D_nh_gof", "", 50, 0.0, diff_chisq_gof_nh);
+    TH1D* hchisq1D_ih_gof = new TH1D("hchisq1D_ih_gof", "", 50, 0.0, diff_chisq_gof_ih);
 
     for(int i = 0; i < Nentries; i++)
     {
         hchisq1D_nh_gof->Fill(vchisq_gof_nh[i] - min_chisq_gof_nh);
         hchisq1D_ih_gof->Fill(vchisq_gof_ih[i] - min_chisq_gof_ih);
     }
+
+    std::cout << "Entries:" << std::endl;
+    for(int i = 1; i <= hchisq1D_nh_gof->GetNbinsX(); i++)
+    {
+       std::cout << hchisq1D_nh_gof->GetBinContent(i) << std::endl;
+    }
+    std::cout << std::endl;
+
+    hchisq1D_nh_gof->Sumw2();
     hchisq1D_nh_gof->Scale(1.0 / hchisq1D_nh_gof->Integral());
+    hchisq1D_ih_gof->Sumw2();
     hchisq1D_ih_gof->Scale(1.0 / hchisq1D_ih_gof->Integral());
+    hchisq1D_nh_gof->GetXaxis()->SetTitle("#chi^{2}_{GoF}");
+    hchisq1D_nh_gof->GetYaxis()->SetTitle("Fraction of toys");
+    hchisq1D_ih_gof->GetXaxis()->SetTitle("#chi^{2}_{GoF}");
+    hchisq1D_ih_gof->GetYaxis()->SetTitle("Fraction of toys");
     double chisq_data_gof_nh = ChisqMin_0 - min_chisq_gof_nh;
     double chisq_data_gof_ih = ChisqMin_1 - min_chisq_gof_ih;
     int chisq_data_bin_gof_nh = hchisq1D_nh_gof->FindBin(chisq_data_gof_nh);
     int chisq_data_bin_gof_ih = hchisq1D_ih_gof->FindBin(chisq_data_gof_ih);
 
-    hchisq1D_nh_gof->Fit("gaus", "0");
-    TF1* fit_gof_nh = hchisq1D_nh_gof->GetFunction("gaus");
+//    hchisq1D_nh_gof->Fit("gaus", "0");
+//    TF1* fit_gof_nh = hchisq1D_nh_gof->GetFunction("gaus");
+
+    TF1* fit_gof_nh = new TF1("fit_gof_nh", chi2, 0.0, diff_chisq_gof_nh, 1);
+    fit_gof_nh->SetParameter(0, diff_chisq_gof_nh / 2);
     fit_gof_nh->SetLineColor(kBlue);
     fit_gof_nh->SetLineWidth(2);
-    double gof_int_low = hchisq1D_nh_gof->GetXaxis()->GetBinLowEdge(0);
+    hchisq1D_nh_gof->Fit("fit_gof_nh");
+
+    double gof_int_low = hchisq1D_nh_gof->GetXaxis()->GetBinLowEdge(1);
     double gof_int_best = chisq_data_gof_nh;
     double gof_int_high = hchisq1D_nh_gof->GetXaxis()->GetBinUpEdge(hchisq1D_nh_gof->GetNbinsX());
     double pval_fit_nh = fit_gof_nh->Integral(gof_int_best, gof_int_high) / fit_gof_nh->Integral(gof_int_low, gof_int_high);
     double pval_gof_nh = hchisq1D_nh_gof->Integral(chisq_data_bin_gof_nh + 1, hchisq1D_nh_gof->GetNbinsX());
 
-    hchisq1D_ih_gof->Fit("gaus", "0");
-    TF1* fit_gof_ih = hchisq1D_ih_gof->GetFunction("gaus");
+//    hchisq1D_ih_gof->Fit("gaus", "0");
+//    TF1* fit_gof_ih = hchisq1D_ih_gof->GetFunction("gaus");
+
+    TF1* fit_gof_ih = new TF1("fit_gof_ih", chi2, 0.0, diff_chisq_gof_ih, 1);
+    fit_gof_ih->SetParameter(0, diff_chisq_gof_ih / 2);
     fit_gof_ih->SetLineColor(kBlue);
     fit_gof_ih->SetLineWidth(2);
-    gof_int_low = hchisq1D_ih_gof->GetXaxis()->GetBinLowEdge(0);
+    hchisq1D_ih_gof->Fit("fit_gof_ih");
+
+    gof_int_low = hchisq1D_ih_gof->GetXaxis()->GetBinLowEdge(1);
     gof_int_best = chisq_data_gof_ih;
     gof_int_high = hchisq1D_ih_gof->GetXaxis()->GetBinUpEdge(hchisq1D_ih_gof->GetNbinsX());
     double pval_fit_ih = fit_gof_ih->Integral(gof_int_best, gof_int_high) / fit_gof_ih->Integral(gof_int_low, gof_int_high);
@@ -1569,8 +1602,12 @@ void plot_contours_dcp_many
     ldata_nh->Draw("same");
     TLatex text_nh;
     text_nh.SetTextSize(0.04);
-    text_nh.DrawLatex(hchisq1D_nh_gof->GetBinCenter((int)(hchisq1D_nh_gof->GetNbinsX() * 0.75)),
-          hchisq1D_nh_gof->GetMaximum() * 0.75, Form("p-value = %.2f", pval_fit_nh));
+    double t_gof_x = hchisq1D_nh_gof->GetBinCenter((int)(hchisq1D_nh_gof->GetNbinsX() * 0.75));
+    double t_gof_y = hchisq1D_nh_gof->GetMaximum() * 0.75;
+    text_nh.DrawLatex(t_gof_x, t_gof_y, Form("p-value = %.2f", pval_fit_nh));
+    TLatex text2_nh;
+    text2_nh.SetTextSize(0.04);
+    text2_nh.DrawLatex(t_gof_x, t_gof_y * 1.1, Form("#chi^{2}_{data} = %.1f", chisq_data_gof_nh));
     c_gof_nh->SaveAs(Form("%s_gof_nh.pdf", tag.c_str()));
 
     TCanvas *c_gof_ih = new TCanvas("c_gof_ih","c_gof_ih");
@@ -1583,8 +1620,12 @@ void plot_contours_dcp_many
     ldata_ih->Draw("same");
     TLatex text_ih;
     text_ih.SetTextSize(0.04);
-    text_ih.DrawLatex(hchisq1D_ih_gof->GetBinCenter((int)(hchisq1D_ih_gof->GetNbinsX() * 0.75)),
-          hchisq1D_ih_gof->GetMaximum() * 0.75, Form("p-value = %.2f", pval_fit_ih));
+    t_gof_x = hchisq1D_ih_gof->GetBinCenter((int)(hchisq1D_ih_gof->GetNbinsX() * 0.75));
+    t_gof_y = hchisq1D_ih_gof->GetMaximum() * 0.75;
+    text_ih.DrawLatex(t_gof_x, t_gof_y, Form("p-value = %.2f", pval_fit_ih));
+    TLatex text2_ih;
+    text2_ih.SetTextSize(0.04);
+    text2_ih.DrawLatex(t_gof_x, t_gof_y *1.1, Form("#chi^{2}_{data} = %.1f", chisq_data_gof_ih));
     c_gof_ih->SaveAs(Form("%s_gof_ih.pdf", tag.c_str()));
 
     delete c_gof_nh;
@@ -2014,18 +2055,29 @@ void plot_contours_dcp_many
     double prob_excl_dcpPi_90CL_ih = hProbChisq_90CL_ih->GetBinContent(bin_dcpPi);
     double prob_excl_dcpPi_2sigma_nh = hProbChisq_2sigma_nh->GetBinContent(bin_dcpPi);
     double prob_excl_dcpPi_2sigma_ih = hProbChisq_2sigma_ih->GetBinContent(bin_dcpPi);
-    
+   
+    double prob_excl_conservation_nh = GetJointPvalue_rightside(
+    vec_deltachisq_bin_nh[bin_dcp0 - 1], vec_deltachisq_bin_nh[bin_dcpPi - 1],
+       gFC2sigma_nh->Eval(hProbChisq_2sigma_nh->GetBinCenter(bin_dcp0)),
+       gFC2sigma_nh->Eval(hProbChisq_2sigma_nh->GetBinCenter(bin_dcpPi)));
+    double prob_excl_conservation_ih = GetJointPvalue_rightside(
+       vec_deltachisq_bin_ih[bin_dcp0 - 1], vec_deltachisq_bin_ih[bin_dcpPi - 1],
+       gFC2sigma_ih->Eval(hProbChisq_2sigma_ih->GetBinCenter(bin_dcp0)),
+       gFC2sigma_ih->Eval(hProbChisq_2sigma_ih->GetBinCenter(bin_dcpPi)));
+
     cout << endl;
     cout << "Normal Hierarchy:" << endl;
     cout << " - Prob. to exclude dcp=0 at 90%CL: " << prob_excl_dcp0_90CL_nh << endl;
     cout << " - Prob. to exclude dcp=0 at 2sigma: " << prob_excl_dcp0_2sigma_nh << endl;
     cout << " - Prob. to exclude dcp=pi at 90%CL: " << prob_excl_dcpPi_90CL_nh << endl;
     cout << " - Prob. to exclude dcp=pi at 2sigma: " << prob_excl_dcpPi_2sigma_nh << endl;
+    cout << " - Prob. to exclude conservation at 2sigma: " << prob_excl_conservation_nh << endl;
     cout << "Inverted Hierarchy:" << endl;
     cout << " - Prob. to exclude dcp=0 at 90%CL: " << prob_excl_dcp0_90CL_ih << endl;
     cout << " - Prob. to exclude dcp=0 at 2sigma: " << prob_excl_dcp0_2sigma_ih << endl;
     cout << " - Prob. to exclude dcp=pi at 90CL: " << prob_excl_dcpPi_90CL_ih << endl;
     cout << " - Prob. to exclude dcp=pi at 2sigma: " << prob_excl_dcpPi_2sigma_ih << endl;
+    cout << " - Prob. to exclude conservation at 2sigma: " << prob_excl_conservation_ih << endl;
     cout << endl;
     cout << "# of events 1Rmu:" << endl;
     cout << " - Mean = " << hNevts_1Rmu->GetMean() << endl;
@@ -2707,6 +2759,25 @@ double GetPvalue_rightside(vector<double> vec_toys,double data){
   
   return pvalue;
 }
+
+double GetJointPvalue_rightside(vector<double> vec_0_toys, vector<double> vec_pi_toys,
+      double critical_0, double critical_pi)
+{
+   int ntot_toys = vec_0_toys.size();
+   double nfrac = 0;
+   for (int i = 0; i < ntot_toys; ++i)
+   {
+      double dchisq0 = vec_0_toys[i];
+      double dchisqpi = vec_pi_toys[i];
+      if(dchisq0 >= critical_0 && dchisqpi >= critical_pi)
+      {
+         nfrac += 1.;
+      }
+   }
+   double pvalue =  nfrac / ntot_toys;
+   return pvalue;
+}
+
 
 double GetPvalue_posterior_rightside(vector<double> vec_toys,vector<double> weight,double data){
   
