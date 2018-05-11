@@ -159,7 +159,7 @@ def compare_fc(valor_file, out_filename):
     canvas = ROOT.TCanvas("fc_nh", "fc_nh", 1024, 768)
     canvas.SetLeftMargin(0.125)
     canvas.SetBottomMargin(0.125)
-    legend = ROOT.TLegend(0.7, 0.2, 0.85, 0.3)
+    canvas.SetRightMargin(0.2)
 
     v1sigmas = get_1sigma_valor(valor_file, "normal")
     p1sigmas = get_1sigma_ptheta("normal")
@@ -233,10 +233,16 @@ def compare_fc(valor_file, out_filename):
             g.SetLineStyle(1)
         g.Draw(opt)
 
+    textsize = 0.04
+    lymin = 0.65
+    legend = ROOT.TLegend(0.755, lymin, 0.95, lymin + textsize * 6)
+    legend.SetBorderSize(0)
+    legend.SetFillStyle(0)
+    legend.SetTextSize(textsize)
     legend.AddEntry(v1sigmas[0], "VALOR 1#sigma", "l")
     legend.AddEntry(p1sigmas[0], "p-theta 1#sigma", "l")
-    legend.AddEntry(v90s[0], "VALOR 90CL", "l")
-    legend.AddEntry(p90s[0], "p-theta 90CL", "l")
+    legend.AddEntry(v90s[0], "VALOR 90% CL", "l")
+    legend.AddEntry(p90s[0], "p-theta 90% CL", "l")
     legend.AddEntry(v2sigmas[0], "VALOR 2#sigma", "l")
     legend.AddEntry(p2sigmas[0], "p-theta 2#sigma", "l")
 
@@ -247,7 +253,7 @@ def compare_fc(valor_file, out_filename):
     canvas = ROOT.TCanvas("fc_ih", "fc_ih", 1024, 768)
     canvas.SetLeftMargin(0.125)
     canvas.SetBottomMargin(0.125)
-    legend = ROOT.TLegend(0.7, 0.2, 0.85, 0.3)
+    canvas.SetRightMargin(0.2)
 
     v1sigmas = get_1sigma_valor(valor_file, "inverted")
     p1sigmas = get_1sigma_ptheta("inverted")
@@ -323,10 +329,16 @@ def compare_fc(valor_file, out_filename):
             g.SetLineStyle(1)
         g.Draw(opt)
 
+    textsize = 0.04
+    lymin = 0.65
+    legend = ROOT.TLegend(0.755, lymin, 0.95, lymin + textsize * 6)
+    legend.SetBorderSize(0)
+    legend.SetFillStyle(0)
+    legend.SetTextSize(textsize)
     legend.AddEntry(v1sigmas[0], "VALOR 1#sigma", "l")
     legend.AddEntry(p1sigmas[0], "p-theta 1#sigma", "l")
-    legend.AddEntry(v90s[0], "VALOR 90CL", "l")
-    legend.AddEntry(p90s[0], "p-theta 90CL", "l")
+    legend.AddEntry(v90s[0], "VALOR 90% CL", "l")
+    legend.AddEntry(p90s[0], "p-theta 90% CL", "l")
     legend.AddEntry(v2sigmas[0], "VALOR 2#sigma", "l")
     legend.AddEntry(p2sigmas[0], "p-theta 2#sigma", "l")
 
