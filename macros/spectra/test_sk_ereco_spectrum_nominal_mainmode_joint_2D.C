@@ -765,29 +765,6 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   legY_reac->AddEntry(hErecoMode_CCnQE,"CCnQE","F");
   legY_reac->Draw();
 
-
-  //Rebinning histograms to compare with Konosuke's presentation
-  //Could also get the additional modes and stack them in the same 
-  THStack *sErecoTotReac_rebin = new THStack("sErecoTotReac_rebin","sErecoTotReac_rebin");
-  double xbins[11] = {0,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3};
-  TH1D * hErecoMode_NC_rebin    = hErecoMode_NC   ->Rebin(10,"hErecoMode_NC_rebin"   , xbins);
-  TH1D * hErecoMode_MEC_rebin   = hErecoMode_MEC  ->Rebin(10,"hErecoMode_MEC_rebin"  , xbins);
-  TH1D * hErecoMode_CCQE_rebin  = hErecoMode_CCQE ->Rebin(10,"hErecoMode_CCQE_rebin" , xbins);
-  TH1D * hErecoMode_CCnQE_rebin = hErecoMode_CCnQE->Rebin(10,"hErecoMode_CCnQE_rebin", xbins);
-  
-  sErecoTotReac_rebin->Add(hErecoMode_NC_rebin);
-  sErecoTotReac_rebin->Add(hErecoMode_MEC_rebin);
-  sErecoTotReac_rebin->Add(hErecoMode_CCQE_rebin);
-  sErecoTotReac_rebin->Add(hErecoMode_CCnQE_rebin);
-
-  TCanvas *cErecoTotReac_rebin = new TCanvas("cErecoTotReac_rebin","cErecoTotReac_rebin");
-  sErecoTotReac_rebin->Draw();
-
-  sErecoTotReac_rebin->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco    
-  sErecoTotReac_rebin->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  if(plot_per_50MeV) sErecoTotReac_rebin->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  else sErecoTotReac_rebin->GetYaxis()->SetTitle("Number of events");
-  cErecoTotReac_rebin->Modified();
   gStyle->SetOptStat(0);
   
   TLatex latex_reac_osc;
@@ -828,33 +805,6 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
   legY_reac->AddEntry(hErecoMode_CCnQE,"CCnQE","F");
   legY_reac->Draw();
 
-
-  THStack *sErecoTotFlavMode_rebin = new THStack("sErecoTotFlavMode_rebin","sErecoTotFlavMode_rebin");
-
-  TH1D * hErecoMode_NueBeam_rebin         = hErecoMode_NueBeam         ->Rebin(10,"hErecoMode_NueBeam_rebin"         ,xbins);
-  TH1D * hErecoMode_NumuBeam_rebin        = hErecoMode_NumuBeam        ->Rebin(10,"hErecoMode_NumuBeam_rebin"        ,xbins);
-  TH1D * hErecoMode_NumuBarBeam_rebin     = hErecoMode_NumuBarBeam     ->Rebin(10,"hErecoMode_NumuBarBeam_rebin"     ,xbins);
-  TH1D * hErecoMode_NumuToNue_rebin       = hErecoMode_NumuToNue       ->Rebin(10,"hErecoMode_NumuToNue_rebin"       ,xbins);
-  TH1D * hErecoMode_NumuBarToNueBar_rebin = hErecoMode_NumuBarToNueBar ->Rebin(10,"hErecoMode_NumuBarToNueBar_rebin" ,xbins);
-
-  sErecoTotFlavMode_rebin->Add(hErecoMode_NC_rebin);
-  sErecoTotFlavMode_rebin->Add(hErecoMode_NueBeam_rebin);
-  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuBeam_rebin);
-  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuBarBeam_rebin);
-  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuToNue_rebin);
-  sErecoTotFlavMode_rebin->Add(hErecoMode_NumuBarToNueBar_rebin);
-  
-  TCanvas *cErecoTotFlavMode_rebin = new TCanvas("cErecoTotFlavMode_rebin","cErecoTotFlavMode_rebin");
-  sErecoTotFlavMode_rebin->Draw();
-  if(draw_data){
-    h_data_ereco->Draw("pe same");
-    lScaleEreco->Draw("same");
-  }
-  sErecoTotFlavMode_rebin->GetXaxis()->SetRangeUser(ErecoRangeLow,ErecoRangeUp); // ereco    
-  sErecoTotFlavMode_rebin->GetXaxis()->SetTitle("#nu Reconstructed Energy (GeV)");
-  if(plot_per_50MeV) sErecoTotFlavMode_rebin->GetYaxis()->SetTitle("Events per 0.050 GeV");
-  else sErecoTotFlavMode_rebin->GetYaxis()->SetTitle("Number of events");
-  cErecoTotFlavMode_rebin->Modified();
   gStyle->SetOptStat(0);
 
   TLegend *legY = new TLegend(0.6, 0.4, 0.9, 0.9);
@@ -1242,9 +1192,6 @@ void test_sk_ereco_spectrum_nominal_mainmode_joint_2D
 
     sprintf(name,"%s_%s.pdf","cErecoTotFlavMode",sk_sample);    
     cErecoTotFlavMode ->Print(name);
-
-    sprintf(name,"%s_%s.pdf","cErecoTotFlavMode_rebin",sk_sample);    
-    cErecoTotFlavMode_rebin ->Print(name);
   }
 
   cout << "test_sk_ereco_spectrum_nominal_mainmode_joint_2D.C finished!" << endl;

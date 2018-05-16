@@ -90,7 +90,9 @@ def plot_flux(filename, matrixname, outputname):
     histo.GetZaxis().CenterTitle()
     histo.GetXaxis().SetLabelSize(0.02)
     histo.GetYaxis().SetLabelSize(0.02)
-    canvas.Print(outputname)
+    canvas.SaveAs(outputname + ".pdf")
+    canvas.SaveAs(outputname + ".eps")
+    canvas.SaveAs(outputname + ".png")
     file.Close()
 
 def plot_xsec(filename, matrixname, outputname):
@@ -141,7 +143,9 @@ def plot_xsec(filename, matrixname, outputname):
     histo.GetZaxis().SetTitle("#sqrt{#left|V_{ij}#right|} x Sign#left(V_{ij}#right)")
     histo.GetZaxis().SetTitleOffset(1.8)
     histo.GetZaxis().CenterTitle()
-    canvas.SaveAs(outputname)
+    canvas.SaveAs(outputname + ".pdf")
+    canvas.SaveAs(outputname + ".eps")
+    canvas.SaveAs(outputname + ".png")
     file.Close()
 
 if __name__ == "__main__":
