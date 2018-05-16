@@ -751,6 +751,10 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
               if(bin_is_beyond_end_of_etrue_range || bin_is_beyond_end_of_q2_range) continue;
                             
               bool bin_is_not_empty = this->IsThereAnEvent(s, m, Ereco, Etrue,Q2);
+              #ifdef GOODNESS_OF_FIT_BINNING
+              // Spline reading optimisation won't work with extremely coarse GoF binning
+              bin_is_not_empty = true;
+              #endif
                             
 #ifdef __skip_unexpected_spline_test_in_readsplines__
               if(!bin_is_not_empty)

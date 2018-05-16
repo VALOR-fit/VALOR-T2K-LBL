@@ -28,6 +28,8 @@ Split valor::conv namespace into several smaller files
 #include "Rtypes.h"
 #endif
 
+//#define GOODNESS_OF_FIT_BINNING 1 // Use coarse binning for goodness-of-fit
+
 #define NUMOFTOYSTOMARGINALIZE 5 // Ntoys
 
 #define SYST_NSIGMA   3   // number of sigma away from nominal nuisance parameters are allowed to be
