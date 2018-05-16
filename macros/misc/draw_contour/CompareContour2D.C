@@ -174,16 +174,16 @@ void CompareContour2D(char* file_1 = "test1",
      {  // Same hierarchy
         if(strcmp(trueMH1, "normal") == 0)
         {  // Normal hierarchy
-           hchisq_valor[0]->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})");
+           hchisq_valor[0]->GetXaxis()->SetTitle("#Deltam^{2}_{32} (eV^{2}c^{-4})");
         }
         else
         {  // Inverted hierarchy
-           hchisq_valor[0]->GetXaxis()->SetTitle("|#Deltam^{2}_{13}| (eV^{2}c^{-4})");
+           hchisq_valor[0]->GetXaxis()->SetTitle("#Deltam^{2}_{13} (eV^{2}c^{-4})");
         }
      }
      else
      {  // Different hierarchies
-        hchisq_valor[0]->GetXaxis()->SetTitle("|#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH)| (eV^{2}c^{-4})");
+        hchisq_valor[0]->GetXaxis()->SetTitle("#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH) (eV^{2}c^{-4})");
      }
   }
 
@@ -194,16 +194,16 @@ void CompareContour2D(char* file_1 = "test1",
      {  // Same hierarchy
         if(strcmp(trueMH1, "normal") == 0)
         {  // Normal hierarchy
-           hchisq_valor[0]->GetYaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})");
+           hchisq_valor[0]->GetYaxis()->SetTitle("#Deltam^{2}_{32} (eV^{2}c^{-4})");
         }
         else
         {  // Inverted hierarchy
-           hchisq_valor[0]->GetYaxis()->SetTitle("|#Deltam^{2}_{13}| (eV^{2}c^{-4})");
+           hchisq_valor[0]->GetYaxis()->SetTitle("#Deltam^{2}_{13} (eV^{2}c^{-4})");
         }
      }
      else
      {  // Different hierarchies
-        hchisq_valor[0]->GetYaxis()->SetTitle("|#Deltam^{2}_{32} (NH),#Deltam^{2}_{13} (IH)| (eV^{2}c^{-4})");
+        hchisq_valor[0]->GetYaxis()->SetTitle("#Deltam^{2}_{32} (NH),#Deltam^{2}_{13} (IH) (eV^{2}c^{-4})");
      }
   }
 

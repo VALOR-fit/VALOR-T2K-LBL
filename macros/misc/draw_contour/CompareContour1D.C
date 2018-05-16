@@ -166,16 +166,16 @@ void CompareContour1D
      {  // Same hierarchy
         if(strcmp(trueMH1, "normal") == 0)
         {  // Normal hierarchy
-           h1->GetXaxis()->SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})");
+           h1->GetXaxis()->SetTitle("#Deltam^{2}_{32} (eV^{2}c^{-4})");
         }
         else
         {  // Inverted hierarchy
-           h1->GetXaxis()->SetTitle("|#Deltam^{2}_{13}| (eV^{2}c^{-4})");
+           h1->GetXaxis()->SetTitle("#Deltam^{2}_{13} (eV^{2}c^{-4})");
         }
      }
      else
      {  // Different hierarchies
-        h1->GetXaxis()->SetTitle("|#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH)| (eV^{2}c^{-4})");
+        h1->GetXaxis()->SetTitle("#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH) (eV^{2}c^{-4})");
      }
   }
 
@@ -250,9 +250,9 @@ void CompareContour1D
   if(draw_3sigmaCL) latLine3Sigma->Draw("same");
   if(draw_4sigmaCL) latLine4Sigma->Draw("same");
   if(draw_5sigmaCL) latLine5Sigma->Draw("same");
-  TLegend *lcontours = new TLegend(0.5,0.77,0.65,0.9);
-  lcontours->SetFillColor(0);
-  lcontours->SetLineColor(0);
+  TLegend *lcontours = new TLegend(0.42,0.77,0.57,0.9);
+  lcontours->SetFillStyle(0);
+  lcontours->SetBorderSize(0);
   lcontours->SetTextFont(132);
   lcontours->SetTextSize(0.05);
   lcontours->AddEntry(h1,latexname[0]);

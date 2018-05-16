@@ -405,7 +405,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
 
          TLegend *l = new TLegend(0.65,0.65,0.85,0.9);
          l->SetLineColor(0);
-         l->AddEntry(h1[ifc][imh],"#Delta#chi^{2}","l");
+         l->AddEntry(h1[ifc][imh],"-2#Deltaln(L)_{crit}","l");
          l->AddEntry(h_draw_68,Form("1#sigmaCL: %1.2lf",FCCritVal_1sigma),"l");
          l->AddEntry(h_draw_90,Form("90%%CL: %1.2lf",FCCritVal_90CL),"l");
          l->AddEntry(h_draw_2sig,Form("2#sigmaCL: %1.2lf",FCCritVal_2sigma),"l");
@@ -684,7 +684,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   
    TCanvas *cDeltaChisq = new TCanvas("cDeltaChisq","cDeltaChisq");
    gFC90CL_nh->GetXaxis()->SetTitle("#delta_{CP}");
-   gFC90CL_nh->GetYaxis()->SetTitle("#Delta #chi^{2}_{crit}");
+   gFC90CL_nh->GetYaxis()->SetTitle("-2#Deltaln(L)_{crit}");
    gFC90CL_nh->GetYaxis()->SetRangeUser(1.5,10);
 
    gFC90CL_nh   ->Draw("apl");
@@ -718,7 +718,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    TCanvas *cDeltaChisq_p1sigma = new TCanvas("cDeltaChisq_p1sigma","cDeltaChisq_p1sigma");
 
    gFC90CL_nh->GetXaxis()->SetTitle("#delta_{CP}");
-   gFC90CL_nh->GetYaxis()->SetTitle("#Delta #chi^{2}_{crit}");
+   gFC90CL_nh->GetYaxis()->SetTitle("-2#Deltaln(L)_{crit}");
    gFC90CL_nh->GetYaxis()->SetRangeUser(0,5);
 
    gFC90CL_nh   ->Draw("apl");

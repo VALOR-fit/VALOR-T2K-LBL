@@ -199,7 +199,9 @@ void plot_contours_dcp_many
       
     } // end loop Nmh
     
-    
+    double chisq_data_gof_nh = hchisq1D[ifile][0]->GetBinContent(hchisq1D[ifile][0]->FindBin(truepar0));
+    double chisq_data_gof_ih = hchisq1D[ifile][1]->GetBinContent(hchisq1D[ifile][1]->FindBin(truepar0));
+
     // Shift the chisq wrt to the global minimum
     
     double ChisqMin_0 = hchisq1D[ifile][0]->GetBinContent(hchisq1D[ifile][0]->GetMinimumBin());
@@ -1346,40 +1348,32 @@ void plot_contours_dcp_many
     double min_chisq_gof_ih = *min_element(vchisq_gof_ih.begin(), vchisq_gof_ih.end());
     double max_chisq_gof_ih = *max_element(vchisq_gof_ih.begin(), vchisq_gof_ih.end());
     double diff_chisq_gof_ih = max_chisq_gof_ih - min_chisq_gof_ih;
-    TH1D* hchisq1D_nh_gof = new TH1D("hchisq1D_nh_gof", "", 50, 0.0, diff_chisq_gof_nh);
-    TH1D* hchisq1D_ih_gof = new TH1D("hchisq1D_ih_gof", "", 50, 0.0, diff_chisq_gof_ih);
+    TH1D* hchisq1D_nh_gof = new TH1D("hchisq1D_nh_gof", "", 50, 0.0, max_chisq_gof_nh);
+    TH1D* hchisq1D_ih_gof = new TH1D("hchisq1D_ih_gof", "", 50, 0.0, max_chisq_gof_ih);
 
     for(int i = 0; i < Nentries; i++)
     {
-        hchisq1D_nh_gof->Fill(vchisq_gof_nh[i] - min_chisq_gof_nh);
-        hchisq1D_ih_gof->Fill(vchisq_gof_ih[i] - min_chisq_gof_ih);
+        hchisq1D_nh_gof->Fill(vchisq_gof_nh[i]);
+        hchisq1D_ih_gof->Fill(vchisq_gof_ih[i]);
     }
 
-    std::cout << "Entries:" << std::endl;
-    for(int i = 1; i <= hchisq1D_nh_gof->GetNbinsX(); i++)
-    {
-       std::cout << hchisq1D_nh_gof->GetBinContent(i) << std::endl;
-    }
-    std::cout << std::endl;
+    int chisq_data_bin_gof_nh = hchisq1D_nh_gof->FindBin(chisq_data_gof_nh);
+    int chisq_data_bin_gof_ih = hchisq1D_ih_gof->FindBin(chisq_data_gof_ih);
 
     hchisq1D_nh_gof->Sumw2();
-    hchisq1D_nh_gof->Scale(1.0 / hchisq1D_nh_gof->Integral());
+    hchisq1D_nh_gof->Scale(1.0 / hchisq1D_nh_gof->Integral(), "width");
     hchisq1D_ih_gof->Sumw2();
-    hchisq1D_ih_gof->Scale(1.0 / hchisq1D_ih_gof->Integral());
+    hchisq1D_ih_gof->Scale(1.0 / hchisq1D_ih_gof->Integral(), "width");
     hchisq1D_nh_gof->GetXaxis()->SetTitle("#chi^{2}_{GoF}");
     hchisq1D_nh_gof->GetYaxis()->SetTitle("Fraction of toys");
     hchisq1D_ih_gof->GetXaxis()->SetTitle("#chi^{2}_{GoF}");
     hchisq1D_ih_gof->GetYaxis()->SetTitle("Fraction of toys");
-    double chisq_data_gof_nh = ChisqMin_0 - min_chisq_gof_nh;
-    double chisq_data_gof_ih = ChisqMin_1 - min_chisq_gof_ih;
-    int chisq_data_bin_gof_nh = hchisq1D_nh_gof->FindBin(chisq_data_gof_nh);
-    int chisq_data_bin_gof_ih = hchisq1D_ih_gof->FindBin(chisq_data_gof_ih);
 
 //    hchisq1D_nh_gof->Fit("gaus", "0");
 //    TF1* fit_gof_nh = hchisq1D_nh_gof->GetFunction("gaus");
 
-    TF1* fit_gof_nh = new TF1("fit_gof_nh", chi2, 0.0, diff_chisq_gof_nh, 1);
-    fit_gof_nh->SetParameter(0, diff_chisq_gof_nh / 2);
+    TF1* fit_gof_nh = new TF1("fit_gof_nh", chi2, 0.0, max_chisq_gof_nh, 1);
+    fit_gof_nh->SetParameter(0, max_chisq_gof_nh / 2);
     fit_gof_nh->SetLineColor(kBlue);
     fit_gof_nh->SetLineWidth(2);
     hchisq1D_nh_gof->Fit("fit_gof_nh");
@@ -1393,8 +1387,8 @@ void plot_contours_dcp_many
 //    hchisq1D_ih_gof->Fit("gaus", "0");
 //    TF1* fit_gof_ih = hchisq1D_ih_gof->GetFunction("gaus");
 
-    TF1* fit_gof_ih = new TF1("fit_gof_ih", chi2, 0.0, diff_chisq_gof_ih, 1);
-    fit_gof_ih->SetParameter(0, diff_chisq_gof_ih / 2);
+    TF1* fit_gof_ih = new TF1("fit_gof_ih", chi2, 0.0, max_chisq_gof_ih, 1);
+    fit_gof_ih->SetParameter(0, max_chisq_gof_ih / 2);
     fit_gof_ih->SetLineColor(kBlue);
     fit_gof_ih->SetLineWidth(2);
     hchisq1D_ih_gof->Fit("fit_gof_ih");
@@ -1594,7 +1588,7 @@ void plot_contours_dcp_many
    
     TCanvas *c_gof_nh = new TCanvas("c_gof_nh","c_gof_nh");
     hchisq1D_nh_gof->SetLineColor(kBlack);
-    hchisq1D_nh_gof->Draw();
+    hchisq1D_nh_gof->Draw("hist");
     fit_gof_nh->Draw("same");
     TLine* ldata_nh = new TLine(chisq_data_gof_nh, 0, chisq_data_gof_nh, hchisq1D_nh_gof->GetMaximum());
     ldata_nh->SetLineColor(kRed);
@@ -1602,17 +1596,21 @@ void plot_contours_dcp_many
     ldata_nh->Draw("same");
     TLatex text_nh;
     text_nh.SetTextSize(0.04);
-    double t_gof_x = hchisq1D_nh_gof->GetBinCenter((int)(hchisq1D_nh_gof->GetNbinsX() * 0.75));
+    double t_gof_x = hchisq1D_nh_gof->GetBinCenter((int)(hchisq1D_nh_gof->GetNbinsX() * 0.2));
     double t_gof_y = hchisq1D_nh_gof->GetMaximum() * 0.75;
     text_nh.DrawLatex(t_gof_x, t_gof_y, Form("p-value = %.2f", pval_fit_nh));
     TLatex text2_nh;
     text2_nh.SetTextSize(0.04);
     text2_nh.DrawLatex(t_gof_x, t_gof_y * 1.1, Form("#chi^{2}_{data} = %.1f", chisq_data_gof_nh));
+    TLatex text3_nh;
+    text3_nh.SetTextSize(0.04);
+    text2_nh.DrawLatex(t_gof_x, t_gof_y * 0.9, Form("N_{dof} = %.1f", fit_gof_nh->GetParameter(0)));
+    cout << "Param err: " << fit_gof_nh->GetParError(0) << endl;
     c_gof_nh->SaveAs(Form("%s_gof_nh.pdf", tag.c_str()));
 
     TCanvas *c_gof_ih = new TCanvas("c_gof_ih","c_gof_ih");
     hchisq1D_ih_gof->SetLineColor(kBlack);
-    hchisq1D_ih_gof->Draw();
+    hchisq1D_ih_gof->Draw("hist");
     fit_gof_ih->Draw("same");
     TLine* ldata_ih = new TLine(chisq_data_gof_ih, 0, chisq_data_gof_ih, hchisq1D_ih_gof->GetMaximum());
     ldata_ih->SetLineColor(kRed);
@@ -1620,12 +1618,15 @@ void plot_contours_dcp_many
     ldata_ih->Draw("same");
     TLatex text_ih;
     text_ih.SetTextSize(0.04);
-    t_gof_x = hchisq1D_ih_gof->GetBinCenter((int)(hchisq1D_ih_gof->GetNbinsX() * 0.75));
+    t_gof_x = hchisq1D_ih_gof->GetBinCenter((int)(hchisq1D_ih_gof->GetNbinsX() * 0.2));
     t_gof_y = hchisq1D_ih_gof->GetMaximum() * 0.75;
     text_ih.DrawLatex(t_gof_x, t_gof_y, Form("p-value = %.2f", pval_fit_ih));
     TLatex text2_ih;
     text2_ih.SetTextSize(0.04);
     text2_ih.DrawLatex(t_gof_x, t_gof_y *1.1, Form("#chi^{2}_{data} = %.1f", chisq_data_gof_ih));
+    TLatex text3_ih;
+    text3_ih.SetTextSize(0.04);
+    text2_ih.DrawLatex(t_gof_x, t_gof_y * 0.9, Form("N_{dof} = %.1f", fit_gof_ih->GetParameter(0)));
     c_gof_ih->SaveAs(Form("%s_gof_ih.pdf", tag.c_str()));
 
     delete c_gof_nh;

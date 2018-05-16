@@ -84,6 +84,7 @@ def plot_flux(filename, matrixname, outputname):
     canvas.SetBottomMargin(0.2)
     canvas.SetRightMargin(0.2)
     histo.Draw("COLZ")
+    histo.GetZaxis().SetRangeUser(-1,1)
     histo.GetZaxis().SetTitle("#sqrt{#left|V_{ij}#right|} x Sign#left(V_{ij}#right)")
     histo.GetZaxis().SetTitleOffset(1.8)
     histo.GetZaxis().CenterTitle()
