@@ -7,52 +7,74 @@
 //
 
 #include <iomanip.h>
+#include "valor/Utilities/UtlXML.h"
 
 using namespace std;
 using namespace valor;
-using namespace valor::conv; 
+using namespace valor::conv;
+
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 void bievent_build
 (
  const int ntoys = 100,
- const int seed = 10000,
- const char * tag                  = "ellipse_Run1_9c",
- const char * sk_sample            = "1Re",                         /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu" */
- const char * hypothesis           = "3f_osc",                 /* options: "2f_numu_disap", "3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar" */ 
- // Best fit values NH
- double       input_mixing12       = 0.304,
- double       input_mixing13       = 0.02235,
- double       input_mixing23       = 0.535,
- double       input_deltacp        = 0,
- double       input_dm12sq         = 7.53E-5,
- double       input_dm23sq         = 2.440E-3,
- double       input_betabar        = -99., //0., //-99,
- bool         disable_banff_tuning = false,                          /* */
- const char * config_file = "analysis_configuration_oa2018_run1-9c_v1_postfit.xml",
- const char * mixparamchoice      = "sinsqtheta",
- const char * hierarchy           = "normal"   ,
- const char * dmsqscheme          = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
- const char * mixparamoctant      = "two",       /* one==kNuOctantOne two==kNuOctantTwo */
- int          iexperiment         = 0,
- const char * rootfile = "official/2018/data/SK_data_Run19c_valor.root", 
- const bool draw_data_spectra = true,
- const bool scale_mc = false
+ const int seed = 1,
+ 
 )
+
 {
    using namespace std;
    using namespace valor;
 
-   const int N23 = 3;
-   const int NMH = 2;
-   const int NDCP = 4;
+
+
+      // Parse the input XML configuration file
+   TXMLEngine* xml = new TXMLEngine;
+   XMLDocPointer_t doc = xml->ParseFile("bieventplot_params.xml");
+   if(!doc)
+   {
+      util::Die(1);
+   }
+
+   string tag = ReadS(xml, doc, "input_parameters/tag");
+   string sk_sample = ReadS(xml, doc, "input_parameters/sk_sample");      
+   string hypothesis  = ReadS(xml, doc, "input_parameters/hypothesis");
+
+   // Best fit values NH
+   double input_mixing12 = ReadD(xml, doc, "bf_values_nh/input_mixing12");
+   double input_mixing13 = ReadD(xml, doc, "bf_values_nh/input_mixing13");
+   double input_mixing23 = ReadD(xml, doc, "bf_values_nh/input_mixing23");
+   double input_deltacp = ReadD(xml, doc, "bf_values_nh/input_deltacp");
+   double input_dm12sq = ReadD(xml, doc, "bf_values_nh/input_dm12sq");
+   double input_dm23sq = ReadD(xml, doc, "bf_values_nh/input_dm23sq");
+   double input_betabar = ReadD(xml, doc, "bf_values_nh/input_betabar");
+   bool disable_banff_tuning = ReadB(xml, doc, "bf_values_nh/disable_banff_tuning");
+   string config_file = ReadS(xml, doc, "bf_values_nh/config_file");
+   string mixparamchoice = ReadS(xml, doc, "bf_values_nh/mixparamchoice");
+   string hierarchy = ReadS(xml, doc, "bf_values_nh/hierarchy");
+   string dmsqscheme = ReadS(xml, doc, "bf_values_nh/dmsqscheme");
+   string mixparamoctant = ReadS(xml, doc, "bf_values_nh/mixparamoctant");
+
+   double deltaCP_first = -TMath::Pi();
+   double deltaCP_last = +TMath::Pi();
+   const int dcp_npt = ReadI(xml, doc, "osc_params/dcp_npt"); 
+   double deltaCP_width = (deltaCP_last - deltaCP_first) / (dcp_npt-1);
+   const int N23 = ReadI(xml, doc, "osc_params/N23");
+   const int NMH = ReadI(xml, doc, "osc_params/NMH");
+   const int NDCP = ReadI(xml, doc, "osc_params/NDCP");
+
    // PDG 2016 best fits
-   double ss12[NMH] = {0.304, 0.304};
-   double dm12[NMH] = {7.53E-5, 7.53E-5};
+   vector<double> ss12 = ReadDA(xml,doc,"vectors/ss12");
+   vector<double> dm12 = ReadDA(xml,doc,"vectors/dm12");
    // 2018 best fit values from 2D fits (including IH shift for dmsq23)
-   double ss13[NMH] = {0.02235, 0.02235};
-   double dm23[NMH] = {2.440E-3, 2.410E-3 - dm12[2]};
+   vector<double> ss13 = ReadDA(xml,doc,"vectors/ss13");
+   vector<double> dm23 = ReadDA(xml,doc,"vectors/dm23");
+   dm23[2] = dm23[2] - dm12[2]; //IH shift for dmsq23
    // Alternative values to use for sinsqtheta23
-   double ss23[N23] = {0.450, 0.500, 0.550};
+   vector<double> ss23 = ReadDA(xml,doc,"vectors/ss23");
 
    // Global options
    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(hierarchy);
@@ -138,10 +160,6 @@ void bievent_build
       ph.SetCurrValue(conv::kPhypDm23sqBar,    input_dm23sq);
       ph.SetCurrValue(conv::kPhypBetaBar,    input_betabar);
    }
-  
-   string oscparams = util::AsString(ph.Hypothesis(), input_mixing12,
-         input_mixing13, input_mixing23, input_deltacp, input_dm12sq,
-         input_dm23sq, input_betabar, -999, -999);
 
    conv::SuperkSample_t s = util::SKSampleFromString(sk_sample); // requested sample
    if(s == conv::kSKsUndefined)
@@ -152,7 +170,7 @@ void bievent_build
    int is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
 
    // Analysis configuration
-   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
+   const char * config  = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file.c_str());
    string sconfig(config);
 
    // Print options
@@ -179,11 +197,7 @@ void bievent_build
    // - Set lines of the TGraph
    // - Calculate N_fhc_elike Vs N_rhc_elike point from data and plot it on top of the MC one
    // 
-    
-   double deltaCP_first = -TMath::Pi();
-   double deltaCP_last = +TMath::Pi();
-   const int dcp_npt = 9;
-   double deltaCP_width = (deltaCP_last - deltaCP_first) / (dcp_npt-1);
+
 
    TH2D* hEventsSyst[dcp_npt][N23][NMH];
    TH2D* hEvents[dcp_npt][N23][NMH];
@@ -274,7 +288,7 @@ void bievent_build
       }
    }
 
-   TFile file(Form("%s_%d.root", tag, seed), "RECREATE");
+   TFile file(Form("%s_%d.root", tag.c_str(), seed), "RECREATE");
    for(int idcp=0; idcp < dcp_npt; ++idcp)
    {
       for(int iss23 = 0; iss23 < N23; ++iss23)
@@ -314,6 +328,10 @@ void GetN_1re(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc,double &Nr
    }
    is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
    Nrhc = skexp.CurrPredictedErecoVsQ2Spectrum(s)->Integral();
+
+
+
+   cout << "Events: " << Nfhc << " => ";
 }
 
 void GetN_cc1pi(PhysHypothesis ph,SuperkExpectation &skexp,double &Nfhc)
@@ -369,5 +387,98 @@ void RandomizeOsc(valor::PhysHypothesis& ph)
          break;
       }
    }
+}
+
+
+
+bool PathExists(TXMLEngine* xml, XMLDocPointer_t doc, string path)
+{
+   XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+   return root_node && util::NodeExists(xml, root_node, path);
+}
+
+////Read int /////
+int ReadI(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2Int(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read string  /////
+string ReadS(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2String(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read double /////
+double ReadD(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{ 
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2Dbl(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read bool /////
+bool ReadB(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{ 
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2Bool(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read double array /////
+vector<double> ReadDA(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{ 
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2DblArray(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
 }
 
