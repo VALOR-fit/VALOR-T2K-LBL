@@ -37,13 +37,10 @@ void bievent_plot
       util::Die(1);
    }
    
-//////
    string tag = ReadS(xml, doc, "plot_data/tag");
    int iexperiment = ReadI(xml,doc,"plot_data/iexperiment");
    string rootfile = ReadS(xml, doc, "plot_data/rootfile");
-   bool draw_data = ReadB(xml, doc, "plot_data/draw_data");
-/////   
-
+   bool draw_data = ReadB(xml, doc, "plot_data/draw_data");  
 
    const int dcp_npt = ReadI(xml, doc, "osc_params/dcp_npt");
    const int N23 = ReadI(xml, doc, "osc_params/N23");
