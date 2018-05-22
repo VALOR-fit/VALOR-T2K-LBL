@@ -10,26 +10,45 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include "valor/Utilities/UtlXML.h"
 
 using namespace std;
 using namespace valor;
 using namespace valor::conv; 
 
+
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl; 
+
 void bievent_plot
-(
- const char * tag                  = "ellipse_Run1_9c",
- int          iexperiment         = 0,
- const char * rootfile = "official/2018/data/SK_data_Run19c_valor.root", 
- const bool draw_data = true
-)
+()
 {
    using namespace std;
    using namespace valor;
 
-   const int dcp_npt = 9; //201;
-   const int N23 = 3;
-   const int NMH = 2;
-   const int NDCP = 4;
+
+     // Parse the input XML configuration file
+   TXMLEngine* xml = new TXMLEngine;
+   XMLDocPointer_t doc = xml->ParseFile("bieventplot_params.xml");
+   if(!doc)
+   {
+      util::Die(1);
+   }
+   
+//////
+   string tag = ReadS(xml, doc, "plot_data/tag");
+   int iexperiment = ReadI(xml,doc,"plot_data/iexperiment");
+   string rootfile = ReadS(xml, doc, "plot_data/rootfile");
+   bool draw_data = ReadB(xml, doc, "plot_data/draw_data");
+/////   
+
+
+   const int dcp_npt = ReadI(xml, doc, "osc_params/dcp_npt");
+   const int N23 = ReadI(xml, doc, "osc_params/N23");
+   const int NMH = ReadI(xml, doc, "osc_params/NMH");
+   const int NDCP = ReadI(xml, doc, "osc_params/NDCP");
 
    TGraph gN_events[N23][NMH];
    TGraph gN_events_1pt[N23][NMH][NDCP];
@@ -38,29 +57,33 @@ void bievent_plot
    TH1D* hFHCEvents[dcp_npt][N23][NMH];
    TH1D* hRHCEvents[dcp_npt][N23][NMH];
    bool display_errors[dcp_npt][N23][NMH];
-   display_errors[2][1][0] = true;  // Systematics at dcp = -pi/2, ss23 = 0.5, NH
+   int a = ReadI(xml,doc,"plot_data/display_errors/first_param");
+   int b = ReadI(xml,doc,"plot_data/display_errors/second_param");
+   int c = ReadI(xml,doc,"plot_data/display_errors/third_param");
+
+   display_errors[a][b][c] = ReadB(xml,doc,"plot_data/display_errors/bool_value");// Systematics at dcp = -pi/2, ss23 = 0.5, NH
 
    double deltaCP_first = -TMath::Pi();
    double deltaCP_last = +TMath::Pi();
    double deltaCP_width = (deltaCP_last - deltaCP_first) / (dcp_npt - 1);
 
-   // PDG 2016 best fits
-   double ss12[NMH] = {0.304, 0.304};
-   double dm12[NMH] = {7.53E-5, 7.53E-5};
-   // 2018 best fit values from 2D fits (including IH shift for dmsq23)
-   double ss13[NMH] = {0.02235, 0.02235};
-   double dm23[NMH] = {2.440E-3, 2.410E-3 - dm12[2]};
-   // Alternative values to use for sinsqtheta23
-   double ss23[N23] = {0.450, 0.500, 0.550};
+ // PDG 2016 best fits
+   vector<double> ss12 = ReadDA(xml,doc,"vectors/ss12");
+   vector<double> dm12 = ReadDA(xml,doc,"vectors/dm12");
+// 2018 best fit values from 2D fits (including IH shift for dmsq23)
+   vector<double> ss13 = ReadDA(xml,doc,"vectors/ss13");
+   vector<double> dm23 = ReadDA(xml,doc,"vectors/dm23");
+   dm23[2] = dm23[2] - dm12[2]; //IH shift for dmsq23
+// Alternative values to use for sinsqtheta23
+   vector<double> ss23 = ReadDA(xml,doc,"vectors/ss23");
 
-   TString rootfile2(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"), rootfile));
    SuperkObservation * skobs_fakedata = new SuperkObservation;
 
    TGraph *gN_events_data = new TGraph();
    if(draw_data)
    {
       skobs_fakedata->Read(Form("%s/inputs/%s", gSystem->Getenv("T2KOSCANA"),
-               rootfile), iexperiment, false);
+               rootfile.c_str()), iexperiment, false);
 
       // 1Re # of events 
       conv::SuperkSample_t s = util::SKSampleFromString("1Re");
@@ -78,9 +101,9 @@ void bievent_plot
       gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
    }
 
-   TFile* file = new TFile("events.root");
-   double Nfhc = 0.0;
-   double Nrhc = 0.0;
+   TFile* file = new TFile("ellipse_Run1_9c_1.root");
+   double Nfhc = ReadD(xml,doc,"plot_data/Nfhc");
+   double Nrhc = ReadD(xml,doc,"plot_data/Nrhc");
 
    for(int idcp = 0; idcp < dcp_npt; ++idcp)
    {
@@ -254,9 +277,9 @@ void bievent_plot
    ldcp_all->AddEntry(gN_events_data,"Data","p");
    ldcp_all->Draw();
 
-   cEllipse_all->SaveAs(Form("%s.pdf", tag));
-   cEllipse_all->SaveAs(Form("%s.png", tag));
-   cEllipse_all->SaveAs(Form("%s.eps", tag));
+   cEllipse_all->SaveAs(Form("%s.pdf", tag.c_str()));
+   cEllipse_all->SaveAs(Form("%s.png", tag.c_str()));
+   cEllipse_all->SaveAs(Form("%s.eps", tag.c_str()));
 
    TCanvas *c_fhc_contour = new TCanvas("c_contour","c_contour");
    hFHCEvents[2][1][0]->Draw("cont0");
@@ -374,3 +397,97 @@ std::pair<double, double> get_interval(TH1D* histo)
    return std::make_pair(low, high);
 }
 
+
+
+
+
+bool PathExists(TXMLEngine* xml, XMLDocPointer_t doc, string path)
+{
+   XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+   return root_node && util::NodeExists(xml, root_node, path);
+}
+
+////Read int /////
+int ReadI(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2Int(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read string  /////
+string ReadS(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2String(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read double /////
+double ReadD(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{ 
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2Dbl(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read bool /////
+bool ReadB(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{ 
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2Bool(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
+
+////Read double array /////
+vector<double> ReadDA(TXMLEngine* xml, XMLDocPointer_t doc, string node)
+{ 
+   if(PathExists(xml, doc, node))
+   {
+      XMLNodePointer_t root_node = xml->DocGetRootElement(doc);
+      return util::XML2DblArray(xml, root_node, node);
+   }
+   else
+   {
+      delete xml;
+      util::Die(1);
+   }
+
+   return 0;
+}
