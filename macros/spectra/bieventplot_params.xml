@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<bievent>
+  <input_parameters>
+    <tag>ellipse_Run1_9c</tag>    
+    <sk_sample>1Re</sk_sample>
+    <hypothesis>3f_osc</hypothesis>
+  </input_parameters>
+
+  <bf_values_nh>
+	  <input_mixing12>0.304</input_mixing12>
+  	<input_mixing13>0.02235</input_mixing13>
+    <input_mixing23>0.530</input_mixing23>
+    <input_deltacp>0</input_deltacp>
+    <input_dm12sq>7.53E-5</input_dm12sq>
+    <input_dm23sq>2.460E-3</input_dm23sq>
+    <input_betabar>-99.</input_betabar>
+    <disable_banff_tuning>false</disable_banff_tuning>
+    <config_file>analysis_configuration_oa2018_run1-9c_v1_postfit.xml</config_file>
+    <mixparamchoice> sinsqtheta </mixparamchoice>
+    <hierarchy> normal </hierarchy>
+    <dmsqscheme> auto </dmsqscheme>
+    <mixparamoctant> two </mixparamoctant>
+  </bf_values_nh>
+
+  <osc_params>
+	  <dcp_npt> 9 </dcp_npt>
+	  <N23> 3 </N23>
+	  <NMH> 2 </NMH>
+	  <NDCP> 4 </NDCP>
+  </osc_params>
+  <vectors>
+    <ss12>
+      0.304,0.304 <!-- size of NMH-->
+    </ss12>
+    <ss13>
+      0.02235,0.0226125 <!-- size of NMH-->
+    </ss13>
+    <dm12>
+      7.53E-5,7.53E-5 <!-- size of NMH-->
+    </dm12>
+    <dm23>
+      2.440E-3, 2.410E-3 <!-- size of NMH-->
+    </dm23>
+    <ss23>
+      0.450,0.500,0.550 <!-- size of N23-->
+    </ss23>
+  </vectors>
+  <plot_data>
+    <rootfile>official/2018/data/SK_data_Run19c_valor.root</rootfile>
+    <tag>ellipse_Run1_9c</tag>
+    <iexperiment>0</iexperiment>
+    <draw_data> true </draw_data>
+
+    <display_errors> <!-- Systematics at dcp = -pi/2, ss23 = 0.5, NH -->
+      <first_param> 2 </first_param>
+      <second_param> 1 </second_param>
+      <third_param> 0 </third_param>
+      <bool_value> true </bool_value>
+    </display_errors>
+    <Nfhc>0.0</Nfhc>
+    <Nrhc>0.0</Nrhc>
+  </plot_data>
+</bievent>
+
