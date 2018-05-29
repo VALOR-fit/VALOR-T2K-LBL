@@ -30,19 +30,19 @@ arridx  = util.ArrIdx.Instance()
 #
 # Histogram parameters to tweak
 #
-nbins_dchisq    = 700 #1100
-low_dchisq      = -20. #-30
-high_dchisq     = 50.  #80
+nbins_dchisq    = 250 #700
+low_dchisq      = -15. #-20
+high_dchisq     = 35.  #50
 low_nevents     = -1   #-1
-high_nevents    = 50   #65
+high_nevents    = 35   #50
 scale_max_rate  = 5
 scale_max_shape =2
 leg_text_size   = 0.03
-line_thickness  = 3
+line_thickness  = 2
 draw_prelim     = 1
 prelim_text     = "T2K Run 1-9c Preliminary"
 
-def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, infilename_comp_nobs_beta0, infilename_comp_nobs_beta1, infilename_comp_Dchisq_beta0, infilename_comp_Dchisq_beta1, test_statistic, prior_predictive, valor_comp, label, label_comp, read_nevents, start_nevents):    
+def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, infilename_comp_nobs_beta0, infilename_comp_nobs_beta1, infilename_comp_Dchisq_beta0, infilename_comp_Dchisq_beta1, test_statistic, prior_predictive, valor_comp, label, label_comp, read_nevents, start_nevents, infilename_comp_data):
     read_nevents += start_nevents
     tstat = True
     if not test_statistic == "rate+shape":
@@ -154,7 +154,6 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
                 continue
             if read_nevents > 0 and ievent >= read_nevents:
                 break
-            hist_deltachisq01_beta1.Fill(event.deltachisq01)
             chisq = 0
             chisq += util.Chisq_Penalty_TH2D(hDataErecoToy_1Rmu, event.hErecoExp_1Rmu)
             chisq += util.Chisq_Penalty_TH2D(hDataErecoToy_1Re, event.hErecoExp_1Re)
@@ -228,6 +227,11 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         canv.SaveAs(outfile_name2,"recreate")
         canv.SaveAs(outfile_name3,"recreate")
 
+        # If we have comparison data, plot it too    TODO: test: does this disrupt the logscale call to plot_comparison_both?
+        plot_comparison_both(hist_deltachisq01_beta0, infilename_comp_Dchisq_beta0, 0, hist_deltachisq01_beta1,
+                             infilename_comp_Dchisq_beta1, 1, "rate+shape", canv, leg, tag, valor_comp,
+                             prior_predictive, label_comp, read_nevents, infilename_comp_data)
+
         #
         # Plot the Delta chisq histograms on a log scale
         #
@@ -245,8 +249,8 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
 
         # If we have comparison data, plot it too
         plot_comparison_both(hist_deltachisq01_beta0, infilename_comp_Dchisq_beta0, 0, hist_deltachisq01_beta1,
-                             infilename_comp_Dchisq_beta1, 1, "rate+shape", canv, leg, tag, valor_comp,
-                             prior_predictive, label_comp, read_nevents)
+                             infilename_comp_Dchisq_beta1, 1, "rate+shape", canv, leg, tag+"_logscale", valor_comp,
+                             prior_predictive, label_comp, read_nevents, infilename_comp_data)
         
         #
         # Check for any overflow points that won't have been plot
@@ -329,7 +333,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
             else:
                 hist_pval_beta0.Fill(ROOT.TMath.Log10(event.pvalue_right_weighted), event.Eventrate_fakedata)
                 hist_pval_nolog_beta0.Fill(event.pvalue_right_weighted, event.Eventrate_fakedata)
-            if ievent % 100 == 0 and not ievent == 0:
+            if ievent % 1000 == 0 and not ievent == 0:
                 print "reading the beta = 0 tree, event #", ievent
             ievent += 1
         ievent = 0
@@ -345,7 +349,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
             else:
                 hist_pval_beta1.Fill(ROOT.TMath.Log10(event.pvalue_left_weighted), event.Eventrate_fakedata)
                 hist_pval_nolog_beta1.Fill(event.pvalue_left_weighted, event.Eventrate_fakedata)
-            if ievent % 10000 == 0 and not ievent == 0:
+            if ievent % 1000 == 0 and not ievent == 0:
                 print "reading the beta = 1 tree, event #", ievent
             ievent += 1
 
@@ -371,7 +375,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         hist_nevents_beta1.SetBarOffset(0.2)
         hist_nevents_beta0.GetXaxis().SetTitle("Number of observed RHC 1Re-like events")
         hist_nevents_beta0.GetYaxis().SetTitle("Entries")
-        maximum_nevents = scale_max_rate * max(hist_nevents_beta0.GetMaximum(), hist_nevents_beta1.GetMaximum())
+        maximum_nevents = 1.1 * max(hist_nevents_beta0.GetMaximum(), hist_nevents_beta1.GetMaximum())
         hist_nevents_beta0.SetMaximum(maximum_nevents)
         data_line_nevents = ROOT.TLine(nevents_data, 0, nevents_data, maximum_nevents)
         data_line_nevents.SetLineStyle(2)
@@ -385,7 +389,6 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
             leg_nevents.AddEntry(data_line_nevents,"Events ("+data_label+") = "+str("{0:.2f}".format(nevents_data)),"l")
 
         canv_nevents = ROOT.TCanvas("nevents", "## events", 800, 600)
-        canv_nevents.SetLogy(1)
         #hist_nevents_beta0.Draw("B")
         #hist_nevents_beta1.Draw("same,B")
         hist_nevents_beta0.SetMinimum(0.5)
@@ -408,10 +411,30 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         canv_nevents.SaveAs(outfile_name_nevents2,"recreate")
         canv_nevents.SaveAs(outfile_name_nevents3,"recreate")
 
+        # If we have comparison data, plot it too     TODO: test: does this disrupt the logscale call to plot_comparison_both?
+        plot_comparison_both(hist_nevents_beta0, infilename_comp_nobs_beta0, 0, hist_nevents_beta1,
+                             infilename_comp_nobs_beta1, 1, "rate-only", canv_nevents, leg_nevents,
+                             tag, valor_comp, prior_predictive, label_comp, read_nevents, infilename_comp_data)
+
+        # Also plot on a log scale
+        maximum_nevents = scale_max_rate * max(hist_nevents_beta0.GetMaximum(), hist_nevents_beta1.GetMaximum())
+        hist_nevents_beta0.SetMaximum(maximum_nevents)
+        data_line_nevents.SetY2(maximum_nevents)
+        canv_nevents.SetLogy(1)
+        canv_nevents.Update()
+        outfile_name_nevents = tag + "_nevents_logscale.pdf"
+        outfile_name_nevents2 = tag + "_nevents_logscale.png"
+        outfile_name_nevents3 = tag + "_nevents_logscale.eps"
+        print "saving logscale nevents image to file", outfile_name_nevents
+        canv_nevents.SaveAs(outfile_name_nevents,"recreate")
+        canv_nevents.SaveAs(outfile_name_nevents2,"recreate")
+        canv_nevents.SaveAs(outfile_name_nevents3,"recreate")
+
+
         # If we have comparison data, plot it too
         plot_comparison_both(hist_nevents_beta0, infilename_comp_nobs_beta0, 0, hist_nevents_beta1,
                              infilename_comp_nobs_beta1, 1, "rate-only", canv_nevents, leg_nevents,
-                             tag, valor_comp, prior_predictive, label_comp, read_nevents)
+                             tag+"_logscale", valor_comp, prior_predictive, label_comp, read_nevents, infilename_comp_data)
         
 
         #
@@ -517,7 +540,7 @@ def warn_over_under_flow(hist):
         print text1, "underflow", text2
 
 
-def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2, infile2name_comp, beta_file2, statistic, canv, leg, tag, valor_comp, prior_predictive, label_comp, read_nevents):
+def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2, infile2name_comp, beta_file2, statistic, canv, leg, tag, valor_comp, prior_predictive, label_comp, read_nevents, infilename_comp_data):
     outtag = ""
     label = label_comp + " (#beta = "
     hname  = ""
@@ -528,11 +551,34 @@ def plot_comparison_both(valor_hist1, infile1name_comp, beta_file1, valor_hist2,
         #draw_opt = draw_opt + ",B"
         draw_opt = draw_opt + ",hist"
     elif statistic == "rate+shape":
-        outtag = "_comparison_Deltachisq_logscale"
+        outtag = "_comparison_Deltachisq"
         hname = "Dchisq"
     else:
         print "Test statistic", statistic, "not understood. Exiting."
         util.Die(-1)
+
+    if infilename_comp_data != "" and not (valor_comp == False or valor_comp == "False" or valor_comp == ""):
+        data_comp = -999
+        file_comp_data = ROOT.TFile(infilename_comp_data,"READ")
+        tree_name = "fitnt"
+        tree_data = ROOT.TTree()
+        tree_data  = file_comp_data.Get(tree_name)
+        if tree_data.GetEntries() != 1:
+            print "Input comparison data tree has", tree_data.GetEntries(), "Expected one entry. Exiting."
+            util.Die(-1)
+        for event in tree_data:
+            if statistic == "rate-only":
+                data_comp = event.hErecoToy_RHC1Re.Integral()   # There'll be a better way to do this than a for loop with only one iteration...
+            else:
+                data_comp = event.deltachisq01
+        data_line = ROOT.TLine(data_comp, 0, data_comp, valor_hist1.GetMaximum())
+        data_line.SetLineStyle(6)
+        data_line.SetLineWidth(line_thickness)
+        data_type = "#Delta #chi^{2}"
+        if statistic == "rate-only":
+            data_type = "Events"
+        leg.AddEntry(data_line,data_type+" (Asimov A) = "+str("{0:.2f}".format(data_comp)),"l")
+        data_line.Draw("same")
 
     comp_h1 = ROOT.TH1D()
     comp_h2 = ROOT.TH1D()
@@ -586,7 +632,7 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
             #hname = "Nevents_nuebar_weighted"
             #if prior_predictive == True or prior_predictive == "True":
             #    hname = "Nevents_nuebar_unweighted"
-            print "*** test: hname comparison =", hname    
+            #print "*** test: hname comparison =", hname    
             histfill_nevents = file_comp.Get(hname)
             bin_width = histfill_nevents.GetBinCenter(2) - histfill_nevents.GetBinCenter(1)
             for ibin in range(0, histfill_nevents.GetNbinsX()+2):           
@@ -722,6 +768,7 @@ if __name__=="__main__":
     parser.add_option('--infilename_comp_nobs_beta1', dest='infilename_comp_nobs_beta1', default="", help='Root file containing histogram of a fake data distribution to be compared with ours for beta = 1')
     parser.add_option('--infilename_comp_Dchisq_beta0', dest='infilename_comp_Dchisq_beta0', default="", help='Root file containing histogram of a fake data distribution to be compared with ours for beta = 0')
     parser.add_option('--infilename_comp_Dchisq_beta1', dest='infilename_comp_Dchisq_beta1', default="", help='Root file containing histogram of a fake data distribution to be compared with ours for beta = 1')
+    parser.add_option('--infilename_comp_data', dest='infilename_comp_data', default="", help='Root file output by marginalisation of the comparison data')
     parser.add_option('--data_label', dest='data_label', default="data", help='Label to be put in the legend entry corresponding to the data')
     parser.add_option('--tag', dest='tag', default="nuebarapp_deltachisq", help='Tag used as the output file name')
     parser.add_option('--label', dest='label', default="Fake-data", help='Label used for the legend')
@@ -741,7 +788,7 @@ if __name__=="__main__":
     main(o.infilename_beta0, o.infilename_beta1, o.tag, o.infilename_data, o.data_label,
          o.infilename_comp_nobs_beta0, o.infilename_comp_nobs_beta1,
          o.infilename_comp_Dchisq_beta0, o.infilename_comp_Dchisq_beta1, o.test_statistic, 
-         o.prior_predictive, o.valor_comp, o.label, o.label_comp, o.read_nevents, o.start_nevents)
+         o.prior_predictive, o.valor_comp, o.label, o.label_comp, o.read_nevents, o.start_nevents, o.infilename_comp_data)
 
     if other:
         print "Warning - ignored arguments: ",other
