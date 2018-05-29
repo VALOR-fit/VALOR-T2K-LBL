@@ -26,7 +26,7 @@ env     = valor.Env.Instance()
 rnd     = valor.Rnd.Instance()
 arridx  = util.ArrIdx.Instance()
 
-def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start):
+def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start, analytic):
     # Set up outputs
     Nevents_max = 100
     outname = tag + ".root"
@@ -54,7 +54,7 @@ def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start):
     if not fin_data:
         print "Cannot open data file", infilename_data, ". Exiting."
         util.Die(-1)
-    Nevents_data_hist = fin_data.Get("exp_data_RHC1Re_0")
+    Nevents_data_hist = fin_data.Get("mock_data_RHC1Re_0")
     Nevents_data = Nevents_data_hist.Integral()
     for itoy in range(itoy_start, itoy_start + ntoys):
         if itoy % 1000 == 0:
@@ -79,19 +79,28 @@ def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start):
                 Nevents_nuebar = nexp_sample
             else:
                 chisq += util.ChisqPoisson(nobs_sample, nexp_sample)
-        # Fluctuate the nuebar event rate
-        for ithrow in range(0, nthrows):
-            Nevents_fluct = rnd.RndToyMCstat().Poisson(Nevents_nuebar)
-            hist_nevents_weighted.Fill(Nevents_fluct, ROOT.TMath.Exp(-chisq*0.5))
-            hist_nevents_weighted_itoy.Fill(Nevents_fluct, ROOT.TMath.Exp(-chisq*0.5))
-            hist_nevents_unweighted.Fill(Nevents_fluct)
-            hist_nevents_unweighted_itoy.Fill(Nevents_fluct)
-        # Calculate p-values for this fake-data toy
-        Nevents_fakedata     [0] = int(Nevents_nuebar)
-        pval_left_unweighted [0] = p_value(hist_nevents_unweighted_itoy, math.floor(Nevents_data), "left" )
-        pval_right_unweighted[0] = p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "right")
-        pval_left_weighted   [0] = p_value(hist_nevents_weighted_itoy  , math.floor(Nevents_data), "left" )
-        pval_right_weighted  [0] = p_value(hist_nevents_weighted_itoy  , math.ceil(Nevents_data) , "right")
+        Nevents_fakedata[0] = int(Nevents_nuebar)
+        if analytic == 0:
+            # Fluctuate the nuebar event rate
+            for ithrow in range(0, nthrows):
+                Nevents_fluct = rnd.RndToyMCstat().Poisson(Nevents_nuebar)
+                hist_nevents_weighted.Fill(Nevents_fluct, ROOT.TMath.Exp(-chisq*0.5))
+                hist_nevents_weighted_itoy.Fill(Nevents_fluct, ROOT.TMath.Exp(-chisq*0.5))
+                hist_nevents_unweighted.Fill(Nevents_fluct)
+                hist_nevents_unweighted_itoy.Fill(Nevents_fluct)
+            #print "p-value (right): throw =", p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "right"), ", analytic =", p_value_analytic(Nevents_nuebar, Nevents_data, "right")
+            #print "p-value (left): throw =", p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "left"), ", analytic =", p_value_analytic(Nevents_nuebar, Nevents_data, "left")
+
+            # Calculate p-values for this fake-data toy
+            pval_left_unweighted [0] = p_value(hist_nevents_unweighted_itoy, math.floor(Nevents_data), "left" )
+            pval_right_unweighted[0] = p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "right")
+            pval_left_weighted   [0] = p_value(hist_nevents_weighted_itoy  , math.floor(Nevents_data), "left" )
+            pval_right_weighted  [0] = p_value(hist_nevents_weighted_itoy  , math.ceil(Nevents_data) , "right")
+        else:
+            pval_left_unweighted [0] = p_value_analytic(Nevents_nuebar, math.floor(Nevents_data), "left")
+            pval_right_unweighted[0] = p_value_analytic(Nevents_nuebar, math.ceil(Nevents_data), "right")
+            pval_left_weighted   [0] = p_value_analytic(Nevents_nuebar, math.floor(Nevents_data), "left") # As the weights are all the same, the calculation is the same, so the weighted p-values are rather redundant
+            pval_right_weighted  [0] = p_value_analytic(Nevents_nuebar, math.ceil(Nevents_data), "right")
         tree_out.Fill()
         del hist_nevents_weighted_itoy
         del hist_nevents_unweighted_itoy
@@ -119,6 +128,15 @@ def p_value(distribution, data, tail):
         util.Die(-1)
     return pval/ntot
 
+def p_value_analytic(mean, data, tail):
+    if tail == "right":
+        return 1 - ROOT.Math.inc_gamma_c(data, mean)
+    elif tail == "left":
+        return ROOT.Math.inc_gamma_c(data + 1, mean)
+    else:
+        print "p_value: Unrecognised argument", tail, "exiting."
+        util.Die(-1)
+
 
 if __name__=="__main__":
     import optparse
@@ -129,6 +147,7 @@ if __name__=="__main__":
     parser.add_option('--nthrows', dest='nthrows', default=10000, type=int, help='Number of Poisson throws')
     parser.add_option('--itoy-start', dest='itoy_start', default=0, type=int, help='Start reading the input file at this toy number')
     parser.add_option('--outfilename', dest='tag', default="nuebarapp_deltachisq", help='Output file name')
+    parser.add_option('--analytic', dest='analytic', default=0, type=int, help='Analytically calculate the p-values instead of throwing many Poisson fluctuations')
 
 
     v = optparse.Values()
@@ -136,7 +155,7 @@ if __name__=="__main__":
 
     o, other = parser.parse_args()
 
-    main(o.infilename, o.infilename_data, o.ntoys, o.nthrows, o.tag, o.itoy_start)
+    main(o.infilename, o.infilename_data, o.ntoys, o.nthrows, o.tag, o.itoy_start, o.analytic)
 
     if other:
         print "Warning - ignored arguments: ",other
