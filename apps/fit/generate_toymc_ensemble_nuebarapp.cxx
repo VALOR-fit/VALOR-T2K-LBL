@@ -81,6 +81,7 @@ public:
   string   XMLExtraFile   () { return fXMLExtra; }
   int      XMLExtraId     () { return fXMLExtraId; }
   string ExtraPoints(int is) { return fExtra[is]; }
+  int 	   PrintLimit     () { return fPrintLimit; }  // Don't print info on each toy past itoy = fPrintLimit, as log files can quickly reach a combined size of > 100GB when generating many toys. Set to < 0 to print all toys
 private:
   int    fToySeed;
   bool   fSaveAsROOT;
@@ -88,16 +89,18 @@ private:
   bool   fSaveFluctInXML;
   string fXMLExtra;
   int    fXMLExtraId;
+  int    fPrintLimit;
   string fExtra[kns];
   
   void Init() {
     RunOpt::Init();
     fToySeed        = 0;
     fSaveAsROOT     = true;
-    fSaveAsXML      = true;
+    fSaveAsXML      = false;
     fSaveFluctInXML = true;
     fXMLExtra       = "";
     fXMLExtraId     = 0;
+    fPrintLimit     = 2;
     for(int is = 0; is < kns; is++)
       fExtra[is] = "";
   }
@@ -121,6 +124,8 @@ private:
       fXMLExtra = util::FormFilePath(fParser->ArgAsString("xml-file-to-add").c_str(), "data");
     if(fParser->OptionExists("xml-to-add-dataset-id"))
       fXMLExtraId = fParser->ArgAsInt("xml-to-add-dataset-id");
+    if(fParser->OptionExists("print-limit"))
+      fPrintLimit = fParser->ArgAsInt("print-limit");	    
     for(int is = 0; is < kns; is++) {
       SuperkSample_t s = conv::kSKSamples[is];
       if (s == conv::kSKsUndefined) continue;
@@ -514,7 +519,7 @@ int main(int argc, char ** argv)
   int weird_unphysical_tweak  = 0;
   
   for(int iexperiment = runopt->FirstExperiment(), last_experiment = runopt->LastExperiment(); iexperiment <= last_experiment; iexperiment++) {
-    cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl;
+    cout << "\n\n*** Pseudo-experiment = " << iexperiment << endl; 
     
     // Set Seeds
     // Because the seed is dependant on iexperiment, using the CountFailedToys option will cause the generated toys to
@@ -527,7 +532,9 @@ int main(int argc, char ** argv)
     }  
 
     // Generate mock data
-    cout << "- Generating toy-MC..." << endl;
+    if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {
+      cout << "- Generating toy-MC..." << endl;
+    }  
     SuperkObservation * skobs = new SuperkObservation();
     PhysHypothesis ph(runopt->Hypothesis());
     
@@ -543,17 +550,24 @@ int main(int argc, char ** argv)
       // Set the mass hierarchy
       util::SetMassHierarchy(skexp);
       
+      bool verbose_throws = false;
+      if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {
+	verbose_throws = true && runopt->VerboseSystThrows();
+      }
+
       // Update physics hypothesis with chosen value of oscillation parameters
-      util::OscParams::Instance()->UpdatePhysHypothesis(ph);
-      
-      util::PerformSysThrow(runopt->SystTweakMode(), skexp, runopt->VerboseSystThrows());
+      util::OscParams::Instance()->UpdatePhysHypothesis(ph, verbose_throws);
+     	      
+      util::PerformSysThrow(runopt->SystTweakMode(), skexp, verbose_throws);
       
       // Rethrow unphysical parameters
       PhysParamList true_nuisance_params = skexp->Tweaks();
       if (runopt->RethrowIfUnphysical()) {
         unphysical_tweak = !(valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(true_nuisance_params));
         if (unphysical_tweak) {
-          cout << "Parameters are unphysical - rethrowing" << std::endl;
+	  if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {
+	    cout << "Parameters are unphysical - rethrowing" << std::endl;
+	  }  
           weird_unphysical_tweak++;
           continue;
         }
@@ -563,7 +577,9 @@ int main(int argc, char ** argv)
       }
       
       applied_negevents_condition = skobs->CreateMockData(*skexp, ph, runopt->StatFluctuations());
-      cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+      if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {
+        cout << "applied_negevents_condition = " << applied_negevents_condition << endl;
+      }	      
       if(applied_negevents_condition)
         weird_applied_neg++;
       
@@ -638,7 +654,9 @@ int main(int argc, char ** argv)
             FillOscToyHisto(ph);
           }
         }
-        std::cout << "chisq = " << chisq << ", min chisq = " << scale_toys_based_on_samples_scale << ", prob = " << prob << std::endl;
+	if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {
+          std::cout << "chisq = " << chisq << ", min chisq = " << scale_toys_based_on_samples_scale << ", prob = " << prob << std::endl;
+	}	
         
         for (int is = 0 ; is < conv::kns ; is++) {
           SuperkSample_t s = conv::kSKSamples[is];
@@ -650,7 +668,9 @@ int main(int argc, char ** argv)
     
     // Fill toy histograms of osc params. Needs to be done after toy is chosen
     util::OscParams::Instance()->FillOscToyHisto(ph);
-    util::OscParams::Instance()->Print(cout);
+    if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {
+    	util::OscParams::Instance()->Print(cout);
+    }
     
     if(!runopt->DoToys()){
       for (int is = 0 ; is < conv::kns ; is++) {
@@ -658,11 +678,15 @@ int main(int argc, char ** argv)
         if (s == conv::kSKsUndefined || s == conv::kSKsRHCFCFV1RingELike) continue;
         
         if(runopt->Using_xml_file()){
-          cout << "Use xml file" << endl; // Only read 1st toy
+	  if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {
+            cout << "Use xml file" << endl; // Only read 1st toy
+	  }  
           skobs->ReadSample(xmlfile2.Data(),0,runopt->Using_xml_file(),s);
         }
         else{
-          cout << "Use root file" << endl; // Only read 1st toy
+	  if(iexperiment < runopt->PrintLimit() || runopt->PrintLimit() < 0) {	
+            cout << "Use root file" << endl; // Only read 1st toy
+	  }  
           skobs->ReadSample(rootfile2.Data(),0,runopt->Using_xml_file(),s);
         }
       }
