@@ -384,6 +384,7 @@ def plot_theta_spectrum(histos, data, outfile):
     canvas.SaveAs(outfile + ".png")
 
 def plot_ereco_theta_spectrum(histos, data, outfile):
+    data.SetMarkerSize(2)
     canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
     total = histos[components[0]].Clone()
     for component in components[1:]:
@@ -434,6 +435,30 @@ def plot_ereco_theta_spectrum(histos, data, outfile):
     canvas.SaveAs(outfile + ".pdf")
     canvas.SaveAs(outfile + ".eps")
     canvas.SaveAs(outfile + ".png")
+
+    for component in components:
+        canv = ROOT.TCanvas("canvas_"+component,"Spectra_"+component, 0, 0, 1000, 750)
+        hist = histos[component]
+        swapped = ROOT.TH2D("hErecoVsQ2_"+component,"hErecoVsQ2Tot_"+component, nEBins, array('d', eEdges), nThetaBins, array('d', thetaEdges))
+        for e in range(1, nEBins + 1):
+            for theta in range(1, nThetaBins + 1):
+                swapped.SetBinContent(e, theta, hist.GetBinContent(theta, e))
+        swapped.GetYaxis().SetTitle("#theta (degrees)")
+        swapped.GetXaxis().SetTitle("#nu Reconstructed Energy (GeV)")
+        swapped.GetZaxis().SetTitle("Number of Events")
+        swapped.GetYaxis().SetRangeUser(0,180)
+        swapped.GetXaxis().SetRangeUser(0,1.25)
+        swapped.Draw("COLZ")
+        canv.SetRightMargin(0.2)
+        if not data is None:
+            data.Draw("P0")
+
+        title.Draw("same");
+        #caveat.Draw("same");
+        canv.SaveAs(outfile + "_" + component + ".pdf")
+        canv.SaveAs(outfile + "_" + component +".eps")
+        canv.SaveAs(outfile + "_" + component +".png")
+
 
 def plot_data_ereco_theta_spectrum(histo, outfile):
     canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
