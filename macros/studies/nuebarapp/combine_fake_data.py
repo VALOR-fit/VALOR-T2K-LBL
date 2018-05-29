@@ -2,6 +2,7 @@
 
 import ROOT
 from copy import deepcopy
+import collections
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 env_var = "T2KOSCANA"
@@ -21,7 +22,15 @@ env     = valor.Env.Instance()
 rnd     = valor.Rnd.Instance()
 arridx  = util.ArrIdx.Instance()
 
-def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_spectra):
+def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_spectra, specify_individually, beta):
+    # If you need to manually specify file names (e.g. if they don't follow a pattern like file0.root, file1.root etc.),
+    # then write the file names in the 'filenames' list in the format filenames["name[beta].root"] = [first toy number, number of toys in file]
+    filenames = collections.OrderedDict()
+    filenames["../20k_reweighting/nuebar_app_toys_distribution_reweighting_2018-03-27_20000_toys_0_[beta]_0-combined.root"] = [0, 20000]
+    for i in range(0, 72):
+        filenames["toys_reweighting_2500_toys_0_[beta]_" + str(i) + "-" + str(i) + ".root"] = [i*2500, 2500]
+
+
     # Each file contains the following:
     #   10 TH2Ds per toy:
     #       mock_data_1Rmu_[itoy], exp_data_1Rmu_[itoy], mock_data_1Re_[itoy],exp_data_1Re_[itoy],
@@ -70,10 +79,16 @@ def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_
                     hists_ipar_names_accepted.append("hToyHisto_" + par + bar + "_" + mh + "_accepted")
 
     print "Initialise the array of osc par hists"
+    file0_name = ""
+    if specify_individually == 0:
+        file0_name = infile_pattern.replace("[x]", str(0))
+    else:
+        file0_name = filenames.keys()[0].replace("[beta]", str(beta))
+    file0 = ROOT.TFile(file0_name, "read")
+
     hists_ipar = {}
     for name in hists_ipar_names:
         # Open the first file to get the properties of the hist
-        file0_name = infile_pattern.replace("[x]", str(0))
         file0 = ROOT.TFile(file0_name, "read")
         file0_hist = file0.Get(name)
         if not file0_hist:
@@ -85,8 +100,6 @@ def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_
     if count_failed_toys == 1:
         for name in hists_ipar_names_accepted:
             # Open the first file to get the properties of the hist
-            file0_name = infile_pattern.replace("[x]", str(0))
-            file0 = ROOT.TFile(file0_name, "read")
             file0_hist = file0.Get(name)
             if not file0_hist:
                 print "Could not find a hist named", name, "in the input file", file0_name
@@ -95,8 +108,6 @@ def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_
 
     hist_chisq = 0
     hist_chisq_accepted = 0
-    file0_name = infile_pattern.replace("[x]", str(0))
-    file0 = ROOT.TFile(file0_name, "read")
     file0_hist = file0.Get("chisq_distribution")
     hist_chisq = deepcopy(file0_hist)
     if count_failed_toys == 1:
@@ -106,9 +117,16 @@ def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_
     outfile = ROOT.TFile(outfile_name, "recreate")
 
     print "Loop over each input file and combine all objects"
+    if specify_individually != 0:
+        nfiles = len(filenames)
+    ispectrum = 0
     for ifile in range(0,nfiles):
         print "Opening file", ifile
-        filename = infile_pattern.replace("[x]", str(ifile))
+        filename = ""
+        if specify_individually == 0:
+            filename = infile_pattern.replace("[x]", str(ifile))
+        else:
+            filename = filenames.keys()[ifile].replace("[beta]", str(beta))
         file = ROOT.TFile(filename, "read")
         if not file:
             print "Could not find the input file", filename
@@ -138,8 +156,15 @@ def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_
                     out_hist.Add(hist)
         # Add each spectrum hist and FitParamList to the output file
         if ignore_spectra == 0:
-            itoy_start = ifile*ntoys
-            itoy_end = itoy_start + ntoys   # Omit the -1 here because the range() function will give numbers up to itoy_end -1
+            itoy_start = 0
+            itoy_end = 0
+            if specify_individually == 0:
+                itoy_start = ifile*ntoys
+                itoy_end = itoy_start + ntoys   # Omit the -1 here because the range() function will give numbers up to itoy_end -1
+            else:
+                itoy_start = filenames.values()[ifile][0]
+                itoy_end = filenames.values()[ifile][0] + filenames.values()[ifile][1]
+
             for itoy in range(itoy_start, itoy_end):
                 if itoy % 1000 == 0 and not itoy == 0:
                     print "     toy #", itoy
@@ -150,11 +175,12 @@ def main(infile_pattern, nfiles, ntoys, outfile_name, count_failed_toys, ignore_
                     if not hist:
                         print "Could not find a hist named", hname, "in the input file", filename
                         util.Die(1)
-                    hist.Write(hname)
+                    hist.Write(name.replace("[itoy]", str(ispectrum)))  # Write with the name containing ispectrum instead of itoy, because multiple files could contain the same itoy values, but they must be unique when writing
                 # FitParamList
                 pname = "iparm_" + str(itoy)
                 fpl = file.Get(pname)
-                fpl.Write(pname)
+                fpl.Write("iparm_" + str(ispectrum))
+                ispectrum += 1
 
 
     hist_chisq.Write("chisq_distribution")
@@ -174,6 +200,8 @@ if __name__=="__main__":
     import optparse
     parser = optparse.OptionParser(usage="%prog [options]..", description="Combine many fake-data toy root files into one")
     parser.add_option('--infile-pattern', dest='infile_pattern', default="", help='The names of the input files with the run number replaced with \'[x]\'. e.g. if input files are called file0.root, file1.root etc. this input would be file[x].root')
+    parser.add_option('--specify-individually', dest='specify_individually', default=0, type=int, help='If the input files don\'t follow the sequential pattern required by --infile-pattern, set this flag to 1 and manually write the file names in the \'filenames\' list in combine_fake_data.py. With this option, --nfiles and --ntoys don\'t need to be specified')
+    parser.add_option('--beta', dest='beta', default=0, type=int, help='If --specify-individually is used, use this option to specify the beta value that the manually specified files correspond to')
     parser.add_option('--nfiles', dest='nfiles', default=1, type=int, help='The number of input files')
     parser.add_option('--ntoys', dest='ntoys', default=1, type=int, help='The number of toys per input file')
     parser.add_option('--outfile-name', dest='outfile_name', default="", help='Name of the combined output root file')
@@ -185,7 +213,7 @@ if __name__=="__main__":
 
     o, other = parser.parse_args()
 
-    main(o.infile_pattern, o.nfiles, o.ntoys, o.outfile_name, o.count_failed_toys, o.ignore_spectra)
+    main(o.infile_pattern, o.nfiles, o.ntoys, o.outfile_name, o.count_failed_toys, o.ignore_spectra, o.specify_individually, o.beta)
 
     if other:
         print "Warning - ignored arguments: ",other
