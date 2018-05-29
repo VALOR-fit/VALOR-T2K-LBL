@@ -26,6 +26,7 @@ ChangeLog:
 #include "valor/Conventions/Constants.h"
 #include "valor/FitCore/PhysHypothesis.h"
 #include "valor/Utilities/UtlXML.h"
+#include "valor/Messenger/Messenger.h"
 
 // Deprecated
 #include "valor/CmdLine/RunOpt_TO_DELETE.h"
@@ -59,13 +60,13 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
   }
   else if(tweak_systematics == 1) {
     // tweak all sources of systematic err (gaussian err)
-    cout << "- Randomizing all systematic params in pdf..." << endl;
+    LOG("UtlForMacros",pINFO) << "- Randomizing all systematic params in pdf...";
     skexp->TweakAllSystematics();
     // skexp->TweakSystematic("sk_energy_scale",0.0,true);
   }
   else if(tweak_systematics == 2) {
     // special tweak, increasing numu flux parameters <700MeV by 5%
-    cout << "- Increasing numu flux parameters <700MeV by 5% in pdf..." << endl;
+    LOG("UtlForMacros",pINFO) << "- Increasing numu flux parameters <700MeV by 5% in pdf...";
     TVectorD twkv(skexp->GetBANFF()->InitialValues());
     twkv[0] += 0.05;
     twkv[1] += 0.05;
@@ -74,16 +75,16 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
     skexp->GetBANFF()->Tweak(true,&twkv);
   }
   else if(tweak_systematics == 3) {
-    cout << "- Randomizing all but SK systematic params in pdf..." << endl;
+    LOG("UtlForMacros",pINFO) << "- Randomizing all but SK systematic params in pdf...";
     skexp->TweakAllBANFFSystematics();
     skexp->TweakAllUncorrelatedXSecSystematics();
   }
   else if(tweak_systematics == 4) {
-    cout << "- Setting xsec_norm_nc1piC to -0.5" << endl;
+    LOG("UtlForMacros",pINFO) << "- Setting xsec_norm_nc1piC to -0.5";
     skexp->TweakSystematic("xsec_norm_nc1piC",-0.5);
   }
   else if(tweak_systematics == 5) {
-    cout << "- Increasing flux parameters >1500MeV by 15% in pdf..." << endl;
+    LOG("UtlForMacros",pINFO) << "- Increasing flux parameters >1500MeV by 15% in pdf...";
     TVectorD twkv(skexp->GetBANFF()->InitialValues());
     twkv[6]  += 0.15;
     twkv[7]  += 0.15;
@@ -95,20 +96,20 @@ void valor::util::PerformSysThrow(unsigned int tweak_systematics, SuperkExpectat
     skexp->GetBANFF()->Tweak(true,&twkv);
   }
   else if(tweak_systematics == 6) {
-    cout << "- Randomizing all BANFF systematic params in pdf..." << endl;
+    LOG("UtlForMacros",pINFO) << "- Randomizing all BANFF systematic params in pdf...";
     skexp->TweakAllBANFFSystematics();
   }
   else if(tweak_systematics == 7) {
-    cout << "- Randomizing all uncorrelated cross section systematic params in pdf..." << endl;
+    LOG("UtlForMacros",pINFO) << "- Randomizing all uncorrelated cross section systematic params in pdf...";
     skexp->TweakAllUncorrelatedXSecSystematics();
   }
   else if(tweak_systematics == 8) {
-    cout << "- Randomizing all SK+FSI systematic params in pdf..." << endl;
+    LOG("UtlForMacros",pINFO) << "- Randomizing all SK+FSI systematic params in pdf...";
     skexp->TweakAllSKDetectorFSISystematics();
   }
   else {
-    cerr << "PerformSysThrow() tweak_systematics = " << tweak_systematics
-	 << " not implemented" << endl;
+    LOG("UtlForMacros",pFATAL) << "PerformSysThrow() tweak_systematics = " << tweak_systematics
+	 << " not implemented";
     exit(-1);
   }
   if(print)
