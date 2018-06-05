@@ -718,6 +718,14 @@ while($i_freepar1 < $n_freepar1) {
 
             if($resource eq "cedar")
             {
+#               if(($irun >= 63 && $irun <= 69) || ($irun >= 86 && $irun <= 99))
+#               {
+#               }
+#               else
+#               {
+#                  $irun++;
+#                  next;
+#               }
                open(Slurm, ">$job_dir/${tag}_${irun}_${i_freepar0}.slurm") or die("Can not create the Slurm batch script");
                print Slurm "#!/bin/bash \n";
                print Slurm "#SBATCH --account=def-tanaka-ac \n";
@@ -744,8 +752,12 @@ while($i_freepar1 < $n_freepar1) {
                print Slurm "      newdir=\"\$\{SLURM_TMPDIR\}/\$val\" \n";
                print Slurm "      newarray+=\"\$\{tokens[i]\} \" \n";
                print Slurm "      newarray+=\"\$newdir \" \n";
-               print Slurm "   fi \n";
-               print Slurm "   if [[ \$\{tokens[i]\} == \\-\\-* ]]; then \n";
+               print Slurm "   elif [ \"\$\{tokens[i]\}\" == \"--file-tag\" ]; then \n";
+               print Slurm "      newdir=\"\$\{SLURM_TMPDIR\}/\$\{tokens[i + 1]\}\" \n";
+               print Slurm "      out=\"\$newdir\" \n";
+               print Slurm "      newarray+=\"\$\{tokens[i]\} \" \n";
+               print Slurm "      newarray+=\"\$newdir \" \n";
+               print Slurm "   elif [[ \$\{tokens[i]\} == \\-\\-* ]]; then \n";
                print Slurm "      if [[ \$\{tokens[i + 1]\} == \\-\\-* ]]; then \n";
                print Slurm "         newarray+=\"\$\{tokens[i]\} \" \n";
                print Slurm "         newarray+=\"\\\"\\\" \" \n";
@@ -762,8 +774,10 @@ while($i_freepar1 < $n_freepar1) {
                print Slurm "cd $job_dir \n";
                print Slurm "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir\n";
                print Slurm "eval \"\$cmd\" \n";
+               print Slurm "cp \$out*.root . \n";
                close(Slurm);
                `sbatch $job_dir/${tag}_${irun}_${i_freepar0}.slurm`;
+               sleep(5);
             }
     
 	    $irun++;

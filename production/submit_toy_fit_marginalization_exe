@@ -533,6 +533,8 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    $npt_freepar1      = 21;#10            unless defined $npt_freepar1; # of free parameter points to scan
 
    $wqueue = "long";
+   $cedar_time = "03:00:00";
+   $cedar_mem = "3500M";
 }
 
 if(($freepar0 ne "") && ($freepar1 eq ""))
