@@ -15,11 +15,54 @@ def is_fit_1d(fit):
     else:
         return False
 
-def get_axis_histogram(valor_filename):
-    f = ROOT.TFile(valor_filename, "READ")
-    axis_histo = f.Get("dchisq_map_2D")
-    axis_histo.SetDirectory(0)
+def get_icecube_histo(filename):
+    f = ROOT.TFile(filename, "READ")
+    tree = f.Get("chi2_map")
+    dd = []
+    tt = []
+    for tuple in tree:
+        dm32 = tuple.dm32
+        th23 = tuple.sin2_theta23
+        chi2 = tuple.delta_chi2
+        dd.append(dm32)
+        tt.append(th23)
+    dd = list(set(dd))
+    tt = list(set(tt))
+    dm32_min = np.min(dd)
+    dm32_max = np.max(dd)
+    th23_min = np.min(tt)
+    th23_max = np.max(tt)
+    N_dm32 = len(dd)
+    N_th23 = len(tt)
+    dm32_step = (dm32_max - dm32_min) / (N_dm32 - 1)
+    th23_step = (th23_max - th23_min) / (N_th23 - 1)
+    dm32_min = dm32_min - dm32_step / 2
+    dm32_max = dm32_max + dm32_step / 2
+    th23_min = th23_min - th23_step / 2
+    th23_max = th23_max + th23_step / 2
+    chi2_hist = ROOT.TH2D("", "", N_th23, th23_min, th23_max, N_dm32, dm32_min, dm32_max)
+    chi2_hist.SetDirectory(0)
+
+    for tuple in tree:
+        it = chi2_hist.GetXaxis().FindBin(tuple.sin2_theta23)
+        id = chi2_hist.GetYaxis().FindBin(tuple.dm32)
+        chi2_hist.SetBinContent(it, id, tuple.delta_chi2)
+
     f.Close()
+    return chi2_hist
+
+def get_axis_histogram(filename):
+    f = ROOT.TFile(filename, "READ")
+    keys = [key.GetName() for key in f.GetListOfKeys()]
+    if "dchisq_map_2D" in keys:
+        # VALOR file
+        axis_histo = f.Get("dchisq_map_2D")
+        axis_histo.SetDirectory(0)
+        f.Close()
+    else:
+        # IceCube file
+        f.Close()
+        axis_histo = get_icecube_histo(filename)
     return axis_histo
 
 def get_axis_labels(fit, is_normal, mach3_present):
@@ -65,6 +108,22 @@ def get_common_axis_range(m_dchisq, p_dchisq, v_dchisq):
         if xaxis.GetXmax() < x_max:
             x_max = xaxis.GetXmax()
     return (x_min, x_max)
+
+# NOvA dmsq axis is in units of 10^(-3), adjust to match T2K units
+def rescale_nova_graph(g):
+    N = g.GetN()
+    xx = np.zeros(N)
+    yy = np.zeros(N)
+    for j in range(N):
+        x = np.zeros(1)
+        y = np.zeros(1)
+        g.GetPoint(j, x, y)
+        xx[j] = x
+        yy[j] = y * 10**(-3)
+    g_out = ROOT.TGraph(N, xx, yy)
+    g_out.SetLineColor(g.GetLineColor())
+    g_out.SetLineStyle(g.GetLineStyle())
+    return g_out
 
 def shift_dmsq_graph_1d(g):
     N = g.GetN()
@@ -160,6 +219,69 @@ def make_histo_local_minimum(histo):
         histo_out.SetBinContent(i, histo.GetBinContent(i) - minval)
     minval = histo_out.GetMinimum()
     return histo_out
+
+def get_icecube_contour(filename, is_normal):
+    """Retrieve the IceCube disappearance contour from file.
+
+    Keyword arguments:
+        filename -- The name of the file containing the contour
+    """
+    chi2_hist = get_icecube_histo(filename)
+    canvas = ROOT.TCanvas("temp_canvas", "temp_canvas", 1024, 768)
+    chi2_hist.SetContour(2, np.array([2.3, 4.61]))
+    chi2_hist.Draw("cont3same")
+    chi2_hist.Draw("CONT LIST same")
+    canvas.Update()
+    contours = ROOT.gROOT.GetListOfSpecials().FindObject("contours")
+    g68 = []
+    lst = contours.At(0)
+    next = ROOT.TIter(lst);
+    for g in next:
+        g.SetLineColor(ROOT.kBlue)
+        g.SetLineStyle(2)
+        g68.append(g.Clone())
+    g90 = []
+    lst = contours.At(1)
+    next = ROOT.TIter(lst);
+    for g in next:
+        g.SetLineColor(ROOT.kBlue)
+        g.SetLineStyle(1)
+        g90.append(g.Clone())
+    return (g68, g90)
+
+def get_nova_contour(filename, fit, is_normal):
+    """Retrieve the NOvA disappearance contour from file.
+
+    Keyword arguments:
+        filename -- The name of the file containing the contour
+    """
+    f = ROOT.TFile(filename, "READ")
+    if is_normal:
+        mh = "NH_"
+    else:
+        mh = "IH_"
+    i = 0
+    g68_contours = []
+    g = f.Get(mh + "1sigma")
+    g.SetLineColor(ROOT.kBlack)
+    g.SetLineWidth(1)
+    g.SetLineStyle(2)
+    g = rescale_nova_graph(g)
+    g68_contours.append(g)
+
+    g90_contours = []
+    g = f.Get(mh + "90percent")
+    g.SetLineColor(ROOT.kBlack)
+    g.SetLineWidth(1)
+    g.SetLineStyle(1)
+    g = rescale_nova_graph(g)
+    g90_contours.append(g)
+
+    ret_val = (g68_contours, g90_contours)
+
+    f.Close()
+    return ret_val
+
 
 def get_mach3_1d_contour(f, object_name):
     histo_in = f.Get(object_name)
@@ -319,7 +441,12 @@ def get_ptheta_contour(filename, fit, is_normal):
 
 def get_valor_2d_contours(dchisq):
     canvas = ROOT.TCanvas("temp_canvas", "temp_canvas", 1024, 768)
-    dchisq.SetContour(2, np.array([2.3, 4.61]))
+    empty = False
+    if dchisq.GetMinimum() > 2.3:
+        dchisq.SetContour(1, np.array([4.61]))
+        empty = True
+    else:
+        dchisq.SetContour(2, np.array([2.3, 4.61]))
     dchisq.Draw("cont3same")
     dchisq.Draw("CONT LIST same")
     canvas.Update()
@@ -329,18 +456,24 @@ def get_valor_2d_contours(dchisq):
     next = ROOT.TIter(lst);
     for g in next:
         g.SetLineColor(ROOT.kRed)
-        g.SetLineStyle(2)
+        if not empty:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
         g68.append(g.Clone())
-    lst = contours.At(1)
-    next = ROOT.TIter(lst);
     g90 = []
-    for g in next:
-        g.SetLineColor(ROOT.kRed)
-        g.SetLineStyle(1)
-        g90.append(g.Clone())
+    if dchisq.GetMinimum() <= 2.3:
+        lst = contours.At(1)
+        next = ROOT.TIter(lst);
+        for g in next:
+            g.SetLineColor(ROOT.kRed)
+            g.SetLineStyle(1)
+            g90.append(g.Clone())
+    else:
+        g90 = g68
     return (g68, g90)
 
-def get_valor_contour(filename, fit):
+def get_valor_contour(filename, fit, glob=False):
     """Retrieve the VALOR contour from file.
 
     Keyword arguments:
@@ -374,8 +507,33 @@ def get_valor_contour(filename, fit):
         ret_val = (dchisq, None, None)
     else:
         # 2D contour
-        dchisq = f.Get("dchisq_map_2D")
-        dchisq.SetDirectory(0)
+        dchisq = None
+        if glob:
+            if "_normal.root" in filename:
+                f2 = ROOT.TFile(filename.replace("_normal.root", "_inverted.root"), "READ")
+                chisq_nh = f.Get("chisq_map_2D")
+                chisq_ih = f2.Get("chisq_map_2D")
+                minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+                dchisq = chisq_nh.Clone("dchisq_map_2D")
+                dchisq.SetDirectory(0)
+                for i in range(1, dchisq.GetNbinsX() + 1):
+                    for j in range(1, dchisq.GetNbinsY() + 1):
+                        dchisq.SetBinContent(i, j, dchisq.GetBinContent(i, j) - minval)
+                f2.Close()
+            else:
+                f2 = ROOT.TFile(filename.replace("_inverted.root", "_normal.root"), "READ")
+                chisq_ih = f.Get("chisq_map_2D")
+                chisq_nh = f2.Get("chisq_map_2D")
+                minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+                dchisq = chisq_ih.Clone("dchisq_map_2D")
+                dchisq.SetDirectory(0)
+                for i in range(1, dchisq.GetNbinsX() + 1):
+                    for j in range(1, dchisq.GetNbinsY() + 1):
+                        dchisq.SetBinContent(i, j, dchisq.GetBinContent(i, j) - minval)
+                f2.Close()
+        else:
+            dchisq = f.Get("dchisq_map_2D")
+            dchisq.SetDirectory(0)
         g68_contours, g90_contours = get_valor_2d_contours(dchisq)
         bestfit = f.Get("best_fit_point_marker")
         bestfit.SetMarkerColor(ROOT.kRed)
@@ -408,7 +566,93 @@ def plot2d(g68, g90, bestfit, x_axis_label, y_axis_label, opt):
         opt = "same"
     for g in g90:
         g.Draw("same")
-    bestfit.Draw("same")
+    if not bestfit is None:
+        bestfit.Draw("same")
+
+def compare_external(fit, is_normal, valor_filename, nova_filename, icecube_filename, output_filename):
+    """Produce comparisons of the specified contours.
+    
+    Keyword arguments:
+        fit -- The type of fit
+        is_normal -- Normal hierarchy if True, inverted otherwise
+        valor_filename -- The name of the valor contour file
+        nova_filename -- The name of the NOvA contour file
+        output_filename -- The name of the PDF file to produce
+    """
+    max_chisq = -sys.float_info.max
+    num_fitters = 0
+    m_dchisq = p_dchisq = v_dchisq = None
+
+    # NOvA
+    n_g68, n_g90 = get_nova_contour(nova_filename, fit, is_normal)
+
+    # IceCube
+    i_g68, i_g90 = get_icecube_contour(icecube_filename, is_normal)
+
+    # VALOR
+    v_g68, v_g90, v_bestfit = get_valor_contour(valor_filename, fit, True)
+    if not is_normal:
+        v_g68, v_g90, v_bestfit = shift_dmsq_graph_2d(v_g68, v_g90, v_bestfit)
+
+    x_axis_label, y_axis_label = get_axis_labels(fit, is_normal, True)
+    opt = "l"
+
+    canvas = ROOT.TCanvas("canvas", "canvas", 1024, 768)
+    canvas.SetTopMargin(0.1)
+    canvas.SetLeftMargin(0.15)
+    canvas.SetBottomMargin(0.15)
+    canvas.SetRightMargin(0.2)
+    textsize = 0.05
+    lymin = 0.7
+    lymax = lymin + 3 * textsize
+    legend = ROOT.TLegend(0.82, lymin, 0.92, lymax)
+    legend.SetFillColor(0);
+    legend.SetLineColor(0);
+    legend.SetTextFont(132);
+    legend.SetTextSize(textsize);
+
+    axis_histo = get_axis_histogram(icecube_filename)
+    if not is_normal:
+        nx = axis_histo.GetNbinsX()
+        ny = axis_histo.GetNbinsY()
+        xmin = axis_histo.GetXaxis().GetXmin()
+        xmax = axis_histo.GetXaxis().GetXmax()
+        ymin = -(axis_histo.GetYaxis().GetXmax() + 7.53E-5)
+        ymax = -(axis_histo.GetYaxis().GetXmin() + 7.53E-5)
+        axis_histo = ROOT.TH2D("dummy", "", nx, xmin, xmax, ny, ymin, ymax)
+
+    format_plot(axis_histo)
+    axis_histo.GetXaxis().SetTitle(x_axis_label)
+    axis_histo.GetYaxis().SetTitle(y_axis_label)
+
+    axis_histo.Draw("axis")
+    # Plot IceCube
+    for g in i_g68:
+        g.SetLineWidth(2)
+    for g in i_g90:
+        g.SetLineWidth(2)
+    plot2d(i_g68, i_g90, None, x_axis_label, y_axis_label, opt)
+    legend.AddEntry(i_g90[0], "IceCube", "l")
+    opt = "same"
+    # Plot NOvA
+    for g in n_g68:
+        g.SetLineWidth(2)
+    for g in n_g90:
+        g.SetLineWidth(2)
+    plot2d(n_g68, n_g90, None, x_axis_label, y_axis_label, opt)
+    legend.AddEntry(n_g90[0], "NOvA", "l")
+    # Plot VALOR
+    for g in v_g68:
+        g.SetLineWidth(2)
+    for g in v_g90:
+        g.SetLineWidth(2)
+    plot2d(v_g68, v_g90, None, x_axis_label, y_axis_label, opt)
+    legend.AddEntry(v_g90[0], "T2K", "l")
+   
+    legend.Draw()
+
+    canvas.Print(output_filename)
+
 
 def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plot_fc, use_global_min, output_filename):
     """Produce comparisons of the specified contours.
@@ -582,6 +826,8 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--mach3", type=str, dest="mach3", help="MaCh3 file specified")
     parser.add_argument("-p", "--p-theta", type=str, dest="ptheta", help="p-theta file specified")
     parser.add_argument("-v", "--valor", type=str, dest="valor", help="VALOR file specified")
+    parser.add_argument("-f", "--nova", type=str, dest="nova", help="NOvA file specified")
+    parser.add_argument("-c", "--icecube", type=str, dest="icecube", help="IceCube file specified")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-n", "--normal", action="store_true", help="Normal hierarchy")
     group.add_argument("-i", "--inverted", action="store_true", help="Inverted hierarchy")
@@ -614,7 +860,10 @@ if __name__ == "__main__":
             fit = "app"
         else:
             fit = "disapp"
-        compare(fit, is_normal, args.mach3, args.ptheta, args.valor, args.fc, args.global_min, args.output)
+        if args.nova is None:
+            compare(fit, is_normal, args.mach3, args.ptheta, args.valor, args.fc, args.global_min, args.output)
+        else:
+            compare_external(fit, is_normal, args.valor, args.nova, args.icecube, args.output)
     else:
         print "Error: No contours specified. Countour files should be specified via"
         print "   -m mach3_file"

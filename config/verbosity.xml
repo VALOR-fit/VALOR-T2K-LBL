@@ -20,6 +20,6 @@
   <priority msgstream="UtlFitParamListFactory"> FATAL    </priority>
   <priority msgstream="UtlNumStat">             FATAL    </priority>
   <priority msgstream="NuXSec">                 FATAL    </priority>
-  <priority msgstream="UtlForMacros">           INFO    </priority>
+  <priority msgstream="UtlForMacros">           FATAL    </priority>
   
 </messenger_config>
