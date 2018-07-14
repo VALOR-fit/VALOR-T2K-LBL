@@ -4,7 +4,7 @@
 
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Data POT for analysis Run 1-9c
+  Data POT for analysis Run 1-9d
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   -->
 
@@ -34,44 +34,44 @@
     -->
       <tuned>
         <numu>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu  </objname>
            <objtype>    TH1D                  </objtype>
         </numu>
         <numubar>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub </objname>
            <objtype>    TH1D                  </objtype>
         </numubar>
         <nue>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue   </objname>
            <objtype>    TH1D                  </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb  </objname>
            <objtype>    TH1D                  </objtype>
         </nuebar>
       </tuned>
       <tuned_rhc>
         <numu>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu  </objname>
            <objtype>    TH1D                  </objtype>
         </numu>
         <numubar>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub </objname>
            <objtype>    TH1D                  </objtype>
         </numubar>
         <nue>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue   </objname>
            <objtype>    TH1D                  </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb  </objname>
            <objtype>    TH1D                  </objtype>
         </nuebar>
@@ -82,22 +82,22 @@
 
       <tuning_weights>
         <numu>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </numu>
         <numubar>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub_ratio  </objname>
            <objtype>    TH1D                         </objtype>
         </numubar>
         <nue>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue_ratio    </objname>
            <objtype>    TH1D                         </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2018/flux/tuned13av2/run1-9a/sk_tuned13av2_13anom_run1-9a_numode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </nuebar>
@@ -105,22 +105,22 @@
 
       <tuning_weights_rhc>
         <numu>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numu_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </numu>
         <numubar>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_numub_ratio  </objname>
            <objtype>    TH1D                         </objtype>
         </numubar>
         <nue>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nue_ratio    </objname>
            <objtype>    TH1D                         </objtype>
         </nue>
         <nuebar>
-           <filename>   official/2018/flux/tuned13av2/run5c-9c/sk_tuned13av2_13anom_run5c-9c_antinumode_fine.root </filename>
+           <filename>   official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
            <objname>    enu_sk_tuned13a_nueb_ratio   </objname>
            <objtype>    TH1D                         </objtype>
         </nuebar>
@@ -139,33 +139,33 @@
       <nominal>
         <numu>
           <pot_fhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumu  </objname>
             <objtype>    TH1D              </objtype>
           </pot_fhc>
           <one_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </one_mu_ring>
           <one_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </one_e_ring>
 
           <pot_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumu  </objname>
             <objtype>    TH1D              </objtype>
           </pot_rhc>
           <one_mu_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </one_e_ring_rhc>
@@ -174,17 +174,17 @@
           <!-- 2016_02_06/mtuples_nuecc1pi_withweights 
                2016_02_06/nue_CC1pi/  -->
           <pot_fhc_cc1pi>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnumu  </objname>
             <objtype>    TH1D              </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tnumu   </objname>
             <objtype>    TTree   </objtype>
           </multi_e_ring>
@@ -192,50 +192,50 @@
 
         <numubar>
           <pot_fhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumubar  </objname>
             <objtype>    TH1D                 </objtype>
           </pot_fhc>
           <one_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </one_mu_ring>
           <one_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </one_e_ring>
 
           <pot_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnumubar  </objname>
             <objtype>    TH1D                 </objtype>
           </pot_rhc>
           <one_mu_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </one_e_ring_rhc>
 
           <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnumubar  </objname>
             <objtype>    TH1D                 </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tnumubar   </objname>
             <objtype>    TTree      </objtype>
           </multi_e_ring>
@@ -243,50 +243,50 @@
 
         <nue>
           <pot_fhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnue  </objname>
             <objtype>    TH1D             </objtype>
           </pot_fhc>
           <one_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </one_mu_ring>
           <one_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </one_e_ring>
 
           <pot_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnue  </objname>
             <objtype>    TH1D             </objtype>
           </pot_rhc>
           <one_mu_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnue  </objname>
             <objtype>    TH1D             </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tnue   </objname>
             <objtype>    TTree  </objtype>
           </multi_e_ring>
@@ -294,50 +294,50 @@
 
         <nuebar>
           <pot_fhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnuebar  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc>
           <one_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </one_mu_ring>
           <one_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </one_e_ring>
 
           <pot_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tnuebar  </objname>
             <objtype>    TH1D                </objtype>
           </pot_rhc>
           <one_mu_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </one_e_ring_rhc>
 
           <!-- Input FHC POT and FHC 1Re and 1Rmu to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tnuebar  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tnuebar   </objname>
             <objtype>    TTree     </objtype>
           </multi_e_ring>
@@ -345,50 +345,50 @@
 
         <signal_nue>
           <pot_fhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignue  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc>
           <one_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </one_mu_ring>
           <one_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </one_e_ring>
 
           <pot_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignue  </objname>
             <objtype>    TH1D                </objtype>
           </pot_rhc>
           <one_mu_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </one_e_ring_rhc>
 
           <!-- Input FHC POT to MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tsignue  </objname>
             <objtype>    TH1D                </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tsignue   </objname>
             <objtype>    TTree     </objtype>
           </multi_e_ring>
@@ -396,50 +396,50 @@
 
         <signal_nuebar>
           <pot_fhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignuebar  </objname>
             <objtype>    TH1D                   </objtype>
           </pot_fhc>
           <one_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.numuselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </one_mu_ring>
           <one_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </one_e_ring>
 
           <pot_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root </filename>
             <objname>    h_stat_snt_tsignuebar  </objname>
             <objtype>    TH1D                   </objtype>
           </pot_rhc>
           <one_mu_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.numuselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </one_mu_ring_rhc>
           <one_e_ring_rhc>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </one_e_ring_rhc>
 
           <!-- Input FHC POT MultiRing -->
           <pot_fhc_cc1pi>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    h_stat_snt_tsignuebar  </objname>
             <objtype>    TH1D                   </objtype>
           </pot_fhc_cc1pi>
           <multi_mu_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </multi_mu_ring>
           <multi_e_ring>
-            <filename>   official/2018/superk/mc/mtuples_v1/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
+            <filename>   official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root  </filename>
             <objname>    tsignuebar   </objname>
             <objtype>    TTree        </objtype>
           </multi_e_ring>

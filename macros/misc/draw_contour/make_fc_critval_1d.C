@@ -26,9 +26,16 @@ const double CLfrac_3sigma = 0.9973;  // 3sigma% CL
 void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
 
   cout << "Making the F&C Critical Values" << endl;
-  
+
+  /*
+  // Standard deltacp setup
   const int Nmh = 2;
   const int NFCpts = 8; // # of points of Feldman-Cousins
+  */
+  // T2K/NOvA mixing23 setup
+  const int Nmh = 1;
+  const int NFCpts = 2;
+
   bool fixed_hierarchy = 0;
   
    // RUN 1-8
@@ -77,6 +84,8 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   
    cout << "Reading file names with F&C Fits" << endl;
   
+   /*
+   // Standard deltacp setup
    const char * infilename_fc[NFCpts][Nmh] = {
       {"fc_deltacp_mpi_normal_merged.root", "fc_deltacp_mpi_inverted_merged.root"},
       {"fc_deltacp_m3pi4_normal_merged.root", "fc_deltacp_m3pi4_inverted_merged.root"},
@@ -92,7 +101,17 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    double copypt[nptcpy][2] = {
       { -TMath::Pi(), TMath::Pi() } // copy crit val of -TMath::Pi() in TMath::Pi()
    };
-  
+   */
+
+   // T2K/NOvA mixing23 setup
+   const char * infilename_fc[NFCpts][Nmh] = {
+      {"fc_mixing23_t2k_nh.root"},
+      {"fc_mixing23_nova_nh.root"},
+  };
+
+   const int nptcpy = 0;
+   double** copypt = 0;
+
    TGraph *gFC90CL_nh = new TGraph();
    gFC90CL_nh->SetName("gFC90CL_nh");
    gFC90CL_nh->SetTitle("gFC90CL_nh");
