@@ -16,13 +16,29 @@ def check(mc_filename):
     print "Entries", N, "E", tree.pnu[0], "Flx weight", tree.wgtflx, "BeRPA", tree.wgtBeRPA_nom, "fqmome", tree.fqmome
     mc_file.Close()
 
+#def get_flux_weight_histogram(flux_filename, mc_filename):
+#    if "nueselec" in mc_filename or "cc1piselec" in mc_filename:
+#        selection = "nue"
+#    else:
+#        selection = "numu"
+#    if "m250ka" in mc_filename:
+#        selection = selection + "b"
+#    flux_file = ROOT.TFile(flux_filename, "READ")
+#    flux_obj = flux_file.Get("enu_sk_tuned13a_" + selection + "_ratio")
+#    flux_obj.SetDirectory(0)
+#    flux_file.Close()
+#    return flux_obj
+
 def get_flux_weight_histogram(flux_filename, mc_filename):
-    if "nueselec" in mc_filename or "cc1piselec" in mc_filename:
+    if "nuebar_x" in mc_filename:
+        selection = "nueb"
+    elif "nue_x" in mc_filename:
         selection = "nue"
-    else:
+    elif "numubar_x" in mc_filename:
+        selection = "numub"
+    else: # "numu_x"
         selection = "numu"
-    if "m250ka" in mc_filename:
-        selection = selection + "b"
+    print flux_filename, mc_filename, "=>", "enu_sk_tuned13a_" + selection + "_ratio"
     flux_file = ROOT.TFile(flux_filename, "READ")
     flux_obj = flux_file.Get("enu_sk_tuned13a_" + selection + "_ratio")
     flux_obj.SetDirectory(0)
