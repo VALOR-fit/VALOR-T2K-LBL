@@ -100,16 +100,65 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   cout << "Best fit values: " << endl;
   cout << "x: " << xmin << endl;
   cout << "y: " << ymin << endl;
-  
+ 
+  double scale = 30.0;
   for(int i = 1;i<((h2->GetNbinsX() +1));i++)
   {
     for(int j = 1;j<(h2->GetNbinsY()+1);j++)
     {
-      hlike->SetBinContent(i,j,TMath::Exp(30-h2->GetBinContent(i,j)/2));
+      hlike->SetBinContent(i,j,TMath::Exp(scale - h2->GetBinContent(i,j)/2));
     }
   }
   double max = hlike->GetMaximum();
   cout << "Max likelihood value " << max << endl;
+
+  // Get 1D projections of 2D likelihood surface
+  int nbins_x = hlike->GetNbinsX();
+  int nbins_y = hlike->GetNbinsY();
+  TH1D* hproj_x = new TH1D("hchisq_x", "hchisq_x", nbins_x,
+        hlike->GetXaxis()->GetBinLowEdge(1),
+        hlike->GetXaxis()->GetBinUpEdge(nbins_x));
+  hproj_x->SetDirectory(0);
+
+  for(int i = 1; i <= hlike->GetNbinsX(); i++)
+  {
+    double Lavg = 0.0;
+    for(int j = 1; j <= hlike->GetNbinsY(); j++)
+    {
+      Lavg += hlike->GetBinContent(i,j);
+    }
+    Lavg /= nbins_y;
+    hproj_x->SetBinContent(i, 2 * scale - 2 * TMath::Log(Lavg));
+  }
+  double chisq_min_x = hproj_x->GetMinimum();
+  TH1D* hproj_x_delta = hproj_x->Clone("hdchisq_x");
+  hproj_x_delta->SetDirectory(0);
+  for(int i = 1; i <= hproj_x->GetNbinsX(); i++)
+  {
+     hproj_x_delta->SetBinContent(i, hproj_x_delta->GetBinContent(i) - chisq_min_x);
+  }
+
+  TH1D* hproj_y = new TH1D("hchisq_y", "hchisq_y", nbins_y,
+        hlike->GetYaxis()->GetBinLowEdge(1),
+        hlike->GetYaxis()->GetBinUpEdge(nbins_y));
+  hproj_y->SetDirectory(0);
+  for(int i = 1; i <= hlike->GetNbinsY(); i++)
+  {
+    double Lavg = 0.0;
+    for(int j = 1; j <= hlike->GetNbinsX(); j++)
+    {
+      Lavg += hlike->GetBinContent(j, i);
+    }
+    Lavg /= nbins_x;
+    hproj_y->SetBinContent(i, 2 * scale - 2 * TMath::Log(Lavg));
+  }
+  double chisq_min_y = hproj_y->GetMinimum();
+  TH1D* hproj_y_delta = hproj_y->Clone("hdchisq_y");
+  hproj_y_delta->SetDirectory(0);
+  for(int i = 1; i <= hproj_y->GetNbinsX(); i++)
+  {
+     hproj_y_delta->SetBinContent(i, hproj_y_delta->GetBinContent(i) - chisq_min_y);
+  }
   for(int i = 1;i<((h2->GetNbinsX() +1));i++)
   {
     for(int j = 1;j<(h2->GetNbinsY()+1);j++)
@@ -177,8 +226,16 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   hdchisq->Write("dchisq_map_2D");
   hlike->Write("likelihood_2D");
   bf->Write("best_fit_point_marker");
+  hproj_x->Write("hchisq_x");
+  hproj_y->Write("hchisq_y");
+  hproj_x_delta->Write("hdchisq_x");
+  hproj_y_delta->Write("hdchisq_y");
   f2->Close();
   
+  delete hproj_x;
+  delete hproj_y;
+  delete hproj_x_delta;
+  delete hproj_y_delta;
 }
 
 
