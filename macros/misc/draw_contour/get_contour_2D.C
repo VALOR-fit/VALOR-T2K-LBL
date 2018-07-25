@@ -101,7 +101,7 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   cout << "x: " << xmin << endl;
   cout << "y: " << ymin << endl;
  
-  double scale = 30.0;
+  double scale = 0.0; // 30
   for(int i = 1;i<((h2->GetNbinsX() +1));i++)
   {
     for(int j = 1;j<(h2->GetNbinsY()+1);j++)
@@ -109,7 +109,7 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
       hlike->SetBinContent(i,j,TMath::Exp(scale - h2->GetBinContent(i,j)/2));
     }
   }
-  double max = hlike->GetMaximum();
+  double max = hlike->Integral();
   cout << "Max likelihood value " << max << endl;
 
   // Get 1D projections of 2D likelihood surface

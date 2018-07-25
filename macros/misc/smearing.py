@@ -311,6 +311,50 @@ def make_delta_chisq(input):
             output.SetBinContent(i, j, input.GetBinContent(i, j) - minval)
     return output
 
+def make_projection_x(input):
+    nbins_x = input.GetNbinsX()
+    nbins_y = input.GetNbinsY()
+    xaxis = input.GetXaxis()
+    yaxis = input.GetYaxis()
+    hchisq = ROOT.TH1D("hchisq_x", "hchisq_x", nbins_x, xaxis.GetBinLowEdge(1), xaxis.GetBinUpEdge(nbins_x))
+    hchisq.SetDirectory(0);
+
+    for i in range(1, nbins_x + 1):
+        Lavg = 0.0
+        for j in range(1 , nbins_y + 1):
+            Lavg += input.GetBinContent(i, j)
+        Lavg /= nbins_y
+        hchisq.SetBinContent(i, -2 * ROOT.TMath.Log(Lavg))
+
+    chisq_min = hchisq.GetMinimum()
+    hdchisq = hchisq.Clone("hdchisq_x")
+    hdchisq.SetDirectory(0);
+    for i in range(1, nbins_x + 1):
+        hdchisq.SetBinContent(i, hdchisq.GetBinContent(i) - chisq_min)
+    return hchisq, hdchisq
+
+def make_projection_y(input):
+    nbins_x = input.GetNbinsX()
+    nbins_y = input.GetNbinsY()
+    xaxis = input.GetXaxis()
+    yaxis = input.GetYaxis()
+    hchisq = ROOT.TH1D("hchisq_y", "hchisq_y", nbins_y, yaxis.GetBinLowEdge(1), yaxis.GetBinUpEdge(nbins_y))
+    hchisq.SetDirectory(0);
+
+    for i in range(1, nbins_y + 1):
+        Lavg = 0.0
+        for j in range(1 , nbins_x + 1):
+            Lavg += input.GetBinContent(j, i)
+        Lavg /= nbins_x
+        hchisq.SetBinContent(i, -2 * ROOT.TMath.Log(Lavg))
+
+    chisq_min = hchisq.GetMinimum()
+    hdchisq = hchisq.Clone("hdchisq_y")
+    hdchisq.SetDirectory(0);
+    for i in range(1, nbins_y + 1):
+        hdchisq.SetBinContent(i, hdchisq.GetBinContent(i) - chisq_min)
+    return hchisq, hdchisq
+
 def chisq_to_likelihood_1d(input):
     output = input.Clone()
     output.SetDirectory(0)
@@ -454,15 +498,32 @@ def process_2d(original, root_filename, pdf_filename, error):
     binx = ROOT.Long(0)
     biny = ROOT.Long(0)
     dummy = ROOT.Long(0)
-    chisq_histogram.GetBinXYZ(minbin, binx, biny, dummy);
+    chisq_histogram.GetBinXYZ(minbin, binx, biny, dummy)
   
-    xmin = chisq_histogram.GetXaxis().GetBinCenter(binx);
-    ymin = chisq_histogram.GetYaxis().GetBinCenter(biny);
+    xmin = chisq_histogram.GetXaxis().GetBinCenter(binx)
+    ymin = chisq_histogram.GetYaxis().GetBinCenter(biny)
 
-    marker = ROOT.TMarker(xmin, ymin, ROOT.kFullStar);
+    marker = ROOT.TMarker(xmin, ymin, ROOT.kFullStar)
     marker.SetMarkerColor(ROOT.kBlack);
     marker.SetMarkerSize(1.5);
     marker.Write("best_fit_point_marker")
+
+    # Get the 1D projections
+    chisq_x_histogram, dchisq_x_histogram = make_projection_x(smeared_histogram)
+    chisq_x_histogram.GetXaxis().SetTitle(xaxis_label)
+    chisq_x_histogram.GetYaxis().SetTitle("#chi^{2}")
+    dchisq_x_histogram.GetXaxis().SetTitle(xaxis_label)
+    dchisq_x_histogram.GetYaxis().SetTitle("#Delta#chi^{2}")
+    chisq_x_histogram.Write("hchisq_x")
+    dchisq_x_histogram.Write("hdchisq_x")
+
+    chisq_y_histogram, dchisq_y_histogram = make_projection_y(smeared_histogram)
+    chisq_y_histogram.GetXaxis().SetTitle(yaxis_label)
+    chisq_y_histogram.GetYaxis().SetTitle("#chi^{2}")
+    dchisq_y_histogram.GetXaxis().SetTitle(yaxis_label)
+    dchisq_y_histogram.GetYaxis().SetTitle("#Delta#chi^{2}")
+    chisq_y_histogram.Write("hchisq_y")
+    dchisq_y_histogram.Write("hdchisq_y")
 
     chisq_histogram.Draw("CONT LIST")
     canvas.Update()
