@@ -395,7 +395,7 @@ def print_histo(input):
             print "%.4f" % input.GetBinContent(i, j),
         print ""
 
-def process_2d(original, root_filename, pdf_filename):
+def process_2d(original, root_filename, pdf_filename, error):
     NXbins = original.GetNbinsX()
     xaxis = original.GetXaxis()
     x_low = xaxis.GetBinLowEdge(1)
@@ -418,7 +418,7 @@ def process_2d(original, root_filename, pdf_filename):
     likelihood_histogram.Draw("COLZ")
     canvas.Print(pdf_filename)
 
-    smeared_histogram = smear(likelihood_histogram)
+    smeared_histogram = smear(likelihood_histogram, error)
     smeared_histogram.GetXaxis().SetTitle("sin^{2}#theta_{23}")
     if "nh" in root_filename or "normal" in root_filename:
         smeared_histogram.GetYaxis().SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})")
@@ -496,7 +496,7 @@ def process_2d(original, root_filename, pdf_filename):
     canvas.Print(pdf_filename + "]")
     root_out_file.Close()
 
-def process_1d(original, root_filename, pdf_filename):
+def process_1d(original, root_filename, pdf_filename, error):
     NXbins = original.GetNbinsX()
     xaxis = original.GetXaxis()
     x_low = xaxis.GetBinLowEdge(1)
@@ -515,7 +515,7 @@ def process_1d(original, root_filename, pdf_filename):
     copy_nparray_to_histo_1d(resampled_array, resampled_histogram)
     likelihood_histogram = chisq_to_likelihood_1d(resampled_histogram)
 
-    smeared_histogram = smear_1d(likelihood_histogram)
+    smeared_histogram = smear_1d(likelihood_histogram, error)
 
     chisq_histogram = likelihood_to_chisq_1d(smeared_histogram)
     chisqmin = chisq_histogram.GetMinimum()
@@ -547,6 +547,7 @@ if __name__=="__main__":
     parser.add_argument("-f", "--filename", dest="in_filename", default="", help="Input contour file.")
     parser.add_argument("-o", "--output-filename", dest="out_filename", default="", help="Output contour file.")
     parser.add_argument("-r", "--root-filename", dest="root_filename", default="", help="Output root file.")
+    parser.add_argument("-e", "--error", dest="error", type=float, help="Smearing error to apply.")
     args = parser.parse_args()
     canvas = ROOT.TCanvas("c", "c", 700, 500)
     canvas.SetLeftMargin(0.125)
@@ -557,10 +558,10 @@ if __name__=="__main__":
     in_file = ROOT.TFile(args.in_filename, "READ")
     if in_file.GetListOfKeys().Contains("chisq_map_2D"):
         original = in_file.Get("chisq_map_2D")
-        process_2d(original, args.root_filename, args.out_filename)
+        process_2d(original, args.root_filename, args.out_filename, args.error)
     else:
         original = in_file.Get("h_chisq")
-        process_1d(original, args.root_filename, args.out_filename)
+        process_1d(original, args.root_filename, args.out_filename, args.error)
 
     in_file.Close()
 
