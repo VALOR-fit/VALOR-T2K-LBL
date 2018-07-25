@@ -119,6 +119,8 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
         hlike->GetXaxis()->GetBinLowEdge(1),
         hlike->GetXaxis()->GetBinUpEdge(nbins_x));
   hproj_x->SetDirectory(0);
+  hproj_x->GetXaxis()->SetTitle(hlike->GetXaxis()->GetTitle());
+  hproj_x->GetYaxis()->SetTitle("#chi^{2}");
 
   for(int i = 1; i <= hlike->GetNbinsX(); i++)
   {
@@ -133,6 +135,7 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   double chisq_min_x = hproj_x->GetMinimum();
   TH1D* hproj_x_delta = hproj_x->Clone("hdchisq_x");
   hproj_x_delta->SetDirectory(0);
+  hproj_x_delta->GetYaxis()->SetTitle("#Delta#chi^{2}");
   for(int i = 1; i <= hproj_x->GetNbinsX(); i++)
   {
      hproj_x_delta->SetBinContent(i, hproj_x_delta->GetBinContent(i) - chisq_min_x);
@@ -142,6 +145,8 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
         hlike->GetYaxis()->GetBinLowEdge(1),
         hlike->GetYaxis()->GetBinUpEdge(nbins_y));
   hproj_y->SetDirectory(0);
+  hproj_y->GetXaxis()->SetTitle(hlike->GetYaxis()->GetTitle());
+  hproj_y->GetYaxis()->SetTitle("#chi^{2}");
   for(int i = 1; i <= hlike->GetNbinsY(); i++)
   {
     double Lavg = 0.0;
@@ -155,6 +160,7 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   double chisq_min_y = hproj_y->GetMinimum();
   TH1D* hproj_y_delta = hproj_y->Clone("hdchisq_y");
   hproj_y_delta->SetDirectory(0);
+  hproj_y_delta->GetYaxis()->SetTitle("#Delta#chi^{2}");
   for(int i = 1; i <= hproj_y->GetNbinsX(); i++)
   {
      hproj_y_delta->SetBinContent(i, hproj_y_delta->GetBinContent(i) - chisq_min_y);
