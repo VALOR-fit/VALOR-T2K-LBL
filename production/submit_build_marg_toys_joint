@@ -312,7 +312,20 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
 # # 2D fit - sinsqth23 Vs dmsq23
 if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))
 {
-   $nexpts_marg = 10000;
+   if($use_reactors == 1)
+   {
+      $nexpts_marg = 10000;
+      $wqueue      = "long -R rusage[mem=3072,swap=3072,tmp=1000]";
+      $cedar_time  = "10:00:00";
+      $cedar_mem   = "3000M";
+   }
+   else
+   {
+      $nexpts_marg = 20000;
+      $wqueue      = "xlong -W 20:00 -R rusage[mem=5072,swap=5072,tmp=1000]";
+      $cedar_time  = "20:00:00";
+      $cedar_mem   = "5000M";
+   }
    if($freepar0 eq "dmsq23")
    {
       $freepar0 = "mixing23";
@@ -328,9 +341,6 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $masshierarchy    = "normal"   unless defined $masshierarchy;
    $step_freepar0    = 3          unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1    = 2          unless defined $step_freepar1;   # of points for each job param1
-   $wqueue           = "long -R rusage[mem=3072,swap=3072,tmp=1000]";
-   $cedar_time       = "10:00:00";
-   $cedar_mem        = "3000M";
 
    $tag = "${tag}_${freepar0}_${freepar1}";
 }
