@@ -56,7 +56,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inver
         g_3sigma_p1.Draw("SAME")
         g_3sigma_m1.Draw("SAME")
         legend.AddEntry(g_3sigma_p1, "~FC 3#sigma region", "l")
-    elif "mix" in pdf_filename:
+    else:
         critval = 9
         critical = ROOT.TLine(-np.pi, critval, np.pi, critval)
         critical.SetLineColor(ROOT.kBlack)

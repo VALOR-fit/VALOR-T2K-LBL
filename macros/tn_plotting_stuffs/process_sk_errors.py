@@ -115,7 +115,7 @@ def CreateEnvelope(N, outfile, filename1, filename2=None):
 
     tx = nominal.GetXaxis().GetBinLowEdge(nominal.GetXaxis().GetLast()) * 0.5
     ty = nominal.GetMaximum() * 1.01
-    title = ROOT.TLatex(tx, ty,"T2K Run1-8 Preliminary");
+    title = ROOT.TLatex(tx, ty,"T2K Run 1-9c Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
 
@@ -216,7 +216,7 @@ def CreateFractionalError(N, outfile, filename1, filename2=None):
 
     tx = upper.GetXaxis().GetBinLowEdge(upper.GetXaxis().GetLast()) * 0.5
     ty = upper.GetMaximum() * 1.01
-    title = ROOT.TLatex(tx, ty,"T2K Run1-9c Preliminary");
+    title = ROOT.TLatex(tx, ty,"T2K Run 1-9c Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
 

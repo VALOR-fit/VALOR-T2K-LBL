@@ -58,6 +58,17 @@ void bievent_plot
    int b = ReadI(xml,doc,"plot_data/display_errors/second_param");
    int c = ReadI(xml,doc,"plot_data/display_errors/third_param");
 
+   for(int idcp = 0; idcp < dcp_npt; ++idcp)
+   {
+      for(int iss23 = 0; iss23 < N23; ++iss23)
+      {
+         for(int imh = 0; imh < NMH; ++imh)
+         {
+            display_errors[idcp][iss23][imh] = false;
+         }
+      }
+   }
+
    display_errors[a][b][c] = ReadB(xml,doc,"plot_data/display_errors/bool_value");// Systematics at dcp = -pi/2, ss23 = 0.5, NH
 
    double deltaCP_first = -TMath::Pi();
@@ -98,7 +109,7 @@ void bievent_plot
       gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
    }
 
-   TFile* file = new TFile("ellipse_Run1_9c_1.root");
+   TFile* file = new TFile("events.root");
    double Nfhc = ReadD(xml,doc,"plot_data/Nfhc");
    double Nrhc = ReadD(xml,doc,"plot_data/Nrhc");
 
@@ -114,9 +125,17 @@ void bievent_plot
             hEventsSyst[idcp][iss23][imh] = static_cast<TH2D*>(file->Get(Form("hEventsSyst_%d_%d_%d", idcp, iss23, imh)));
             hFHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_fhc_%d_%d_%d", idcp, iss23, imh)));
             hRHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_rhc_%d_%d_%d", idcp, iss23, imh)));
-            Nfhc = hEvents[idcp][iss23][imh]->GetMean(1);
-            Nrhc = hEvents[idcp][iss23][imh]->GetMean(2);
-            //cout << idcp << " " << iss23 << " " << imh << " => " << Nfhc << " " << Nrhc << endl;
+            Nfhc = hEventsSyst[idcp][iss23][imh]->GetMean(1);
+            Nrhc = hEventsSyst[idcp][iss23][imh]->GetMean(2);
+            cout << "Syst" << endl;
+            cout << idcp << " " << iss23 << " " << imh << " => " <<
+               Nfhc << "(" << hEventsSyst[idcp][iss23][imh]->GetRMS(1) << ") " <<
+               Nrhc << "(" << hEventsSyst[idcp][iss23][imh]->GetRMS(2) << ") " << endl;
+            cout << "Stat+Syst" << endl;
+            cout << idcp << " " << iss23 << " " << imh << " => " <<
+               hEvents[idcp][iss23][imh]->GetMean(1) << "(" << hEvents[idcp][iss23][imh]->GetRMS(1) << ") " <<
+               hEvents[idcp][iss23][imh]->GetMean(2) << "(" << hEvents[idcp][iss23][imh]->GetRMS(2) << ") " << endl;
+
             gN_events[iss23][imh].SetPoint(gN_events[iss23][imh].GetN(), Nfhc, Nrhc);
 
             if(fabs(dcp - (-TMath::Pi() / 2.)) < 1.E-4 ) 
@@ -226,6 +245,25 @@ void bievent_plot
                hEventsSyst[idcp][iss23][imh]->SetLineColor(kBlue);
                hEventsSyst[idcp][iss23][imh]->SetLineStyle(3);
                hEventsSyst[idcp][iss23][imh]->Draw("cont3 same");
+
+               TEllipse eventsEllipse(hEvents[idcp][iss23][imh]->GetMean(1),
+                     hEvents[idcp][iss23][imh]->GetMean(2),
+                     hEvents[idcp][iss23][imh]->GetRMS(1),
+                     hEvents[idcp][iss23][imh]->GetRMS(2));
+               eventsEllipse.SetLineStyle(2);
+               eventsEllipse.SetLineColor(kRed);
+               eventsEllipse.SetFillStyle(0);
+               eventsEllipse.Draw("same");
+
+               TEllipse eventsSystEllipse(hEventsSyst[idcp][iss23][imh]->GetMean(1),
+                     hEventsSyst[idcp][iss23][imh]->GetMean(2),
+                     hEventsSyst[idcp][iss23][imh]->GetRMS(1),
+                     hEventsSyst[idcp][iss23][imh]->GetRMS(2));
+               eventsSystEllipse.SetLineStyle(2);
+               eventsSystEllipse.SetLineColor(kBlue);
+               eventsSystEllipse.SetFillStyle(0);
+               eventsSystEllipse.Draw("same");
+
             }
          }
       }
@@ -320,12 +358,15 @@ double get_contour_level(TH2D* histo)
    // Sort descending
    std::sort(events.begin(), events.end());
    double cutoff = num_events * 0.6827;
+   std::cout << "Overall: " << num_events << " " << cutoff << std::endl;
    num_events = 0.0;
    for(int i = events.size() - 1; i >= 0; --i)
    {
       num_events += events[i];
+
       if(num_events >= cutoff)
       {
+         std::cout << "Cut off:" << cutoff << " " << num_events << " " << events[i] << std::endl;
          return events[i];
       }
    }
