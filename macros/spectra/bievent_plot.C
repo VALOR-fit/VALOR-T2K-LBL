@@ -125,9 +125,11 @@ void bievent_plot
             hEventsSyst[idcp][iss23][imh] = static_cast<TH2D*>(file->Get(Form("hEventsSyst_%d_%d_%d", idcp, iss23, imh)));
             hFHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_fhc_%d_%d_%d", idcp, iss23, imh)));
             hRHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_rhc_%d_%d_%d", idcp, iss23, imh)));
+
+            // Consider median instead of mean
             Nfhc = hEventsSyst[idcp][iss23][imh]->GetMean(1);
             Nrhc = hEventsSyst[idcp][iss23][imh]->GetMean(2);
-            cout << "Syst" << endl;
+/*            cout << "Syst" << endl;
             cout << idcp << " " << iss23 << " " << imh << " => " <<
                Nfhc << "(" << hEventsSyst[idcp][iss23][imh]->GetRMS(1) << ") " <<
                Nrhc << "(" << hEventsSyst[idcp][iss23][imh]->GetRMS(2) << ") " << endl;
@@ -135,7 +137,7 @@ void bievent_plot
             cout << idcp << " " << iss23 << " " << imh << " => " <<
                hEvents[idcp][iss23][imh]->GetMean(1) << "(" << hEvents[idcp][iss23][imh]->GetRMS(1) << ") " <<
                hEvents[idcp][iss23][imh]->GetMean(2) << "(" << hEvents[idcp][iss23][imh]->GetRMS(2) << ") " << endl;
-
+*/
             gN_events[iss23][imh].SetPoint(gN_events[iss23][imh].GetN(), Nfhc, Nrhc);
 
             if(fabs(dcp - (-TMath::Pi() / 2.)) < 1.E-4 ) 
@@ -245,7 +247,7 @@ void bievent_plot
                hEventsSyst[idcp][iss23][imh]->SetLineColor(kBlue);
                hEventsSyst[idcp][iss23][imh]->SetLineStyle(3);
                hEventsSyst[idcp][iss23][imh]->Draw("cont3 same");
-
+/*
                TEllipse eventsEllipse(hEvents[idcp][iss23][imh]->GetMean(1),
                      hEvents[idcp][iss23][imh]->GetMean(2),
                      hEvents[idcp][iss23][imh]->GetRMS(1),
@@ -263,7 +265,8 @@ void bievent_plot
                eventsSystEllipse.SetLineColor(kBlue);
                eventsSystEllipse.SetFillStyle(0);
                eventsSystEllipse.Draw("same");
-
+*/
+//               hEventsSyst[idcp][iss23][imh]->Draw("TEXT same");
             }
          }
       }
@@ -357,7 +360,7 @@ double get_contour_level(TH2D* histo)
    }
    // Sort descending
    std::sort(events.begin(), events.end());
-   double cutoff = num_events * 0.6827;
+   double cutoff = num_events * 0.6827 * 0.6827;
    std::cout << "Overall: " << num_events << " " << cutoff << std::endl;
    num_events = 0.0;
    for(int i = events.size() - 1; i >= 0; --i)

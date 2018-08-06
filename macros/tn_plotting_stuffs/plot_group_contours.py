@@ -59,6 +59,11 @@ def get_axis_histogram(filename):
         axis_histo = f.Get("dchisq_map_2D")
         axis_histo.SetDirectory(0)
         f.Close()
+    elif "Asimov_2D" in keys:
+        # p-theta file
+        axis_histo = f.Get("Asimov_2D")
+        axis_histo.SetDirectory(0)
+        f.Close()
     else:
         # IceCube file
         f.Close()
@@ -220,6 +225,19 @@ def make_histo_local_minimum(histo):
     minval = histo_out.GetMinimum()
     return histo_out
 
+def make_histo_2d_local_minimum(histo):
+    Nx = histo.GetNbinsX()
+    Ny = histo.GetNbinsY()
+    minval = histo.GetMinimum()
+    histo_out = histo.Clone(histo.GetName() + "_clone")
+    histo_out.SetDirectory(0)
+    histo_out.Reset()
+    for i in range(1, Nx + 1):
+        for j in range(1, Ny + 1):
+            histo_out.SetBinContent(i, j, histo.GetBinContent(i, j) - minval)
+    minval = histo_out.GetMinimum()
+    return histo_out
+
 def get_icecube_contour(filename, is_normal):
     """Retrieve the IceCube disappearance contour from file.
 
@@ -357,6 +375,41 @@ def get_mach3_contour(filename, fit):
     f.Close()
     return ret_val
 
+def get_ptheta_2d_contours(dchisq):
+    dchisq = make_histo_2d_local_minimum(dchisq)
+    canvas = ROOT.TCanvas("temp_canvas", "temp_canvas", 1024, 768)
+    empty = False
+    if dchisq.GetMinimum() > 2.3:
+        dchisq.SetContour(1, np.array([4.61]))
+        empty = True
+    else:
+        dchisq.SetContour(2, np.array([2.3, 4.61]))
+    dchisq.Draw("cont3same")
+    dchisq.Draw("CONT LIST same")
+    canvas.Update()
+    contours = ROOT.gROOT.GetListOfSpecials().FindObject("contours")
+    g68 = []
+    lst = contours.At(0)
+    next = ROOT.TIter(lst);
+    for g in next:
+        g.SetLineColor(ROOT.kBlack)
+        if not empty:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g68.append(g.Clone())
+    g90 = []
+    if dchisq.GetMinimum() <= 2.3:
+        lst = contours.At(1)
+        next = ROOT.TIter(lst);
+        for g in next:
+            g.SetLineColor(ROOT.kBlack)
+            g.SetLineStyle(1)
+            g90.append(g.Clone())
+    else:
+        g90 = g68
+    return (g68, g90)
+
 def get_ptheta_contour(filename, fit, is_normal):
     """Retrieve the p-theta contour from file.
 
@@ -385,56 +438,63 @@ def get_ptheta_contour(filename, fit, is_normal):
     else:
         # 2D contour
         if is_normal:
+            g68_contours, g90_contours = get_ptheta_2d_contours(f.Get("Asimov_2D"))
             bestfit = f.Get("BestFit_Point_All")
-            mh = "_0"
         else:
+            g68_contours, g90_contours = get_ptheta_2d_contours(f.Get("FDS_2D"))
             bestfit = f.Get("BestFit_Point_All_FDS")
-            mh = "_1"
+#        if is_normal:
+#            bestfit = f.Get("BestFit_Point_All")
+#            mh = "_0"
+#        else:
+#            bestfit = f.Get("BestFit_Point_All_FDS")
+#            mh = "_1"
         x = np.zeros(1)
         y = np.zeros(1)
         bestfit.GetPoint(0, x, y)
         bestfit = ROOT.TMarker(x[0], y[0], 34)
         bestfit.SetMarkerColor(ROOT.kBlack)
-        i = 0
-        g68_contours = []
-        done = False
-        while not done:
-            if "cont_like_all_conv_68_0_0" in keys:
-                key = "cont_like_all_conv_68" + mh + "_" + str(i)
-            else:
-                key = "cont_like_all_conv_68" + mh
-                i = -1
-            if key in keys:
-                g = f.Get(key)
-                g.SetLineColor(ROOT.kBlack)
-                g.SetLineWidth(1)
-                g.SetLineStyle(2)
-                g68_contours.append(g)
-                if i == -1:
-                    done = True
-            else:
-                done = True
-            i += 1
-        i = 0
-        g90_contours = []
-        done = False
-        while not done:
-            if "cont_like_all_conv_90_0_0" in keys:
-                key = "cont_like_all_conv_90" + mh + "_" + str(i)
-            else:
-                key = "cont_like_all_conv_90" + mh
-                i = -1
-            if key in keys:
-                g = f.Get(key)
-                g.SetLineColor(ROOT.kBlack)
-                g.SetLineWidth(1)
-                g90_contours.append(g)
-                if i == -1:
-                    done = True
-            else:
-                done = True
-            i += 1
         ret_val = (g68_contours, g90_contours, bestfit)
+#        i = 0
+#        g68_contours = []
+#        done = False
+#        while not done:
+#            if "cont_like_all_conv_68_0_0" in keys:
+#                key = "cont_like_all_conv_68" + mh + "_" + str(i)
+#            else:
+#                key = "cont_like_all_conv_68" + mh
+#                i = -1
+#            if key in keys:
+#                g = f.Get(key)
+#                g.SetLineColor(ROOT.kBlack)
+#                g.SetLineWidth(1)
+#                g.SetLineStyle(2)
+#                g68_contours.append(g)
+#                if i == -1:
+#                    done = True
+#            else:
+#                done = True
+#            i += 1
+#        i = 0
+#        g90_contours = []
+#        done = False
+#        while not done:
+#            if "cont_like_all_conv_90_0_0" in keys:
+#                key = "cont_like_all_conv_90" + mh + "_" + str(i)
+#            else:
+#                key = "cont_like_all_conv_90" + mh
+#                i = -1
+#            if key in keys:
+#                g = f.Get(key)
+#                g.SetLineColor(ROOT.kBlack)
+#                g.SetLineWidth(1)
+#                g90_contours.append(g)
+#                if i == -1:
+#                    done = True
+#            else:
+#                done = True
+#            i += 1
+#        ret_val = (g68_contours, g90_contours, bestfit)
 
     f.Close()
     return ret_val
@@ -534,6 +594,13 @@ def get_valor_contour(filename, fit, glob=False):
         else:
             dchisq = f.Get("dchisq_map_2D")
             dchisq.SetDirectory(0)
+            minval = 5000
+            for i in range(1, dchisq.GetNbinsX() + 1):
+                for j in range(1, dchisq.GetNbinsY() + 1):
+                    if dchisq.GetBinContent(i, j) < minval:
+                        minval = dchisq.GetBinContent(i, j)
+            # Strange non-zero miminum despite minimum bin containing zero in appearance fit
+            dchisq.SetMinimum(0.0)
         g68_contours, g90_contours = get_valor_2d_contours(dchisq)
         bestfit = f.Get("best_fit_point_marker")
         bestfit.SetMarkerColor(ROOT.kRed)
@@ -791,7 +858,10 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
             legend.AddEntry(p_dchisq, "p-theta", "l")
             opt = "lsame"
     else:
-        axis_histo = get_axis_histogram(valor_filename)
+        if not valor_filename is None:
+            axis_histo = get_axis_histogram(valor_filename)
+        else:
+            axis_histo = get_axis_histogram(ptheta_filename)
         if fit == "disapp" and not is_normal and not mach3_filename is None:
             nx = axis_histo.GetNbinsX()
             ny = axis_histo.GetNbinsY()
