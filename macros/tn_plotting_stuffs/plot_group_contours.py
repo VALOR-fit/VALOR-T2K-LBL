@@ -130,6 +130,25 @@ def rescale_nova_graph(g):
     g_out.SetLineStyle(g.GetLineStyle())
     return g_out
 
+def convert_theta13(graph_in):
+    graph_out = []
+    for i, g in enumerate(graph_in):
+        N = g.GetN()
+        xx = np.zeros(N)
+        yy = np.zeros(N)
+        for j in range(N):
+            x = np.zeros(1)
+            y = np.zeros(1)
+            g.GetPoint(j, x, y)
+            xx[j] = 0.5 * (1 - np.sqrt(1 - x))
+            yy[j] = y
+        g_out = ROOT.TGraph(N, xx, yy)
+        g_out.SetLineColor(g.GetLineColor())
+        g_out.SetLineStyle(g.GetLineStyle())
+        graph_out.append(g_out)
+
+    return graph_out
+
 def shift_dmsq_graph_1d(g):
     N = g.GetN()
     xx = np.zeros(N)
@@ -449,6 +468,9 @@ def get_ptheta_contour(filename, fit, is_normal):
 #        else:
 #            bestfit = f.Get("BestFit_Point_All_FDS")
 #            mh = "_1"
+        if fit == "app":
+            g68_contours = convert_theta13(g68_contours)
+            g90_contours = convert_theta13(g90_contours)
         x = np.zeros(1)
         y = np.zeros(1)
         bestfit.GetPoint(0, x, y)
@@ -542,27 +564,75 @@ def get_valor_contour(filename, fit, glob=False):
     f = ROOT.TFile(filename, "READ")
     keys = [key.GetName() for key in f.GetListOfKeys()]
     if is_fit_1d(fit):
-        # 1D contour
-        if "_normal.root" in filename:
-            f2 = ROOT.TFile(filename.replace("_normal.root", "_inverted.root"), "READ")
-            chisq_nh = f.Get("h_chisq")
-            chisq_ih = f2.Get("h_chisq")
-            minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
-            dchisq = chisq_nh.Clone("h_dchisq")
-            dchisq.SetDirectory(0)
-            for i in range(1, dchisq.GetNbinsX() + 1):
-                dchisq.SetBinContent(i, dchisq.GetBinContent(i) - minval)
-            f2.Close()
+        if fit == "dcp":
+            # 1D contour
+            if "_normal.root" in filename:
+                f2 = ROOT.TFile(filename.replace("_normal.root", "_inverted.root"), "READ")
+                chisq_nh = f.Get("h_chisq")
+                chisq_ih = f2.Get("h_chisq")
+                minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+                dchisq = chisq_nh.Clone("h_dchisq")
+                dchisq.SetDirectory(0)
+                for i in range(1, dchisq.GetNbinsX() + 1):
+                    dchisq.SetBinContent(i, dchisq.GetBinContent(i) - minval)
+                f2.Close()
+            else:
+                f2 = ROOT.TFile(filename.replace("_inverted.root", "_normal.root"), "READ")
+                chisq_ih = f.Get("h_chisq")
+                chisq_nh = f2.Get("h_chisq")
+                minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+                dchisq = chisq_ih.Clone("h_dchisq")
+                dchisq.SetDirectory(0)
+                for i in range(1, dchisq.GetNbinsX() + 1):
+                    dchisq.SetBinContent(i, dchisq.GetBinContent(i) - minval)
+                f2.Close()
         else:
-            f2 = ROOT.TFile(filename.replace("_inverted.root", "_normal.root"), "READ")
-            chisq_ih = f.Get("h_chisq")
-            chisq_nh = f2.Get("h_chisq")
-            minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
-            dchisq = chisq_ih.Clone("h_dchisq")
-            dchisq.SetDirectory(0)
-            for i in range(1, dchisq.GetNbinsX() + 1):
-                dchisq.SetBinContent(i, dchisq.GetBinContent(i) - minval)
-            f2.Close()
+            dchisq = None
+            if glob:
+                if "_normal.root" in filename:
+                    f2 = ROOT.TFile(filename.replace("_normal.root", "_inverted.root"), "READ")
+                    if fit in ["th13", "th23"]:
+                        chisq_nh = f.Get("hchisq_x")
+                        chisq_ih = f2.Get("hchisq_x")
+                    else:
+                        chisq_nh = f.Get("hchisq_y")
+                        chisq_ih = f2.Get("hchisq_y")
+                    minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+                    dchisq = chisq_nh.Clone("hdchisq")
+                    dchisq.SetDirectory(0)
+                    for i in range(1, dchisq.GetNbinsX() + 1):
+                        for j in range(1, dchisq.GetNbinsY() + 1):
+                            dchisq.SetBinContent(i, j, dchisq.GetBinContent(i, j) - minval)
+                    f2.Close()
+                else:
+                    f2 = ROOT.TFile(filename.replace("_inverted.root", "_normal.root"), "READ")
+                    if fit in ["th13", "th23"]:
+                        chisq_ih = f.Get("hchisq_x")
+                        chisq_nh = f2.Get("hchisq_x")
+                    else:
+                        chisq_ih = f.Get("hchisq_y")
+                        chisq_nh = f2.Get("hchisq_y")
+                    minval = np.min(np.array([chisq_nh.GetMinimum(), chisq_ih.GetMinimum()]))
+                    dchisq = chisq_ih.Clone("hdchisq")
+                    dchisq.SetDirectory(0)
+                    for i in range(1, dchisq.GetNbinsX() + 1):
+                        for j in range(1, dchisq.GetNbinsY() + 1):
+                            dchisq.SetBinContent(i, j, dchisq.GetBinContent(i, j) - minval)
+                    f2.Close()
+            else:
+                if fit in ["th13", "th23"]:
+                    dchisq = f.Get("hdchisq_x")
+                else:
+                    dchisq = f.Get("hdchisq_y")
+                dchisq.SetDirectory(0)
+                minval = 5000
+                for i in range(1, dchisq.GetNbinsX() + 1):
+                    for j in range(1, dchisq.GetNbinsY() + 1):
+                        if dchisq.GetBinContent(i, j) < minval:
+                            minval = dchisq.GetBinContent(i, j)
+                # Strange non-zero miminum despite minimum bin containing zero in appearance fit
+                dchisq.SetMinimum(0.0)
+
         dchisq.SetLineColor(ROOT.kRed)
         ret_val = (dchisq, None, None)
     else:
@@ -776,7 +846,7 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
     if not valor_filename is None:
         num_fitters += 1
         v_contour1, v_contour2, v_bestfit = get_valor_contour(valor_filename, fit)
-        if v_bestfit is None:
+        if is_fit_1d(fit):
             if not use_global_min:
                 v_dchisq = make_histo_local_minimum(v_contour1)
             else:

@@ -269,7 +269,7 @@ void CompareContour1D
   double nx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 10);
   double ty = max;
 
-  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9c Preliminary");
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9 Preliminary");
   title->SetTextSize(0.05);
   title->Draw("same");
   TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");

@@ -39,6 +39,16 @@ def read_fc(dir, point):
     chisq["nh"]["mih"] = []
     chisq["ih"]["mnh"] = []
     chisq["ih"]["mih"] = []
+    min_chisq = dict(zip(["nh", "ih"], [ dict(), dict() ] ))
+    min_chisq["nh"]["mnh"] = ROOT.TH2D("nh_chi_nh", "nh_chi_nh", 100, 0, 1, 110, 20, 130)
+    min_chisq["nh"]["mih"] = ROOT.TH2D("nh_chi_ih", "nh_chi_ih", 100, 0, 1, 110, 20, 130)
+    min_chisq["ih"]["mnh"] = ROOT.TH2D("ih_chi_nh", "ih_chi_nh", 100, 0, 1, 110, 20, 130)
+    min_chisq["ih"]["mih"] = ROOT.TH2D("ih_chi_ih", "ih_chi_ih", 100, 0, 1, 110, 20, 130)
+#    min_chisq["nh"]["mnh"] = ROOT.TH1D("nh_chi_nh", "nh_chi_nh", 200, 0, 200)
+#    min_chisq["nh"]["mih"] = ROOT.TH1D("nh_chi_ih", "nh_chi_ih", 200, 0, 200)
+#    min_chisq["ih"]["mnh"] = ROOT.TH1D("ih_chi_nh", "ih_chi_nh", 200, 0, 200)
+#    min_chisq["ih"]["mih"] = ROOT.TH1D("ih_chi_ih", "ih_chi_ih", 200, 0, 200)
+  
     for mh in hierarchy:
         filename = dir + "/" + mh + "/fc_deltacp_" + point + "_" + hierarchy[mh] + "_merged.root"
         if not exists(filename):
@@ -49,16 +59,37 @@ def read_fc(dir, point):
         for entry in tree:
             if not tree.trueMH == hierarchy[mh]:
                 print "Error: Expected true hierarchy %s in %s, found %s" % (mh, filename, true_mh[0])
+            fhc1rmu_obs = tree.hErecoToy_1Rmu.Integral()
+            fhc1re_obs = tree.hErecoToy_1Re.Integral()
+            fhc1repi_obs = tree.hErecoToy_MultiRe.Integral()
+            rhc1rmu_obs = tree.hErecoToy_RHC1Rmu.Integral()
+            rhc1re_obs = tree.hErecoToy_RHC1Re.Integral()
+            fhc1rmu_exp = tree.hErecoExp_1Rmu.Integral()
+            fhc1re_exp = tree.hErecoExp_1Re.Integral()
+            fhc1repi_exp = tree.hErecoExp_MultiRe.Integral()
+            rhc1rmu_exp = tree.hErecoExp_RHC1Rmu.Integral()
+            rhc1re_exp = tree.hErecoExp_RHC1Re.Integral()
+
+            print "FHC %f RHC %f : NH %f IH %f" % (fhc1re_obs, rhc1re_obs, tree.chisqmin_nh, tree.chisqmin_ih)
+#            min_chisq[mh]["mnh"].Fill(tree.chisqmin_nh)
+#            min_chisq[mh]["mih"].Fill(tree.chisqmin_ih)
             N = tree.hchisq1D_nh.GetNbinsX()
             nh_vals = np.zeros(N)
             ih_vals = np.zeros(N)
+            avg_likelihood_nh = 0.0
+            avg_likelihood_ih = 0.0
             for i in range(N):
                 nh_vals[i] = tree.hchisq1D_nh.GetBinContent(i + 1)
                 ih_vals[i] = tree.hchisq1D_ih.GetBinContent(i + 1)
+                avg_likelihood_nh += np.exp(-nh_vals[i] / 2) / N
+                avg_likelihood_ih += np.exp(-ih_vals[i] / 2) / N
+            min_chisq[mh]["mnh"].Fill(avg_likelihood_nh / (avg_likelihood_nh + avg_likelihood_ih), fhc1re_obs + fhc1repi_obs)
+            min_chisq[mh]["mih"].Fill(avg_likelihood_ih / (avg_likelihood_nh + avg_likelihood_ih), fhc1re_obs + fhc1repi_obs)
+
             chisq[mh]["mnh"].append(nh_vals)
             chisq[mh]["mih"].append(ih_vals)
         f.Close()
-    return chisq
+    return chisq, min_chisq
 
 def get_likelihoods(chisqs):
     likelihoods = dict(zip(["nh", "ih"], [ dict(), dict() ]))
@@ -211,10 +242,26 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.print_only:
-        chisqs = read_fc(args.fc_dir, args.delta)
+        chisqs, min_chisqs = read_fc(args.fc_dir, args.delta)
         likelihoods = get_likelihoods(chisqs)
         likelihoods = get_average_likelihood(likelihoods)
         nh_histograms, ih_histograms = get_posterior_probability(likelihoods)
+
+        canvas = ROOT.TCanvas("a", "a", 1024, 768)
+        min_chisqs["nh"]["mnh"].SetTitle("True NH, #delta = 0 - NH")
+        min_chisqs["nh"]["mnh"].GetXaxis().SetTitle("Posterior probability")
+        min_chisqs["nh"]["mnh"].GetYaxis().SetTitle("#nu_{e} candidates")
+        min_chisqs["nh"]["mnh"].Draw("COLZ")
+#        min_chisqs["nh"]["mih"].SetLineColor(ROOT.kRed)
+#        min_chisqs["nh"]["mih"].Draw("same")
+        canvas.Print("test.pdf(")
+        min_chisqs["ih"]["mnh"].SetTitle("True IH, #delta = 0 - NH")
+        min_chisqs["ih"]["mnh"].GetXaxis().SetTitle("Posterior probability")
+        min_chisqs["ih"]["mnh"].GetYaxis().SetTitle("#nu_{e} candidates")
+        min_chisqs["ih"]["mnh"].Draw("COLZ")
+#        min_chisqs["ih"]["mih"].SetLineColor(ROOT.kRed)
+#        min_chisqs["ih"]["mih"].Draw("same")
+        canvas.Print("test.pdf)")
 
         f = ROOT.TFile(args.root_out, "RECREATE")
         nh_histograms["nh"].Write("nh_true_nh_marg_histogram")
