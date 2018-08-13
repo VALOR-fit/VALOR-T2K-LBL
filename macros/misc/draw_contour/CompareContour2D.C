@@ -295,12 +295,224 @@ void CompareContour2D(char* file_1 = "test1",
   ccontours->SaveAs(Form("%s.eps",tag));
   ccontours->SaveAs(Form("%s.root",tag));
 
+  // Plot 1D projections
+  // x projection 
+  TCanvas* canvas_x = new TCanvas("canvas_x", "canvas_x");
+  TH1D* hchisq_x1 = (TH1D*)filein[0]->Get("hchisq_x");
+  TH1D* hchisq_x2 = (TH1D*)filein[1]->Get("hchisq_x");
+  hchisq_x1->SetDirectory(0);
+  hchisq_x2->SetDirectory(0);
+  double min = hchisq_x1->GetMinimum() < hchisq_x2->GetMinimum() ? hchisq_x1->GetMinimum() : hchisq_x2->GetMinimum();
+  minimise_hist(hchisq_x1, min);
+  minimise_hist(hchisq_x2, min);
+
+  hchisq_x1->GetXaxis()->SetTitle(xaxis_title);
+  hchisq_x1->GetYaxis()->SetTitle("-2#Deltaln(L)");
+  hchisq_x2->GetXaxis()->SetTitle(xaxis_title);
+  hchisq_x2->GetYaxis()->SetTitle("-2#Deltaln(L)");
+
+  double max1 = hchisq_x1->GetMaximum();
+  double max2 = hchisq_x2->GetMaximum();
+  double max = (max1 > max2)? max1 : max2;
+  max = TMath::Ceil(max);
+  if(max > 25)
+  {  // No need to go past 5 sigma for the plot
+     max = 25.0;
+  }
+
+  hchisq_x1->GetYaxis()->SetRangeUser(0, max);
+  hchisq_x2->GetYaxis()->SetRangeUser(0, max);
+  if(paper_style)
+  {
+     format_hist(hchisq_x1);
+     format_hist(hchisq_x2);
+  }
+  hchisq_x1->SetLineColor(kBlack);
+  hchisq_x1->SetLineWidth(1);
+  hchisq_x1->SetLineStyle(1);
+  hchisq_x2->SetLineColor(kRed);
+  hchisq_x2->SetLineWidth(1);
+  hchisq_x2->SetLineStyle(2);
+
+  hchisq_x1->Draw("l");
+  
+  if(draw_reactors && strstr(xaxis_title, "theta_{13}") != NULL)
+  {
+    delete breactors;
+    breactors = new TBox(sinsqth13_nom - sinsqth13_err, hchisq_x1->GetMinimum(), sinsqth13_nom + sinsqth13_err, max);
+    breactors->SetFillColor(kYellow+1);
+    breactors->Draw("same");
+  }
+
+  hchisq_x1->Draw("l same");
+  hchisq_x2->Draw("l same");
+
+  double sigmas[4] = {1.0, 4.0, 9.0, 16.0};
+  for(int i = 0; i < 4; ++i)
+  {
+    if(max1 > sigmas[i] || max2 > sigmas[i])
+    {
+      TLine *lsigma = new TLine(hchisq_x1->GetXaxis()->GetBinLowEdge(1), sigmas[i], hchisq_x1->GetXaxis()->GetBinUpEdge(hchisq_x1->GetNbinsX()), sigmas[i]);
+      lsigma->SetLineWidth(2);
+      lsigma->SetLineColor(kBlue);
+      lsigma->Draw("l same");
+  
+      TLatex *latLineSigma = new TLatex(hchisq_x1->GetXaxis()->GetBinLowEdge(5), sigmas[i] + 0.1, Form("%d#sigma", (i + 1)));
+      latLineSigma->SetTextColor(kBlue);
+      latLineSigma->SetTextSize(0.05);
+      latLineSigma->Draw("same");
+    }
+  }
+  TLegend *lcontours = new TLegend(0.45,0.77,0.60,0.9);
+  lcontours->SetFillStyle(0);
+  lcontours->SetBorderSize(0);
+  lcontours->SetTextFont(132);
+  lcontours->SetTextSize(0.05);
+  lcontours->AddEntry(hchisq_x1, latexname[0], "l");
+  lcontours->AddEntry(hchisq_x2, latexname[1], "l");
+  if(draw_reactors && strstr(xaxis_title, "theta_{13}") != NULL)
+  {
+     lcontours->AddEntry(breactors, "PDG 2016", "f");
+  }
+  lcontours->Draw();
+ 
+  double tx = hchisq_x1->GetXaxis()->GetBinLowEdge(hchisq_x1->GetXaxis()->GetNbins() / 2);
+  double ty = max;
+
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9 Preliminary");
+  title->SetTextSize(0.05);
+  title->Draw("same");
+
+  int first = indexof(tag, '_');
+  int second = indexof(tag + first + 1, '_') + first + 1;
+  char* subtag = new char[strlen(tag) - (second - first) + 1];
+  strncpy(subtag, tag, first);
+  strncpy(subtag + first, tag + second, strlen(tag) - second);
+  subtag[strlen(tag) - (second - first)] = '\0';
+  canvas_x->SaveAs(Form("%s_proj.pdf", subtag));
+  canvas_x->SaveAs(Form("%s_proj.png", subtag));
+  canvas_x->SaveAs(Form("%s_proj.eps", subtag));
+  canvas_x->SaveAs(Form("%s_proj.root", subtag));
+  delete[] subtag;
+
+  // y projection 
+  TCanvas* canvas_y = new TCanvas("canvas_y", "canvas_y");
+  TH1D* hchisq_y1 = (TH1D*)filein[0]->Get("hchisq_y");
+  TH1D* hchisq_y2 = (TH1D*)filein[1]->Get("hchisq_y");
+  hchisq_y1->SetDirectory(0);
+  hchisq_y2->SetDirectory(0);
+  min = hchisq_y1->GetMinimum() < hchisq_y2->GetMinimum() ? hchisq_y1->GetMinimum() : hchisq_y2->GetMinimum();
+  minimise_hist(hchisq_y1, min);
+  minimise_hist(hchisq_y2, min);
+
+  hchisq_y1->GetXaxis()->SetTitle(yaxis_title);
+  hchisq_y1->GetYaxis()->SetTitle("-2#Deltaln(L)");
+  hchisq_y2->GetXaxis()->SetTitle(xaxis_title);
+  hchisq_y2->GetYaxis()->SetTitle("-2#Deltaln(L)");
+
+  max1 = hchisq_y1->GetMaximum();
+  max2 = hchisq_y2->GetMaximum();
+  max = (max1 > max2)? max1 : max2;
+  max = TMath::Ceil(max);
+  if(max > 25)
+  {  // No need to go past 5 sigma for the plot
+     max = 25.0;
+  }
+
+  hchisq_y1->GetYaxis()->SetRangeUser(0, max);
+  hchisq_y2->GetYaxis()->SetRangeUser(0, max);
+  if(paper_style)
+  {
+     format_hist(hchisq_y1);
+     format_hist(hchisq_y2);
+  }
+  hchisq_y1->SetLineColor(kBlack);
+  hchisq_y1->SetLineWidth(1);
+  hchisq_y1->SetLineStyle(1);
+  hchisq_y2->SetLineColor(kRed);
+  hchisq_y2->SetLineWidth(1);
+  hchisq_y2->SetLineStyle(2);
+
+  hchisq_y1->Draw("l");
+  
+  if(draw_reactors && strstr(yaxis_title, "theta_{13}") != NULL)
+  {
+    delete breactors;
+    breactors = new TBox(sinsqth13_nom - sinsqth13_err, hchisq_y1->GetMinimum(), sinsqth13_nom + sinsqth13_err, max);
+    breactors->SetFillColor(kYellow+1);
+    breactors->Draw("same");
+  }
+
+  hchisq_y1->Draw("l same");
+  hchisq_y2->Draw("l same");
+
+  for(int i = 0; i < 4; ++i)
+  {
+    if(max1 > sigmas[i] || max2 > sigmas[i])
+    {
+      TLine *lsigma = new TLine(hchisq_y1->GetXaxis()->GetBinLowEdge(1), sigmas[i], hchisq_y1->GetXaxis()->GetBinUpEdge(hchisq_y1->GetNbinsX()), sigmas[i]);
+      lsigma->SetLineWidth(2);
+      lsigma->SetLineColor(kBlue);
+      lsigma->Draw("l same");
+  
+      TLatex *latLineSigma = new TLatex(hchisq_y1->GetXaxis()->GetBinLowEdge(5), sigmas[i] + 0.1, Form("%d#sigma", (i + 1)));
+      latLineSigma->SetTextColor(kBlue);
+      latLineSigma->SetTextSize(0.05);
+      latLineSigma->Draw("same");
+    }
+  }
+  TLegend *lcontours = new TLegend(0.45,0.77,0.60,0.9);
+  lcontours->SetFillStyle(0);
+  lcontours->SetBorderSize(0);
+  lcontours->SetTextFont(132);
+  lcontours->SetTextSize(0.05);
+  lcontours->AddEntry(hchisq_y1, latexname[0], "l");
+  lcontours->AddEntry(hchisq_y2, latexname[1], "l");
+  if(draw_reactors && strstr(yaxis_title, "theta_{13}") != NULL)
+  {
+     lcontours->AddEntry(breactors, "PDG 2016", "f");
+  }
+  lcontours->Draw();
+ 
+  tx = hchisq_y1->GetXaxis()->GetBinLowEdge(hchisq_y1->GetXaxis()->GetNbins() / 2);
+  ty = max;
+
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9 Preliminary");
+  title->SetTextSize(0.05);
+  title->Draw("same");
+
+  first = indexof(tag, '_');
+  subtag = new char[strlen(tag) - (first + 1) + 1];
+  strncpy(subtag, tag + first + 1, strlen(tag) - (first + 1));
+  subtag[strlen(tag) - (first + 1)] = '\0';
+  canvas_y->SaveAs(Form("%s_proj.pdf", subtag));
+  canvas_y->SaveAs(Form("%s_proj.png", subtag));
+  canvas_y->SaveAs(Form("%s_proj.eps", subtag));
+  canvas_y->SaveAs(Form("%s_proj.root", subtag));
+  delete[] subtag;
+
   return;
-  
-  
 }
 
-
+int indexof(const char* str, const char chr)
+{
+   if(str == 0)
+   {
+      return -1;
+   }
+   else
+   {
+      int len = strlen(str);
+      for(int i = 0; i < len; ++i)
+      {
+         if(str[i] == chr)
+         {
+            return i;
+         }
+      }
+      return -1;
+   }
+}
 
 void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
   
@@ -315,6 +527,13 @@ void ConvertHistoFromSinsqthToSinsq2th(TGraph *graph){
   return;
 }
 
+void minimise_hist(TH1* h, double min)
+{
+   for(int i = 1; i <= h->GetNbinsX(); i++)
+   {
+      h->SetBinContent(i, h->GetBinContent(i) - min);
+   }
+}
 
 void minimise_hist(TH2* _h1, double min)
 {
@@ -389,4 +608,21 @@ int format_hist(TH2D* _histogram)
   _histogram->GetYaxis()->CenterTitle();
   _histogram->GetZaxis()->CenterTitle();
 
+}
+
+int format_hist(TH1D* _histogram)
+{
+  _histogram->GetYaxis()->SetTitleOffset(0.85);
+  _histogram->GetXaxis()->SetTitleOffset(1);
+  _histogram->GetXaxis()->SetLabelSize(0.05);
+  _histogram->GetYaxis()->SetLabelSize(0.05);
+  _histogram->GetXaxis()->SetLabelFont(132);
+  _histogram->GetYaxis()->SetLabelFont(132);
+  _histogram->GetXaxis()->SetTitleFont(132);
+  _histogram->GetYaxis()->SetTitleFont(132);
+  _histogram->GetXaxis()->SetTitleSize(0.06);
+  _histogram->GetYaxis()->SetTitleSize(0.06);
+  _histogram->GetXaxis()->CenterTitle();
+  _histogram->GetYaxis()->CenterTitle();
+  _histogram->GetZaxis()->CenterTitle();
 }
