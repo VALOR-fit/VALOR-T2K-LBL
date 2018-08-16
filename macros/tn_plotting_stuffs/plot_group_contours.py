@@ -130,7 +130,7 @@ def rescale_nova_graph(g):
     g_out.SetLineStyle(g.GetLineStyle())
     return g_out
 
-def convert_theta13(graph_in):
+def convert_theta13_2d(graph_in):
     graph_out = []
     for i, g in enumerate(graph_in):
         N = g.GetN()
@@ -469,8 +469,8 @@ def get_ptheta_contour(filename, fit, is_normal):
 #            bestfit = f.Get("BestFit_Point_All_FDS")
 #            mh = "_1"
         if fit == "app":
-            g68_contours = convert_theta13(g68_contours)
-            g90_contours = convert_theta13(g90_contours)
+            g68_contours = convert_theta13_2d(g68_contours)
+            g90_contours = convert_theta13_2d(g90_contours)
         x = np.zeros(1)
         y = np.zeros(1)
         bestfit.GetPoint(0, x, y)

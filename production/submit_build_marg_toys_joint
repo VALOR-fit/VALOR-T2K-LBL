@@ -276,7 +276,6 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
 # # 2D fit - sinsqth13 Vs dcp
 if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "deltacp") and ($freepar1 eq "mixing13")))
 {
-   $nexpts_marg = 10000;
    if($freepar0 eq "deltacp")
    {
       $freepar0 = "mixing13";
@@ -287,12 +286,20 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    
    if($use_reactors == 1)
    {
+      $nexpts_marg = 10000;
+      $wqueue      = "xlong -W 20:00 -R rusage[mem=4096,swap=4096,tmp=1000]";
+      $cedar_time  = "20:00:00";
+      $cedar_mem   = "4096M";
       $minfreepar0         = 0.015     unless defined $minfreepar0;     # Minimum free parameter allowed value
       $maxfreepar0         = 0.036     unless defined $maxfreepar0;     # Maximum free parameter allowed value 
       $npt_freepar0        = 81        unless defined $npt_freepar0;    # of free parameter points to scan
    }
    else
    {
+      $nexpts_marg = 20000;
+      $wqueue      = "xlong -W 40:00 -R rusage[mem=5120,swap=5120,tmp=1000]";
+      $cedar_time  = "40:00:00";
+      $cedar_mem   = "5120M";
       $minfreepar0         = 0.007     unless defined $minfreepar0;     # Minimum free parameter allowed value
       $maxfreepar0         = 0.053     unless defined $maxfreepar0;     # Maximum free parameter allowed value 
       $npt_freepar0        = 81        unless defined $npt_freepar0;    # of free parameter points to scan
@@ -303,11 +310,8 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    $npt_freepar1      = 51                        unless defined $npt_freepar1; # of free parameter points to scan
    $marg_hierarchy    = 0                         unless defined $marg_hierarchy;
    $masshierarchy     = "normal"                  unless defined $masshierarchy;
-   $step_freepar0     = 3                         unless defined $step_freepar0;   # of points for each job param0
-   $step_freepar1     = 2                         unless defined $step_freepar1;   # of points for each job param1
-   $wqueue            = "long -R rusage[mem=3072,swap=3072,tmp=1000]";
-   $cedar_time        = "12:00:00";
-   $cedar_mem         = "3000M";
+   $step_freepar0     = 4                         unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1     = 3                         unless defined $step_freepar1;   # of points for each job param1
 }
 # # 2D fit - sinsqth23 Vs dmsq23
 if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dmsq23") and ($freepar1 eq "mixing23")))

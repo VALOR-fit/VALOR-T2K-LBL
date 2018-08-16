@@ -105,7 +105,7 @@ def plot_bestfit_dcp0_spectrum(fhc_mc, rhc_mc, fhc_data, rhc_data, outfile):
     max *= 1.05
     histos[0].Draw()
     axis = histos[0].GetXaxis()
-    title = ROOT.TLatex(axis.GetBinLowEdge(7), 1.01 * max, "T2K Run1-8 Preliminary")
+    title = ROOT.TLatex(axis.GetBinLowEdge(7), 1.01 * max, "T2K Run1-9 Preliminary")
     title.SetTextSize(0.05)
     title.Draw()
     line = ROOT.TLine(0, 0, axis.GetBinUpEdge(axis.GetNbins()), 0)
@@ -313,7 +313,7 @@ def plot_ereco_spectrum(histos, data, outfile):
 
     tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
     ty = max * 1.05
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9c Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -372,7 +372,7 @@ def plot_theta_spectrum(histos, data, outfile):
 
     tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
     ty = max * 1.05
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9c Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -384,7 +384,8 @@ def plot_theta_spectrum(histos, data, outfile):
     canvas.SaveAs(outfile + ".png")
 
 def plot_ereco_theta_spectrum(histos, data, outfile):
-    data.SetMarkerSize(2)
+    if not data is None:
+        data.SetMarkerSize(2)
     canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
     total = histos[components[0]].Clone()
     for component in components[1:]:
@@ -425,7 +426,7 @@ def plot_ereco_theta_spectrum(histos, data, outfile):
 
     tx = swappedTotal.GetXaxis().GetBinLowEdge(swappedTotal.GetXaxis().GetLast())
     ty = 180 
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9c Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
