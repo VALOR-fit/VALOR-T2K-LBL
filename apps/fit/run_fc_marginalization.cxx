@@ -325,6 +325,17 @@ int main(int argc, char ** argv)
   TH2D *hstep2D_out_ih = new TH2D("hstep2D_out_ih","hstep2D_out_ih",1,0,1,1,0,1);
   TH1D *hstep1D_out_nh = new TH1D("hstep1D_out_nh","hstep1D_out_nh",1,0,1);
   TH1D *hstep1D_out_ih = new TH1D("hstep1D_out_ih","hstep1D_out_ih",1,0,1);
+  TH1D *hchisq1D_samples_out_nh[conv::kns] = {};
+  TH1D *hchisq1D_samples_out_ih[conv::kns] = {};
+  int is_count = 0;
+  for(int is = 0; is < conv::kns; ++is)
+  {
+     const char* name_nh = Form("hchisq1D_sample_%d_out_nh", is);
+     hchisq1D_samples_out_nh[is] = new TH1D(name_nh, name_nh, 1, 0, 1);
+     const char* name_ih = Form("hchisq1D_sample_%d_out_nh", is);
+     hchisq1D_samples_out_ih[is] = new TH1D(name_ih, name_ih, 1, 0, 1);
+  }
+
   
 #ifndef __USE_2D_TEMPLATES__
   TH1D *hErecoToy_1Rmu = new TH1D("hErecoToy_1Rmu","hErecoToy_1Rmu",1,0,1);
@@ -455,6 +466,16 @@ int main(int argc, char ** argv)
   // histograms
   fitnt->Branch("hchisq1D_nh",     "TH1D", &hchisq1D_out_nh,     32000,0 );
   fitnt->Branch("hchisq1D_ih",     "TH1D", &hchisq1D_out_ih,     32000,0 );
+  fitnt->Branch("hchisq1D_1Rmu_nh", "TH1D", hchisq1D_samples_out_nh[0], 32000,0 );
+  fitnt->Branch("hchisq1D_1Re_nh", "TH1D", hchisq1D_samples_out_nh[1], 32000,0 );
+  fitnt->Branch("hchisq1D_RHC1Rmu_nh", "TH1D", hchisq1D_samples_out_nh[2], 32000,0 );
+  fitnt->Branch("hchisq1D_RHC1Re_nh", "TH1D", hchisq1D_samples_out_nh[3], 32000,0 );
+  fitnt->Branch("hchisq1D_MultiRe_nh", "TH1D", hchisq1D_samples_out_nh[4], 32000,0 );
+  fitnt->Branch("hchisq1D_1Rmu_ih", "TH1D", hchisq1D_samples_out_ih[0], 32000,0 );
+  fitnt->Branch("hchisq1D_1Re_ih", "TH1D", hchisq1D_samples_out_ih[1], 32000,0 );
+  fitnt->Branch("hchisq1D_RHC1Rmu_ih", "TH1D", hchisq1D_samples_out_ih[2], 32000,0 );
+  fitnt->Branch("hchisq1D_RHC1Re_ih", "TH1D", hchisq1D_samples_out_ih[3], 32000,0 );
+  fitnt->Branch("hchisq1D_MultiRe_ih", "TH1D", hchisq1D_samples_out_ih[5], 32000,0 );
   fitnt->Branch("hstep1D_nh",      "TH1D", &hstep1D_out_nh,      32000,0 );
   fitnt->Branch("hstep1D_ih",      "TH1D", &hstep1D_out_ih,      32000,0 );
   fitnt->Branch("hdeltachisq1D_nh","TH1D", &hdeltachisq1D_out_nh,32000,0 );
@@ -1101,6 +1122,19 @@ int main(int argc, char ** argv)
       fitmarg_ih->GetDeltaChisqMarg1D()->Copy(*hdeltachisq1D_out_ih);
       fitmarg_nh->GetChisqStep_1D    ()->Copy(*hstep1D_out_nh);
       fitmarg_ih->GetChisqStep_1D    ()->Copy(*hstep1D_out_ih);
+
+      int is_count = 0;
+      for(int is = 0; is < conv::kns; ++is)
+      {
+         SuperkSample_t s = conv::kSKSamples[is];
+         if(s == conv::kSKsUndefined)
+         {
+            continue;
+         }
+         fitmarg_nh->GetChisqMargSample1D(is_count)->Copy(*hchisq1D_samples_out_nh[is_count]);
+         fitmarg_ih->GetChisqMargSample1D(is_count)->Copy(*hchisq1D_samples_out_ih[is_count]);
+         is_count++;
+      }
       
       cout << endl;
       if(runopt->VerboseFit()){
@@ -1345,6 +1379,12 @@ int main(int argc, char ** argv)
   delete hdeltachisq1D_out_ih;
   delete hstep1D_out_nh;
   delete hstep1D_out_ih;
+
+  for(int is = 0; is < conv::kns; ++is)
+  {
+     delete hchisq1D_samples_out_nh[is];
+     delete hchisq1D_samples_out_ih[is];
+  }
   
   cout << endl;
   cout << "Total CPU time" << endl;
