@@ -307,6 +307,9 @@ class FitMarginalization
 
   TH1D *GetChisqMarg1D (void){ return fhchisq_marg_1D;}; // NEW PRECISION
   TH2D *GetChisqMarg2D (void){ return fhchisq_marg_2D;}; // NEW PRECISION
+
+  // Per sample
+  TH1D *GetChisqMargSample1D (const int isample){ return fhchisq_marg_sample_1D[isample]; };
   
   // NEW PENALTY TERM
   double CalcPenaltyTerm (const double par0, const double par1=0.);
@@ -358,7 +361,10 @@ private:
   TH1D *fhchisq_marg_1D; 
   TH2D *fhchisq_marg_2D;  
   TH1D *fhdeltachisq_marg_1D; 
-  TH2D *fhdeltachisq_marg_2D;  
+  TH2D *fhdeltachisq_marg_2D;
+
+  // Per sample chisq
+  TH1D *fhchisq_marg_sample_1D[conv::kns];
   //  
 
   // NEW PENALTY TERM

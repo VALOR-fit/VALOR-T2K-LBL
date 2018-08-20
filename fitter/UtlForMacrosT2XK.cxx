@@ -721,7 +721,7 @@ void valor::util::MargFit_1D_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,
   fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
   fitmarg->SetStartBin(-TMath::Pi()/2.,0.); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
+  fitmarg->SetGridStartRange(-TMath::Pi()/2.,-TMath::Pi()/2.+conv::kASmallNum,0.,0.);
   //fitmarg->SetExtractStartPt("GridFix");
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
@@ -750,7 +750,7 @@ void valor::util::MargFit_1D_deltaCP(RunOpt *runopt,FitMarginalization *fitmarg,
   fitmarg->SetMinimIntervalRead(-TMath::Pi(),+TMath::Pi(),0.,0.,true);
   fitmarg->SetStartBin(+TMath::Pi()/2.,0.); 
   fitmarg->SetNumStartBin(1,1);
-  fitmarg->SetGridStartRange(0.,0.+conv::kASmallNum,0.,0.);
+  fitmarg->SetGridStartRange(+TMath::Pi()/2.,+TMath::Pi()/2.+conv::kASmallNum,0.,0.);
   //fitmarg->SetExtractStartPt("GridFix");
   fitmarg->SetExtractStartPt("Single");
   fitmarg->MinimizeChisqStepRead(skobs_fakedata,true);      
