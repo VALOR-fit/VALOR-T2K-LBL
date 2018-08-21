@@ -346,11 +346,14 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
    if($penalty_freepar0 == 1)
    {
       $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
-      $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
+#      $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+#      $cedar_time = "00:15:00";
+#      $cedar_mem = "2500M";
+      $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;
+      $cedar_time = "00:30:00";
+      $cedar_mem = "3500M";
    }
    else
    {
@@ -509,7 +512,7 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
       $ntoys_margtoys    = 20000  unless defined $ntoys_margtoys;     # of marginalization toys    
       $minfreepar0       = 0.007  unless defined $minfreepar0;  # Min free param allowed value
       $maxfreepar0       = 0.053  unless defined $maxfreepar0;  # Max free param allowed value
-      $wqueue = "long -W 8:00"; # long -W 6:00
+      $wqueue = "long"; # long -W 6:00
    }
    $npt_freepar0      = 81           unless defined $npt_freepar0; # of free parameter points to scan
    $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
