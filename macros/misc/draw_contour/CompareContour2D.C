@@ -183,7 +183,7 @@ void CompareContour2D(char* file_1 = "test1",
      }
      else
      {  // Different hierarchies
-        hchisq_valor[0]->GetXaxis()->SetTitle("#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH) (eV^{2}c^{-4})");
+        hchisq_valor[0]->GetXaxis()->SetTitle("#Deltam^{2}_{32} (NO), #Deltam^{2}_{13} (IO) (eV^{2}c^{-4})");
      }
   }
 
@@ -203,7 +203,7 @@ void CompareContour2D(char* file_1 = "test1",
      }
      else
      {  // Different hierarchies
-        hchisq_valor[0]->GetYaxis()->SetTitle("#Deltam^{2}_{32} (NH),#Deltam^{2}_{13} (IH) (eV^{2}c^{-4})");
+        hchisq_valor[0]->GetYaxis()->SetTitle("#Deltam^{2}_{32} (NO), #Deltam^{2}_{13} (IO) (eV^{2}c^{-4})");
      }
   }
 
@@ -279,7 +279,7 @@ void CompareContour2D(char* file_1 = "test1",
 
   //char* note_text = (doGlobalMin) ? "Global minimum" :"Fixed Mass Ordering";
   char* notetext = "Final systematics pending";
-  double tx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 2);
+  double tx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() * 0.5);
   double nx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 10);
   double ty = Y2;
 
@@ -302,6 +302,24 @@ void CompareContour2D(char* file_1 = "test1",
   TH1D* hchisq_x2 = (TH1D*)filein[1]->Get("hchisq_x");
   hchisq_x1->SetDirectory(0);
   hchisq_x2->SetDirectory(0);
+
+  valor::RootFinder* find_root = new valor::RootFinder();
+  find_root->SetGraph(hchisq_x1);
+  find_root->SetDchiSq(1 + hchisq_x1->GetMinimum());
+  find_root->GetRoots();
+  cout << "X NH: " << endl;
+  find_root->PrintRoots();
+  delete find_root;
+  
+  find_root = new valor::RootFinder();
+  find_root->SetGraph(hchisq_x2);
+  
+  find_root->SetDchiSq(1 + hchisq_x2->GetMinimum());
+  find_root->GetRoots();
+  cout << "X IH: " << endl;
+  find_root->PrintRoots();
+  delete find_root;
+
   double min = hchisq_x1->GetMinimum() < hchisq_x2->GetMinimum() ? hchisq_x1->GetMinimum() : hchisq_x2->GetMinimum();
   minimise_hist(hchisq_x1, min);
   minimise_hist(hchisq_x2, min);
@@ -376,7 +394,7 @@ void CompareContour2D(char* file_1 = "test1",
   }
   lcontours->Draw();
  
-  double tx = hchisq_x1->GetXaxis()->GetBinLowEdge(hchisq_x1->GetXaxis()->GetNbins() / 2);
+  double tx = hchisq_x1->GetXaxis()->GetBinLowEdge(hchisq_x1->GetXaxis()->GetNbins() * 0.5);
   double ty = max;
 
   TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9 Preliminary");
@@ -401,6 +419,24 @@ void CompareContour2D(char* file_1 = "test1",
   TH1D* hchisq_y2 = (TH1D*)filein[1]->Get("hchisq_y");
   hchisq_y1->SetDirectory(0);
   hchisq_y2->SetDirectory(0);
+
+  find_root = new valor::RootFinder();
+  find_root->SetGraph(hchisq_y1);
+  find_root->SetDchiSq(1 + hchisq_y1->GetMinimum());
+  find_root->GetRoots();
+  cout << "Y NH: " << endl;
+  find_root->PrintRoots();
+  delete find_root;
+  
+  find_root = new valor::RootFinder();
+  find_root->SetGraph(hchisq_y2);
+  
+  find_root->SetDchiSq(1 + hchisq_y2->GetMinimum());
+  find_root->GetRoots();
+  cout << "Y IH: " << endl;
+  find_root->PrintRoots();
+  delete find_root;
+
   min = hchisq_y1->GetMinimum() < hchisq_y2->GetMinimum() ? hchisq_y1->GetMinimum() : hchisq_y2->GetMinimum();
   minimise_hist(hchisq_y1, min);
   minimise_hist(hchisq_y2, min);
@@ -474,7 +510,7 @@ void CompareContour2D(char* file_1 = "test1",
   }
   lcontours->Draw();
  
-  tx = hchisq_y1->GetXaxis()->GetBinLowEdge(hchisq_y1->GetXaxis()->GetNbins() / 2);
+  tx = hchisq_y1->GetXaxis()->GetBinLowEdge(hchisq_y1->GetXaxis()->GetNbins() * 0.5);
   ty = max;
 
   TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9 Preliminary");

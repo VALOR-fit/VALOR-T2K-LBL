@@ -346,14 +346,11 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
    if($penalty_freepar0 == 1)
    {
       $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
-#      $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-#      $cedar_time = "00:15:00";
-#      $cedar_mem = "2500M";
-      $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;
-      $cedar_time = "00:30:00";
-      $cedar_mem = "3500M";
+      $cedar_time = "00:15:00";
+      $cedar_mem = "2500M";
    }
    else
    {
@@ -523,28 +520,32 @@ if((($freepar0 eq "mixing13") && ($freepar1 eq "deltacp")) || (($freepar0 eq "de
 # 2D fit - mixing23 v dmsq23
 if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dmsq23") && ($freepar1 eq "mixing23")))
 {
-   $nfiles_margtoys   = 297;#231; #201           unless defined $nfiles_margtoys; # of marginalization files
+#   $nfiles_margtoys   = 297;#231; #201           unless defined $nfiles_margtoys; # of marginalization files
 
    $freepar0 = "mixing23";
    $freepar1 = "dmsq23";
 
    if($penalty_freepar0 == 1)
    {  # Reactor constraint applied
+      $nfiles_margtoys   = 357    unless defined $nfiles_margtoys;
       $ntoys_margtoys    = 10000  unless defined $ntoys_margtoys;
-      $wqueue = "short";
+      $npt_freepar0      = 81     unless defined $npt_freepar0;
+      $npt_freepar1      = 51     unless defined $npt_freepar1;
+      $wqueue = "medium";
    }
    else
    {  # T2K only
+      $nfiles_margtoys   = 297    unless defined $nfiles_margtoys;
       $ntoys_margtoys    = 20000  unless defined $ntoys_margtoys;
+      $npt_freepar0      = 81     unless defined $npt_freepar0;
+      $npt_freepar1      = 21     unless defined $npt_freepar1;
       $wqueue = "medium";
    }
 
    $minfreepar0       = 0.3  unless defined $minfreepar0;  # Min free param allowed value
    $maxfreepar0       = 0.7  unless defined $maxfreepar0;  # Max free param allowed value
-   $npt_freepar0      = 81;#10; #201           unless defined $npt_freepar0; # of free parameter points to scan
    $minfreepar1       = 2.2e-3  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 2.8e-3  unless defined $maxfreepar1;  # Max free param allowed value
-   $npt_freepar1      = 21;#10            unless defined $npt_freepar1; # of free parameter points to scan
    $cedar_time = "03:00:00";
    $cedar_mem = "3500M";
 }

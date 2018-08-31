@@ -160,15 +160,11 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
    $tag = "${tag}_${freepar0}";
    if($use_reactors == 1)
    {
-#      $nexpts_marg            = 40000                    unless defined $nexpts_marg;
-      $nexpts_marg            = 80000                    unless defined $nexpts_marg; 
+      $nexpts_marg            = 40000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
-#      $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
-      $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
-#      $cedar_time             = "5:00:00";
-#      $cedar_mem              = "3500M";
-      $cedar_time             = "10:00:00";
-      $cedar_mem              = "5000M";
+      $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
+      $cedar_time             = "5:00:00";
+      $cedar_mem              = "3500M";
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
    }
    else
@@ -323,16 +319,16 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    if($use_reactors == 1)
    {
       $nexpts_marg = 10000;
-      $wqueue      = "long -R rusage[mem=3072,swap=3072,tmp=1000]";
-      $cedar_time  = "10:00:00";
-      $cedar_mem   = "3000M";
+      $wqueue      = "xlong -W 20:00 -R rusage[mem=4096,swap=4096,tmp=1000]";
+      $cedar_time  = "20:00:00";
+      $cedar_mem   = "4096M";
    }
    else
    {
       $nexpts_marg = 20000;
-      $wqueue      = "xlong -W 20:00 -R rusage[mem=5072,swap=5072,tmp=1000]";
-      $cedar_time  = "20:00:00";
-      $cedar_mem   = "5000M";
+      $wqueue      = "xlong -W 40:00 -R rusage[mem=5120,swap=5120,tmp=1000]";
+      $cedar_time  = "40:00:00";
+      $cedar_mem   = "5120M";
    }
    if($freepar0 eq "dmsq23")
    {
@@ -344,11 +340,11 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $npt_freepar0     = 81         unless defined $npt_freepar0;    # of free parameter points to scan
    $minfreepar1      = 2.2e-3     unless defined $minfreepar1;     # Minimum free parameter allowed value
    $maxfreepar1      = 2.8e-3     unless defined $maxfreepar1;     # Maximum free parameter allowed value 
-   $npt_freepar1     = 21         unless defined $npt_freepar1;    # of free parameter points to scan
+   $npt_freepar1     = 51         unless defined $npt_freepar1;    # of free parameter points to scan
    $marg_hierarchy   = 0          unless defined $marg_hierarchy;
    $masshierarchy    = "normal"   unless defined $masshierarchy;
-   $step_freepar0    = 3          unless defined $step_freepar0;   # of points for each job param0
-   $step_freepar1    = 2          unless defined $step_freepar1;   # of points for each job param1
+   $step_freepar0    = 4          unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1    = 3          unless defined $step_freepar1;   # of points for each job param1
 
    $tag = "${tag}_${freepar0}_${freepar1}";
 }

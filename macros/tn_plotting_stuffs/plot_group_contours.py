@@ -441,12 +441,16 @@ def get_ptheta_contour(filename, fit, is_normal):
     if is_fit_1d(fit):
         if is_normal:
             mh = "_0"
+            mh13 = "_A"
         else:
             mh = "_1"
+            mh13 = "_F"
         if fit == "dcp":
             dchisq = f.Get("cont_like_all_conv" + mh)
         elif fit == "th13":
-            dchisq = f.Get("T13_1D" + mh)
+            dchisq = ROOT.TGraph(f.Get("contours_1D_t13" + mh13))
+            # This works because theat13 corresponds to x for both 1D and 2D
+            dchisq = convert_theta13_2d([dchisq])[0]
         elif fit == "th23":
             dchisq = f.Get("T23_1D" + mh)
         else:

@@ -252,6 +252,62 @@ def drop_bin(histo):
         newHisto.SetBinContent(i, histo.GetBinContent(i))
     return newHisto
 
+def plot_diff_spectrum(histos, data_old, data_new, outfile):
+    data_old.SetMarkerSize(2)
+    data_new.SetMarkerSize(2)
+    data_old.SetMarkerColor(ROOT.kBlack)
+    data_new.SetMarkerColor(ROOT.kRed)
+    data_old.SetMarkerStyle(20)
+    data_new.SetMarkerStyle(20)
+
+    canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
+    total = histos[components[0]].Clone()
+    for component in components[1:]:
+        total.Add(histos[component])
+
+    thetaAxis = total.GetXaxis()
+    nThetaBins = thetaAxis.GetNbins()
+    thetaEdges = []
+    thetaCentre = []
+    for i in range(1, nThetaBins + 1):
+        thetaEdges.append(thetaAxis.GetBinLowEdge(i))
+        thetaCentre.append(thetaAxis.GetBinCenter(i))
+    thetaEdges.append(thetaAxis.GetBinUpEdge(i))
+
+    eAxis = total.GetYaxis()
+    nEBins = eAxis.GetNbins()
+    eEdges = []
+    eCentre = []
+    for i in range(1, nEBins + 1):
+        eEdges.append(eAxis.GetBinLowEdge(i))
+        eCentre.append(eAxis.GetBinCenter(i))
+    eEdges.append(eAxis.GetBinUpEdge(i))
+
+    swappedTotal = ROOT.TH2D("hErecoVsQ2Tot","hErecoVsQ2Tot", nEBins, array('d', eEdges), nThetaBins, array('d', thetaEdges))
+    for e in range(1, nEBins + 1):
+        for theta in range(1, nThetaBins + 1):
+            swappedTotal.SetBinContent(e, theta, total.GetBinContent(theta, e))
+    swappedTotal.Draw("COLZ")
+    swappedTotal.GetYaxis().SetTitle("#theta (degrees)")
+    swappedTotal.GetXaxis().SetTitle("#nu Reconstructed Energy (GeV)")
+    swappedTotal.GetZaxis().SetTitle("Number of Events")
+    swappedTotal.GetYaxis().SetRangeUser(0,180)
+    swappedTotal.GetXaxis().SetRangeUser(0,1.25)
+    swappedTotal.Draw("COLZ")
+    canvas.SetRightMargin(0.2)
+    data_old.Draw("P0")
+    data_new.Draw("P0")
+
+    tx = swappedTotal.GetXaxis().GetBinLowEdge(swappedTotal.GetXaxis().GetLast())
+    ty = 180 
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
+    title.SetTextSize(0.05);
+    title.Draw("same");
+
+    canvas.SaveAs(outfile + "_diff.pdf")
+    canvas.SaveAs(outfile + "_diff.eps")
+    canvas.SaveAs(outfile + "_diff.png")
+
 def plot_ereco_spectrum(histos, data, outfile):
     ROOT.gStyle.SetOptTitle(0)
     canvas = ROOT.TCanvas("canvas","Spectra",10, 10, 1034, 778)
@@ -523,6 +579,19 @@ def asimov(infile, outfile, datafile, sample):
         plot_ereco_spectrum(erecHistos, data, "erec_" + outfile)
         plot_theta_spectrum(thetaHistos, data, "theta_" + outfile)
 
+def diff_data(infile, outfile, datafile_old, datafile_new, sample):
+    file = ROOT.TFile(infile)
+    dfile_old = ROOT.TFile(datafile_old)
+    dfile_new = ROOT.TFile(datafile_new)
+
+    histos = dict()
+    if sample in ["1Re", "RHC1Re", "MultiRe"]:
+        for component in components:
+            histos[component] = file.Get("hErecoVsQ2Mode_" + component)
+        graph_old = dfile_old.Get("g" + sample)
+        graph_new = dfile_new.Get("g" + sample)
+        plot_diff_spectrum(histos, graph_old, graph_new, outfile)
+
 def data(infile, outfile, sample):
     file = ROOT.TFile(infile)
     if sample in ["1Rmu", "RHC1Rmu"]:
@@ -555,13 +624,18 @@ if __name__=="__main__":
     parser.add_option("-f", "--input-file", dest="infile", help='Input file containing the spectra histograms')
     parser.add_option("-o", "--output-file", dest="outfile", help='Output file for spectrum plot')
     parser.add_option("-d", "--data-file", dest="datafile", help='Data file for spectrum plot')
+    parser.add_option("-x", "--data-file-old", dest="datafile_old", help='Data file for spectrum plot')
     parser.add_option("-s", "--sample", dest="sample", help='The sample to plot. 1Re, 1Rmu, MultiRe, RHC1Re, RHC1Rmu.')
     
     v = optparse.Values()
     parser.parse_args(values = v)   # v contains only the values that were specified, not defaults
     o, other = parser.parse_args()
- 
-    asimov(o.infile, o.outfile, o.datafile, o.sample)
+
+    if not o.datafile_old:
+        asimov(o.infile, o.outfile, o.datafile, o.sample)
+    else:
+        print "Option specified"
+        diff_data(o.infile, o.outfile, o.datafile_old, o.datafile, o.sample)
     #data(o.infile, o.outfile, o.sample)
 
     #make_asimovb_variation_spectrum(o.outfile)

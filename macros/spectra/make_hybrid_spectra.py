@@ -18,10 +18,8 @@ except:
 ROOT.gROOT.SetBatch(1)
 
 samples=["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
-mcfileprefix="spectra_osc_asimova_"
-#mcfileprefix="spectra_valor_hybrid_"
 
-def make_full_hybrid(outfile, datafile, mcsamples=[]):
+def make_full_hybrid(outfile, datafile, mcfileprefix, mcsamples=[]):
     df = ROOT.TFile(datafile)
     hybrid = ROOT.TFile(outfile, "RECREATE")
     print "Output", outfile
@@ -71,27 +69,28 @@ def make_hybrid(outfile, datafile, mcFHC1Rmu=None, mcRHC1Rmu=None):
 if __name__=="__main__":
     import optparse
     parser = optparse.OptionParser(usage="%prog [options]..", description="Plot spectra")
-    parser.add_option("-o", "--output-file", dest="outfile", help='Output file for hyrbid spectra')
+    parser.add_option("-o", "--output-file-prefix", dest="outfile", help='Output file prefix for hybrid spectra')
     parser.add_option("-d", "--data-file", dest="datafile", help='Input file containing data spectra')
+    parser.add_option("-f", "--fake-data-prefix", dest="prefix", help='Full path and prefit to fake data spectra')
     
     v = optparse.Values()
     parser.parse_args(values = v)
     o, other = parser.parse_args()
   
-#    make_full_hybrid("hybrid_1Re.root", o.datafile, ["1Re"])
-#    make_full_hybrid("hybrid_1Rmu.root", o.datafile, ["1Rmu"])
-#    make_full_hybrid("hybrid_RHC1Re.root", o.datafile, ["RHC1Re"])
-#    make_full_hybrid("hybrid_RHC1Rmu.root", o.datafile, ["RHC1Rmu"])
-#    make_full_hybrid("hybrid_MultiRe.root", o.datafile, ["MultiRe"])
+    # Mostly fake data
+    make_full_hybrid(o.outfile + "fhc1rmu_data.root", o.datafile, o.prefix, ["1Re","RHC1Re","RHC1Rmu","MultiRe"])
+    make_full_hybrid(o.outfile + "fhc1re_data.root", o.datafile, o.prefix, ["1Rmu","RHC1Re","RHC1Rmu","MultiRe"])
+    make_full_hybrid(o.outfile + "rhc1rmu_data.root", o.datafile, o.prefix, ["1Re","1Rmu","RHC1Re","MultiRe"])
+    make_full_hybrid(o.outfile + "rhc1re_data.root", o.datafile, o.prefix, ["1Re","1Rmu","RHC1Rmu","MultiRe"])
+    make_full_hybrid(o.outfile + "fhc1pi_data.root", o.datafile, o.prefix, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
+    make_full_hybrid(o.outfile + "bestfit_asimov.root", o.datafile, o.prefix, ["1Re","1Rmu","RHC1Re","RHC1Rmu","MultiRe"])
 
-#    make_full_hybrid("hybrid_4mc_cc1pi_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
-#    make_full_hybrid("valor_hybrid.root", o.datafile, ["1Rmu","MultiRe"])
-#    make_full_hybrid("valor_bestfit.root", o.datafile, ["1Re","1Rmu","RHC1Re", "RHC1Rmu","MultiRe"])
-    make_full_hybrid("valor_hybrid_fhc1rmu_data.root", o.datafile, ["1Re","RHC1Re","RHC1Rmu","MultiRe"])
-    make_full_hybrid("valor_hybrid_fhc1re_data.root", o.datafile, ["1Rmu","RHC1Re","RHC1Rmu","MultiRe"])
-    make_full_hybrid("valor_hybrid_rhc1rmu_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","MultiRe"])
-    make_full_hybrid("valor_hybrid_rhc1re_data.root", o.datafile, ["1Re","1Rmu","RHC1Rmu","MultiRe"])
-    make_full_hybrid("valor_hybrid_fhc1pi_data.root", o.datafile, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
+    # Mostly real data
+#    make_full_hybrid(o.outfile + "fhc1rmu_data.root", o.datafile, o.prefix, ["1Rmu"])
+#    make_full_hybrid(o.outfile + "fhc1re_data.root", o.datafile, o.prefix, ["1Re"])
+#    make_full_hybrid(o.outfile + "rhc1rmu_data.root", o.datafile, o.prefix, ["RHC1Rmu"])
+#    make_full_hybrid(o.outfile + "rhc1re_data.root", o.datafile, o.prefix, ["RHC1Re"])
+#    make_full_hybrid(o.outfile + "fhc1pi_data.root", o.datafile, o.prefix, ["MultiRe"])
 
     if other:
         print "Warning - ignored arguments: ", other

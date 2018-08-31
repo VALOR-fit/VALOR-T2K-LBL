@@ -57,11 +57,17 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inver
         g_3sigma_m1.Draw("SAME")
         legend.AddEntry(g_3sigma_p1, "~FC 3#sigma region", "l")
     else:
-        critval = 9
-        critical = ROOT.TLine(-np.pi, critval, np.pi, critval)
-        critical.SetLineColor(ROOT.kBlack)
-        critical.SetLineStyle(2)
-        critical.Draw();
+        critval2 = 4 
+        critical2 = ROOT.TLine(-np.pi, critval2, np.pi, critval2)
+        critical2.SetLineColor(ROOT.kBlack)
+        critical2.SetLineStyle(2)
+        critical2.Draw()
+        critval3 = 9
+        critical3 = ROOT.TLine(-np.pi, critval3, np.pi, critval3)
+        critical3.SetLineColor(ROOT.kBlack)
+        critical3.SetLineStyle(2)
+        critical3.Draw();
+
 
     legend.Draw()
 
@@ -226,10 +232,11 @@ if __name__=="__main__":
             num_var = dim
         elif num_var != dim:
             num_var = -1
+    print len(dchisq_objects)
 
     if num_var == 1:
         if not args.do_global:
-            plot_contours_1d(dchisq_objects, args.labels, args.out_filename)
+            plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only)
         else:
             nh_filename = args.out_filename
             ih_filename = args.out_filename.replace("normal", "inverted")

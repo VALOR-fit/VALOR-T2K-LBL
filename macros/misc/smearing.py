@@ -129,125 +129,162 @@ def resample(input, scale):
         print "Error, input %dD. 1D or 2D resampling only" % len(input.shape)
         sys.exit()
 
-def smear(input, error=4.083384e-5):
-    # Smear the input TH2D - assumes smear variable is Y
-    NXbins = input.GetNbinsX()
-    xaxis = input.GetXaxis()
-    x_low = xaxis.GetBinLowEdge(1)
-    x_high = xaxis.GetBinUpEdge(NXbins)
+#def smear(input, error=4.083384e-5):
+#    # Smear the input TH2D - assumes smear variable is Y
+#    NXbins = input.GetNbinsX()
+#    xaxis = input.GetXaxis()
+#    x_low = xaxis.GetBinLowEdge(1)
+#    x_high = xaxis.GetBinUpEdge(NXbins)
+#
+#    NYbins = input.GetNbinsY()
+#    yaxis = input.GetYaxis()
+#    y_low = yaxis.GetBinLowEdge(1)
+#    y_high = yaxis.GetBinUpEdge(NYbins)
+#    bin_width = yaxis.GetBinWidth(1)
+#
+#    norm = 1.0 / (error * np.sqrt(2 * np.pi))
+#    max = float(-np.inf)
+#    output = input.Clone()
+#    output.SetDirectory(0)
+#    for i in range(0, NXbins):
+#        for j in range(0, NYbins):
+#            val = input.GetBinContent(i + 1, j + 1)
+#            if val > max:
+#                max = val
+#                max_x = i
+#                max_y = j
+#
+#    canvas = ROOT.TCanvas("c2", "c2", 700, 500)
+#    canvas.Print("gaus.pdf[")
+#
+#    like_slice = ROOT.TH1D("like_slice", "like_slice", NYbins, y_low, y_high)
+#    smear_contrib = ROOT.TH1D("smear_contrib", "smear_contrib", NYbins, y_low, y_high)
+#    bestfit_slice = ROOT.TH1D("like_slice", "like_slice", NYbins, y_low, y_high)
+#    boundary = ROOT.TH1D("boundary", "boundary", NYbins, y_low, y_high)
+#    left = yaxis.FindBin(0.00238)
+#    right = yaxis.FindBin(0.00265)
+#    for i in range(left - 7, left):
+#        boundary.SetBinContent(i, input.GetBinContent(max_x, i))
+#    for i in range(right + 1, right + 8):
+#        boundary.SetBinContent(i, input.GetBinContent(max_x, i))
+#    boundary.SetTitle("Likelihood around original 90% CL")
+#    boundary.Draw()
+#    canvas.Print("gaus.pdf")
+#
+#    receive = []
+#    for i in range(0, NYbins):
+#        receive.append(ROOT.TH1D("receive" + str(i), "receive" + str(i), NYbins, y_low, y_high))
+#    for i in range(0, NXbins):
+#        x_smear = xaxis.GetBinCenter(i + 1)
+#        if i == max_x:
+#            for j in range(0, NYbins):
+#                bestfit_slice.SetBinContent(j + 1, input.GetBinContent(i + 1, j + 1))
+#        elif 0.4 < x_smear < 0.65:
+#            for j in range(0, NYbins):
+#                like_slice.SetBinContent(j + 1, input.GetBinContent(i + 1, j + 1))
+#            like_slice.SetTitle("Likelihood through sin^{2}#theta_{23} = " + str(x_smear) + " (" + str(i) + ")")
+#            like_slice.Draw()
+#            canvas.Print("gaus.pdf")
+#
+#        for j in range(0, NYbins):
+#            y_smear = yaxis.GetBinCenter(j + 1)
+#            likelihood = input.GetBinContent(i + 1, j + 1)
+#            gauss_bin = ROOT.TF1("gauss_bin", "gaus(0)", y_low, y_high)
+#            gauss_bin.SetParameters(norm, y_smear, error)
+#            for k in range(0, NYbins):
+#                if j != k:
+#                    y_temp = yaxis.GetBinCenter(k + 1)
+#                    integral = gauss_bin.Integral(y_temp - 0.5 * bin_width, y_temp + 0.5 * bin_width)
+#                    output.Fill(x_smear, y_temp, integral * likelihood)
+#                    if i == max_x:
+#                        smear_contrib.SetBinContent(k, integral * likelihood)
+#                        receive[k - 1].SetBinContent(j, integral * likelihood)
+#                else:
+#                    if i == max_x:
+#                        smear_contrib.SetBinContent(k, 0)
+#            if i == max_x:
+#                smear_contrib.SetTitle("Spread of " + str(x_smear) + " " + str(y_smear))
+#                smear_contrib.Draw()
+#                canvas.Print("gaus.pdf")
+#    for i in range(1, NYbins + 1):
+#        receive[i - 1].SetTitle("Inputs into " + str(xaxis.GetBinCenter(max_x)) + " " + str(yaxis.GetBinCenter(i)))
+#        receive[i - 1].Draw()
+#        canvas.Print("gaus.pdf")
+#    bestfit_slice.SetTitle("Likelihood through sin^{2}#theta_{23} best fit")
+#    bestfit_slice.Draw()
+#    opt = "SAME"
+#    for i in (left, right, right + 1):
+#        receive[i - 1].Scale(10)
+#        receive[i - 1].SetLineColor(ROOT.kRed)
+#        receive[i - 1].Draw(opt)
+#        receive[i - 1].SetTitle("Gaussian at 90CL")
+#
+#    canvas.Print("gaus.pdf")
+#
+#    canvas.Print("gaus.pdf]")
+#    return output
 
-    NYbins = input.GetNbinsY()
-    yaxis = input.GetYaxis()
-    y_low = yaxis.GetBinLowEdge(1)
-    y_high = yaxis.GetBinUpEdge(NYbins)
-    bin_width = yaxis.GetBinWidth(1)
-
-    norm = 1.0 / (error * np.sqrt(2 * np.pi))
-    max = float(-np.inf)
-    output = input.Clone()
+def smear(unsmeared, error):
+    Ny = unsmeared.GetNbinsY()
+    Nx = unsmeared.GetNbinsX()
+    xaxis = unsmeared.GetXaxis()
+    yaxis = unsmeared.GetYaxis()
+    output = unsmeared.Clone()
     output.SetDirectory(0)
-    for i in range(0, NXbins):
-        for j in range(0, NYbins):
-            val = input.GetBinContent(i + 1, j + 1)
-            if val > max:
-                max = val
-                max_x = i
-                max_y = j
-
-    canvas = ROOT.TCanvas("c2", "c2", 700, 500)
-    canvas.Print("gaus.pdf[")
-
-    like_slice = ROOT.TH1D("like_slice", "like_slice", NYbins, y_low, y_high)
-    smear_contrib = ROOT.TH1D("smear_contrib", "smear_contrib", NYbins, y_low, y_high)
-    bestfit_slice = ROOT.TH1D("like_slice", "like_slice", NYbins, y_low, y_high)
-    boundary = ROOT.TH1D("boundary", "boundary", NYbins, y_low, y_high)
-    left = yaxis.FindBin(0.00238)
-    right = yaxis.FindBin(0.00265)
-    for i in range(left - 7, left):
-        boundary.SetBinContent(i, input.GetBinContent(max_x, i))
-    for i in range(right + 1, right + 8):
-        boundary.SetBinContent(i, input.GetBinContent(max_x, i))
-    boundary.SetTitle("Likelihood around original 90% CL")
-    boundary.Draw()
-    canvas.Print("gaus.pdf")
-
-    receive = []
-    for i in range(0, NYbins):
-        receive.append(ROOT.TH1D("receive" + str(i), "receive" + str(i), NYbins, y_low, y_high))
-    for i in range(0, NXbins):
-        x_smear = xaxis.GetBinCenter(i + 1)
-        if i == max_x:
-            for j in range(0, NYbins):
-                bestfit_slice.SetBinContent(j + 1, input.GetBinContent(i + 1, j + 1))
-        elif 0.4 < x_smear < 0.65:
-            for j in range(0, NYbins):
-                like_slice.SetBinContent(j + 1, input.GetBinContent(i + 1, j + 1))
-            like_slice.SetTitle("Likelihood through sin^{2}#theta_{23} = " + str(x_smear) + " (" + str(i) + ")")
-            like_slice.Draw()
-            canvas.Print("gaus.pdf")
-
-        for j in range(0, NYbins):
-            y_smear = yaxis.GetBinCenter(j + 1)
-            likelihood = input.GetBinContent(i + 1, j + 1)
-            gauss_bin = ROOT.TF1("gauss_bin", "gaus(0)", y_low, y_high)
-            gauss_bin.SetParameters(norm, y_smear, error)
-            for k in range(0, NYbins):
-                if j != k:
-                    y_temp = yaxis.GetBinCenter(k + 1)
-                    integral = gauss_bin.Integral(y_temp - 0.5 * bin_width, y_temp + 0.5 * bin_width)
-                    output.Fill(x_smear, y_temp, integral * likelihood)
-                    if i == max_x:
-                        smear_contrib.SetBinContent(k, integral * likelihood)
-                        receive[k - 1].SetBinContent(j, integral * likelihood)
-                else:
-                    if i == max_x:
-                        smear_contrib.SetBinContent(k, 0)
-            if i == max_x:
-                smear_contrib.SetTitle("Spread of " + str(x_smear) + " " + str(y_smear))
-                smear_contrib.Draw()
-                canvas.Print("gaus.pdf")
-    for i in range(1, NYbins + 1):
-        receive[i - 1].SetTitle("Inputs into " + str(xaxis.GetBinCenter(max_x)) + " " + str(yaxis.GetBinCenter(i)))
-        receive[i - 1].Draw()
-        canvas.Print("gaus.pdf")
-    bestfit_slice.SetTitle("Likelihood through sin^{2}#theta_{23} best fit")
-    bestfit_slice.Draw()
-    opt = "SAME"
-    for i in (left, right, right + 1):
-        receive[i - 1].Scale(10)
-        receive[i - 1].SetLineColor(ROOT.kRed)
-        receive[i - 1].Draw(opt)
-        receive[i - 1].SetTitle("Gaussian at 90CL")
-
-    canvas.Print("gaus.pdf")
-
-    canvas.Print("gaus.pdf]")
+    for i in range(1, Nx + 1):
+        x_u = xaxis.GetBinCenter(i)
+        for j in range(1, Ny + 1):
+            y_u = yaxis.GetBinCenter(j)
+            kmin = yaxis.FindBin(y_u - 5 * error)
+            kmax = yaxis.FindBin(y_u + 5 * error)
+            content = 0.0
+            for k in range(kmin, kmax + 1):
+                mean = yaxis.GetBinCenter(k)
+                content += unsmeared.GetBinContent(i, k) * ROOT.TMath.Gaus(y_u, mean, error, False)
+            content = content * xaxis.GetBinWidth(i) * yaxis.GetBinWidth(j) / (2 * np.pi * error)
+            output.SetBinContent(i, j, content)
     return output
 
-def smear_1d(input, error=4.083384e-5):
-    # Smear the input TH1D
-    NXbins = input.GetNbinsX()
-    xaxis = input.GetXaxis()
-    x_low = xaxis.GetBinLowEdge(1)
-    x_high = xaxis.GetBinUpEdge(NXbins)
-    bin_width = xaxis.GetBinWidth(1)
+#def smear_1d(input, error=4.083384e-5):
+#    # Smear the input TH1D
+#    NXbins = input.GetNbinsX()
+#    xaxis = input.GetXaxis()
+#    x_low = xaxis.GetBinLowEdge(1)
+#    x_high = xaxis.GetBinUpEdge(NXbins)
+#    bin_width = xaxis.GetBinWidth(1)
+#
+#    norm = 1.0 / (error * np.sqrt(2 * np.pi))
+#    output = input.Clone()
+#    output.SetDirectory(0)
+#
+#    for i in range(0, NXbins):
+#        x_smear = xaxis.GetBinCenter(i + 1)
+#        likelihood = input.GetBinContent(i + 1)
+#        gauss_bin = ROOT.TF1("gauss_bin", "gaus(0)", x_low, x_high)
+#        gauss_bin.SetParameters(norm, x_smear, error)
+#        for k in range(0, NXbins):
+#            if i != k:
+#                x_temp = xaxis.GetBinCenter(k + 1)
+#                integral = gauss_bin.Integral(x_temp - 0.5 * bin_width, x_temp + 0.5 * bin_width)
+#                output.Fill(x_temp, integral * likelihood)
+#    return output
 
-    norm = 1.0 / (error * np.sqrt(2 * np.pi))
-    output = input.Clone()
+def smear_1d(unsmeared, error):
+    N = unsmeared.GetNbinsX()
+    xaxis = unsmeared.GetXaxis()
+    output = unsmeared.Clone()
     output.SetDirectory(0)
-
-    for i in range(0, NXbins):
-        x_smear = xaxis.GetBinCenter(i + 1)
-        likelihood = input.GetBinContent(i + 1)
-        gauss_bin = ROOT.TF1("gauss_bin", "gaus(0)", x_low, x_high)
-        gauss_bin.SetParameters(norm, x_smear, error)
-        for k in range(0, NXbins):
-            if i != k:
-                x_temp = xaxis.GetBinCenter(k + 1)
-                integral = gauss_bin.Integral(x_temp - 0.5 * bin_width, x_temp + 0.5 * bin_width)
-                output.Fill(x_temp, integral * likelihood)
+    for i in range(1, N + 1):
+        x_u = xaxis.GetBinCenter(i)
+        content = 0.0
+        jmin = xaxis.FindBin(x_u - 5 * error)
+        jmax = xaxis.FindBin(x_u + 5 * error)
+        for j in range(jmin, jmax + 1):
+            mean = xaxis.GetBinCenter(j)
+            content += unsmeared.GetBinContent(j) * ROOT.TMath.Gaus(x_u, mean, error, False)
+        content = content * xaxis.GetBinWidth(i) / (2 * np.pi * error);
+        output.SetBinContent(i, content)
     return output
-
 
 def marginalise(input, axis="x"):
     # Smear the input TH2D - assumes smear variable is Y
@@ -453,7 +490,9 @@ def process_2d(original, root_filename, pdf_filename, error):
 
     temp = chisq_to_likelihood(original)
     original_array = histo_to_nparray(original)
-    scale = 10.0
+    scale = 9.0
+#    resampled_array = original_array
+#    resampled_histogram = ROOT.TH2D("atmos", "atmos", original.GetNbinsX(), original.GetXaxis().GetXmin(), original.GetXaxis().GetXmax(), original.GetNbinsY(), original.GetYaxis().GetXmin(), original.GetYaxis().GetXmax())
     resampled_array = resample(original_array, scale)
     resampled_histogram = ROOT.TH2D("atmos", "atmos", int(scale * original.GetNbinsX()), original.GetXaxis().GetXmin(), original.GetXaxis().GetXmax(), int(scale * original.GetNbinsY()), original.GetYaxis().GetXmin(), original.GetYaxis().GetXmax())
     copy_nparray_to_histo(resampled_array, resampled_histogram)
@@ -570,9 +609,11 @@ def process_1d(original, root_filename, pdf_filename, error):
 
     temp = chisq_to_likelihood_1d(original)
     original_array = histo_to_nparray_1d(original)
-    scale = 10.0
+    scale = 5.0
     resampled_array = resample(original_array, scale)
     resampled_histogram = ROOT.TH1D("atmos", "atmos", int(scale * original.GetNbinsX()), original.GetXaxis().GetXmin(), original.GetXaxis().GetXmax())
+#    resampled_array = original_array
+#    resampled_histogram = ROOT.TH1D("atmos", "atmos", original.GetNbinsX(), original.GetXaxis().GetXmin(), original.GetXaxis().GetXmax())
     copy_nparray_to_histo_1d(resampled_array, resampled_histogram)
     likelihood_histogram = chisq_to_likelihood_1d(resampled_histogram)
 
