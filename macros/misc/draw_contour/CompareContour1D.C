@@ -175,7 +175,7 @@ void CompareContour1D
      }
      else
      {  // Different hierarchies
-        h1->GetXaxis()->SetTitle("#Deltam^{2}_{32} (NH), #Deltam^{2}_{13} (IH) (eV^{2}c^{-4})");
+        h1->GetXaxis()->SetTitle("#Deltam^{2}_{32} (NO), #Deltam^{2}_{13} (IO) (eV^{2}c^{-4})");
      }
   }
 

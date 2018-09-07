@@ -589,7 +589,7 @@
     </normalisations>
 
     <untuned_parameter_central_values>
-      <filename>   official/2018/banff/BANFF_DataFit_2018_final_180712_sk_eb_valor_order_all_plus_scc.root </filename>
+      <filename>   official/2018/banff/DataFit_Postfit_2018_final_v1_180907_sk_eb_valor_order_all_plus_scc.root </filename>
       <objname>    banff_xsec_untuned_central_values    </objname>
       <objtype>    TVectorD                             </objtype>
     </untuned_parameter_central_values>
@@ -627,7 +627,7 @@
           Parameter untuned central values
       -->
       <untuned_values>
-        <filename>   official/2018/banff/BANFF_DataFit_2018_final_180712_sk_eb_valor_order_all_plus_scc.root </filename>
+        <filename>   official/2018/banff/DataFit_Postfit_2018_final_v1_180907_sk_eb_valor_order_all_plus_scc.root </filename>
         <objname>    banff_untuned_central_values  </objname>
         <objtype>    TVectorD                      </objtype>
       </untuned_values>
@@ -638,7 +638,7 @@
           Central values from BANFF fit
       -->
       <initial_values>
-        <filename>   official/2018/banff/BANFF_DataFit_2018_final_180712_sk_eb_valor_order_all_plus_scc.root </filename>
+        <filename>   official/2018/banff/DataFit_Postfit_2018_final_v1_180907_sk_eb_valor_order_all_plus_scc.root </filename>
         <objname>    postfit_params   </objname>
         <objtype>    TVectorD         </objtype>
       </initial_values>
@@ -646,7 +646,7 @@
           Covariance of fit parameters
       -->
       <covariance_matrix>
-        <filename>   official/2018/banff/BANFF_DataFit_2018_final_180712_sk_eb_valor_order_all_plus_scc.root </filename>
+        <filename>   official/2018/banff/DataFit_Postfit_2018_final_v1_180907_sk_eb_valor_order_all_plus_scc.root </filename>
         <objname>    postfit_cov       </objname>
         <objtype>    TMatrixD          </objtype>
       </covariance_matrix>
