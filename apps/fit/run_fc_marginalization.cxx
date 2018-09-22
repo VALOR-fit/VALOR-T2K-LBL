@@ -1,4 +1,3 @@
-
 // ------------------------------------------------------------------------------------------------
 //
 // Macro to perform fit marginalizing the systematic and oscillation parameters
@@ -116,10 +115,18 @@ int main(int argc, char ** argv)
   TStopwatch sw_all;
   
   Env::Instance()->AutoSet("t2xk");
-  cout << *Env::Instance() << endl;
   gROOT->SetBatch(true);
   //MyRunOpt runopt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
   MyRunOpt *runopt = new MyRunOpt(argc, argv, kParseCommon | kParseToys | kParseGlobal | kParseFitMarg | kParse3FOscParams);
+
+  // If it's been set, change the top level data directory
+  // - useful when running on clusters, can copy copy MC, splines etc to local storage
+  string top_level_dir = runopt->TopLevelDataDir();
+  if(top_level_dir.compare("") != 0)
+  {
+    Env::Instance()->SetTopLevelDataDir(top_level_dir);
+  }
+  cout << *Env::Instance() << endl;
   
   TString opt(runopt->Fit_param_list());
   TH2D* penalty_hist = runopt->ToyPenaltyTerm2DHist();

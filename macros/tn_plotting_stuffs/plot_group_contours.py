@@ -81,14 +81,14 @@ def get_axis_labels(fit, is_normal, mach3_present):
         if mach3_present or is_normal:
             return ("#Deltam^{2}_{32} (eV^{2} / c^{4})", "#Delta#chi^{2}")
         else:
-            return ("#Deltam^{2}_{13} (eV^{2} / c^{4})", "#Delta#chi^{2}")
+            return ("#Deltam^{2}_{32} (eV^{2} / c^{4})", "#Delta#chi^{2}")
     elif fit == "app":
         return ("sin^{2}#theta_{13}", "#delta_{CP}")
     elif fit == "disapp":
         if mach3_present or is_normal:
             return ("sin^{2}#theta_{23}", "#Deltam^{2}_{32} (eV^{2} / c^{4})")
         else:
-            return ("sin^{2}#theta_{23}", "#Deltam^{2}_{13} (eV^{2}  / c^{4})")
+            return ("sin^{2}#theta_{23}", "#Deltam^{2}_{32} (eV^{2}  / c^{4})")
 
 def get_common_axis_range(m_dchisq, p_dchisq, v_dchisq):
     x_min = -sys.float_info.max
@@ -838,13 +838,13 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
             p_max = ROOT.TMath.MaxElement(p_dchisq.GetN(), p_dchisq.GetY())
             if p_max > max_chisq:
                 max_chisq = p_max
-            if fit == "dmsq" and not is_normal and not mach3_filename is None:
+            if fit == "dmsq" and not is_normal:
                 p_dchisq = shift_dmsq_graph_1d(p_dchisq)
         else:
             p_is_1d = False
             p_g68 = p_contour1
             p_g90 = p_contour2
-            if fit == "disapp" and not is_normal and not mach3_filename is None:
+            if fit == "disapp" and not is_normal:
                 p_g68, p_g90, p_bestfit = shift_dmsq_graph_2d(p_g68, p_g90, p_bestfit)
 
     if not valor_filename is None:
@@ -857,13 +857,13 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
                 v_dchisq = v_contour1
             if v_dchisq.GetMaximum() > max_chisq:
                 max_chisq = v_dchisq.GetMaximum()
-            if fit == "dmsq" and not is_normal and not mach3_filename is None:
+            if fit == "dmsq" and not is_normal:
                 v_dchisq = shift_dmsq_histo_1d(v_dchisq)
         else:
             v_is_1d = False
             v_g68 = v_contour1
             v_g90 = v_contour2
-            if fit == "disapp" and not is_normal and not mach3_filename is None:
+            if fit == "disapp" and not is_normal:
                 v_g68, v_g90, v_bestfit = shift_dmsq_graph_2d(v_g68, v_g90, v_bestfit)
 
     x_axis_label, y_axis_label = get_axis_labels(fit, is_normal, not mach3_filename is None)
@@ -936,7 +936,18 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
             axis_histo = get_axis_histogram(valor_filename)
         else:
             axis_histo = get_axis_histogram(ptheta_filename)
-        if fit == "disapp" and not is_normal and not mach3_filename is None:
+            if fit == "app":
+                nx = axis_histo.GetNbinsX()
+                ny = axis_histo.GetNbinsY()
+                xmin = axis_histo.GetXaxis().GetXmin()
+                xmax = axis_histo.GetXaxis().GetXmax()
+                xmin = 0.5 * (1 - np.sqrt(1 - xmin))
+                xmax = 0.5 * (1 - np.sqrt(1 - xmax))
+                ymin = axis_histo.GetYaxis().GetXmin()
+                ymax = axis_histo.GetYaxis().GetXmax()
+                axis_histo = ROOT.TH2D("dummy", "", nx, xmin, xmax, ny, ymin, ymax)
+
+        if fit == "disapp" and not is_normal:
             nx = axis_histo.GetNbinsX()
             ny = axis_histo.GetNbinsY()
             xmin = axis_histo.GetXaxis().GetXmin()

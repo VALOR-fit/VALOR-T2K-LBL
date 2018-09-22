@@ -699,7 +699,7 @@ while($i_freepar1 < $n_freepar1) {
 	    
 	    if($resource eq "warwick")
             {
-#               if($irun == 57 || $irun == 96 || $irun == 97)
+#               if( ($irun >= 0 && $irun <= 3) || ($irun >= 7 && $irun <= 10) || ($irun >= 12 && $irun <= 13) || ($irun == 15) || ($irun >= 19 && $irun <= 20) || ($irun >= 28 && $irun <= 30) || ($irun >= 32 && $irun <= 33) || ($irun == 35) || ($irun >= 47 && $irun <= 48) || ($irun == 51) || ($irun >= 53 && $irun <= 54) || ($irun == 56) || ($irun == 59) || ($irun == 63) || ($irun >= 65 && $irun <= 68) || ($irun == 70) || ($irun >= 72 && $irun <= 73) || ($irun == 78) || ($irun >= 80 && $irun <= 83) || ($irun >= 85 && $irun <= 87) || ($irun >= 89 && $irun <= 92) || ($irun >= 96 && $irun <= 97) )
 #               {
 #               }
 #               else
@@ -709,7 +709,10 @@ while($i_freepar1 < $n_freepar1) {
 #               }
 
                `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/submit_fc.sh $command`;
-               $sleep_time = int(rand(10)) + 20;
+#               $sleep_time = int(rand(10)) + 20;
+#               $sleep_time = 1;
+#               $sleep_time = 108;
+               $sleep_time = 90;
                print "Sleeping for $sleep_time seconds";
                sleep($sleep_time);
 

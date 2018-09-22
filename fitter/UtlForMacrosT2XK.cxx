@@ -275,7 +275,7 @@ void valor::util::PerformMargFit(int argc, char ** argv,RunOpt *runopt,FitMargin
   //
 
   
-  Env::Instance()->AutoSet("t2xk");
+//  Env::Instance()->AutoSet("t2xk");
   cout << *Env::Instance() << endl;
   //gROOT->SetBatch(true);
   

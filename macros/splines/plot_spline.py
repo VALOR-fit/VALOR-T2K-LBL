@@ -63,7 +63,9 @@ def nominal(name):
     elif "dismpishp" in name:
         return 0.509591 - 0
     elif "erpa_A" in name:
-        return 0.661699 - 1
+        return 0.683600021893 - 1
+#        return 0.687780898993 - 1
+#        return 0.661699 - 1
     elif "erpa_B" in name:
         return 1.64227 - 1
     elif "erpa_D" in name:
@@ -161,6 +163,38 @@ def state(filename, var, mode, flav, etbin, erbin, thetabin):
         plt.close()
     pdf.close()
 
+def state_nominal(filename, var, mode, flav, etbin, erbin, thetabin):
+    f = ROOT.TFile(filename)
+    if "t2ksk" in filename:
+        names = [ key.GetName() for key in f.GetListOfKeys() if var in key.GetName() ]
+        names = [ name for name in names if "_sp_" in name ]
+        names = [ name for name in names if mode in name ]
+    else:
+        names = [ key.GetName() for key in f.GetListOfKeys() if var in key.GetName() ]
+        names = [ name for name in names if (flav + mode) in name ]
+#    newnames = []
+#    for name in names:
+#        bins = name.split("_")[-3:]
+#        inc_etbin = etbin == "*" or etbin == bins[0]
+#        inc_erbin = erbin == "*" or erbin == bins[1]
+#        inc_thetabin = thetabin == "*" or thetabin == bins[2]
+#        inc = inc_etbin and inc_erbin and inc_thetabin
+#        if inc:
+#            newnames.append(name)
+#    names = newnames
+    print names
+    names.sort()
+    for name in names:
+        splinearray = f.Get(name)
+        print splinearray
+        spline = splinearray[1]
+        print spline
+        xmin = spline.GetXmin()
+        xmax = spline.GetXmax()
+        xspan = xmax - xmin
+        nom = nominal(name)
+        err = sigma(name)
+        print name, nom, spline.Eval(nom), spline.Eval(0)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot splines")
@@ -172,5 +206,6 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--theta-bin", dest="thetabin", default="*", help="theta bin.")
     parser.add_argument("-v", "--flavour", dest="flavour", default="", help="Neutrino flavour.")
     args = parser.parse_args()
-    state(args.filename, args.systematic, args.mode, args.flavour, args.etbin, args.erbin, args.thetabin)
+    state_nominal(args.filename, args.systematic, args.mode, args.flavour, args.etbin, args.erbin, args.thetabin)
+#    state(args.filename, args.systematic, args.mode, args.flavour, args.etbin, args.erbin, args.thetabin)
 #    plot(args.filename, args.systematic, float(args.point))

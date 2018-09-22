@@ -154,12 +154,12 @@ void CompareContour2D(char* file_1 = "test1",
   if(strstr(file_2, "normal") != NULL)
   {
      trueMH2 = "normal";
-     std::cout << "File 2:" << file_1 << " " << trueMH2 << std::endl;
+     std::cout << "File 2:" << file_2 << " " << trueMH2 << std::endl;
   }
   else
   {
      trueMH2 = "inverted";
-     std::cout << "File 2:" << file_1 << " " << trueMH2 << std::endl;
+     std::cout << "File 2:" << file_2 << " " << trueMH2 << std::endl;
   }
 
   // Global scan contours
