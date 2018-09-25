@@ -27,15 +27,14 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
 
   cout << "Making the F&C Critical Values" << endl;
 
-  /*
   // Standard deltacp setup
-  const int Nmh = 2;
-  const int NFCpts = 8; // # of points of Feldman-Cousins
-  */
+  const int Nmh = 1; //2;
+  const int NFCpts = 5; // # of points of Feldman-Cousins
+  /*
   // T2K/NOvA mixing23 setup
   const int Nmh = 1;
   const int NFCpts = 2;
-
+  */
   bool fixed_hierarchy = 0;
   
    // RUN 1-8
@@ -84,34 +83,31 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   
    cout << "Reading file names with F&C Fits" << endl;
   
-   /*
    // Standard deltacp setup
    const char * infilename_fc[NFCpts][Nmh] = {
-      {"fc_deltacp_mpi_normal_merged.root", "fc_deltacp_mpi_inverted_merged.root"},
-      {"fc_deltacp_m3pi4_normal_merged.root", "fc_deltacp_m3pi4_inverted_merged.root"},
-      {"fc_deltacp_mpi2_normal_merged.root", "fc_deltacp_mpi2_inverted_merged.root"},
-      {"fc_deltacp_mpi4_normal_merged.root", "fc_deltacp_mpi4_inverted_merged.root"},
-      {"fc_deltacp_0_normal_merged.root", "fc_deltacp_0_inverted_merged.root"},
-      {"fc_deltacp_ppi4_normal_merged.root", "fc_deltacp_ppi4_inverted_merged.root"},
-      {"fc_deltacp_ppi2_normal_merged.root", "fc_deltacp_ppi2_inverted_merged.root"},
-      {"fc_deltacp_p3pi4_normal_merged.root", "fc_deltacp_p3pi4_inverted_merged.root"}
+//      {"fc_deltacp_mpi_normal_merged.root", "fc_deltacp_mpi_inverted_merged.root"},
+      {"fc_deltacp_mpi_normal_merge1.root"},
+      {"fc_deltacp_m3pi4_normal_merge1.root"},
+      {"fc_deltacp_mpi2_normal_merge1.root"},
+      {"fc_deltacp_mpi4_normal_merge1.root"},
+      {"fc_deltacp_0_normal_merge1.root"}
   };
 
    const int nptcpy = 1;
    double copypt[nptcpy][2] = {
       { -TMath::Pi(), TMath::Pi() } // copy crit val of -TMath::Pi() in TMath::Pi()
    };
-   */
 
+/*
    // T2K/NOvA mixing23 setup
    const char * infilename_fc[NFCpts][Nmh] = {
       {"fc_mixing23_t2k_nh.root"},
       {"fc_mixing23_nova_nh.root"},
-  };
+  ;
 
    const int nptcpy = 0;
    double** copypt = 0;
-
+*/
    TGraph *gFC90CL_nh = new TGraph();
    gFC90CL_nh->SetName("gFC90CL_nh");
    gFC90CL_nh->SetTitle("gFC90CL_nh");
@@ -738,7 +734,8 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
 
    gFC90CL_nh->GetXaxis()->SetTitle("#delta_{CP}");
    gFC90CL_nh->GetYaxis()->SetTitle("-2#Deltaln(L)_{crit}");
-   gFC90CL_nh->GetYaxis()->SetRangeUser(0,5);
+   double maxcrit = 10.0;
+   gFC90CL_nh->GetYaxis()->SetRangeUser(0, maxcrit);
 
    gFC90CL_nh   ->Draw("apl");
    gFC90CL_nh_p1->Draw("pl same");
@@ -749,6 +746,9 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    gFC2sigma_nh   ->Draw("pl same");
    gFC2sigma_nh_p1->Draw("pl same");
    gFC2sigma_nh_m1->Draw("pl same");
+   gFC3sigma_nh   ->Draw("pl same");
+   gFC3sigma_nh_p1->Draw("pl same");
+   gFC3sigma_nh_m1->Draw("pl same");
 
    gFC90CL_ih   ->Draw("pl same");
    gFC90CL_ih_p1->Draw("pl same");
@@ -759,23 +759,27 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    gFC2sigma_ih   ->Draw("pl same");
    gFC2sigma_ih_p1->Draw("pl same");
    gFC2sigma_ih_m1->Draw("pl same");
-  
+   gFC3sigma_ih   ->Draw("pl same");
+   gFC3sigma_ih_p1->Draw("pl same");
+   gFC3sigma_ih_m1->Draw("pl same");
+ 
    TLegend *lDeltaChisq_p1sigma = new TLegend(0.75,0.2,1.0,0.35);
    lDeltaChisq_p1sigma->SetLineColor(0);
    lDeltaChisq_p1sigma->SetFillStyle(0);
    lDeltaChisq_p1sigma->AddEntry(gFC1sigma_nh,"1#sigma","l");  
    lDeltaChisq_p1sigma->AddEntry(gFC90CL_nh,"90%","l");
    lDeltaChisq_p1sigma->AddEntry(gFC2sigma_nh,"2#sigma","l");
-   lDeltaChisq_p1sigma->AddEntry(gFC2sigma_nh,"NH","l");
+   lDeltaChisq_p1sigma->AddEntry(gFC3sigma_nh,"3#sigma","l");
 
+   lDeltaChisq_p1sigma->AddEntry(gFC2sigma_nh,"NH","l");
    lDeltaChisq_p1sigma->AddEntry(gFC2sigma_ih,"IH","l");
 
    lDeltaChisq_p1sigma->Draw();
 
-   TLatex* title = new TLatex(0.0, 1.01 * 5.0, "T2K Run1-9c Preliminary");
+   TLatex* title = new TLatex(0.0, 1.01 * maxcrit, "T2K Run1-9 Preliminary");
    title->SetTextSize(0.05);
    title->Draw();
-   TLatex* caveat = new TLatex(-2.5, 1.01 * 5.0, "Final systematics pending");
+   TLatex* caveat = new TLatex(-2.5, 1.01 * maxcrit, "Final systematics pending");
    caveat->SetTextSize(0.025);
 //   caveat->Draw();
 

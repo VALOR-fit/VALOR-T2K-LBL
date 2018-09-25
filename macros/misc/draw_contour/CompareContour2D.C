@@ -212,8 +212,8 @@ void CompareContour2D(char* file_1 = "test1",
   if(paper_style) format_hist(hchisq_valor[0]);
   hchisq_valor[0]->Draw(); // to set the range
   
-  const double sinsqth13_nom = 0.0219;
-  const double sinsqth13_err = 0.0012;
+  const double sinsqth13_nom = 0.0212;
+  const double sinsqth13_err = 0.0008;
   double X1 = sinsqth13_nom + sinsqth13_err;
   double X2 = sinsqth13_nom - sinsqth13_err;
   double Y1 = hchisq_valor[0]->GetYaxis()->GetXmin();
@@ -272,7 +272,7 @@ void CompareContour2D(char* file_1 = "test1",
   lcontours_2->SetTextSize(0.04);
 
   lcontours_2->AddEntry(gbest_fit_global[0],"Best fit","p");
-  if(draw_reactors) lcontours_2->AddEntry(breactors,"PDG 2016","f");
+  if(draw_reactors) lcontours_2->AddEntry(breactors,"PDG 2018","f");
 
   lcontours->Draw();
   lcontours_2->Draw();

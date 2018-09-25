@@ -115,7 +115,7 @@ def CreateEnvelope(N, outfile, filename1, filename2=None):
 
     tx = nominal.GetXaxis().GetBinLowEdge(nominal.GetXaxis().GetLast()) * 0.5
     ty = nominal.GetMaximum() * 1.01
-    title = ROOT.TLatex(tx, ty,"T2K Run 1-9c Preliminary");
+    title = ROOT.TLatex(tx, ty,"T2K Run 1-9 Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
 
@@ -216,7 +216,7 @@ def CreateFractionalError(N, outfile, filename1, filename2=None):
 
     tx = upper.GetXaxis().GetBinLowEdge(upper.GetXaxis().GetLast()) * 0.5
     ty = upper.GetMaximum() * 1.01
-    title = ROOT.TLatex(tx, ty,"T2K Run 1-9c Preliminary");
+    title = ROOT.TLatex(tx, ty,"T2K Run 1-9 Preliminary");
     title.SetTextSize(0.05);
     title.Draw("same");
 
@@ -413,9 +413,9 @@ def CreateByModeSummaryTable(N):
 if __name__=="__main__":
     N = 10000
     if len(sys.argv) == 1:
-#        CreateSummaryTable(N)
+        CreateSummaryTable(N)
 #        CreateByModeSummaryTable(N)
-        CreateByModeErecPlots(N)
+#        CreateByModeErecPlots(N)
     elif len(sys.argv) == 3:
         CreateEnvelope(N, sys.argv[1], sys.argv[2])
         CreateFractionalError(N, sys.argv[1], sys.argv[2])

@@ -187,8 +187,8 @@ void CompareContour1D
   if(paper_style) format_hist(h1);
   h1->Draw("l");
   
-  const double sinsqth13_nom = 0.0219;
-  const double sinsqth13_err = 0.0012;
+  const double sinsqth13_nom = 0.0212;
+  const double sinsqth13_err = 0.0008;
   double X1 = sinsqth13_nom - sinsqth13_err;
   double X2 = sinsqth13_nom + sinsqth13_err;
   double Y1 = h1->GetMinimum();
@@ -259,7 +259,7 @@ void CompareContour1D
   lcontours->AddEntry(h2,latexname[1]);
   if(draw_reactors)
   {
-     lcontours->AddEntry(breactors, "PDG 2016", "f");
+     lcontours->AddEntry(breactors, "PDG 2018", "f");
   }
   lcontours->Draw();
  
