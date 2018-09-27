@@ -721,7 +721,7 @@ while($i_freepar1 < $n_freepar1) {
 
             if($resource eq "cedar")
             {
-#               if(($irun >= 63 && $irun <= 69) || ($irun >= 86 && $irun <= 99))
+#               if(($irun >= 66 && $irun <= 73) )
 #               {
 #               }
 #               else
@@ -733,8 +733,9 @@ while($i_freepar1 < $n_freepar1) {
                print Slurm "#!/bin/bash \n";
                print Slurm "#SBATCH --account=def-tanaka-ac \n";
                print Slurm "#SBATCH --nodes=1 \n";
-               print Slurm "#SBATCH --time=24:00:00 \n";
-               print Slurm "#SBATCH --mem=3500M \n";
+               print Slurm "#SBATCH --time=23:30:00 \n";
+               print Slurm "#SBATCH --mem=4000M \n";
+               print Slurm "#SBATCH --tmp=52G \n";
                print Slurm "#SBATCH --job-name=$tag-$irun-${i_freepar0} \n";
                print Slurm "#SBATCH --output=$job_dir/$tag-$irun-${i_freepar0}.slurm.log \n";
                print Slurm "str=\"$command\" \n";
@@ -748,6 +749,7 @@ while($i_freepar1 < $n_freepar1) {
                print Slurm "      newdir=\"\$\{SLURM_TMPDIR\}/\$val\" \n";
                print Slurm "      newarray+=\"\$\{tokens[i]\} \" \n";
                print Slurm "      newarray+=\"\$newdir \" \n";
+               print Slurm "      i=\$((i+1)) \n";
                print Slurm "   elif [ \"\$\{tokens[i]\}\" == \"--file-margtoys-ih\" ]; then \n";
                print Slurm "      ih=\"\$\{tokens[i + 1]//\\\"/\}\" \n";
                print Slurm "      x=\"\$\{str%%\$ih*\}\" \n";
@@ -755,11 +757,13 @@ while($i_freepar1 < $n_freepar1) {
                print Slurm "      newdir=\"\$\{SLURM_TMPDIR\}/\$val\" \n";
                print Slurm "      newarray+=\"\$\{tokens[i]\} \" \n";
                print Slurm "      newarray+=\"\$newdir \" \n";
+               print Slurm "      i=\$((i+1)) \n";
                print Slurm "   elif [ \"\$\{tokens[i]\}\" == \"--file-tag\" ]; then \n";
                print Slurm "      newdir=\"\$\{SLURM_TMPDIR\}/\$\{tokens[i + 1]\}\" \n";
                print Slurm "      out=\"\$newdir\" \n";
                print Slurm "      newarray+=\"\$\{tokens[i]\} \" \n";
                print Slurm "      newarray+=\"\$newdir \" \n";
+               print Slurm "      i=\$((i+1)) \n";
                print Slurm "   elif [[ \$\{tokens[i]\} == \\-\\-* ]]; then \n";
                print Slurm "      if [[ \$\{tokens[i + 1]\} == \\-\\-* ]]; then \n";
                print Slurm "         newarray+=\"\$\{tokens[i]\} \" \n";
@@ -771,16 +775,36 @@ while($i_freepar1 < $n_freepar1) {
                print Slurm "      newarray+=\"\$\{tokens[i]\} \" \n";
                print Slurm "   fi \n";
                print Slurm "done \n";
+
+               print Slurm "newarray+=\"--top-level-data-dir \" \n";
+               print Slurm "newarray+=\"\$\{SLURM_TMPDIR\}/\" \n";
+
                print Slurm "cp -f \$nh*.bin \$\{SLURM_TMPDIR\} \n";
                print Slurm "cp -f \$ih*.bin \$\{SLURM_TMPDIR\} \n";
-               print Slurm "cmd=\"\$\{newarray[*]\}\" \n";
+
+               print Slurm "mkdir -p \$\{SLURM_TMPDIR\}/official/2018/banff \n";
+               print Slurm "mkdir -p \$\{SLURM_TMPDIR\}/official/2018/flux \n";
+               print Slurm "mkdir -p \$\{SLURM_TMPDIR\}/official/2018/skdetfsi \n";
+               print Slurm "mkdir -p \$\{SLURM_TMPDIR\}/official/2018/superk/mc/mtuples_v2/valor_format \n";
+               print Slurm "mkdir -p \$\{SLURM_TMPDIR\}/official/2018/xsec/splines2018v1/valor_format \n";
+
                print Slurm "cd $job_dir \n";
                print Slurm "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir\n";
+
+               print Slurm "origdatadir=\$T2KOSCANA/inputs/official/2018 \n";
+               print Slurm "cp \$origdatadir/banff/*valor_order_all_plus_scc.root \$\{SLURM_TMPDIR\}/official/2018/banff/ \n";
+               print Slurm "cp -r \$origdatadir/flux/tuned13av3 \$\{SLURM_TMPDIR\}/official/2018/flux/ \n";
+               print Slurm "cp -r \$origdatadir/skdetfsi/*VALOR_order.root \$\{SLURM_TMPDIR\}/official/2018/skdetfsi/ \n";
+               print Slurm "cp -r \$origdatadir/superk/mc/mtuples_v2/valor_format/*.root \$\{SLURM_TMPDIR\}/official/2018/superk/mc/mtuples_v2/valor_format/ \n";
+               print Slurm "cp -r \$origdatadir/xsec/splines2018v1/valor_format/*.root \$\{SLURM_TMPDIR\}/official/2018/xsec/splines2018v1/valor_format/ \n";
+
+               print Slurm "cmd=\"\$\{newarray[*]\}\" \n";
+               
                print Slurm "eval \"\$cmd\" \n";
                print Slurm "cp \$out*.root . \n";
                close(Slurm);
                `sbatch $job_dir/${tag}_${irun}_${i_freepar0}.slurm`;
-               sleep(5);
+               sleep(10);
             }
     
 	    $irun++;
