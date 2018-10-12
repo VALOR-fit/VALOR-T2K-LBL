@@ -140,6 +140,22 @@ def get_2sigma_valor(valor_file, hierarchy):
     err_p = get_valor_graph(valor_file, tag + mh + "_p1")
     return (central, err_m, err_p)
 
+def get_3sigma_valor(valor_file, hierarchy):
+    tag = "gFC3sigma"
+    if hierarchy == "normal":
+        mh = "_nh"
+    elif hierarchy == "inverted":
+        mh = "_ih"
+    else:
+        print "Error: Unknown hierarchy \"" + hierarchy + "\""
+        sys.exit()
+
+    central = get_valor_graph(valor_file, tag + mh)
+    err_m = get_valor_graph(valor_file, tag + mh + "_m1")
+    err_p = get_valor_graph(valor_file, tag + mh + "_p1")
+    return (central, err_m, err_p)
+
+
 def get_90cl_valor(valor_file, hierarchy):
     tag = "gFC90CL"
     if hierarchy == "normal":
@@ -346,15 +362,246 @@ def compare_fc(valor_file, out_filename):
 
     canvas.Print(out_filename + ")")
 
+def compare_valor_fc(valor_file1, valor_file2, out_filename):
+    canvas = ROOT.TCanvas("fc_nh", "fc_nh", 1024, 768)
+    canvas.SetLeftMargin(0.125)
+    canvas.SetBottomMargin(0.125)
+    canvas.SetRightMargin(0.2)
+
+    v1sigmas = get_1sigma_valor(valor_file1, "normal")
+    v1sigmas2 = get_1sigma_valor(valor_file2, "normal")
+    v90s = get_90cl_valor(valor_file1, "normal")
+    v90s2 = get_90cl_valor(valor_file2, "normal")
+    v2sigmas = get_2sigma_valor(valor_file1, "normal")
+    v2sigmas2 = get_2sigma_valor(valor_file2, "normal")
+
+    v3sigmas = get_3sigma_valor(valor_file1, "normal")
+    v3sigmas2 = get_3sigma_valor(valor_file2, "normal")
+
+    vmax = ROOT.TMath.MaxElement(v3sigmas2[2].GetN(), v3sigmas2[2].GetY())
+    gmax = ROOT.TMath.Ceil(vmax)
+    opt = ""
+    # 1 sigma
+    for i, g in enumerate(v1sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kBlack)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.GetXaxis().SetTitle("#delta_{CP}")
+        g.GetYaxis().SetTitle("#Delta#chi^2")
+        g.SetTitle("FC NH critical values")
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v1sigmas2):
+        g.SetLineColor(ROOT.kRed)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+    # 90CL
+    for i, g in enumerate(v90s):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kMagenta)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v90s2):
+        g.SetLineColor(ROOT.kCyan)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+    # 2 sigma
+    for i, g in enumerate(v2sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kBlue)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v2sigmas2):
+        g.SetLineColor(ROOT.kGreen)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+    # 3 sigma
+    for i, g in enumerate(v3sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(8)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v3sigmas2):
+        g.SetLineColor(9)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+
+    textsize = 0.04
+    lymin = 0.55
+    legend = ROOT.TLegend(0.755, lymin, 0.95, lymin + textsize * 8)
+    legend.SetBorderSize(0)
+    legend.SetFillStyle(0)
+    legend.SetTextSize(textsize)
+    legend.AddEntry(v1sigmas[0], "1-9d 1#sigma", "l")
+    legend.AddEntry(v1sigmas2[0], "1-9c 1#sigma", "l")
+    legend.AddEntry(v90s[0], "1-9d 90%", "l")
+    legend.AddEntry(v90s2[0], "1-9c 90%", "l")
+    legend.AddEntry(v2sigmas[0], "1-9d 2#sigma", "l")
+    legend.AddEntry(v2sigmas2[0], "1-9c 2#sigma", "l")
+    legend.AddEntry(v3sigmas[0], "1-9d 3#sigma", "l")
+    legend.AddEntry(v3sigmas2[0], "1-9c 3#sigma", "l")
+
+    legend.Draw()
+
+    canvas.Print(out_filename + "(")
+
+    # Inverted
+    canvas = ROOT.TCanvas("fc_ih", "fc_ih", 1024, 768)
+    canvas.SetLeftMargin(0.125)
+    canvas.SetBottomMargin(0.125)
+    canvas.SetRightMargin(0.2)
+
+    v1sigmas = get_1sigma_valor(valor_file1, "inverted")
+    v1sigmas2 = get_1sigma_valor(valor_file2, "inverted")
+    v90s = get_90cl_valor(valor_file1, "inverted")
+    v90s2 = get_90cl_valor(valor_file2, "inverted")
+    v2sigmas = get_2sigma_valor(valor_file1, "inverted")
+    v2sigmas2 = get_2sigma_valor(valor_file2, "inverted")
+
+    v3sigmas = get_3sigma_valor(valor_file1, "inverted")
+    v3sigmas2 = get_3sigma_valor(valor_file2, "inverted")
+
+    vmax = ROOT.TMath.MaxElement(v3sigmas2[2].GetN(), v3sigmas2[2].GetY())
+    gmax = ROOT.TMath.Ceil(vmax)
+    opt = ""
+    # 1 sigma
+    for i, g in enumerate(v1sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kBlack)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.GetXaxis().SetTitle("#delta_{CP}")
+        g.GetYaxis().SetTitle("#Delta#chi^2")
+        g.SetTitle("FC IH critical values")
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v1sigmas2):
+        g.SetLineColor(ROOT.kRed)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+    # 90CL
+    for i, g in enumerate(v90s):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kMagenta)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v90s2):
+        g.SetLineColor(ROOT.kCyan)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+    # 2 sigma
+    for i, g in enumerate(v2sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kBlue)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v2sigmas2):
+        g.SetLineColor(ROOT.kGreen)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+    # 3 sigma
+    for i, g in enumerate(v3sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(8)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(v3sigmas2):
+        g.SetLineColor(9)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+
+    textsize = 0.04
+    lymin = 0.55
+    legend = ROOT.TLegend(0.755, lymin, 0.95, lymin + textsize * 8)
+    legend.SetBorderSize(0)
+    legend.SetFillStyle(0)
+    legend.SetTextSize(textsize)
+    legend.AddEntry(v1sigmas[0], "1-9d 1#sigma", "l")
+    legend.AddEntry(v1sigmas2[0], "1-9c 1#sigma", "l")
+    legend.AddEntry(v90s[0], "1-9d 90%", "l")
+    legend.AddEntry(v90s2[0], "1-9c 90%", "l")
+    legend.AddEntry(v2sigmas[0], "1-9d 2#sigma", "l")
+    legend.AddEntry(v2sigmas2[0], "1-9c 2#sigma", "l")
+    legend.AddEntry(v3sigmas[0], "1-9d 3#sigma", "l")
+    legend.AddEntry(v3sigmas2[0], "1-9c 3#sigma", "l")
+
+    legend.Draw()
+
+    canvas.Print(out_filename + ")")
+
 
 def main(in_filename, out_filename):
     valor_file = ROOT.TFile(in_filename, "READ")
     compare_fc(valor_file, out_filename)
     valor_file.Close()
 
+def valor_only(in_filename, in_filename2, out_filename):
+    valor_file1 = ROOT.TFile(in_filename, "READ")
+    valor_file2 = ROOT.TFile(in_filename2, "READ")
+    compare_valor_fc(valor_file1, valor_file2, out_filename)
+    valor_file2.Close()
+    valor_file1.Close()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Insert the new FSI parameters into the unprocessed BANFF matrix")
     parser.add_argument("--input", type=str, help="The VALOR FC graph", required=True)
+    parser.add_argument("--input2", type=str, help="A previous VALOR FC graph", required=False)
     parser.add_argument("--output", type=str, help="Name of the output PDF file", required=True)
     args = parser.parse_args()
-    main(args.input, args.output)
+    if args.input2:
+        valor_only(args.input, args.input2, args.output)
+    else:
+        main(args.input, args.output)

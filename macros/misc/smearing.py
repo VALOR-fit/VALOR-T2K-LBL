@@ -7,6 +7,7 @@ import numpy as np
 import sys
 
 ROOT.gROOT.SetBatch(1)
+ROOT.gStyle->SetOptTitle(0)
 
 def make_erec_spectrum(erec_theta):
     Nerec = erec_theta.GetNbinsY()
@@ -499,7 +500,7 @@ def process_2d(original, root_filename, pdf_filename, error):
     likelihood_histogram = chisq_to_likelihood(resampled_histogram)
     likelihood_histogram.SetTitle("Resampled likelihood surface")
     likelihood_histogram.Draw("COLZ")
-    canvas.Print(pdf_filename)
+#    canvas.Print(pdf_filename)
 
     smeared_histogram = smear(likelihood_histogram, error)
     smeared_histogram.GetXaxis().SetTitle("sin^{2}#theta_{23}")
@@ -512,6 +513,12 @@ def process_2d(original, root_filename, pdf_filename, error):
 
     smeared_histogram.SetTitle("Smeared likelihood surface")
     smeared_histogram.Draw("COLZ")
+#    canvas.Print(pdf_filename)
+
+    # Low res version for TN
+    low_res_histogram = smeared_histogram.Clone("low_res_histogram")
+    low_res_histogram.Rebin2D(3, 3)
+    low_res_histogram.Draw("COLZ")
     canvas.Print(pdf_filename)
 
     chisq_histogram = likelihood_to_chisq(smeared_histogram)

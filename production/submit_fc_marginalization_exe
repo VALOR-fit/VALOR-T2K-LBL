@@ -708,7 +708,7 @@ while($i_freepar1 < $n_freepar1) {
 #                  next;
 #               }
 
-               `bsub -q $queue -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/submit_fc.sh $command`;
+               `bsub -q $queue -G t2kgrp -oo log_${tag}_${irun}_${i_freepar0}.log $softw_dir/production/submit_fc.sh $command`;
 #               $sleep_time = int(rand(10)) + 20;
 #               $sleep_time = 1;
 #               $sleep_time = 108;

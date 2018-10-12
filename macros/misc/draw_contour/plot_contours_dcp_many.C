@@ -44,7 +44,7 @@ void plot_contours_dcp_many
  const bool same_mh_color = false, // use same color for NH and IH
  const bool same_mh_style = true, // use same style for NH and IH
  const bool draw_preliminary = true,
- TString str_preliminary = "T2K Run1-9c Preliminary",
+ TString str_preliminary = "T2K Run 1-9 Preliminary",
  const bool do_fc = true,
  const bool draw_fc_err = false,
  const bool do_fc_critval = true,
@@ -76,7 +76,7 @@ void plot_contours_dcp_many
  const char *hybrid_file_ih = 0
  )
 {
-  str_preliminary = "T2K Run1-9c Preliminary";
+  str_preliminary = "T2K Run 1-9 Preliminary";
   gStyle->SetOptTitle(0);
   const int Nfiles = 1;
   const int Nmh = 2;

@@ -28,8 +28,8 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   cout << "Making the F&C Critical Values" << endl;
 
   // Standard deltacp setup
-  const int Nmh = 1; //2;
-  const int NFCpts = 5; // # of points of Feldman-Cousins
+  const int Nmh = 2;
+  const int NFCpts = 8; // # of points of Feldman-Cousins
   /*
   // T2K/NOvA mixing23 setup
   const int Nmh = 1;
@@ -86,11 +86,14 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    // Standard deltacp setup
    const char * infilename_fc[NFCpts][Nmh] = {
 //      {"fc_deltacp_mpi_normal_merged.root", "fc_deltacp_mpi_inverted_merged.root"},
-      {"fc_deltacp_mpi_normal_merge1.root"},
-      {"fc_deltacp_m3pi4_normal_merge1.root"},
-      {"fc_deltacp_mpi2_normal_merge1.root"},
-      {"fc_deltacp_mpi4_normal_merge1.root"},
-      {"fc_deltacp_0_normal_merge1.root"}
+      {"fc_deltacp_mpi_normal_merge1.root", "fc_deltacp_mpi_inverted_merge1.root"},
+      {"fc_deltacp_m3pi4_normal_merge1.root", "fc_deltacp_m3pi4_inverted_merge1.root"},
+      {"fc_deltacp_mpi2_normal_merge1.root", "fc_deltacp_mpi2_inverted_merge1.root"},
+      {"fc_deltacp_mpi4_normal_merge1.root", "fc_deltacp_mpi4_inverted_merge1.root"},
+      {"fc_deltacp_0_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"},
+      {"fc_deltacp_ppi4_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"},
+      {"fc_deltacp_ppi2_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"},
+      {"fc_deltacp_p3pi4_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"}
   };
 
    const int nptcpy = 1;

@@ -390,7 +390,7 @@ void CompareContour2D(char* file_1 = "test1",
   lcontours->AddEntry(hchisq_x2, latexname[1], "l");
   if(draw_reactors && strstr(xaxis_title, "theta_{13}") != NULL)
   {
-     lcontours->AddEntry(breactors, "PDG 2016", "f");
+     lcontours->AddEntry(breactors, "PDG 2018", "f");
   }
   lcontours->Draw();
  
@@ -506,7 +506,7 @@ void CompareContour2D(char* file_1 = "test1",
   lcontours->AddEntry(hchisq_y2, latexname[1], "l");
   if(draw_reactors && strstr(yaxis_title, "theta_{13}") != NULL)
   {
-     lcontours->AddEntry(breactors, "PDG 2016", "f");
+     lcontours->AddEntry(breactors, "PDG 2018", "f");
   }
   lcontours->Draw();
  
