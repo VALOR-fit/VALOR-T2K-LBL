@@ -16,15 +16,15 @@ void event_rate_ellipse_fhc_Vs_rhc
 (
  bool include_cc1pi = false,
  const char * tag = "ellipse_Run18",
- const char* str_preliminary = "T2K Run 1-9c preliminary",
+ const char* str_preliminary = "T2K Run 1-9 preliminary",
  const char * hypothesis = "3f_osc", /* 2f_numu_disap, 3f_osc, 3f_oscbar, 3f_osc_normbar, 3f_oscbar_normbar */ 
  bool         disable_banff_tuning = false,
- const char * config_file = "analysis_configuration_oa2018_run1-9c_v1_postfit.xml",
+ const char * config_file = "analysis_configuration_oa2018_run1-9d_v1_postfit.xml",
  const char * mixparamchoice = "sinsqtheta",
  const char * hierarchy = "normal",
  const char * dmsqscheme = "auto", /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * mixparamoctant = "two", /* one==kNuOctantOne two==kNuOctantTwo */
- const char * rootfile = "official/2018/data/SK_data_Run19c_valor.root", 
+ const char * rootfile = "official/2018/data/SK_data_Run19d_valor.root", 
  const bool draw_data_spectra = true
 )
 {
@@ -141,15 +141,15 @@ void event_rate_ellipse_fhc_Vs_rhc
   TGraph *gN_fhcVsrhc_elike_nh_sinsqth23_0p55_dcp_mpi2 = new TGraph();
   TGraph *gN_fhcVsrhc_elike_ih_sinsqth23_0p55_dcp_mpi2 = new TGraph();
 
-  double ss12_nh = 0.304;
-  double ss13_nh = 0.02235;
-  double dm12_nh = 7.53E-5;
-  double dm23_nh = 2.440E-3;
+  double ss12_nh = util::FromSinsq2thToSinsqth(kPrior_Sinsq2th12_Used_Mean);
+  double ss13_nh = util::FromSinsq2thToSinsqth(kPrior_Sinsq2th13_Used_Mean);
+  double dm12_nh = kPrior_Dm12sq_Used_Mean;
+  double dm23_nh = 2.452E-3;
 
-  double ss12_ih = 0.304;
-  double ss13_ih = 0.0226125;
-  double dm12_ih = 7.53E-5;
-  double dm23_ih = 2.410E-3;
+  double ss12_ih = ss12_nh;
+  double ss13_ih = ss13_nh;
+  double dm12_ih = dm12_nh;
+  double dm23_ih = 2.432E-3;
 
   for(int idcp=0;idcp<dcp_npt;idcp++){
 
@@ -475,11 +475,11 @@ void event_rate_ellipse_fhc_Vs_rhc
 
   // Init histogram
   
-  TH2D *hInit = new TH2D("hInit","hInit",500,0,100,500,0,100);
-  double xmax = 100.0;
+  TH2D *hInit = new TH2D("hInit","hInit",550,0,110,125,0,25);
+  double xmax = 110.0;
   double xmin = 25.0;
-  double ymin = 4.0;
-  double ymax = 18.0;
+  double ymin = 8.0;
+  double ymax = 25.0;
   hInit->GetXaxis()->SetRangeUser(xmin,xmax);
   hInit->GetYaxis()->SetRangeUser(ymin,ymax);
   double ttx = (xmax + xmin) * 0.5;
@@ -608,14 +608,14 @@ void event_rate_ellipse_fhc_Vs_rhc
 
   gN_fhcVsrhc_elike_data->Draw("PE");
 
-  TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.64);
+  TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.55);
   ldcp_all->SetFillColor(0);
   ldcp_all->SetLineColor(0);
   ldcp_all->SetTextFont(132);
   ldcp_all->SetTextSize(0.035);
   ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5,"sin^{2} #theta_{23} = #color[1]{0.50}, #color[2]{0.45}, #color[4]{0.55}","l");
-  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5,"#Deltam^{2}_{32} = 2.44#times10^{-3} eV^{2}/c^{4}","l");
-  ldcp_all->AddEntry(gN_fhcVsrhc_elike_ih_sinsqth23_0p5,"#Deltam^{2}_{31} = -2.41#times10^{-3} eV^{2}/c^{4}","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5,"#Deltam^{2}_{32} = 2.45#times10^{-3} eV^{2}/c^{4}","l");
+  ldcp_all->AddEntry(gN_fhcVsrhc_elike_ih_sinsqth23_0p5,"#Deltam^{2}_{31} = -2.43#times10^{-3} eV^{2}/c^{4}","l");
   ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi,"#delta_{CP} = #pi","p");
   ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_ppi2,"#delta_{CP} = +#pi/2","p");
   ldcp_all->AddEntry(gN_fhcVsrhc_elike_nh_sinsqth23_0p5_dcp_0,"#delta_{CP} = 0","p");

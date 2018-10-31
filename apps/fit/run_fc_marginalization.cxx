@@ -482,7 +482,7 @@ int main(int argc, char ** argv)
   fitnt->Branch("hchisq1D_1Re_ih", "TH1D", hchisq1D_samples_out_ih[1], 32000,0 );
   fitnt->Branch("hchisq1D_RHC1Rmu_ih", "TH1D", hchisq1D_samples_out_ih[2], 32000,0 );
   fitnt->Branch("hchisq1D_RHC1Re_ih", "TH1D", hchisq1D_samples_out_ih[3], 32000,0 );
-  fitnt->Branch("hchisq1D_MultiRe_ih", "TH1D", hchisq1D_samples_out_ih[5], 32000,0 );
+  fitnt->Branch("hchisq1D_MultiRe_ih", "TH1D", hchisq1D_samples_out_ih[4], 32000,0 );
   fitnt->Branch("hstep1D_nh",      "TH1D", &hstep1D_out_nh,      32000,0 );
   fitnt->Branch("hstep1D_ih",      "TH1D", &hstep1D_out_ih,      32000,0 );
   fitnt->Branch("hdeltachisq1D_nh","TH1D", &hdeltachisq1D_out_nh,32000,0 );

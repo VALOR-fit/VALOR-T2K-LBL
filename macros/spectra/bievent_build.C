@@ -22,7 +22,7 @@ void bievent_build
 (
  const int ntoys = 100,
  const int seed = 1,
- 
+ const char* tag 
 )
 
 {
@@ -39,7 +39,7 @@ void bievent_build
       util::Die(1);
    }
 
-   string tag = ReadS(xml, doc, "input_parameters/tag");
+   string dummy = ReadS(xml, doc, "input_parameters/tag");
    string sk_sample = ReadS(xml, doc, "input_parameters/sk_sample");      
    string hypothesis  = ReadS(xml, doc, "input_parameters/hypothesis");
 
@@ -201,6 +201,7 @@ void bievent_build
 
    TH2D* hEventsSyst[dcp_npt][N23][NMH];
    TH2D* hEvents[dcp_npt][N23][NMH];
+   TObjArray* nominals = new TObjArray(0);
    TH1D* hFHCEvents[dcp_npt][N23][NMH];
    TH1D* hRHCEvents[dcp_npt][N23][NMH];
    for(int idcp=0; idcp < dcp_npt; idcp++)
@@ -234,8 +235,11 @@ void bievent_build
       while(!isPhysical)
       {
          skexp.ResetSystematics();
-         skexp.RandomizeSystematics();
-         RandomizeOsc(ph);
+         if(e > 0)
+         {  // Generate one nominal set and use random throws for the rest
+            skexp.RandomizeSystematics();
+            RandomizeOsc(ph);
+         }
 
          PhysParamList paramTweaks = skexp.Tweaks();
          isPhysical = valor::T2KPhysicalParameterLimits::Instance()->AllWithinLimits(paramTweaks);
@@ -275,6 +279,10 @@ void bievent_build
                GetN_cc1pi(ph,skexp,Ncc1pi);
                Nfhc += Ncc1pi;
                hEventsSyst[idcp][iss23][imh]->Fill(Nfhc, Nrhc);
+               if(e == 0)
+               {
+                  nominals->Add(new TMarker(Nfhc, Nrhc, 20));
+               }
 
                // Apply statistical fluctuations
                Nfhc = Rnd::Instance()->RndToyMCstat().Poisson(Nfhc);
@@ -288,7 +296,7 @@ void bievent_build
       }
    }
 
-   TFile file(Form("%s_%d.root", tag.c_str(), seed), "RECREATE");
+   TFile file(Form("%s_%d.root", tag, seed), "RECREATE");
    for(int idcp=0; idcp < dcp_npt; ++idcp)
    {
       for(int iss23 = 0; iss23 < N23; ++iss23)
@@ -302,6 +310,9 @@ void bievent_build
          }
       }
    }
+   TFile filenom(Form("%snominal.root", tag, seed), "RECREATE");
+   nominals->Write("Nominals", TObject::kSingleKey);
+   filenom.Close();
    file.Close();
 
    return;

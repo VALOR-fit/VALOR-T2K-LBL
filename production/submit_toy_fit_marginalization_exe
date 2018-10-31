@@ -536,7 +536,7 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    else
    {  # T2K only
       $ntoys_margtoys    = 20000  unless defined $ntoys_margtoys;
-      $wqueue = "medium";
+      $wqueue = "long";
    }
 
    $minfreepar0       = 0.3  unless defined $minfreepar0;  # Min free param allowed value
@@ -1031,7 +1031,7 @@ while($i_freepar1 < $n_freepar1) {
 
 
             if($resource eq "warwick") {
-                `bsub -q $wqueue -R "select[hname != 'comp20']" -oo log_${tag}_${irun}_${i_freepar0}_${ifreepar1}.log $command`
+                `bsub -q $wqueue -G t2kgrp -R "select[hname != 'comp20']" -oo log_${tag}_${irun}_${i_freepar0}_${ifreepar1}.log $command`
             }
 	    
 	    

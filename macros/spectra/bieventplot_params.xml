@@ -2,7 +2,7 @@
 
 <bievent>
   <input_parameters>
-    <tag>ellipse_Run1_9c</tag>    
+    <tag>ellipse_Run1_9</tag>    
     <sk_sample>1Re</sk_sample>
     <hypothesis>3f_osc</hypothesis>
   </input_parameters>
@@ -16,7 +16,7 @@
     <input_dm23sq>2.460E-3</input_dm23sq>
     <input_betabar>-99.</input_betabar>
     <disable_banff_tuning>false</disable_banff_tuning>
-    <config_file>analysis_configuration_oa2018_run1-9c_v1_postfit.xml</config_file>
+    <config_file>analysis_configuration_oa2018_run1-9d_v1_postfit.xml</config_file>
     <mixparamchoice> sinsqtheta </mixparamchoice>
     <hierarchy> normal </hierarchy>
     <dmsqscheme> auto </dmsqscheme>
@@ -47,8 +47,8 @@
     </ss23>
   </vectors>
   <plot_data>
-    <rootfile>official/2018/data/SK_data_Run19c_valor.root</rootfile>
-    <tag>ellipse_Run1_9c</tag>
+    <rootfile>official/2018/data/SK_data_Run19d_valor.root</rootfile>
+    <tag>ellipse_Run1_9</tag>
     <iexperiment>0</iexperiment>
     <draw_data> true </draw_data>
 

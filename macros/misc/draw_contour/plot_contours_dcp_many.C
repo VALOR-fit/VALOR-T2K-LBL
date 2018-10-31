@@ -626,9 +626,10 @@ void plot_contours_dcp_many
       double bincenter = hdeltachisq1D_shifted_fc[0][0]->GetBinCenter(ibin+1);
       double bincont = hdeltachisq1D_shifted_fc[0][0]->GetBinContent(ibin+1);
       double bincont_new = 0.;
-      if     (draw_90CL)   bincont_new = bincont - gFC90CL_nh->Eval(bincenter); // bincont=0 --> boundary of CL
-      else if(draw_2sigmaCL) bincont_new = bincont - gFC2sigma_nh->Eval(bincenter); // bincont=0 --> boundary of CL      
-      else if(draw_1sigmaCL) bincont_new = bincont - gFC1sigma_nh->Eval(bincenter);
+      if     (draw_90CL)   bincont_new = bincont - gFC90CL_nh_p1->Eval(bincenter); // bincont=0 --> boundary of CL
+      else if(draw_3sigmaCL) bincont_new = bincont - gFC3sigma_nh_p1->Eval(bincenter);
+      else if(draw_2sigmaCL) bincont_new = bincont - gFC2sigma_nh_p1->Eval(bincenter); // bincont=0 --> boundary of CL      
+      else if(draw_1sigmaCL) bincont_new = bincont - gFC1sigma_nh_p1->Eval(bincenter);
       else{
 	cerr << "CL interval only available for 90% or 2sigma CL" << endl;
 	exit(1);
@@ -678,9 +679,10 @@ void plot_contours_dcp_many
       double bincenter = hdeltachisq1D_shifted_fc[0][1]->GetBinCenter(ibin+1);
       double bincont = hdeltachisq1D_shifted_fc[0][1]->GetBinContent(ibin+1);
       double bincont_new = 0.;
-      if     (draw_90CL)     bincont_new = bincont - gFC90CL_ih->Eval(bincenter); // bincont=0 --> boundary of CL
-      else if(draw_2sigmaCL) bincont_new = bincont - gFC2sigma_ih->Eval(bincenter); // bincont=0 --> boundary of CL
-      else if(draw_1sigmaCL) bincont_new = bincont - gFC1sigma_ih->Eval(bincenter);
+      if     (draw_90CL)     bincont_new = bincont - gFC90CL_ih_p1->Eval(bincenter); // bincont=0 --> boundary of CL
+      else if(draw_3sigmaCL) bincont_new = bincont - gFC3sigma_ih_p1->Eval(bincenter);
+      else if(draw_2sigmaCL) bincont_new = bincont - gFC2sigma_ih_p1->Eval(bincenter); // bincont=0 --> boundary of CL
+      else if(draw_1sigmaCL) bincont_new = bincont - gFC1sigma_ih_p1->Eval(bincenter);
       else{
 	cerr << "CL interval only available for 90% or 2sigma CL" << endl;
 	exit(1);
@@ -815,7 +817,7 @@ void plot_contours_dcp_many
     
     // Computation of confidence intervals available only for 90% or 2sigma CL
 
-    if( (draw_90CL || draw_1sigmaCL || draw_2sigmaCL) && do_fc_conf_interv){
+    if( (draw_90CL || draw_1sigmaCL || draw_2sigmaCL || draw_3sigmaCL) && do_fc_conf_interv){
 
       if(Status_range_nh!=conv::kBadResult){
 	min90CL_nh->SetLineWidth(2);
@@ -887,7 +889,17 @@ void plot_contours_dcp_many
 	hatch_max90CL_ih->Draw();
       }
     }
-    
+    if(do_fc_critval && draw_3sigmaCL){
+      gFC3sigma_nh   ->Draw("l same");
+      gFC3sigma_ih   ->Draw("l same");
+      if(draw_fc_err){
+        gFC3sigma_nh_p1->Draw("l same");
+        gFC3sigma_nh_m1->Draw("l same");
+        gFC3sigma_ih_p1->Draw("l same");
+        gFC3sigma_ih_m1->Draw("l same");
+      }
+    }
+   
     if(do_fc_critval && draw_2sigmaCL){
       gFC2sigma_nh   ->Draw("l same");
       gFC2sigma_ih   ->Draw("l same");
@@ -940,6 +952,10 @@ void plot_contours_dcp_many
       //lcritval->AddEntry(gFC2sigma_ih,"#Delta #chi^{2}_{crit} (2#sigma) - IH","l");
       lcritval->AddEntry(gFC2sigma_nh,"2#sigma CL","l");
     }
+    if(draw_3sigmaCL){
+      lcritval->AddEntry(gFC3sigma_nh,"3#sigma CL","l");
+    }
+
     if(draw_1sigmaCL){
       lcritval->AddEntry(gFC1sigma_nh,"1#sigma CL","l");
     }
@@ -1353,7 +1369,7 @@ void plot_contours_dcp_many
 
     if(!two_sided)
     {
-       int N = NbinsChisq;
+/*       int N = NbinsChisq;
        for(int ibin = 0; ibin < N; ibin++)
        {
           int islice = hdeltachisq1D[0][0]->FindBin(0.0);
@@ -1372,7 +1388,7 @@ void plot_contours_dcp_many
           }
           plot_slice(vec_deltachisq_bin_nh[ibin], hdeltachisq1D[0][0]->GetBinContent(ibin + 1),
                 hdeltachisq1D[0][0]->GetXaxis()->GetBinCenter(ibin + 1), slicename);
-       }
+       }*/
     }
 
     double min_chisq_gof_nh = *min_element(vchisq_gof_nh.begin(), vchisq_gof_nh.end());
@@ -2241,7 +2257,7 @@ void plot_contours_dcp_many
   return;
 }
 
-double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
+double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf, double &lim_x_min, double &lim_x_max){
   
   cout << endl;
   cout << "Compute MINOS errors" << endl;
@@ -2279,7 +2295,6 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
     cout << "best-fit chisq = " << chisq_min << endl;
     //cout << endl;
   }
-  
   
   // cout << endl;
   // cout << "val_bf = " << val_bf << endl;
@@ -2327,7 +2342,19 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
     // }
     
   }
-  
+  cout << "MINOS Left interval bin 1: " << ibin << endl;
+  if(ibin < 0)
+  {  // The interval hit the boundary, wrap around
+     for(int ibin=histo->GetNbinsX(); ibin > bin_bf; ibin--){
+        double bincont = histo->GetBinContent(ibin);
+        if(bincont>CritChisq_1D){
+           bin_negsigma_b = ibin;
+           bin_negsigma_a = bin_negsigma_b+1;
+           break;
+        }
+     }
+  }
+  cout << "MINOS Left interval bin 2: " << ibin << endl;
   
   // Positive error
   
@@ -2358,6 +2385,19 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
       break;
     }
   }
+  cout << "MINOS Right interval bin 1: " << ibin << endl;
+  if(ibin > histo->GetNbinsX())
+  {
+     for(int 0; ibin < bin_bf; ibin++){
+        double bincont = histo->GetBinContent(ibin);
+        if(bincont>CritChisq_1D){
+           bin_negsigma_b = ibin;
+           bin_negsigma_a = bin_negsigma_b+1;
+           break;
+        }
+     }
+  }
+  cout << "MINOS Right interval bin 2: " << ibin << endl;
   //cout << "bin_possigma_b = " << bin_possigma_b << endl;
   //cout << "bin_possigma_a = " << bin_possigma_a << endl;
   
@@ -2377,7 +2417,7 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
   }
   
   // Check if the interval bins are correctly found
-  if(bin_negsigma_a > bin_possigma_b){
+/*  if(bin_negsigma_a > bin_possigma_b){
     cerr << endl;
     cerr << "FitMarginalization::CalcBestFitErrorsMINOS" << endl;
     cerr << "Left extreme bin is higher than right extreme bin" << endl;
@@ -2388,7 +2428,7 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
     //exit(1);
     return conv::kBadResult;
   }
-  
+*/
   double X1 = conv::kBadResult;
   double Y1 = conv::kBadResult;
   double X2 = conv::kBadResult;
@@ -2408,6 +2448,7 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
   }
   
   errneg = fabs(val_bf - Xout);
+  lim_x_min = Xout;
   //cout << "fparam_bf_errneg[0] = " << fparam_bf_errneg[0] << endl;
   
   // Extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
@@ -2421,7 +2462,8 @@ double CalcBestFitErrorsMINOS(TH1D *histo, double CritVal, double val_bf){
   else{
     Xout = histo->GetBinCenter(bin_possigma_b);
   }
-  errpos[0] = fabs(val_bf - Xout);
+  errpos = fabs(val_bf - Xout);
+  lim_x_max = Xout;
   //cout << "fparam_bf_errpos[0] = " << fparam_bf_errpos[0] << endl;
   
   cout << endl;
@@ -2523,7 +2565,24 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
     // }
     
   }
-  
+  cout << "Left interval bin 1: " << ibin << endl;
+  if(ibin < 0)
+  {  // The interval hit the boundary, wrap around
+     for(int ibin=histo->GetNbinsX(); ibin > bin_bf; ibin--){
+       double bincont = histo->GetBinContent(ibin);
+       if(bincont>CritChisq_1D){
+         // bins before (b) and after (a) DeltaChisq=1 (following x direction)
+         bin_negsigma_b = ibin;
+         bin_negsigma_a = bin_negsigma_b+1;
+         break;
+       }
+     }
+  }
+  cout << "Left interval bin 2: " << ibin << endl;
+  if(ibin == bin_bf)
+  {
+     return conv::kBadResult;
+  }
   
   //
   // Useful for checks
@@ -2568,6 +2627,26 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
       break;
     }
   }
+  cout << "Right interval bin 1: " << ibin << endl;
+  if(ibin > histo->GetNbinsX())
+  {  // The interval hit the boundary, wrap around
+     for(int 0; ibin < bin_bf; ibin++){
+       double bincont = histo->GetBinContent(ibin);
+       if(bincont>CritChisq_1D){
+         // bins before (b) and after (a) DeltaChisq=1 (following x direction)
+         bin_negsigma_b = ibin;
+         bin_negsigma_a = bin_negsigma_b+1;
+         break;
+       }
+     }
+  }
+  cout << "Right interval bin 2: " << ibin << endl;
+  if(ibin == bin_bf)
+  {
+     return conv::kBadResult;
+  }
+
+
   //cout << "bin_possigma_b = " << bin_possigma_b << endl;
   //cout << "bin_possigma_a = " << bin_possigma_a << endl;
   
@@ -2585,7 +2664,7 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
     bin_possigma_a = histo->GetNbinsX();
     bin_possigma_b = histo->GetNbinsX();
   }
-  
+/*  
   // Check if the interval bins are correctly found
   if(bin_negsigma_a > bin_possigma_b){
     cerr << endl;
@@ -2597,7 +2676,7 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
     cerr << endl;
     //exit(1);
     return conv::kBadResult;
-  }
+  }*/
   
   double X1 = conv::kBadResult;
   double Y1 = conv::kBadResult;
@@ -2612,12 +2691,14 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
     X2 = histo->GetXaxis()->GetBinCenter(bin_negsigma_a);
     Y2 = histo->GetBinContent(bin_negsigma_a);
     Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+    cout << "Left (" << X1 << "," << Y1 << "," << X2 << "," << Y2 << "): " << Xout << endl;
   }
   else{
     Xout = histo->GetBinCenter(bin_negsigma_a);
   }
   
   errneg = fabs(val_bf - Xout);
+  lim_x_min = Xout;
   //cout << "fparam_bf_errneg[0] = " << fparam_bf_errneg[0] << endl;
   
   // Extrapolation (right extreme). Do it only if 1sigma bin is in the physical region
@@ -2627,11 +2708,13 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
     X2 = histo->GetXaxis()->GetBinCenter(bin_possigma_a);
     Y2 = histo->GetBinContent(bin_possigma_a);
     Xout = GetInterpolationX(X1,Y1,X2,Y2,CritChisq_1D);
+    cout << "Right (" << X1 << "," << Y1 << "," << X2 << "," << Y2 << "): " << Xout << endl;
   }
   else{
     Xout = histo->GetBinCenter(bin_possigma_b);
   }
-  errpos[0] = fabs(val_bf - Xout);
+  errpos = fabs(val_bf - Xout);
+  lim_x_max = Xout;
   //cout << "fparam_bf_errpos[0] = " << fparam_bf_errpos[0] << endl;
   
   cout << endl;
@@ -2640,10 +2723,6 @@ double CalcBestFitErrorsMINOS_FC(TH1D *histo, double CritVal, double val_bf,doub
   cout << "The confidence interval is:"<< endl;
   cout << "[ " << val_bf - errneg << " ; " << val_bf + errpos << " ] " << endl;
   cout << endl;
-  
-  lim_x_min = val_bf - errneg;
-  lim_x_max = val_bf + errpos;
-  
 }
 
 

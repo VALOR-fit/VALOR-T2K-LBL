@@ -7,7 +7,7 @@ import numpy as np
 import sys
 
 ROOT.gROOT.SetBatch(1)
-ROOT.gStyle->SetOptTitle(0)
+ROOT.gStyle.SetOptTitle(0)
 
 def make_erec_spectrum(erec_theta):
     Nerec = erec_theta.GetNbinsY()

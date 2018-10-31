@@ -85,15 +85,14 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   
    // Standard deltacp setup
    const char * infilename_fc[NFCpts][Nmh] = {
-//      {"fc_deltacp_mpi_normal_merged.root", "fc_deltacp_mpi_inverted_merged.root"},
-      {"fc_deltacp_mpi_normal_merge1.root", "fc_deltacp_mpi_inverted_merge1.root"},
-      {"fc_deltacp_m3pi4_normal_merge1.root", "fc_deltacp_m3pi4_inverted_merge1.root"},
-      {"fc_deltacp_mpi2_normal_merge1.root", "fc_deltacp_mpi2_inverted_merge1.root"},
-      {"fc_deltacp_mpi4_normal_merge1.root", "fc_deltacp_mpi4_inverted_merge1.root"},
-      {"fc_deltacp_0_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"},
-      {"fc_deltacp_ppi4_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"},
-      {"fc_deltacp_ppi2_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"},
-      {"fc_deltacp_p3pi4_normal_merge1.root", "fc_deltacp_0_inverted_merge1.root"}
+      {"fc_deltacp_mpi_normal_merge.root", "fc_deltacp_mpi_inverted_merge.root"},
+      {"fc_deltacp_m3pi4_normal_merge.root", "fc_deltacp_m3pi4_inverted_merge.root"},
+      {"fc_deltacp_mpi2_normal_merge.root", "fc_deltacp_mpi2_inverted_merge.root"},
+      {"fc_deltacp_mpi4_normal_merge.root", "fc_deltacp_mpi4_inverted_merge.root"},
+      {"fc_deltacp_0_normal_merge.root", "fc_deltacp_0_inverted_merge.root"},
+      {"fc_deltacp_ppi4_normal_merge.root", "fc_deltacp_ppi4_inverted_merge.root"},
+      {"fc_deltacp_ppi2_normal_merge.root", "fc_deltacp_ppi2_inverted_merge.root"},
+      {"fc_deltacp_p3pi4_normal_merge.root", "fc_deltacp_p3pi4_inverted_merge.root"}
   };
 
    const int nptcpy = 1;
@@ -279,7 +278,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
         
             if(ientry == 0)
             {
-               h1[ifc][imh] = new TH1D(Form("h_%d_%d",ifc,imh),Form("hist_%s_%1.3lf",hierarch[imh],truepar0),100,0,8);
+               h1[ifc][imh] = new TH1D(Form("h_%d_%d",ifc,imh),Form("hist_%s_%1.3lf",hierarch[imh],truepar0),100,0,10);
                h1_bf[ifc][imh] = new TH1D(Form("h_%d_%d_bf",ifc,imh),Form("hist_%s_%1.3lf",hierarch[imh],truepar0),100,-TMath::Pi(),TMath::Pi());
             }
             double deltachisq0BF_used = deltachisq0BF_glob;
@@ -377,6 +376,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
         
             h_coverage_1sigma_nh->SetPoint(h_coverage_1sigma_nh->GetN(),truepar0,1 - CalcCoverage(myvector,1));
             h_coverage_2sigma_nh->SetPoint(h_coverage_2sigma_nh->GetN(),truepar0,1 - CalcCoverage(myvector,4));
+            h_coverage_3sigma_nh->SetPoint(h_coverage_3sigma_nh->GetN(),truepar0,1 - CalcCoverage(myvector,9));
             h_coverage_90pc_nh->SetPoint(h_coverage_90pc_nh->GetN(),truepar0, 1 - CalcCoverage(myvector,2.71));
          }
          else if(*trueMH=="inverted")
@@ -399,6 +399,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
         
             h_coverage_1sigma_ih->SetPoint(h_coverage_1sigma_ih->GetN(),truepar0,1 - CalcCoverage(myvector,1));
             h_coverage_2sigma_ih->SetPoint(h_coverage_2sigma_ih->GetN(),truepar0,1 - CalcCoverage(myvector,4));
+            h_coverage_3sigma_ih->SetPoint(h_coverage_3sigma_ih->GetN(),truepar0,1 - CalcCoverage(myvector,9));
             h_coverage_90pc_ih->SetPoint(h_coverage_90pc_ih->GetN(),truepar0,1 - CalcCoverage(myvector,2.71));
          }
          else
@@ -418,6 +419,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
          bin = h_draw_2sig->FindBin(FCCritVal_2sigma);
          h_draw_2sig->Reset();
          h_draw_2sig->SetBinContent(bin,histogram_maximum*0.8);
+         bin = h_draw_3sig->FindBin(FCCritVal_3sigma);
          h_draw_3sig->Reset();
          h_draw_3sig->SetBinContent(bin,histogram_maximum*0.8);
 
@@ -430,6 +432,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
          l->AddEntry(h_draw_3sig,Form("3#sigmaCL: %1.2lf",FCCritVal_3sigma),"l");
       
          TCanvas* c = new TCanvas();
+         c->SetLogy();
          h1[ifc][imh]->GetXaxis()->SetTitle("#Delta#chi^{2}");
          h1[ifc][imh]->GetYaxis()->SetTitle("N Toys");
          h1[ifc][imh]->SetLineWidth(2);
@@ -613,10 +616,12 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   
    h_coverage_1sigma_nh->Sort();
    h_coverage_2sigma_nh->Sort();
+   h_coverage_3sigma_nh->Sort();
    h_coverage_90pc_nh->Sort();
   
    h_coverage_1sigma_ih->Sort();
    h_coverage_2sigma_ih->Sort();
+   h_coverage_3sigma_ih->Sort();
    h_coverage_90pc_ih->Sort();
   
    gFC90CL_nh   ->Sort();
@@ -677,14 +682,17 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   
    h_coverage_1sigma_nh->SetLineColor(kRed);
    h_coverage_2sigma_nh->SetLineColor(kBlue);
+   h_coverage_3sigma_nh->SetLineColor(kYellow);
    h_coverage_90pc_nh->SetLineColor(kGreen+3);
   
    h_coverage_1sigma_ih->SetLineColor(kRed);
    h_coverage_2sigma_ih->SetLineColor(kBlue);
+   h_coverage_3sigma_ih->SetLineColor(kYellow);
    h_coverage_90pc_ih->SetLineColor(kGreen+3);
   
    h_coverage_1sigma_ih->SetLineStyle(2);
    h_coverage_2sigma_ih->SetLineStyle(2);
+   h_coverage_3sigma_ih->SetLineStyle(2);
    h_coverage_90pc_ih->SetLineStyle(2);
   
    gFC90CL_ih   ->SetLineStyle(2);
@@ -818,9 +826,11 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    fa3->Draw("lsame");
    h_coverage_1sigma_nh->Draw("pl");
    h_coverage_2sigma_nh->Draw("pl");
+   h_coverage_3sigma_nh->Draw("pl");
    h_coverage_90pc_nh->Draw("pl");
    h_coverage_1sigma_ih->Draw("pl");
    h_coverage_2sigma_ih->Draw("pl");
+   h_coverage_3sigma_ih->Draw("pl");
    h_coverage_90pc_ih->Draw("pl");
   
    TLegend *leg = new TLegend(0.6,0.2,0.88,0.4);
@@ -828,6 +838,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
    leg->AddEntry(h_coverage_1sigma_nh,"1#sigma (68%)","l");
    leg->AddEntry(h_coverage_90pc_nh,"90%","l");
    leg->AddEntry(h_coverage_2sigma_nh,"2#sigma (95%)","l");
+   leg->AddEntry(h_coverage_3sigma_nh,"3#sigma (99.7%)","l");
    leg->AddEntry(h_coverage_1sigma_ih,"IH","l");
    leg->Draw();
    CoverageCanvas->SaveAs("Coverage.pdf");
@@ -866,9 +877,11 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   
    h_coverage_1sigma_nh->Write("h_coverage_1sigma_nh");
    h_coverage_2sigma_nh->Write("h_coverage_2sigma_nh");
+   h_coverage_3sigma_nh->Write("h_coverage_3sigma_nh");
    h_coverage_90pc_nh->Write("h_coverage_90pc_nh");
    h_coverage_1sigma_ih->Write("h_coverage_1sigma_ih");
    h_coverage_2sigma_ih->Write("h_coverage_2sigma_ih");
+   h_coverage_3sigma_ih->Write("h_coverage_3sigma_ih");
    h_coverage_90pc_ih->Write("h_coverage_90pc_ih");
    fileout_fc->Close();
 

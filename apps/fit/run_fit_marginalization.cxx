@@ -212,6 +212,11 @@ int main(int argc, char ** argv)
   double deltachisq01=conv::kALargeNum;
   TH2D *hchisq2D_out = new TH2D("hchisq2D_out","hchisq2D_out",1,0,1,1,0,1);
   TH1D *hchisq1D_out = new TH1D("hchisq1D_out","hchisq1D_out",1,0,1);
+  TH1D *hchisq1D_1Rmu = new TH1D("hchisq1D_1Rmu","hchisq1D_1Rmu",1,0,1); 
+  TH1D *hchisq1D_1Re = new TH1D("hchisq1D_1Re","hchisq1D_1Re",1,0,1);
+  TH1D *hchisq1D_MultiRe = new TH1D("hchisq1D_MultiRe","hchisq1D_MultiRe",1,0,1);
+  TH1D *hchisq1D_RHC1Rmu = new TH1D("hchisq1D_RHC1Rmu","hchisq1D_RHC1Rmu",1,0,1);
+  TH1D *hchisq1D_RHC1Re = new TH1D("hchisq1D_RHC1Re","hchisq1D_RHC1Re",1,0,1);
   TH2D *hdeltachisq2D_out = new TH2D("hdeltachisq2D_out","hdeltachisq2D_out",1,0,1,1,0,1);
   TH1D *hdeltachisq1D_out = new TH1D("hdeltachisq1D_out","hdeltachisq1D_out",1,0,1);
   TH2D *hstep2D_out = new TH2D("hstep2D_out","hstep2D_out",1,0,1,1,0,1);
@@ -288,6 +293,11 @@ int main(int argc, char ** argv)
   fitnt->Branch("bestfit1", &bestfit1 );
   
   fitnt->Branch("hchisq1D",     "TH1D", &hchisq1D_out,     32000,0 );
+  fitnt->Branch("hchisq1D_1Rmu","TH1D", &hchisq1D_1Rmu,    32000,0 );
+  fitnt->Branch("hchisq1D_1Re","TH1D", &hchisq1D_1Re,    32000,0 );
+  fitnt->Branch("hchisq1D_MultiRe","TH1D", &hchisq1D_MultiRe,    32000,0 );
+  fitnt->Branch("hchisq1D_RHC1Rmu","TH1D", &hchisq1D_RHC1Rmu,    32000,0 );
+  fitnt->Branch("hchisq1D_RHC1Re","TH1D", &hchisq1D_RHC1Re,    32000,0 );
   fitnt->Branch("hstep1D",      "TH1D", &hstep1D_out,      32000,0 );
   fitnt->Branch("hdeltachisq1D","TH1D", &hdeltachisq1D_out,32000,0 );
   fitnt->Branch("hchisq2D",     "TH2D", &hchisq2D_out,     32000,0 );
@@ -676,6 +686,33 @@ int main(int argc, char ** argv)
       fitmarg->GetChisqMarg1D     ()->Copy(*hchisq1D_out      );
       fitmarg->GetDeltaChisqMarg1D()->Copy(*hdeltachisq1D_out);
       fitmarg->GetChisqStep_1D    ()->Copy(*hstep1D_out);
+
+      int is_count = 0;
+      for(int is = 0; is < conv::kns; ++is)
+      {
+         SuperkSample_t s = conv::kSKSamples[is];
+         switch(s)
+         {
+            case conv::kSKsFCFV1RingMuLike:
+               fitmarg->GetChisqMargSample1D(is_count)->Copy(*hchisq1D_1Rmu);
+               break;
+            case conv::kSKsFCFV1RingELike:
+               fitmarg->GetChisqMargSample1D(is_count)->Copy(*hchisq1D_1Re);
+               break;
+            case conv::kSKsRHCFCFV1RingMuLike:
+               fitmarg->GetChisqMargSample1D(is_count)->Copy(*hchisq1D_RHC1Rmu);
+               break;
+            case conv::kSKsRHCFCFV1RingELike:
+               fitmarg->GetChisqMargSample1D(is_count)->Copy(*hchisq1D_RHC1Re);
+               break;
+            case conv::kSKsFCFVMultiRingELike:
+               fitmarg->GetChisqMargSample1D(is_count)->Copy(*hchisq1D_MultiRe);
+               break;
+            default:
+               continue;
+         }
+         is_count++;
+      }
       
       cout << "Chisq:" << endl;
       int npt_chisq_x = hchisq1D_out->GetNbinsX();

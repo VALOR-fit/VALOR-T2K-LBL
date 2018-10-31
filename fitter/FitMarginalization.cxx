@@ -118,6 +118,15 @@
 //#undef __USE_1RMU_IN_CHISQ__
 //#undef __USE_RHC1RE_IN_CHISQ__
 
+// Appearance only fit
+//#undef __USE_RHC1RMU_IN_CHISQ__
+//#undef __USE_1RMU_IN_CHISQ__
+
+// Disappearance only fit
+//#undef __USE_RHC1RE_IN_CHISQ__
+//#undef __USE_1RE_IN_CHISQ__
+//#undef __USE_MULTIRE_IN_CHISQ__
+
 using std::cout;
 using std::cerr;
 using std::endl;

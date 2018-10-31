@@ -110,6 +110,7 @@ void bievent_plot
    }
 
    TFile* file = new TFile("events.root");
+   TFile* filenom = new TFile("nominals.root");
    double Nfhc = ReadD(xml,doc,"plot_data/Nfhc");
    double Nrhc = ReadD(xml,doc,"plot_data/Nrhc");
 
@@ -127,8 +128,11 @@ void bievent_plot
             hRHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_rhc_%d_%d_%d", idcp, iss23, imh)));
 
             // Consider median instead of mean
-            Nfhc = hEventsSyst[idcp][iss23][imh]->GetMean(1);
-            Nrhc = hEventsSyst[idcp][iss23][imh]->GetMean(2);
+            TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(idcp * N23 * NMH + iss23 * NMH + imh);
+            Nfhc = nom->GetX();
+            Nrhc = nom->GetY();
+//            Nfhc = hEventsSyst[idcp][iss23][imh]->GetMean(1);
+//            Nrhc = hEventsSyst[idcp][iss23][imh]->GetMean(2);
 /*            cout << "Syst" << endl;
             cout << idcp << " " << iss23 << " " << imh << " => " <<
                Nfhc << "(" << hEventsSyst[idcp][iss23][imh]->GetRMS(1) << ") " <<
@@ -174,7 +178,7 @@ void bievent_plot
    double xmax = 100.0;
    double xmin = 25.0;
    double ymin = 4.0;
-   double ymax = 18.0;
+   double ymax = 25.0;
    hInit->GetXaxis()->SetRangeUser(xmin,xmax);
    hInit->GetYaxis()->SetRangeUser(ymin,ymax);
    double ttx = (xmax + xmin) * 0.5;
@@ -277,7 +281,7 @@ void bievent_plot
    gN_events_data->SetMarkerStyle(23);
    gN_events_data->Draw("p");
 
-   TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-9c Preliminary");
+   TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-9 Preliminary");
    title->SetTextSize(0.05);
    title->Draw();
    TLatex* caveat = new TLatex(ctx, 1.01 * ty, "Final systematics pending");

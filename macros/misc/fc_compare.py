@@ -16,23 +16,23 @@ def get_1sigma_ptheta(hierarchy):
     ])
     if hierarchy == "normal":
         central = np.array([
-            1.33685,   0.918013,   0.489131,   1.1639,     1.63422,    1.64574,    1.47577,    1.45326,    1.33685
+            1.42841,   0.971327,     0.517528,     1.21209,     1.63962,     1.69637,     1.49823,     1.4967,     1.42841
         ])
         err_p = np.array([
-            1.35816,   0.933285,   0.506248,   1.17774,    1.65707,    1.66869,    1.49817,    1.47874,    1.35816
+            1.44494,    0.983721,   0.528202,   1.22372,    1.65732,    1.71246,    1.51303,    1.51073,    1.44494
         ])
         err_m = np.array([
-            1.31051,   0.901412,   0.470563,   1.14611,    1.60675,    1.62627,    1.45899,    1.42888,    1.31051
+            1.41031,    0.95818,    0.506787,   1.1973,     1.6214,     1.6795,     1.48509,    1.47994,    1.41031
         ])
     else:
         central = np.array([
-            1.72801,   1.68239,    1.49607,    1.45637,    1.39545,    1.07431,    0.75144,    1.32113,    1.72801
+            1.83198,    1.78041,    1.59909,    1.56084,    1.49057,    1.14834,    0.801538,   1.38609,    1.83198
         ])
         err_p = np.array([
-            1.76231,   1.70355,    1.5157,     1.47835,    1.4169,     1.09118,    0.769979,   1.33888,    1.76231
+            1.85178,    1.79441,    1.61624,    1.5761,     1.51044,    1.1589,     0.816973,   1.39869,    1.85178
         ])
         err_m = np.array([
-            1.70604,   1.66413,    1.47351,    1.43674,    1.36697,    1.05863,    0.727023,   1.30319,    1.70604
+            1.81327,    1.76345,    1.58534,    1.54397,    1.47345,    1.13291,    0.787904,   1.37097,    1.81327
         ])
     gcentral = ROOT.TGraph(len(central), dcp, central)
     gerr_p = ROOT.TGraph(len(err_p), dcp, err_p)
@@ -47,28 +47,60 @@ def get_2sigma_ptheta(hierarchy):
     ])
     if hierarchy == "normal":
         central = np.array([
-            3.7301,    2.86577,    2.94686,    3.08528,    4.10718,    4.19564,    3.89917,    3.94545,    3.7301
+            3.94117,     2.98058,     3.13813,     3.23689,    4.15363,     4.29318,     3.78187,     4.06287,     3.94117
         ])
         err_p = np.array([
-            3.78355,   2.92726,    3.00886,    3.13782,    4.17493,    4.24121,    3.95521,    4.0093,     3.78355
+            3.9734,     3.01493,    3.19812,    3.27908,    4.18265,    4.34552,    3.82385,    4.11013,    3.9734
         ])
         err_m = np.array([
-            3.67525,   2.81413,    2.90014,    3.03054,    4.04596,    4.14042,    3.82915,    3.88069,    3.67525
+            3.90175,    2.94359,    3.06977,    3.19851,    4.11212,    4.24951,    3.73411,    4.01657,    3.90175
         ])
     else:
         central = np.array([
-            4.36348,   4.13774,    3.73848,    3.83816,    3.92575,    3.48139,    3.59933,    3.75345,    4.36348
+            4.53456,    4.37234,    3.89413,    4.03318,    4.15353,    3.62808,    3.72282,    3.86741,    4.53456            
         ])
         err_p = np.array([
-            4.42767,   4.18631,    3.79261,    3.90991,    3.96735,    3.54312,    3.66838,    3.80902,    4.42767
+            4.56928,    4.4298,     3.93771,    4.08019,    4.21451,    3.67862,    3.77717,    3.92508,    4.56928
         ])
         err_m = np.array([
-            4.32913,   4.06989,    3.67521,    3.77397,    3.86069,    3.4345,     3.53091,    3.66713,    4.32913
+            4.49626,    4.32694,    3.85826,    3.99947,    4.11508,    3.58497,    3.64838,    3.82819,    4.49626
         ])
     gcentral = ROOT.TGraph(len(central), dcp, central)
     gerr_p = ROOT.TGraph(len(err_p), dcp, err_p)
     gerr_m = ROOT.TGraph(len(err_m), dcp, err_m)
     return (gcentral, gerr_m, gerr_p)
+
+def get_3sigma_ptheta(hierarchy):
+    dcp = np.array([
+        -3.14159265359,-2.35619449019,-1.57079632679,
+        -0.78539816339,0.0,0.78539816339,
+        1.57079632679,2.35619449019,3.14159265359
+    ])
+    if hierarchy == "normal":
+        central = np.array([
+            7.14189,    6.9917,     7.25759,    7.35769,    7.49438,    8.51605,    8.1012,     7.94791,    7.14189
+        ])
+        err_p = np.array([
+            7.28868,    7.10152,    7.47141 ,   7.62189,    7.57498,    8.71947,    8.39234,    8.16214,    7.28868
+        ])
+        err_m = np.array([
+            7.04791,    6.88437,    7.04536,    7.21949,    7.3996,     8.24896,    7.89309,    7.76813,    7.04791
+        ])
+    else:
+        central = np.array([
+            8.22741,    7.59662,    7.96901,    7.6689,     8.19489,    7.85326,    8.45545,    8.12065,    8.22741
+        ])
+        err_p = np.array([
+            8.34986,    7.71256,    8.10219,    7.84004,    8.31989,    7.98715,    8.72958,    8.39883,    8.34986
+        ])
+        err_m = np.array([
+            8.06399,    7.46685,    7.80227,    7.38685,    7.99173,    7.6282  ,   8.30157,    7.90948,    8.06399
+        ])
+    gcentral = ROOT.TGraph(len(central), dcp, central)
+    gerr_p = ROOT.TGraph(len(err_p), dcp, err_p)
+    gerr_m = ROOT.TGraph(len(err_m), dcp, err_m)
+    return (gcentral, gerr_m, gerr_p)
+
 
 def write_ptheta_graph(g_nh, g_ih):
     f = ROOT.TFile("ptheta_fc.root", "RECREATE")
@@ -84,23 +116,23 @@ def get_90cl_ptheta(hierarchy):
     ])
     if hierarchy == "normal":
         central = np.array([
-            2.79803,   1.96558,    1.83203,    2.21087,    3.13907,    3.14253 ,   2.83913,    2.91232,    2.79803
+            2.92791,     2.06695,     1.94758,     2.33131,     3.15869,     3.21636 ,     2.81765,     2.9884,     2.92791
         ])
         err_p = np.array([
-            2.82822,   1.98972,    1.87762,    2.23599,    3.18088,    3.18416,    2.87986,    2.95255,    2.82822
+            2.96108,    2.0882,     1.98061,    2.35553,    3.18286,    3.2467,     2.84582,    3.01756,    2.96108
         ])
         err_m = np.array([
-            2.76579,   1.93043,    1.78571,    2.18437,    3.10556,    3.09595,    2.79109,    2.87349,    2.76579
+            2.89644,    2.03169,    1.91192,    2.30207,    3.13022,    3.18489,    2.7854,     2.95169,    2.89644
         ])
     else:
         central = np.array([
-            3.3036,    3.14508,    2.83882,    2.8689  ,   2.88333,    2.36627,    2.37207,    2.62994,    3.3036
+            3.43813,    3.3644,     2.94837,    3.07676 ,   3.07233,    2.49237,    2.47119,    2.76296,    3.43813
         ])
         err_p = np.array([
-            3.34912,   3.18417,    2.86743,    2.89726,    2.9393,     2.40165,    2.42656,    2.67093,    3.34912
+            3.464,  3.39075,    2.98027,    3.10756,    3.10165,    2.51808,    2.49906,    2.78725,    3.464
         ])
         err_m = np.array([
-            3.26105,   3.10444,    2.79883,    2.83752,    2.84131,    2.30612,    2.32571,    2.59192,    3.26105
+            3.40271,    3.32448,    2.91927,    3.03507,    3.03662,    2.45925,    2.4254,     2.72632,    3.40271
         ])
     gcentral = ROOT.TGraph(len(central), dcp, central)
     gerr_p = ROOT.TGraph(len(err_p), dcp, err_p)
@@ -183,11 +215,13 @@ def compare_fc(valor_file, out_filename):
     p90s = get_90cl_ptheta("normal")
     v2sigmas = get_2sigma_valor(valor_file, "normal")
     p2sigmas = get_2sigma_ptheta("normal")
+    v3sigmas = get_3sigma_valor(valor_file, "normal")
+    p3sigmas = get_3sigma_ptheta("normal")
 
     p2sigma_nh = p2sigmas[0]
 
-    vmax = ROOT.TMath.MaxElement(v2sigmas[2].GetN(), v2sigmas[2].GetY())
-    pmax = ROOT.TMath.MaxElement(p2sigmas[2].GetN(), p2sigmas[2].GetY())
+    vmax = ROOT.TMath.MaxElement(v3sigmas[2].GetN(), v3sigmas[2].GetY())
+    pmax = ROOT.TMath.MaxElement(p3sigmas[2].GetN(), p3sigmas[2].GetY())
     if vmax > pmax:
         gmax = vmax
     else:
@@ -203,7 +237,7 @@ def compare_fc(valor_file, out_filename):
         else:
             g.SetLineStyle(1)
         g.GetXaxis().SetTitle("#delta_{CP}")
-        g.GetYaxis().SetTitle("#Delta#chi^2")
+        g.GetYaxis().SetTitle("#Delta#chi^{2}")
         g.SetTitle("FC NH critical values")
         g.Draw(opt)
         opt = "same"
@@ -215,22 +249,22 @@ def compare_fc(valor_file, out_filename):
             g.SetLineStyle(1)
         g.Draw(opt)
     # 90CL
-    for i, g in enumerate(v90s):
-        g.GetYaxis().SetRangeUser(0.0, gmax)
-        g.SetLineColor(ROOT.kMagenta)
-        if i > 0:
-            g.SetLineStyle(2)
-        else:
-            g.SetLineStyle(1)
-        g.Draw(opt)
-        opt = "same"
-    for i, g in enumerate(p90s):
-        g.SetLineColor(ROOT.kCyan)
-        if i > 0:
-            g.SetLineStyle(2)
-        else:
-            g.SetLineStyle(1)
-        g.Draw(opt)
+#    for i, g in enumerate(v90s):
+#        g.GetYaxis().SetRangeUser(0.0, gmax)
+#        g.SetLineColor(ROOT.kMagenta)
+#        if i > 0:
+#            g.SetLineStyle(2)
+#        else:
+#            g.SetLineStyle(1)
+#        g.Draw(opt)
+#        opt = "same"
+#    for i, g in enumerate(p90s):
+#        g.SetLineColor(ROOT.kCyan)
+#        if i > 0:
+#            g.SetLineStyle(2)
+#        else:
+#            g.SetLineStyle(1)
+#        g.Draw(opt)
     # 2 sigma
     for i, g in enumerate(v2sigmas):
         g.GetYaxis().SetRangeUser(0.0, gmax)
@@ -248,6 +282,24 @@ def compare_fc(valor_file, out_filename):
         else:
             g.SetLineStyle(1)
         g.Draw(opt)
+    # 3 sigma
+    for i, g in enumerate(v3sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kMagenta)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(p3sigmas):
+        g.SetLineColor(ROOT.kCyan)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+
 
     textsize = 0.04
     lymin = 0.65
@@ -257,10 +309,12 @@ def compare_fc(valor_file, out_filename):
     legend.SetTextSize(textsize)
     legend.AddEntry(v1sigmas[0], "VALOR 1#sigma", "l")
     legend.AddEntry(p1sigmas[0], "p-theta 1#sigma", "l")
-    legend.AddEntry(v90s[0], "VALOR 90% CL", "l")
-    legend.AddEntry(p90s[0], "p-theta 90% CL", "l")
+#    legend.AddEntry(v90s[0], "VALOR 90% CL", "l")
+#    legend.AddEntry(p90s[0], "p-theta 90% CL", "l")
     legend.AddEntry(v2sigmas[0], "VALOR 2#sigma", "l")
     legend.AddEntry(p2sigmas[0], "p-theta 2#sigma", "l")
+    legend.AddEntry(v3sigmas[0], "VALOR 3#sigma", "l")
+    legend.AddEntry(p3sigmas[0], "p-theta 3#sigma", "l")
 
     legend.Draw()
 
@@ -277,13 +331,15 @@ def compare_fc(valor_file, out_filename):
     p90s = get_90cl_ptheta("inverted")
     v2sigmas = get_2sigma_valor(valor_file, "inverted")
     p2sigmas = get_2sigma_ptheta("inverted")
+    v3sigmas = get_3sigma_valor(valor_file, "inverted")
+    p3sigmas = get_3sigma_ptheta("inverted")
 
     p2sigma_ih = p2sigmas[0]
 
     write_ptheta_graph(p2sigma_nh, p2sigma_ih)
 
-    vmax = ROOT.TMath.MaxElement(v2sigmas[2].GetN(), v2sigmas[2].GetY())
-    pmax = ROOT.TMath.MaxElement(p2sigmas[2].GetN(), p2sigmas[2].GetY())
+    vmax = ROOT.TMath.MaxElement(v3sigmas[2].GetN(), v3sigmas[2].GetY())
+    pmax = ROOT.TMath.MaxElement(p3sigmas[2].GetN(), p3sigmas[2].GetY())
     if vmax > pmax:
         gmax = vmax
     else:
@@ -311,22 +367,22 @@ def compare_fc(valor_file, out_filename):
             g.SetLineStyle(1)
         g.Draw(opt)
     # 90CL
-    for i, g in enumerate(v90s):
-        g.GetYaxis().SetRangeUser(0.0, gmax)
-        g.SetLineColor(ROOT.kMagenta)
-        if i > 0:
-            g.SetLineStyle(2)
-        else:
-            g.SetLineStyle(1)
-        g.Draw(opt)
-        opt = "same"
-    for i, g in enumerate(p90s):
-        g.SetLineColor(ROOT.kCyan)
-        if i > 0:
-            g.SetLineStyle(2)
-        else:
-            g.SetLineStyle(1)
-        g.Draw(opt)
+#    for i, g in enumerate(v90s):
+#        g.GetYaxis().SetRangeUser(0.0, gmax)
+#        g.SetLineColor(ROOT.kMagenta)
+#        if i > 0:
+#            g.SetLineStyle(2)
+#        else:
+#            g.SetLineStyle(1)
+#        g.Draw(opt)
+#        opt = "same"
+#    for i, g in enumerate(p90s):
+#        g.SetLineColor(ROOT.kCyan)
+#        if i > 0:
+#            g.SetLineStyle(2)
+#        else:
+#            g.SetLineStyle(1)
+#        g.Draw(opt)
     # 2 sigma
     for i, g in enumerate(v2sigmas):
         g.GetYaxis().SetRangeUser(0.0, gmax)
@@ -344,6 +400,23 @@ def compare_fc(valor_file, out_filename):
         else:
             g.SetLineStyle(1)
         g.Draw(opt)
+    # 3 sigma
+    for i, g in enumerate(v3sigmas):
+        g.GetYaxis().SetRangeUser(0.0, gmax)
+        g.SetLineColor(ROOT.kMagenta)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
+        opt = "same"
+    for i, g in enumerate(p3sigmas):
+        g.SetLineColor(ROOT.kCyan)
+        if i > 0:
+            g.SetLineStyle(2)
+        else:
+            g.SetLineStyle(1)
+        g.Draw(opt)
 
     textsize = 0.04
     lymin = 0.65
@@ -353,10 +426,12 @@ def compare_fc(valor_file, out_filename):
     legend.SetTextSize(textsize)
     legend.AddEntry(v1sigmas[0], "VALOR 1#sigma", "l")
     legend.AddEntry(p1sigmas[0], "p-theta 1#sigma", "l")
-    legend.AddEntry(v90s[0], "VALOR 90% CL", "l")
-    legend.AddEntry(p90s[0], "p-theta 90% CL", "l")
+#    legend.AddEntry(v90s[0], "VALOR 90% CL", "l")
+#    legend.AddEntry(p90s[0], "p-theta 90% CL", "l")
     legend.AddEntry(v2sigmas[0], "VALOR 2#sigma", "l")
     legend.AddEntry(p2sigmas[0], "p-theta 2#sigma", "l")
+    legend.AddEntry(v2sigmas[0], "VALOR 3#sigma", "l")
+    legend.AddEntry(p2sigmas[0], "p-theta 3#sigma", "l")
 
     legend.Draw()
 
@@ -459,14 +534,23 @@ def compare_valor_fc(valor_file1, valor_file2, out_filename):
     legend.SetBorderSize(0)
     legend.SetFillStyle(0)
     legend.SetTextSize(textsize)
-    legend.AddEntry(v1sigmas[0], "1-9d 1#sigma", "l")
-    legend.AddEntry(v1sigmas2[0], "1-9c 1#sigma", "l")
-    legend.AddEntry(v90s[0], "1-9d 90%", "l")
-    legend.AddEntry(v90s2[0], "1-9c 90%", "l")
-    legend.AddEntry(v2sigmas[0], "1-9d 2#sigma", "l")
-    legend.AddEntry(v2sigmas2[0], "1-9c 2#sigma", "l")
-    legend.AddEntry(v3sigmas[0], "1-9d 3#sigma", "l")
-    legend.AddEntry(v3sigmas2[0], "1-9c 3#sigma", "l")
+#    legend.AddEntry(v1sigmas[0], "1-9d 1#sigma", "l")
+#    legend.AddEntry(v1sigmas2[0], "1-9c 1#sigma", "l")
+#    legend.AddEntry(v90s[0], "1-9d 90%", "l")
+#    legend.AddEntry(v90s2[0], "1-9c 90%", "l")
+#    legend.AddEntry(v2sigmas[0], "1-9d 2#sigma", "l")
+#    legend.AddEntry(v2sigmas2[0], "1-9c 2#sigma", "l")
+#    legend.AddEntry(v3sigmas[0], "1-9d 3#sigma", "l")
+#    legend.AddEntry(v3sigmas2[0], "1-9c 3#sigma", "l")
+    legend.AddEntry(v1sigmas[0], "Set 1 1#sigma", "l")
+    legend.AddEntry(v1sigmas2[0], "Set 2 1#sigma", "l")
+    legend.AddEntry(v90s[0], "Set 1 90%", "l")
+    legend.AddEntry(v90s2[0], "Set 2 90%", "l")
+    legend.AddEntry(v2sigmas[0], "Set 1 2#sigma", "l")
+    legend.AddEntry(v2sigmas2[0], "Set 2 2#sigma", "l")
+    legend.AddEntry(v3sigmas[0], "Set 1 3#sigma", "l")
+    legend.AddEntry(v3sigmas2[0], "Set 2 3#sigma", "l")
+
 
     legend.Draw()
 
