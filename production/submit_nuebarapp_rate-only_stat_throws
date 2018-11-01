@@ -16,6 +16,7 @@ foreach (@ARGV) {
   if($iarg % 2 == 1) {$iarg++; next;}
   if   ($_ eq '--resource'               ) { $resource              = $ARGV[$iarg+1]; }
   elsif($_ eq '--tag'                    ) { $tag                   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cput'                   ) { $cput                  = $ARGV[$iarg+1]; }
   elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
   elsif($_ eq '--file-in'                ) { $filein                = $ARGV[$iarg+1]; }
   elsif($_ eq '--file-in-data'           ) { $filein_data           = $ARGV[$iarg+1]; }
