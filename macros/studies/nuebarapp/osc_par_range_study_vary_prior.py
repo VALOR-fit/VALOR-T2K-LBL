@@ -32,40 +32,34 @@ arridx  = util.ArrIdx.Instance()
 # Define the prior ranges to test here
 
 # dCP, special case, use two priors to cut out the Dchisq peak. So 1st prior is [-pi, priors[0]], 2nd peak is [priors[1], +pi]  (peak is at 1.5radians)
-priors = [
-    [1.2, 1.6],
-    [1.1, 1.8],
-    [0.9, 2.0],
-    [0.7, 2.2],
-    [0.5, 2.4],
-    [0.3, 2.6],
-    [0.1, 2.8]
-#    [-0.1, 3.0],
-]
-
-# Dmsq23:
 #priors = [
-#    [2.3e-3, 2.68e-3],
+#    [1.2, 1.6],
+#    [1.1, 1.8],
+#    [0.9, 2.0],
+#    [0.7, 2.2],
+#    [0.5, 2.4],
+#    [0.3, 2.6],
+#    [0.1, 2.8]
+#    [-0.1, 3.0],
+#]
+
+## Dmsq23:
+#priors = [
 #    [2.3e-3, 2.65e-3],
-#    [2.3e-3, 2.62e-3],
-#    [2.3e-3, 2.61e-3],
-#    [2.3e-3, 2.57e-3]
+#    [2.3e-3, 2.67e-3],
+#    [2.3e-3, 2.69e-3],
+#    [2.3e-3, 2.71e-3]
 #]
 
 
 # mixing23:
-#priors = [
-#    [0.300, 0.700],
-#    [0.355, 0.68],
-#    [0.375, 0.66],
-#    [0.39, 0.65],
-#    [0.41, 0.625],
-#    [0.42, 0.62],
-#    [0.43, 0.61],
-#    [0.44, 0.605],
-#    [0.45, 0.6],
-#    [0.46, 0.59]
-#]
+priors = [
+    [0.300, 0.700],
+    [0.39, 0.65],
+    [0.40, 0.63],
+    [0.41, 0.625],
+    [0.42, 0.62]
+]
 
 hists_itoy_names = [
     "exp_data_1Rmu_",
@@ -102,6 +96,7 @@ def main(nominal_filename, tag, chisq_min, param, target, ntoys, data_filename):
                 print "Could not find a hist named", hname, "in the input file", nominal_filename
                 util.Die(1)
             chisq += util.Chisq_Penalty_TH2D(data[isample],hist)    
+            del hist
         prob = ROOT.TMath.Exp(-0.5*(chisq - chisq_min))
         fpl = nominal_file.Get("iparm_"+str(itoy))
         param_value = fpl.Value(util.PhysParamIdFromRawString(param))
@@ -153,7 +148,8 @@ def main(nominal_filename, tag, chisq_min, param, target, ntoys, data_filename):
                 
                 
 
-
+    del throws
+    del canv
     print "Done!"
 
 
