@@ -31,18 +31,18 @@ arridx  = util.ArrIdx.Instance()
 # Histogram parameters to tweak
 #
 nbins_dchisq    = 250 #700
-low_dchisq      = -15. #-20
-high_dchisq     = 35.  #50
+low_dchisq      = -20. #-20
+high_dchisq     = 45.  #50
 low_nevents     = -1   #-1
-high_nevents    = 35   #50
+high_nevents    = 60   #50
 scale_max_rate  = 5
-scale_max_shape =2
-leg_text_size   = 0.03
-line_thickness  = 2
+scale_max_shape = 2
+leg_text_size   = 0.02 #0.03
+line_thickness  = 2 # 2 is good for projectors?
 draw_prelim     = 1
-prelim_text     = "T2K Run 1-9c Preliminary"
+prelim_text     = "T2K Run 1-9 Preliminary"
 
-def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, infilename_comp_nobs_beta0, infilename_comp_nobs_beta1, infilename_comp_Dchisq_beta0, infilename_comp_Dchisq_beta1, test_statistic, prior_predictive, valor_comp, label, label_comp, read_nevents, start_nevents, infilename_comp_data):
+def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, infilename_comp_nobs_beta0, infilename_comp_nobs_beta1, infilename_comp_Dchisq_beta0, infilename_comp_Dchisq_beta1, test_statistic, prior_predictive, valor_comp, label, label_comp, read_nevents, start_nevents, infilename_comp_data, nev_comp, Dchisq_comp):
     read_nevents += start_nevents
     tstat = True
     if not test_statistic == "rate+shape":
@@ -135,7 +135,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
             # Not elif, because if deltachisq01 = Delta_chisq_data, then this value is used in both tails    
             if event.deltachisq01 >= Delta_chisq_data:    
                 tail_beta0.append("right")
-            if ievent % 10000 == 0:
+            if ievent % 1000 == 0:
                 print "reading the beta = 0 tree, event #", ievent
             ievent += 1
         if len(wghts_beta0) != len(tail_beta0):
@@ -169,7 +169,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
             # Not elif, because if deltachisq01 = Delta_chisq_data, then this value is used in both tails
             if event.deltachisq01 >= Delta_chisq_data:
                 tail_beta1.append("right")
-            if ievent % 10000 == 0:
+            if ievent % 1000 == 0:
                 print "reading the beta = 1 tree, event #", ievent
             ievent += 1
         if len(wghts_beta1) != len(tail_beta1):
@@ -193,15 +193,18 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         data_line_dchisq.SetLineStyle(2)
         data_line_dchisq.SetLineWidth(line_thickness)
 
-        leg_ylow = 0.73
+        leg_ylow = 0.8
         if infilename_data != "":
-            leg_ylow = 0.78
-        leg = ROOT.TLegend(0.6,leg_ylow,0.9,0.95)
+            leg_ylow = 0.83
+        leg = ROOT.TLegend(0.72,leg_ylow,0.9,0.95)
         leg.SetTextSize(leg_text_size)
         leg.AddEntry(hist_deltachisq01_beta0, label + " (#beta = 0)","l")
         leg.AddEntry(hist_deltachisq01_beta1, label + " (#beta = 1)","l")
         if infilename_data != "":
-            leg.AddEntry(data_line_dchisq,"#Delta #chi^{2} ("+data_label+") = "+str("{0:.2f}".format(Delta_chisq_data)),"l")
+            data_line_label = data_label
+            if Dchisq_comp != -999:
+                data_line_label = data_label + ", " + label
+            leg.AddEntry(data_line_dchisq,"#Delta #chi^{2} ("+data_line_label+") = "+str("{0:.2f}".format(Delta_chisq_data)),"l")
 
         canv = ROOT.TCanvas("Delta chisq", "#Delta #chi^{2}", 800, 600)
         if prior_predictive == True or prior_predictive == "True":
@@ -228,6 +231,12 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         canv.SaveAs(outfile_name3,"recreate")
 
         # If we have comparison data, plot it too    TODO: test: does this disrupt the logscale call to plot_comparison_both?
+        if Dchisq_comp != -999:
+            data_line_comp = ROOT.TLine(Dchisq_comp, 0, Dchisq_comp, maximum_dchisq)
+            data_line_comp.SetLineStyle(5)
+            data_line_comp.SetLineWidth(line_thickness)
+            data_line_comp.Draw("same")
+            leg.AddEntry(data_line_comp,"#Delta #chi^{2} ("+data_label+", "+label_comp+") = "+str("{0:.2f}".format(Dchisq_comp)),"l")
         plot_comparison_both(hist_deltachisq01_beta0, infilename_comp_Dchisq_beta0, 0, hist_deltachisq01_beta1,
                              infilename_comp_Dchisq_beta1, 1, "rate+shape", canv, leg, tag, valor_comp,
                              prior_predictive, label_comp, read_nevents, infilename_comp_data)
@@ -237,6 +246,8 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         #
         hist_deltachisq01_beta0.SetMaximum(scale_max_shape*maximum_dchisq)
         data_line_dchisq.SetY2(scale_max_shape*maximum_dchisq)
+        if Dchisq_comp != -999:
+            data_line_comp.SetY2(scale_max_shape*maximum_dchisq)
         canv.SetLogy(1)
         canv.Update()
         outfile_name = tag + "_Deltachisq_logscale.pdf"
@@ -381,12 +392,15 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         data_line_nevents.SetLineStyle(2)
         data_line_nevents.SetLineWidth(line_thickness)
 
-        leg_nevents = ROOT.TLegend(0.50,0.8,0.9,0.95)
+        leg_nevents = ROOT.TLegend(0.57,0.85,0.9,0.95)
         leg_nevents.SetTextSize(leg_text_size)
         leg_nevents.AddEntry(hist_nevents_beta0, label + " (#beta = 0)","l")
         leg_nevents.AddEntry(hist_nevents_beta1, label + " (#beta = 1)","l")
         if infilename_data != "":
-            leg_nevents.AddEntry(data_line_nevents,"Events ("+data_label+") = "+str("{0:.2f}".format(nevents_data)),"l")
+            data_line_label = data_label
+            if nev_comp != -999:
+                data_line_label = data_label + ", " + label
+            leg_nevents.AddEntry(data_line_nevents,"Events ("+data_line_label+") = "+str("{0:.2f}".format(nevents_data)),"l")
 
         canv_nevents = ROOT.TCanvas("nevents", "## events", 800, 600)
         #hist_nevents_beta0.Draw("B")
@@ -412,6 +426,12 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         canv_nevents.SaveAs(outfile_name_nevents3,"recreate")
 
         # If we have comparison data, plot it too     TODO: test: does this disrupt the logscale call to plot_comparison_both?
+        if nev_comp != -999:
+            data_line_comp = ROOT.TLine(nev_comp, 0, nev_comp, maximum_nevents)
+            data_line_comp.SetLineStyle(5)
+            data_line_comp.SetLineWidth(line_thickness)
+            data_line_comp.Draw("same")
+            leg_nevents.AddEntry(data_line_comp,"Events ("+data_label+", "+label_comp+") = "+str("{0:.2f}".format(nev_comp)),"l")
         plot_comparison_both(hist_nevents_beta0, infilename_comp_nobs_beta0, 0, hist_nevents_beta1,
                              infilename_comp_nobs_beta1, 1, "rate-only", canv_nevents, leg_nevents,
                              tag, valor_comp, prior_predictive, label_comp, read_nevents, infilename_comp_data)
@@ -420,6 +440,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, i
         maximum_nevents = scale_max_rate * max(hist_nevents_beta0.GetMaximum(), hist_nevents_beta1.GetMaximum())
         hist_nevents_beta0.SetMaximum(maximum_nevents)
         data_line_nevents.SetY2(maximum_nevents)
+        data_line_comp.SetY2(maximum_nevents)
         canv_nevents.SetLogy(1)
         canv_nevents.Update()
         outfile_name_nevents = tag + "_nevents_logscale.pdf"
@@ -620,14 +641,21 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
     
     file_comp = ROOT.TFile(infilename_comp,"READ")
     hist_comp = 0
+    if statistic == "rate-only":
+        hist_comp = ROOT.TH1D("comprison_"+str(beta), "comparison_"+str(beta), high_nevents - low_nevents, low_nevents, high_nevents)
+    else:
+        hist_comp = ROOT.TH1D("comparison_"+str(beta), "comparison_"+str(beta), nbins_dchisq, low_dchisq, high_dchisq)
     if valor_comp == False or valor_comp == "False" or valor_comp == "":
-        # If reading a digitized P-Theta histogram, directly get the hist
+        # If reading a digitized P-Theta histogram, directly get the hist then re-bin it to the same as binning as the VALOR hist
         hname = "h0"
-        hist_comp = file_comp.Get(hname)
+        hist_comp_raw = file_comp.Get(hname)
+        for ibin in range(1, hist_comp_raw.GetNbinsX()+1):
+            centre = hist_comp_raw.GetBinCenter(ibin)
+            nentries = hist_comp_raw.GetBinContent(ibin)
+            hist_comp.Fill(centre, nentries)
     else:
         # If comparing to another VALOR result, read the Dchisq or Nevents values into a hist
         if statistic == "rate-only":
-            hist_comp = ROOT.TH1D("comprison_"+str(beta), "comparison_"+str(beta), high_nevents - low_nevents, low_nevents, high_nevents)
             hname = "Nevents_nuebar_unweighted"
             #hname = "Nevents_nuebar_weighted"
             #if prior_predictive == True or prior_predictive == "True":
@@ -640,7 +668,6 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
                 nentries = histfill_nevents.GetBinContent(ibin)
                 hist_comp.Fill(nev, nentries)
         else:
-            hist_comp = ROOT.TH1D("comparison_"+str(beta), "comparison_"+str(beta), nbins_dchisq, low_dchisq, high_dchisq)
             tree_name = "fitnt"
             tree = file_comp.Get(tree_name)
             ievent = 0
@@ -671,23 +698,36 @@ def plot_comparison_single(valor_hist, infilename_comp, beta, statistic, leg, hn
         #elif beta ==1:
             #hist_comp.SetBarOffset(0.3)
             #hist_comp.SetBarOffset(0.2)
-        print "RMS value (axis 0) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(0)
-        print "RMS value (axis 0) for rate-only distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(0)
-        print "RMS value (axis 1) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
         print "RMS value (axis 1) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
         print "RMS value (axis 1) for rate-only distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(1)
+        print "mean value (axis 1) for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetMean(1)
+        print "mean value (axis 1) for rate-only distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetMean(1)
+        print "peak value for rate-only distribution (beta =", str(beta), ", valor) =", valor_hist.GetBinCenter(valor_hist.GetMaximumBin())
+        print "peak value for rate-only distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetBinCenter(hist_comp.GetMaximumBin())
     elif statistic == "rate+shape":
         # draw as a hist
         hist_comp.SetLineStyle(style)
-        print "RMS value (axis 0) for rate+shape distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(0)
-        print "RMS value (axis 0) for rate+shape distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(0)
         print "RMS value (axis 1) for rate+shape distribution (beta =", str(beta), ", valor) =", valor_hist.GetRMS(1)
         print "RMS value (axis 1) for rate+shape distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetRMS(1)
+        print "mean value (axis 1) for rate+shape distribution (beta =", str(beta), ", valor) =", valor_hist.GetMean(1)
+        print "mean value (axis 1) for rate+shape distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetMean(1)
+        print "peak value for rate+shape distribution (beta =", str(beta), ", valor) =", valor_hist.GetBinCenter(valor_hist.GetMaximumBin())
+        print "peak value for rate+shape distribution (beta =", str(beta), ", P-theta) =", hist_comp.GetBinCenter(hist_comp.GetMaximumBin())
 
     print "valor_Hist integral =", valor_hist.Integral(), "; comp_hist integral =",  hist_comp.Integral()
     print "\n\n"
     new_hist = copy.deepcopy(hist_comp)
-    leg.AddEntry(new_hist,label,"l")
+    # Only add the label if it does not already exist (this can happen as plot_comparison_both() is called twice on the same canvas [with log scale on and off])
+    add_label = True
+    leg_entries = leg.GetListOfPrimitives()
+    entry = leg_entries.First()
+    while(entry):
+        if label == entry.GetLabel():
+            add_label = False
+            break
+        entry = leg_entries.After(entry)
+    if add_label:    
+        leg.AddEntry(new_hist,label,"l")
     return new_hist
 
 def area_norm(hist1, hist2, range_low = 0, range_high = 0):
@@ -773,6 +813,8 @@ if __name__=="__main__":
     parser.add_option('--tag', dest='tag', default="nuebarapp_deltachisq", help='Tag used as the output file name')
     parser.add_option('--label', dest='label', default="Fake-data", help='Label used for the legend')
     parser.add_option('--label-comp', dest='label_comp', default="P-theta Events", help='Label used for the legend for comparison hists')
+    parser.add_option('--nev-comp', dest='nev_comp', default=-999, type=float, help='Data or Asimov number of RHC 1Re-like events from the results we\'re comparing to')
+    parser.add_option('--Dchisq-comp', dest='Dchisq_comp', default=-999, type=float, help='Data or Asimov Delta chisq from the results we\'re comparing to')
     parser.add_option('--test-statistic', dest='test_statistic', default="rate+shape", help='The test statistic used in the marginalisation and fit')
     parser.add_option('--prior-predictive', dest='prior_predictive', action='store_true', default="False", help='Include this flag to make the rate-only analysis prior-predictive (for rate+shape, the input file determines this)')
     parser.add_option('--valor-comp', dest='valor_comp', action='store_true', default="False", help='Include this flag to compare to another VALOR file isntead of the default P-Theta file')
@@ -788,7 +830,7 @@ if __name__=="__main__":
     main(o.infilename_beta0, o.infilename_beta1, o.tag, o.infilename_data, o.data_label,
          o.infilename_comp_nobs_beta0, o.infilename_comp_nobs_beta1,
          o.infilename_comp_Dchisq_beta0, o.infilename_comp_Dchisq_beta1, o.test_statistic, 
-         o.prior_predictive, o.valor_comp, o.label, o.label_comp, o.read_nevents, o.start_nevents, o.infilename_comp_data)
+         o.prior_predictive, o.valor_comp, o.label, o.label_comp, o.read_nevents, o.start_nevents, o.infilename_comp_data, o.nev_comp, o.Dchisq_comp)
 
     if other:
         print "Warning - ignored arguments: ",other
