@@ -2,7 +2,7 @@
 
 Code implementing the VALOR T2K(/HK) LBL oscillation analysis.
 
-## Authors
+## Current authors
 
 * **Costas Andreopoulos**, *University of Liverpool & STFC/RAL*
 * **Maria Antonova**, *IFIC Valencia*
@@ -11,7 +11,6 @@ Code implementing the VALOR T2K(/HK) LBL oscillation analysis.
 * **Andrew Chappell**, *University of Warwick*
 * **Thomas Dealtry**, *Lancaster University*
 * **Steve Dennis**, *University of Liverpool*
-* **Marco Roda**, *University of Liverpool*
 * **Davide Sgalaberna**, *CERN*
 
 Past authors:
@@ -27,7 +26,6 @@ Dr. **Costas Andreopoulos** < constantinos.andreopoulos \at cern.ch >
 **University of Liverpool** | Faculty of Science & Engineering | School of Physical Sciences | Dept. of Physics <br>
 *Oliver Lodge Lab 316, Liverpool L69 7ZE, UK*
 *(tel: +44-(0)1517-943201)*
-
 **U.K. Research & Innovation** | Science & Technology Facilities Council | Rutherford Appleton Lab | Particle Physics Dept. <br>
 *Harwell Oxford Campus, R1 2.89, Oxfordshire OX11 0QX, UK*
 *(tel: +44-(0)1235-445091)*
