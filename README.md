@@ -17,25 +17,28 @@ Code implementing the VALOR T2K(/HK) LBL oscillation analysis.
 Past authors:
 
 * **Lorena Escudero**, *University of Cambridge*
-* **Raj Shah**, *University of Oxford * STFC/RAL*
+* **Raj Shah**, *University of Oxford & STFC/RAL*
+
 
 ## Contact
 
 Dr. **Costas Andreopoulos** < constantinos.andreopoulos \at cern.ch >
  
-<pre> 
-  University of Liverpool          |  U.K. Research & Innovation (UKRI)
-  Faculty of Science & Engineering |  Science & Technology Facilities Council (STFC)
-  School of Physical Sciences      |  Rutherford Appleton Laboratory 
-  Department of Physics            |  Particle Physics Department
-  Oliver Lodge Lab 316             |  Harwell Oxford Campus, R1 2.89
-  Liverpool L69 7ZE, UK            |  Oxfordshire OX11 0QX, UK          
-  tel: +44-(0)1517-943201          |  tel: +44-(0)1235-445091 
-</pre> 
+**University of Liverpool** 
+Faculty of Science & Engineering | School of Physical Sciences | Department of Physics
+*Oliver Lodge Lab 316, Liverpool L69 7ZE, UK*
+*tel: +44-(0)1517-943201*
+
+**U.K. Research & Innovation (UKRI)** 
+Science & Technology Facilities Council (STFC) | Rutherford Appleton Laboratory | Particle Physics Department
+*Harwell Oxford Campus, R1 2.89, Oxfordshire OX11 0QX, UK*
+*tel: +44-(0)1235-445091*
+
 
 ## Copyright
 
 Copyright (c) 2010-2018, The VALOR Fitting Group. **All Rights Reserved.**
+
 
 ## T2K LBL oscillation analysis releases 
 
