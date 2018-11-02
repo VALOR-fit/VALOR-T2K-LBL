@@ -3,10 +3,12 @@ VALOR T2K(/HK) LBL oscillation analysis
 
 # T2K LBL analysis releases and associated framework releases
 
-T2K-LBL tag | FMWK tag | Summary
------------------------------------------------------------------------------------------------------------------------------
-2010_v1.0.0 |   n/a    | This is the code which was used for the 2010a 0.323E+20 POT muon-disappearance analysis.
-            |          | Details may be found in T2K-TN-36 (v4).
+| T2K-LBL tag | FMWK tag | Summary
+| -----------------------------------------------------------------------------------------------------------------------------
+| 2010_v1.0.0 |   n/a    | This is the code which was used for the 2010a 0.323E+20 POT muon-disappearance analysis.
+|            |          | Details may be found in T2K-TN-36 (v4).
+
+
             |          |
 2010_v2.0.0 |   n/a    | This is the code which was used for the 2010b 1.431E+20 POT muon-disappearance analysis.
             |          | Details may be found in T2K-TN-64 (v3).
