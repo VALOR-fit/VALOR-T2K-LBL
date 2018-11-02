@@ -28,7 +28,7 @@ Dr. **Costas Andreopoulos** < constantinos.andreopoulos \at cern.ch >
 *Oliver Lodge Lab 316, Liverpool L69 7ZE, UK*
 *(tel: +44-(0)1517-943201)*
 
-**U.K. Research & Innovation** | Science & Technology Facilities Council | Rutherford Appleton Lab | Particle Physics Dept.
+**U.K. Research & Innovation** | Science & Technology Facilities Council | Rutherford Appleton Lab | Particle Physics Dept. <br>
 *Harwell Oxford Campus, R1 2.89, Oxfordshire OX11 0QX, UK*
 *(tel: +44-(0)1235-445091)*
 
@@ -94,19 +94,21 @@ T2K-LBL tag | FMWK tag | Summary
             |          | Not used for analysis.
             |          |
 2015_v1.0.0 |  v1.1.0  | Code used for the 2015 Run 5+6 3-flavour muon-antineutrino disappearance analysis.
-            |          | This version was used for the first version of the tech note (2.5E20 POT, data not yet fit)
+            |          | This version was used for the first version of the tech note. 
+            |          | (2.5E20 POT, data not yet fit)
             |          | Details may be found in T2K-TN-243v0.
             |          |
 2015_v1.1.0 |  v1.1.0  | Code used for the 2015 Run 5+6 3-flavour muon-antineutrino disappearance analysis.
-            |          | This version was used for the final version of the tech note (2.315E20 POT, including data fit)
+            |          | This version was used for the final version of the tech note. 
+            |          | (2.315E20 POT, including data fit)
             |          | Details may be found in T2K-TN-243v3.
             |          |
 2015_v2.0.0 |  v1.1.0  | Code used for the 2015 Run 5+6 3-flavour electron antineutrino appearance analysis.
-            |          | This version was used for the first version of the tech note (2.5E20 POT, data not yet fit)
+            |          | This version was used for the first version of the tech note.
+            |          | (2.5E20 POT, data not yet fit)
             |          | Details may be found in T2K-TN-252v1.
             |          |
 2016_v1.0.0 |  v1.2.0  | Code used for the analyses shown in Neutrino-2016.
-            |          |
             |          |
 2017_v0.0.1 |  v1.4.2  | Code for the 2017 joint analysis (not yet frozen)
             |          |
