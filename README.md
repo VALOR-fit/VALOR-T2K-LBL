@@ -1,6 +1,7 @@
 # T2K-LBL
 
 Code implementing the VALOR T2K(/HK) LBL oscillation analysis.
+VALOR (named after its initial participants: Valencia-Lancaster-Oxford-Rutherford) was established in 2010. It led numerous flagship T2K oscillation analyses, produced world-leading results on behalf of the T2K collaboration and contributed to most published T2K oscillation papers to date. 
 
 ## Current authors
 
@@ -24,11 +25,9 @@ Past authors:
 Dr. **Costas Andreopoulos** < constantinos.andreopoulos \at cern.ch >
  
 **University of Liverpool** | Faculty of Science & Engineering | School of Physical Sciences | Dept. of Physics <br>
-*Oliver Lodge Lab 316, Liverpool L69 7ZE, UK*
-*(tel: +44-(0)1517-943201)*
+*Oliver Lodge Lab 316, Liverpool L69 7ZE, UK (tel: +44-(0)1517-943201)* <br>
 **U.K. Research & Innovation** | Science & Technology Facilities Council | Rutherford Appleton Lab | Particle Physics Dept. <br>
-*Harwell Oxford Campus, R1 2.89, Oxfordshire OX11 0QX, UK*
-*(tel: +44-(0)1235-445091)*
+*Harwell Oxford Campus, R1 2.89, Oxfordshire OX11 0QX, UK (tel: +44-(0)1235-445091)* <br>
 
 
 ## Copyright
