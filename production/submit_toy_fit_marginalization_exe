@@ -36,6 +36,7 @@ foreach (@ARGV) {
     ##################################### Common ########################################
     if   ($_ eq '--resource'         ) { $resource        = $ARGV[$iarg+1]; }
     elsif($_ eq '--cpu-time'         ) { $cput            = $ARGV[$iarg+1]; }
+    elsif($_ eq '--mem'              ) { $mem             = $ARGV[$iarg+1]; }
     elsif($_ eq '--tag'              ) { $tag             = $ARGV[$iarg+1]; }
     elsif($_ eq '--nruns'            ) { $nruns           = $ARGV[$iarg+1]; }
     elsif($_ eq '--runstart'         ) { $runstart        = $ARGV[$iarg+1]; }
@@ -136,7 +137,9 @@ $run_fullgrid  = 0   unless defined $run_fullgrid; # 0 --> run single point, 1 -
 ####################################### Common #########################################
 
 $resource        = "interactive"               unless defined $resource;
-
+if($resource ne "cedar") {
+    $mem             = "7000M" unless defined $mem;
+}
 #$tag             = "fitmarg_joint_dcp_t2konly_nh_escaleX3"  unless defined $tag;
 #$tag             = "fitmarg_joint_dcp_t2konly_nh_asimov_pdg2014"  unless defined $tag;
 #$tag             = "fitmarg_joint_dcp_react_nh_fhconly"  unless defined $tag;
@@ -290,6 +293,7 @@ if( !defined $cput ) {
     if($resource eq "OLDRAL") { $cput = "6:00:00";  }
     if($resource eq "Oxford") { $cput = "1:50:00";  }
     if($resource eq "Liverpool_Slurm") { $cput = "1440"; }
+    # The default CPU time for cedar is dependant on the fit variables, so do not set it here
 }
 ########################################################################################
 
@@ -350,8 +354,12 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:15:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "2500M";
+      }
    }
    else
    {
@@ -359,8 +367,12 @@ if($freepar0 eq "deltacp" && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:30:00";
-      $cedar_mem = "3500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:30:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "3500M";
+      }
    }
 
    $minfreepar0       = -3.14159265358979312e+00  unless defined $minfreepar0;  # Min free param allowed value
@@ -395,6 +407,12 @@ if($freepar0 eq "betaBar" && $freepar1 eq "")
    $npt_freepar1      = 1           unless defined $npt_freepar1; # of free parameter points to scan
 
    $wqueue = "short";
+   if( !defined $cput && $resource eq "cedar") {
+     $cput = "24:00:00";
+   }
+   if( !defined $mem && $resource eq "cedar") {
+     $mem = "7000M";
+   }
 }
 
 # 1D fit - sinsqth13
@@ -407,8 +425,12 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
       $npt_freepar0      = 101    unless defined $npt_freepar0;
       $ntoys_margtoys   = 40000   unless defined $ntoys_margtoys;
       $nfiles_margtoys   = 101    unless defined $nfiles_margtoys;
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:15:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "2500M";
+      }
    }
    else
    {  # T2K only
@@ -417,8 +439,12 @@ if($freepar0 eq "mixing13"  && $freepar1 eq "")
       $npt_freepar0      = 101    unless defined $npt_freepar0;
       $ntoys_margtoys   = 40000   unless defined $ntoys_margtoys;
       $nfiles_margtoys   = 101    unless defined $nfiles_margtoys;
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:15:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "2500M";
+      }
    }
 
    $freepar1          = ""     unless defined $freepar1;
@@ -438,8 +464,12 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:15:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "2500M";
+      }
    }
    else
    {
@@ -447,8 +477,12 @@ if($freepar0 eq "mixing23" && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:30:00";
-      $cedar_mem = "3500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:30:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "3500M";
+      }
    }
 
 
@@ -469,8 +503,12 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
       $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:15:00";
-      $cedar_mem = "2500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:15:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "2500M";
+      }
    }
    else
    {
@@ -478,8 +516,12 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
       $ntoys_margtoys    = 80000         unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
-      $cedar_time = "00:30:00";
-      $cedar_mem = "3500M";
+      if( !defined $cput && $resource eq "cedar") {
+        $cput = "00:30:00";
+      }
+      if( !defined $mem && $resource eq "cedar") {
+        $mem = "3500M";
+      }
    }
 
    $minfreepar0       = 2.2e-3  unless defined $minfreepar0;  # Min free param allowed value
@@ -544,8 +586,12 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    $maxfreepar0       = 0.7  unless defined $maxfreepar0;  # Max free param allowed value
    $minfreepar1       = 2.2e-3  unless defined $minfreepar1;  # Min free param allowed value
    $maxfreepar1       = 2.8e-3  unless defined $maxfreepar1;  # Max free param allowed value
-   $cedar_time = "03:00:00";
-   $cedar_mem = "3500M";
+   if( !defined $cput && $resource eq "cedar") {
+     $cput = "03:00:00";
+   }
+   if( !defined $mem && $resource eq "cedar") {
+     $mem = "3500M";
+   }
 }
 
 if(($freepar0 ne "") && ($freepar1 eq ""))
@@ -1024,8 +1070,8 @@ while($i_freepar1 < $n_freepar1) {
             print Slurm "#!/bin/bash \n";
             print Slurm "#SBATCH --account=def-tanaka-ac \n";
             print Slurm "#SBATCH --nodes=1 \n";
-            print Slurm "#SBATCH --time=$cedar_time \n";
-            print Slurm "#SBATCH --mem=$cedar_mem \n";
+            print Slurm "#SBATCH --time=$cput \n";
+            print Slurm "#SBATCH --mem=$mem \n";
             print Slurm "#SBATCH --job-name=$tag_save-$irun \n";
             print Slurm "#SBATCH --output=$job_dir/$tag_save-$irun.slurm.log \n";
             #print Slurm "#SBATCH -o $job_dir/$tag_save-$irun.slurm.out \n";
