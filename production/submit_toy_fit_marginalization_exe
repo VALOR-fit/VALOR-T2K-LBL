@@ -38,6 +38,7 @@ foreach (@ARGV) {
     elsif($_ eq '--cpu-time'         ) { $cput            = $ARGV[$iarg+1]; }
     elsif($_ eq '--tag'              ) { $tag             = $ARGV[$iarg+1]; }
     elsif($_ eq '--nruns'            ) { $nruns           = $ARGV[$iarg+1]; }
+    elsif($_ eq '--runstart'         ) { $runstart        = $ARGV[$iarg+1]; }
 
     elsif($_ eq '--job-dir'          ) { $job_dir         = $ARGV[$iarg+1]; }
     elsif($_ eq '--softw-dir'        ) { $softw_dir       = $ARGV[$iarg+1]; }
@@ -165,6 +166,7 @@ $resource        = "interactive"               unless defined $resource;
 #$nruns           = 500                           unless defined $nruns;  # number of jobs per freepar point (dcp 1D) 
 #$nruns           = 100                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
 $nruns           = 1                           unless defined $nruns;  # number of jobs per freepar point  (sinsqth13 Vs dcp 2D) 
+$runstart        = 0                           unless defined $runstart; # Start each point from this job number (use if e.g. need to re-run a load of failed points)
 
 $config_file     = "analysis_configuration_oa2017_run1-8_postfit.xml"  unless defined $config_file;
 
@@ -793,8 +795,8 @@ while($i_freepar1 < $n_freepar1) {
 	# Not used if toys are run. See code line $irun = $nruns;
 	#
 	
-	$irun = 0;
-	while($irun < $nruns) { # loop over the jobs
+	$irun = $runstart;
+	while($irun < ($nruns + $runstart)) { # loop over the jobs
 	    
 	    $ifile_first = $irun * $nexpts;
 	    $ifile_last  = $ifile_first + $nexpts - 1; # The "last" experiment is included
