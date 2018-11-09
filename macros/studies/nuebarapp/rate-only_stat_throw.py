@@ -1,11 +1,6 @@
 import ROOT
-import copy
 import math
-import array
 from array import array
-import sys
-import os
-import subprocess
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
@@ -27,23 +22,18 @@ rnd     = valor.Rnd.Instance()
 arridx  = util.ArrIdx.Instance()
 
 def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start, analytic):
+    # Note: in this macro we deal entirely with calculating an unweighted p-value for each toy. The weights should be applied at the next step, i.e. when calculating the (weighted) mean p-value
     # Set up outputs
     Nevents_max = 100
     outname = tag + ".root"
     fout = ROOT.TFile(outname, "recreate")
-    hist_nevents_weighted   = ROOT.TH1D("Nevents_weighted"  , "Nevents_weighted"  , Nevents_max, 0, Nevents_max)
-    hist_nevents_unweighted = ROOT.TH1D("Nevents_unweighted", "Nevents_unweighted", Nevents_max, 0, Nevents_max)
+    hist_nevents = ROOT.TH1D("Nevents", "Nevents", Nevents_max, 0, Nevents_max)
     tree_out = ROOT.TTree("output_tree","output_tree")
-    pval_left_weighted    = array('f', [-1.])   # For why an array is used see https://root.cern.ch/how/how-write-ttree-python
-    pval_left_unweighted  = array('f', [-1.])
-    pval_right_weighted   = array('f', [-1.])
-    pval_right_unweighted = array('f', [-1.])
-    Nevents_fakedata      = array('i', [-1 ])
-    tree_out.Branch("pvalue_left_weighted"   , pval_left_weighted   , "pval_left_weighted/F"   )
-    tree_out.Branch("pvalue_left_unweighted" , pval_left_unweighted , "pval_left_unweighted/F" )
-    tree_out.Branch("pvalue_right_weighted"  , pval_right_weighted  , "pval_right_weighted/F"  )
-    tree_out.Branch("pvalue_right_unweighted", pval_right_unweighted, "pval_right_unweighted/F")
-    tree_out.Branch("Eventrate_fakedata"     , Nevents_fakedata     , "Eventrate_fakedata/I"  )
+    pval_left         = array('f', [-1.])   # For why an array is used see https://root.cern.ch/how/how-write-ttree-python
+    pval_right        = array('f', [-1.])
+
+    tree_out.Branch("pvalue_left"       , pval_left        , "pvalue_left/F"         )
+    tree_out.Branch("pvalue_right"      , pval_right       , "pvalue_right/F"        )
 
     # Read inputs
     fin = ROOT.TFile(infilename, "read")
@@ -59,56 +49,31 @@ def main(infilename, infilename_data, ntoys, nthrows, tag, itoy_start, analytic)
     for itoy in range(itoy_start, itoy_start + ntoys):
         if itoy % 1000 == 0:
             print "itoy =", itoy - itoy_start, "of", ntoys
-        chisq = 0
-        Nevents_nuebar = 0
-        hist_nevents_weighted_itoy   = ROOT.TH1D("Nevents_weighted_" + str(itoy)  , "Nevents_weighted_" + str(itoy)  , Nevents_max, 0, Nevents_max)
+
         hist_nevents_unweighted_itoy = ROOT.TH1D("Nevents_unweighted_" + str(itoy), "Nevents_unweighted_" + str(itoy), Nevents_max, 0, Nevents_max)
-        for isample in range(0, conv.kns):
-            s = util.GetSKSample(isample)
-            sample_name = util.SampleAsStringCompact(s)
-            if s == conv.kSKsUndefined or sample_name == "":
-                continue
-            hname_exp_read =  "exp_data_" + sample_name + "_" + str(itoy)
-            #print "*** hname exp = ", hname_exp_read
-            hist_exp_sample = fin.Get(hname_exp_read)
-            nexp_sample = hist_exp_sample.Integral()
-            hname_obs_read =  "mock_data_" + util.SampleAsStringCompact(s) + "_" + str(itoy)
-            hist_obs_sample = fin.Get(hname_obs_read)
-            nobs_sample = hist_obs_sample.Integral()
-            if(s == conv.kSKsRHCFCFV1RingELike):
-                Nevents_nuebar = nexp_sample
-            else:
-                chisq += util.ChisqPoisson(nobs_sample, nexp_sample)
-        Nevents_fakedata[0] = int(Nevents_nuebar)
+
+        hErecoToy_RHC1Re = fin.Get("mock_data_RHC1Re_"  + str(itoy))
+        Nevents_nuebar = hErecoToy_RHC1Re.Integral()
+
         if analytic == 0:
             # Fluctuate the nuebar event rate
             for ithrow in range(0, nthrows):
                 Nevents_fluct = rnd.RndToyMCstat().Poisson(Nevents_nuebar)
-                hist_nevents_weighted.Fill(Nevents_fluct, ROOT.TMath.Exp(-chisq*0.5))
-                hist_nevents_weighted_itoy.Fill(Nevents_fluct, ROOT.TMath.Exp(-chisq*0.5))
-                hist_nevents_unweighted.Fill(Nevents_fluct)
                 hist_nevents_unweighted_itoy.Fill(Nevents_fluct)
-            #print "p-value (right): throw =", p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "right"), ", analytic =", p_value_analytic(Nevents_nuebar, Nevents_data, "right")
-            #print "p-value (left): throw =", p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "left"), ", analytic =", p_value_analytic(Nevents_nuebar, Nevents_data, "left")
 
             # Calculate p-values for this fake-data toy
-            pval_left_unweighted [0] = p_value(hist_nevents_unweighted_itoy, math.floor(Nevents_data), "left" )
-            pval_right_unweighted[0] = p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "right")
-            pval_left_weighted   [0] = p_value(hist_nevents_weighted_itoy  , math.floor(Nevents_data), "left" )
-            pval_right_weighted  [0] = p_value(hist_nevents_weighted_itoy  , math.ceil(Nevents_data) , "right")
+            pval_left [0] = p_value(hist_nevents_unweighted_itoy, math.floor(Nevents_data), "left" )
+            pval_right[0] = p_value(hist_nevents_unweighted_itoy, math.ceil(Nevents_data) , "right")
         else:
-            pval_left_unweighted [0] = p_value_analytic(Nevents_nuebar, math.floor(Nevents_data), "left")
-            pval_right_unweighted[0] = p_value_analytic(Nevents_nuebar, math.ceil(Nevents_data), "right")
-            pval_left_weighted   [0] = p_value_analytic(Nevents_nuebar, math.floor(Nevents_data), "left") # As the weights are all the same, the calculation is the same, so the weighted p-values are rather redundant
-            pval_right_weighted  [0] = p_value_analytic(Nevents_nuebar, math.ceil(Nevents_data), "right")
+            pval_left [0] = p_value_analytic(Nevents_nuebar, math.floor(Nevents_data), "left")
+            pval_right[0] = p_value_analytic(Nevents_nuebar, math.ceil(Nevents_data), "right")
+
         tree_out.Fill()
-        del hist_nevents_weighted_itoy
         del hist_nevents_unweighted_itoy
 
     # Write out
     fout.cd()
-    hist_nevents_weighted.Write("Nevents_nuebar_weighted")
-    hist_nevents_unweighted.Write("Nevents_nuebar_unweighted")
+    hist_nevents.Write("Nevents_nuebar_unweighted")
     tree_out.Write("fake-data_tree")
     fout.Close()
     fin_data.Close()
