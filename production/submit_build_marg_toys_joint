@@ -349,6 +349,43 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    $tag = "${tag}_${freepar0}_${freepar1}";
 }
 
+# # 2D fit - sinsqth23 Vs dcp
+if((($freepar0 eq "mixing23") and ($freepar1 eq "deltacp")) or (($freepar0 eq "deltacp") and ($freepar1 eq "mixing23")))
+{
+   if($freepar0 eq "deltacp")
+   {
+      $freepar0 = "mixing23";
+      $freepar1 = "deltacp";
+   }
+   
+   $tag = "${tag}_${freepar0}_${freepar1}";
+   
+   if($use_reactors == 1)
+   {
+      $nexpts_marg = 10000;
+      $wqueue      = "xlong -W 20:00 -R rusage[mem=4096,swap=4096,tmp=1000]";
+      $cedar_time  = "20:00:00";
+      $cedar_mem   = "4096M";
+   }
+   else
+   {
+      $nexpts_marg = 20000;
+      $wqueue      = "xlong -W 40:00 -R rusage[mem=5120,swap=5120,tmp=1000]";
+      $cedar_time  = "40:00:00";
+      $cedar_mem   = "5120M";
+   }
+
+   $minfreepar0       = 0.3     unless defined $minfreepar0;     # Minimum free parameter allowed value
+   $maxfreepar0       = 0.7     unless defined $maxfreepar0;     # Maximum free parameter allowed value
+   $npt_freepar0      = 81        unless defined $npt_freepar0;    # of free parameter points to scan
+   $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;   # Minimum free parameter allowed value
+   $maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;   # Maximum free parameter allowed value 
+   $npt_freepar1      = 51                        unless defined $npt_freepar1; # of free parameter points to scan
+   $marg_hierarchy    = 0                         unless defined $marg_hierarchy;
+   $masshierarchy     = "normal"                  unless defined $masshierarchy;
+   $step_freepar0     = 4                         unless defined $step_freepar0;   # of points for each job param0
+   $step_freepar1     = 3                         unless defined $step_freepar1;   # of points for each job param1
+}
 					               
 $tweak_systematics      = 1                            unless defined $tweak_systematics;
 $prior_prob_nh          = 0.5                          unless defined $prior_prob_nh;
@@ -747,7 +784,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 
          if($resource eq "warwick")
          {
-#            if($imin0 == 18)
+#            if($irun == 206 || $irun == 209 || $irun == 211 || $irun == 214 || $irun == 226 || $irun == 237 || $irun == 252 || $irun == 259 || $irun == 264 || $irun == 277 || $irun == 288 || $irun == 293 || $irun == 295 || $irun == 299 || $irun == 305 || $irun == 307 || $irun == 310)
 #            {
 #            }
 #            else
