@@ -19,6 +19,8 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   TH2D* h1;
   TH2D* h2;
   TH2D* h3;
+  TH2D* h_2sigma;
+  TH2D* h_3sigma;
   TH2D* hdchisq;
   TH2D* hlike;
   
@@ -60,16 +62,22 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
     h1 = SwapXY(h1);
     hdchisq = SwapXY(hdchisq);
   }
-  h3 = (TH2D*)h1->Clone();
-  h2 = (TH2D*)h1->Clone();
+  h3 = (TH2D*)h1->Clone("h3");
+  h2 = (TH2D*)h1->Clone("h2");
+  h_2sigma = (TH2D*)h1->Clone("h_2sigma");
+  h_3sigma = (TH2D*)h1->Clone("h_3sigma");
 
   h1->SetDirectory(0);
   h3->SetDirectory(0);
   h2->SetDirectory(0);
+  h_2sigma->SetDirectory(0);
+  h_3sigma->SetDirectory(0);
   hdchisq->SetDirectory(0);
   double chisq_min = h1->GetMinimum();
   h1->SetContour(1);
   h3->SetContour(1);
+  h_2sigma->SetContour(1);
+  h_3sigma->SetContour(1);
   
   hlike = (TH2D*)h2->Clone();
   hlike->SetDirectory(0);
@@ -83,11 +91,18 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   
   h1->SetContourLevel(0,chisq_min+2.3);
   h3->SetContourLevel(0,chisq_min+4.61);
+  h_2sigma->SetContourLevel(0,chisq_min + 6.18);
+  h_3sigma->SetContourLevel(0,chisq_min + 11.83);
   h1->SetLineWidth(2);
   h3->SetLineWidth(2);
+  h_2sigma->SetLineWidth(2);
+  h_3sigma->SetLineWidth(2);
   h1->SetLineColor(kRed);
   h3->SetLineColor(kRed);
+  h_2sigma->SetLineColor(kRed);
+  h_3sigma->SetLineColor(kRed);
   h1->SetLineStyle(2);
+  h_2sigma->SetLineStyle(3);
   
   int minbin = h1->GetMinimumBin();
   int binx;
@@ -225,8 +240,10 @@ void get_contour_2D(const char* _filename = "",bool draw_asimov_input = true, bo
   
   TFile* f2 = new TFile(Form("%s_contour.root",filename.c_str()),"recreate");
   
-  save_contour(h1,h3,"");
-  
+  save_contour(h1, "g68_valor");
+  save_contour(h3, "g90_valor");
+  save_contour(h_2sigma, "g95_valor");
+  save_contour(h_3sigma, "g99_valor");
   
   h2->Write("chisq_map_2D");
   hdchisq->Write("dchisq_map_2D");

@@ -8,11 +8,15 @@ using namespace valor::conv;
 
 static const int Ncont_68 = 3;
 static const int Ncont_90 = 3;
+static const int Ncont_95 = 3;
+static const int Ncont_99 = 3;
 static const int Nfiles = 2;
 
 
 TGraph *g68_valor[Ncont_68][Nfiles] = {0};
 TGraph *g90_valor[Ncont_90][Nfiles] = {0};
+TGraph *g95_valor[Ncont_95][Nfiles] = {0};
+TGraph *g99_valor[Ncont_99][Nfiles] = {0};
 
 
 void CompareContour2D(char* file_1 = "test1",
@@ -42,14 +46,24 @@ void CompareContour2D(char* file_1 = "test1",
     "g68_valor_2"
     
   };
-  const int Ncont_90 = 3;
   const char *contour_90_name[Ncont_90] = { // different graph for each contour (+-)
     "g90_valor_0",
     "g90_valor_1",
     "g90_valor_2"
     
   };
-  
+  const char *contour_95_name[Ncont_95] = { // different graph for each contour (+-)
+    "g95_valor_0",
+    "g95_valor_1",
+    "g95_valor_2"
+    
+  };
+  const char *contour_99_name[Ncont_99] = { // different graph for each contour (+-)
+    "g99_valor_0",
+    "g99_valor_1",
+    "g99_valor_2"
+  };
+
   char *latexname[Nfiles] = {
     "CC#pi^{+}",
     "1Ring"
@@ -83,6 +97,13 @@ void CompareContour2D(char* file_1 = "test1",
       for(int icont=0;icont<Ncont_90;icont++){
         g90_valor[icont][ifile] = (TGraph*)filein[ifile]->Get(contour_90_name[icont]);
       }
+      for(int icont=0;icont<Ncont_95;icont++){
+        g95_valor[icont][ifile] = (TGraph*)filein[ifile]->Get(contour_95_name[icont]);
+      }
+      for(int icont=0;icont<Ncont_99;icont++){
+        g99_valor[icont][ifile] = (TGraph*)filein[ifile]->Get(contour_99_name[icont]);
+      }
+
       hchisq_valor[ifile] = (TH2D*)filein[ifile]->Get(chisq_name);
       hchisq_valor[ifile]->Reset(); // used to set the full range though tgraphs
       
@@ -131,12 +152,23 @@ void CompareContour2D(char* file_1 = "test1",
     h2->SetContourLevel(0,2.3);
     h2_2->SetContour(1);
     h2_2->SetContourLevel(0,4.61);
-    
+    h1_2sigma->SetContour(1);
+    h1_2sigma->SetContourLevel(0,6.18);
+    h1_3sigma->SetContour(1);
+    h1_3sigma->SetContourLevel(0,11.83);
+    h2_2sigma->SetContour(1);
+    h2_2sigma->SetContourLevel(0,6.18);
+    h2_3sigma->SetContour(1);
+    h2_3sigma->SetContourLevel(0,11.83);
+
     get_contour_68(h1,0);
     get_contour_68(h2,1);
     get_contour_90(h1_2,0);
     get_contour_90(h2_2,1);
-    
+    get_contour_95(h1_2sigma,0);
+    get_contour_95(h2_2sigma,1);
+    get_contour_99(h1_3sigma,0);
+    get_contour_99(h2_3sigma,1);
   }
 
   const char* trueMH1;
@@ -226,7 +258,6 @@ void CompareContour2D(char* file_1 = "test1",
   {
      breactors->Draw("same");
   }
-
   
   for(int ifile=0;ifile<Nfiles;ifile++){
     for(int icont=0;icont<Ncont_90;icont++){
@@ -294,6 +325,99 @@ void CompareContour2D(char* file_1 = "test1",
   ccontours->SaveAs(Form("%s.png",tag));
   ccontours->SaveAs(Form("%s.eps",tag));
   ccontours->SaveAs(Form("%s.root",tag));
+
+  // 2 and 3 sigma contours
+
+  TCanvas *ccontours = new TCanvas("ccontours","ccontours");
+  ccontours->SetTopMargin(0.1);
+
+  hchisq_valor[0]->GetYaxis()->SetLabelSize(0.04);
+  hchisq_valor[0]->GetXaxis()->SetLabelSize(0.04);
+  if(paper_style) format_hist(hchisq_valor[0]);
+  hchisq_valor[0]->Draw(); // to set the range
+
+  if(draw_reactors)
+  {
+     breactors->Draw("same");
+  }
+  
+  for(int ifile=0;ifile<Nfiles;ifile++){
+    for(int icont=0;icont<Ncont_99;icont++){
+      if(g99_valor[icont][ifile]){
+        g99_valor[icont][ifile]->SetLineWidth(2);
+        g99_valor[icont][ifile]->SetLineColor(ifile+1);
+        g99_valor[icont][ifile]->SetLineStyle(1);
+        g99_valor[icont][ifile]->DrawClone("l same");
+      }
+    }
+    for(int icont=0;icont<Ncont_95;icont++){
+      if(g95_valor[icont][ifile]){
+        g95_valor[icont][ifile]->SetLineWidth(2);
+        g95_valor[icont][ifile]->SetLineColor(ifile+1);
+        g95_valor[icont][ifile]->SetLineStyle(2);
+        g95_valor[icont][ifile]->DrawClone("l same");
+      }
+    }
+    for(int icont=0;icont<Ncont_68;icont++){
+      if(g68_valor[icont][ifile]){
+        g68_valor[icont][ifile]->SetLineWidth(2);
+        g68_valor[icont][ifile]->SetLineColor(ifile+1);
+        g68_valor[icont][ifile]->SetLineStyle(3);
+        g68_valor[icont][ifile]->DrawClone("l same");
+      }
+    }
+    gbest_fit_global[ifile]->SetMarkerColor(ifile+1);
+    gbest_fit_global[ifile]->SetMarkerStyle(kFullStar+ifile);
+    gbest_fit_global[ifile]->Draw("same");
+  }
+  
+  TLegend *lcontours = new TLegend(0.65,0.64,0.88,0.88);
+  lcontours->SetFillColor(0);
+  lcontours->SetLineColor(0);
+  lcontours->SetTextFont(132);
+  lcontours->SetTextSize(0.04);
+  for(int ifile=0;ifile<Nfiles;ifile++){
+    char name[200];
+    sprintf(name,"%s - 68CL",latexname[ifile]);
+    if (g68_valor[0][ifile])
+    lcontours->AddEntry(g68_valor[0][ifile],name,"l");
+    sprintf(name,"%s - 95CL",latexname[ifile]);
+    if (g95_valor[0][ifile])
+    lcontours->AddEntry(g95_valor[0][ifile],name,"l");
+    sprintf(name,"%s - 99CL",latexname[ifile]);
+    if (g99_valor[0][ifile])
+    lcontours->AddEntry(g99_valor[0][ifile],name,"l");
+  }
+  
+  TLegend *lcontours_2 = new TLegend(0.5,0.77,0.65,0.84);
+  lcontours_2->SetFillColor(0);
+  lcontours_2->SetLineColor(0);
+  lcontours_2->SetTextFont(132);
+  lcontours_2->SetTextSize(0.04);
+
+  lcontours_2->AddEntry(gbest_fit_global[0],"Best fit","p");
+  if(draw_reactors) lcontours_2->AddEntry(breactors,"PDG 2018","f");
+
+  lcontours->Draw();
+  lcontours_2->Draw();
+
+  //char* note_text = (doGlobalMin) ? "Global minimum" :"Fixed Mass Ordering";
+  char* notetext = "Final systematics pending";
+  double tx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() * 0.5);
+  double nx = h1->GetXaxis()->GetBinLowEdge(h1->GetXaxis()->GetNbins() / 10);
+  double ty = Y2;
+
+  TLatex* title = new TLatex(tx, ty * 1.01, "T2K Run 1-9 Preliminary");
+  title->SetTextSize(0.05);
+  title->Draw("same");
+  TLatex* note = new TLatex(nx, ty * 1.01, "Final systematics pending");
+  note->SetTextSize(0.025);
+//  note->Draw("same");
+
+  ccontours->SaveAs(Form("%s_3sigma.pdf",tag));
+  ccontours->SaveAs(Form("%s_3sigma.png",tag));
+  ccontours->SaveAs(Form("%s_3sigma.eps",tag));
+  ccontours->SaveAs(Form("%s_3sigma.root",tag));
 
   // Plot 1D projections
   // x projection 
@@ -627,6 +751,51 @@ void get_contour_90(TH2D* _h1, int file_num)
   delete c2;
 }
 
+void get_contour_95(TH2* _h1, int file_num)
+{
+  TCanvas* c2 = new TCanvas("c2","c",0,0,900,600);
+  _h1->Draw("cont3same");
+  _h1->Draw("CONT LIST");
+  c2->Update();
+  TObjArray *contours = 0;
+  contours = (TObjArray *)gROOT->GetListOfSpecials()->FindObject("contours");
+  TList *lister = (TList*)contours->At(0);
+  TGraph *g;
+  int it=0;
+  
+  TIter next(lister);
+  while ((g = (TGraph*)next()))
+  {
+    g95_valor[it][file_num] = (TGraph*) g->Clone();
+    it++;
+  }
+
+  c2->Clear();
+  delete c2;
+}
+
+void get_contour_99(TH2* _h1, int file_num)
+{
+  TCanvas* c2 = new TCanvas("c2","c",0,0,900,600);
+  _h1->Draw("cont3same");
+  _h1->Draw("CONT LIST");
+  c2->Update();
+  TObjArray *contours = 0;
+  contours = (TObjArray *)gROOT->GetListOfSpecials()->FindObject("contours");
+  TList *lister = (TList*)contours->At(0);
+  TGraph *g;
+  int it=0;
+  
+  TIter next(lister);
+  while ((g = (TGraph*)next()))
+  {
+    g99_valor[it][file_num] = (TGraph*) g->Clone();
+    it++;
+  }
+
+  c2->Clear();
+  delete c2;
+}
 
 int format_hist(TH2D* _histogram)
 {

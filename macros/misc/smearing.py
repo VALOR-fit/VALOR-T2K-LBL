@@ -523,9 +523,11 @@ def process_2d(original, root_filename, pdf_filename, error):
 
     chisq_histogram = likelihood_to_chisq(smeared_histogram)
     chisqmin = chisq_histogram.GetMinimum()
-    chisq_histogram.SetContour(2)
+    chisq_histogram.SetContour(4)
     chisq_histogram.SetContourLevel(0, chisqmin + 2.3)
     chisq_histogram.SetContourLevel(1, chisqmin + 4.61)
+    chisq_histogram.SetContourLevel(2, chisqmin + 6.18)
+    chisq_histogram.SetContourLevel(3, chisqmin + 11.83)
 
     root_out_file = ROOT.TFile(root_filename, "RECREATE")
     root_out_file.cd()
@@ -592,6 +594,32 @@ def process_2d(original, root_filename, pdf_filename, error):
     opt = "SAME"
     for i, g in enumerate(iter):
         name = "g90_valor_" + str(i)
+        g.SetLineWidth(2)
+        g.SetLineStyle(1)
+        g.SetLineColor(ROOT.kRed)
+        root_out_file.cd()
+        g.Draw(opt + "CONT3")
+        g.Write(name)
+        opt = "SAME"
+
+    list95 = contours.At(2)
+    iter = ROOT.TIter(list95)
+    opt = "SAME"
+    for i, g in enumerate(iter):
+        name = "g95_valor_" + str(i)
+        g.SetLineWidth(2)
+        g.SetLineStyle(1)
+        g.SetLineColor(ROOT.kRed)
+        root_out_file.cd()
+        g.Draw(opt + "CONT3")
+        g.Write(name)
+        opt = "SAME"
+
+    list99 = contours.At(3)
+    iter = ROOT.TIter(list99)
+    opt = "SAME"
+    for i, g in enumerate(iter):
+        name = "g99_valor_" + str(i)
         g.SetLineWidth(2)
         g.SetLineStyle(1)
         g.SetLineColor(ROOT.kRed)

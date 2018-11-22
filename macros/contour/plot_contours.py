@@ -73,22 +73,25 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inver
 
     canvas.Print(pdf_filename)
 
-def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, is_inverted=False):
+def plot_contours_2d(dchisq_objs, best_fits, labels, theta23, dm23, pdf_filename, is_inverted=False):
     canvas = ROOT.TCanvas("canvas2d", "canvas2d", 700, 500)
     canvas.SetLeftMargin(0.13)
     canvas.SetRightMargin(0.05)
     canvas.SetTopMargin(0.05)
     canvas.SetBottomMargin(0.1)
-    lymax = 0.89
+    lymax = 0.95
     lymin = lymax - (len(dchisq_objs) + 1) * 0.03
-    legend = ROOT.TLegend(0.7, lymin, 0.85, lymax);
+    legend = ROOT.TLegend(0.15, lymin, 0.3, lymax);
     legend.SetFillStyle(0);
     legend.SetBorderSize(0);
     legend.SetTextFont(132);
     legend.SetTextSize(0.03);
+    print  dchisq_objs[-1].GetYaxis().GetTitle()
     if "_{32}" in dchisq_objs[-1].GetYaxis().GetTitle():
+        print is_inverted
         if is_inverted:
             dchisq_objs[-1].GetYaxis().SetTitle("#Deltam^{2}_{13} (eV^{2}c^{-4})")
+            print dchisq_objs[-1].GetYaxis().GetTitle()
         else:
             dchisq_objs[-1].GetYaxis().SetTitle("#Deltam^{2}_{32} (eV^{2}c^{-4})")
         
@@ -117,7 +120,17 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, is_invert
         line_color += 1
     multigraph.Draw()
 
-    if "atmos" in pdf_filename:
+    if len(dchisq_objs) == 3 and not "nova" in pdf_filename:
+        line_color = 2
+    else:
+        line_color = 1
+
+    for bf in best_fits:
+        bf.SetMarkerColor(line_color)
+        bf.Draw("SAME")
+        line_color += 1
+
+    if not theta23 is None and not dm23 is None:
         input = ROOT.TMarker(theta23, dm23, 23)
         input.SetMarkerColor(12)
         input.Draw("SAME")
@@ -155,8 +168,9 @@ def get_local_histo(filename):
     elif in_file.GetListOfKeys().Contains("dchisq_map_2D"):
         obj = in_file.Get("dchisq_map_2D")
         obj.SetDirectory(0)
+        best = in_file.Get("best_fit_point_marker")
         in_file.Close()
-        return obj, 2
+        return (obj, 2, best)
     else:
         print "Error: No dchisq surface found"
         sys.exit()
@@ -187,6 +201,8 @@ def get_global_histos(filename):
         obj_nh.SetDirectory(0)
         obj_ih = ih_file.Get("chisq_map_2D")
         obj_ih.SetDirectory(0)
+        best_nh = nh_file.Get("best_fit_point_marker")
+        best_ih = ih_file.Get("best_fit_point_marker")
         nh_file.Close()
         ih_file.Close()
         minval = min(obj_nh.GetMinimum(), obj_ih.GetMinimum())
@@ -194,7 +210,7 @@ def get_global_histos(filename):
             for j in range(1, obj_nh.GetNbinsY() + 1):
                 obj_nh.SetBinContent(i, j, obj_nh.GetBinContent(i, j) - minval)
                 obj_ih.SetBinContent(i, j, obj_ih.GetBinContent(i, j) - minval)
-        return obj_nh, obj_ih, 2
+        return (obj_nh, obj_ih, 2, best_nh, best_ih)
     else:
         print "Error: No dchisq surface found"
         sys.exit()
@@ -219,13 +235,25 @@ if __name__=="__main__":
     dchisq_objects = []
     dchisq_nh_objects = []
     dchisq_ih_objects = []
+    best_fits = []
+    best_fits_nh = []
+    best_fits_ih = []
     num_var = 0
     for filename in args.in_filenames:
-        if not args.do_global:            
-            obj, dim = get_local_histo(filename)
+        if not args.do_global:
+            tup = get_local_histo(filename)
+            obj, dim = tup[0], tup[1]
+            if dim == 2:
+                best_fits.append(tup[2])
             dchisq_objects.append(obj)
         else:
-            obj_nh, obj_ih, dim = get_global_histos(filename)
+            tup = get_global_histos(filename)
+            obj_nh = tup[0]
+            obj_ih = tup[1]
+            dim = tup[2]
+            if dim == 2:
+                best_fits_nh.append(tup[3])
+                best_fits_ih.append(tup[4])
             dchisq_nh_objects.append(obj_nh)
             dchisq_ih_objects.append(obj_ih)
         if num_var == 0:
@@ -244,12 +272,12 @@ if __name__=="__main__":
             plot_contours_1d(dchisq_ih_objects, args.labels, ih_filename, args.is_t2k_only, True)
     elif num_var == 2:
         if not args.do_global:
-            plot_contours_2d(dchisq_objects, args.labels, args,theta23, args.dm23, args.out_filename)
+            plot_contours_2d(dchisq_objects, best_fits, args.labels, args.theta23, args.dm23, args.out_filename, True)
         else:
             nh_filename = args.out_filename
             ih_filename = args.out_filename.replace("normal", "inverted")
-            plot_contours_2d(dchisq_nh_objects, args.labels, args.theta23, args.dm23, nh_filename)
-            plot_contours_2d(dchisq_ih_objects, args.labels, args.theta23, args.dm23, ih_filename, True)
+            plot_contours_2d(dchisq_nh_objects, best_fits_nh, args.labels, args.theta23, args.dm23, nh_filename)
+            plot_contours_2d(dchisq_ih_objects, best_fits_ih, args.labels, args.theta23, args.dm23, ih_filename, True)
     else:
         print "Error: Not all contours have the same dimensionality"
         sys.exit()
