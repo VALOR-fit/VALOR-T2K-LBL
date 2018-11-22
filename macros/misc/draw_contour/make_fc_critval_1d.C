@@ -35,7 +35,7 @@ void make_fc_critval_1d(const char* path_fc_nh, const char* path_fc_ih){
   const int Nmh = 1;
   const int NFCpts = 2;
   */
-  bool fixed_hierarchy = 0;
+  bool fixed_hierarchy = false;
   
    // RUN 1-8
    // Root path to toys location, for convenience specifying path in "infilename_fc"
