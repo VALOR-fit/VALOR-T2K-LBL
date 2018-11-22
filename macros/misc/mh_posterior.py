@@ -15,8 +15,8 @@ hierarchy = dict(zip(["nh", "ih"], ["normal", "inverted"]))
 #points = dict(zip(range(9), ["mpi", "m3pi4", "mpi2", "mpi4", "0", "ppi4", "ppi2", "p3pi4", "ppi"]))
 points = dict(\
     zip(\
-    ["mpi", "m3pi4", "mpi2", "mpi4", "0", "ppi4", "ppi2", "p3pi4"],\
-    [-3.14, -2.36, -1.57, -0.79, 0.0, 0.79, 1.57, 2.36])\
+    ["mpi", "m3pi4", "mpi2", "mpi4", "0", "ppi4", "ppi2", "p3pi4", "bf"],\
+    [-3.14, -2.36, -1.57, -0.79, 0.0, 0.79, 1.57, 2.36, -1.88])\
     )
 
 def get_tree(f, treename):
@@ -50,15 +50,17 @@ def read_fc(dir, point):
 #    min_chisq["ih"]["mih"] = ROOT.TH1D("ih_chi_ih", "ih_chi_ih", 200, 0, 200)
   
     for mh in hierarchy:
-        filename = dir + "/" + mh + "/fc_deltacp_" + point + "_" + hierarchy[mh] + "_merged.root"
+        filename = dir + "/" + mh + "/fc_deltacp_" + point + "_" + hierarchy[mh] + "_merge.root"
         if not exists(filename):
             print "Error: No such file \'%s\'" % filename
             sys.exit()
         f = ROOT.TFile(filename, "READ")
         tree = get_tree(f, "fitnt")
         for entry in tree:
-            if not tree.trueMH == hierarchy[mh]:
-                print "Error: Expected true hierarchy %s in %s, found %s" % (mh, filename, true_mh[0])
+            # Ideally this next two lines should be included, but best-fit is only in one hierarchy,
+            # so need to fake true IH to allow this to run (doesn't matter because it won't be used)
+#            if not tree.trueMH == hierarchy[mh]:
+#                print "Error: Expected true hierarchy %s in %s, found %s" % (mh, filename, true_mh[0])
             fhc1rmu_obs = tree.hErecoToy_1Rmu.Integral()
             fhc1re_obs = tree.hErecoToy_1Re.Integral()
             fhc1repi_obs = tree.hErecoToy_MultiRe.Integral()
@@ -136,11 +138,13 @@ def get_posterior_probability(likelihoods):
     true_nh["ih"] = ROOT.TH1D("ih_posterior", "ih_posterior", 100, 0.0, 1.0)
     true_nh["nh"].SetDirectory(0)
     true_nh["ih"].SetDirectory(0)
+    posterior_nh = []
 
     N = len(likelihoods["nh"]["mnh"])
     for i in range(N):
         p = likelihoods["nh"]["mnh"][i] / (likelihoods["nh"]["mnh"][i] + likelihoods["nh"]["mih"][i])
         true_nh["nh"].Fill(p)
+        posterior_nh.append(p)
         p = likelihoods["nh"]["mih"][i] / (likelihoods["nh"]["mnh"][i] + likelihoods["nh"]["mih"][i])
         true_nh["ih"].Fill(p)
 
@@ -157,16 +161,23 @@ def get_posterior_probability(likelihoods):
         p = likelihoods["ih"]["mih"][i] / (likelihoods["ih"]["mnh"][i] + likelihoods["ih"]["mih"][i])
         true_ih["ih"].Fill(p)
 
-    return true_nh, true_ih
+    return true_nh, true_ih, posterior_nh
 
 def get_data_likelihood(hchisq, delta):
+    # Get chisq at best fit, probably not appropriate for a mass hierarchy statement
     chisq = hchisq.GetBinContent(hchisq.FindBin(delta))
     likelihood = np.exp(-chisq / 2)
+    # Average likelihood over all values of delta
+    sum_likelihood = 0.0
+    for i in range(1, hchisq.GetNbinsX() + 1):
+        chisq = hchisq.GetBinContent(i)
+        sum_likelihood += np.exp(-chisq / 2)
+    likelihood = sum_likelihood / hchisq.GetNbinsX()
     return likelihood
 
-def plot_posterior_probabilities(nh_histograms, ih_histograms, dcp, output, data_chisq_nh, data_chisq_ih):
+def plot_posterior_probabilities(nh_histograms, ih_histograms, dcp, output, data_chisq_nh, data_chisq_ih, posterior_nh):
     canvas = ROOT.TCanvas("canvas", "canvas", 1024, 768)
-    nh_histograms["nh"].SetTitle("Posterior probability - True NH, #delta=" + str(dcp))
+    nh_histograms["nh"].SetTitle("Posterior probability - True NO, #delta=" + str(dcp))
     nh_histograms["nh"].GetXaxis().SetTitle("Posterior probability")
     nh_histograms["nh"].GetYaxis().SetTitle("Number of toys")
     nh_histograms["nh"].SetLineColor(ROOT.kRed)
@@ -175,21 +186,30 @@ def plot_posterior_probabilities(nh_histograms, ih_histograms, dcp, output, data
     nh_histograms["ih"].Draw("SAME")
     if not data_chisq_nh is None:
         data_posterior = data_chisq_nh / (data_chisq_nh + data_chisq_ih)
+        data_posterior = 0.911  # p-theta value
         data_line = ROOT.TLine(data_posterior, 0.0, data_posterior, nh_histograms["nh"].GetMaximum())
         data_line.SetLineColor(ROOT.kBlack)
         data_line.SetLineWidth(2)
         data_line.Draw("SAME")
-    legend = ROOT.TLegend(0.79, 0.79, 0.89, 0.89)
+        ptext = ROOT.TLatex(data_posterior + 0.02, nh_histograms["nh"].GetMaximum() / 2, "data = %0.3f" % data_posterior)
+        ptext.SetTextColor(ROOT.kBlack)
+        ptext.SetTextSize(0.04)
+        ptext.Draw()
+        print "Data:", data_chisq_nh, data_chisq_ih, data_posterior
+        count = sum(toy_posterior > data_posterior for toy_posterior in posterior_nh)
+        print "p-value:", (float(count) / len(posterior_nh))
+
+    legend = ROOT.TLegend(0.91, 0.79, 0.99, 0.89)
     legend.SetFillColor(0);
     legend.SetLineColor(0);
     legend.SetTextFont(132);
     legend.SetTextSize(0.05);
-    legend.AddEntry(nh_histograms["nh"], "NH", "l")
-    legend.AddEntry(nh_histograms["ih"], "IH", "l")
+    legend.AddEntry(nh_histograms["nh"], "NO", "l")
+    legend.AddEntry(nh_histograms["ih"], "IO", "l")
     legend.Draw()
     canvas.Print(output + "(")
 
-    ih_histograms["nh"].SetTitle("Posterior probability - True IH, #delta=" + str(dcp))
+    ih_histograms["nh"].SetTitle("Posterior probability - True IO, #delta=" + str(dcp))
     ih_histograms["nh"].GetXaxis().SetTitle("Posterior probability")
     ih_histograms["nh"].GetYaxis().SetTitle("Number of toys")
     ih_histograms["nh"].SetLineColor(ROOT.kRed)
@@ -202,13 +222,13 @@ def plot_posterior_probabilities(nh_histograms, ih_histograms, dcp, output, data
         data_line.SetLineColor(ROOT.kBlack)
         data_line.SetLineWidth(2)
         data_line.Draw("SAME")
-    legend = ROOT.TLegend(0.79, 0.79, 0.89, 0.89)
+    legend = ROOT.TLegend(0.91, 0.79, 0.99, 0.89)
     legend.SetFillColor(0);
     legend.SetLineColor(0);
     legend.SetTextFont(132);
     legend.SetTextSize(0.05);
-    legend.AddEntry(nh_histograms["nh"], "NH", "l")
-    legend.AddEntry(nh_histograms["ih"], "IH", "l")
+    legend.AddEntry(nh_histograms["nh"], "NO", "l")
+    legend.AddEntry(nh_histograms["ih"], "IO", "l")
     legend.Draw()
 
     canvas.Print(output + ")")
@@ -236,6 +256,17 @@ def plot_posterior_probabilities(nh_histograms, ih_histograms, dcp, output, data
     low = ih_histograms["nh"].FindBin(0.99)
     reject_true99_ih = ih_histograms["nh"].Integral(low, Nbins) / float(Ntoys_ih)
 
+    tex_filename = output.replace("pdf", "tex")
+    with open(tex_filename, "w") as f:
+        f.write(r"\begin{tabular}{| c | c | c |}" + "\n")
+        f.write(r"\hline" + "\n")
+        f.write(r"True ordering & Reject false ordering & Reject true ordering \\" + "\n")
+        f.write(r"\hline" + "\n")
+        f.write(r"Normal & " + ("%.5f" % reject_false95_nh) + r" & " + ("%.5f" % reject_true95_nh) + r" \\" + "\n")
+        f.write(r"Inverted & " + ("%.5f" % reject_false95_ih) + r" & " + ("%.5f" % reject_true95_ih) + r" \\" + "\n")
+        f.write(r"\hline" + "\n")
+        f.write(r"\end{tabular}" + "\n")
+
     print "True normal hierarchy"
     print "Reject false at 95%%: %.4f" % reject_false95_nh
     print "Reject true at 95%%: %.4f" % reject_true95_nh
@@ -260,6 +291,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    data_likelihood_nh = None
+    data_likelihood_ih = None
+
     if not args.filename_nh is None and not args.filename_ih is None:
         file_nh = ROOT.TFile(args.filename_nh)
         print args.filename_nh, ":", file_nh
@@ -278,30 +312,31 @@ if __name__ == "__main__":
         chisqs, min_chisqs = read_fc(args.fc_dir, args.delta)
         likelihoods = get_likelihoods(chisqs)
         likelihoods = get_average_likelihood(likelihoods)
-        nh_histograms, ih_histograms = get_posterior_probability(likelihoods)
+        nh_histograms, ih_histograms, posterior_nh = get_posterior_probability(likelihoods)
 
         canvas = ROOT.TCanvas("a", "a", 1024, 768)
-        min_chisqs["nh"]["mnh"].SetTitle("True NH, #delta = 0 - NH")
+        min_chisqs["nh"]["mnh"].SetTitle("True NO, #delta = " + str(points[args.delta]) + " - NO")
         min_chisqs["nh"]["mnh"].GetXaxis().SetTitle("Posterior probability")
         min_chisqs["nh"]["mnh"].GetYaxis().SetTitle("#nu_{e} candidates")
         min_chisqs["nh"]["mnh"].Draw("COLZ")
 #        min_chisqs["nh"]["mih"].SetLineColor(ROOT.kRed)
 #        min_chisqs["nh"]["mih"].Draw("same")
-        canvas.Print("test.pdf(")
-        min_chisqs["ih"]["mnh"].SetTitle("True IH, #delta = 0 - NH")
-        min_chisqs["ih"]["mnh"].GetXaxis().SetTitle("Posterior probability")
-        min_chisqs["ih"]["mnh"].GetYaxis().SetTitle("#nu_{e} candidates")
-        min_chisqs["ih"]["mnh"].Draw("COLZ")
+        rate_filename = args.pdf_out.replace("posterior", "rate")
+        canvas.Print(rate_filename + ".pdf(")
+        min_chisqs["ih"]["mih"].SetTitle("True IO, #delta = " + str(points[args.delta]) + " - IO")
+        min_chisqs["ih"]["mih"].GetXaxis().SetTitle("Posterior probability")
+        min_chisqs["ih"]["mih"].GetYaxis().SetTitle("#nu_{e} candidates")
+        min_chisqs["ih"]["mih"].Draw("COLZ")
 #        min_chisqs["ih"]["mih"].SetLineColor(ROOT.kRed)
 #        min_chisqs["ih"]["mih"].Draw("same")
-        canvas.Print("test.pdf)")
+        canvas.Print(rate_filename + ".pdf)")
 
         f = ROOT.TFile(args.root_out, "RECREATE")
         nh_histograms["nh"].Write("nh_true_nh_marg_histogram")
         nh_histograms["ih"].Write("nh_true_ih_marg_histogram")
         ih_histograms["nh"].Write("ih_true_nh_marg_histogram")
         ih_histograms["ih"].Write("ih_true_ih_marg_histogram")
-        plot_posterior_probabilities(nh_histograms, ih_histograms, points[args.delta], args.pdf_out, data_likelihood_nh, data_likelihood_ih)
+        plot_posterior_probabilities(nh_histograms, ih_histograms, points[args.delta], args.pdf_out, data_likelihood_nh, data_likelihood_ih, posterior_nh)
         f.Close()
     else:
         f = ROOT.TFile(args.root_out, "READ")
@@ -311,6 +346,6 @@ if __name__ == "__main__":
         ih_histograms = dict()
         ih_histograms["nh"] = f.Get("ih_true_nh_marg_histogram")
         ih_histograms["ih"] = f.Get("ih_true_ih_marg_histogram")
-        plot_posterior_probabilities(nh_histograms, ih_histograms, points[args.delta], args.pdf_out, data_likelihood_nh, data_likelihood_ih)
+        plot_posterior_probabilities(nh_histograms, ih_histograms, points[args.delta], args.pdf_out, data_likelihood_nh, data_likelihood_ih, posterior_nh)
         f.Close()
 
