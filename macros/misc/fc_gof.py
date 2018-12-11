@@ -130,11 +130,43 @@ def get_pvalue_two_sided(toys, dchisq):
             pval += 1.0
     return pval
 
-def plot_dchisq_single(h_toys_tnh, h_toys_tih, dchisq_data, output_pdf):
+def plot_dchisq_single(h_toys_tnh, h_toys_tih, dchisq_data, output_pdf, dchisq_toys_tnh, dchisq_toys_tih):
     canvas = ROOT.TCanvas("canvas", "canvas", 1024, 768)
     h_toys_tnh.Draw("")
     h_toys_tih.Draw("same")
     maxval = h_toys_tnh.GetMaximum()
+
+    dchisq_toys_tnh_sorted = np.sort(dchisq_toys_tnh)
+    Ntnh = len(dchisq_toys_tnh_sorted)
+    dchisq_toys_tih_sorted = np.sort(dchisq_toys_tih)
+    Ntih = len(dchisq_toys_tih_sorted)
+
+    pvalue = 0.9545
+    plow = (1.0 - pvalue) / 2
+    phigh = 1.0 - plow
+    toys_95_low_nh = dchisq_toys_tnh_sorted[int(np.floor(plow * Ntnh) - 1)]
+    toys_95_high_nh = dchisq_toys_tnh_sorted[int(np.floor(phigh * Ntnh) - 1)]
+    toys_95_low_ih = dchisq_toys_tih_sorted[int(np.floor(plow * Ntih) - 1)]
+    toys_95_high_ih = dchisq_toys_tih_sorted[int(np.floor(phigh * Ntih) - 1)]
+
+    nh_low_line = ROOT.TLine(toys_95_low_nh, 0.0, toys_95_low_nh, maxval)
+    nh_low_line.SetLineColor(ROOT.kBlue)
+    nh_low_line.SetLineWidth(2)
+    nh_low_line.Draw("SAME")
+    nh_high_line = ROOT.TLine(toys_95_high_nh, 0.0, toys_95_high_nh, maxval)
+    nh_high_line.SetLineColor(ROOT.kBlue)
+    nh_high_line.SetLineWidth(2)
+    nh_high_line.Draw("SAME")
+
+    ih_low_line = ROOT.TLine(toys_95_low_ih, 0.0, toys_95_low_ih, maxval)
+    ih_low_line.SetLineColor(ROOT.kRed)
+    ih_low_line.SetLineWidth(2)
+    ih_low_line.Draw("SAME")
+    ih_high_line = ROOT.TLine(toys_95_high_ih, 0.0, toys_95_high_ih, maxval)
+    ih_high_line.SetLineColor(ROOT.kRed)
+    ih_high_line.SetLineWidth(2)
+    ih_high_line.Draw("SAME")
+
     data_line = ROOT.TLine(dchisq_data, 0.0, dchisq_data, maxval)
     data_line.SetLineColor(ROOT.kBlack)
     data_line.SetLineWidth(2)
@@ -156,6 +188,8 @@ def plot_dchisq_all(dchisq_toys_tnh_dict, dchisq_toys_tih_dict, dchisq_data, pva
 
     N = len(dchisq_toys_tnh_dict)
     dcp = np.zeros(N)
+    dcp_nh = np.zeros(N)
+    dcp_ih = np.zeros(N)
     data_nh = np.zeros(N)
     data_ih = np.zeros(N)
     toys_95_low_nh = np.zeros(N)
@@ -180,6 +214,9 @@ def plot_dchisq_all(dchisq_toys_tnh_dict, dchisq_toys_tih_dict, dchisq_data, pva
     keys = list(points.keys())
     for i in range(0, N):
         dcp[i] = points[keys[i]]
+        # Offset the hierarchies for better readability
+        dcp_nh[i] = points[keys[i]] - 0.1
+        dcp_ih[i] = points[keys[i]] + 0.1
         dchisq_toys_tnh_sorted = np.sort(dchisq_toys_tnh_dict[keys[i]])
         Ntnh = len(dchisq_toys_tnh_sorted)
         dchisq_toys_tih_sorted = np.sort(dchisq_toys_tih_dict[keys[i]])
@@ -231,45 +268,25 @@ def plot_dchisq_all(dchisq_toys_tnh_dict, dchisq_toys_tih_dict, dchisq_data, pva
     axis.Draw("axis")
 
     g95_nh = []
-    g100_nh = []
     g95_ih = []
-    g100_ih = []
     for i in range(0, N):
-        # Plot NH full interval
-        g100_nh.append(ROOT.TGraphErrors(N, dcp, data_100_nh, np.zeros(N), toys_100_nh))
-        g100_nh[i].SetLineColor(ROOT.kBlue)
-        g100_nh[i].SetLineStyle(3)
-        g100_nh[i].SetMarkerSize(0)
-        g100_nh[i].Draw("P SAME")
-
-        # Plot IH full interval
-        g100_ih.append(ROOT.TGraphErrors(N, dcp, data_100_ih, np.zeros(N), toys_100_ih))
-        g100_ih[i].SetLineColor(ROOT.kRed)
-        g100_ih[i].SetLineStyle(3)
-        g100_ih[i].Draw("P SAME")
-        g100_ih[i].SetMarkerSize(0)
-
         # Plot NH 95% interval
-        g95_nh.append(ROOT.TGraphErrors(N, dcp, data_95_nh, np.zeros(N), toys_95_nh))
+        g95_nh.append(ROOT.TGraphErrors(N, dcp_nh, data_95_nh, np.zeros(N), toys_95_nh))
         g95_nh[i].SetLineColor(ROOT.kBlue)
+        g95_nh[i].SetLineWidth(2)
         g95_nh[i].SetMarkerColor(ROOT.kBlack)
         g95_nh[i].SetMarkerStyle(0)
         g95_nh[i].SetMarkerSize(0)
         g95_nh[i].Draw("P SAME")
 
         # Plot IH 95% interval
-        g95_ih.append(ROOT.TGraphErrors(N, dcp, data_95_ih, np.zeros(N), toys_95_ih))
+        g95_ih.append(ROOT.TGraphErrors(N, dcp_ih, data_95_ih, np.zeros(N), toys_95_ih))
         g95_ih[i].SetLineColor(ROOT.kRed)
+        g95_ih[i].SetLineWidth(2)
         g95_ih[i].SetMarkerColor(ROOT.kRed)
         g95_ih[i].SetMarkerStyle(0)
         g95_ih[i].SetMarkerSize(0)
         g95_ih[i].Draw("P SAME")
-
-    # Data line - for a single point
-    data_line = ROOT.TLine(- ROOT.TMath.Pi(), dchisq_data, +ROOT.TMath.Pi(), dchisq_data)
-    data_line.SetLineColor(ROOT.kBlack)
-    data_line.SetLineWidth(2)
-    data_line.Draw("SAME")
 
     textsize = 0.04
     lymin = 0.7
@@ -281,6 +298,14 @@ def plot_dchisq_all(dchisq_toys_tnh_dict, dchisq_toys_tih_dict, dchisq_data, pva
     legend.AddEntry(g95_nh[0], "True NO", "l")
     legend.AddEntry(g95_ih[0], "True IO", "l")
     legend.Draw()
+
+    canvas.SaveAs("fc_gof_all_%f_sensitivity.pdf" % pvalue)
+
+    # Data line - for a single point
+    data_line = ROOT.TLine(- ROOT.TMath.Pi(), dchisq_data, +ROOT.TMath.Pi(), dchisq_data)
+    data_line.SetLineColor(ROOT.kBlack)
+    data_line.SetLineWidth(2)
+    data_line.Draw("SAME")
 
     canvas.SaveAs("fc_gof_all_%f.pdf" % pvalue)
 
@@ -321,8 +346,7 @@ if __name__ == "__main__":
             h_toys_tih.Write()
             f.Close()
 
-            plot_dchisq_single(h_toys_tnh, h_toys_tih, dchisq_data, "fc_gof_" + dcp + ".pdf")
-
+            plot_dchisq_single(h_toys_tnh, h_toys_tih, dchisq_data, "fc_gof_" + dcp + ".pdf", dchisq_toys_tnh, dchisq_toys_tih)
             dchisq_toys_tnh_dict[dcp] = dchisq_toys_tnh
             dchisq_toys_tih_dict[dcp] = dchisq_toys_tih
 
@@ -330,12 +354,4 @@ if __name__ == "__main__":
             plot_dchisq_all(dchisq_toys_tnh_dict, dchisq_toys_tih_dict, dchisq_data, 0.9545)
             plot_dchisq_all(dchisq_toys_tnh_dict, dchisq_toys_tih_dict, dchisq_data, 0.6827)
             plot_dchisq_all(dchisq_toys_tnh_dict, dchisq_toys_tih_dict, dchisq_data, 0.9973)
-    else:
-        f = ROOT.TFile(args.root_out, "READ")
-        h_toys_tnh = f.Get("toys_tnh")
-        h_toys_tnh.SetDirectory(0)
-        h_toys_tih = f.Get("toys_tih")
-        h_toys_tih.SetDirectory(0)
-        f.Close()
-        plot_dchisq_single(h_toys_tnh, h_toys_tih, dchisq_data, args.pdf_out)
 
