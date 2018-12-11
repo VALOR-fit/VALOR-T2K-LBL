@@ -508,10 +508,14 @@ def process_2d(original, root_filename, pdf_filename, error):
         smeared_histogram.GetYaxis().SetTitle("|#Deltam^{2}_{32}| (eV^{2}c^{-4})")
     else:
         smeared_histogram.GetYaxis().SetTitle("|#Deltam^{2}_{13}| (eV^{2}c^{-4})")
-    smeared_histogram.GetXaxis().SetTitleOffset(1.2)
-    smeared_histogram.GetYaxis().SetTitleOffset(1.8)
+    smeared_histogram.GetXaxis().SetTitleOffset(1.1)
+    textsize = 0.05
+    smeared_histogram.GetXaxis().SetTitleSize(textsize)
+    smeared_histogram.GetYaxis().SetTitleOffset(1.3)
+    smeared_histogram.GetYaxis().SetTitleSize(textsize)
 
-    smeared_histogram.SetTitle("Smeared likelihood surface")
+#    smeared_histogram.SetTitle("Smeared likelihood surface")
+    smeared_histogram.SetTitle("")
     smeared_histogram.Draw("COLZ")
 #    canvas.Print(pdf_filename)
 
