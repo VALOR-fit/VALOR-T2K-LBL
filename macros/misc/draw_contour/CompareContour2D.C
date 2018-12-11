@@ -283,6 +283,7 @@ void CompareContour2D(char* file_1 = "test1",
   
   TLegend *lcontours = new TLegend(0.65,0.73,0.88,0.88);
   lcontours->SetFillColor(0);
+  lcontours->SetFillStyle(0);
   lcontours->SetLineColor(0);
   lcontours->SetTextFont(132);
   lcontours->SetTextSize(0.04);
@@ -296,8 +297,9 @@ void CompareContour2D(char* file_1 = "test1",
     lcontours->AddEntry(g90_valor[0][ifile],name,"l");
   }
   
-  TLegend *lcontours_2 = new TLegend(0.5,0.77,0.65,0.84);
+  TLegend *lcontours_2 = new TLegend(0.50,0.77,0.65,0.84);
   lcontours_2->SetFillColor(0);
+  lcontours_2->SetFillStyle(0);
   lcontours_2->SetLineColor(0);
   lcontours_2->SetTextFont(132);
   lcontours_2->SetTextSize(0.04);
@@ -371,26 +373,28 @@ void CompareContour2D(char* file_1 = "test1",
     gbest_fit_global[ifile]->Draw("same");
   }
   
-  TLegend *lcontours = new TLegend(0.65,0.64,0.88,0.88);
+  TLegend *lcontours = new TLegend(0.65,0.58,0.88,0.82);
   lcontours->SetFillColor(0);
+  lcontours->SetFillStyle(0);
   lcontours->SetLineColor(0);
   lcontours->SetTextFont(132);
   lcontours->SetTextSize(0.04);
   for(int ifile=0;ifile<Nfiles;ifile++){
     char name[200];
-    sprintf(name,"%s - 68CL",latexname[ifile]);
+    sprintf(name,"%s - 1#sigmaCL",latexname[ifile]);
     if (g68_valor[0][ifile])
     lcontours->AddEntry(g68_valor[0][ifile],name,"l");
-    sprintf(name,"%s - 95CL",latexname[ifile]);
+    sprintf(name,"%s - 2#sigmaCL",latexname[ifile]);
     if (g95_valor[0][ifile])
     lcontours->AddEntry(g95_valor[0][ifile],name,"l");
-    sprintf(name,"%s - 99CL",latexname[ifile]);
+    sprintf(name,"%s - 3#sigmaCL",latexname[ifile]);
     if (g99_valor[0][ifile])
     lcontours->AddEntry(g99_valor[0][ifile],name,"l");
   }
   
-  TLegend *lcontours_2 = new TLegend(0.5,0.77,0.65,0.84);
+  TLegend *lcontours_2 = new TLegend(0.45,0.67,0.55,0.74);
   lcontours_2->SetFillColor(0);
+  lcontours_2->SetFillStyle(0);
   lcontours_2->SetLineColor(0);
   lcontours_2->SetTextFont(132);
   lcontours_2->SetTextSize(0.04);
