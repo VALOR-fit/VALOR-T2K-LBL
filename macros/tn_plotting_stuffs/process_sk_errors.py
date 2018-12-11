@@ -113,6 +113,8 @@ def CreateEnvelope(N, outfile, filename1, filename2=None):
         nominal2.SetLineWidth(1)
         nominal2.Draw("same")
 
+    nominal.Draw("same axis")
+
     tx = nominal.GetXaxis().GetBinLowEdge(nominal.GetXaxis().GetLast()) * 0.5
     ty = nominal.GetMaximum() * 1.01
     title = ROOT.TLatex(tx, ty,"T2K Run 1-9 Preliminary");
