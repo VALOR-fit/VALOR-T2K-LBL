@@ -381,6 +381,7 @@ if( !defined $cput ) {
         $cput = "01:00:00";
     }
 }
+print "Expected cput $cput \n";
  
 mkpath ($job_dir, {verbose => 1, mode=>0777}); 
 die("$job_dir doesn't exist") unless -d $job_dir;
@@ -481,7 +482,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	
 	$program = "root2k ";
 	
-	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys_joint.C($fileid,$imin0,$imax0,$imin1,$imax1,\"$tag\",\"$config_file\",\"$fitparamlist\",$mix12_nh,$mix13_nh,$mix23_nh,$deltacp_nh,$dm12sq_nh,$dm23sq_nh,$mix12_ih,$mix13_ih,$mix23_ih,$deltacp_ih,$dm12sq_ih,$dm23sq_ih,$betaBar,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$nexpts_marg,$tweak_systematics,$marg_hierarchy,$prior_prob_nh,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$seed,$use_reactors)\'";
+	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys_joint.C+($fileid,$imin0,$imax0,$imin1,$imax1,\"$tag\",\"$config_file\",\"$fitparamlist\",$mix12_nh,$mix13_nh,$mix23_nh,$deltacp_nh,$dm12sq_nh,$dm23sq_nh,$mix12_ih,$mix13_ih,$mix23_ih,$deltacp_ih,$dm12sq_ih,$dm23sq_ih,$betaBar,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$nexpts_marg,$tweak_systematics,$marg_hierarchy,$prior_prob_nh,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$seed,$use_reactors)\'";
 		
 	$command = "$program $arguments";
 	print "$command \n";
@@ -638,6 +639,30 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
      close(Slurm);
      `sbatch -p compute $job_dir/$tag.slurm`;
   }
+        #
+        # Lancaster
+        #
+	print "$job_dir/$tag-$irun.jdl";
+	if($resource eq "Lancaster") {
+	    $fullprogram = `which root2k`;
+	    $fullprogram = `readlink -m $fullprogram`;
+	    $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+	    $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+	    open(JDL, ">$job_dir/$tag-$irun.jdl") or die("Cannot create the JDL script");
+	    print JDL "executable     = $softw_dir/bin/root2k \n";
+	    print JDL "universe       = vanilla \n";
+	    print JDL "arguments      = $arguments \n";
+	    print JDL "output         = $job_dir/$tag-$irun.out \n";
+	    print JDL "error          = $job_dir/$tag-$irun.err \n";
+	    print JDL "log            = $job_dir/$tag-$irun.log \n";
+	    print JDL "request_memory = 1000 \n";
+	    print JDL "getenv         = True \n";
+	    print CND "should_transfer_files    = YES \n";
+	    print CND "when_to_transfer_output  = ON_EXIT \n";
+	    print JDL "queue 1 \n";
+	    close(JDL);
+            `condor_submit $job_dir/$tag-$irun.jdl`;
+	}
 	#
 	# LyonPBS case
 	#
