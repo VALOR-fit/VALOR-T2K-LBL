@@ -12,21 +12,31 @@ parser.add_argument('--executable','-e', required=True, type=str, help='Executab
 parser.add_argument('--arguments', '-a', required=True, type=str, help='Arguments')
 parser.add_argument('--logfile', '-l', required=True, type=str, help='Logfile')
 parser.add_argument('--escape-quotes', default=False, action='store_true', help='Escape the " in the argument')
+parser.add_argument('--wrap-in-shell-script','-w',default=False, action='store_true', help='Wrap the command inside a shell script. Required sometimes when there are too many quotes hanging around')
 #parse the arguments
 args = parser.parse_args()
 
 fcondor = open(args.logfile + '.jdl', 'w')
+arguments = args.arguments
+if args.escape_quotes:
+    arguments = arguments.replace('"', '\\"')
+if args.wrap_in_shell_script:
+    shname = args.logfile + '.sh'
+    with open(shname, 'w') as f:
+        f.write("#!/bin/bash \n")
+        f.write(args.executable + ' ' + arguments)
+    executable = '/bin/bash'
+    arguments = shname
+else:
+    executable = args.executable
 
 condor = ''
 if args.notifyuseremail:
     condor += '' \
         'notify_user    = ' + args.notifyuseremail + '\n' \
         'notification   = Always \n'
-arguments = args.arguments
-if args.escape_quotes:
-    arguments = arguments.replace('"', '\\"')
 condor += '' \
-    'executable     = ' + args.executable + ' \n' \
+    'executable     = ' + executable + ' \n' \
     'universe       = vanilla \n' \
     'arguments      = ' + arguments + ' \n' \
     'output         = ' + args.logfile + '.out \n' \

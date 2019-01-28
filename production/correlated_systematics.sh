@@ -26,7 +26,7 @@ for sample in ${samples[@]}; do
 	echo root2k -b -q $command'('"\"${sample}\"",${std_args},"\"${config}\"","\"${group}\"","\"${outfile}_${sample}\""')'
 	exec="${T2KOSCANA}/bin/root2k"
 	args="-b -q $command'(\""${sample}"\","${std_args}",\""${config}"\","\"${group}"\",\""${outfile}"_"${sample}"\")'"
-	python ${T2KOSCANA}/production/run_on_condor.py -e $exec -a "${args}" -l ${outfile}_${sample}_${group} --escape-quotes
+	python ${T2KOSCANA}/production/run_on_condor.py -e $exec -a "${args}" -l ${outfile}_${sample}_${group} -w #--onlycreatefiles #--escape-quotes
 	#root2k -b -q $command'('"\"${sample}\"",${std_args},"\"${config}\"","\"${group}\"","\"${outfile}_${sample}\""')'
     done
    #bsub -q ${queue} -oo log_syst_effects_${sample}_skdet.log ${T2KOSCANA}/production/warwick_submit_command.sh root2k -q -b "${command}(\"${sample}\",${std_args},\"systematic_configuration_run1-9d_skdet\",\"skdet\",\"${outfile}_${sample}\")"
