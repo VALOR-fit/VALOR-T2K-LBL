@@ -11,10 +11,23 @@
 //                                                                                           
 // ------------------------------------------------------------------------------------------------
 
+#include <iostream>
+#include <string>
+
+#include "TFile.h"
+#include "TCanvas.h"
+#include "TSystem.h"
+
+#include "Conventions.h"
+#include "FitMarginalization.h"
+//#include "FitParamList.h"
+#include "SuperkExpectation.h"
+#include "SuperkObservation.h"
+#include "UtlFitParamListFactory.h"
+
 using namespace std;
 using namespace valor;
 using namespace valor::conv;
-
 
 void build_marg_toys_joint
 (
@@ -380,8 +393,9 @@ void build_marg_toys_joint
     fparm_ih->SetInitValue(kPhypDm23sqBar,   input_dm23sq_ih);
   }
   else if(hyp == kHypNuMuDisapp2F) {
-    fparm->SetInitValue(kPhypMixing23, input_mixing23);
-    fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
+    cerr << util::AsString(kHypNuMuDisapp2F) << " not implemented in this macro" << endl;
+    //fparm->SetInitValue(kPhypMixing23, input_mixing23);
+    //fparm->SetInitValue(kPhypDm23sq,   input_dm23sq);
   }
   
   cout << "   - True oscillation parameters (Normal Hierarchy): " << endl;
@@ -840,6 +854,7 @@ void build_marg_toys_joint
     hToyHisto_Dm23Bar_ih->Draw("");
   }
 
+  TH1D * hPriorHisto_MH = 0;
   if(fitmarg->GetHistoPriorMH()){
     hPriorHisto_MH = new TH1D(*fitmarg->GetHistoPriorMH());
     TCanvas *cPriorHisto_MH = new TCanvas("cPriorHisto_MH","cPriorHisto_MH");
