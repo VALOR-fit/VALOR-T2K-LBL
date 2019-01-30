@@ -14,8 +14,8 @@ void make_t2xkk_flux_file(
 			  bool verbose_weights = false,
 			  const char * outfilename = "inputs/hk/flux/flux_weights_and_flux_2p5_295km.root",
 			  const char * in_korea_filename = "inputs/hk/flux/flux_295km_2p5degree.root",
-			  const char * in_fhc_filename = "inputs/official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root",
-			  const char * in_rhc_filename = "inputs/official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root"
+			  const char * in_fhc_filename = "$T2KOSCANA/inputs/official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root",
+			  const char * in_rhc_filename = "$T2KOSCANA/inputs/official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root"
 			  )
 {
   TFile * ffhc = new TFile(in_fhc_filename);
@@ -44,7 +44,10 @@ void make_t2xkk_flux_file(
       f->GetObject(TString::Format("enu_sk_tuned13a_%s", species[is].c_str()), tune13av11);
       f->GetObject(TString::Format("enu_sk_13a_nom_%s", species[is].c_str()), nom);
       f->GetObject(TString::Format("enu_sk_tuned13a_%s_ratio", species[is].c_str()), ratio);
-      assert(tune13av11 && nom && ratio);
+      cout << tune13av11 << "\t" << nom << "\t" << ratio << endl;
+      assert(tune13av11);
+      assert(nom);
+      assert(ratio);
       
       //this is (potentially) a coarsely binned histogram
       TH1D * tunekorea = 0;
@@ -55,7 +58,7 @@ void make_t2xkk_flux_file(
       if(verbose_binning) {
 	for(int ib = 0; ib < tune13av11->GetNbinsX(); ib++) {
 	  double centre = nom->GetXaxis()->GetBinCenter(ib);
-	  cout << "Fine bin " << ib
+	  cout << "Listing upper bin edges. Fine bin " << ib
 	       << " nom " << nom->GetXaxis()->GetBinUpEdge(nom->GetXaxis()->FindBin(centre))
 	       << " ratio " << ratio->GetXaxis()->GetBinUpEdge(ratio->GetXaxis()->FindBin(centre))
 	       << " tune13av11 " << tune13av11->GetXaxis()->GetBinUpEdge(tune13av11->GetXaxis()->FindBin(centre))
@@ -92,27 +95,27 @@ void make_t2xkk_flux_file(
 	double c_ratio  = ratio->GetBinContent(ratio->FindBin(center));
 	double c_tunekorea = tunekorea->GetBinContent(tunekorea->FindBin(center));
 	
-	double c_newtune = c_nom * c_tunekorea;
+	//tune = ratio * nom
+	double c_newratio = c_tunekorea / c_nom;
 	
 	if(verbose_weights || (TMath::Abs(c_tune13av11 - c_nom * c_ratio) > 1E-6)) {
-	  cout << center << "\t"
-	       << c_tune13av11 << "\t=\t"
+	  cout << "Bin centre" << center << endl
+	       << "\tT2K: Tune = nom * ratio = nom x ratio \t" << c_tune13av11 << "\t=\t"
 	       << c_nom * c_ratio << "\t=\t"
 	       << c_nom << "\tx\t"
-	       << c_ratio << "\t"
-	       << "\t\t"//endl
-	       << "\t" << c_tunekorea << "\t" << c_newtune << endl;
-}
+	       << c_ratio << endl
+	       << "\tKOREA: Tune, Ratio \t" << c_tunekorea << "\t" << c_newratio << endl;
+	}
 
-	if(TMath::IsNaN(c_newtune)) c_newtune = 0;
+	if(TMath::IsNaN(c_newratio)) c_newratio = 0;
 
-	newtune->SetBinContent(ib, c_newtune);
-	newtuneratio->SetBinContent(ib, c_tunekorea);
+	newtune->SetBinContent(ib, c_tunekorea);
+	newtuneratio->SetBinContent(ib, c_newratio);
       }//ib
 
       fout.cd();
       newtune->Write(TString::Format("enu_sk_tunedkorea_%s_%s", modes[im].c_str(), species[is].c_str()));
-      newtuneratio->Write(tunekorea->GetName());
+      newtuneratio->Write(TString::Format("%s_ratio", tunekorea->GetName()));
     }//is
   }//im
 
