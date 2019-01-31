@@ -73,6 +73,7 @@ void make_t2xkk_flux_file(
       */
 
       //create new histograms using the FINE binning
+      TH1D * newnom = new TH1D(*tune13av11);
       TH1D * newtune = new TH1D(*tune13av11);
       TH1D * newtuneratio = new TH1D(*tune13av11);
 
@@ -93,8 +94,9 @@ void make_t2xkk_flux_file(
 	double c_tune13av11   = tune13av11->GetBinContent(tune13av11->FindBin(center));
 	double c_nom    = nom->GetBinContent(nom->FindBin(center));
 	double c_ratio  = ratio->GetBinContent(ratio->FindBin(center));
-	double c_tunekorea = tunekorea->GetBinContent(tunekorea->FindBin(center));
-	
+	double c_nomkorea = tunekorea->GetBinContent(tunekorea->FindBin(center));
+	double c_tunekorea = c_nomkorea * c_ratio;
+
 	//tune = ratio * nom
 	double c_newratio = c_tunekorea / c_nom;
 	
@@ -109,11 +111,13 @@ void make_t2xkk_flux_file(
 
 	if(TMath::IsNaN(c_newratio)) c_newratio = 0;
 
+	newnom->SetBinContent(ib, c_nomkorea);
 	newtune->SetBinContent(ib, c_tunekorea);
 	newtuneratio->SetBinContent(ib, c_newratio);
       }//ib
 
       fout.cd();
+      newnom->Write(TString::Format("enu_sk_nomkorea_%s_%s", modes[im].c_str(), species[is].c_str()));
       newtune->Write(TString::Format("enu_sk_tunedkorea_%s_%s", modes[im].c_str(), species[is].c_str()));
       newtuneratio->Write(TString::Format("%s_ratio", tunekorea->GetName()));
     }//is
