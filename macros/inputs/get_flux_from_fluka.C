@@ -8,11 +8,11 @@
 #include "TFile.h"
 #include "TH1D.h"
 
-TTree * GetTree(const char * fname)
+TTree * GetTree(const char * fname, const char * tname = "h2000")
 {
   TFile * f = new TFile(fname);
   TTree * t = 0;
-  const char * treename = "h2000";
+  const char * treename = tname;
   f->GetObject(treename,t);
   if(t)
     return t;
@@ -35,6 +35,12 @@ void get_flux_from_fluka(const char * infhc="fluka_flux_b_2_hktoch_pos_all.root"
   TTree * tfhc = GetTree(infhc);
   TTree * trhc = GetTree(inrhc);
 
+  TTree * tfhc_version = GetTree(infhc, "h1000");
+  TTree * trhc_version = GetTree(inrhc, "h1000");
+  int nfiles[2];
+  nfiles[0] = tfhc_version->GetEntries();
+  nfiles[1] = trhc_version->GetEntries();
+
   TFile fout(fnameout, "RECREATE");
   for(int ib = 0; ib < 2; ib++) {
     TTree * t;
@@ -54,24 +60,24 @@ void get_flux_from_fluka(const char * infhc="fluka_flux_b_2_hktoch_pos_all.root"
       string cut;
       switch(im) {
       case 0:
-	cut = "norm/1000*(mode >= 11 && mode < 16)";
+	cut = TString::Format("norm/%d*(mode >= 11 && mode < 16)", nfiles[ib]);
 	hname_flav = "numu";
 	break;
       case 1:
-	cut = "norm/1000*(mode >= 21 && mode < 26)";
+	cut = TString::Format("norm/%d*(mode >= 21 && mode < 26)", nfiles[ib]);
 	hname_flav = "numubar";
 	break;
       case 2:
-	cut = "norm/1000*(mode >= 31 && mode < 36)";
+	cut = TString::Format("norm/%d*(mode >= 31 && mode < 36)", nfiles[ib]);
 	hname_flav = "nue";
 	break;
       case 3:
-	cut = "norm/1000*(mode >= 41 && mode < 46)";
+	cut = TString::Format("norm/%d*(mode >= 41 && mode < 46)", nfiles[ib]);
 	hname_flav = "nuebar";
 	break;
       }//switch(im)
       TString hname = TString::Format("flux_%s_%s", hname_beam.c_str(), hname_flav.c_str()).Data();
-      cout << hname << endl;
+      cout << hname << " made of " << nfiles[ib] << " fluka files" << endl;
       TH1D * h = GetHisto(t, cut.c_str(), hname.Data());
       h->Write();
     }//im neutrino flavour
