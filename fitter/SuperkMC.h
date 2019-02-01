@@ -348,6 +348,7 @@ namespace valor {
     double     fMCPOTMultiRingOscNuEBar;              ///< MC event sample POT : nuebar (signal)
     
     ////
+    float fBrWall; ///< branch var for reading input MC Minituple
     float      fBrPtrue[10];                 ///< branch var for reading input MC Minituple
     double     fBrEreco;                     ///< branch var for reading input MC mini-DST
                                              //~ double     fBrEtrue;                     ///< branch var for reading input MC mini-DST

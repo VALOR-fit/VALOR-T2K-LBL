@@ -1243,6 +1243,9 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     const char * berpa_wght_branch    = "wgtBeRPA_nom";
     const char * sf_rfg_wght_branch   = "wgtsfrfg";
     const char * cc_coh_wght_branch   = "wght_CCcoh";
+    const char * wall_branch = "fqwall";
+    //const char * towall_branch = "fqtowall";
+
     
     //~ const char * flux_wght_branch = "wgt";
     // // NEW 2D TEMPLATES
@@ -1262,6 +1265,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     // //
     
     // SetBranchAddress?
+    TBranch * branchWall = mctree->GetBranch(wall_branch);
+
     TBranch * branchEreco   = mctree->GetBranch(erec_branch      );
     TBranch * branchEtrue   = mctree->GetBranch(etrue_branch     );
     TBranch * branchGenCode = mctree->GetBranch(mode_branch      );
@@ -1280,6 +1285,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     branchGenCode  -> SetAddress(&fBrGenCode);
     branchWghtFlx  -> SetAddress(&fBrWghtFlx);
 
+    branchWall->SetAddress(&fBrWall);
 
     // // NEW 2D TEMPLATES
     // branchNumnu    -> SetAddress(&fBrNumnu);
@@ -1291,6 +1297,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     // //
 
     mctree->SetBranchStatus("*",0);
+    mctree->SetBranchStatus(wall_branch, 1);
     mctree->SetBranchStatus(erec_branch      , 1 );
     mctree->SetBranchStatus(etrue_branch     , 1 );
     mctree->SetBranchStatus(mode_branch      , 1 );
@@ -1353,6 +1360,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         mctree->GetEntry(iev);
         
         if(fBrEreco<0) continue;
+	if(fBrWall<200) continue; //use old cut
         
         // use current entry for mode m template?
         bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
