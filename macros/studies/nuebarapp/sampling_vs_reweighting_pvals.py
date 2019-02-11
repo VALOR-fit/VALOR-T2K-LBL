@@ -3,6 +3,9 @@
 import ROOT
 import collections
 from collections import namedtuple
+import re
+from array import array
+from copy import deepcopy
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
@@ -26,11 +29,11 @@ arridx  = util.ArrIdx.Instance()
 #
 # Histogram parameters to tweak
 #
-nbins_dchisq    = 250 #700
-low_dchisq      = -20. #-20
-high_dchisq     = 45.  #50
-low_nevents     = -1   #-1
-high_nevents    = 60   #50
+# nbins_dchisq    = 160 #700
+# low_dchisq      = -25. #-20
+# high_dchisq     = 55.  #50
+# low_nevents     = -1   #-1
+# high_nevents    = 60   #50
 scale_max_rate  = 5
 scale_max_shape = 2
 leg_text_size   = 0.03
@@ -38,39 +41,35 @@ line_thickness  = 2
 draw_prelim     = 1
 prelim_text     = "T2K Run 1-9 Preliminary"
 
-tree_name = "fitnt"
+tree_name_shape = "fitnt"
+tree_name_rate = "fake-data_tree"
 rand = ROOT.TRandom3()
 
+binning_weights_low_power = -57
+binning_weights_high_power = 0
 
-def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, test_statistic, read_nevents, start_nevents, chisq_min, fakefilename_beta0, fakefilename_beta1):
-    read_nevents += start_nevents
+
+def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, test_statistic):
     if not (test_statistic == "rate+shape" or test_statistic == "rate-only"):
         print "Test statistic", test_statistic, "not understood. Exiting."
         util.Die(1)
-    file_beta0 = ROOT.TFile(infilename_beta0,"READ")
-    file_beta1 = ROOT.TFile(infilename_beta1,"READ")
+
+    data = read_data(infilename_data, test_statistic)
 
     if test_statistic == "rate+shape":
-        data = read_data(infilename_data, "rate+shape")
-
-        tree_beta0 = file_beta0.Get(tree_name)
-        tree_beta1 = file_beta1.Get(tree_name)
-        n_entries = tree_beta0.GetEntries()
-        if n_entries != tree_beta1.GetEntries():
-            print "Input fake-data trees have", n_entries, "and", tree_beta1.GetEntries(), "for beta = 0,1, respectively. Expected to be equal. Exiting."
-            util.Die(-1)
-
         # Loop over the trees to read the Delta chisq values and fill the histrograms
         print "Reading delta chisq values from the input trees"
-        beta0 = read_from_tree(tree_beta0, 0, start_nevents, read_nevents, data, "rate+shape", data.test_stat,
-                               chisq_min, "hDchisq_beta0", nbins_dchisq, low_dchisq, high_dchisq, fakefilename_beta0)
-        beta1 = read_from_tree(tree_beta1, 1, start_nevents, read_nevents, data, "rate+shape", data.test_stat,
-                               chisq_min, "hDchisq_beta1", nbins_dchisq, low_dchisq, high_dchisq, fakefilename_beta1)
+        beta0 = read_inputs(infilename_beta0, "hDchisq_beta0", test_statistic)
+        beta1 = read_inputs(infilename_beta1, "hDchisq_beta1", test_statistic)
 
+        print "Accepted toys (beta = 0) =", beta0.hist_accepted.Integral()
+        print "Accepted toys (beta = 1) =", beta1.hist_accepted.Integral()
 
         # Plot the Delta chisq distribuitons
-        canv = draw_test_statistic_distributions(beta0, beta1, data, "#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)",
-                                          tag, "Delta chisq", "#Delta #chi^{2}", data_label)
+        canv_distribution = draw_test_statistic_distributions(beta0, beta1, data, "#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)",
+                                                              tag, "Delta chisq", "#Delta #chi^{2}", data_label)
+        draw_ratio_distributions(beta0, beta1, data, "#Delta #chi^{2} = #chi^{2}(#beta=0) - #chi^{2}(#beta=1)", tag,
+                                 "Ratio Delta chisq", "#Delta #chi^{2}", data_label)
 
         # Calculate p-values
         print "\n\n***** p-values & Bayes factor *****"
@@ -80,64 +79,76 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, t
 
         p_val    = p_value_from_hist_unweighted(beta0.hist_accepted, data.test_stat, "right")
         err_pval = err_pvalue_unweighted(p_val, beta0.hist_accepted.Integral())
-        print "Rate+shape (true beta = 0) p-value (right tail) for accepted MC sampling toys (from hist) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        #print "Rate+shape (true beta = 0) p-value (right tail) for accepted MC sampling toys (from hist) =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val    = p_value_from_list_unweighted("right", beta0.wghts_accepted) # no need to calculate the error from the list, it would be exactly the same as from the hist
-        print "Rate+shape (true beta = 0) p-value (right tail) for accepted MC sampling toys (from list) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate+shape (true beta = 0) p-value (right tail) for accepted MC sampling toys (from list) =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val    = p_value_reweighting("right", beta0.wghts_accepted)
         err_pval = err_pvalue_reweighting(p_val, beta0.wghts_accepted)
-        print "Rate+shape (true beta = 0) p-value (right tail) for accepted reweighted toys =",  p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        sum_wghts_tail = sum(pair[0] if pair[1] == "right" else 0 for pair in beta0.wghts_accepted)
+        total_wghts = sum(pair[0] for pair in beta0.wghts_accepted)
+        print "Rate+shape (true beta = 0) p-value (right tail) for accepted reweighted toys =", sum_wghts_tail, "/", total_wghts, "=",  p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val    = p_value_reweighting("right", beta0.wghts_all_toys)
         err_pval = err_pvalue_reweighting(p_val, beta0.wghts_all_toys)
-        print "Rate+shape (true beta = 0) p-value (right tail) for all reweighted toys =",       p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        sum_wghts_tail = sum(pair[0] if pair[1] == "right" else 0 for pair in beta0.wghts_all_toys)
+        total_wghts = sum(pair[0] for pair in beta0.wghts_all_toys)
+        print "Rate+shape (true beta = 0) p-value (right tail) for all reweighted toys =", sum_wghts_tail, "/", total_wghts, "=", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val    = p_value_reweighting("right", beta0.wghts_rejected)
         err_pval = err_pvalue_reweighting(p_val, beta0.wghts_rejected)
-        print "Rate+shape (true beta = 0) p-value (right tail) for rejected reweighted toys =",  p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        sum_wghts_tail = sum(pair[0] if pair[1] == "right" else 0 for pair in beta0.wghts_rejected)
+        total_wghts = sum(pair[0] for pair in beta0.wghts_rejected)
+        print "Rate+shape (true beta = 0) p-value (right tail) for rejected reweighted toys =", sum_wghts_tail, "/", total_wghts, "=",  p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = p_value_from_hist_unweighted(beta1.hist_accepted, data.test_stat, "left")
         err_pval = err_pvalue_unweighted(p_val, beta1.hist_accepted.Integral())
-        print "Rate+shape (true beta = 1) p-value (left tail) for accepted MC sampling toys (from hist) =",  p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        #print "Rate+shape (true beta = 1) p-value (left tail) for accepted MC sampling toys (from hist) =",  p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
-        p_val    = p_value_from_list_unweighted("right", beta1.wghts_accepted) # no need to calculate the error from the list, it would be exactly the same as from the hist
-        print "Rate+shape (true beta = 1) p-value (left tail) for accepted MC sampling toys (from list) =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        p_val    = p_value_from_list_unweighted("left", beta1.wghts_accepted) # no need to calculate the error from the list, it would be exactly the same as from the hist
+        print "Rate+shape (true beta = 1) p-value (left tail) for accepted MC sampling toys (from list) =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val    = p_value_reweighting("left", beta1.wghts_accepted)
         err_pval = err_pvalue_reweighting(p_val, beta1.wghts_accepted)
-        print "Rate+shape (true beta = 1) p-value (left tail) for accepted reweighted toys =",   p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        sum_wghts_tail = sum(pair[0] if pair[1] == "right" else 0 for pair in beta1.wghts_accepted)
+        total_wghts = sum(pair[0] for pair in beta1.wghts_accepted)
+        print "Rate+shape (true beta = 1) p-value (left tail) for accepted reweighted toys =", sum_wghts_tail, "/", total_wghts, "=",   p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val    = p_value_reweighting("left", beta1.wghts_all_toys)
         err_pval = err_pvalue_reweighting(p_val, beta1.wghts_all_toys)
-        print "Rate+shape (true beta = 1) p-value (left tail) for all reweighted toys =",        p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        sum_wghts_tail = sum(pair[0] if pair[1] == "right" else 0 for pair in beta1.wghts_all_toys)
+        total_wghts = sum(pair[0] for pair in beta1.wghts_all_toys)
+        print "Rate+shape (true beta = 1) p-value (left tail) for all reweighted toys =", sum_wghts_tail, "/", total_wghts, "=",        p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val    = p_value_reweighting("left", beta1.wghts_rejected)
         err_pval = err_pvalue_reweighting(p_val, beta1.wghts_rejected)
-        print "Rate+shape (true beta = 1) p-value (left tail) for rejected reweighted toys =",   p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        sum_wghts_tail = sum(pair[0] if pair[1] == "right" else 0 for pair in beta1.wghts_rejected)
+        total_wghts = sum(pair[0] for pair in beta1.wghts_rejected)
+        print "Rate+shape (true beta = 1) p-value (left tail) for rejected reweighted toys =", sum_wghts_tail, "/", total_wghts, "=",   p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
+
+        print "Bayes factor = exp(- Delta chisq / 2) =", ROOT.TMath.Exp(-0.5*data.test_stat)
 
         draw_control_chisq_hist(beta0, 0, tag)
         draw_control_chisq_hist(beta1, 1, tag)
-
-        print "Bayes factor = exp(- Delta chisq / 2) =", ROOT.TMath.Exp(-0.5*data.test_stat)
+        draw_weights_hist(beta0, 0, tag)
+        draw_weights_hist(beta1, 1, tag)
+        print "K-S test prob for beta = 0 accepted (sampling) and all (reweighting) hists =", beta0.hist_accepted.KolmogorovTest(beta0.hist_all_toys)
+        print "K-S test prob for beta = 1 accepted (sampling) and all (reweighting) hists =", beta1.hist_accepted.KolmogorovTest(beta1.hist_all_toys)
         print "\n\n"
     else:
-        #
-        # rate-only
-        #
-        data = read_data(infilename_data, "rate-only")
-
-        tree_beta0  = file_beta0.Get("fake-data_tree")
-        tree_beta1  = file_beta1.Get("fake-data_tree")
-
-        beta0 = read_from_tree(tree_beta0, 0, start_nevents, read_nevents, data, "rate-only", data.test_stat,chisq_min,
-                               "hNevents_beta0", high_nevents - low_nevents, low_nevents, high_nevents, fakefilename_beta0)
-        beta1 = read_from_tree(tree_beta1, 1, start_nevents, read_nevents, data, "rate-only", data.test_stat, chisq_min,
-                               "hNevents_beta1", high_nevents - low_nevents, low_nevents, high_nevents, fakefilename_beta1)
+        beta0 = read_inputs(infilename_beta0, "hNevents_beta0", test_statistic)
+        beta1 = read_inputs(infilename_beta1, "hNevents_beta1", test_statistic)
 
         # Plot the Delta chisq distribuitons
-        canv = draw_test_statistic_distributions(beta0, beta1, data, "Number of observed RHC 1Re-like events", tag,
-                                                 "Nevents", "Events", data_label)
+        canv_distribution = draw_test_statistic_distributions(beta0, beta1, data, "Number of observed RHC 1Re-like events", tag,
+                                                              "Nevents", "Events", data_label)
+
+        draw_ratio_distributions(beta0, beta1, data, "Number of observed RHC 1Re-like events", tag, "Ratio Nevents",
+                                 "Events", data_label)
+
+        print "Accepted toys (beta = 0) =", beta0.hist_accepted.Integral()
+        print "Accepted toys (beta = 1) =", beta1.hist_accepted.Integral()
 
         # Calculate p-values
         print "\n\n***** p-values *****"
@@ -145,35 +156,42 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, t
 
         p_val = mean_p_value_rate_only(beta0.wghts_accepted)
         err_pval = err_pvalue_unweighted(p_val, len(beta0.wghts_accepted))
-        print "Rate-only (true beta = 0) p-value (right tail) for accepted MC sampling toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 0) p-value (right tail) for accepted MC sampling toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = mean_p_value_rate_only_reweighting(beta0.wghts_accepted)
         err_pval = err_pvalue_unweighted(p_val, len(beta0.wghts_accepted))  # For the rate-only analysis, the error on the weighted mean p-value uses the same equation as the unweighted case (the weights cancel out)
-        print "Rate-only (true beta = 0) p-value (right tail) for accepted reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 0) p-value (right tail) for accepted reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = mean_p_value_rate_only_reweighting(beta0.wghts_all_toys)
         err_pval = err_pvalue_unweighted(p_val, len(beta0.wghts_all_toys))
-        print "Rate-only (true beta = 0) p-value (right tail) for all reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 0) p-value (right tail) for all reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = mean_p_value_rate_only_reweighting(beta0.wghts_rejected)
         err_pval = err_pvalue_unweighted(p_val, len(beta0.wghts_rejected))
-        print "Rate-only (true beta = 0) p-value (right tail) for rejected reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 0) p-value (right tail) for rejected reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = mean_p_value_rate_only(beta1.wghts_accepted)
         err_pval = err_pvalue_unweighted(p_val, len(beta1.wghts_accepted))
-        print "Rate-only (true beta = 1) p-value (right tail) for accepted MC sampling toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 1) p-value (right tail) for accepted MC sampling toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = mean_p_value_rate_only_reweighting(beta1.wghts_accepted)
         err_pval = err_pvalue_unweighted(p_val, len(beta1.wghts_accepted))  # For the rate-only analysis, the error on the weighted mean p-value uses the same equation as the unweighted case (the weights cancel out)
-        print "Rate-only (true beta = 1) p-value (right tail) for accepted reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 1) p-value (right tail) for accepted reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = mean_p_value_rate_only_reweighting(beta1.wghts_all_toys)
         err_pval = err_pvalue_unweighted(p_val, len(beta1.wghts_all_toys))
-        print "Rate-only (true beta = 1) p-value (right tail) for all reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 1) p-value (right tail) for all reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
 
         p_val = mean_p_value_rate_only_reweighting(beta1.wghts_rejected)
         err_pval = err_pvalue_unweighted(p_val, len(beta1.wghts_rejected))
-        print "Rate-only (true beta = 1) p-value (right tail) for rejected reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), "sigma"
+        print "Rate-only (true beta = 1) p-value (right tail) for rejected reweighted toys =", p_val, "+/-", err_pval, "=", sigma(p_val), err_sigma(p_val, err_pval), "sigma"
+
+        draw_control_chisq_hist(beta0, 0, tag)
+        draw_control_chisq_hist(beta1, 1, tag)
+        draw_weights_hist(beta0, 0, tag)
+        draw_weights_hist(beta1, 1, tag)
+        print "K-S test prob for beta = 0 accepted (sampling) and all (reweighting) hists =", beta0.hist_accepted.KolmogorovTest(beta0.hist_all_toys)
+        print "K-S test prob for beta = 1 accepted (sampling) and all (reweighting) hists =", beta1.hist_accepted.KolmogorovTest(beta1.hist_all_toys)
         print "\n\n"
 
     # Save outputs
@@ -182,7 +200,7 @@ def main(infilename_beta0, infilename_beta1, tag, infilename_data, data_label, t
     beta1.hist_accepted.Write("accepted_beta1")
     beta0.hist_rejected.Write("rejected_beta0")
     beta1.hist_rejected.Write("rejected_beta1")
-    canv.Write(test_statistic + "_canvas")
+    canv_distribution.Write(test_statistic + "_canvas_distribution")
     fout.Close()
 
     print "Done!"
@@ -251,6 +269,15 @@ def err_pvalue_reweighting(pval, wght_tail_list):
 
 def sigma(p_val):
     return ROOT.TMath.Sqrt(2.) * ROOT.TMath.ErfInverse(1 - p_val)
+
+
+# Convert an error on a p-value to an asymmetric error on the number of sigma
+def err_sigma(p_val, err_pval):
+    sigma_up   = sigma(p_val - err_pval)    # small p-val = large sigma
+    sigma_down = sigma(p_val + err_pval)
+    err_up     = sigma_up - sigma(p_val)
+    err_down   = sigma(p_val) - sigma_down
+    return "+ " + str(err_up )+ " - " + str(err_down)
 
 
 def warn_over_under_flow(hist):
@@ -371,91 +398,41 @@ def read_data(infilename_data, test_stat_name):
     return data
 
 
-def read_from_tree(tree, beta, start_nevents, read_nevents, data_hists, test_stat_name, test_stat_data, chisq_min, hname, nbins, xlow, xhigh, fakefilename):
-    if not (test_stat_name == "rate-only" or test_stat_name == "rate+shape"):
-        print "Test statistic", test_stat_name, "not understood. Exiting."
-        util.Die(-1)
-    hist_accepted  = ROOT.TH1D(hname+"_accepted", hname+"_accepted", nbins, xlow, xhigh)
-    hist_rejected  = ROOT.TH1D(hname+"_rejected", hname+"_rejected", nbins, xlow, xhigh)
-    hist_all_toys  = ROOT.TH1D(hname+"_all_toys", hname+"_all_toys", nbins, xlow, xhigh)
+def read_inputs(files_in, hname, test_statistic):
+    # Open the first input file to get the histogram binning
+    f = ROOT.TFile(files_in[0], "read")
+    nbins = f.Get("accepted").GetNbinsX()
+    xlow  = f.Get("accepted").GetXaxis().GetBinLowEdge(1)
+    xhigh = f.Get("accepted").GetXaxis().GetBinUpEdge(nbins)
+    f.Close()
+
+    hist_accepted = ROOT.TH1D(hname+"_accepted", hname+"_accepted", nbins, xlow, xhigh)
+    hist_rejected = ROOT.TH1D(hname+"_rejected", hname+"_rejected", nbins, xlow, xhigh)
+    hist_all_toys = ROOT.TH1D(hname+"_all_toys", hname+"_all_toys", nbins, xlow, xhigh)
     wghts_accepted = []
     wghts_rejected = []
     wghts_all_toys = []
 
-    # In the rate+shape weighted analysis, we need the fake data toys to get the control sample chisq
-    fake_file = ROOT.TFile(fakefilename, "read")
+    # Read all input files into the hists and lists
+    ifile = 0
+    for file_name in files_in:
+        f = ROOT.TFile(file_name, "read")
+        hist_accepted.Add(f.Get("accepted"))
+        hist_rejected.Add(f.Get("rejected"))
+        hist_all_toys.Add(f.Get("all_toys"))
+        vec_name = "pvals"
+        if test_statistic == "rate+shape":
+            vec_name = "tails"
+        append_weight_tail_list(wghts_accepted, f.Get("vec_wghts_accepted"), f.Get("vec_" + vec_name + "_accepted"), test_statistic)
+        append_weight_tail_list(wghts_rejected, f.Get("vec_wghts_rejected"), f.Get("vec_" + vec_name + "_rejected"), test_statistic)
+        append_weight_tail_list(wghts_all_toys, f.Get("vec_wghts_all_toys"), f.Get("vec_" + vec_name + "_all_toys"), test_statistic)
+        f.Close()
+        if ifile % 10 == 0:
+            print "Reading input file", ifile, "of", len(files_in)
+        ifile += 1
 
-    ievent = 0
-    for event in tree:
-        if ievent < start_nevents:
-            ievent += 1
-            continue
-        if read_nevents > 0 and ievent >= read_nevents:
-            break
-
-        # When using re-weighting, then we'll need the control sample chisq to calculate the weights
-        hexp_1Rmu    = fake_file.Get("exp_data_1Rmu_"    + str(ievent))
-        hexp_1Re     = fake_file.Get("exp_data_1Re_"     + str(ievent))
-        hexp_RHC1Rmu = fake_file.Get("exp_data_RHC1Rmu_" + str(ievent))
-        hexp_RHC1Re  = fake_file.Get("exp_data_RHC1Re_"  + str(ievent))
-        hexp_MultiRe = fake_file.Get("exp_data_MultiRe_" + str(ievent))
-
-        chisq = 0
-        chisq += util.Chisq_Penalty_TH2D(data_hists.FHC1Rmu   , hexp_1Rmu)
-        chisq += util.Chisq_Penalty_TH2D(data_hists.FHC1Re    , hexp_1Re)
-        chisq += util.Chisq_Penalty_TH2D(data_hists.RHC1Rmu   , hexp_RHC1Rmu)
-        chisq += util.Chisq_Penalty_TH2D(data_hists.FHCMultiRe, hexp_MultiRe)
-        prob = ROOT.TMath.Exp(-0.5*(chisq-chisq_min))
-
-        del hexp_1Rmu
-        del hexp_1Re
-        del hexp_RHC1Rmu
-        del hexp_MultiRe
-
-        accepted = False
-        rand_throw = rand.Uniform(0,1)
-        if rand_throw <= prob:
-            accepted = True
-
-        if test_stat_name == "rate+shape":
-            test_stat_toy = event.deltachisq01
-            hist_all_toys.Fill(test_stat_toy, prob)     # Fill with prob as the bin content so that we can compare all toys to the rejected toys (the latter requires the weights to be applied)
-            if test_stat_toy <= test_stat_data:
-                wghts_all_toys.append([prob,"left"])
-            if test_stat_toy >= test_stat_data: # Not elif, because if deltachisq01 = Delta_chisq_data, then this value is used in both tails
-                wghts_all_toys.append([prob,"right"])
-
-            if accepted == True or accepted == "True":
-                hist_accepted.Fill(test_stat_toy)   # Don't fill with prob = bin content, as we count the accepted toys as having been sampled so the weight is not explicitly needed
-                if  test_stat_toy <= test_stat_data:
-                    wghts_accepted.append([prob,"left"])
-                if  test_stat_toy >= test_stat_data:
-                    wghts_accepted.append([prob,"right"])
-            else:
-                hist_rejected.Fill(test_stat_toy, prob)
-                if  test_stat_toy <= test_stat_data:
-                    wghts_rejected.append([prob,"left"])
-                if  test_stat_toy >= test_stat_data:
-                    wghts_rejected.append([prob,"right"])
-        else:
-            test_stat_toy = hexp_RHC1Re.Integral()
-            hist_all_toys.Fill(test_stat_toy, prob)     # Fill with prob as the bin content so that we can compare all toys to the rejected toys (the latter requires the weights to be applied)
-            rate_only_pval_toy = 0
-            if beta == 0:
-                rate_only_pval_toy = event.pvalue_right
-            else:
-                rate_only_pval_toy = event.pvalue_left
-            wghts_all_toys.append([prob, rate_only_pval_toy])    # In the rate-only analysis we don't associate the weight with a tail, as we apply the weights as a weighted mean p-value. And sd we already have p-values for each toy, store the pval instead of the tail
-            if accepted == True or accepted == "True":
-                hist_accepted.Fill(test_stat_toy)
-                wghts_accepted.append([prob, rate_only_pval_toy])
-            else:
-                hist_rejected.Fill(test_stat_toy, prob)
-                wghts_rejected.append([prob, rate_only_pval_toy])
-
-        if ievent % 10000 == 0:
-            print "reading the beta =", beta, "tree, event #", ievent
-        ievent += 1
+    area_norm(hist_rejected, hist_accepted)
+    area_norm(hist_all_toys, hist_accepted)
 
     returns = namedtuple('read_tree', ['hist_accepted' , 'hist_rejected' , 'hist_all_toys',
                                        'wghts_accepted', 'wghts_rejected', 'wghts_all_toys'])
@@ -470,9 +447,25 @@ def read_from_tree(tree, beta, start_nevents, read_nevents, data_hists, test_sta
     return to_return
 
 
+def append_weight_tail_list(list, vec_wghts, vec_tails, test_statistic):
+    if vec_wghts.GetNoElements() != vec_tails.GetNoElements():
+        print "Input vectors of weights and tails should be the same lengths. Exiting."
+        util.Die(1)
+    for i in range(0, vec_wghts.GetNoElements()):
+        if test_statistic == "rate+shape":
+            tail = "left"
+            if vec_tails[i] == 1:
+                tail = "right"
+            list.append([vec_wghts[i], tail])
+        else:
+            list.append([vec_wghts[i], vec_tails[i]])
+
+
 def set_draw_opt(hist_accepted, hist_rejected, beta, max, xtitle):
     line_col_acc = 1
     line_col_rej = 1
+    line_sty_acc = 1
+    line_sty_rej = 2
     if beta == 0:
         line_col_acc = 2
         line_col_rej = 1
@@ -481,6 +474,8 @@ def set_draw_opt(hist_accepted, hist_rejected, beta, max, xtitle):
         line_col_rej = 4
     hist_accepted.SetLineColor(line_col_acc)
     hist_rejected.SetLineColor(line_col_rej)
+    hist_accepted.SetLineStyle(line_sty_acc)
+    hist_rejected.SetLineStyle(line_sty_rej)
     hist_accepted.SetLineWidth(line_thickness)
     hist_rejected.SetLineWidth(line_thickness)
     hist_accepted.GetXaxis().SetTitle(xtitle)
@@ -526,12 +521,56 @@ def draw_control_chisq_hist(from_tree, beta, tag):
     canv.SaveAs(tag+"_control_sample_chisq_beta"+str(beta)+".pdf")
 
 
+def draw_weights_hist(from_tree, beta, tag):
+    binning_weights = [0]
+    for power in range(binning_weights_low_power+1, binning_weights_high_power+1):
+        for decimal in range(0, 10, 2):
+            binning_weights.append(pow(10, 0.1*decimal + power))
+    #print "x-axis bin low edges for weights hist:", binning_weights
+    hist_accepted = ROOT.TH1D("weights_beta"+str(beta)+"_accepted", "weights_beta"+str(beta)+"_accepted", len(binning_weights)-1, array('d',binning_weights))
+    hist_rejected = ROOT.TH1D("weights_beta"+str(beta)+"_rejected", "weights_beta"+str(beta)+"_rejected", len(binning_weights)-1, array('d',binning_weights))
+    hist_all_toys = ROOT.TH1D("weights_beta"+str(beta)+"_all_toys", "weights_beta"+str(beta)+"_all_toys", len(binning_weights)-1, array('d',binning_weights))
+    for pair in from_tree.wghts_accepted:
+        hist_accepted.Fill(pair[0])
+    for pair in from_tree.wghts_rejected:
+        hist_rejected.Fill(pair[0])
+    for pair in from_tree.wghts_all_toys:
+        hist_all_toys.Fill(pair[0])    # Just to get the maximum, don't actually need to plot it
+
+    hist_accepted.SetLineColor(2)
+    hist_rejected.SetLineColor(3)
+    hist_accepted.SetFillColor(2)
+    hist_rejected.SetFillColor(3)
+
+    canv = ROOT.TCanvas("weights_canv_beta"+str(beta), "weights_canv_beta"+str(beta), 800, 600)
+    stack = ROOT.THStack("weights_stack_beta"+str(beta), "weights_stack_beta"+str(beta))
+    stack.Add(hist_rejected)
+    stack.Add(hist_accepted)
+    stack.SetMaximum(1.1*hist_all_toys.GetMaximum())
+    stack.SetMinimum(0.5)
+    stack.Draw()
+    #stack.GetXaxis().SetTitle("Control Sample Weight = exp(-#frac{1}{2}(#chi^{2} - #chi^{2}_{min.})), for #beta = "+str(beta))
+    stack.GetXaxis().SetTitle("Control Sample Weight for #beta = "+str(beta))
+    stack.GetYaxis().SetTitle("Entries")
+    stack.GetXaxis().SetLabelSize(0.03)
+    stack.GetYaxis().SetLabelSize(0.03)
+
+    leg = ROOT.TLegend(0.15, 0.75, 0.30, 0.95)
+    leg.AddEntry(hist_rejected, "Rejected toys", "f")
+    leg.AddEntry(hist_accepted, "Accepted toys", "f")
+    leg.Draw()
+
+    canv.SetLogx(1)
+    canv.Update()
+    canv.SaveAs(tag+"_weights_beta"+str(beta)+".pdf")
+
+
 def draw_test_statistic_distributions(beta0, beta1, data, xtitle, tag, canv_name, data_line_name, data_label):
     # Set plotting options
-    maximum = 1.1 * max(beta0.hist_accepted.GetMaximum(), beta0.hist_rejected.GetMaximum(),
-                               beta1.hist_accepted.GetMaximum(), beta1.hist_rejected.GetMaximum())
-    set_draw_opt(beta0.hist_accepted, beta0.hist_rejected, 0, maximum, xtitle)
-    set_draw_opt(beta1.hist_accepted, beta1.hist_rejected, 1, maximum, xtitle)
+    maximum = 1.1 * max(beta0.hist_accepted.GetMaximum(), beta0.hist_all_toys.GetMaximum(),
+                               beta1.hist_accepted.GetMaximum(), beta1.hist_all_toys.GetMaximum())
+    set_draw_opt(beta0.hist_accepted, beta0.hist_all_toys, 0, maximum, xtitle)
+    set_draw_opt(beta1.hist_accepted, beta1.hist_all_toys, 1, maximum, xtitle)
 
     # Setup vertical line for data or Asimov
     data_line = ROOT.TLine(data.test_stat, 0.5, data.test_stat, maximum)
@@ -542,20 +581,20 @@ def draw_test_statistic_distributions(beta0, beta1, data, xtitle, tag, canv_name
     leg_ylow = 0.73
     if data.test_stat != 0:     # If we read no data, the data test statistic will be 0
         leg_ylow = 0.78
-    leg = ROOT.TLegend(0.6,leg_ylow,0.9,0.95)
+    leg = ROOT.TLegend(0.55,leg_ylow,0.9,0.95)
     leg.SetTextSize(leg_text_size)
-    leg.AddEntry(beta0.hist_accepted, "Accepted (#beta = 0)","l")
-    leg.AddEntry(beta0.hist_rejected, "Rejected (#beta = 0)","l")
-    leg.AddEntry(beta1.hist_accepted, "Accepted (#beta = 1)","l")
-    leg.AddEntry(beta1.hist_rejected, "Rejected (#beta = 1)","l")
+    leg.AddEntry(beta0.hist_accepted, "Sampling (#beta = 0)","l")
+    leg.AddEntry(beta0.hist_all_toys, "Reweighting (#beta = 0)","l")
+    leg.AddEntry(beta1.hist_accepted, "Sampling (#beta = 1)","l")
+    leg.AddEntry(beta1.hist_all_toys, "Reweighting (#beta = 1)","l")
     if data.test_stat != 0:
         leg.AddEntry(data_line, data_line_name + " ("+data_label+") = "+str("{0:.2f}".format(data.test_stat)),"l")
 
     canv = ROOT.TCanvas(canv_name, data_line_name, 800, 600)
     beta0.hist_accepted.Draw()
-    beta0.hist_rejected.Draw("same")
+    beta0.hist_all_toys.Draw("same")
     beta1.hist_accepted.Draw("same")
-    beta1.hist_rejected.Draw("same")
+    beta1.hist_all_toys.Draw("same")
     if data.test_stat != 0:
         data_line.Draw("same")
     leg.Draw("same")
@@ -584,37 +623,82 @@ def draw_test_statistic_distributions(beta0, beta1, data, xtitle, tag, canv_name
 
     # Check for any underflow or overflow points that won't have been plot
     warn_over_under_flow(beta0.hist_accepted)
-    warn_over_under_flow(beta0.hist_rejected)
+    warn_over_under_flow(beta0.hist_all_toys)
     warn_over_under_flow(beta1.hist_accepted)
-    warn_over_under_flow(beta1.hist_rejected)
+    warn_over_under_flow(beta1.hist_all_toys)
 
     return canv
 
 
+# plot accepted / rejected for reweighted toys
+def draw_ratio_distributions(beta0, beta1, data, xtitle, tag, canv_name, data_line_name, data_label):
+    #hist_ratio_beta0 = copy.deepcopy(beta0.hist_all_toys)
+    hist_ratio_beta0 = ROOT.TH1D(beta0.hist_all_toys)
+    hist_ratio_beta0.Add(beta0.hist_rejected, -1.0)
+    hist_ratio_beta0.Divide(beta0.hist_rejected)
+    hist_ratio_beta0.SetLineColor(1)
+    hist_ratio_beta0.SetLineStyle(1)
+    hist_ratio_beta0.GetXaxis().SetTitle(xtitle)
+    hist_ratio_beta0.GetYaxis().SetTitle("Accepted / Rejected (for Reweighting)")
+
+    hist_ratio_beta1 = ROOT.TH1D(beta1.hist_all_toys)
+    hist_ratio_beta1.Add(beta1.hist_rejected, -1.0)
+    hist_ratio_beta1.Divide(beta1.hist_rejected)
+    hist_ratio_beta1.SetLineColor(2)
+    hist_ratio_beta1.SetLineStyle(1)
+
+    maximum = 1.1 * max(hist_ratio_beta0.GetMaximum(), hist_ratio_beta1.GetMaximum())
+    hist_ratio_beta0.SetMaximum(maximum)
+    hist_ratio_beta0.SetMinimum(0)
+
+    # Setup vertical line for data or Asimov
+    data_line = ROOT.TLine(data.test_stat, 0., data.test_stat, maximum)
+    data_line.SetLineStyle(2)
+    data_line.SetLineWidth(line_thickness)
+
+    # Setup legend
+    leg_ylow = 0.73
+    if data.test_stat != 0:     # If we read no data, the data test statistic will be 0
+        leg_ylow = 0.78
+    leg = ROOT.TLegend(0.6,leg_ylow,0.9,0.95)
+    leg.SetTextSize(leg_text_size)
+    leg.AddEntry(hist_ratio_beta0, "#beta = 0","l")
+    leg.AddEntry(hist_ratio_beta1, "#beta = 1","l")
+    if data.test_stat != 0:
+        leg.AddEntry(data_line, data_line_name + " ("+data_label+") = "+str("{0:.2f}".format(data.test_stat)),"l")
+
+    canv = ROOT.TCanvas(canv_name, data_line_name, 800, 600)
+    hist_ratio_beta0.Draw()
+    hist_ratio_beta1.Draw("same")
+    if data.test_stat != 0:
+        data_line.Draw("same")
+    leg.Draw("same")
+    if draw_prelim == 1:
+        prelim = ROOT.TLatex()
+        prelim.SetTextSize(0.05)
+        prelim.DrawLatexNDC(0.5, 0.96, prelim_text)
+    canv.Update()
+    save_name = tag + "_" + canv_name.replace(" ", "")
+    print "saving", canv_name, "image to file", save_name + ".pdf"
+    canv.SaveAs(save_name+".pdf","recreate")
+    return
+
+
+
 if __name__=="__main__":
-    import optparse
-    parser = optparse.OptionParser(usage="%prog [options]..", description="Compare the MC sampling to reweighting Delta chisq and event rate graphs and calculate p-values")
-    parser.add_option('--infilename_beta0', dest='infilename_beta0', default="", help='Root file output by marginalisation, with fake data toys (distribution toys) for beta = 0')
-    parser.add_option('--infilename_beta1', dest='infilename_beta1', default="", help='Root file output by marginalisation, with fake data toys (distribution toys) for beta = 1')
-    parser.add_option('--infilename_data', dest='infilename_data', default="", help='Root file output by marginalisation of the data')
-    parser.add_option('--fakefilename_beta0', dest='fakefilename_beta0', default="", help='Fake data toy file used to produce --infilename_beta0')
-    parser.add_option('--fakefilename_beta1', dest='fakefilename_beta1', default="", help='Fake data toy file used to produce --infilename_beta1')
-    parser.add_option('--data_label', dest='data_label', default="data", help='Label to be put in the legend entry corresponding to the data')
-    parser.add_option('--tag', dest='tag', default="nuebarapp_deltachisq", help='Tag used as the output file name')
-    parser.add_option('--test-statistic', dest='test_statistic', default="rate+shape", help='The test statistic used in the marginalisation and fit')
-    parser.add_option('--read-nevents', dest='read_nevents', default=-1, type=int, help='Read only the first n events (staring from --start-nevents) from the input trees. This works for the p-values of both analyses, but the rate-only graph will be plot will all events. Set to <= 0 to read all events (default)')
-    parser.add_option('--start-nevents', dest='start_nevents', default=0, type=int, help='Start reading the input trees from this event number')
-    parser.add_option('--chisq-min', dest='chisq_min', default=0, type=float, help='Minimum control sample chisq')
+    import argparse
+    parser = argparse.ArgumentParser(usage="%prog [options]..", description="Compare the MC sampling to reweighting Delta chisq and event rate graphs and calculate p-values")
+    parser.add_argument('--infilename_beta0', dest='infilename_beta0', nargs="+", help='Root file(s) output by marginalisation, with fake data toys (distribution toys) for beta = 0')
+    parser.add_argument('--infilename_beta1', dest='infilename_beta1', nargs="+", help='Root file(s) output by marginalisation, with fake data toys (distribution toys) for beta = 1')
+    parser.add_argument('--infilename_data', dest='infilename_data', default="", help='Root file output by marginalisation of the data')
+    parser.add_argument('--data_label', dest='data_label', default="data", help='Label to be put in the legend entry corresponding to the data')
+    parser.add_argument('--tag', dest='tag', default="nuebarapp_deltachisq", help='Tag used as the output file name')
+    parser.add_argument('--test-statistic', dest='test_statistic', default="rate+shape", help='The test statistic used in the marginalisation and fit')
 
+    o = parser.parse_args()
+    main(o.infilename_beta0, o.infilename_beta1, o.tag, o.infilename_data, o.data_label, o.test_statistic)
 
-    v = optparse.Values()
-    parser.parse_args(values=v) # v contains only the values that were specified, not defaults
-
-    o, other = parser.parse_args()
-
-    main(o.infilename_beta0, o.infilename_beta1, o.tag, o.infilename_data, o.data_label, o.test_statistic,
-         o.read_nevents, o.start_nevents, o.chisq_min, o.fakefilename_beta0, o.fakefilename_beta1)
-
+    other = argparse.REMAINDER  # TODO: Test that this correctly identifies the remaining args
     if other:
         print "Warning - ignored arguments: ",other
 
