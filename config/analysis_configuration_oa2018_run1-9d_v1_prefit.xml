@@ -2,6 +2,15 @@
 
 <analysis_inputs analysis="T2K/VaLOR/joint" data="run1to9c_prelim" flux="tun13av2" mc="neut/14a" ndfit="banff/prelim" oth="sk+fsi">
 
+  <mass_scaling>
+    <inner>
+      1
+    </inner>
+    <outer>
+      1
+    </outer>
+  </mass_scaling>
+
   <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Data POT for analysis Run 1-9d

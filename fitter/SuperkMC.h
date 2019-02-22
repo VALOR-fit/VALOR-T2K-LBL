@@ -347,6 +347,10 @@ namespace valor {
     double     fMCPOTMultiRingOscNuE;                 ///< MC event sample POT : nue (signal)
     double     fMCPOTMultiRingOscNuEBar;              ///< MC event sample POT : nuebar (signal)
     
+    //mass scaling
+    double fMassWeightInner; ///< Mass scaling for the inner (traditional 2 m FV) cut
+    double fMassWeightOuter; ///< Mass scaling for the outer (additional FV taken back by fiTQun) cut
+
     ////
     float fBrWall; ///< branch var for reading input MC Minituple
     float      fBrPtrue[10];                 ///< branch var for reading input MC Minituple

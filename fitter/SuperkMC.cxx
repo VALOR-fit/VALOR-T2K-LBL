@@ -587,6 +587,11 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
 #endif
     ///
+
+    // Mass scaling
+    fMassWeightInner = util::XML2Dbl(xml,root_node,"mass_scaling/inner");
+    fMassWeightOuter = util::XML2Dbl(xml,root_node,"mass_scaling/outer");
+    LOG("SuperkMC",pWARN) << "Mass scaling inner " << fMassWeightInner << " outer " << fMassWeightOuter;
     
     //
     // Get MC trees and MC POT
@@ -1360,7 +1365,9 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         mctree->GetEntry(iev);
         
         if(fBrEreco<0) continue;
-	if(fBrWall<200) continue; //use old cut
+
+	//old 2 m to wall FV cut. For T2K, scaling is different inside/outside this point
+	double mass_weight = (fBrWall<200) ? fMassWeightOuter : fMassWeightInner;
         
         // use current entry for mode m template?
         bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
@@ -1583,7 +1590,7 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         //
 #endif
         
-        double pot_flx_weight = pot_wght * fBrWghtFlx;
+        double pot_flx_weight = pot_wght * fBrWghtFlx * mass_weight;
         double NC1GammaWght = 1.;       
 #ifdef USE_NC1gamma_WEIGHTS
         if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){
@@ -1932,6 +1939,9 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         
         if(fBrEreco<0) continue;
         
+	//old 2 m to wall FV cut. For T2K, scaling is different inside/outside this point
+	double mass_weight = (fBrWall<200) ? fMassWeightOuter : fMassWeightInner;
+
         // use current entry for mode m template?
         bool use_it = util::UseEventToFillInTemplate(m,util::SuperkMode2SKMCPdg(m),fBrGenCode);
         if(!use_it) continue;
@@ -2220,7 +2230,7 @@ void SuperkMC::FillTemplateHistogramSmeared(SuperkSample_t s, SuperkMode_t m)
         //
 #endif
         
-        double pot_flx_weight = pot_wght * fBrWghtFlx;
+        double pot_flx_weight = pot_wght * fBrWghtFlx * mass_weight;
         double NC1GammaWght = 1.;
 #ifdef USE_NC1gamma_WEIGHTS
         if(util::IsNC1Gamma(TMath::Abs(fBrGenCode))){

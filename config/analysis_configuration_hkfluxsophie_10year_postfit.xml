@@ -3,6 +3,32 @@
 <analysis_inputs analysis="T2K/VaLOR/joint" data="run1to9c_prelim" flux="tun13av2" mc="neut/14a" ndfit="banff/prelim" oth="sk+fsi">
 
   <!--
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     Mass scaling
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     We're using SK MC for HK detector
+     So need to scale up the number of events for detector size
+     
+     Previously this was simply 187/22.5 = 8.3111111 (ratio of fiducial volumes defined as mass more than 2m from wall)
+     
+     But now the SK reconstruction expands the FV by a non-uniform amount (>80 cm from wall; >170 cm towall)
+     So it's actually more complicated now
+
+     Idea is to
+       - use 187/22.5 = 8.3111111 for the inner events (i.e. old 2m FV cut scales by mass (aka volume))
+       - use 20062.7 / 5638.47 = 3.55818156343830871 for the outer events (i.e. scales by surface area)
+  -->
+
+  <mass_scaling>
+    <inner>
+      8.311111
+    </inner>
+    <outer>
+      3.558182
+    </outer>
+  </mass_scaling>
+
+  <!--
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Data POT for analysis Run 1-9c
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,27 +36,18 @@
      2.7E22 POT / 10 year expected @ HK
      Typically split 1:3 between FHC & RHC (nu-enhanced and nu-bar enhanced)
      So this is 0.675E22 : 2.025E22
-
-     But we're using SK MC for HK detector
-     So need to scale up the number of events for detector size
-
-     Previously this was simply 187/22.5 = 8.3111111 (ratio of fiducial volumes defined as mass more than 2m from wall)
-     Giving 5.61E22 : 16.83E22
-
-     But now the SK reconstruction expands the FV by a non-uniform amount (>80 cm from wall; >170 cm towall)
-     So it's actually more complicated now
-  -->
+    -->
 
   <data_pot>
     <superk>
       <fhc>
-        5.61E22
+        0.675E22
       </fhc>
       <rhc>
-        16.83E22
+        2.025E22
       </rhc>
       <multiring_fhc>
-        5.61E22
+        0.675E22
       </multiring_fhc>
     </superk>
   </data_pot>
