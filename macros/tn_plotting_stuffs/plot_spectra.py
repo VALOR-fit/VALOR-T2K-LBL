@@ -26,6 +26,14 @@ labels["NumuToNue"] = r"#nu_{#mu}#rightarrow#nu_{e}"
 labels["NumuBarToNueBar"] = r"#bar{#nu}_{#mu}#rightarrow#bar{#nu}_{e}"
 labels["NC"] = r"NC"
 
+labelstex = dict()
+labelstex["NueBeam"] = r"$\nue/\nuebar$ intrinsic"
+labelstex["NumuBeam"] = r"$\numu$ intrinsic"
+labelstex["NumuBarBeam"] = r"$\numubar$ intrinsic"
+labelstex["NumuToNue"] = r"$\numu \rightarrow \nue$"
+labelstex["NumuBarToNueBar"] = r"$\numubar \rightarrow \nuebar$"
+labelstex["NC"] = r"NC"
+
 colors = dict()
 colors["NueBeam"] = ROOT.kYellow
 colors["NumuBeam"] = ROOT.kCyan
@@ -74,7 +82,7 @@ def process_data(data, negate=False):
     graph.SetMarkerStyle(21)
     return graph
 
-def plot_bestfit_dcp0_spectrum(fhc_mc, rhc_mc, fhc_data, rhc_data, outfile):
+def plot_bestfit_dcp0_spectrum(fhc_mc, rhc_mc, fhc_data, rhc_data, outfile, runlabel):
     canvas = ROOT.TCanvas("canvas","Spectra",10, 10, 1034, 778)
     hs = ROOT.THStack("hs", "Spectrum")
     legend = ROOT.TLegend(0.7, 0.73, 0.8, 0.8);
@@ -105,7 +113,7 @@ def plot_bestfit_dcp0_spectrum(fhc_mc, rhc_mc, fhc_data, rhc_data, outfile):
     max *= 1.05
     histos[0].Draw()
     axis = histos[0].GetXaxis()
-    title = ROOT.TLatex(axis.GetBinLowEdge(7), 1.01 * max, "T2K Run1-9 Preliminary")
+    title = ROOT.TLatex(axis.GetBinLowEdge(7), 1.01 * max, runlabel)
     title.SetTextSize(0.05)
     title.Draw()
     line = ROOT.TLine(0, 0, axis.GetBinUpEdge(axis.GetNbins()), 0)
@@ -252,7 +260,7 @@ def drop_bin(histo):
         newHisto.SetBinContent(i, histo.GetBinContent(i))
     return newHisto
 
-def plot_diff_spectrum(histos, data_old, data_new, outfile):
+def plot_diff_spectrum(histos, data_old, data_new, outfile, runlabel):
     data_old.SetMarkerSize(2)
     data_new.SetMarkerSize(2)
     data_old.SetMarkerColor(ROOT.kBlack)
@@ -300,7 +308,7 @@ def plot_diff_spectrum(histos, data_old, data_new, outfile):
 
     tx = swappedTotal.GetXaxis().GetBinLowEdge(swappedTotal.GetXaxis().GetLast())
     ty = 180 
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, runlabel);
     title.SetTextSize(0.05);
     title.Draw("same");
 
@@ -308,11 +316,14 @@ def plot_diff_spectrum(histos, data_old, data_new, outfile):
     canvas.SaveAs(outfile + "_diff.eps")
     canvas.SaveAs(outfile + "_diff.png")
 
-def plot_ereco_spectrum(histos, data, outfile):
+def plot_ereco_spectrum(histos, data, outfile, runlabel):
     ROOT.gStyle.SetOptTitle(0)
     canvas = ROOT.TCanvas("canvas","Spectra",10, 10, 1034, 778)
     hs = ROOT.THStack("hs", "Spectrum")
     legend = ROOT.TLegend(0.7, 0.7, 0.95, 0.95);
+    total = 0;
+    ftex = open(outfile + '.tex', 'w')
+    ftex.write('\\begin{tabular}{l|S[table-format=5.1]} \n')
     for component in components:
         if "1Rmu" in outfile:
             newHisto = drop_bin(histos[component])
@@ -325,6 +336,12 @@ def plot_ereco_spectrum(histos, data, outfile):
         histos[component].SetMarkerColor(colors[component])
         hs.Add(histos[component])
         legend.AddEntry(histos[component], labels[component], "f")
+        ftex.write('%s & %.1f \\\\ \n' % (labelstex[component].replace('#','\\'), histos[component].Integral()))
+        total += histos[component].Integral()
+    ftex.write('\\hline \n')
+    ftex.write('Total & %.1f \n' % (total))
+    ftex.write('\\end{tabular} \n')
+    ftex.close()
     hs.Draw("A")
     hs.GetXaxis().SetTitle("#nu Reconstructed Energy (GeV)")
     hs.GetYaxis().SetTitle("Number of Events")
@@ -369,7 +386,7 @@ def plot_ereco_spectrum(histos, data, outfile):
 
     tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
     ty = max * 1.05
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, runlabel);
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -380,7 +397,7 @@ def plot_ereco_spectrum(histos, data, outfile):
     canvas.SaveAs(outfile + ".eps")
     canvas.SaveAs(outfile + ".png")
 
-def plot_theta_spectrum(histos, data, outfile):
+def plot_theta_spectrum(histos, data, outfile, runlabel):
     canvas = ROOT.TCanvas("canvas","Spectra",10, 10, 1034, 778)
     hs = ROOT.THStack("hs", "Spectrum")
     legend = ROOT.TLegend(0.7, 0.7, 0.95, 0.95);
@@ -428,7 +445,7 @@ def plot_theta_spectrum(histos, data, outfile):
 
     tx = hs.GetXaxis().GetBinLowEdge(hs.GetXaxis().GetLast())
     ty = max * 1.05
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, runlabel);
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -439,7 +456,7 @@ def plot_theta_spectrum(histos, data, outfile):
     canvas.SaveAs(outfile + ".eps")
     canvas.SaveAs(outfile + ".png")
 
-def plot_ereco_theta_spectrum(histos, data, outfile):
+def plot_ereco_theta_spectrum(histos, data, outfile, runlabel):
     if not data is None:
         data.SetMarkerSize(2)
     canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
@@ -482,7 +499,7 @@ def plot_ereco_theta_spectrum(histos, data, outfile):
 
     tx = swappedTotal.GetXaxis().GetBinLowEdge(swappedTotal.GetXaxis().GetLast())
     ty = 180 
-    title = ROOT.TLatex(tx * 0.5, ty * 1.01, "T2K Run1-9 Preliminary");
+    title = ROOT.TLatex(tx * 0.5, ty * 1.01, runlabel);
     title.SetTextSize(0.05);
     title.Draw("same");
     caveat = ROOT.TLatex(tx * 0.1, ty * 1.01, "Final systematics pending");
@@ -553,7 +570,7 @@ def plot_data_ereco_theta_spectrum(histo, outfile):
     canvas.SetRightMargin(0.2)
     canvas.Print(outfile)
 
-def asimov(infile, outfile, datafile, sample):
+def asimov(infile, outfile, datafile, sample, runlabel):
     file = ROOT.TFile(infile)
     if not datafile is None:
         dfile = ROOT.TFile(datafile)
@@ -566,7 +583,7 @@ def asimov(infile, outfile, datafile, sample):
     if sample in ["1Rmu", "RHC1Rmu"]:
         for component in components:
             histos[component] = file.Get("hErecoMode_" + component)
-        plot_ereco_spectrum(histos, data, outfile)
+        plot_ereco_spectrum(histos, data, outfile, runlabel)
     else:
         erecHistos = dict()
         thetaHistos = dict()
@@ -575,9 +592,9 @@ def asimov(infile, outfile, datafile, sample):
             erecHistos[component] = file.Get("hErecoMode_" + component)
             thetaHistos[component] = file.Get("hQ2Mode_" + component)
 
-        plot_ereco_theta_spectrum(histos, graph, outfile)
-        plot_ereco_spectrum(erecHistos, data, "erec_" + outfile)
-        plot_theta_spectrum(thetaHistos, data, "theta_" + outfile)
+        plot_ereco_theta_spectrum(histos, graph, outfile, runlabel)
+        plot_ereco_spectrum(erecHistos, data, "erec_" + outfile, runlabel)
+        plot_theta_spectrum(thetaHistos, data, "theta_" + outfile, runlabel)
 
 def diff_data(infile, outfile, datafile_old, datafile_new, sample):
     file = ROOT.TFile(infile)
@@ -626,13 +643,14 @@ if __name__=="__main__":
     parser.add_option("-d", "--data-file", dest="datafile", help='Data file for spectrum plot')
     parser.add_option("-x", "--data-file-old", dest="datafile_old", help='Data file for spectrum plot')
     parser.add_option("-s", "--sample", dest="sample", help='The sample to plot. 1Re, 1Rmu, MultiRe, RHC1Re, RHC1Rmu.')
-    
+    parser.add_option("-l", "--run-label", dest="runlabel", default="HK 10 yr; 1:3 #nu:#bar{#nu}", help="The run e.g. T2K Run 1-9 Preliminary")
+
     v = optparse.Values()
     parser.parse_args(values = v)   # v contains only the values that were specified, not defaults
     o, other = parser.parse_args()
 
     if not o.datafile_old:
-        asimov(o.infile, o.outfile, o.datafile, o.sample)
+        asimov(o.infile, o.outfile, o.datafile, o.sample, o.runlabel)
     else:
         print "Option specified"
         diff_data(o.infile, o.outfile, o.datafile_old, o.datafile, o.sample)
