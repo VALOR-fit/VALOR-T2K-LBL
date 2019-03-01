@@ -12,10 +12,10 @@ else
 fi
 
 if [ "$3" == "prefit" ]; then
-   config="analysis_configuration_oa2018_run1-9d_v1_prefit.xml"
+   config="analysis_configuration_hkfluxsophie_10year_prefit.xml" #"analysis_configuration_oa2018_run1-9d_v1_prefit.xml"
    banff="_prefit"
 else
-   config="analysis_configuration_oa2018_run1-9d_v1_postfit.xml"
+   config="analysis_configuration_hkfluxsophie_10year_postfit.xml" #"analysis_configuration_oa2018_run1-9d_v1_postfit.xml"
    banff=""
 fi
 
@@ -25,6 +25,14 @@ if [ "${osc}" == "unosc" ]; then
    mixing23=0.0
    dmsq12=7.53E-5
    dmsq23=2.509E-3
+   dcp=0
+   octant="two"
+elif [ "${osc}" == "hkdr" ]; then
+   mixing12=0.32
+   mixing13=0.0256584
+   mixing23=0.5
+   dmsq12=7.6E-5
+   dmsq23=2.4E-3
    dcp=0
    octant="two"
 elif [ "${osc}" == "asimova" ]; then
@@ -103,7 +111,7 @@ if [ "$ok" == "1" ]; then
    done
 else
    echo -e "Usage: make_spectra.sh <osc> <disable_systematics> [banff]"
-   echo -e "   osc: asimova | asimovb | unosc | asimov2018 | asimova2019"
+   echo -e "   osc: asimova | asimovb | unosc | asimov2018 | asimova2019 | hkdr"
    echo -e "   disable_systematics: false | true"
    echo -e "   banff: prefit | postfit (default)"
 fi

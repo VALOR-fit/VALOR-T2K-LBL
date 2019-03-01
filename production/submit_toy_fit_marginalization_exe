@@ -188,6 +188,18 @@ if($param_set eq "random"){
   $deltacp         = -999                      unless defined $deltacp;
   $betaBar         = 0.                        unless defined $betaBar;
 }
+elsif($param_set eq "HKDR"){
+  $dmsq23          = 2.4E-3                    unless defined $dmsq23;
+  $dmsq12          = 7.6E-5                    unless defined $dmsq12;
+  $mix23           = 0.5                       unless defined $mix23;
+  $mix13           = 0.0256584                 unless defined $mix13;
+  $mix12           = 0.32                      unless defined $mix12;
+  $deltacp         = 0                         unless defined $deltacp;
+  $mixparamoctant  = "two"                     unless defined $mixparamoctant;
+  $betaBar         = 1.                        unless defined $betaBar;
+  $masshierarchy   = "normal"                  unless defined $masshierarchy;
+  $marg_hierarchy  = 0                         unless defined $marg_hierarchy;
+}   
 elsif($param_set eq "AsimovA"){
   $dmsq23          = 2.509E-3                  unless defined $dmsq23;
   $dmsq12          = 7.53E-5                   unless defined $dmsq12;
