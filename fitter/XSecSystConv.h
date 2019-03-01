@@ -69,8 +69,8 @@ namespace valor {
 #if defined(__USE_NIWG2017__)
     // NEW XSEC
 #  if BANFF_BINS == 1
-    static const int kNumOfXSecSyst = 25;
-    static const int kNumOfRHCXSecSyst = 25;
+    static const int kNumOfXSecSyst = 25 + kNumOfExtraXSecParamsInBANFFfit;
+    static const int kNumOfRHCXSecSyst = 25 + kNumOfExtraXSecParamsInBANFFfit;
 #  endif
 #  ifdef __NUMUONLY__
     static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
@@ -126,6 +126,41 @@ namespace valor {
       kNuisBANFFNorm2p2hCtoO,
       kNuisBANFFEb
 #  endif             
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      kNuisBANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      kNuisBANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      kNuisBANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      kNuisBANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      kNuisBANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      kNuisBANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      kNuisBANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      kNuisBANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      kNuisBANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      kNuisBANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -165,6 +200,41 @@ namespace valor {
       kRHCNuisBANFFNorm2p2hCtoO,
       kRHCNuisBANFFEb
 #  endif             
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      kNuisBANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      kNuisBANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      kNuisBANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      kNuisBANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      kNuisBANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      kNuisBANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      kNuisBANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      kNuisBANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      kNuisBANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      kNuisBANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
         };
         
@@ -208,6 +278,40 @@ namespace valor {
       false,                     //kNuisBANFFNorm2p2hCtoO
       true,                      //kNuisBANFFEb
 #  endif             
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      false,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      false,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      false,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      false,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      false,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      false,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      false,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      false,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      false,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      false,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
 #endif
           };
         
@@ -247,6 +351,40 @@ namespace valor {
       false,                      // kNuisBANFFNorm2p2hCtoO
       true,                      // kNuisBANFFEb
 #  endif             
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      false,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      false,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      false,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      false,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      false,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      false,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      false,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      false,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      false,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      false,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
 
 #endif
     };
@@ -291,6 +429,40 @@ namespace valor {
       true,                      // kNuisBANFFEb
 #  endif             
 
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      true,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      true,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      true,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      true,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      true,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      true,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      true,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      true,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      true,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      true,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -331,6 +503,40 @@ namespace valor {
       true,                      //kNuisBANFFNorm2p2hCtoO
       true,                      //kNuisBANFFEb
 #  endif             
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      true,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      true,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      true,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      true,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      true,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      true,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      true,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      true,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      true,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      true        //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
 
 #endif
         };
@@ -374,6 +580,40 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFEb
 #  endif             
 
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      { 0.0, 100.0 },       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      { 0.0, 100.0 },       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      { 0.0, 100.0 },       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      { 0.0, 100.0 },       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      { 0.0, 100.0 },       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      { 0.0, 100.0 },       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      { 0.0, 100.0 },       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      { 0.0, 100.0 },       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      { 0.0, 100.0 },       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      { 0.0, 100.0 }       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -414,6 +654,40 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFEb
 #  endif             
 
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      { 0.0, 100.0 },       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      { 0.0, 100.0 },       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      { 0.0, 100.0 },       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      { 0.0, 100.0 },       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      { 0.0, 100.0 },       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      { 0.0, 100.0 },       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      { 0.0, 100.0 },       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      { 0.0, 100.0 },       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      { 0.0, 100.0 },       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      { 0.0, 100.0 }       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -453,6 +727,40 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFNorm2p2hCtoO
       { 0.0, 100.0 },            //kNuisBANFFEb
 #  endif             
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      { 0.0, 100.0 },       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      { 0.0, 100.0 },       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      { 0.0, 100.0 },       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      { 0.0, 100.0 },       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      { 0.0, 100.0 },       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      { 0.0, 100.0 },       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      { 0.0, 100.0 },       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      { 0.0, 100.0 },       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      { 0.0, 100.0 },       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      { 0.0, 100.0 }       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
 #endif
     };
         
@@ -492,6 +800,40 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFNorm2p2hCtoO
       { 0.0, 100.0 },            //kNuisBANFFEb
 #  endif             
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      { 0.0, 100.0 },       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      { 0.0, 100.0 },       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      { 0.0, 100.0 },       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      { 0.0, 100.0 },       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      { 0.0, 100.0 },       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      { 0.0, 100.0 },       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      { 0.0, 100.0 },       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      { 0.0, 100.0 },       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      { 0.0, 100.0 },       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      { 0.0, 100.0 }       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -534,6 +876,40 @@ namespace valor {
      -999,            //kNuisBANFFNorm2p2hCtoO
      -999,            //kNuisBANFFEb
 #  endif             
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      -999,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      -999,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      -999,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      -999,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      -999,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      -999,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      -999,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      -999,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      -999,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      -999       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -573,13 +949,305 @@ namespace valor {
       -999,            //BANFF, Norm2p2h CtoO
       -999,            //kNuisBANFFEb
 #  endif             
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      -999,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      -999,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      -999,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      -999,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      -999,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      -999,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      -999,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      -999,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      -999,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      -999       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
 
 #endif
     };
         
         
         
-    // The following list describles in which MC templates we are supposed to apply the
+#ifdef EXPANDEDBANFF
+    static const bool kXsApplyXSecSystToSKModeNewBANFF[kns][kNumOfExtraXSecParamsInBANFFfit][knm] = {
+      //
+      // FHC 1-ring mu-like
+      //
+      {
+	//kSKmNuMuCCQE kSKmNuMuCC1pi kSKmNuMuCCcoh kSKmNuMuCC2p2h kSKmNuMuCCoth kSKmNuMuNC1piC kSKmNuMuNC1pi0 kSKmNuMuNCcoh kSKmNuMuNCoth kSKmNuMuNC1Gamma
+	//kSKmNuMuBarCCQE kSKmNuMuBarCC1pi kSKmNuMuBarCCcoh kSKmNuMuBarCC2p2h kSKmNuMuBarCCoth kSKmNuMuBarNC1piC kSKmNuMuBarNC1pi0 kSKmNuMuBarNCcoh kSKmNuMuBarNCoth kSKmNuMuBarNC1Gamma
+	//kSKmNuECCQE kSKmNuECC1pi kSKmNuECCcoh kSKmNuECC2p2h kSKmNuECCoth kSKmNuENC1piC kSKmNuENC1pi0 kSKmNuENCcoh kSKmNuENCoth kSKmNuENC1Gamma
+	//kSKmSigNuECCQE kSKmSigNuECC1pi kSKmSigNuECCcoh kSKmSigNuECC2p2h kSKmSigNuECCoth
+	//kSKmNuEBarCCQE kSKmNuEBarCC1pi kSKmNuEBarCCcoh kSKmNuEBarCC2p2h kSKmNuEBarCCoth kSKmNuEBarNC1piC kSKmNuEBarNC1pi0 kSKmNuEBarNCcoh kSKmNuEBarNCoth kSKmNuEBarNC1Gamma
+	//kSKmSigNuEBarCCQE kSKmSigNuEBarCC1pi kSKmSigNuEBarCCcoh kSKmSigNuEBarCC2p2h kSKmSigNuEBarCCoth
+#ifdef BANFF00
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF00
+#endif //BANFF00
+#ifdef BANFF01
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF01
+#endif //BANFF01
+#ifdef BANFF02
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF02
+#endif //BANFF02
+#ifdef BANFF03
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF03
+#endif //BANFF03
+#ifdef BANFF04
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF04
+#endif //BANFF04
+#ifdef BANFF05
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF05
+#endif //BANFF05
+#ifdef BANFF06
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF06
+#endif //BANFF06
+#ifdef BANFF07
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF07
+#endif //BANFF07
+#ifdef BANFF08
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF08
+#endif //BANFF08
+#ifdef BANFF09
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }  //BANFF09
+#endif //BANFF09
+      }, //// FHC 1-ring mu-like
+
+      //
+      // FHC 1-ring e-like
+      //
+      {
+	//kSKmNuMuCCQE kSKmNuMuCC1pi kSKmNuMuCCcoh kSKmNuMuCC2p2h kSKmNuMuCCoth kSKmNuMuNC1piC kSKmNuMuNC1pi0 kSKmNuMuNCcoh kSKmNuMuNCoth kSKmNuMuNC1Gamma
+	//kSKmNuMuBarCCQE kSKmNuMuBarCC1pi kSKmNuMuBarCCcoh kSKmNuMuBarCC2p2h kSKmNuMuBarCCoth kSKmNuMuBarNC1piC kSKmNuMuBarNC1pi0 kSKmNuMuBarNCcoh kSKmNuMuBarNCoth kSKmNuMuBarNC1Gamma
+	//kSKmNuECCQE kSKmNuECC1pi kSKmNuECCcoh kSKmNuECC2p2h kSKmNuECCoth kSKmNuENC1piC kSKmNuENC1pi0 kSKmNuENCcoh kSKmNuENCoth kSKmNuENC1Gamma
+	//kSKmSigNuECCQE kSKmSigNuECC1pi kSKmSigNuECCcoh kSKmSigNuECC2p2h kSKmSigNuECCoth
+	//kSKmNuEBarCCQE kSKmNuEBarCC1pi kSKmNuEBarCCcoh kSKmNuEBarCC2p2h kSKmNuEBarCCoth kSKmNuEBarNC1piC kSKmNuEBarNC1pi0 kSKmNuEBarNCcoh kSKmNuEBarNCoth kSKmNuEBarNC1Gamma
+	//kSKmSigNuEBarCCQE kSKmSigNuEBarCC1pi kSKmSigNuEBarCCcoh kSKmSigNuEBarCC2p2h kSKmSigNuEBarCCoth
+#ifdef BANFF00
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF00
+#endif //BANFF00
+#ifdef BANFF01
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF01
+#endif //BANFF01
+#ifdef BANFF02
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF02
+#endif //BANFF02
+#ifdef BANFF03
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF03
+#endif //BANFF03
+#ifdef BANFF04
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF04
+#endif //BANFF04
+#ifdef BANFF05
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF05
+#endif //BANFF05
+#ifdef BANFF06
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF06
+#endif //BANFF06
+#ifdef BANFF07
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF07
+#endif //BANFF07
+#ifdef BANFF08
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF08
+#endif //BANFF08
+#ifdef BANFF09
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }  //BANFF09
+#endif //BANFF09
+      }, // FHC 1-ring e-like
+
+      //
+      // RHC 1-ring mu-like
+      //
+      {
+	//kSKmNuMuCCQE kSKmNuMuCC1pi kSKmNuMuCCcoh kSKmNuMuCC2p2h kSKmNuMuCCoth kSKmNuMuNC1piC kSKmNuMuNC1pi0 kSKmNuMuNCcoh kSKmNuMuNCoth kSKmNuMuNC1Gamma
+	//kSKmNuMuBarCCQE kSKmNuMuBarCC1pi kSKmNuMuBarCCcoh kSKmNuMuBarCC2p2h kSKmNuMuBarCCoth kSKmNuMuBarNC1piC kSKmNuMuBarNC1pi0 kSKmNuMuBarNCcoh kSKmNuMuBarNCoth kSKmNuMuBarNC1Gamma
+	//kSKmNuECCQE kSKmNuECC1pi kSKmNuECCcoh kSKmNuECC2p2h kSKmNuECCoth kSKmNuENC1piC kSKmNuENC1pi0 kSKmNuENCcoh kSKmNuENCoth kSKmNuENC1Gamma
+	//kSKmSigNuECCQE kSKmSigNuECC1pi kSKmSigNuECCcoh kSKmSigNuECC2p2h kSKmSigNuECCoth
+	//kSKmNuEBarCCQE kSKmNuEBarCC1pi kSKmNuEBarCCcoh kSKmNuEBarCC2p2h kSKmNuEBarCCoth kSKmNuEBarNC1piC kSKmNuEBarNC1pi0 kSKmNuEBarNCcoh kSKmNuEBarNCoth kSKmNuEBarNC1Gamma
+	//kSKmSigNuEBarCCQE kSKmSigNuEBarCC1pi kSKmSigNuEBarCCcoh kSKmSigNuEBarCC2p2h kSKmSigNuEBarCCoth
+#ifdef BANFF00
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF00
+#endif //BANFF00
+#ifdef BANFF01
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF01
+#endif //BANFF01
+#ifdef BANFF02
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF02
+#endif //BANFF02
+#ifdef BANFF03
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF03
+#endif //BANFF03
+#ifdef BANFF04
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF04
+#endif //BANFF04
+#ifdef BANFF05
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF05
+#endif //BANFF05
+#ifdef BANFF06
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF06
+#endif //BANFF06
+#ifdef BANFF07
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF07
+#endif //BANFF07
+#ifdef BANFF08
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF08
+#endif //BANFF08
+#ifdef BANFF09
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }  //BANFF09
+#endif //BANFF09
+      }, // RHC 1-ring mu-like
+
+      //
+      // RHC 1-ring e-like
+      //
+      {
+	//kSKmNuMuCCQE kSKmNuMuCC1pi kSKmNuMuCCcoh kSKmNuMuCC2p2h kSKmNuMuCCoth kSKmNuMuNC1piC kSKmNuMuNC1pi0 kSKmNuMuNCcoh kSKmNuMuNCoth kSKmNuMuNC1Gamma
+	//kSKmNuMuBarCCQE kSKmNuMuBarCC1pi kSKmNuMuBarCCcoh kSKmNuMuBarCC2p2h kSKmNuMuBarCCoth kSKmNuMuBarNC1piC kSKmNuMuBarNC1pi0 kSKmNuMuBarNCcoh kSKmNuMuBarNCoth kSKmNuMuBarNC1Gamma
+	//kSKmNuECCQE kSKmNuECC1pi kSKmNuECCcoh kSKmNuECC2p2h kSKmNuECCoth kSKmNuENC1piC kSKmNuENC1pi0 kSKmNuENCcoh kSKmNuENCoth kSKmNuENC1Gamma
+	//kSKmSigNuECCQE kSKmSigNuECC1pi kSKmSigNuECCcoh kSKmSigNuECC2p2h kSKmSigNuECCoth
+	//kSKmNuEBarCCQE kSKmNuEBarCC1pi kSKmNuEBarCCcoh kSKmNuEBarCC2p2h kSKmNuEBarCCoth kSKmNuEBarNC1piC kSKmNuEBarNC1pi0 kSKmNuEBarNCcoh kSKmNuEBarNCoth kSKmNuEBarNC1Gamma
+	//kSKmSigNuEBarCCQE kSKmSigNuEBarCC1pi kSKmSigNuEBarCCcoh kSKmSigNuEBarCC2p2h kSKmSigNuEBarCCoth
+#ifdef BANFF00
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF00
+#endif //BANFF00
+#ifdef BANFF01
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF01
+#endif //BANFF01
+#ifdef BANFF02
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF02
+#endif //BANFF02
+#ifdef BANFF03
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF03
+#endif //BANFF03
+#ifdef BANFF04
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF04
+#endif //BANFF04
+#ifdef BANFF05
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF05
+#endif //BANFF05
+#ifdef BANFF06
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF06
+#endif //BANFF06
+#ifdef BANFF07
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF07
+#endif //BANFF07
+#ifdef BANFF08
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF08
+#endif //BANFF08
+#ifdef BANFF09
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }  //BANFF09
+#endif //BANFF09
+      }, // RHC 1-ring e-like
+
+      //
+      // FHC multi-ring mu-like
+      //
+      {
+	//kSKmNuMuCCQE kSKmNuMuCC1pi kSKmNuMuCCcoh kSKmNuMuCC2p2h kSKmNuMuCCoth kSKmNuMuNC1piC kSKmNuMuNC1pi0 kSKmNuMuNCcoh kSKmNuMuNCoth kSKmNuMuNC1Gamma
+	//kSKmNuMuBarCCQE kSKmNuMuBarCC1pi kSKmNuMuBarCCcoh kSKmNuMuBarCC2p2h kSKmNuMuBarCCoth kSKmNuMuBarNC1piC kSKmNuMuBarNC1pi0 kSKmNuMuBarNCcoh kSKmNuMuBarNCoth kSKmNuMuBarNC1Gamma
+	//kSKmNuECCQE kSKmNuECC1pi kSKmNuECCcoh kSKmNuECC2p2h kSKmNuECCoth kSKmNuENC1piC kSKmNuENC1pi0 kSKmNuENCcoh kSKmNuENCoth kSKmNuENC1Gamma
+	//kSKmSigNuECCQE kSKmSigNuECC1pi kSKmSigNuECCcoh kSKmSigNuECC2p2h kSKmSigNuECCoth
+	//kSKmNuEBarCCQE kSKmNuEBarCC1pi kSKmNuEBarCCcoh kSKmNuEBarCC2p2h kSKmNuEBarCCoth kSKmNuEBarNC1piC kSKmNuEBarNC1pi0 kSKmNuEBarNCcoh kSKmNuEBarNCoth kSKmNuEBarNC1Gamma
+	//kSKmSigNuEBarCCQE kSKmSigNuEBarCC1pi kSKmSigNuEBarCCcoh kSKmSigNuEBarCC2p2h kSKmSigNuEBarCCoth
+#ifdef BANFF00
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF00
+#endif //BANFF00
+#ifdef BANFF01
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF01
+#endif //BANFF01
+#ifdef BANFF02
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF02
+#endif //BANFF02
+#ifdef BANFF03
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF03
+#endif //BANFF03
+#ifdef BANFF04
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF04
+#endif //BANFF04
+#ifdef BANFF05
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF05
+#endif //BANFF05
+#ifdef BANFF06
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF06
+#endif //BANFF06
+#ifdef BANFF07
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF07
+#endif //BANFF07
+#ifdef BANFF08
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF08
+#endif //BANFF08
+#ifdef BANFF09
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }  //BANFF09
+#endif //BANFF09
+      }, //FHC multi-ring mu-like
+
+      //
+      // FHC multi-ring e-like
+      //
+      {
+	//kSKmNuMuCCQE kSKmNuMuCC1pi kSKmNuMuCCcoh kSKmNuMuCC2p2h kSKmNuMuCCoth kSKmNuMuNC1piC kSKmNuMuNC1pi0 kSKmNuMuNCcoh kSKmNuMuNCoth kSKmNuMuNC1Gamma
+	//kSKmNuMuBarCCQE kSKmNuMuBarCC1pi kSKmNuMuBarCCcoh kSKmNuMuBarCC2p2h kSKmNuMuBarCCoth kSKmNuMuBarNC1piC kSKmNuMuBarNC1pi0 kSKmNuMuBarNCcoh kSKmNuMuBarNCoth kSKmNuMuBarNC1Gamma
+	//kSKmNuECCQE kSKmNuECC1pi kSKmNuECCcoh kSKmNuECC2p2h kSKmNuECCoth kSKmNuENC1piC kSKmNuENC1pi0 kSKmNuENCcoh kSKmNuENCoth kSKmNuENC1Gamma
+	//kSKmSigNuECCQE kSKmSigNuECC1pi kSKmSigNuECCcoh kSKmSigNuECC2p2h kSKmSigNuECCoth
+	//kSKmNuEBarCCQE kSKmNuEBarCC1pi kSKmNuEBarCCcoh kSKmNuEBarCC2p2h kSKmNuEBarCCoth kSKmNuEBarNC1piC kSKmNuEBarNC1pi0 kSKmNuEBarNCcoh kSKmNuEBarNCoth kSKmNuEBarNC1Gamma
+	//kSKmSigNuEBarCCQE kSKmSigNuEBarCC1pi kSKmSigNuEBarCCcoh kSKmSigNuEBarCC2p2h kSKmSigNuEBarCCoth
+#ifdef BANFF00
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF00
+#endif //BANFF00
+#ifdef BANFF01
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF01
+#endif //BANFF01
+#ifdef BANFF02
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF02
+#endif //BANFF02
+#ifdef BANFF03
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF03
+#endif //BANFF03
+#ifdef BANFF04
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF04
+#endif //BANFF04
+#ifdef BANFF05
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF05
+#endif //BANFF05
+#ifdef BANFF06
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF06
+#endif //BANFF06
+#ifdef BANFF07
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF07
+#endif //BANFF07
+#ifdef BANFF08
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }, //BANFF08
+#endif //BANFF08
+#ifdef BANFF09
+	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }  //BANFF09
+#endif //BANFF09
+      } //FHC multi-ring e-like
+
+#endif //EXPANDEDBANFF
+
+    TODO: how to make use of this array with the array below...??????????
+      It's connected (i.e. used) in NuXSec and util::ApplySystToSKMode() in Utilities.cxx
+
+    // The following list describes in which MC templates we are supposed to apply the
     // weights as a result of tweaking any of the above systematic parameters.
     // The order of systematic parameters should match the one in kListOfXSecSyst.
 #if BANFF_BINS == 1

@@ -202,6 +202,37 @@ void valor::T2KPhysicalParameterLimits::SetDefaults(void)
   fParamMaxima[conv::kNuisBANFFEb] = 10.;
   fParamMaxima[conv::kRHCNuisBANFFEb] = 10.;
 
+#ifdef ADDBANFF00
+  fParamMinima[conv::kNuisBANFFNew00] = 0.;
+#endif //ADDBANFF00
+#ifdef ADDBANFF01
+  fParamMinima[conv::kNuisBANFFNew01] = 0.;
+#endif //ADDBANFF01
+#ifdef ADDBANFF02
+  fParamMinima[conv::kNuisBANFFNew02] = 0.;
+#endif //ADDBANFF02
+#ifdef ADDBANFF03
+  fParamMinima[conv::kNuisBANFFNew03] = 0.;
+#endif //ADDBANFF03
+#ifdef ADDBANFF04
+  fParamMinima[conv::kNuisBANFFNew04] = 0.;
+#endif //ADDBANFF04
+#ifdef ADDBANFF05
+  fParamMinima[conv::kNuisBANFFNew05] = 0.;
+#endif //ADDBANFF05
+#ifdef ADDBANFF06
+  fParamMinima[conv::kNuisBANFFNew06] = 0.;
+#endif //ADDBANFF06
+#ifdef ADDBANFF07
+  fParamMinima[conv::kNuisBANFFNew07] = 0.;
+#endif //ADDBANFF07
+#ifdef ADDBANFF08
+  fParamMinima[conv::kNuisBANFFNew08] = 0.;
+#endif //ADDBANFF08
+#ifdef ADDBANFF09
+  fParamMinima[conv::kNuisBANFFNew09] = 0.;
+#endif //ADDBANFF09
+
   return;
 }
 //____________________________________________________________________________

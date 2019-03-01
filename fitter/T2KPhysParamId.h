@@ -141,7 +141,42 @@ static const PhysParamId_t kNuisBANFFNorm2p2hCtoO        = kNuis073;   // 2p2h C
 static const PhysParamId_t kNuisBANFFEb                  = kNuis074;   // Eb
 //
 
+
+#ifdef EXPANDEDBANFF
+#ifdef ADDBANFF00
+static const PhysParamId_t kNuisBANFFNew00  = kNuis075;
+#endif //ADDBANFF00
+#ifdef ADDBANFF01
+static const PhysParamId_t kNuisBANFFNew01  = kNuis076;
+#endif //ADDBANFF01
+#ifdef ADDBANFF02
+static const PhysParamId_t kNuisBANFFNew02  = kNuis077;
+#endif //ADDBANFF02
+#ifdef ADDBANFF03
+static const PhysParamId_t kNuisBANFFNew03  = kNuis078;
+#endif //ADDBANFF03
+#ifdef ADDBANFF04
+static const PhysParamId_t kNuisBANFFNew04  = kNuis079;
+#endif //ADDBANFF04
+#ifdef ADDBANFF05
+static const PhysParamId_t kNuisBANFFNew05  = kNuis080;
+#endif //ADDBANFF05
+#ifdef ADDBANFF06
+static const PhysParamId_t kNuisBANFFNew06  = kNuis081;
+#endif //ADDBANFF06
+#ifdef ADDBANFF07
+static const PhysParamId_t kNuisBANFFNew07  = kNuis082;
+#endif //ADDBANFF07
+#ifdef ADDBANFF08
+static const PhysParamId_t kNuisBANFFNew08  = kNuis083;
+#endif //ADDBANFF08
+#ifdef ADDBANFF09
+static const PhysParamId_t kNuisBANFFNew09  = kNuis084;
+#endif //ADDBANFF09
+static const PhysParamId_t kLastBANFFParam  = kNuis085; // Utility, should always come after last FHC BANFF
+#else
 static const PhysParamId_t kLastBANFFParam  = kNuis075; // Utility, should always come after last FHC BANFF
+#endif //EXPANDEDBANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -150,6 +185,27 @@ static const PhysParamId_t kLastBANFFParam  = kNuis075; // Utility, should alway
    //systematics which use splines
 
 // NEW XSEC
+#ifdef EXPANDEDBANFF
+
+static const PhysParamId_t kNuisXSecRPA            = kNuis086;   // RPA tuning
+
+static const PhysParamId_t kNuisXSecFermiMom       = kNuis087;   // Fermi momentum
+static const PhysParamId_t kNuisXSecSpecFunc       = kNuis088;   // spectral function on/off
+static const PhysParamId_t kNuisXSecWshape         = kNuis089;   // W-shape
+static const PhysParamId_t kNuisXSecShapeCCoth     = kNuis090;   // CC other shape
+static const PhysParamId_t kNuisXSecPiLessDelta    = kNuis091;   // Pion-less delta decay
+static const PhysParamId_t kNuisXSecBindE          = kNuis092;   // Binding energy
+   //systematics that are normalisations
+static const PhysParamId_t kNuisXSecNormCCcoh      = kNuis093;   // CC coherent norm
+static const PhysParamId_t kNuisXSecNormNC1piC     = kNuis094;   // NC 1piC norm
+static const PhysParamId_t kNuisXSecNormNCcoh      = kNuis095;   // NC coh norm
+static const PhysParamId_t kNuisXSecNormNCoth      = kNuis096;   // NC other norm
+static const PhysParamId_t kNuisXSecNormNuEToNuMu  = kNuis097;   // nue / numu cross section
+static const PhysParamId_t kNuisXSecNormAntiNuToNu = kNuis098;   // antinu / nu cross section
+
+static const PhysParamId_t kLastXSecParam = kNuis099;   // Utility, should always come after last FHC Xsec param
+
+#else
 static const PhysParamId_t kNuisXSecRPA            = kNuis080;   // RPA tuning
 
 static const PhysParamId_t kNuisXSecFermiMom       = kNuis081;   // Fermi momentum
@@ -167,7 +223,7 @@ static const PhysParamId_t kNuisXSecNormNuEToNuMu  = kNuis091;   // nue / numu c
 static const PhysParamId_t kNuisXSecNormAntiNuToNu = kNuis092;   // antinu / nu cross section
 
 static const PhysParamId_t kLastXSecParam = kNuis093;   // Utility, should always come after last FHC Xsec param
-
+#endif //EXPANDEDBANFF
    /*
     * FSI parameters.
     * Assuming here a 10x10 covariance matrix will be made available.

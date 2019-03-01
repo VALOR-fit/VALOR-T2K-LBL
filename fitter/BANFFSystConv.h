@@ -70,14 +70,51 @@ namespace valor {
 #endif
 #if defined(__USE_NIWG2017__)
 #  if BANFF_BINS == 1 //joint
-    static const int kNumOfParamsInBANFFfit = 49;
-    static const int kNumOfXSecParamsInBANFFfit = 24;
-    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - kNumOfXSecParamsInBANFFfit;
-    static const int kNumOfRHCParamsInBANFFfit = 49;
-    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - kNumOfXSecParamsInBANFFfit;
+
+#ifdef EXPANDEDBANFF
+    static const int kNumOfExtraXSecParamsInBANFFfit = 0
+#ifdef ADDBANFF00
+      + 1
+#endif //ADDBANFF00
+#ifdef ADDBANFF01
+      + 1
+#endif //ADDBANFF01
+#ifdef ADDBANFF02
+      + 1
+#endif //ADDBANFF02
+#ifdef ADDBANFF03
+      + 1
+#endif //ADDBANFF03
+#ifdef ADDBANFF04
+      + 1
+#endif //ADDBANFF04
+#ifdef ADDBANFF05
+      + 1
+#endif //ADDBANFF05
+#ifdef ADDBANFF06
+      + 1
+#endif //ADDBANFF06
+#ifdef ADDBANFF07
+      + 1
+#endif //ADDBANFF07
+#ifdef ADDBANFF08
+      + 1
+#endif //ADDBANFF08
+#ifdef ADDBANFF09
+      + 1
+#endif //ADDBANFF09
+      ;
+#else
+    static const int kNumOfExtraXSecParamsInBANFFfit = 0;
+#endif //EXPANDEDBANFF
+    static const int kNumOfParamsInBANFFfit = 49 + kNumOfExtraXSecParamsInBANFFfit;
+    static const int kNumOfXSecParamsInBANFFfit = 24 + kNumOfExtraXSecParamsInBANFFfit;
+    static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - kNumOfXSecParamsInBANFFfit - kNumOfExtraXSecParamsInBANFFfit;
+    static const int kNumOfRHCParamsInBANFFfit = 49 + kNumOfExtraXSecParamsInBANFFfit;
+    static const int kNumOfRHCFluxParamsInBANFFfit = kNumOfRHCParamsInBANFFfit - kNumOfXSecParamsInBANFFfit - kNumOfExtraXSecParamsInBANFFfit;
     // NEW FLUX FHC+RHC
-    static const int kNumOfFHCpRHCParamsInBANFFfit = 74;
-    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - kNumOfXSecParamsInBANFFfit ;     
+    static const int kNumOfFHCpRHCParamsInBANFFfit = 74 + kNumOfExtraXSecParamsInBANFFfit;
+    static const int kNumOfFHCpRHCFluxParamsInBANFFfit = kNumOfFHCpRHCParamsInBANFFfit - kNumOfXSecParamsInBANFFfit - kNumOfExtraXSecParamsInBANFFfit;     
 #  endif
 #endif
         
@@ -142,8 +179,43 @@ namespace valor {
       kNuisBANFFShape2p2h   , //
       kNuisBANFFNorm2p2hCtoO, //
       kNuisBANFFEb
-#  endif      
-#endif
+#  endif      //__USE_NIWG2017__
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      kNuisBANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      kNuisBANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      kNuisBANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      kNuisBANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      kNuisBANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      kNuisBANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      kNuisBANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      kNuisBANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      kNuisBANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      kNuisBANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
+#endif //__USE_NIWG2017__  || __USE_NIWG2015__ 
     };
         
     static const PhysParamId_t kListOfRHCBANFFParams[kNumOfRHCParamsInBANFFfit] =
@@ -206,6 +278,40 @@ namespace valor {
       kRHCNuisBANFFNorm2p2hCtoO,
       kRHCNuisBANFFEb
 #  endif
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      kNuisBANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      kNuisBANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      kNuisBANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      kNuisBANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      kNuisBANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      kNuisBANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      kNuisBANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      kNuisBANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      kNuisBANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      kNuisBANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
       
 #endif
     };
@@ -297,6 +403,41 @@ namespace valor {
       kNuisBANFFNorm2p2hCtoO,
       kNuisBANFFEb
 #  endif
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      kNuisBANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      kNuisBANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      kNuisBANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      kNuisBANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      kNuisBANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      kNuisBANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      kNuisBANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      kNuisBANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      kNuisBANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      kNuisBANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -371,6 +512,40 @@ namespace valor {
       false                 // kNuisBANFFEb
 #  endif
 
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      false,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      false,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      false,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      false,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      false,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      false,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      false,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      false,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      false,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      false,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -434,6 +609,40 @@ namespace valor {
       false,                // kNuisBANFFNorm2p2hCtoO
       false,                // kRHCNuisBANFFEb
 #  endif
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      false,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      false,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      false,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      false,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      false,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      false,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      false,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      false,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      false,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      false,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
 
 #endif
     };
@@ -528,6 +737,40 @@ namespace valor {
       false,                // kNuisBANFFNorm2p2hCtoO
       false,                // kNuisBANFFEb
 #  endif            
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      false,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      false,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      false,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      false,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      false,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      false,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      false,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      false,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      false,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      false,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
                   
 #endif
     };
@@ -597,6 +840,40 @@ namespace valor {
       0,                    // kNuisBANFFNorm2p2hCtoO
       0,                    // kNuisBANFFEb
 #  endif
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      0,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      0,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      0,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      0,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      0,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      0,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      0,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      0,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      0,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      0,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
             
 #endif
     };
@@ -662,6 +939,40 @@ namespace valor {
       0,                    // kNuisBANFFNorm2p2hCtoO
       0,                    // kRHCNuisBANFFEb
 #  endif
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      0,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      0,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      0,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      0,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      0,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      0,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      0,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      0,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      0,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      0,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
       
 #endif
     };
@@ -759,6 +1070,41 @@ namespace valor {
       0,                    // kNuisBANFFNorm2p2hCtoO
       0,                    // kNuisBANFFEb
 #  endif            
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      0,       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      0,       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      0,       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      0,       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      0,       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      0,       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      0,       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      0,       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      0,       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      0,       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
     ///
@@ -830,6 +1176,41 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
       {  -1,   -1 },        // kNuisBANFFEb
 #  endif            
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      { -1, -1},       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      { -1, -1},       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      { -1, -1},       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      { -1, -1},       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      { -1, -1},       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      { -1, -1},       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      { -1, -1},       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      { -1, -1},       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      { -1, -1},       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      { -1, -1},       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -901,6 +1282,41 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
       {  -1,   -1 },        // kRHCNuisBANFFEb
 #  endif                  
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      { -1, -1},       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      { -1, -1},       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      { -1, -1},       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      { -1, -1},       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      { -1, -1},       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      { -1, -1},       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      { -1, -1},       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      { -1, -1},       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      { -1, -1},       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      { -1, -1},       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
         
@@ -1005,6 +1421,41 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
       {  -1,   -1 },        // kNuisBANFFEb
 #  endif                        
+
+#ifdef EXPANDEDBANFF
+      ,
+#ifdef NEWBANFF00
+      { -1, -1},       //BANFFNew00,
+#endif //#NEWBANFF00
+#ifdef NEWBANFF01
+      { -1, -1},       //BANFFNew01,
+#endif //#NEWBANFF01
+#ifdef NEWBANFF02
+      { -1, -1},       //BANFFNew02,
+#endif //#NEWBANFF02
+#ifdef NEWBANFF03
+      { -1, -1},       //BANFFNew03,
+#endif //#NEWBANFF03
+#ifdef NEWBANFF04
+      { -1, -1},       //BANFFNew04,
+#endif //#NEWBANFF04
+#ifdef NEWBANFF05
+      { -1, -1},       //BANFFNew05,
+#endif //#NEWBANFF05
+#ifdef NEWBANFF06
+      { -1, -1},       //BANFFNew06,
+#endif //#NEWBANFF06
+#ifdef NEWBANFF07
+      { -1, -1},       //BANFFNew07,
+#endif //#NEWBANFF07
+#ifdef NEWBANFF08
+      { -1, -1},       //BANFFNew08,
+#endif //#NEWBANFF08
+#ifdef NEWBANFF09
+      { -1, -1},       //BANFFNew09
+#endif //#NEWBANFF09
+#endif //#EXPANDEDBANFF
+
 #endif
     };
     //

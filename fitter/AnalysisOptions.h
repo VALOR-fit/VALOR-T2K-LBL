@@ -259,5 +259,19 @@ Split valor::conv namespace into several smaller files
 #endif
 #endif
 
+#define EXPANDEDBANFF
+#ifdef EXPANDEDBANFF
+#define ADDBANFF00
+#define ADDBANFF01
+#define ADDBANFF02
+#define ADDBANFF03
+#define ADDBANFF04
+#define ADDBANFF05
+#define ADDBANFF06
+#define ADDBANFF07
+#define ADDBANFF08
+#define ADDBANFF09
+#endif //EXPANDEDBANFF
+
 #endif //ana_options_h
 
