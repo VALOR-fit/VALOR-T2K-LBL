@@ -71,6 +71,7 @@ namespace valor {
 #  if BANFF_BINS == 1
     static const int kNumOfXSecSyst = 25 + kNumOfExtraXSecParamsInBANFFfit;
     static const int kNumOfRHCXSecSyst = 25 + kNumOfExtraXSecParamsInBANFFfit;
+    static const int kNumOfXSecSystOrig = 25;
 #  endif
 #  ifdef __NUMUONLY__
     static const int kNumOfUncXSecSyst    = 0; // no uncorr xsec
@@ -1243,9 +1244,6 @@ namespace valor {
       } //FHC multi-ring e-like
 
 #endif //EXPANDEDBANFF
-
-    TODO: how to make use of this array with the array below...??????????
-      It's connected (i.e. used) in NuXSec and util::ApplySystToSKMode() in Utilities.cxx
 
     // The following list describes in which MC templates we are supposed to apply the
     // weights as a result of tweaking any of the above systematic parameters.

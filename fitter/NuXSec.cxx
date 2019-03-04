@@ -85,7 +85,8 @@ NuXSec::NuXSec()
     CheckERange(kNumOfXSecSyst,    kListOfXSecSyst,    (const double *)kXSecSystEtrueCut,    "kXSecSystEtrueCut");
     CheckERange(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const double *)kRHCXSecSystEtrueCut, "kRHCXSecSystEtrueCut");
     
-    CheckSKMode(kNumOfXSecSyst, kListOfXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, "kXsApplyXSecSystToSKMode");
+    CheckSKModeOrig(kNumOfXSecSystOrig, kListOfXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, 0, "kXsApplyXSecSystToSKMode");
+    CheckSKModeOrig(kNumOfExtraXSecParamsInBANFFfit, kListOfXSecSyst + kNumOfXSecSystOrig, (const bool *)kXsApplyXSecSystToSKModeNewBANFF, 1, "kXsApplyXSecSystToSKModeNewBANFF");
 #ifdef __use_1Rsplines_for_MultiR_sample__
     LOG("NuXSec",pWARN) << "Changing spline name to read 1Re splines for the MultiR samples";
 #endif
@@ -198,7 +199,7 @@ void NuXSec::CheckERange(int nparams, const PhysParamId_t * params, const double
   }//ix
 }
 //________________________________________________________________________________________
-void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname)
+void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const bool * modes, const int array_order_mode, const char * vname)
 {
   PhysParamId_t curr;
   //check that XSec parameters effect the correct energy range
@@ -220,7 +221,15 @@ void NuXSec::CheckSKMode(int nparams, const conv::PhysParamId_t * params, const 
       for(int im = 0; im < knm; im++) {
         SuperkMode_t m = kSKReactionModes[is][im];
         if(m == kSKmUndefined) continue;
-        bool applies_to_mode = modes[is*knm*nparams + im*nparams + ix];
+        bool applies_to_mode;
+#ifdef EXPANDEDBANFF
+	if(array_order_mode == 0)
+#endif //EXPANDEDBANFF
+	  applies_to_mode = modes[is*knm*nparams + im*nparams + ix];
+#ifdef EXPANDEDBANFF
+	else
+	  applies_to_mode = modes[is*knm*nparams + ix*knm + im];
+#endif //EXPANDEDBANFF
         if(applies_to_mode) {
           modes_set.push_back(m);
 #ifdef __show_xsecsystconv_check_mesg_debug__
@@ -464,7 +473,15 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
                 // is the current systematic parameter going to be applied to current sample/mode?
                 //~ bool is_applied = this->ApplySystToSKMode(p,s,m);
-                bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
+		bool is_applied;
+#ifdef EXPANDEDBANFF
+		if(ip < kNumOfXSecSystOrig)
+#endif //EXPANDEDBANFF
+		  is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
+#ifdef EXPANDEDBANFF
+		else
+		  apply = kXsApplyXSecSystToSKModeNewBANFF[is][ip - kNumOfXSecSystOrig][im];
+#endif //EXPANDEDBANFF
                 if(!is_applied) continue;
 
                 // loop over the var.-size  Ereco and Etrue bins for which weight splines were pre-computed
@@ -728,7 +745,15 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 #endif
         // is the current systematic parameter going to be applied to current sample/mode?
         //~ bool is_applied = this->ApplySystToSKMode(p,s,m);
-        bool is_applied = kXsApplyXSecSystToSKMode[is][im][ip];       
+	bool is_applied;
+#ifdef EXPANDEDBANFF
+	if(ip < kNumOfXSecSystOrig)
+#endif //EXPANDEDBANFF
+	  is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
+#ifdef EXPANDEDBANFF
+	else
+	  apply = kXsApplyXSecSystToSKModeNewBANFF[is][ip - kNumOfXSecSystOrig][im];
+#endif //EXPANDEDBANFF
                 
         if(!is_applied) continue;
 
@@ -2938,7 +2963,15 @@ bool NuXSec::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m
     
     int is = arr_index->SuperkSampleIdx(s);
     
-    bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
+    bool apply;
+#ifdef EXPANDEDBANFF
+    if(isyst < kNumOfXSecSystOrig)
+#endif //EXPANDEDBANFF
+      apply = kXsApplyXSecSystToSKMode[is][im][isyst];
+#ifdef EXPANDEDBANFF
+    else
+      apply = kXsApplyXSecSystToSKModeNewBANFF[is][isyst - kNumOfXSecSystOrig][im];
+#endif //EXPANDEDBANFF
     
     return apply;
 }

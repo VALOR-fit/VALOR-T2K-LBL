@@ -176,6 +176,45 @@ static const PhysParamId_t kNuisBANFFNew09  = kNuis084;
 static const PhysParamId_t kLastBANFFParam  = kNuis085; // Utility, should always come after last FHC BANFF
 #else
 static const PhysParamId_t kLastBANFFParam  = kNuis075; // Utility, should always come after last FHC BANFF
+
+const std::map<Phys_ParamId_t,int> create_map()
+{
+  std::map<Phys_ParamId_t,int> NewBANFFPositions;
+  int pos = 0;
+#ifdef ADDBANFF00
+  NewBANFFPositions[kNuisBANFFNew00] = pos++;
+#endif //ADDBANFF00
+#ifdef ADDBANFF01
+  NewBANFFPositions[kNuisBANFFNew01] = pos++;
+#endif //ADDBANFF01
+#ifdef ADDBANFF02
+  NewBANFFPositions[kNuisBANFFNew02] = pos++;
+#endif //ADDBANFF02
+#ifdef ADDBANFF03
+  NewBANFFPositions[kNuisBANFFNew03] = pos++;
+#endif //ADDBANFF03
+#ifdef ADDBANFF04
+  NewBANFFPositions[kNuisBANFFNew04] = pos++;
+#endif //ADDBANFF04
+#ifdef ADDBANFF05
+  NewBANFFPositions[kNuisBANFFNew05] = pos++;
+#endif //ADDBANFF05
+#ifdef ADDBANFF06
+  NewBANFFPositions[kNuisBANFFNew06] = pos++;
+#endif //ADDBANFF06
+#ifdef ADDBANFF07
+  NewBANFFPositions[kNuisBANFFNew07] = pos++;
+#endif //ADDBANFF07
+#ifdef ADDBANFF08
+  NewBANFFPositions[kNuisBANFFNew08] = pos++;
+#endif //ADDBANFF08
+#ifdef ADDBANFF09
+  NewBANFFPositions[kNuisBANFFNew09] = pos++;
+#endif //ADDBANFF09
+};
+
+static const map<<Phys_ParamId_t,int> kNewBANFFPositions = create_map();
+
 #endif //EXPANDEDBANFF
 
    /*

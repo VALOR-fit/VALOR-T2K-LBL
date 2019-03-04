@@ -156,7 +156,7 @@ private:
   void CheckIsSplineParam (int nparams, const conv::PhysParamId_t * params, const bool * spline, const char * vname);
   void CheckIsBANFFParam  (int nparams, int nbanffxsecparams, const conv::PhysParamId_t * params, const bool * banff, const char * vname);
   void CheckERange        (int nparams, const conv::PhysParamId_t * params, const double * erange, const char * vname);
-  void CheckSKMode        (int nparams, const conv::PhysParamId_t * params, const bool * modes, const char * vname);
+  void CheckSKMode        (int nparams, const conv::PhysParamId_t * params, const bool * modes, const int array_order_mode, const char * vname);
 
   void Init    (void);
   void CleanUp (void);

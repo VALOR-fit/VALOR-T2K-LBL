@@ -1366,8 +1366,16 @@ bool util::ApplySystToSKMode(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m)
     
   int is = arr_index->SuperkSampleIdx(s);
     
-  bool apply = kXsApplyXSecSystToSKMode[is][im][isyst];
-    
+  bool apply;
+#ifdef EXPANDEDBANFF
+  if(is < kNumOfXSecSystOrig)
+#endif //EXPANDEDBANFF
+    apply = kXsApplyXSecSystToSKMode[is][im][isyst];
+#ifdef EXPANDEDBANFF
+  else
+    apply = kXsApplyXSecSystToSKModeNewBANFF[is][isyst - kNumOfXSecSystOrig][im];
+#endif //EXPANDEDBANFF
+
   return apply;
 }
 //____________________________________________________________________________  
