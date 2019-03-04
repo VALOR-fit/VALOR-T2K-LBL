@@ -70,43 +70,6 @@ namespace valor {
 #endif
 #if defined(__USE_NIWG2017__)
 #  if BANFF_BINS == 1 //joint
-
-#ifdef EXPANDEDBANFF
-    static const int kNumOfExtraXSecParamsInBANFFfit = 0
-#ifdef ADDBANFF00
-      + 1
-#endif //ADDBANFF00
-#ifdef ADDBANFF01
-      + 1
-#endif //ADDBANFF01
-#ifdef ADDBANFF02
-      + 1
-#endif //ADDBANFF02
-#ifdef ADDBANFF03
-      + 1
-#endif //ADDBANFF03
-#ifdef ADDBANFF04
-      + 1
-#endif //ADDBANFF04
-#ifdef ADDBANFF05
-      + 1
-#endif //ADDBANFF05
-#ifdef ADDBANFF06
-      + 1
-#endif //ADDBANFF06
-#ifdef ADDBANFF07
-      + 1
-#endif //ADDBANFF07
-#ifdef ADDBANFF08
-      + 1
-#endif //ADDBANFF08
-#ifdef ADDBANFF09
-      + 1
-#endif //ADDBANFF09
-      ;
-#else
-    static const int kNumOfExtraXSecParamsInBANFFfit = 0;
-#endif //EXPANDEDBANFF
     static const int kNumOfParamsInBANFFfit = 49 + kNumOfExtraXSecParamsInBANFFfit;
     static const int kNumOfXSecParamsInBANFFfit = 24 + kNumOfExtraXSecParamsInBANFFfit;
     static const int kNumOfFluxParamsInBANFFfit = kNumOfParamsInBANFFfit - kNumOfXSecParamsInBANFFfit - kNumOfExtraXSecParamsInBANFFfit;
@@ -607,7 +570,7 @@ namespace valor {
       false,                // kNuisBANFFBeRPA_U     
       false,                // kNuisBANFFShape2p2h   
       false,                // kNuisBANFFNorm2p2hCtoO
-      false,                // kRHCNuisBANFFEb
+      false                 // kRHCNuisBANFFEb
 #  endif
 
 #ifdef EXPANDEDBANFF
@@ -735,7 +698,7 @@ namespace valor {
       false,                // kNuisBANFFBeRPA_U     
       false,                // kNuisBANFFShape2p2h   
       false,                // kNuisBANFFNorm2p2hCtoO
-      false,                // kNuisBANFFEb
+      false                 // kNuisBANFFEb
 #  endif            
 
 #ifdef EXPANDEDBANFF
@@ -838,7 +801,7 @@ namespace valor {
       0,                    // kNuisBANFFBeRPA_U     
       0,                    // kNuisBANFFShape2p2h   
       0,                    // kNuisBANFFNorm2p2hCtoO
-      0,                    // kNuisBANFFEb
+      0                     // kNuisBANFFEb
 #  endif
 
 #ifdef EXPANDEDBANFF
@@ -937,7 +900,7 @@ namespace valor {
       0,                    // kNuisBANFFBeRPA_U     
       0,                    // kNuisBANFFShape2p2h   
       0,                    // kNuisBANFFNorm2p2hCtoO
-      0,                    // kRHCNuisBANFFEb
+      0                     // kRHCNuisBANFFEb
 #  endif
 
 #ifdef EXPANDEDBANFF
@@ -1068,7 +1031,7 @@ namespace valor {
       0,                    // kNuisBANFFBeRPA_U     
       0,                    // kNuisBANFFShape2p2h   
       0,                    // kNuisBANFFNorm2p2hCtoO
-      0,                    // kNuisBANFFEb
+      0                     // kNuisBANFFEb
 #  endif            
 
 #ifdef EXPANDEDBANFF
@@ -1174,7 +1137,7 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFBeRPA_U     
       {  -1,   -1 },        // kNuisBANFFShape2p2h   
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
-      {  -1,   -1 },        // kNuisBANFFEb
+      {  -1,   -1 }         // kNuisBANFFEb
 #  endif            
 
 #ifdef EXPANDEDBANFF
@@ -1280,7 +1243,7 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFBeRPA_U     
       {  -1,   -1 },        // kNuisBANFFShape2p2h   
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
-      {  -1,   -1 },        // kRHCNuisBANFFEb
+      {  -1,   -1 }         // kRHCNuisBANFFEb
 #  endif                  
 
 #ifdef EXPANDEDBANFF
@@ -1419,7 +1382,7 @@ namespace valor {
       {  -1,   -1 },        // kNuisBANFFBeRPA_U     
       {  -1,   -1 },        // kNuisBANFFShape2p2h   
       {  -1,   -1 },        // kNuisBANFFNorm2p2hCtoO
-      {  -1,   -1 },        // kNuisBANFFEb
+      {  -1,   -1 }         // kNuisBANFFEb
 #  endif                        
 
 #ifdef EXPANDEDBANFF

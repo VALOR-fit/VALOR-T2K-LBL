@@ -273,5 +273,42 @@ Split valor::conv namespace into several smaller files
 #define ADDBANFF09
 #endif //EXPANDEDBANFF
 
+#ifdef EXPANDEDBANFF
+    static const int kNumOfExtraXSecParamsInBANFFfit = 0
+#ifdef ADDBANFF00
+      + 1
+#endif //ADDBANFF00
+#ifdef ADDBANFF01
+      + 1
+#endif //ADDBANFF01
+#ifdef ADDBANFF02
+      + 1
+#endif //ADDBANFF02
+#ifdef ADDBANFF03
+      + 1
+#endif //ADDBANFF03
+#ifdef ADDBANFF04
+      + 1
+#endif //ADDBANFF04
+#ifdef ADDBANFF05
+      + 1
+#endif //ADDBANFF05
+#ifdef ADDBANFF06
+      + 1
+#endif //ADDBANFF06
+#ifdef ADDBANFF07
+      + 1
+#endif //ADDBANFF07
+#ifdef ADDBANFF08
+      + 1
+#endif //ADDBANFF08
+#ifdef ADDBANFF09
+      + 1
+#endif //ADDBANFF09
+      ;
+#else
+    static const int kNumOfExtraXSecParamsInBANFFfit = 0;
+#endif //EXPANDEDBANFF
+
 #endif //ana_options_h
 

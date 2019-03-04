@@ -19,6 +19,7 @@
 #define _t2k_phys_param_id_h_
 
 #include <string>
+#include <map>
 
 #include "AnalysisOptions.h"
 
@@ -174,12 +175,10 @@ static const PhysParamId_t kNuisBANFFNew08  = kNuis083;
 static const PhysParamId_t kNuisBANFFNew09  = kNuis084;
 #endif //ADDBANFF09
 static const PhysParamId_t kLastBANFFParam  = kNuis085; // Utility, should always come after last FHC BANFF
-#else
-static const PhysParamId_t kLastBANFFParam  = kNuis075; // Utility, should always come after last FHC BANFF
 
-const std::map<Phys_ParamId_t,int> create_map()
+std::map<PhysParamId_t,int> create_map()
 {
-  std::map<Phys_ParamId_t,int> NewBANFFPositions;
+  std::map<PhysParamId_t,int> NewBANFFPositions;
   int pos = 0;
 #ifdef ADDBANFF00
   NewBANFFPositions[kNuisBANFFNew00] = pos++;
@@ -211,9 +210,14 @@ const std::map<Phys_ParamId_t,int> create_map()
 #ifdef ADDBANFF09
   NewBANFFPositions[kNuisBANFFNew09] = pos++;
 #endif //ADDBANFF09
+  return NewBANFFPositions;
 };
 
-static const map<<Phys_ParamId_t,int> kNewBANFFPositions = create_map();
+ static std::map<PhysParamId_t,int> kNewBANFFPositions = valor::conv::create_map();
+
+#else
+
+ static const PhysParamId_t kLastBANFFParam  = kNuis075; // Utility, should always come after last FHC BANFF
 
 #endif //EXPANDEDBANFF
 

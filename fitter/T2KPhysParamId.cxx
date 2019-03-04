@@ -146,6 +146,7 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kNuisBANFFNorm2p2hCtoO  ) : return "BANFF; Norm;  2p2h C to O";  break;
   case ( kNuisBANFFEb  ) : return "BANFF; Eb";  break;
 
+#ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
   case ( kNuisBANFFNew00 ):
@@ -178,10 +179,11 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = (int)p - (int)kNuisBANFFNew00;
+      int ip = kNewBANFFPositions[p];
       return std::string(Form("New BANFF %2d", ip));
       break;
     }
+#endif //EXPANDEDBANFF
 
   //
 
@@ -573,43 +575,6 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kRHCNuisBANFFShape2p2h     ) : return "BANFF; 2p2h nu nubar shape; RHC"; break;
   case ( kRHCNuisBANFFNorm2p2hCtoO  ) : return "BANFF; 2p2h C to O; RHC";
   case ( kRHCNuisBANFFEb  ) : return "BANFF; Eb; RHC";
-
-    //NEW BANFF
-#ifdef ADDBANFF00
-  case ( kNuisBANFFNew00 ):
-#endif //ADDBANFF00
-#ifdef ADDBANFF01
-  case ( kNuisBANFFNew01 ):
-#endif //ADDBANFF01
-#ifdef ADDBANFF02
-  case ( kNuisBANFFNew02 ):
-#endif //ADDBANFF02
-#ifdef ADDBANFF03
-  case ( kNuisBANFFNew03 ):
-#endif //ADDBANFF03
-#ifdef ADDBANFF04
-  case ( kNuisBANFFNew04 ):
-#endif //ADDBANFF04
-#ifdef ADDBANFF05
-  case ( kNuisBANFFNew05 ):
-#endif //ADDBANFF05
-#ifdef ADDBANFF06
-  case ( kNuisBANFFNew06 ):
-#endif //ADDBANFF06
-#ifdef ADDBANFF07
-  case ( kNuisBANFFNew07 ):
-#endif //ADDBANFF07
-#ifdef ADDBANFF08
-  case ( kNuisBANFFNew08 ):
-#endif //ADDBANFF08
-#ifdef ADDBANFF09
-  case ( kNuisBANFFNew09 ):
-#endif //ADDBANFF09
-    {
-      int ip = (int)p - (int)kNuisBANFFNew00;
-      return std::string(Form("New BANFF %2d", ip));
-      break;
-    }
 
   //
 
@@ -1219,6 +1184,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
   case ( kNuisBANFFNorm2p2hCtoO  ) : return "BANFF; Norm; 2p2h C to O";  break;
   case ( kNuisBANFFEb  ) : return "BANFF; Eb";
 
+#ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
   case ( kNuisBANFFNew00 ):
@@ -1251,10 +1217,11 @@ string valor::util::AsStringTex(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = (int)p - (int)kNuisBANFFNew00;
+      int ip = kNewBANFFPositions[p];
       return std::string(Form("New BANFF %2d", ip));
       break;
     }
+#endif //EXPANDEDBANFF
 
   //
             
@@ -2504,6 +2471,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisBANFFNorm2p2hCtoO      ) : return "f_banffnorm_2p2hCtoO_fhc_rhc";  break;
   case ( kNuisBANFFEb      ) : return "f_banffshape_eb_fhc_rhc";
 
+#ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
   case ( kNuisBANFFNew00 ):
@@ -2536,10 +2504,11 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = (int)p - (int)kNuisBANFFNew00;
+      int ip = kNewBANFFPositions[p];
       return std::string(Form("f_banffnew%2d", ip));
       break;
     }
+#endif //EXPANDEDBANFF
             
 #else
 #ifndef ONEOVERMAQE
@@ -2586,6 +2555,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisBANFFNorm2p2hCtoO      ) : return "f_banffnorm_2p2hCtoO";    break;
   case ( kNuisBANFFEb         ) : return "f_banffshape_eb";
 
+#ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
   case ( kNuisBANFFNew00 ):
@@ -2618,10 +2588,11 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = (int)p - (int)kNuisBANFFNew00;
+      int ip = kNewBANFFPositions[p];
       return std::string(Form("f_banffnew%2d", ip));
       break;
     }
+#endif //EXPANDEDBANFF
 
   //
             
@@ -3272,6 +3243,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFFEb    ) : return "$f_{Shape_{Eb}}^{banff}$";
     //
 
+#ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
   case ( kNuisBANFFNew00 ):
@@ -3304,11 +3276,11 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = (int)p - (int)kNuisBANFFNew00;
+      int ip = kNewBANFFPositions[p];
       return std::string(Form("$f_{%2d}^{BANFF new}", ip));
       break;
     }
-
+#endif //EXPANDEDBANFF
             
   //
   // XSec params not correlated with flux
@@ -3802,44 +3774,6 @@ string valor::util::AsStringPaperTable(PhysParamId_t p)
     case ( kNuisBANFFEb       ) : 
     case ( kRHCNuisBANFFEb    ) : 
       return "Binding energy shape";     break;
-
-    //NEW BANFF
-#ifdef ADDBANFF00
-    case ( kNuisBANFFNew00 ):
-#endif //ADDBANFF00
-#ifdef ADDBANFF01
-    case ( kNuisBANFFNew01 ):
-#endif //ADDBANFF01
-#ifdef ADDBANFF02
-    case ( kNuisBANFFNew02 ):
-#endif //ADDBANFF02
-#ifdef ADDBANFF03
-    case ( kNuisBANFFNew03 ):
-#endif //ADDBANFF03
-#ifdef ADDBANFF04
-    case ( kNuisBANFFNew04 ):
-#endif //ADDBANFF04
-#ifdef ADDBANFF05
-    case ( kNuisBANFFNew05 ):
-#endif //ADDBANFF05
-#ifdef ADDBANFF06
-    case ( kNuisBANFFNew06 ):
-#endif //ADDBANFF06
-#ifdef ADDBANFF07
-    case ( kNuisBANFFNew07 ):
-#endif //ADDBANFF07
-#ifdef ADDBANFF08
-    case ( kNuisBANFFNew08 ):
-#endif //ADDBANFF08
-#ifdef ADDBANFF09
-    case ( kNuisBANFFNew09 ):
-#endif //ADDBANFF09
-      {
-	int ip = (int)p - (int)kNuisBANFFNew00;
-	return std::string(Form("New BANFF %2d", ip));
-	break;
-      }
-
                 
     default:
       return util::AsString(p);
@@ -4321,6 +4255,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
   case ( kNuisBANFFNorm2p2hCtoO   ) : return true;
   case ( kNuisBANFFEb   ) : return true;
 
+#ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
   case ( kNuisBANFFNew00 ):
@@ -4353,6 +4288,7 @@ bool valor::util::IsXSec(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     return true;    
+#endif //EXPANDEDBANFF
     
   case ( kRHCNuisBANFF2p2hBar       ) : return true;
   case ( kRHCNuisBANFF2p2h          ) : return true;
@@ -4430,6 +4366,7 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
   case( kRHCNuisBANFFBeRPA_U            ) : return true; break;
   case( kRHCNuisBANFFNorm2p2hCtoO       ) : return true; break;
 
+#ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
   case ( kNuisBANFFNew00 ):
@@ -4462,7 +4399,8 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     return true;    
-      
+#endif //EXPANDEDBANFF
+
   default                               : return false; break;
   }
   return false;

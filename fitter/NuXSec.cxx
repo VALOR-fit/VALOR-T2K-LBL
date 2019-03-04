@@ -85,8 +85,8 @@ NuXSec::NuXSec()
     CheckERange(kNumOfXSecSyst,    kListOfXSecSyst,    (const double *)kXSecSystEtrueCut,    "kXSecSystEtrueCut");
     CheckERange(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const double *)kRHCXSecSystEtrueCut, "kRHCXSecSystEtrueCut");
     
-    CheckSKModeOrig(kNumOfXSecSystOrig, kListOfXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, 0, "kXsApplyXSecSystToSKMode");
-    CheckSKModeOrig(kNumOfExtraXSecParamsInBANFFfit, kListOfXSecSyst + kNumOfXSecSystOrig, (const bool *)kXsApplyXSecSystToSKModeNewBANFF, 1, "kXsApplyXSecSystToSKModeNewBANFF");
+    CheckSKMode(kNumOfXSecSystOrig, kListOfXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, 0, "kXsApplyXSecSystToSKMode");
+    CheckSKMode(kNumOfExtraXSecParamsInBANFFfit, kListOfXSecSyst + kNumOfXSecSystOrig, (const bool *)kXsApplyXSecSystToSKModeNewBANFF, 1, "kXsApplyXSecSystToSKModeNewBANFF");
 #ifdef __use_1Rsplines_for_MultiR_sample__
     LOG("NuXSec",pWARN) << "Changing spline name to read 1Re splines for the MultiR samples";
 #endif
@@ -480,7 +480,7 @@ bool NuXSec::ReadSplines(TXMLEngine* xml, XMLNodePointer_t root_node)
 		  is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
 #ifdef EXPANDEDBANFF
 		else
-		  apply = kXsApplyXSecSystToSKModeNewBANFF[is][ip - kNumOfXSecSystOrig][im];
+		  is_applied = kXsApplyXSecSystToSKModeNewBANFF[is][ip - kNumOfXSecSystOrig][im];
 #endif //EXPANDEDBANFF
                 if(!is_applied) continue;
 
@@ -752,7 +752,7 @@ bool NuXSec::ReadSplines2D(TXMLEngine* xml, XMLNodePointer_t root_node)
 	  is_applied = kXsApplyXSecSystToSKMode[is][im][ip];
 #ifdef EXPANDEDBANFF
 	else
-	  apply = kXsApplyXSecSystToSKModeNewBANFF[is][ip - kNumOfXSecSystOrig][im];
+	  is_applied = kXsApplyXSecSystToSKModeNewBANFF[is][ip - kNumOfXSecSystOrig][im];
 #endif //EXPANDEDBANFF
                 
         if(!is_applied) continue;

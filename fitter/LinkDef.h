@@ -13,6 +13,7 @@
 #pragma link C++ enum  valor::conv::SuperkSample_t;
 #pragma link C++ enum  valor::conv::SuperkMode_t;
 
+#pragma link C++ class std::map<valor::conv::PhysParamId_t, int>+;
 
 #pragma link C++ class valor::util::ArrIdx;
 #pragma link C++ class valor::util::UtlMakeFakeData;

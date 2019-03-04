@@ -277,7 +277,7 @@ namespace valor {
       false,                     //kNuisBANFFBeRPA_U     
       true,                      //kNuisBANFFShape2p2h   
       false,                     //kNuisBANFFNorm2p2hCtoO
-      true,                      //kNuisBANFFEb
+      true                       //kNuisBANFFEb
 #  endif             
 
 #ifdef EXPANDEDBANFF
@@ -350,7 +350,7 @@ namespace valor {
       false,                     // kNuisBANFFBeRPA_U     
       true,                      // kNuisBANFFShape2p2h   
       false,                      // kNuisBANFFNorm2p2hCtoO
-      true,                      // kNuisBANFFEb
+      true                       // kNuisBANFFEb
 #  endif             
 
 #ifdef EXPANDEDBANFF
@@ -427,7 +427,7 @@ namespace valor {
       true,                      // kNuisBANFFBeRPA_U     
       true,                      // kNuisBANFFShape2p2h   
       true,                      // kNuisBANFFNorm2p2hCtoO
-      true,                      // kNuisBANFFEb
+      true                       // kNuisBANFFEb
 #  endif             
 
 #ifdef EXPANDEDBANFF
@@ -502,7 +502,7 @@ namespace valor {
       true,                      //kNuisBANFFBeRPA_U     
       true,                      //kNuisBANFFShape2p2h   
       true,                      //kNuisBANFFNorm2p2hCtoO
-      true,                      //kNuisBANFFEb
+      true                       //kNuisBANFFEb
 #  endif             
 
 #ifdef EXPANDEDBANFF
@@ -578,7 +578,7 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_U     
       { 0.0, 100.0 },            //kNuisBANFFShape2p2h   
       { 0.0, 100.0 },            //kNuisBANFFNorm2p2hCtoO
-      { 0.0, 100.0 },            //kNuisBANFFEb
+      { 0.0, 100.0 }             //kNuisBANFFEb
 #  endif             
 
 #ifdef EXPANDEDBANFF
@@ -652,7 +652,7 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_U     
       { 0.0, 100.0 },            //kNuisBANFFShape2p2h   
       { 0.0, 100.0 },            //kNuisBANFFNorm2p2hCtoO
-      { 0.0, 100.0 },            //kNuisBANFFEb
+      { 0.0, 100.0 }             //kNuisBANFFEb
 #  endif             
 
 #ifdef EXPANDEDBANFF
@@ -726,7 +726,7 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_U     
       { 0.0, 100.0 },            //kNuisBANFFShape2p2h   
       { 0.0, 100.0 },            //kNuisBANFFNorm2p2hCtoO
-      { 0.0, 100.0 },            //kNuisBANFFEb
+      { 0.0, 100.0 }             //kNuisBANFFEb
 #  endif             
 
 #ifdef EXPANDEDBANFF
@@ -799,7 +799,7 @@ namespace valor {
       { 0.0, 100.0 },            //kNuisBANFFBeRPA_U     
       { 0.0, 100.0 },            //kNuisBANFFShape2p2h   
       { 0.0, 100.0 },            //kNuisBANFFNorm2p2hCtoO
-      { 0.0, 100.0 },            //kNuisBANFFEb
+      { 0.0, 100.0 }             //kNuisBANFFEb
 #  endif             
 #ifdef EXPANDEDBANFF
       ,
@@ -875,7 +875,7 @@ namespace valor {
      -999,            //kNuisBANFFBeRPA_U     
      -999,            //kNuisBANFFShape2p2h   
      -999,            //kNuisBANFFNorm2p2hCtoO
-     -999,            //kNuisBANFFEb
+     -999             //kNuisBANFFEb
 #  endif             
 #ifdef EXPANDEDBANFF
       ,
@@ -948,7 +948,7 @@ namespace valor {
       -999,            //BANFF, BeRPA_U     
       -999,            //BANFF, Shape2p2h   
       -999,            //BANFF, Norm2p2h CtoO
-      -999,            //kNuisBANFFEb
+      -999             //kNuisBANFFEb
 #  endif             
 #ifdef EXPANDEDBANFF
       ,
@@ -1241,8 +1241,8 @@ namespace valor {
 #ifdef BANFF09
 	{ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0,     1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     1, 0, 0, 0, 0 }  //BANFF09
 #endif //BANFF09
-      } //FHC multi-ring e-like
-
+      }//FHC multi-ring e-like
+    };
 #endif //EXPANDEDBANFF
 
     // The following list describes in which MC templates we are supposed to apply the
