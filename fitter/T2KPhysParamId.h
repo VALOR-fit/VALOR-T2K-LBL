@@ -19,7 +19,6 @@
 #define _t2k_phys_param_id_h_
 
 #include <string>
-#include <map>
 
 #include "AnalysisOptions.h"
 
@@ -175,45 +174,6 @@ static const PhysParamId_t kNuisBANFFNew08  = kNuis083;
 static const PhysParamId_t kNuisBANFFNew09  = kNuis084;
 #endif //ADDBANFF09
 static const PhysParamId_t kLastBANFFParam  = kNuis085; // Utility, should always come after last FHC BANFF
-
-std::map<PhysParamId_t,int> create_map()
-{
-  std::map<PhysParamId_t,int> NewBANFFPositions;
-  int pos = 0;
-#ifdef ADDBANFF00
-  NewBANFFPositions[kNuisBANFFNew00] = pos++;
-#endif //ADDBANFF00
-#ifdef ADDBANFF01
-  NewBANFFPositions[kNuisBANFFNew01] = pos++;
-#endif //ADDBANFF01
-#ifdef ADDBANFF02
-  NewBANFFPositions[kNuisBANFFNew02] = pos++;
-#endif //ADDBANFF02
-#ifdef ADDBANFF03
-  NewBANFFPositions[kNuisBANFFNew03] = pos++;
-#endif //ADDBANFF03
-#ifdef ADDBANFF04
-  NewBANFFPositions[kNuisBANFFNew04] = pos++;
-#endif //ADDBANFF04
-#ifdef ADDBANFF05
-  NewBANFFPositions[kNuisBANFFNew05] = pos++;
-#endif //ADDBANFF05
-#ifdef ADDBANFF06
-  NewBANFFPositions[kNuisBANFFNew06] = pos++;
-#endif //ADDBANFF06
-#ifdef ADDBANFF07
-  NewBANFFPositions[kNuisBANFFNew07] = pos++;
-#endif //ADDBANFF07
-#ifdef ADDBANFF08
-  NewBANFFPositions[kNuisBANFFNew08] = pos++;
-#endif //ADDBANFF08
-#ifdef ADDBANFF09
-  NewBANFFPositions[kNuisBANFFNew09] = pos++;
-#endif //ADDBANFF09
-  return NewBANFFPositions;
-};
-
- static std::map<PhysParamId_t,int> kNewBANFFPositions = valor::conv::create_map();
 
 #else
 

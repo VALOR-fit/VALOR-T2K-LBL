@@ -140,6 +140,9 @@ namespace valor {
             int BANFFXSecSystIdx    (conv::PhysParamId_t p)                        { return fBANFFXSecSystIdx   [p]; }
             int RHCBANFFSystIdx     (conv::PhysParamId_t p)                        { return fRHCBANFFSystIdx    [p]; }
             int RHCBANFFXSecSystIdx (conv::PhysParamId_t p)                        { return fRHCBANFFXSecSystIdx[p]; }
+#ifdef EXPANDEDBANFF
+	    int NewBANFFSystIdx     (conv::PhysParamId_t p)                        { return fNewBANFFSystIdx[p]; }
+#endif //EXPANDEDBANFF
             int FSISystIdx          (conv::PhysParamId_t p)                        { return fFSISystIdx         [p]; }
             int SKDetFSISystIdx     (conv::PhysParamId_t p)                        { return fSKDetFSISystIdx    [p]; }
             int RHCSKDetFSISystIdx  (conv::PhysParamId_t p)                        { return fRHCSKDetFSISystIdx [p]; }
@@ -168,6 +171,9 @@ namespace valor {
             int fRHCBANFFSystIdx     [conv::knppmax];            ///< maps physics param to BANFF covariance matrix
             int fBANFFXSecSystIdx    [conv::knppmax];            ///< maps physics param to BANFF covariance matrix, xsec only
             int fRHCBANFFXSecSystIdx [conv::knppmax];            ///< maps physics param to BANFF covariance matrix, xsec only
+#ifdef EXPANDEDBANFF
+	    int fNewBANFFSystIdx     [conv::knppmax];            ///< maps physics param to BANFF covariance matrix, new selection of xsec params only
+#endif //EXPANDEDBANFF
             int fFSISystIdx          [conv::knppmax];            ///< maps physics param to FSI covariance matrix
             int fSKDetFSISystIdx     [conv::knppmax];            ///< maps physics param to FSI covariance matrix
             int fRHCSKDetFSISystIdx  [conv::knppmax];            ///< maps physics param to FSI covariance matrix

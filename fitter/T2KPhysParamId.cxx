@@ -179,7 +179,7 @@ string valor::util::AsString(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = kNewBANFFPositions[p];
+      int ip = ArrIdx::Instance()->NewBANFFSystIdx(p);
       return std::string(Form("New BANFF %2d", ip));
       break;
     }
@@ -1217,7 +1217,7 @@ string valor::util::AsStringTex(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = kNewBANFFPositions[p];
+      int ip = ArrIdx::Instance()->NewBANFFSystIdx(p);
       return std::string(Form("New BANFF %2d", ip));
       break;
     }
@@ -2504,7 +2504,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = kNewBANFFPositions[p];
+      int ip = ArrIdx::Instance()->NewBANFFSystIdx(p);
       return std::string(Form("f_banffnew%2d", ip));
       break;
     }
@@ -2588,7 +2588,7 @@ string valor::util::AsStringCompact(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = kNewBANFFPositions[p];
+      int ip = ArrIdx::Instance()->NewBANFFSystIdx(p);
       return std::string(Form("f_banffnew%2d", ip));
       break;
     }
@@ -3276,7 +3276,7 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
   case ( kNuisBANFFNew09 ):
 #endif //ADDBANFF09
     {
-      int ip = kNewBANFFPositions[p];
+      int ip = ArrIdx::Instance()->NewBANFFSystIdx(p);
       return std::string(Form("$f_{%2d}^{BANFF new}", ip));
       break;
     }

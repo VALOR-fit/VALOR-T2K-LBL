@@ -1158,8 +1158,44 @@ void valor::util::ArrIdx::Init(void)
 #endif
     }
 
-    
 
+#ifdef EXPANDEDBANFF
+    //NEW BANFF
+    for(int i = 0; i < knppmax; i++) {
+      fNewBANFFSystIdx[i] = -1;
+    }
+      int pos = 0;
+#ifdef ADDBANFF00
+      fNewBANFFSystIdx[kNuisBANFFNew00] = pos++;
+#endif //ADDBANFF00
+#ifdef ADDBANFF01
+      fNewBANFFSystIdx[kNuisBANFFNew01] = pos++;
+#endif //ADDBANFF01
+#ifdef ADDBANFF02
+      fNewBANFFSystIdx[kNuisBANFFNew02] = pos++;
+#endif //ADDBANFF02
+#ifdef ADDBANFF03
+      fNewBANFFSystIdx[kNuisBANFFNew03] = pos++;
+#endif //ADDBANFF03
+#ifdef ADDBANFF04
+      fNewBANFFSystIdx[kNuisBANFFNew04] = pos++;
+#endif //ADDBANFF04
+#ifdef ADDBANFF05
+      fNewBANFFSystIdx[kNuisBANFFNew05] = pos++;
+#endif //ADDBANFF05
+#ifdef ADDBANFF06
+      fNewBANFFSystIdx[kNuisBANFFNew06] = pos++;
+#endif //ADDBANFF06
+#ifdef ADDBANFF07
+      fNewBANFFSystIdx[kNuisBANFFNew07] = pos++;
+#endif //ADDBANFF07
+#ifdef ADDBANFF08
+      fNewBANFFSystIdx[kNuisBANFFNew08] = pos++;
+#endif //ADDBANFF08
+#ifdef ADDBANFF09
+      fNewBANFFSystIdx[kNuisBANFFNew09] = pos++;
+#endif //ADDBANFF09
+#endif //EXPANDEDBANFF
 
   //SKDET + FSI
   // fhc
