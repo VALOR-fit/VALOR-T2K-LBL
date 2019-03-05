@@ -86,7 +86,9 @@ NuXSec::NuXSec()
     CheckERange(kNumOfRHCXSecSyst, kListOfRHCXSecSyst, (const double *)kRHCXSecSystEtrueCut, "kRHCXSecSystEtrueCut");
     
     CheckSKMode(kNumOfXSecSystOrig, kListOfXSecSyst, (const bool *)kXsApplyXSecSystToSKMode, 0, "kXsApplyXSecSystToSKMode");
+#ifdef EXPANDEDBANFF
     CheckSKMode(kNumOfExtraXSecParamsInBANFFfit, kListOfXSecSyst + kNumOfXSecSystOrig, (const bool *)kXsApplyXSecSystToSKModeNewBANFF, 1, "kXsApplyXSecSystToSKModeNewBANFF");
+#endif //EXPANDEDBANFF
 #ifdef __use_1Rsplines_for_MultiR_sample__
     LOG("NuXSec",pWARN) << "Changing spline name to read 1Re splines for the MultiR samples";
 #endif
