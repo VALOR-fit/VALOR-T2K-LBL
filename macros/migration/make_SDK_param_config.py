@@ -253,13 +253,13 @@ def get_type(ip, p):
         if util.IsRHCSystematic(p):
             index = 1 + ip - _first_xsec_index - conv.kNumOfXSecSyst    # 1 + because the first param in the table is RPA, which is depreciated and the BeRPA params are used instead. Iterating over the params does not give the RPA param.
             if conv.kRHCXSecSystHasWghtSplines[index]:
-                return "response function"
+                return "response"
             else:
                 return "normalisation"
         else:
             index = 1 + ip - _first_xsec_index  # 1 + because the first param in the table is RPA, which is depreciated and the BeRPA params are used instead. Iterating over the params does not give the RPA param.
             if conv.kXSecSystHasWghtSplines[index]:
-                return "response function"
+                return "response"
             else:
                 return "normalisation"
     else:
@@ -655,15 +655,15 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
                 and not (flavours["nue_osc"] or flavours["nuebar_osc"]):
             return "all"
         elif flavours["numu"] and flavours["nue"] and not (flavours["nue_osc"] or flavours["nuebar_osc"] or flavours["numubar"] or flavours["nuebar"]):
-            return "all nu"
+            return "nu any"
         elif flavours["numubar"] and flavours["nuebar"] and not (flavours["nuebar_osc"] or flavours["nue_osc"] or flavours["numu"] or flavours["nue"]):
-            return "all nubar"
+            return "nubar any"
         else:
             print "Not expecting this flavor apply combination. Exiting.", flavours
             util.Die(-1)
     elif has_mu:
         if all_mu:
-            return "all numu"
+            return "numu any"
         else:
             len_true = 0
             for flav in flavours:
@@ -684,7 +684,7 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
         if all_e:
             return "unosc nue any, osc nue any"
         elif flavours["nue"] and flavours["nuebar"] and not (flavours["nue_osc"] or flavours["nuebar_osc"]):
-            return "all nue"
+            return "nue any"
         elif not (flavours["nue"] or flavours["nuebar"]) and flavours["nue_osc"] and flavours["nuebar_osc"]:
             return "osc nue any"
         elif flavours["nue"] and flavours["nue_osc"] and not (flavours["nuebar"] or flavours["nuebar_osc"]):
@@ -753,43 +753,49 @@ def set_kine_range(ip, p, fields):
     global _first_SKDetFSI_index
     range_low  = -999
     range_high = -999
-    if util.IsBANFF(p) and util.IsFlux(p):
-        if util.IsRHCSystematic(p):
-            index = ip - _first_flux_index - conv.kNumOfFluxParamsInBANFFfit # - num FHC params because FHC and RHC ranges are in the same indexes of 2 different arrays
-            ranges = c_to_pyroot_array_hack(conv.kEtrueRangeOfRHCFluxParamInBANFFfit, conv.kNumOfRHCParamsInBANFFfit, 2)   # pyroot can't handle c++ arrays, see c_to_pyroot_array_hack definition for details
-            range_low  = ranges[index][0]
-            range_high = ranges[index][1]
-        else:
-            index = ip - _first_flux_index
-            ranges = c_to_pyroot_array_hack(conv.kEtrueRangeOfFluxParamInBANFFfit, conv.kNumOfParamsInBANFFfit, 2)
-            range_low  = ranges[index][0]
-            range_high = ranges[index][1]
-        if range_low != -999 and range_high != -999:
-            fields.kine_ranges["Etrue"] = str(range_low) + ", " + str(range_high)
-    # Don't need to manually set the ranges of the BANFF interaction params, as they kine ranges should be from 0 to infinity, which is the default for the new Parameter class
-    elif util.IsSKDetFSI(p) and not (p == conv.kNuisSuperkEnergyScale or p == conv.kRHCNuisSuperkEnergyScale):
-        ranges = None
-        index  = None
-        if p not in MultiRingSKDetFSIParams:
-            # Param is not MultiReSKDetFSI
+    if util.IsBANFF(p):
+        if util.IsFlux(p):
             if util.IsRHCSystematic(p):
-                index = ip - _first_SKDetFSI_index - conv.kNumOfSKDetFSIParams
-                ranges = c_to_pyroot_array_hack(conv.kRHCSKDetFSIParamsErecoCut, conv.kNumOfRHCSKDetFSIParams, 2)
+                index = ip - _first_flux_index - conv.kNumOfFluxParamsInBANFFfit # - num FHC params because FHC and RHC ranges are in the same indexes of 2 different arrays
+                ranges = c_to_pyroot_array_hack(conv.kEtrueRangeOfRHCFluxParamInBANFFfit, conv.kNumOfRHCParamsInBANFFfit, 2)   # pyroot can't handle c++ arrays, see c_to_pyroot_array_hack definition for details
+                range_low  = ranges[index][0]
+                range_high = ranges[index][1]
             else:
-                index = ip - _first_SKDetFSI_index
-                ranges = c_to_pyroot_array_hack(conv.kSKDetFSIParamsErecoCut, conv.kNumOfSKDetFSIParams, 2)
+                index = ip - _first_flux_index
+                ranges = c_to_pyroot_array_hack(conv.kEtrueRangeOfFluxParamInBANFFfit, conv.kNumOfParamsInBANFFfit, 2)
+                range_low  = ranges[index][0]
+                range_high = ranges[index][1]
+            if range_low != -999 and range_high != -999:
+                fields.kine_ranges["Etrue"] = str(range_low) + ", " + str(range_high)
         else:
-            # Param is MultiReSKDetFSI
-            index = ip - _first_SKDetFSI_index - 2*conv.kNumOfSKDetFSIParams
-            if util.IsRHCSystematic(p):
-                print "ERROR: Something's gone wrong, there shouldn't be any RHC MultiRing params! Exiting"
-                util.Die(-1)
-            ranges = c_to_pyroot_array_hack(conv.kMultiRingSKDetFSIParamsErecoCut, conv.kNumOfSKDetFSIParamsMultiRing, 2)
-        range_low  = ranges[index][0]
-        range_high = ranges[index][1]
-        if range_low != -999 and range_high != -999:
-            fields.kine_ranges["Ereco"] = str(range_low) + ", " + str(range_high)
-    #print "*** test: parameter =", util.AsStringTex(p), " has range [", range_low, ", ", range_high, "] \n"
+            # interaction params
+            fields.kine_ranges["Etrue"] = "0, inf"
+    elif util.IsSKDetFSI(p):
+        if not (p == conv.kNuisSuperkEnergyScale or p == conv.kRHCNuisSuperkEnergyScale):
+            ranges = None
+            index  = None
+            if p not in MultiRingSKDetFSIParams:
+                # Param is not MultiReSKDetFSI
+                if util.IsRHCSystematic(p):
+                    index = ip - _first_SKDetFSI_index - conv.kNumOfSKDetFSIParams
+                    ranges = c_to_pyroot_array_hack(conv.kRHCSKDetFSIParamsErecoCut, conv.kNumOfRHCSKDetFSIParams, 2)
+                else:
+                    index = ip - _first_SKDetFSI_index
+                    ranges = c_to_pyroot_array_hack(conv.kSKDetFSIParamsErecoCut, conv.kNumOfSKDetFSIParams, 2)
+            else:
+                # Param is MultiReSKDetFSI
+                index = ip - _first_SKDetFSI_index - 2*conv.kNumOfSKDetFSIParams
+                if util.IsRHCSystematic(p):
+                    print "ERROR: Something's gone wrong, there shouldn't be any RHC MultiRing params! Exiting"
+                    util.Die(-1)
+                ranges = c_to_pyroot_array_hack(conv.kMultiRingSKDetFSIParamsErecoCut, conv.kNumOfSKDetFSIParamsMultiRing, 2)
+            range_low  = ranges[index][0]
+            range_high = ranges[index][1]
+            if range_low != -999 and range_high != -999:
+                fields.kine_ranges["Ereco"] = str(range_low) + ", " + str(range_high)
+        else:
+            # SK energy scale
+            fields.kine_ranges["Etrue"] = "0, inf"
 
 
 def set_category(p, fields):
