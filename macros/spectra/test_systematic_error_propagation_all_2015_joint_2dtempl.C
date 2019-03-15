@@ -47,7 +47,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  
  bool         save_toy_expts     = false,                                       /* save the ereco spectra? */
  
- const char * config_file        = "analysis_configuration_oa2017_run1-8_postfit.xml",
+ const char * config_file        = "analysis_configuration_hkfluxsophie_10year_postfit.xml",
  const char * fit_param_list     = "nuosc3f+nuisance",
  
  const char * mixparamchoice     = "sinsqtheta",
@@ -57,8 +57,9 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
                                               0-Nsyst --> mode table, -99 --> Document with all the mode table */
  string tablesyst_name           = "f_tamesu", //"f_banff17", /* follow util::AsStringCompact() convention */
  const bool   drawplots          = false,
- const bool   per_mode           = true,
- const char*  tag                = "postbanff_osc"
+ const bool   per_mode           = false,//true,
+ const char*  tag                = "postbanff_osc",
+ const bool   make_osc3pp_inputs = true
  ){
   using namespace std;
   using namespace valor;
@@ -996,16 +997,21 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   // Write ROOT file output
 
   string file_mode = (update_rootfile ? "UPDATE" : "RECREATE");
+  TFile * output_rootfile_osc3pp;
+  if(make_osc3pp_inputs)
+    output_rootfile_osc3pp = new TFile(Form("%s.fij.t2k.root", sname), file_mode.c_str());
   TFile * output_rootfile = new TFile(Form("systematic_variations%s_%s.root",tag,sname),file_mode.c_str());
   output_rootfile->cd();
   hErecoTun->Write(Form("Spectrum_%s_nominal",sname));
   hErecoTunCheck->Write(Form("Spectrum_%s_nominal_check",sname));
+  int systcounter = 0;
   for(int ip = 0; ip < np; ip++) {
     conv::PhysParamId_t p = fparm->WhichParam(ip);
     if(!fparm->IsNuisance(p)) continue;
     string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
     
+    output_rootfile->cd();
     hErecoTun_m1sigma[ip]->Write(Form("Spectrum_%s_%s_m1",sname,sysstr.c_str()));
     hErecoTun_m3sigma[ip]->Write(Form("Spectrum_%s_%s_m3",sname,sysstr.c_str()));
     hErecoTun_p1sigma[ip]->Write(Form("Spectrum_%s_%s_p1",sname,sysstr.c_str()));
@@ -1016,6 +1022,11 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     hRatioTun_p1sigma[ip]->Write(Form("Ratio_%s_%s_p1",sname,sysstr.c_str()));
     hRatioTun_p3sigma[ip]->Write(Form("Ratio_%s_%s_p3",sname,sysstr.c_str()));
     
+    if(make_osc3pp_inputs) {
+      output_rootfile_osc3pp->cd();
+      hRatioTun_p1sigma[ip]->Write(Form("syserre_%d",systcounter));
+    }
+    systcounter++;
   }
 
   if (per_mode) {
@@ -1048,6 +1059,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   } // per_mode
 
   output_rootfile->Close();
+  if(make_osc3pp_inputs)
+    output_rootfile_osc3pp->Close();
 
 
 
