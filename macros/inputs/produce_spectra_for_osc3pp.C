@@ -82,7 +82,7 @@ double produce_a_spectrum(const char * intag,
   return tot;
 }
 
-void produce_spectra_for_osc3pp(const char * intag = "Template2D_mcnorm_fluxtuned_banfftuned")
+void produce_spectra_for_osc3pp(const char * intag = "Template2D_mcnorm_fluxtuned_banfftuned_syst_multi")
 {
   const int nsamples = 2;
   string samples[nsamples] = {"1Rmu", "1Re"};
