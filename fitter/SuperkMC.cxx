@@ -4549,7 +4549,7 @@ void SuperkMC::ApplySystematicsToTemplates_Multiplicative_2D(void)
     }//is
     
 #ifdef __save_templates_debug__
-    this->NevDebug2D(kSKMCtSys, "mcnorm_fluxtuned_banfftuned_syst_multi");
+    this->NevDebug2D(kSKMCtFin, "mcnorm_fluxtuned_banfftuned_syst_multi");
 #endif
 }
 
