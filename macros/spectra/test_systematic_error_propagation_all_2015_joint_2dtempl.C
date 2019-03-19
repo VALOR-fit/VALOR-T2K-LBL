@@ -1025,6 +1025,12 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     if(make_osc3pp_inputs) {
       output_rootfile_osc3pp->cd();
       hRatioTun_p1sigma[ip]->Write(Form("syserre_%d",systcounter));
+      if(util::IsUsingSplines(p)) {
+	hRatioTun_p1sigma[ip]->Write(Form("syserre_%d_p1",systcounter));
+	hRatioTun_p3sigma[ip]->Write(Form("syserre_%d_p3",systcounter));
+	hRatioTun_m1sigma[ip]->Write(Form("syserre_%d_m1",systcounter));
+	hRatioTun_m3sigma[ip]->Write(Form("syserre_%d_m3",systcounter));
+      }
     }
     systcounter++;
   }
