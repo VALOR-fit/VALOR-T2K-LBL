@@ -29,8 +29,12 @@ arridx  = util.ArrIdx.Instance()
 species   = ["numu","nue","numubar","nuebar","signue", "signuebar"]
 #processes      = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother"]
 #processes_used = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother"]
-processes      = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother", "NC1gamma"]
+rocesses      = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother", "NC1gamma"]
 processes_used = ["CCQE", "CC1pi", "CCcoherent", "2p2h", "CCother", "NC1pi0", "NC1piPM", "NCcoherent", "NCother", "NC1gamma"]
+osc3pp_comparison = True
+if osc3pp_comparison:
+  processes      = ["CCQE", "CCnQE", "NC"]
+  processes_used = ["CCQE", "CCnQE", "NC"]
 
 
 #samples   = ["1Rmu","1Re","RHC1Rmu","RHC1Re"]
@@ -118,6 +122,65 @@ modes_to_species_and_process[conv.kSKmOscNuECC1pi]      = ("signue","CC1pi")
 modes_to_species_and_process[conv.kSKmOscNuECCcoh]      = ("signue","CCcoherent")
 modes_to_species_and_process[conv.kSKmOscNuECC2p2h]     = ("signue","2p2h")
 modes_to_species_and_process[conv.kSKmOscNuECCoth]      = ("signue","CCother")
+
+
+if osc3pp_comparison:
+  modes_to_species_and_process[conv.kSKmNuMuCCQE]         = ("numu", "CCQE")
+  modes_to_species_and_process[conv.kSKmNuMuCC1pi]        = ("numu", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuCCcoh]        = ("numu", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuCC2p2h]       = ("numu", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuCCoth]        = ("numu", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuNC1piC]       = ("numu", "NC")
+  modes_to_species_and_process[conv.kSKmNuMuNC1pi0]       = ("numu", "NC")
+  modes_to_species_and_process[conv.kSKmNuMuNCcoh]        = ("numu", "NC")
+  modes_to_species_and_process[conv.kSKmNuMuNCoth]        = ("numu", "NC")  # unified defini,.qtion
+  modes_to_species_and_process[conv.kSKmNuMuNC1Gamma]     = ("numu", "NC")  # unified definition
+  #
+  modes_to_species_and_process[conv.kSKmNuMuBarCCQE]      = ("numubar", "CCQE")
+  modes_to_species_and_process[conv.kSKmNuMuBarCC1pi]     = ("numubar", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuBarCCcoh]     = ("numubar", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuBarCC2p2h]    = ("numubar", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuBarCCoth]     = ("numubar", "CCnQE")
+  modes_to_species_and_process[conv.kSKmNuMuBarNC1piC]    = ("numubar", "NC")
+  modes_to_species_and_process[conv.kSKmNuMuBarNC1pi0]    = ("numubar", "NC")
+  modes_to_species_and_process[conv.kSKmNuMuBarNCcoh]     = ("numubar", "NC")
+  modes_to_species_and_process[conv.kSKmNuMuBarNCoth]     = ("numubar", "NC") #unified definition
+  modes_to_species_and_process[conv.kSKmNuMuBarNC1Gamma]  = ("numubar", "NC") #unified definition
+  #
+  modes_to_species_and_process[conv.kSKmNuECCQE]          = ("nue","CCQE")
+  modes_to_species_and_process[conv.kSKmNuECC1pi]         = ("nue","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuECCcoh]         = ("nue","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuECC2p2h]        = ("nue","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuECCoth]         = ("nue","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuENC1piC]        = ("nue","NC")
+  modes_to_species_and_process[conv.kSKmNuENC1pi0]        = ("nue","NC")
+  modes_to_species_and_process[conv.kSKmNuENCcoh]         = ("nue","NC")
+  modes_to_species_and_process[conv.kSKmNuENCoth]         = ("nue","NC") #unified definition
+  modes_to_species_and_process[conv.kSKmNuENC1Gamma]      = ("nue","NC") #unified definition
+  #
+  modes_to_species_and_process[conv.kSKmOscNuEBarCCQE]    = ("signuebar","CCQE")
+  modes_to_species_and_process[conv.kSKmOscNuEBarCC1pi]   = ("signuebar","CCnQE")
+  modes_to_species_and_process[conv.kSKmOscNuEBarCCcoh]   = ("signuebar","CCnQE")
+  modes_to_species_and_process[conv.kSKmOscNuEBarCC2p2h]  = ("signuebar","CCnQE")
+  modes_to_species_and_process[conv.kSKmOscNuEBarCCoth]   = ("signuebar","CCnQE")
+  #
+  modes_to_species_and_process[conv.kSKmNuEBarCCQE]       = ("nuebar","CCQE")
+  modes_to_species_and_process[conv.kSKmNuEBarCC1pi]      = ("nuebar","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuEBarCCcoh]      = ("nuebar","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuEBarCC2p2h]     = ("nuebar","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuEBarCCoth]      = ("nuebar","CCnQE")
+  modes_to_species_and_process[conv.kSKmNuEBarNC1piC]     = ("nuebar","NC")
+  modes_to_species_and_process[conv.kSKmNuEBarNC1pi0]     = ("nuebar","NC")
+  modes_to_species_and_process[conv.kSKmNuEBarNCcoh]      = ("nuebar","NC")
+  modes_to_species_and_process[conv.kSKmNuEBarNCoth]      = ("nuebar","NC") #unified definition
+  modes_to_species_and_process[conv.kSKmNuEBarNC1Gamma]   = ("nuebar","NC") #unified definition
+  #
+  modes_to_species_and_process[conv.kSKmOscNuECCQE]       = ("signue","CCQE")
+  modes_to_species_and_process[conv.kSKmOscNuECC1pi]      = ("signue","CCnQE")
+  modes_to_species_and_process[conv.kSKmOscNuECCcoh]      = ("signue","CCnQE")
+  modes_to_species_and_process[conv.kSKmOscNuECC2p2h]     = ("signue","CCnQE")
+  modes_to_species_and_process[conv.kSKmOscNuECCoth]      = ("signue","CCnQE")
+
 
 fancy_species = dict()
 fancy_species ["numu"      ] = "$\\nu_\\mu$"
@@ -395,6 +458,8 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
     
     for proc in processes:
       event_counts_per_species[proc] = dict()
+      for spec in species:
+        event_counts_per_species[proc][spec] = 0.
       total_event_counts_per_process[proc] = 0.
       
     for spec in species:
@@ -425,7 +490,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
       nev_tot += nev
       total_event_counts_per_species[spec] += nev
       total_event_counts_per_process[proc] += nev
-      event_counts_per_species[proc][spec] = to5dp.format(nev)
+      event_counts_per_species[proc][spec] += nev
       
       if (signal_for_sample[sample_name]==spec): signal_events+=nev
       else: background_events+=nev
@@ -445,7 +510,7 @@ def main(config_file,mixing12,mixing13,mixing23,dm12sq,dm23sq,deltacp,hierarchy,
       ev_counts = []
       for spec in species:
         try:
-          ev_counts.append(ev[spec].ljust(coln_width))
+          ev_counts.append(to5dp.format(ev[spec]).ljust(coln_width))
         except KeyError:
           ev_counts.append("N/A".ljust(coln_width))
       
