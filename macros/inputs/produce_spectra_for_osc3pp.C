@@ -3,12 +3,17 @@
 #include "TFile.h"
 #include "TH3D.h"
 #include "TH2D.h"
+#include "Binning.h"
 
 using namespace std;
+using namespace valor;
+using namespace valor::conv;
+using namespace valor::util;
 
-const int nbins_etrue = 96;
+#if 0
+const int nbins_etrue = 98;
 const double edges_etrue[nbins_etrue + 1] = {
-  0.05, 0.1, 0.15,
+  0.0, 0.05, 0.1, 0.15,
   0.2, 0.225, 0.25, 0.275,
   0.3, 0.325, 0.35, 0.375,
   0.4, 0.425, 0.45, 0.475,
@@ -27,9 +32,9 @@ const double edges_etrue[nbins_etrue + 1] = {
   4.0, 4.2, 4.4, 4.6, 4.8,
   5.0, 5.2, 5.4, 5.6, 5.8,
   6.0, 6.5, 7.0, 7.5, 
-  8, 9, 10
+  8, 9, 10, 30
 };
-const int nbins_ereco = 56;
+const int nbins_ereco = 57;
 const double edges_ereco[nbins_ereco + 1] = {
   0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
   1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9,
@@ -38,8 +43,14 @@ const double edges_ereco[nbins_ereco + 1] = {
   4, 4.2, 4.4, 4.6, 4.8,
   5, 5.2, 5.4, 5.6, 5.8,
   6, 6.5, 7, 7.5,
-  8, 9, 10
+  8, 9, 10, 30
 };
+#else
+const int nbins_etrue = kNEtrueBins1Rmu;
+const double * edges_etrue = kEtrueBinEdges1Rmu;
+const int nbins_ereco = kNErecoBins1Rmu;
+const double * edges_ereco = kErecoBinEdges1Rmu;
+#endif
 
 double produce_a_spectrum(const char * intag,
 			  TFile * outfile,
@@ -133,7 +144,8 @@ void produce_spectra_for_osc3pp(const char * intag = "Template2D_mcnorm_fluxtune
 	  modes.push_back(istart + imode);
 	}//imode
 	double thistot = produce_a_spectrum(intag, outfile, modes, samples[is].c_str(), valorsample, isample, ints[ii].c_str());
-	if(!(ifl % 6 == 3 || ifl % 6 == 5))
+	//if(true)
+	if(!(ifl % 6 == 3 || ifl % 6 == 5)) //don't add oscillated nue(bar) for no oscillations
 	  tot[isample] += thistot;
       }//ii
     }//is
