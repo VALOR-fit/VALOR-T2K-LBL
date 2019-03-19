@@ -12,13 +12,16 @@ else
 fi
 
 if [ "$3" == "prefit" ]; then
-   config="analysis_configuration_hkfluxsophie_10year_prefit.xml" #"analysis_configuration_oa2018_run1-9d_v1_prefit.xml"
+   config="analysis_configuration_hkfluxsophie_10year_prefit.xml"
+   #config="analysis_configuration_oa2018_run1-9d_v1_postfit.xml"
    banff="_prefit"
 else
-   config="analysis_configuration_hkfluxsophie_10year_postfit.xml" #"analysis_configuration_oa2018_run1-9d_v1_postfit.xml"
+   config="analysis_configuration_hkfluxsophie_10year_postfit.xml"
+   #config="analysis_configuration_oa2018_run1-9d_v1_postfit.xml"
    banff=""
 fi
 
+echo ${osc}
 if [ "${osc}" == "unosc" ]; then
    mixing12=0.0
    mixing13=0.0
@@ -42,6 +45,38 @@ elif [ "${osc}" == "asimova" ]; then
    dmsq12=7.53E-5
    dmsq23=2.509E-3
    dcp=-1.601
+   octant="two"
+elif [ "${osc}" == "asimova_dcpm90" ]; then
+   mixing12=0.304
+   mixing13=0.0219
+   mixing23=0.528
+   dmsq12=7.53E-5
+   dmsq23=2.509E-3
+   dcp=-1.57079633
+   octant="two"
+elif [ "${osc}" == "asimova_dcp0" ]; then
+   mixing12=0.304
+   mixing13=0.0219
+   mixing23=0.528
+   dmsq12=7.53E-5
+   dmsq23=2.509E-3
+   dcp=-0
+   octant="two"
+elif [ "${osc}" == "asimova_dcp90" ]; then
+   mixing12=0.304
+   mixing13=0.0219
+   mixing23=0.528
+   dmsq12=7.53E-5
+   dmsq23=2.509E-3
+   dcp=1.57079633
+   octant="two"
+elif [ "${osc}" == "asimova_dcp180" ]; then
+   mixing12=0.304
+   mixing13=0.0219
+   mixing23=0.528
+   dmsq12=7.53E-5
+   dmsq23=2.509E-3
+   dcp=3.14159265
    octant="two"
 elif [ "${osc}" == "asimovb" ]; then
    mixing12=0.304
