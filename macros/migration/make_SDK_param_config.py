@@ -74,6 +74,7 @@ _param_fields = namedtuple('param_fields',
        'apply_beam',
        'apply_selection',
        'apply_flav',
+       'apply_osc',
        'apply_reac',
        'apply_target',
        'limits'
@@ -176,6 +177,7 @@ def main(filename, t2k_legacy_config, overwrite):
             apply_beam      = get_beam_mode(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
             apply_selection = get_selection(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
             apply_flav      = get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
+            apply_osc       = get_osc(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
             apply_reac      = get_reac_type(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
             apply_target    = get_target(p),
             limits          = get_limits(p)
@@ -620,43 +622,28 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
     flavours["numubar"] = False # No osc numu/numubar templates
     flavours["nue"] = False
     flavours["nuebar"] = False
-    flavours["nue_osc"] = False
-    flavours["nuebar_osc"] = False
     for mode in apply_to_modes:
         if apply_to_modes[mode]:
             if util.IsNuMu(mode):
                 flavours["numu"] = True
             if util.IsNuMuBar(mode):
                 flavours["numubar"] = True
-            if util.IsNuE(mode):
+            if util.IsNuE(mode) or util.IsOscNuE(mode):
                 flavours["nue"] = True
-            if util.IsNuEBar(mode):
+            if util.IsNuEBar(mode) or util.IsOscNuEBar(mode):
                 flavours["nuebar"] = True
-            if util.IsOscNuEBar(mode):
-                flavours["nuebar_osc"] = True
-            if util.IsOscNuE(mode):
-                flavours["nue_osc"] = True
 
     has_mu = flavours["numu"] or flavours["numubar"]
-    has_e = flavours["nue"] or flavours["nuebar"] or flavours["nuebar_osc"] or flavours["nue_osc"]
+    has_e = flavours["nue"] or flavours["nuebar"]
     all_mu = flavours["numu"] and flavours["numubar"]
-    all_e = flavours["nue"] and flavours["nuebar"] and flavours["nuebar_osc"] and flavours["nue_osc"]
+    all_e = flavours["nue"] and flavours["nuebar"]
 
     if has_mu and has_e:
         if all_mu and all_e:
-            return "all unosc, osc nue any"
-        elif flavours["numu"] and flavours["nue"] and flavours["nue_osc"] \
-                and not (flavours["numubar"] or flavours["nuebar"] or flavours["nuebar_osc"]):
-            return "unosc nu any, osc nue"
-        elif flavours["numubar"] and flavours["nuebar"] and flavours["nuebar_osc"] \
-                and not (flavours["numu"] or flavours["nue"] or flavours["nue_osc"]):
-            return "unosc nubar any, osc nuebar"
-        elif flavours["numu"] and flavours["nue"] and flavours["numubar"] and flavours["nuebar"] \
-                and not (flavours["nue_osc"] or flavours["nuebar_osc"]):
             return "all"
-        elif flavours["numu"] and flavours["nue"] and not (flavours["nue_osc"] or flavours["nuebar_osc"] or flavours["numubar"] or flavours["nuebar"]):
+        elif flavours["numu"] and flavours["nue"] and not (flavours["numubar"] or flavours["nuebar"]):
             return "nu any"
-        elif flavours["numubar"] and flavours["nuebar"] and not (flavours["nuebar_osc"] or flavours["nue_osc"] or flavours["numu"] or flavours["nue"]):
+        elif flavours["numubar"] and flavours["nuebar"]  and not (flavours["numu"] or flavours["nue"]):
             return "nubar any"
         else:
             print "Not expecting this flavor apply combination. Exiting.", flavours
@@ -682,15 +669,7 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
                 util.Die(-1)
     elif has_e:
         if all_e:
-            return "unosc nue any, osc nue any"
-        elif flavours["nue"] and flavours["nuebar"] and not (flavours["nue_osc"] or flavours["nuebar_osc"]):
             return "nue any"
-        elif not (flavours["nue"] or flavours["nuebar"]) and flavours["nue_osc"] and flavours["nuebar_osc"]:
-            return "osc nue any"
-        elif flavours["nue"] and flavours["nue_osc"] and not (flavours["nuebar"] or flavours["nuebar_osc"]):
-            return "unosc nue, osc nue"
-        elif not (flavours["nue"] and flavours["nue_osc"]) and flavours["nuebar"] and flavours["nuebar_osc"]:
-            return "unosc nuebar, osc nuebar"
         else:
             len_true = 0
             for flav in flavours:
@@ -699,12 +678,8 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
             if len_true == 1:
                 if flavours["nue"]:
                     return "nue"
-                elif flavours["nue_osc"]:
-                    return "osc nue"
                 elif flavours["nuebar"]:
                     return "nuebar"
-                elif flavours["nuebar_osc"]:
-                    return "osc nuebar"
                 else:
                     print "ERROR: Shouldn't be here"
                     util.Die(-1)
@@ -714,6 +689,40 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
     else:
         print "WARNING: Not applying param", util.ParamAsString(p), "to any true nu flavour"
         return "none"
+
+
+def get_osc(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring):
+    apply_to_modes = None
+    if util.IsBANFF(p):
+        if util.IsFlux(p):
+            return "all"
+        else:
+            # Use the 3D array kXsApplyXSecSystToSKMode to decide whether each xsec param is applied to each sample
+            apply_to_modes = get_apply_to_modes_xsec(ip, p, apply_table_xsec)
+    else:
+        apply_to_modes = get_apply_to_modes_skdetfsi(ip, p, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring)
+
+    masks = {}
+    masks["osc"] = False
+    masks["unosc"] = False # No osc numu/numubar templates
+    for mode in apply_to_modes:
+        if apply_to_modes[mode]:
+            if util.IsNuMu(mode) or util.IsNuMuBar(mode) or util.IsNuE(mode) or util.IsNuEBar(mode):
+                masks["unosc"] = True
+            if util.IsOscNuEBar(mode) or util.IsOscNuE(mode):
+                masks["osc"] = True
+
+    if masks["osc"] and masks["unosc"]:
+        return "all"
+    elif masks["osc"]:
+        return "osc"
+    elif masks["unosc"]:
+        return "unosc"
+    else:
+        print "WARNING: Not applying param", util.ParamAsString(p), "to any mode"
+        return "none"
+
+
 
 def get_target(p):
     # TODO: For now the SDK doesn't use the nuclear target, so just set to apply to all
@@ -850,6 +859,7 @@ def add_param(root_node, fields):
     apply_selec_node  = add_node(apply_node, "selection"     , fields.apply_selection , False, False)
     apply_reac_node   = add_node(apply_node, "reac_type"     , fields.apply_reac      , False, False)
     apply_flav_node   = add_node(apply_node, "flav"          , fields.apply_flav      , False, False)
+    apply_flav_node   = add_node(apply_node, "osc"           , fields.apply_osc       , False, False)
     apply_target_node = add_node(apply_node, "target"        , fields.apply_target    , False, False)
     limits_node       = add_node(param_node, "limits"        , fields.limits          , False, False)
     _xmleng.AddRawLine(root_node, "\n\n")     # Additional blank lines after each parameter, for readability
