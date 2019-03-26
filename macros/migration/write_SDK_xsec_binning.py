@@ -112,14 +112,17 @@ def main(tag, overwrite):
     # Write the Xsec binning schemes to XML files
     for ischeme in range (0, len(edges_theta_all)):
         mode_list_str = get_mode_sample_list_str(modes_with_same_binning_reco[ischeme])
-        fname_reco = tag + "_Ereco_Thetareco_" + modelist_names_reco[ischeme] + ".xml"
+        fname_reco_e2e = tag + "_e2e_Ereco_Thetareco_" + modelist_names_reco[ischeme] + ".xml"
         write_binning_xml_content(edges_ereco_all[ischeme], edges_theta_all[ischeme],
-                                  mode_list_str, fname_reco, overwrite, False)
+                                  mode_list_str, fname_reco_e2e, overwrite, False, True)
+        fname_reco_mondrian = tag + "_mondrian_Ereco_Thetareco_" + modelist_names_reco[ischeme] + ".xml"
+        write_binning_xml_content(edges_ereco_all[ischeme], edges_theta_all[ischeme],
+                                  mode_list_str, fname_reco_mondrian, overwrite, False, False)
     for ischeme in range (0, len(edges_etrue_all)):
         mode_list_str = get_mode_sample_list_str(modes_with_same_binning_true[ischeme])
-        fname_true = tag + "_Etrue_" + modelist_names_true[ischeme] + ".xml"
+        fname_true = tag + "_e2e_Etrue_" + modelist_names_true[ischeme] + ".xml"
         write_binning_xml_content(edges_etrue_all[ischeme], [],
-                                  mode_list_str, fname_true, overwrite, True)
+                                  mode_list_str, fname_true, overwrite, True, True)
 
     print "Done!"
     return
@@ -169,7 +172,7 @@ def get_indicies_of_matching_list(edges_all, edges_search):
 
 
 
-def write_binning_xml_content(edges_energy, edges_theta, mode_list_str, filename, overwrite, is_true):
+def write_binning_xml_content(edges_energy, edges_theta, mode_list_str, filename, overwrite, is_true, is_e2e):
     print "Writing binning to XML file", filename, ", which applied to the following modes:\n", mode_list_str
     exists = os.path.isfile(filename)
     if exists and not overwrite:
@@ -178,17 +181,41 @@ def write_binning_xml_content(edges_energy, edges_theta, mode_list_str, filename
     f = open(filename, "w")
 
     f.write( "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n\n")
-    f.write( "<!--\nTODO: Make sure this xsec binning file is only applied to the SDK equivalent of the following legacy T2K modes:\n")
-    f.write( mode_list_str + "-->\n\n")
+    #f.write( "<!--\nTODO: Make sure this xsec binning file is only applied to the SDK equivalent of the following legacy T2K modes:\n")
+    f#.write( mode_list_str + "-->\n\n")
     f.write( "<binning>\n\n")
-    f.write( "\t<type>\n\t\tedge-to-edge\n\t</type>\n\n")
-    if is_true:
-        f.write( "\t<space>\n\t\tEtrue\n\t</space>\n\n")
-        write_single_kinevar_e2e_binning("Etrue", edges_energy, f)
+    if is_e2e:
+        f.write( "\t<type>\n\t\tedge-to-edge\n\t</type>\n\n")
+        if is_true:
+            f.write( "\t<space>\n\t\tEtrue\n\t</space>\n\n")
+            write_single_kinevar_e2e_binning("Etrue", edges_energy, f)
+        else:
+            f.write( "\t<space>\n\t\tEreco,Thetareco\n\t</space>\n\n")
+            write_single_kinevar_e2e_binning("Ereco", edges_energy, f)
+            write_single_kinevar_e2e_binning("Thetareco", edges_theta, f)
     else:
-        f.write( "\t<space>\n\t\tEreco,Thetareco\n\t</space>\n\n")
-        write_single_kinevar_e2e_binning("Ereco", edges_energy, f)
-        write_single_kinevar_e2e_binning("Thetareco", edges_theta, f)
+        f.write( "\t<type>\n\t\tmondrian\n\t</type>\n\n")
+        nbins = ( len(edges_energy) -1 ) * ( len(edges_theta) -1 )
+        if nbins < 1:
+            print "ERROR: < 1 Mondrian bins. Exiting."
+            util.Die(-1)
+        f.write( "\t<nbins>\n\t\t"+str(nbins)+"\n\t</nbins>\n\n")
+
+        # Treat mu-like and e-like binning separately
+        if len(edges_theta) == 2:
+            # mu-like
+            for i in range(0, len(edges_energy) -1):
+                f.write( "\t<bin_" + str(i) + ">  " + "{:.2f}".format(edges_energy[i]) + ",  " + \
+                         "{:.2f}".format(edges_energy[i+1]) + "\t</bin_" + str(i) + ">\n" )
+        else:
+            # e-like
+            for j in range(0, len(edges_theta) -1):
+                for i in range(0, len(edges_energy) -1):
+                    bindex = j * (len(edges_energy) -1) + i
+                    f.write( "\t<bin_" + str(bindex) + ">  " + "{:.2f}".format(edges_energy[i]) + ",  " + \
+                          "{:.2f}".format(edges_energy[i+1]) + ",  " + "{:.0f}".format(edges_theta[j]) + ",  " + \
+                          "{:.0f}".format(edges_theta[j+1]) + "\t</bin_" + str(bindex) + ">\n" )
+
     f.write( "</binning>\n")
 
 
