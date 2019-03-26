@@ -29,15 +29,16 @@ env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
 arridx= util.ArrIdx.Instance()
 
-modelist_names = [
-    "mulike_samples__rightsign_numu+oscnue_modes",
-    "mulike_samples__wrongsign_numu+oscnue_modes",
-    "mulike_samples__rightsign_nue_modes",
-    "mulike_samples__wrongsign_nue_modes",
-    "elike_samples__rightsign_numu+oscnue_modes",
-    "elike_samples__wrongsign_numu+oscnue_modes",
-    "elike_samples__rightsign_nue_modes",
-    "elike_samples__wrongsign_nue_modes"
+modelist_names_true = [
+    "rightsign_numu+oscnue_modes",
+    "wrongsign_numu+oscnue_modes",
+    "rightsign_nue_modes",
+    "wrongsign_nue_modes",
+]
+
+modelist_names_reco = [
+    "mulike",
+    "elike"
 ]
 
 
@@ -51,7 +52,8 @@ def main(tag, overwrite):
     edges_etrue_all = []
     edges_ereco_all = []
     edges_theta_all = []
-    modes_with_same_binning = []
+    modes_with_same_binning_reco = []
+    modes_with_same_binning_true = []
 
     # Store the xsec binning schemes
     for sample_index in range(0, conv.kns):
@@ -75,39 +77,49 @@ def main(tag, overwrite):
                     "\n  edges etrue =", edges_etrue, \
                     "\n  edges ereo =" , edges_ereco
 
-                binning_index = get_common_binning_index(edges_etrue_all, edges_etrue, edges_theta_all, edges_theta, edges_ereco_all, edges_ereco)
-                if binning_index == -1:
+                binning_index_reco = get_common_binning_index(edges_theta_all, edges_theta, edges_ereco_all, edges_ereco)
+                binning_index_true = get_common_binning_index(edges_etrue_all, edges_etrue)
+                if binning_index_reco == -1:
                     # We haven't saved this binning scheme yet, so save it and say what mode it corresponds to
-                    print "Recording this binning scheme"
-                    edges_theta_all.append(edges_theta) # Does this insert the a whole list into the new element, or does it append each element of the list idividually? (want the former)
-                    edges_etrue_all.append(edges_etrue)
+                    print "Recording this reco binning scheme"
+                    edges_theta_all.append(edges_theta)
                     edges_ereco_all.append(edges_ereco)
-                    modes_with_same_binning.append([[s, m]])
+                    modes_with_same_binning_reco.append([[s, m]])
                 else:
                     # We have already recorded this binning scheme, so just record that this mode uses this binning.
                     # To save the mode in the right position, need both the current etrue and xsec binning to match a
                     # previously added binning scheme
-                    print "Binning scheme already exists, adding mode to list"
-                    modes_with_same_binning[binning_index].append([s,m])
+                    print "Reco binning scheme already exists, adding mode to list"
+                    modes_with_same_binning_reco[binning_index_reco].append([s,m])
+                if binning_index_true == -1:
+                    print "Recording this true binning scheme"
+                    edges_etrue_all.append(edges_etrue)
+                    modes_with_same_binning_true.append([[s, m]])
+                else:
+                    print "True binning scheme already exists, adding mode to list"
+                    modes_with_same_binning_true[binning_index_true].append([s,m])
                 print "\n\n"
 
-    if not ( len(edges_etrue_all) == len(edges_theta_all)
-            and len(modes_with_same_binning) == len(edges_theta_all)
+    if not ( len(modes_with_same_binning_reco) == len(edges_theta_all)
             and len(edges_ereco_all) == len(edges_theta_all) ):
-        print "ERROR: Number of binning schemes recorded for each kinevar / number of mode lists. Exiting."
+        print "ERROR: Number of binning schemes recorded for each reco kinevar / number of mode lists. Exiting."
         util.Die(-1)
+    if not ( len(modes_with_same_binning_true) == len(edges_etrue_all) ):
+        print "ERROR: Number of binning schemes recorded for each true kinevar / number of mode lists. Exiting."
+        util.Die(-1)
+
 
     # Write the Xsec binning schemes to XML files
     for ischeme in range (0, len(edges_theta_all)):
-        mode_list_str = get_mode_sample_list_str(modes_with_same_binning[ischeme])
-        fname = tag + "__" + modelist_names[ischeme] + ".xml"
-        print "Writing binning to XML file", fname, ", which applied to the following modes:\n", mode_list_str
-        exists = os.path.isfile(fname)
-        if exists and not overwrite:
-            print "ERROR: Output file", fname, " already exists and the overwrite option was not specified. Exiting."
-            util.Die(-1)
-        f = open(fname, "w")
-        write_binning_xml_content(edges_etrue_all[ischeme], edges_theta_all[ischeme], edges_ereco_all[ischeme], mode_list_str, f)
+        mode_list_str = get_mode_sample_list_str(modes_with_same_binning_reco[ischeme])
+        fname_reco = tag + "_Ereco_Thetareco_" + modelist_names_reco[ischeme] + ".xml"
+        write_binning_xml_content(edges_ereco_all[ischeme], edges_theta_all[ischeme],
+                                  mode_list_str, fname_reco, overwrite, False)
+    for ischeme in range (0, len(edges_etrue_all)):
+        mode_list_str = get_mode_sample_list_str(modes_with_same_binning_true[ischeme])
+        fname_true = tag + "_Etrue_" + modelist_names_true[ischeme] + ".xml"
+        write_binning_xml_content(edges_etrue_all[ischeme], [],
+                                  mode_list_str, fname_true, overwrite, True)
 
     print "Done!"
     return
@@ -122,24 +134,28 @@ def get_mode_sample_list_str(sample_mode_pair_list):
 
 
 
-def get_common_binning_index(edges_etrue_all, edges_etrue, edges_theta_all, edges_theta, edges_ereco_all, edges_ereco):
-    etrue_indicies = get_indicies_of_matching_list(edges_etrue_all, edges_etrue)
-    ereco_indicies = get_indicies_of_matching_list(edges_ereco_all, edges_ereco)
-    theta_indicies = get_indicies_of_matching_list(edges_theta_all, edges_theta)
-    if len(etrue_indicies) == 0 or len(theta_indicies) == 0 or len(ereco_indicies) == 0:
+def get_common_binning_index(edges_all1, edges1, edges_all2 = [], edges2 = []):
+    indicies1 = get_indicies_of_matching_list(edges_all1, edges1)
+    indicies2 = get_indicies_of_matching_list(edges_all2, edges2)
+    if len(indicies1) == 0 or (len(indicies2) == 0 and len(edges2) != 0):
         return -1   # This binning scheme has not yet been recorded
     common_index = -1
     found = False
-    for etrue_index in etrue_indicies:
-        for theta_index in theta_indicies:
-            for ereco_index in ereco_indicies:
-                if etrue_index == theta_index and etrue_index == ereco_index:
+    if len(edges2) != 0:
+        for index1 in indicies1:
+            for index2 in indicies2:
+                if index1 == index2:
                     if not found:
-                        common_index = etrue_index
+                        common_index = index1
                         found = True
                     else:
                         print "ERROR: Should not be more than one common index. Exiting."
                         util.Die(-1)
+    elif len(indicies1) > 1:
+        print "ERROR: Should not be more than one common index. Exiting."
+        util.Die(-1)
+    else: common_index = indicies1[0]
+
     return common_index
 
 
@@ -153,16 +169,26 @@ def get_indicies_of_matching_list(edges_all, edges_search):
 
 
 
-def write_binning_xml_content(edges_etrue, edges_theta, edges_ereco, mode_list_str, f):
+def write_binning_xml_content(edges_energy, edges_theta, mode_list_str, filename, overwrite, is_true):
+    print "Writing binning to XML file", filename, ", which applied to the following modes:\n", mode_list_str
+    exists = os.path.isfile(filename)
+    if exists and not overwrite:
+        print "ERROR: Output file", filename, " already exists and the overwrite option was not specified. Exiting."
+        util.Die(-1)
+    f = open(filename, "w")
+
     f.write( "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n\n")
     f.write( "<!--\nTODO: Make sure this xsec binning file is only applied to the SDK equivalent of the following legacy T2K modes:\n")
     f.write( mode_list_str + "-->\n\n")
     f.write( "<binning>\n\n")
-    f.write( "\t<space>\n\t\tEtrue,Ereco,Thetareco\n\t</space>\n\n")
     f.write( "\t<type>\n\t\tedge-to-edge\n\t</type>\n\n")
-    write_single_kinevar_e2e_binning("Etrue", edges_etrue, f)
-    write_single_kinevar_e2e_binning("Ereco", edges_ereco, f)
-    write_single_kinevar_e2e_binning("thetareco", edges_theta, f)
+    if is_true:
+        f.write( "\t<space>\n\t\tEtrue\n\t</space>\n\n")
+        write_single_kinevar_e2e_binning("Etrue", edges_energy, f)
+    else:
+        f.write( "\t<space>\n\t\tEreco,Thetareco\n\t</space>\n\n")
+        write_single_kinevar_e2e_binning("Ereco", edges_energy, f)
+        write_single_kinevar_e2e_binning("Thetareco", edges_theta, f)
     f.write( "</binning>\n")
 
 
