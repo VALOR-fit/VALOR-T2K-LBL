@@ -139,9 +139,10 @@ static const PhysParamId_t kNuisBANFFBeRPA_U             = kNuis071;   // BeRPA 
 static const PhysParamId_t kNuisBANFFShape2p2h           = kNuis072;   // 2p2h nu/nubar shape
 static const PhysParamId_t kNuisBANFFNorm2p2hCtoO        = kNuis073;   // 2p2h CtoO norm
 static const PhysParamId_t kNuisBANFFEb                  = kNuis074;   // Eb
+static const PhysParamId_t kNuisBANFFMultiReNorm         = kNuis075;   // Normalisation of all events in the FHC MultiRe sample
 //
 
-static const PhysParamId_t kLastBANFFParam  = kNuis075; // Utility, should always come after last FHC BANFF
+static const PhysParamId_t kLastBANFFParam  = kNuis076; // Utility, should always come after last FHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
@@ -327,10 +328,11 @@ static const PhysParamId_t kRHCNuisBANFFBeRPA_U             = kNuis221;   // BeR
 static const PhysParamId_t kRHCNuisBANFFShape2p2h           = kNuis222;   // 2p2h nu shape
 static const PhysParamId_t kRHCNuisBANFFNorm2p2hCtoO        = kNuis223;   // 2p2h CtoO norm
 static const PhysParamId_t kRHCNuisBANFFEb                  = kNuis224;   // 2p2h CtoO norm
-  
+static const PhysParamId_t kRHCNuisBANFFMultiReNorm         = kNuis225;   // RHC MultiRe normalisation. NOT USED
+
 //
 
-static const PhysParamId_t kRHCLastBANFFParam  = kNuis225; // Utility, should always come after last RHC BANFF
+static const PhysParamId_t kRHCLastBANFFParam  = kNuis226; // Utility, should always come after last RHC BANFF
 
    /*
     * Cross-section parameters (excluding cross-section params which were included in BANFF fit and are correlated with the flux params)
