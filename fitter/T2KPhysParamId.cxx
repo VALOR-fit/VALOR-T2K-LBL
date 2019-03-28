@@ -4149,7 +4149,8 @@ bool valor::util::IsNormXSecParam(conv::PhysParamId_t p)
     case( kRHCNuisBANFFNormNuEBarToNuMuBar) : return true; break; 
     case( kRHCNuisBANFFBeRPA_U            ) : return true; break;
     case( kRHCNuisBANFFNorm2p2hCtoO       ) : return true; break;
-      
+    case( kNuisBANFFMultiReNorm           ) : return true; break;
+
     default                               : return false; break;
    }
   return false;
