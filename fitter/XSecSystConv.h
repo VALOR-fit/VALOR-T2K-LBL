@@ -293,7 +293,7 @@ namespace valor {
       true,                      // kNuisBANFFShape2p2h   
       true,                      // kNuisBANFFNorm2p2hCtoO
       true,                      // kNuisBANFFEb
-      false                      // kNuisBANFFMultiReNorm
+      true                       // kNuisBANFFMultiReNorm
 #  endif
 
 #endif
@@ -335,7 +335,7 @@ namespace valor {
       true,                      //kNuisBANFFShape2p2h   
       true,                      //kNuisBANFFNorm2p2hCtoO
       true,                      //kNuisBANFFEb
-      false                      //kRHCNuisBANFFMultiReNorm
+      true                       //kRHCNuisBANFFMultiReNorm
 #  endif             
 
 #endif
