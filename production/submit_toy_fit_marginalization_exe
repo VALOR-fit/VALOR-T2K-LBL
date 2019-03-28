@@ -1101,14 +1101,15 @@ while($i_freepar1 < $n_freepar1) {
          {
             open(Slurm, ">$job_dir/$tag_save-$irun.slurm") or die("Can not create the Slurm batch script");
             print Slurm "#!/bin/bash \n";
-            print Slurm "#SBATCH --account=def-tanaka-ac \n";
+	    #print Slurm "#SBATCH --account=def-tanaka-ac \n";
+	    print Slurm "#SBATCH --account=rpp-tanaka-ab \n";
             print Slurm "#SBATCH --nodes=1 \n";
             print Slurm "#SBATCH --time=$cput \n";
             print Slurm "#SBATCH --mem=$mem \n";
             print Slurm "#SBATCH --job-name=$tag_save-$irun \n";
-            print Slurm "#SBATCH --output=$job_dir/$tag_save-$irun.slurm.log \n";
-            #print Slurm "#SBATCH -o $job_dir/$tag_save-$irun.slurm.out \n";
-            #print Slurm "#SBATCH -e $job_dir/$tag_save-$irun.slurm.err \n";
+	    #print Slurm "#SBATCH --output=$job_dir/$tag_save-$irun.slurm.log \n";
+            print Slurm "#SBATCH -o $job_dir/$tag_save-$irun.slurm.out \n";
+            print Slurm "#SBATCH -e $job_dir/$tag_save-$irun.slurm.err \n";
             print Slurm "cd $job_dir \n";
             print Slurm "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir\n";
             print Slurm "$command \n";
