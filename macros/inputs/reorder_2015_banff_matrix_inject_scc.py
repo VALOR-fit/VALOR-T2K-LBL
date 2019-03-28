@@ -39,7 +39,7 @@ for beam_mode_name in ["all"]:
   infile_name = sys.argv[1]
   print "Input file name =", infile_name
 
-  outfile_name = infile_name.replace(".root","_valor_order_"+beam_mode_name+".root")
+  outfile_name = infile_name.replace(".root","_valor_order_"+beam_mode_name+"_MultiRe_norm.root")
   print "Output file name =", outfile_name
 
   infile  = ROOT.TFile(infile_name)
@@ -62,8 +62,6 @@ for beam_mode_name in ["all"]:
   # Add the MultiRe normalisation params
   print "Input params", input_param_list
   input_param_list.append("FHC_MultiRe_norm")
-  input_param_list.append("RHC_MultiRe_norm_UNUSED")  # TODO: where to put the RHC param
-  # TODO: Reached here
   # END HACK
 
   n_banff_flux_params = 0
@@ -150,13 +148,13 @@ for beam_mode_name in ["all"]:
     # Add the MultiRe normalisation params
     new_cov = ROOT.TMatrixD(n_elements, n_elements)
     new_params = ROOT.TVectorD(n_elements)
-    for i in range(n_elements - 2):
+    for i in range(n_elements - 1):
       new_params[i] = orig_params[i]
-      for j in range(n_elements - 2):
+      for j in range(n_elements - 1):
         new_cov[i][j] = orig_cov[i][j]
-    for i in range(n_elements - 2, n_elements):
+    for i in range(n_elements - 1, n_elements):
       new_params[i] = 1.0
-      new_cov[i][i] = 0.1**2  # The MultiRe normalisation params have a 10% uncertainty
+      new_cov[i][i] = 0.1**2  # The MultiRe normalisation param has a 10% uncertainty
     orig_cov = new_cov
     orig_params = new_params
     # END HACK
