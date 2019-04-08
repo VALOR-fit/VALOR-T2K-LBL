@@ -4,6 +4,7 @@
 #include "TH3D.h"
 #include "TH2D.h"
 #include "Binning.h"
+#include "valor/Conventions/Constants.h"
 
 using namespace std;
 using namespace valor;
@@ -45,6 +46,41 @@ const double edges_ereco[nbins_ereco + 1] = {
   6, 6.5, 7, 7.5,
   8, 9, 10, 30
 };
+#elif 0
+const int nbins_etrue = 96;
+const double edges_etrue[nbins_etrue + 1] = {
+  0.05, 0.1, 0.15,
+  0.2, 0.225, 0.25, 0.275,
+  0.3, 0.325, 0.35, 0.375,
+  0.4, 0.425, 0.45, 0.475,
+  0.5, 0.525, 0.55, 0.575,
+  0.6, 0.625, 0.65, 0.675,
+  0.7, 0.725, 0.75, 0.775,
+  0.8, 0.825, 0.85, 0.875,
+  0.9, 0.925, 0.95, 0.975,
+  1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 
+  1.4, 1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75,
+  1.8, 1.85, 1.9, 1.95,
+  2.0, 2.05, 2.1, 2.15, 2.2, 2.25, 2.3, 2.35, 
+  2.4, 2.45, 2.5,
+  2.6, 2.7, 2.8, 2.9,
+  3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
+  4.0, 4.2, 4.4, 4.6, 4.8,
+  5.0, 5.2, 5.4, 5.6, 5.8,
+  6.0, 6.5, 7.0, 7.5, 
+  8, 9, 10
+};
+const int nbins_ereco = 56;
+const double edges_ereco[nbins_ereco + 1] = {
+  0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+  1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9,
+  2, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9,
+  3, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9,
+  4, 4.2, 4.4, 4.6, 4.8,
+  5, 5.2, 5.4, 5.6, 5.8,
+  6, 6.5, 7, 7.5,
+  8, 9, 10
+};
 #else
 const int nbins_etrue = kNEtrueBins1Rmu;
 const double * edges_etrue = kEtrueBinEdges1Rmu;
@@ -75,18 +111,35 @@ double produce_a_spectrum(const char * intag,
     }
     cout << "Adding events from " << h->GetTitle() << " in " << selection << endl
 	 << "\tto " << hnew->GetTitle() << " in " << outfile->GetName() << endl;
-    for(int ix = 1; ix <= h->GetNbinsX(); ix++) {
-      for(int iy = 1; iy <= h->GetNbinsY(); iy++) {
-	for(int iz = 1; iz <= h->GetNbinsZ(); iz++) {
-	  int global_bin = h->GetBin(ix, iy, iz);
-	  double ereco = h->GetYaxis()->GetBinCenter(iy);
-	  double etrue = h->GetZaxis()->GetBinCenter(iz);
+    for(int iq = 1; iq <= h->GetNbinsX(); iq++) {
+      for(int ireco = 1; ireco <= h->GetNbinsY(); ireco++) {
+	for(int itrue = 1; itrue <= h->GetNbinsZ(); itrue++) {
+	  int global_bin = h->GetBin(iq, ireco, itrue);
+	  double ereco = h->GetYaxis()->GetBinCenter(ireco);
+	  double etrue = h->GetZaxis()->GetBinCenter(itrue);
 	  double value = h->GetBinContent(global_bin);
+	  if(ereco > edges_ereco[nbins_ereco]) {
+	    //cout << "Setting ereco to " << edges_ereco[nbins_ereco] - kOneMeV << " from " << ereco << endl;
+	    ereco = edges_ereco[nbins_ereco] - kOneMeV;
+	  }
+	  else if(ereco < edges_ereco[0]) {
+	    //cout << "Setting ereco to " << edges_ereco[0] + kOneMeV << " from " << ereco << endl;
+	    ereco = edges_ereco[0] + kOneMeV;
+	  }
+	  if(etrue > edges_etrue[nbins_etrue]) {
+	    //cout << "Setting etrue to " << edges_etrue[nbins_etrue] - kOneMeV << " from " << etrue << endl;
+	    etrue = edges_etrue[nbins_etrue] - kOneMeV;
+	  }
+	  else if(etrue < edges_etrue[0]) {
+	    //cout << "Setting etrue to " << edges_etrue[0] + kOneMeV << " from " << etrue << endl;
+	    etrue = edges_etrue[0] + kOneMeV;
+	  }
 	  hnew->Fill(etrue, ereco, value);
 	  tot += value;
-	}//iz
-      }//iy
-    }//ix
+	  //cout << "Filling from " << iq << "," << ireco << "," << itrue << " into Etrue " << etrue << " Ereco " << ereco << " with value" << value << endl;
+	}//itrue
+      }//ireco
+    }//iq
   }//im
   outfile->cd();
   hnew->Write();
