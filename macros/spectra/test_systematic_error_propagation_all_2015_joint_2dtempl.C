@@ -1000,7 +1000,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   TFile * output_rootfile_osc3pp;
   TCanvas c3pp;
   if(make_osc3pp_inputs) {
-    c3pp.SaveAs(TString::Format("syst_variations_%s.pdf[", util::AsStringCompact(s)));
+    c3pp.SaveAs(TString::Format("syst_variations_%s.pdf[", sname));
     output_rootfile_osc3pp = new TFile(Form("%s.fij.t2k.root", sname), file_mode.c_str());
   }
   TFile * output_rootfile = new TFile(Form("systematic_variations%s_%s.root",tag,sname),file_mode.c_str());
@@ -1050,7 +1050,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       l.AddEntry(hRatioTun_m1sigma[ip], "-1 #sigma", "l");
       l.AddEntry(hRatioTun_m3sigma[ip], "-3 #sigma", "l");
       l.Draw();
-      c3pp.SaveAs(TString::Format("syst_variations_%s.pdf", util::AsStringCompact(s)));
+      c3pp.SaveAs(TString::Format("syst_variations_%s.pdf", sname));
     }
     systcounter++;
   }
@@ -1087,7 +1087,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   output_rootfile->Close();
   if(make_osc3pp_inputs) {
     output_rootfile_osc3pp->Close();
-    c3pp.SaveAs(TString::Format("syst_variations_%s.pdf]", util::AsStringCompact(s)));
+    c3pp.SaveAs(TString::Format("syst_variations_%s.pdf]", sname));
     c3pp.Close();
   }
 
