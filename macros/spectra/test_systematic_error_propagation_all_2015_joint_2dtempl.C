@@ -31,12 +31,12 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  const char * sk_sample          = "MultiRe",      /* options: "1Rmu", "1Re", "RHC1Rmu", "RHC1Re", "MultiRmu, MultiRe" */
  const char * hypothesis         = "3f_osc",       /* options: "2f_numu_disap", "3f_osc", "3f_oscbar" , "nuosc_3f+nuisance"*/
 
- double       input_mixing12       = 0.304,//-99,    
- double       input_mixing13       = 0.0217, //-99,    
- double       input_mixing23       = 0.528,    
- double       input_deltacp        = -1.601,   
- double       input_dm12sq         = 7.53E-5,   
- double       input_dm23sq         = 2.509E-3,     
+ double       input_mixing12       = 0.32,//-99,    
+ double       input_mixing13       = 0.0256584, //-99,    
+ double       input_mixing23       = 0.5,    
+ double       input_deltacp        = 0,   
+ double       input_dm12sq         = 7.6E-5,   
+ double       input_dm23sq         = 2.4E-3,     
 
  // double       input_mixing12       = 0.,    
  // double       input_mixing13       = 0.,    
@@ -998,8 +998,11 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 
   string file_mode = (update_rootfile ? "UPDATE" : "RECREATE");
   TFile * output_rootfile_osc3pp;
-  if(make_osc3pp_inputs)
+  TCanvas c3pp;
+  if(make_osc3pp_inputs) {
+    c3pp.SaveAs(TString::Format("syst_variations_%s.pdf[", util::AsStringCompact(s)));
     output_rootfile_osc3pp = new TFile(Form("%s.fij.t2k.root", sname), file_mode.c_str());
+  }
   TFile * output_rootfile = new TFile(Form("systematic_variations%s_%s.root",tag,sname),file_mode.c_str());
   output_rootfile->cd();
   hErecoTun->Write(Form("Spectrum_%s_nominal",sname));
@@ -1031,6 +1034,23 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 	hRatioTun_m1sigma[ip]->Write(Form("syserre_%d_m1",systcounter));
 	hRatioTun_m3sigma[ip]->Write(Form("syserre_%d_m3",systcounter));
       }
+      c3pp.cd();
+      double axis_min = TMath::Min(0, TMath::Min(hRatioTun_p3sigma[ip]->GetMinimum(), hRatioTun_m3sigma[ip]->GetMinimum())) * 1.05;
+      double axis_max = TMath::Max(0, TMath::Max(hRatioTun_p3sigma[ip]->GetMaximum(), hRatioTun_m3sigma[ip]->GetMaximum())) * 1.05;
+      hRatioTun_p3sigma[ip]->GetYaxis()->SetRangeUser(axis_min, axis_max);
+      hRatioTun_p3sigma[ip]->Draw();
+      hRatioTun_p1sigma[ip]->Draw("SAME");
+      hRatioTun_m1sigma[ip]->Draw("SAME");
+      hRatioTun_m3sigma[ip]->Draw("SAME");
+      TLegend l(0.1, 0.8, 1, 1);
+      l.SetNColumns(5);
+      l.AddEntry((TObject*)0, util::AsString(p), "");
+      l.AddEntry(hRatioTun_p3sigma[ip], "+3 #sigma", "l");
+      l.AddEntry(hRatioTun_p1sigma[ip], "+1 #sigma", "l");
+      l.AddEntry(hRatioTun_m1sigma[ip], "-1 #sigma", "l");
+      l.AddEntry(hRatioTun_m3sigma[ip], "-3 #sigma", "l");
+      l.Draw();
+      c3pp.SaveAs(TString::Format("syst_variations_%s.pdf", util::AsStringCompact(s)));
     }
     systcounter++;
   }
@@ -1065,8 +1085,11 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   } // per_mode
 
   output_rootfile->Close();
-  if(make_osc3pp_inputs)
+  if(make_osc3pp_inputs) {
     output_rootfile_osc3pp->Close();
+    c3pp.SaveAs(TString::Format("syst_variations_%s.pdf]", util::AsStringCompact(s)));
+    c3pp.Close();
+  }
 
 
 
