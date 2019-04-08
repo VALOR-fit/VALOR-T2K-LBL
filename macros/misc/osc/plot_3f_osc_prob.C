@@ -43,12 +43,12 @@ void plot_3f_osc_prob
  // double       dm12sq     = 7.5E-5,                             /* */
 
  // sinsqtheta - T2K reactor
- double       mixing23   = 0.527,                            /* */
- double       dm23sq     = 0.00251,                            /* */
- double       mixing12   = 0.,                            /* */
- double       mixing13   = 0., //0.000001, //0.0248,                            /* */
- double       deltacp    = -1.55,                            /* */
- double       dm12sq     = 7.53E-5,                             /* */
+ double       mixing23   = 0.5,                            /* */
+ double       dm23sq     = 0.0024,                            /* */
+ double       mixing12   = 0.32,                            /* */
+ double       mixing13   = 0.0256584, //0.000001, //0.0248,                            /* */
+ double       deltacp    = 0,                            /* */
+ double       dm12sq     = 7.6E-5,                             /* */
 
  // // sinsqtheta T2K only
  // double       mixing23   = 0.524,                            /* */
@@ -113,13 +113,34 @@ void plot_3f_osc_prob
   //  1.000,  1.050,  1.100,  1.150,  1.200,  1.250,  1.300,  1.350,  1.400,  1.450, 
   //  1.500
   // };
-
-  const int nbins = 100;
-  double binedges[nbins+1];
-  for(int ibin=0;ibin<(nbins+1);ibin++){
+  /*
+    const int nbins = 100;
+    double binedges[nbins+1];
+    for(int ibin=0;ibin<(nbins+1);ibin++){
     binedges[ibin] = (double)ibin / ((double)nbins);
     //cout << binedges[ibin] << endl;
-  }
+    }
+  */
+  const int nbins = 98;
+  const double binedges[nbins+1] = 
+    {
+      0.0, 0.05, 0.1, 0.15,
+      0.2, 0.225, 0.25, 0.275, 0.3, 0.325, 0.35, 0.375,
+      0.4, 0.425, 0.45, 0.475, 0.5, 0.525, 0.55, 0.575,
+      0.6, 0.625, 0.65, 0.675, 0.7, 0.725, 0.75, 0.775,
+      0.8, 0.825, 0.85, 0.875, 0.9, 0.925, 0.95, 0.975,
+      1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45,
+      1.5, 1.55, 1.6, 1.65, 1.7, 1.75, 1.8, 1.85, 1.9, 1.95,
+      2.0, 2.05, 2.1, 2.15, 2.2, 2.25, 2.3, 2.35, 2.4, 2.45,
+      2.5, 2.6, 2.7, 2.8, 2.9,
+      3.0, 3.1, 3.2, 3.3, 3.4,
+      3.5, 3.6, 3.7, 3.8, 3.9,
+      4.0, 4.2, 4.4, 4.6, 4.8,
+      5.0, 5.2, 5.4, 5.6, 5.8,
+      6.0, 6.5, 7.0, 7.5, 
+      8, 9, 10, 30
+    };
+
 
   //axis, for the binning
   TAxis * axis = new TAxis(nbins,binedges);
@@ -289,6 +310,25 @@ void plot_3f_osc_prob
   g_nutaubar_nuebar->Write("g_nutaubar_nuebar");
   g_numubar_nutaubar_nuebar->Write("g_numubar_nutaubar_nuebar");
   g_nuebar_nutaubar_nuebar->Write("g_nuebar_nutaubar_nuebar");
+
+  TH1D * h_numu_numu = new TH1D("oscMM_0", "", nbins, binedges);
+  h_numu_numu->FillN(nbins, binedges, p_numu_numu);
+  h_numu_numu->Write();
+  TH1D * h_numubar_numubar = new TH1D("oscMM_B", "", nbins, binedges);
+  h_numubar_numubar->FillN(nbins, binedges, p_numubar_numubar);
+  h_numubar_numubar->Write();
+  TH1D * h_nue_nue = new TH1D("oscEE_0", "", nbins, binedges);
+  h_nue_nue->FillN(nbins, binedges, p_nue_nue);
+  h_nue_nue->Write();
+  TH1D * h_nuebar_nuebar = new TH1D("oscEE_B", "", nbins, binedges);
+  h_nuebar_nuebar->FillN(nbins, binedges, p_nuebar_nuebar);
+  h_nuebar_nuebar->Write();
+  TH1D * h_numu_nue = new TH1D("oscME_0", "", nbins, binedges);
+  h_numu_nue->FillN(nbins, binedges, p_numu_nue);
+  h_numu_nue->Write();
+  TH1D * h_numubar_nuebar = new TH1D("oscME_B", "", nbins, binedges);
+  h_numubar_nuebar->FillN(nbins, binedges, p_numubar_nuebar);
+  h_numubar_nuebar->Write();
 
   cout << endl;
   cout << "Used set of oscillation parameters:" << endl;
