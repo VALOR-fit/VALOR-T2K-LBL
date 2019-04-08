@@ -4837,6 +4837,9 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
     }
     
     // loop over samples
+#ifdef __save_templates_debug__
+    TFile fout("postoscevts.root", "RECREATE");
+#endif
     for(int is = 0; is < kns; is++) {
         SuperkSample_t s = kSKSamples[is];
         if(s == kSKsUndefined) continue;
@@ -4848,7 +4851,21 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
         //assert(this -> Template(s,kSKmNuMuCCQE,kSKMCtSys));
         //TAxis * ereco_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetXaxis();
         //TAxis * etrue_axis = this->Template(s,kSKmNuMuCCQE,kSKMCtSys)->GetYaxis();
-        
+
+#ifdef __save_templates_debug__
+	double counters[3] = {0,0,0};
+	TH2D * htemp[3];
+	htemp[0] = new TH2D(TString::Format("enu_erec_%s_CCQE", util::AsStringCompact(s).c_str()), ";Etrue;Ereco",
+			    n_etrue_bins, util::EtrueBinEdges(s),
+			    n_ereco_bins, util::ErecoBinEdges(s));
+	htemp[1] = new TH2D(TString::Format("enu_erec_%s_CCnQE", util::AsStringCompact(s).c_str()), ";Etrue;Ereco",
+			    n_etrue_bins, util::EtrueBinEdges(s),
+			    n_ereco_bins, util::ErecoBinEdges(s));
+	htemp[2] = new TH2D(TString::Format("enu_erec_%s_NC", util::AsStringCompact(s).c_str()), ";Etrue;Ereco",
+			    n_etrue_bins, util::EtrueBinEdges(s),
+			    n_ereco_bins, util::ErecoBinEdges(s));
+#endif
+
         // loop over Etrue
         for(int it = 1; it <= n_etrue_bins; it++) {
             
@@ -4938,11 +4955,22 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
                             double nev_osc = nev * posc;
                             //array[ir-1][iq-1] = nev_osc;
                             fMCTemplArrayFin2D[is]->GetEntryRef(im,it-1,ir-1,iq-1) = nev_osc;
+
+#ifdef __save_templates_debug__
+			    int itemp = -1;
+			    if(util::IsCCQE(m))
+			      itemp = 0;
+			    else if(util::IsNC(m))
+			      itemp = 2;
+			    else
+			      itemp = 1;
+			    counters[itemp] += nev_osc;
+			    htemp[itemp]->Fill(Etrue, util::ErecoBinEdges(s,ir-1)+conv::kOneMeV, nev_osc);
+#endif
                             ////
                         }//iq
                     }//ir
                 }//im
-                
             }
             else{ // 1D templates
                 
@@ -4988,6 +5016,26 @@ void SuperkMC::ApplyPhysHypothesisToTemplates_3fOsc(const bool Use2Dtemplates) /
             //
             
         }//it
+#ifdef __save_templates_debug__
+	cout << "SAMPLE " << util::AsStringCompact(s)
+	  //<< " MODE " << util::AsStringCompact(m)
+	     << " CCQE " << counters[0]
+	     << " CCnQE " << counters[1]
+	     << " NC " << counters[2]
+	     << " TOTAL " << counters[0] + counters[1] + counters[2]
+	     << endl;
+	for(int itemp = 0; itemp < 3; itemp++) {
+	  htemp[itemp]->Write();
+	  cout << "X" << htemp[itemp]->GetXaxis()->GetTitle() << "\t" << htemp[itemp]->GetXaxis()->GetNbins() << endl;
+	  cout << "Y" << htemp[itemp]->GetYaxis()->GetTitle() << "\t" << htemp[itemp]->GetYaxis()->GetNbins() << endl;
+	  if(itemp)
+	    htemp[0]->Add(htemp[itemp]);
+	}
+	htemp[0]->Write(TString::Format("enu_erec_%s_TOTAL", util::AsStringCompact(s).c_str()));
+	for(int itemp = 0; itemp < 3; itemp++) {
+	  delete htemp[itemp];
+	}
+#endif
     }//is
     
     return;
