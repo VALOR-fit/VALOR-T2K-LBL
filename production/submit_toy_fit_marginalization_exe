@@ -115,7 +115,8 @@ foreach (@ARGV) {
     elsif($_ eq '--additional-tag'         ) { $additional_tag          = $ARGV[$iarg+1]; }   # run_fit_marginalization.cxx uses the tag to determine which marginalisation toy files to read, but results in the output files being overwritten (for the nuebar appearance analysis), so this option is another tag that is appended to the regular tag when saving output files
     elsif($_ eq '--param-set'              ) { $param_set               = $ARGV[$iarg+1]; }    # Choose from "AsimovA", "AsimovB", or "random" (default) to randomly throw params that weren't set individually
     #####################################################################################
-    
+    elsif($_ eq '--force-dcp-integer'      ) { $dcpinteger              = $ARGV[$iarg+1]; }
+    #####################################################################################
     else {
 	print "Unrecognised argument ".$_."\n"; exit;
     }
@@ -288,6 +289,13 @@ else{
   print "Unrecognised param set [$param_set]. Exiting.";
   exit;
 }
+$dcpinteger = "SPAM" unless defined $dcpinteger;
+use Math::BigFloat ':constant';
+use Math::Trig ':pi';
+if(!($dcpinteger eq "SPAM")){
+    $deltacp = pi * ($dcpinteger - 50.) / 50.;
+}
+
 
 $marg_hierarchy  = 0                           unless defined $marg_hierarchy; # toys for mass hierarchy in fake data sets
 $masshierarchy   = "normal"                    unless defined $masshierarchy;  # mass hierarchy in fake data sets
@@ -903,7 +911,7 @@ while($i_freepar1 < $n_freepar1) {
 	    
 	    print "\n////////////////////////////// \n\n";
 
-	  
+
 	    ################################### Submit the job ##################################
 	    
 	    #
@@ -997,25 +1005,25 @@ while($i_freepar1 < $n_freepar1) {
 		#$arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
 		#$arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
 		#$arguments =~ s/\"//g;            # and apparently single quotes are unnecessary but break it
-		$condorsh   = "$job_dir/fit_marg_$tag-$irun.sh";
+		$condorsh   = "$job_dir/fit_marg_$tag_save-$irun.sh";
 		open(CONSH,">$condorsh") or die("Cannot make shell script for Condor");
 		print CONSH "cd $job_dir \n";
 		print CONSH "$command \n";
 		close(CONSH);
-		open(JDL, ">$job_dir/fit_marg_$tag-$irun.jdl") or die("Cannot create the JDL script");
+		open(JDL, ">$job_dir/fit_marg_$tag_save-$irun.jdl") or die("Cannot create the JDL script");
 		print JDL "executable     = $source \n";
 		print JDL "universe       = vanilla \n";
 		print JDL "arguments      = $condorsh \n";
-		print JDL "output         = $job_dir/fit_marg_$tag-$irun.out \n";
-		print JDL "error          = $job_dir/fit_marg_$tag-$irun.err \n";
-		print JDL "log            = $job_dir/fit_marg_$tag-$irun.log \n";
+		print JDL "output         = $job_dir/fit_marg_$tag_save-$irun.out \n";
+		print JDL "error          = $job_dir/fit_marg_$tag_save-$irun.err \n";
+		print JDL "log            = $job_dir/fit_marg_$tag_save-$irun.log \n";
 		print JDL "request_memory = 1000 \n";
 		print JDL "getenv         = True \n";
 		print CND "should_transfer_files    = YES \n";
 		print CND "when_to_transfer_output  = ON_EXIT \n";
 		print JDL "queue 1 \n";
 		close(JDL);
-		`condor_submit $job_dir/fit_marg_$tag-$irun.jdl`;
+		`condor_submit $job_dir/fit_marg_$tag_save-$irun.jdl`;
 	    }
 	    
 	    #
