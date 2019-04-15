@@ -163,7 +163,7 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
       $nexpts_marg            = 40000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
-      $cedar_time             = "5:00:00";
+      $cedar_time             = "8:00:00";
       $cedar_mem              = "3500M";
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
    }
@@ -172,7 +172,7 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
       $nexpts_marg            = 80000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
-      $cedar_time             = "10:00:00";
+      $cedar_time             = "15:00:00";
       $cedar_mem              = "5000M";
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
    }
@@ -724,12 +724,13 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 
             open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
             print Slurm "#!/bin/bash \n";
-            print Slurm "#SBATCH --account=def-tanaka-ac \n";
+            print Slurm "#SBATCH --account=rpp-tanaka-ab \n";
             print Slurm "#SBATCH --nodes=1 \n";
             print Slurm "#SBATCH --time=$cedar_time \n";
             print Slurm "#SBATCH --mem=$cedar_mem \n";
             print Slurm "#SBATCH --job-name=$tag-$irun \n";
-            print Slurm "#SBATCH --output=$job_dir/$tag-$irun.slurm.log \n";
+            print Slurm "#SBATCH -o $job_dir/$tag-$irun.slurm.out \n";
+	    print Slurm "#SBATCH -e $job_dir/$tag-$irun.slurm.err \n";
             print Slurm "cd $job_dir \n"; 
             print Slurm "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir\n";
             print Slurm "$command \n";
@@ -745,12 +746,13 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
             print Slurm "rm -rf \$node_dir \n";
             open(Slurm, ">$job_dir/${tag}_${irun}.slurm") or die("Can not create the Slurm batch script");
             print Slurm "#!/bin/bash \n";
-            print Slurm "#SBATCH --account=def-tanaka-ac \n";
+            print Slurm "#SBATCH --account=rpp-tanaka-ab \n";
             print Slurm "#SBATCH --nodes=1 \n";
             print Slurm "#SBATCH --time=$cedar_time \n";
             print Slurm "#SBATCH --mem=$cedar_mem \n";
             print Slurm "#SBATCH --job-name=$tag-$irun \n";
-            print Slurm "#SBATCH --output=$job_dir/$tag-$irun.slurm.log \n";
+            print Slurm "#SBATCH -o $job_dir/$tag-$irun.slurm.out \n";
+	    print Slurm "#SBATCH -e $job_dir/$tag-$irun.slurm.err \n";
             print Slurm "the_command=\$(cat $job_dir/temp_${irun}.txt) \n";
 
             print Slurm "IFS=',' read -r -a tokens <<< \"\$the_command\" \n";
