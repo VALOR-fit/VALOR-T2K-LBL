@@ -267,23 +267,25 @@ def get_contour(dchisq_obj):
             graphs.append(g.Clone())
     return graphs
 
-def get_local_histo(filename):
+def get_local_histo(filename, objname):
     in_file = ROOT.TFile(filename, "READ")
     if in_file.GetListOfKeys().Contains("h_deltachisq"):
-        obj = in_file.Get("h_deltachisq")
-        obj.SetDirectory(0)
-        in_file.Close()
-        return (obj, 1)
+        objname = "h_deltachisq"
     elif in_file.GetListOfKeys().Contains("dchisq_map_2D"):
-        obj = in_file.Get("dchisq_map_2D")
-        obj.SetDirectory(0)
-        in_file.Close()
-        return obj, 2
-    else:
-        print "Error: No dchisq surface found"
+        objname ="dchisq_map_2D"
+    elif not in_file.GetListOfKeys().Contains(objname):
+        print "Error: No dchisq surface found for object named", objname, "in file", filename
         sys.exit()
+    obj = in_file.Get(objname)
+    obj.SetDirectory(0)
+    in_file.Close()
+    type_name = str(type(obj))
+    ndim = 1
+    if "2" in type_name:
+        ndim = 2
+    return (obj, ndim)
 
-def get_global_histos(filename):
+def get_global_histos(filename, objnames, global_chisq_min = -1):
     if "normal" in filename:
         filename_nh = filename
         filename_ih = filename.replace("normal", "inverted")
@@ -292,39 +294,98 @@ def get_global_histos(filename):
         filename_nh = filename.replace("inverted", "normal")
     nh_file = ROOT.TFile(filename_nh, "READ")
     ih_file = ROOT.TFile(filename_ih, "READ")
-    if nh_file.GetListOfKeys().Contains("h_deltachisq"):
-        obj_nh = nh_file.Get("h_chisq")
-        obj_nh.SetDirectory(0)
-        obj_ih = ih_file.Get("h_chisq")
-        obj_ih.SetDirectory(0)
-        nh_file.Close()
-        ih_file.Close()
-        minval = min(obj_nh.GetMinimum(), obj_ih.GetMinimum())
+    if nh_file.GetListOfKeys().Contains("h_chisq"):
+        objnames = ["h_chisq","h_chisq"]
+    elif nh_file.GetListOfKeys().Contains("chisq_map_2D"):
+        objnames = ["chisq_map_2D", "chisq_map_2D"]
+    elif not nh_file.GetListOfKeys().Contains(objnames[0]):
+        print "Error: No dchisq surface found for object named", objnames[0], "in file", filename_nh
+        sys.exit()
+    elif not ih_file.GetListOfKeys().Contains(objnames[1]):
+        print "Error: No dchisq surface found for object named", objnames[1], "in file", filename_ih
+        sys.exit()
+    obj_nh = nh_file.Get(objnames[0])
+    obj_nh.SetDirectory(0)
+    obj_ih = ih_file.Get(objnames[1])
+    obj_ih.SetDirectory(0)
+    nh_file.Close()
+    ih_file.Close()
+    minval = min(obj_nh.GetMinimum(), obj_ih.GetMinimum())
+    print "*** test: obj_nh =",obj_nh,"; obj_ih =", obj_ih, "; obj_nh.GetMinimum() =", obj_nh.GetMinimum(), "; obj_ih.GetMinimum() =", obj_ih.GetMinimum()   # TODO: remove after testing
+    if global_chisq_min != -1:
+        if minval < global_chisq_min:
+            print "Local min < global min!"
+            sys.exit()
+        else:
+            minval = global_chisq_min
+    two_dim = False
+    type_name = str(type(nh_file.Get(objnames[0])))
+    if "2" in type_name:
+        two_dim = True
+    if not two_dim:
         for i in range(1, obj_nh.GetNbinsX() + 1):
             obj_nh.SetBinContent(i, obj_nh.GetBinContent(i) - minval)
             obj_ih.SetBinContent(i, obj_ih.GetBinContent(i) - minval)
         return (obj_nh, obj_ih, 1)
-    elif nh_file.GetListOfKeys().Contains("dchisq_map_2D"):
-        obj_nh = nh_file.Get("chisq_map_2D")
-        obj_nh.SetDirectory(0)
-        obj_ih = ih_file.Get("chisq_map_2D")
-        obj_ih.SetDirectory(0)
-        nh_file.Close()
-        ih_file.Close()
-        minval = min(obj_nh.GetMinimum(), obj_ih.GetMinimum())
+    else:
         for i in range(1, obj_nh.GetNbinsX() + 1):
             for j in range(1, obj_nh.GetNbinsY() + 1):
                 obj_nh.SetBinContent(i, j, obj_nh.GetBinContent(i, j) - minval)
                 obj_ih.SetBinContent(i, j, obj_ih.GetBinContent(i, j) - minval)
-        return obj_nh, obj_ih, 2
-    else:
-        print "Error: No dchisq surface found"
-        sys.exit()
+        return (obj_nh, obj_ih, 2)
+
+def get_global_chisq_min(in_filenames, in_objnames):
+    global_min = 999999999.
+    for i in range(0, len(in_filenames)):
+        filename = in_filenames[i]
+        objnames = [in_objnames[2*i], in_objnames[2*i+1]]
+        if "normal" in filename:
+            filename_nh = filename
+            filename_ih = filename.replace("normal", "inverted")
+        else:
+            filename_ih = filename
+            filename_nh = filename.replace("inverted", "normal")
+        nh_file = ROOT.TFile(filename_nh, "READ")
+        ih_file = ROOT.TFile(filename_ih, "READ")
+        if nh_file.GetListOfKeys().Contains("h_chisq"):
+            objnames = ["h_chisq","h_chisq"]
+        elif nh_file.GetListOfKeys().Contains("chisq_map_2D"):
+            objnames = ["chisq_map_2D", "chisq_map_2D"]
+        elif not nh_file.GetListOfKeys().Contains(objnames[0]):
+            print "Error: No dchisq surface found for object named", objnames[0], "in file", filename_nh
+            sys.exit()
+        elif not ih_file.GetListOfKeys().Contains(objnames[1]):
+            print "Error: No dchisq surface found for object named", objnames[1], "in file", filename_ih
+            sys.exit()
+        obj_nh = nh_file.Get(objnames[0])
+        obj_nh.SetDirectory(0)
+        obj_ih = ih_file.Get(objnames[1])
+        obj_ih.SetDirectory(0)
+        nh_file.Close()
+        ih_file.Close()
+        global_min = min(global_min, obj_nh.GetMinimum(), obj_ih.GetMinimum())
+    return global_min
+
+def print_best_fit_points(dchisq_objects, labels, ndim):
+    for i in range(0, len(dchisq_objects)):
+        min_bin_x = ROOT.Long(-1)
+        min_bin_y = ROOT.Long(-1)
+        min_bin_z = ROOT.Long(-1)
+        min_glob_bin = dchisq_objects[i].GetMinimumBin()
+        dchisq_objects[i].GetBinXYZ(min_glob_bin, min_bin_x, min_bin_y, min_bin_z)
+        bin_center_x = dchisq_objects[i].GetXaxis().GetBinCenter(min_bin_x)
+        bin_center_y = dchisq_objects[i].GetYaxis().GetBinCenter(min_bin_y)
+        print_str = "\nFor object " + labels[i] + ", the chisq min is in the bin centered around (" + str(bin_center_x)
+        if ndim == 2:
+            print_str += ", " + str(bin_center_y)
+        print_str += ")"
+        print print_str
 
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Index splines")
     parser.add_argument("-f", "--filename", dest="in_filenames", nargs="+", help="Input filename(s) for contour(s).")
+    parser.add_argument("-j", "--objname", dest="in_objnames", nargs="+", help="Name(s) of chisq hists in the input file(s). Optional. Can leave entries blank to use default.")
     parser.add_argument("-l", "--label", dest="labels", nargs="+", help="Legend label(s) for contours(s). This should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("-c", "--colour", dest="colours", nargs="+", help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("-s", "--style", dest="styles", nargs="+", help="Custom line style(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
@@ -336,31 +397,42 @@ if __name__=="__main__":
     parser.add_argument("--marker-size", dest="msize", type=float, help="Best-fit marker size")
     parser.add_argument("--text-size", dest="tsize", type=float, help="Legend text size")
     parser.add_argument("-o", "--output", dest="out_filename", help="Output PDF filename")
-    parser.add_argument("--global", dest="do_global", action="store_true")
+    parser.add_argument("--global", dest="do_global", action="store_true", help="Plot the chisq separation between ALL input files")
+    parser.add_argument("--hierarchy-pair-min", dest="hierarchy_pair_min", action="store_true", help="Plot only the chisq separation between NH/IH pairs of input files, rather than between all input files")
     parser.add_argument("--t2k", dest="is_t2k_only", action="store_true")
     parser.add_argument("--fc", dest="FC", action="store_true")
     parser.add_argument("--prelim", dest="prelim", action="store_true")
     parser.add_argument("--theta23", dest="theta23", type=float, help="Input value of theta23.")
     parser.add_argument("--dm23", dest="dm23", type=float, help="Input value of dm23.")
     args = parser.parse_args()
-    if not len(args.in_filenames) == len(args.labels) and not args.do_global:
+    if args.do_global and args.hierarchy_pair_min:
+        print "Error: Can't use --global and --hierarchy-pair-min at the same time"
+        sys.exit()
+    if not len(args.in_filenames) == len(args.labels) and not (args.do_global or args.hierarchy_pair_min):
         print "Error: The number of filenames and labels should match"
         sys.exit()
-    elif not 2 * len(args.in_filenames) == len(args.labels) and args.do_global:
+    elif not 2 * len(args.in_filenames) == len(args.labels) and (args.do_global or args.hierarchy_pair_min):
         print "Error: The number of labels should be twice the number of filenames"
         sys.exit()
 
+    global_chisq_min = -1
+    if args.do_global:
+        global_chisq_min = get_global_chisq_min(args.in_filenames, args.in_objnames)
 
     dchisq_objects = []
     dchisq_nh_objects = []
     dchisq_ih_objects = []
     num_var = 0
-    for filename in args.in_filenames:
-        if not args.do_global:            
-            obj, dim = get_local_histo(filename)
+    for i in range(0, len(args.in_filenames)):
+        filename = args.in_filenames[i]
+        if not (args.do_global or args.hierarchy_pair_min):
+            objname = args.in_objnames[i]
+            obj, dim = get_local_histo(filename, objname)
             dchisq_objects.append(obj)
         else:
-            obj_nh, obj_ih, dim = get_global_histos(filename)
+            objnames = [args.in_objnames[2*i], args.in_objnames[2*i+1]]
+            print "*** test: filename =", filename, "; objnames =", objnames    # TODO: remove after testing
+            obj_nh, obj_ih, dim = get_global_histos(filename, objnames, global_chisq_min)
             dchisq_objects.append(obj_nh)
             dchisq_objects.append(obj_ih)
         if num_var == 0:
@@ -387,4 +459,5 @@ if __name__=="__main__":
         print "Error: Not all contours have the same dimensionality"
         sys.exit()
 
+    print_best_fit_points(dchisq_objects, args.labels, num_var)
 
