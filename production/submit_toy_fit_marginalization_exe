@@ -186,6 +186,7 @@ if($param_set eq "random"){
   $mix13           = -999                      unless defined $mix13;
   $mix12           = -999                      unless defined $mix12;
   $deltacp         = -999                      unless defined $deltacp;
+  $mixparamoctant  = "two"                     unless defined $mixparamoctant;
   $betaBar         = 0.                        unless defined $betaBar;
 }
 elsif($param_set eq "AsimovA"){
