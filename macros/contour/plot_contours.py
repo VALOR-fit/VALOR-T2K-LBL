@@ -10,13 +10,27 @@ ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 
-def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inverted=False):
+def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inverted=False, trues=None, bestfits=None, zoom=False):
     max_val = 0.0
     for dchisq_obj in dchisq_objects:
         max_val = max(max_val, dchisq_obj.GetMaximum())
-    max_val = np.ceil(max_val)
+    max_val = np.ceil(max_val) * 1.05
+    if zoom:
+        max_val = 30
     for dchisq_obj in dchisq_objects:
         dchisq_obj.GetYaxis().SetRangeUser(0, max_val)
+
+    true = -999.9
+    for t1, t2 in trues:
+        if true < -999.0:
+            true = t1
+        elif abs(true - t1) > 1E-6:
+            true = -999.9
+            break
+    if true > -999:
+        line = ROOT.TLine(true, 0, true, max_val)
+        line.SetLineStyle(ROOT.kDotted)
+        #line.SetLineColor(ROOT.kGray)
 
     canvas = ROOT.TCanvas("canvas1d", "canvas1d", 700, 500)
    
@@ -25,20 +39,28 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inver
         line_color = 2
     else:
         line_color = 1
+    line_colors = [ROOT.kBlack, ROOT.kRed, ROOT.kGreen+2, ROOT.kBlue, ROOT.kGray]
+    line_styles = [ROOT.kSolid, ROOT.kDashed, ROOT.kDotted]
     for i, dchisq_obj in enumerate(dchisq_objects):
-        dchisq_obj.SetLineColor(line_color)
+        #dchisq_obj.SetLineColor(line_color)
+        dchisq_obj.SetLineColor(line_colors[i])
+        dchisq_obj.SetLineStyle(line_styles[i % len(line_styles)])
         dchisq_obj.Draw("l" + options)
         options = "same"
         line_color += 1
     lymax = 0.89
-    lymin = lymax - (1 + len(dchisq_objects)) * 0.03
-    legend = ROOT.TLegend(0.15, lymin, 0.3, lymax);
-    legend.SetFillStyle(0);
+    lymin = lymax - (1 + len(dchisq_objects) + 1) * 0.03
+    legend = ROOT.TLegend(0.15, lymin, 0.4, lymax);
+    #legend.SetFillStyle(0);
+    legend.SetFillStyle(1001);
+    legend.SetFillColor(10);
     legend.SetBorderSize(0);
     legend.SetTextFont(132);
     legend.SetTextSize(0.03);
+    if true > -999:
+        legend.AddEntry(None, "True #delta_{CP} = %.3f" % true, "");
     for i, dchisq_obj in enumerate(dchisq_objects):
-        legend.AddEntry(dchisq_obj, labels[i]);
+        legend.AddEntry(dchisq_obj, labels[i] + " bf: %.3f" % bestfits[i][0]);
 
     if "mix" in pdf_filename and not is_t2k_only:
         fc_file = ROOT.TFile("FCgraphs.root", "READ")
@@ -67,10 +89,15 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inver
         critical3.SetLineColor(ROOT.kBlack)
         critical3.SetLineStyle(2)
         critical3.Draw();
+        critval4 = 16
+        critical4 = ROOT.TLine(-np.pi, critval4, np.pi, critval4)
+        critical4.SetLineColor(ROOT.kBlack)
+        critical4.SetLineStyle(2)
+        critical4.Draw();
 
-
+    if true > -999:
+        line.Draw()
     legend.Draw()
-
     canvas.Print(pdf_filename)
 
 def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, is_inverted=False):
@@ -146,17 +173,22 @@ def get_contour(dchisq_obj):
     return graphs
 
 def get_local_histo(filename):
+    in_file_tree = ROOT.TFile(filename.replace("_contour",""))
+    tree = in_file_tree.Get('fitnt')
+    entry = tree.GetEntry(0)
+    trues = (tree.truepar0, tree.truepar1)
+    bfs = (tree.bestfit0, tree.bestfit0)
     in_file = ROOT.TFile(filename, "READ")
     if in_file.GetListOfKeys().Contains("h_deltachisq"):
         obj = in_file.Get("h_deltachisq")
         obj.SetDirectory(0)
         in_file.Close()
-        return (obj, 1)
+        return [obj, 1, trues, bfs]
     elif in_file.GetListOfKeys().Contains("dchisq_map_2D"):
         obj = in_file.Get("dchisq_map_2D")
         obj.SetDirectory(0)
         in_file.Close()
-        return obj, 2
+        return [obj, 2, trues, bfs]
     else:
         print "Error: No dchisq surface found"
         sys.exit()
@@ -221,11 +253,15 @@ if __name__=="__main__":
     dchisq_objects = []
     dchisq_nh_objects = []
     dchisq_ih_objects = []
+    trues = []
+    bfs = []
     num_var = 0
     for filename in args.in_filenames:
         if not args.do_global:            
-            obj, dim = get_local_histo(filename)
+            obj, dim, true, bf = get_local_histo(filename)
             dchisq_objects.append(obj)
+            trues.append(true)
+            bfs.append(bf)
         else:
             obj_nh, obj_ih, dim = get_global_histos(filename)
             dchisq_nh_objects.append(obj_nh)
@@ -234,11 +270,15 @@ if __name__=="__main__":
             num_var = dim
         elif num_var != dim:
             num_var = -1
-    print len(dchisq_objects)
+    print len(dchisq_objects), "contours will be drawn"
 
     if num_var == 1:
         if not args.do_global:
-            plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only)
+            c = ROOT.TCanvas()
+            c.SaveAs(args.out_filename + '[')
+            plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only, trues=trues, bestfits=bfs)
+            plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only, trues=trues, bestfits=bfs, zoom=True)
+            c.SaveAs(args.out_filename + ']')
         else:
             nh_filename = args.out_filename
             ih_filename = args.out_filename.replace("normal", "inverted")

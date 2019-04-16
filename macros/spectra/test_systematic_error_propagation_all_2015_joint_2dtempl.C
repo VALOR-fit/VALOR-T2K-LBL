@@ -1000,6 +1000,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
   TFile * output_rootfile_osc3pp;
   TCanvas c3pp;
   if(make_osc3pp_inputs) {
+    c3pp.SetRightMargin(0.05);
     c3pp.SaveAs(TString::Format("syst_variations_%s.pdf[", sname));
     output_rootfile_osc3pp = new TFile(Form("%s.fij.t2k.root", sname), file_mode.c_str());
   }
@@ -1035,16 +1036,33 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 	hRatioTun_m3sigma[ip]->Write(Form("syserre_%d_m3",systcounter));
       }
       c3pp.cd();
-      double axis_min = TMath::Min(0, TMath::Min(hRatioTun_p3sigma[ip]->GetMinimum(), hRatioTun_m3sigma[ip]->GetMinimum())) * 1.05;
-      double axis_max = TMath::Max(0, TMath::Max(hRatioTun_p3sigma[ip]->GetMaximum(), hRatioTun_m3sigma[ip]->GetMaximum())) * 1.05;
+      //rangers
+      double axis_min = TMath::Min(hRatioTun_p3sigma[ip]->GetMinimum(), hRatioTun_m3sigma[ip]->GetMinimum());
+      double axis_max = TMath::Max(hRatioTun_p3sigma[ip]->GetMaximum(), hRatioTun_m3sigma[ip]->GetMaximum());
+      axis_max *= 1.05;
+      axis_min *= 0.95;
       hRatioTun_p3sigma[ip]->GetYaxis()->SetRangeUser(axis_min, axis_max);
+      hRatioTun_p3sigma[ip]->GetYaxis()->SetTitle("Ratio to nominal");
+      //styles
+      hRatioTun_p3sigma[ip]->SetLineColor(kRed);
+      hRatioTun_p1sigma[ip]->SetLineColor(kRed);
+      hRatioTun_m1sigma[ip]->SetLineColor(kBlue);
+      hRatioTun_m3sigma[ip]->SetLineColor(kBlue);
+      hRatioTun_p3sigma[ip]->SetLineStyle(kDashed);
+      hRatioTun_m3sigma[ip]->SetLineStyle(kDashed);
+      //draws
       hRatioTun_p3sigma[ip]->Draw();
       hRatioTun_p1sigma[ip]->Draw("SAME");
       hRatioTun_m1sigma[ip]->Draw("SAME");
       hRatioTun_m3sigma[ip]->Draw("SAME");
-      TLegend l(0.1, 0.8, 1, 1);
+      //lines
+      TLine line(0, 1, hRatioTun_p3sigma[ip]->GetXaxis()->GetXmax(), 1);
+      line.SetLineColor(kBlack);
+      line.Draw();
+      //legend
+      TLegend l(0.1, 0.9, 1, 1);
       l.SetNColumns(5);
-      l.AddEntry((TObject*)0, util::AsString(p), "");
+      l.AddEntry((TObject*)0, util::AsString(p).c_str(), "");
       l.AddEntry(hRatioTun_p3sigma[ip], "+3 #sigma", "l");
       l.AddEntry(hRatioTun_p1sigma[ip], "+1 #sigma", "l");
       l.AddEntry(hRatioTun_m1sigma[ip], "-1 #sigma", "l");
