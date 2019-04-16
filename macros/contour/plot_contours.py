@@ -213,6 +213,8 @@ if __name__=="__main__":
     if len(args.in_filenames) == len(args.labels):
         None
     else:
+        print args.in_filenames
+        print args.labels
         print "Error: The number of filenames and labels should match"
         sys.exit()
 
