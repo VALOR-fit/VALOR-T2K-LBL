@@ -12,7 +12,7 @@ ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 
-def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours, styles, prelim, title_x, title_y, line_width, text_size, FC=False, is_inverted=False):
+def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours, styles, prelim, title_x, title_y, line_width, text_size, FC=False, is_inverted=False, skip_draw_crit=False):
     max_val = 0.0
     min_val = 999
     for dchisq_obj in dchisq_objects:
@@ -105,29 +105,30 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             xpos_frac = 0.1
         xpos = dchisq_objects[0].GetXaxis().GetBinLowEdge( int(xpos_frac * dchisq_objects[0].GetNbinsX()) )
 
-        critval1 = 1
-        critical1 = ROOT.TLine(xlow, critval1, xhigh, critval1)
-        critical1.SetLineColor(ROOT.kBlue)
-        critical1.SetLineStyle(1)
-        critical1.SetLineWidth(2)
-        critical1.Draw()
+        if not skip_draw_crit:
+          critval1 = 1
+          critical1 = ROOT.TLine(xlow, critval1, xhigh, critval1)
+          critical1.SetLineColor(ROOT.kBlue)
+          critical1.SetLineStyle(1)
+          critical1.SetLineWidth(2)
+          critical1.Draw()
 
-        latLine1 = ROOT.TLatex(xpos, critval1 + 0.15, str(int(ROOT.TMath.Sqrt(critval1))) + " #sigma")
-        latLine1.SetTextColor(ROOT.kBlue)
-        latLine1.SetTextSize(0.05)
-        latLine1.Draw("same")
+          latLine1 = ROOT.TLatex(xpos, critval1 + 0.15, str(int(ROOT.TMath.Sqrt(critval1))) + " #sigma")
+          latLine1.SetTextColor(ROOT.kBlue)
+          latLine1.SetTextSize(0.05)
+          latLine1.Draw("same")
 
-        critval2 = 4
-        critical2 = ROOT.TLine(xlow, critval2, xhigh, critval2)
-        critical2.SetLineColor(ROOT.kBlue)
-        critical2.SetLineStyle(1)
-        critical2.SetLineWidth(2)
-        critical2.Draw()
+          critval2 = 4
+          critical2 = ROOT.TLine(xlow, critval2, xhigh, critval2)
+          critical2.SetLineColor(ROOT.kBlue)
+          critical2.SetLineStyle(1)
+          critical2.SetLineWidth(2)
+          critical2.Draw()
 
-        latLine2 = ROOT.TLatex(xpos, critval2 + 0.15, str(int(ROOT.TMath.Sqrt(critval2))) + " #sigma")
-        latLine2.SetTextColor(ROOT.kBlue)
-        latLine2.SetTextSize(0.05)
-        latLine2.Draw("same")
+          latLine2 = ROOT.TLatex(xpos, critval2 + 0.15, str(int(ROOT.TMath.Sqrt(critval2))) + " #sigma")
+          latLine2.SetTextColor(ROOT.kBlue)
+          latLine2.SetTextSize(0.05)
+          latLine2.Draw("same")
 
     if prelim:
         title = ROOT.TLatex(0.5, 0.91, "T2K Run 1-9 Preliminary")
@@ -385,6 +386,7 @@ def print_best_fit_points(dchisq_objects, labels, ndim):
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Index splines")
     parser.add_argument("-f", "--filename", dest="in_filenames", nargs="+", help="Input filename(s) for contour(s).")
+    parser.add_argument("-r", "--skip-draw-crit", dest="skip_draw_crit", naction="store_true", help="Do not draw the const chisq critical values on 1D plots.")
     parser.add_argument("-j", "--objname", dest="in_objnames", nargs="+", help="Name(s) of chisq hists in the input file(s). Optional. Can leave entries blank to use default.")
     parser.add_argument("-l", "--label", dest="labels", nargs="+", help="Legend label(s) for contours(s). This should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("-c", "--colour", dest="colours", nargs="+", help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
@@ -392,7 +394,7 @@ if __name__=="__main__":
     parser.add_argument("--best-fit-label", dest="best_fit_labels", nargs="+", help="Labels for best-fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("--best-fit-style", dest="best_fit_styles", nargs="+", help="Marker styles for best fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("--title-x", dest="title_x", help="Override default x-axis title")
-    parser.add_argument("--title-y", dest="title_y", help="Override default y-axis title")
+    parser.add_argument("--title-y", dest="title_y", default="-2#Deltaln(L)", help="Override default y-axis title")
     parser.add_argument("--line-width", dest="lwidth", type=int, help="Contour line width")
     parser.add_argument("--marker-size", dest="msize", type=float, help="Best-fit marker size")
     parser.add_argument("--text-size", dest="tsize", type=float, help="Legend text size")
@@ -452,7 +454,7 @@ if __name__=="__main__":
         best_fit_styles = [int(i) for i in args.best_fit_styles]
 
     if num_var == 1:
-        plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim, args.title_x, "-2#Deltaln(L)", args.lwidth, args.tsize, args.FC)
+        plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim, args.title_x, args.title_y, args.lwidth, args.tsize, args.FC, args.skip_draw_crit)
     elif num_var == 2:
         plot_contours_2d(dchisq_objects, args.labels, args.theta23, args.dm23, args.out_filename, colours, styles, best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth, args.msize, args.tsize)
     else:
