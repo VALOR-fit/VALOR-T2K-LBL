@@ -12,16 +12,24 @@ ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(0)
 
-def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours, styles, prelim, title_x, title_y, line_width, text_size, FC=False, is_inverted=False, skip_draw_crit=False):
+def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours, styles, prelim, title_x, title_y, line_width, text_size, skip_draw_crit=False, FC=False, is_inverted=False):
     max_val = 0.0
     min_val = 999
     for dchisq_obj in dchisq_objects:
         max_val = max(max_val, dchisq_obj.GetMaximum())
         min_val = min(min_val, dchisq_obj.GetMinimum())
-    max_val = np.ceil(max_val)
+    if max_val >= 0.5:
+        max_val = np.ceil(max_val)
+    else:
+        max_val = 1.1 * max_val
     min_val = np.floor(min_val)
     for dchisq_obj in dchisq_objects:
         dchisq_obj.GetYaxis().SetRangeUser(0, max_val)
+        title_offset = 0.8
+        if max_val < 0.5:
+            # Prevent collisions between the title and the axis numbering
+            title_offset = 1.2
+        dchisq_obj.GetYaxis().SetTitleOffset(title_offset)
 
     canvas = ROOT.TCanvas("canvas1d", "canvas1d", 700, 500)
 
@@ -30,7 +38,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         sinsqth13_err = 0.0008
         X1 = sinsqth13_nom - sinsqth13_err
         X2 = sinsqth13_nom + sinsqth13_err
-        print "*** test:", X1,min_val,X2,max_val
         breactors = ROOT.TBox(X1,min_val,X2,max_val)
         breactors.SetFillColor(ROOT.kYellow+1)
         dchisq_objects[0].Draw("axis")
@@ -56,7 +63,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             dchisq_obj.GetXaxis().SetTitle(title_x)
         if title_y:
             dchisq_obj.GetYaxis().SetTitle(title_y)
-        dchisq_obj.GetYaxis().SetTitleOffset(0.8)
         dchisq_obj.Draw("l" + options)
         options = "same"
         line_color += 1
@@ -312,7 +318,6 @@ def get_global_histos(filename, objnames, global_chisq_min = -1):
     nh_file.Close()
     ih_file.Close()
     minval = min(obj_nh.GetMinimum(), obj_ih.GetMinimum())
-    print "*** test: obj_nh =",obj_nh,"; obj_ih =", obj_ih, "; obj_nh.GetMinimum() =", obj_nh.GetMinimum(), "; obj_ih.GetMinimum() =", obj_ih.GetMinimum()   # TODO: remove after testing
     if global_chisq_min != -1:
         if minval < global_chisq_min:
             print "Local min < global min!"
@@ -386,7 +391,7 @@ def print_best_fit_points(dchisq_objects, labels, ndim):
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Index splines")
     parser.add_argument("-f", "--filename", dest="in_filenames", nargs="+", help="Input filename(s) for contour(s).")
-    parser.add_argument("-r", "--skip-draw-crit", dest="skip_draw_crit", naction="store_true", help="Do not draw the const chisq critical values on 1D plots.")
+    parser.add_argument("-r", "--skip-draw-crit", dest="skip_draw_crit", action="store_true", help="Do not draw the const chisq critical values on 1D plots.")
     parser.add_argument("-j", "--objname", dest="in_objnames", nargs="+", help="Name(s) of chisq hists in the input file(s). Optional. Can leave entries blank to use default.")
     parser.add_argument("-l", "--label", dest="labels", nargs="+", help="Legend label(s) for contours(s). This should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("-c", "--colour", dest="colours", nargs="+", help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
@@ -433,7 +438,6 @@ if __name__=="__main__":
             dchisq_objects.append(obj)
         else:
             objnames = [args.in_objnames[2*i], args.in_objnames[2*i+1]]
-            print "*** test: filename =", filename, "; objnames =", objnames    # TODO: remove after testing
             obj_nh, obj_ih, dim = get_global_histos(filename, objnames, global_chisq_min)
             dchisq_objects.append(obj_nh)
             dchisq_objects.append(obj_ih)
@@ -454,7 +458,7 @@ if __name__=="__main__":
         best_fit_styles = [int(i) for i in args.best_fit_styles]
 
     if num_var == 1:
-        plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim, args.title_x, args.title_y, args.lwidth, args.tsize, args.FC, args.skip_draw_crit)
+        plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim, args.title_x, args.title_y, args.lwidth, args.tsize, args.skip_draw_crit, args.FC)
     elif num_var == 2:
         plot_contours_2d(dchisq_objects, args.labels, args.theta23, args.dm23, args.out_filename, colours, styles, best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth, args.msize, args.tsize)
     else:
