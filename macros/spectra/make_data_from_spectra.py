@@ -6,7 +6,6 @@ import sys
 import os
 
 from array import array
-import numpy as np
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
