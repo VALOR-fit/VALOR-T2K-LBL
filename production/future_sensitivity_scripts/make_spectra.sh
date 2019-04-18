@@ -5,7 +5,7 @@ disable_syst="false"
 run="$1"
 amount="$2"
 config_type="$3"
-config="analysis_configuration_oa2018_run1-9d_v1_postfit_future_${amount}_${run}_${config_type}_hybrid.xml"
+config="analysis_configuration_oa2018_run1-9d_v1_postfit_future_${amount}_${run}_${config_type}.xml"
 
 if [ "$run" == "" ] || [ "$amount" == "" ] || [ "$config_type" == "" ]; then
     ok=0
