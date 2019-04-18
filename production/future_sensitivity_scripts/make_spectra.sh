@@ -1,38 +1,16 @@
 ok=1
 disable_syst="false"
 
-if [[ "$1" == "fhc" ]]; then
-   run="fhc"
-   if [[ "$2" == "full" ]]; then
-      amount="full"
-      config="analysis_configuration_pac_201901_fhc_postfit.xml"
-   elif [[ "$2" == "future" ]]; then
-      amount="future"
-      config="analysis_configuration_pac_201901_fhc_future_postfit.xml"
-   elif [[ "$2" == "standard" ]]; then
-      amount="standard"
-      config="analysis_configuration_pac_201901_standard_postfit.xml"
-   else
-      ok=0
-   fi
-elif [[ "$1" == "rhc" ]]; then
-   run="rhc"
-   if [[ "$2" == "full" ]]; then
-      amount="full"
-      config="analysis_configuration_pac_201901_rhc_postfit.xml"
-   elif [[ "$2" == "future" ]]; then
-      amount="future"
-      config="analysis_configuration_pac_201901_rhc_future_postfit.xml"
-   elif [[ "$2" == "standard" ]]; then
-      amount="standard"
-      config="analysis_configuration_pac_201901_standard_postfit.xml"
-   else
-      ok=0
-   fi
-else
-   ok=0
-fi
 
+run="$1"
+amount="$2"
+config_type="$3"
+config="analysis_configuration_oa2018_run1-9d_v1_postfit_future_${amount}_${run}_${config_type}_hybrid.xml"
+
+if [ "$run" == "" ] || [ "$amount" == "" ] || [ "$config_type" == "" ]; then
+    ok=0
+fi
+   
 mixing12=0.307
 mixing13=0.0212
 mixing23=0.528
@@ -50,12 +28,14 @@ if [ "$ok" == "1" ]; then
          erec_high=1.25
       fi
       command="${T2KOSCANA}/macros/spectra/test_sk_ereco_spectrum_nominal_mainmode_joint_2D.C"
-      std_args="\"spectra_${run}_${amount}\",\"${s}\",\"3f_osc\",$mixing12,$mixing13,$mixing23,$dcp,$dmsq12,$dmsq23,-99,${disable_syst},\"${config}\",true,false,\"sinsqtheta\",\"normal\",\"auto\",\"$octant\",false,0.0,$erec_high,0,\"\",false"
-      bsub -q express -G t2kgrp -R "rusage[mem=3072,swap=3280]" -oo make_spectra_${run}_${amount}_${s}.log ${T2KOSCANA}/production/warwick_submit_command.sh root2k -q -b "${command}(${std_args})"
+      std_args="\"spectra_${run}_${amount}_${config_type}\",\"${s}\",\"3f_osc\",$mixing12,$mixing13,$mixing23,$dcp,$dmsq12,$dmsq23,-99,${disable_syst},\"${config}\",true,false,\"sinsqtheta\",\"normal\",\"auto\",\"$octant\",false,0.0,$erec_high,0,\"\",false"
+      root2k -q -b "${command}(${std_args})"
+      #echo "root2k -q -b ${command}(${std_args})"
    done
 else
    echo -e "Usage: make_spectra.sh <run> <amount>"
-   echo -e "   run: fhc | rhc"
-   echo -e "   amount: full | future"
+   echo -e "   run: FHC (for extra POT = 100% FHC) | FHC_RHC (for extra POT = 50/50 FHC/RHC)"
+   echo -e "   amount: 7.8E21 | 10E21 | 15E21"
+   echo -e "   config_type: total (for config containing total future POT) | excess (for config containing future POT - current POT)"
 fi
 
