@@ -20,7 +20,8 @@ job_dir=$7
 par0=$8
 par1=$9
 
-tag="future_sensitivity_Apr19_${hier}_${reac}_${split}_${POT}_${study_type}"
+tag="oa2018_${hier}_${reac}"
+add_tag="${split}_${POT}_${study_type}"
 datafit="--do-toys 0 --fakedata-root-file /scratch/fbench/future_sensitivity_Apr2019/data/data_${split}_${POT}_${study_type}.root"
 config_file="--config-file analysis_configuration_oa2018_run1-9d_v1_postfit_future_${POT}_${split}_total.xml"
 if [ "$study_type" == "" ] || [ "$split" == "" ] || [ "$POT" == "" ]; then
@@ -70,7 +71,7 @@ if [ "$ok" == "1" ]
 then
    echo -e "Running fit - $tag"
    resource="--resource cedar"
-   $T2KOSCANA/production/submit_toy_fit_marginalization_exe $resource $datafit $hierarchy $penalty $osc_params $config_file $freepars $dir --job-dir $job_dir --tag $tag --cpu-time 1:00:00
+   $T2KOSCANA/production/submit_toy_fit_marginalization_exe $resource $datafit $hierarchy $penalty $osc_params $config_file $freepars $dir --job-dir $job_dir --tag $tag --additional-tag $add_tag --cpu-time 1:00:00
    echo
    echo
 else
