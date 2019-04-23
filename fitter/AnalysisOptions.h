@@ -128,6 +128,7 @@ Split valor::conv namespace into several smaller files
 //#define OSC3PPBINNING
 //#define OSC3PPISHBINNING //osc3pp for Etrue. T2K for Ereco (osc3pp Ereco binning doesn't line up with the spline binning)
 #define OSC3PPINPUTBINNING //osc3ppp for Etrue. T2K/Osc3++ combined for mu-like Ereco. T2K for e-like Ereco
+//#define OSC3PPINPUTSTARBINNING //osc3ppp for Etrue. T2K/Osc3++ combined for Ereco
 //#define FINEBINNING
 #ifdef T2KBINNING
 #define ETRUE_BINS_1RMU 2
@@ -149,6 +150,11 @@ Split valor::conv namespace into several smaller files
 #define ETRUE_BINS_1RE 8
 #define ERECO_BINS_1RMU 9
 #define ERECO_BINS_1RE 3
+#elif defined(OSC3PPINPUTSTARBINNING)
+#define ETRUE_BINS_1RMU 8
+#define ETRUE_BINS_1RE 8
+#define ERECO_BINS_1RMU 9
+#define ERECO_BINS_1RE 9
 #elif defined(FINEBINNING)
 #define ETRUE_BINS_1RMU 5
 #define ETRUE_BINS_1RE 5
