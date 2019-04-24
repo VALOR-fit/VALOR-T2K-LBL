@@ -19,6 +19,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         max_val = max(max_val, dchisq_obj.GetMaximum())
         min_val = min(min_val, dchisq_obj.GetMinimum())
     max_val = np.ceil(max_val)
+    max_val = min(max_val, 25.0)    # Not meaningful above 5 sigma, so truncate the axis
     min_val = np.floor(min_val)
     for dchisq_obj in dchisq_objects:
         dchisq_obj.GetYaxis().SetRangeUser(0, max_val)
@@ -105,7 +106,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             xpos_frac = 0.1
         xpos = dchisq_objects[0].GetXaxis().GetBinLowEdge( int(xpos_frac * dchisq_objects[0].GetNbinsX()) )
 
-        critval1 = 1
+        critval1 = 9
         critical1 = ROOT.TLine(xlow, critval1, xhigh, critval1)
         critical1.SetLineColor(ROOT.kBlue)
         critical1.SetLineStyle(1)
@@ -117,7 +118,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         latLine1.SetTextSize(0.05)
         latLine1.Draw("same")
 
-        critval2 = 4
+        critval2 = 16
         critical2 = ROOT.TLine(xlow, critval2, xhigh, critval2)
         critical2.SetLineColor(ROOT.kBlue)
         critical2.SetLineStyle(1)
@@ -348,6 +349,8 @@ if __name__=="__main__":
         sys.exit()
     elif not 2 * len(args.in_filenames) == len(args.labels) and args.do_global:
         print "Error: The number of labels should be twice the number of filenames"
+        print "filenames =", args.in_filenames
+        print "labels =", args.labels
         sys.exit()
 
 
