@@ -500,14 +500,14 @@ if($freepar0 eq "dmsq23"  && $freepar1 eq "")
    if($penalty_freepar0 == 1)
    {
       $nfiles_margtoys   = 101           unless defined $nfiles_margtoys; # of marginalization files
-      $ntoys_margtoys    = 40000         unless defined $ntoys_margtoys;     # of marginalization toys
+      $ntoys_margtoys    = 100000        unless defined $ntoys_margtoys;     # of marginalization toys
       $npt_freepar0      = 101           unless defined $npt_freepar0; # of free parameter points to scan
       $wqueue = "short";
       if( !defined $cput && $resource eq "cedar") {
-        $cput = "00:15:00";
+        $cput = "00:45:00";
       }
       if( !defined $mem && $resource eq "cedar") {
-        $mem = "2500M";
+        $mem = "4000M";
       }
    }
    else
