@@ -5,5 +5,5 @@ for f in "$@"; do
     tag="${tag#*fit}"
     tag="${tag%-*}"
     tag="get_contour${tag}"
-    ${T2KOSCANA}/production/submit_get_contour --file ${f} --resource cedar --job-dir ${fit_path} --tag ${tag}
+    ${T2KOSCANA}/production/submit_get_contour --file ${f} --resource interactive --job-dir ${fit_path} --tag ${tag}
 done
