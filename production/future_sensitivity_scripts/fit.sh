@@ -14,11 +14,14 @@ study_type=$1
 split=$2
 POT=$3
 marg_dir=$4
-hier=$5
-reac=$6
-job_dir=$7
-par0=$8
-par1=$9
+ntoys=$5
+cput=$6
+mem=$7
+hier=$8
+reac=$9
+job_dir=${10}
+par0=${11}
+par1=${12}
 
 tag="oa2018_${hier}_${reac}"
 add_tag="${split}_${POT}_${study_type}"
@@ -71,7 +74,7 @@ if [ "$ok" == "1" ]
 then
    echo -e "Running fit - $tag"
    resource="--resource cedar"
-   $T2KOSCANA/production/submit_toy_fit_marginalization_exe $resource $datafit $hierarchy $penalty $osc_params $config_file $freepars $dir --job-dir $job_dir --tag $tag --additional-tag $add_tag --cpu-time 1:00:00
+   $T2KOSCANA/production/submit_toy_fit_marginalization_exe $resource $datafit $hierarchy $penalty $osc_params $config_file $freepars $dir --job-dir $job_dir --tag $tag --additional-tag $add_tag --cpu-time $cput --mem $mem --ntoys-margtoys $ntoys
    echo
    echo
 else
