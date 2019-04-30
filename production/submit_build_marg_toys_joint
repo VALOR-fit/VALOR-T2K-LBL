@@ -247,12 +247,12 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
 
    if($use_reactors == 1)
    {
-      $nexpts_marg            = 40000           unless defined $nexpts_marg;
+      $nexpts_marg            = 100000           unless defined $nexpts_marg; # Nominal Run 1-9d is 40k toys and 8h and 4000M with RC
       $step_freepar0          = 1;
       $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
       $npt_freepar0           = 101;
-      $cedar_time             = "8:00:00";
-      $cedar_mem              = "4000M";
+      $cedar_time             = "20:00:00";
+      $cedar_mem              = "6000M";
    }
    else
    {
