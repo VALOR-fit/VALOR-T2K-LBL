@@ -123,6 +123,7 @@ def main(file_pattern, outfilename, nbatch, critval_str, var):
                         file_in = file_in.replace     ("[ALLOCATION]", alloc)
                         file_in = file_in.replace     ("[MH]"        , hier)
                         file_in = file_in.replace     ("[POT]"       , pot)
+                        file_in = file_in.replace     ("[VAR]"       , var)
                         print "Reading from file", file_in
                         f = ROOT.TFile(file_in, "read")
                         hchisq = f.Get("h_deltachisq")
@@ -240,7 +241,7 @@ if __name__=="__main__":
   
     import optparse
     parser = optparse.OptionParser(usage="%prog [options]..",description="Make tables of validation spectra")
-    parser.add_option('-p', '--file-pattern', dest='file_pattern', default="batch[BATCH]/fit_oa2018_[MH]_reactor_dmsq23_nexp_1_0.003_-999.000-job0_[ALLOCATION]_[POT]_[DATATYPE]-_0_0_contour.root", help="File naming pattern for input ROOT files.")
+    parser.add_option('-p', '--file-pattern', dest='file_pattern', default="batch[BATCH]/fit_oa2018_[MH]_reactor_[VAR]_nexp_1_0.003_-999.000-job0_[ALLOCATION]_[POT]_[DATATYPE]-_0_0_contour.root", help="File naming pattern for input ROOT files.")
     parser.add_option('-o', '--out-file'    , dest='output_file' , default="PAC_conf_interval_comparison.tex"                                                                                      , help="Name for output TeX file.")
     parser.add_option('-n', '--n-batches'   , dest='nbatch'      , default=3,   type=int                                                                                                           , help="The number of batches of fits to compare.")
     parser.add_option('-c', '--crit-val'    , dest='critval'     , default="4sigma"                                                                                                                , help="Critical value (in sigma or percent) to evaluate the range at.")
