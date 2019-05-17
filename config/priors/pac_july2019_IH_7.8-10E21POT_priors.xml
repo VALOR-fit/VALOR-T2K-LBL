@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<prior_list name="PAC_july2019_IH_7.8-10E21POT">
+
+  <param>
+    <name> deltacp                  </name>
+    <type> flat                     </type>
+    <low>  -3.14159265358979312e+00 </low>
+    <high> +3.14159265358979312e+00 </high>
+  </param>
+
+  <param>
+    <name>   dmsq23  </name>
+    <type>   flat    </type>
+    <low>    2.30E-3 </low>
+    <high>   2.65E-3 </high>
+    <scheme> auto    </scheme>       <!-- NOTE: This just tells VALOR which scheme these values correspond to, it does not set the scheme.  -->
+  </param>
+
+  <param>
+    <name>   mixing23    </name>
+    <type>   flat        </type>
+    <low>    0.42        </low>
+    <high>   0.61        </high>
+    <scheme> sinsqtheta  </scheme>  <!-- NOTE: This just tells VALOR which scheme these values correspond to, it does not set the scheme.  -->
+  </param>
+
+  <param>
+    <name>   mixing13    </name>
+    <type>   gaus        </type>
+    <mean>   0.0830      </mean>
+    <sigma>  0.0031      </sigma>
+    <scheme> sinsq2theta </scheme>
+  </param>
+
+  <param>
+    <name>   mixing12    </name>
+    <type>   gaus        </type>
+    <mean>   0.851       </mean>
+    <sigma>  0.020       </sigma>
+    <scheme> sinsq2theta </scheme>
+  </param>
+
+  <param>
+    <name>   dmsq12  </name>
+    <type>   gaus    </type>
+    <mean>   7.53E-5 </mean>
+    <sigma>  0.18E-5 </sigma>
+    <scheme> auto    </scheme>
+  </param>
+</prior_list>
