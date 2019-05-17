@@ -73,6 +73,7 @@ foreach (@ARGV) {
   
   elsif($_ eq '--rethrow-unphysical'     ) { $rethrow_unphysical    = $ARGV[$iarg+1]; }
   elsif($_ eq '--cpu-time'               ) { $cput                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mem'                    ) { $mem                   = $ARGV[$iarg+1]; }
   elsif($_ eq '--job-dir'                ) { $job_dir               = $ARGV[$iarg+1]; }
   elsif($_ eq '--softw-dir'              ) { $softw_dir             = $ARGV[$iarg+1]; }
   elsif($_ eq '--dmsq-scheme'            ) { $dmsqscheme            = $ARGV[$iarg+1]; }
@@ -122,8 +123,9 @@ else
 }
 
 $wqueue = "medium";
-$cedar_time = "12:00:00";
-$cedar_mem = "3500M";
+
+$cedar_time = $cput unless ((defined $cedar_time) or ! (defined $cput));	# If we have cedar_time defined already, do nothing. If not, then set cedar_time to cput if cput has been defined
+$cedar_mem  = $mem  unless ((defined $cedar_mem ) or ! (defined $mem));
 
 # # 1D fit - beta bar
 if(($freepar0 eq "betaBar") and ($freepar1 eq ""))
@@ -163,8 +165,8 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
       $nexpts_marg            = 40000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
-      $cedar_time             = "8:00:00";
-      $cedar_mem              = "3500M";
+      $cedar_time             = "8:00:00"                unless defined $cedar_time;
+      $cedar_mem              = "3500M"									 unless defined $cedar_mem;
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
    }
    else
@@ -172,8 +174,8 @@ if(($freepar0 eq "deltacp") and ($freepar1 eq ""))
       $nexpts_marg            = 80000                    unless defined $nexpts_marg;
       $step_freepar0          = 1;
       $wqueue                 = "xlong -W 15:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
-      $cedar_time             = "15:00:00";
-      $cedar_mem              = "5000M";
+      $cedar_time             = "15:00:00"               unless defined $cedar_time;
+      $cedar_mem              = "5000M"									 unless defined $cedar_mem;
       $npt_freepar0           = 101                      unless defined $npt_freepar0;
    }
    $minfreepar0    = -3.14159265358979312e+00    unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -203,8 +205,8 @@ if(($freepar0 eq "mixing13") and ($freepar1 eq ""))
    $step_freepar0  = 1                unless defined $step_freepar0;   # of points for each job param0
    $step_freepar1  = 1                unless defined $step_freepar1;   # of points for each job param1
    $wqueue         = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
-   $cedar_time     = "8:00:00";
-   $cedar_mem      = "3500M";
+   $cedar_time     = "8:00:00"        unless defined $cedar_time;
+   $cedar_mem      = "3500M"					 unless defined $cedar_mem;
 }
 
 # # 1D fit - sinsqth23
@@ -218,8 +220,8 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
       $step_freepar0  = 1;
       $wqueue         = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
       $npt_freepar0   = 101;
-      $cedar_time     = "8:00:00";
-      $cedar_mem      = "4000M";
+      $cedar_time     = "8:00:00"        unless defined $cedar_time;
+      $cedar_mem      = "4000M"						unless defined $cedar_mem;
    }
    else
    {
@@ -227,8 +229,8 @@ if(($freepar0 eq "mixing23") and ($freepar1 eq ""))
       $step_freepar0  = 1;
       $wqueue         = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
       $npt_freepar0   = 101;
-      $cedar_time     = "15:00:00";
-      $cedar_mem      = "5500M";
+      $cedar_time     = "15:00:00"       unless defined $cedar_time;
+      $cedar_mem      = "5500M"					  unless defined $cedar_mem;
    }
    $minfreepar0       = 0.3         unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0       = 0.7         unless defined $maxfreepar0;     # Maximum free parameter allowed value 
@@ -251,8 +253,8 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
       $step_freepar0          = 1;
       $wqueue                 = "long -R rusage[mem=3584,swap=3584,tmp=1000]";
       $npt_freepar0           = 101;
-      $cedar_time             = "20:00:00";
-      $cedar_mem              = "6000M";
+      $cedar_time             = "20:00:00"       unless defined $cedar_time;
+      $cedar_mem              = "6000M"					 unless defined $cedar_mem;
    }
    else
    {
@@ -260,8 +262,8 @@ if(($freepar0 eq "dmsq23") and ($freepar1 eq ""))
       $step_freepar0          = 1;
       $wqueue                 = "xlong -W 17:00 -M 5120 -R rusage[mem=5120,swap=5120,tmp=1000]";
       $npt_freepar0           = 101;
-      $cedar_time             = "15:00:00";
-      $cedar_mem              = "5500M";
+      $cedar_time             = "15:00:00"      unless defined $cedar_time;
+      $cedar_mem              = "5500M"				  unless defined $cedar_mem;
    }
    $minfreepar0            = 2.2e-3    unless defined $minfreepar0;     # Minimum free parameter allowed value
    $maxfreepar0            = 2.8e-3    unless defined $maxfreepar0;     # Maximum free parameter allowed value 
@@ -288,8 +290,8 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    {
       $nexpts_marg = 10000;
       $wqueue      = "xlong -W 20:00 -R rusage[mem=4096,swap=4096,tmp=1000]";
-      $cedar_time  = "20:00:00";
-      $cedar_mem   = "4096M";
+      $cedar_time  = "20:00:00"        unless defined $cedar_time;
+      $cedar_mem   = "4096M"						unless defined $cedar_mem;
       $minfreepar0         = 0.015     unless defined $minfreepar0;     # Minimum free parameter allowed value
       $maxfreepar0         = 0.036     unless defined $maxfreepar0;     # Maximum free parameter allowed value 
       $npt_freepar0        = 81        unless defined $npt_freepar0;    # of free parameter points to scan
@@ -298,8 +300,8 @@ if((($freepar0 eq "mixing13") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    {
       $nexpts_marg = 20000;
       $wqueue      = "xlong -W 40:00 -R rusage[mem=5120,swap=5120,tmp=1000]";
-      $cedar_time  = "40:00:00";
-      $cedar_mem   = "5120M";
+      $cedar_time  = "40:00:00"        unless defined $cedar_time;
+      $cedar_mem   = "5120M"						unless defined $cedar_mem;
       $minfreepar0         = 0.007     unless defined $minfreepar0;     # Minimum free parameter allowed value
       $maxfreepar0         = 0.053     unless defined $maxfreepar0;     # Maximum free parameter allowed value 
       $npt_freepar0        = 81        unless defined $npt_freepar0;    # of free parameter points to scan
@@ -320,15 +322,15 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "dmsq23")) or (($freepar0 eq "dm
    {
       $nexpts_marg = 10000;
       $wqueue      = "xlong -W 20:00 -R rusage[mem=4096,swap=4096,tmp=1000]";
-      $cedar_time  = "20:00:00";
-      $cedar_mem   = "4096M";
+      $cedar_time  = "20:00:00"                unless defined $cedar_time;
+      $cedar_mem   = "4096M"									  unless defined $cedar_mem;
    }
    else
    {
       $nexpts_marg = 20000;
       $wqueue      = "xlong -W 40:00 -R rusage[mem=5120,swap=5120,tmp=1000]";
-      $cedar_time  = "40:00:00";
-      $cedar_mem   = "5120M";
+      $cedar_time  = "40:00:00"                unless defined $cedar_time;
+      $cedar_mem   = "5120M"									   unless defined $cedar_mem;
    }
    if($freepar0 eq "dmsq23")
    {
@@ -364,15 +366,15 @@ if((($freepar0 eq "mixing23") and ($freepar1 eq "deltacp")) or (($freepar0 eq "d
    {
       $nexpts_marg = 10000;
       $wqueue      = "xlong -W 20:00 -R rusage[mem=4096,swap=4096,tmp=1000]";
-      $cedar_time  = "20:00:00";
-      $cedar_mem   = "4096M";
+      $cedar_time  = "20:00:00"                unless defined $cedar_time;
+      $cedar_mem   = "4096M"									  unless defined $cedar_mem;
    }
    else
    {
       $nexpts_marg = 20000;
       $wqueue      = "xlong -W 40:00 -R rusage[mem=5120,swap=5120,tmp=1000]";
-      $cedar_time  = "40:00:00";
-      $cedar_mem   = "5120M";
+      $cedar_time  = "40:00:00"                unless defined $cedar_time;
+      $cedar_mem   = "5120M"									  unless defined $cedar_mem;
    }
 
    $minfreepar0       = 0.3     unless defined $minfreepar0;     # Minimum free parameter allowed value
@@ -466,7 +468,7 @@ print ARGS "--marginalize-hierarchy   $marg_hierarchy \\\n";
 print ARGS "--prior-prob-nh           $prior_prob_nh \\\n";      
 print ARGS "--rethrow-unphysical      $rethrow_unphysical \\\n"; 
 print ARGS "--cpu-time                $cput \\\n";               
-print ARGS "--job-dir                '$job_dir' \\\n";            
+print ARGS "--job-dir                '$job_dir' \\\n";
 print ARGS "--softw-dir              '$softw_dir' \\\n";          
 print ARGS "--dmsq-scheme            '$dmsqscheme' \\\n";         
 print ARGS "--hierarchy              '$masshierarchy' \\\n";      
@@ -475,6 +477,9 @@ print ARGS "--use-reactors            $use_reactors \\\n";
 print ARGS "--file-prior             '$file_prior' \\\n";         
 print ARGS "--fmwk-dir               '$fmwk_dir' \\\n";           
 close(ARGS); 
+
+print "cedar time = ${cedar_time} \n";
+print "cedar mem  = ${cedar_mem} \n";
 
 $fileid=0;
 
