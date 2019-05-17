@@ -518,7 +518,7 @@ for($imin0 = 0; $imin0 < $npt_freepar0; $imin0 = $imin0_p1) {
 	
 	$program = "root2k ";
 	
-	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys_joint.C($fileid,$imin0,$imax0,$imin1,$imax1,\"$tag\",\"$config_file\",\"$fitparamlist\",$mix12_nh,$mix13_nh,$mix23_nh,$deltacp_nh,$dm12sq_nh,$dm23sq_nh,$mix12_ih,$mix13_ih,$mix23_ih,$deltacp_ih,$dm12sq_ih,$dm23sq_ih,$betaBar,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$nexpts_marg,$tweak_systematics,$marg_hierarchy,$prior_prob_nh,$rethrow_unphysical,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",$seed,$use_reactors)\'";
+	$arguments = " -l -b -q \'$softw_dir/macros/marginalization/build_marg_toys_joint.C($fileid,$imin0,$imax0,$imin1,$imax1,\"$tag\",\"$config_file\",\"$fitparamlist\",$mix12_nh,$mix13_nh,$mix23_nh,$deltacp_nh,$dm12sq_nh,$dm23sq_nh,$mix12_ih,$mix13_ih,$mix23_ih,$deltacp_ih,$dm12sq_ih,$dm23sq_ih,$betaBar,\"$freepar0\",$minfreepar0,$maxfreepar0,$npt_freepar0,\"$freepar1\",$minfreepar1,$maxfreepar1,$npt_freepar1,$nexpts_marg,$tweak_systematics,$marg_hierarchy,$prior_prob_nh,\"$dmsqscheme\",\"$masshierarchy\",\"$mixparamchoice\",\"$mixparamoctant\",\"$file_prior\",$seed,$use_reactors)\'";
 		
 	$command = "$program $arguments";
 	print "$command \n";

@@ -26,20 +26,14 @@ void build_marg_toys_joint
  const int    last_bin_freepar1    = -999, // last freepar of the sub-range
 
  const char * tag                  = "PROVA_SystAll_TemplVArray",
- //const char * tag                  = "PROVA_SystAll",
- //const char * tag                  = "PROVA_SystOsc",
- //const char * tag                  = "PROVA_NoSyst",
- 
- // const char * config_file          = "analysis_configuration_run1to6_joint_Nu6.914E20POT_NuBar4.0108E20POT.xml",
-  const char * config_file          = "analysis_configuration.xml",
- //const char * config_file          = "analysis_configuration_run1to6_test_app_4.0108E20POT_fluxJune.xml",
- 
+ const char * config_file          = "analysis_configuration.xml",
+
  const char * fit_param_list        = "nuosc3f+nuisance", // all osc params are free
- //const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
- //const char * fit_param_list        = "nuosc3f_fixall_fitdcp+nuisance", // fix all osc params (stat-only)
- //const char * fit_param_list        = "nuosc3f_nueapp_fix4+nuisance", // fix all osc params except sinsqth13 and dcp (stat-only)
- 
- // Mach3, T2K Run1-4 + reactors best fit (A)
+  //const char * fit_param_list        = "nuosc3f_12fix+nuisance", // dcp
+  //const char * fit_param_list        = "nuosc3f_fixall_fitdcp+nuisance", // fix all osc params (stat-only)
+  //const char * fit_param_list        = "nuosc3f_nueapp_fix4+nuisance", // fix all osc params except sinsqth13 and dcp (stat-only)
+
+  // Mach3, T2K Run1-4 + reactors best fit (A)
  double       input_mixing12_nh       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing13_nh       = 0.0243,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_mixing23_nh       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
@@ -51,33 +45,9 @@ void build_marg_toys_joint
  double       input_mixing23_ih       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
  double       input_deltacp_ih        = -1.601, //-99,    /* deltacp, */
  double       input_dm12sq_ih         = 7.53E-5,    /* Dm^2_{12},  */
- double       input_dm23sq_ih         = 2.509E-3, //-99,    /* |Dm^2_{23}| */ 
+ double       input_dm23sq_ih         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
  double       input_beta_bar          = -99,
 
- // // Mach3, T2K only Run1-4 best fit (C)
- // double       input_mixing12_nh       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13_nh       = 0.0422,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23_nh       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp_nh        = 1.91, //-99,    /* deltacp, */
- // double       input_dm12sq_nh         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq_nh         = 2.509E-3, //-99,    /* |Dm^2_{23}| */
- // double       input_mixing12_ih       = 0.304,    /* 12-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing13_ih       = 0.0422,    /* 13-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_mixing23_ih       = 0.528, //-99,    /* 23-mixing, sinq2theta or sinsqtheta depending on user choice */
- // double       input_deltacp_ih        = 1.91, //-99,    /* deltacp, */
- // double       input_dm12sq_ih         = 7.53E-5,    /* Dm^2_{12},  */
- // double       input_dm23sq_ih         = 2.509E-3, //-99,    /* |Dm^2_{23}| */ 
- // double       input_beta_bar          = -99,
-
- // const char * freeparname0          = "deltacp",  // free parameter
- // const double freeparmin0           = -3.14159265358979312e+00,     // minimum value of free parameter
- // const double freeparmax0           = +3.14159265358979312e+00,     // maxinum value of free parameter
- // const int    NptScan0              = 3, //3, //21,  // # pts of free parameter to scan
- // const char * freeparname1          = "",  // free parameter
- // const double freeparmin1           = 0.,     // minimum value of free parameter
- // const double freeparmax1           = 0.,     // maxinum value of free parameter
- // const int    NptScan1              = 1,  // # pts of free parameter to scan
- 
  const char * freeparname0          = "mixing13",  // free parameter
  const double freeparmin0           = 0.,     // minimum value of free parameter
  const double freeparmax0           = 0.4,     // maxinum value of free parameter
@@ -87,26 +57,24 @@ void build_marg_toys_joint
  const double freeparmax1           = +3.14159265358979312e+00,     // maxinum value of free parameter
  const int    NptScan1              = 2, //51, //3, //21,  // # pts of free parameter to scan
 
- const int    NtoysMarg            = 100, //3, //500  // # toys marginalization 
+ const int    NtoysMarg            = 100, //3, //500  // # toys marginalization
  const int tweak_systematics       = 1,      /* generate toy MC with randomized systematics? */
 
  const bool   doMargMH             = 0, //true,      // marginalize Mass Hierarchy
  const double PriorProbNH          = 0.5, // Prior for MH --> give the prob. of NH as input
 
- const bool   doRethrowUnphysical  = true,    // rethrow unphysical systematic toys
- 
  const char * dmsqscheme           = "auto",   /* auto==kNuDmsqAuto abs23==kNuDmsq12andAbs23 abs31==kNuDmsq12andAbs31 fogli==kNuDmsqFogliLisi */
  const char * hierarchy            = "normal",    /* normal or inverted */
  const char * mixparamchoice       = "sinsqtheta",  /* sinsq2theta or sinsqtheta */
  const char * mixparamoctant       = "two",         /* one==kNuOctantOne two==kNuOctantTwo */
- 
- //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR)
+
+ TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR)
  int seed = 999,
- 
+
  bool reactors       = false // reactor constraint
  )
-{  
-  TString file_priors = "";
+{
+  const bool doRethrowUnphysical = true;    // rethrow unphysical systematic toys
   FileStat_t dummy;
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
 
@@ -477,229 +445,251 @@ void build_marg_toys_joint
  
   bool UsePrior_dcp = false;
   bool UsePrior_23 = false;
+  bool read_priors_from_xml = false;
 
   if(file_priors!=""){
+    // Read priors from hists if its a ROOT file, or read prior values from an XML file
+    if(file_priors.Contains(".root")) {
+      UsePrior_dcp = true;
+      UsePrior_23 = true;
 
-    UsePrior_dcp = true;
-    UsePrior_23 = true;
-    
-    cout << endl;
-    cout << "Take priors from: " << file_priors << endl;
-    TFile *fPrior = new TFile(file_priors.Data(),"READ");
-    if(!fPrior->IsOpen() || !fPrior){
-      cerr << endl;
-      cerr << "Error: the file " << file_priors << " is not open!" << endl;
-      cerr << endl;
-      exit(1);
-    }
+      cout << endl;
+      cout << "Take priors from: " << file_priors << endl;
+      TFile *fPrior = new TFile(file_priors.Data(),"READ");
+      if(!fPrior->IsOpen() || !fPrior){
+        cerr << endl;
+        cerr << "Error: the file " << file_priors << " is not open!" << endl;
+        cerr << endl;
+        exit(1);
+      }
 
-    hPrior_th13_dcp_nh = (TH2D*) fPrior->Get(name_prior_th13_dcp_nh.Data());        
-    if(hPrior_th13_dcp_nh->IsZombie() || !hPrior_th13_dcp_nh){
-      cerr << endl;
-      cerr << "Error: the histogram theta13 Vs deltaCP normal hierarchy is not taken!" << endl;
-      cerr << endl;
-      exit(1);
-    }
-    hPrior_th13_dcp_ih = (TH2D*) fPrior->Get(name_prior_th13_dcp_ih.Data());       
-    if(hPrior_th13_dcp_ih->IsZombie() || !hPrior_th13_dcp_ih){
-      cerr << endl;
-      cerr << "Error: the histogram theta13 Vs deltaCP inverted hierarchy is not taken!" << endl;
-      cerr << endl;
-      exit(1);
-    }
+      hPrior_th13_dcp_nh = (TH2D*) fPrior->Get(name_prior_th13_dcp_nh.Data());
+      if(hPrior_th13_dcp_nh->IsZombie() || !hPrior_th13_dcp_nh){
+        cerr << endl;
+        cerr << "Error: the histogram theta13 Vs deltaCP normal hierarchy is not taken!" << endl;
+        cerr << endl;
+        exit(1);
+      }
+      hPrior_th13_dcp_ih = (TH2D*) fPrior->Get(name_prior_th13_dcp_ih.Data());
+      if(hPrior_th13_dcp_ih->IsZombie() || !hPrior_th13_dcp_ih){
+        cerr << endl;
+        cerr << "Error: the histogram theta13 Vs deltaCP inverted hierarchy is not taken!" << endl;
+        cerr << endl;
+        exit(1);
+      }
 
-    hPrior_23_nh = (TH2D*) fPrior->Get(name_prior_23_nh.Data()); 
-    if(hPrior_23_nh->IsZombie() || !hPrior_23_nh){
-      cerr << endl;
-      cerr << "Error: the histogram par23_hist_normal is not taken!" << endl;
-      cerr << endl;
+      hPrior_23_nh = (TH2D*) fPrior->Get(name_prior_23_nh.Data());
+      if(hPrior_23_nh->IsZombie() || !hPrior_23_nh){
+        cerr << endl;
+        cerr << "Error: the histogram par23_hist_normal is not taken!" << endl;
+        cerr << endl;
+        exit(1);
+      }
+      hPrior_23_ih = (TH2D*) fPrior->Get(name_prior_23_ih.Data());
+      if(hPrior_23_ih->IsZombie() || !hPrior_23_ih){
+        cerr << endl;
+        cerr << "Error: the histogram par23_hist_inverted is not taken!" << endl;
+        cerr << endl;
+        exit(1);
+      }
+
+      // TCanvas *c0 = new TCanvas("c0","c0");
+      // hPrior_th13_dcp_nh->Draw("colz");
+      // TCanvas *c1 = new TCanvas("c1","c1");
+      // hPrior_th13_dcp_ih->Draw("colz");
+      // TCanvas *c2 = new TCanvas("c2","c2");
+      // hPrior_23_nh->Draw("colz");
+      // TCanvas *c3 = new TCanvas("c3","c3");
+      // hPrior_23_ih->Draw("colz");
+      // return;
+    }
+    else if(file_priors.Contains(".xml")) {
+      fitmarg->SetPriorsFromXML(file_priors.Data());
+      read_priors_from_xml = true;
+    }
+    else {
+      std::cerr << "ERROR: Could not parse the input prior file. Exiting." << std::endl;
       exit(1);
     }
-    hPrior_23_ih = (TH2D*) fPrior->Get(name_prior_23_ih.Data()); 
-    if(hPrior_23_ih->IsZombie() || !hPrior_23_ih){
-      cerr << endl;
-      cerr << "Error: the histogram par23_hist_inverted is not taken!" << endl;
-      cerr << endl;
-      exit(1);
-    }
-    
-    // TCanvas *c0 = new TCanvas("c0","c0");
-    // hPrior_th13_dcp_nh->Draw("colz");
-    // TCanvas *c1 = new TCanvas("c1","c1");
-    // hPrior_th13_dcp_ih->Draw("colz");
-    // TCanvas *c2 = new TCanvas("c2","c2");
-    // hPrior_23_nh->Draw("colz");
-    // TCanvas *c3 = new TCanvas("c3","c3");
-    // hPrior_23_ih->Draw("colz");
-    // return;
     
   } // if(file_priors)
   
 
-  
-  // Set theta13 and deltaCP prior
-  
-  if(UsePrior_dcp){
-    fitmarg->SetPrior_NH(kPhypCPV,"user",hPrior_th13_dcp_nh);  // mix13 and dcp must have the same prior
-    fitmarg->SetPrior_IH(kPhypCPV,"user",hPrior_th13_dcp_ih);
+  if(!read_priors_from_xml) {
+    // Set theta13 and deltaCP prior
 
-    fitmarg->SetPrior_NH(kPhypMixing13,"user",hPrior_th13_dcp_nh); 
-    fitmarg->SetPrior_IH(kPhypMixing13,"user",hPrior_th13_dcp_ih);
+    if(UsePrior_dcp){
+      fitmarg->SetPrior_NH(kPhypCPV,"user",hPrior_th13_dcp_nh);  // mix13 and dcp must have the same prior
+      fitmarg->SetPrior_IH(kPhypCPV,"user",hPrior_th13_dcp_ih);
 
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-      fitmarg->SetPrior_NH(kPhypCPVBar,"user",hPrior_th13_dcp_nh);
-      fitmarg->SetPrior_IH(kPhypCPVBar,"user",hPrior_th13_dcp_ih);
+      fitmarg->SetPrior_NH(kPhypMixing13,"user",hPrior_th13_dcp_nh);
+      fitmarg->SetPrior_IH(kPhypMixing13,"user",hPrior_th13_dcp_ih);
 
-      fitmarg->SetPrior_NH(kPhypMixing13Bar,"user",hPrior_th13_dcp_nh);
-      fitmarg->SetPrior_IH(kPhypMixing13Bar,"user",hPrior_th13_dcp_ih);
-    }
-  }
-  else{
-    // deltaCP
-    fitmarg->SetPrior_NH(kPhypCPV,"flat",
-			 conv::kPrior_deltaCP_Flat_Low,
-			 conv::kPrior_deltaCP_Flat_Up
-			 );
-    fitmarg->SetPrior_IH(kPhypCPV,"flat",
-			 conv::kPrior_deltaCP_Flat_Low,
-			 conv::kPrior_deltaCP_Flat_Up
-			 );
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-      fitmarg->SetPrior_NH(kPhypCPVBar,"flat",
-			   conv::kPrior_deltaCP_Flat_Low,
-			   conv::kPrior_deltaCP_Flat_Up
-			   );
-      fitmarg->SetPrior_IH(kPhypCPVBar,"flat",
-			   conv::kPrior_deltaCP_Flat_Low,
-			   conv::kPrior_deltaCP_Flat_Up
-			   );
-    }
-    
-    // mixing13
-    if(reactors){
-      fitmarg->SetPrior_NH(kPhypMixing13,"gaus",
-      			   conv::kPrior_Sinsq2th13_Used_Mean,
-      			   conv::kPrior_Sinsq2th13_Used_RMS
-      			   ); // prior on sinsq2th
-      fitmarg->SetPrior_IH(kPhypMixing13,"gaus",
-      			   conv::kPrior_Sinsq2th13_Used_Mean,
-      			   conv::kPrior_Sinsq2th13_Used_RMS
-      			   );   
       if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
-      	fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",
-      			     conv::kPrior_Sinsq2th13_Used_Mean,
-      			     conv::kPrior_Sinsq2th13_Used_RMS
-      			     );
-      	fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",
-      			     conv::kPrior_Sinsq2th13_Used_Mean,
-      			     conv::kPrior_Sinsq2th13_Used_RMS
-      			     );
-      }      
-    }
-    else{
-      fitmarg->SetPrior_NH(kPhypMixing13,"flat",
-			   conv::kPrior_Sinsq2th13_Flat_Low,
-			   conv::kPrior_Sinsq2th13_Flat_Up
-			   ); // prior on sinsq2th
-      fitmarg->SetPrior_IH(kPhypMixing13,"flat",
-			   conv::kPrior_Sinsq2th13_Flat_Low,
-			   conv::kPrior_Sinsq2th13_Flat_Up
-			   );   
-      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){ 
-	fitmarg->SetPrior_NH(kPhypMixing13Bar,"flat",
-			     conv::kPrior_Sinsq2th13_Flat_Low,
-			     conv::kPrior_Sinsq2th13_Flat_Up
-			     );
-	fitmarg->SetPrior_IH(kPhypMixing13Bar,"flat",
-			     conv::kPrior_Sinsq2th13_Flat_Low,
-			     conv::kPrior_Sinsq2th13_Flat_Up
-			     );
+        fitmarg->SetPrior_NH(kPhypCPVBar,"user",hPrior_th13_dcp_nh);
+        fitmarg->SetPrior_IH(kPhypCPVBar,"user",hPrior_th13_dcp_ih);
+
+        fitmarg->SetPrior_NH(kPhypMixing13Bar,"user",hPrior_th13_dcp_nh);
+        fitmarg->SetPrior_IH(kPhypMixing13Bar,"user",hPrior_th13_dcp_ih);
       }
     }
-    
-  } // if(UsePrior_dcp)
+    else{
+      // deltaCP
+      fitmarg->SetPrior_NH(kPhypCPV,"flat",
+         conv::kPrior_deltaCP_Flat_Low,
+         conv::kPrior_deltaCP_Flat_Up
+         );
+      fitmarg->SetPrior_IH(kPhypCPV,"flat",
+         conv::kPrior_deltaCP_Flat_Low,
+         conv::kPrior_deltaCP_Flat_Up
+         );
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+        fitmarg->SetPrior_NH(kPhypCPVBar,"flat",
+           conv::kPrior_deltaCP_Flat_Low,
+           conv::kPrior_deltaCP_Flat_Up
+           );
+        fitmarg->SetPrior_IH(kPhypCPVBar,"flat",
+           conv::kPrior_deltaCP_Flat_Low,
+           conv::kPrior_deltaCP_Flat_Up
+           );
+      }
 
-  // Set 23 prior
-  if(UsePrior_23){
-    fitmarg->SetPrior_NH(kPhypMixing23,"user",hPrior_23_nh);  // mix23 and dmsq must have the same prior
-    fitmarg->SetPrior_IH(kPhypMixing23,"user",hPrior_23_ih);
-    fitmarg->SetPrior_NH(kPhypDm23sq,"user",hPrior_23_nh);
-    fitmarg->SetPrior_IH(kPhypDm23sq,"user",hPrior_23_ih);
-    cout << "setting 23bar priors " << endl;
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
-      cout << "in here" << endl;
-      fitmarg->SetPrior_NH(kPhypMixing23Bar,"user",hPrior_23_nh);
-      fitmarg->SetPrior_IH(kPhypMixing23Bar,"user",hPrior_23_ih);
-      fitmarg->SetPrior_NH(kPhypDm23sqBar,"user",hPrior_23_nh);
-      fitmarg->SetPrior_IH(kPhypDm23sqBar,"user",hPrior_23_ih);
+      // mixing13
+      if(reactors){
+        fitmarg->SetPrior_NH(kPhypMixing13,"gaus",
+                 conv::kPrior_Sinsq2th13_Used_Mean,
+                 conv::kPrior_Sinsq2th13_Used_RMS
+                 ); // prior on sinsq2th
+        fitmarg->SetPrior_IH(kPhypMixing13,"gaus",
+                 conv::kPrior_Sinsq2th13_Used_Mean,
+                 conv::kPrior_Sinsq2th13_Used_RMS
+                 );
+        if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+          fitmarg->SetPrior_NH(kPhypMixing13Bar,"gaus",
+                   conv::kPrior_Sinsq2th13_Used_Mean,
+                   conv::kPrior_Sinsq2th13_Used_RMS
+                   );
+          fitmarg->SetPrior_IH(kPhypMixing13Bar,"gaus",
+                   conv::kPrior_Sinsq2th13_Used_Mean,
+                   conv::kPrior_Sinsq2th13_Used_RMS
+                   );
+        }
+      }
+      else{
+        fitmarg->SetPrior_NH(kPhypMixing13,"flat",
+           conv::kPrior_Sinsq2th13_Flat_Low,
+           conv::kPrior_Sinsq2th13_Flat_Up
+           ); // prior on sinsq2th
+        fitmarg->SetPrior_IH(kPhypMixing13,"flat",
+           conv::kPrior_Sinsq2th13_Flat_Low,
+           conv::kPrior_Sinsq2th13_Flat_Up
+           );
+        if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar){
+    fitmarg->SetPrior_NH(kPhypMixing13Bar,"flat",
+             conv::kPrior_Sinsq2th13_Flat_Low,
+             conv::kPrior_Sinsq2th13_Flat_Up
+             );
+    fitmarg->SetPrior_IH(kPhypMixing13Bar,"flat",
+             conv::kPrior_Sinsq2th13_Flat_Low,
+             conv::kPrior_Sinsq2th13_Flat_Up
+             );
+        }
+      }
+
+    } // if(UsePrior_dcp)
+
+    // Set 23 prior
+    if(UsePrior_23){
+      fitmarg->SetPrior_NH(kPhypMixing23,"user",hPrior_23_nh);  // mix23 and dmsq must have the same prior
+      fitmarg->SetPrior_IH(kPhypMixing23,"user",hPrior_23_ih);
+      fitmarg->SetPrior_NH(kPhypDm23sq,"user",hPrior_23_nh);
+      fitmarg->SetPrior_IH(kPhypDm23sq,"user",hPrior_23_ih);
+      cout << "setting 23bar priors " << endl;
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+        cout << "in here" << endl;
+        fitmarg->SetPrior_NH(kPhypMixing23Bar,"user",hPrior_23_nh);
+        fitmarg->SetPrior_IH(kPhypMixing23Bar,"user",hPrior_23_ih);
+        fitmarg->SetPrior_NH(kPhypDm23sqBar,"user",hPrior_23_nh);
+        fitmarg->SetPrior_IH(kPhypDm23sqBar,"user",hPrior_23_ih);
+      }
+    }
+    else{
+      // mixing23
+      fitmarg->SetPrior_NH(kPhypMixing23,"flat",
+         conv::kPrior_Sinsq2th23_Flat_Low,
+         conv::kPrior_Sinsq2th23_Flat_Up
+         ); // prior on sinsqth
+      fitmarg->SetPrior_IH(kPhypMixing23,"flat",
+         conv::kPrior_Sinsq2th23_Flat_Low,
+         conv::kPrior_Sinsq2th23_Flat_Up
+         );
+      cout << "setting 23bar priors " << endl;
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+        cout << "in here" << endl;
+        fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",
+           conv::kPrior_Sinsq2th23_Flat_Low,
+           conv::kPrior_Sinsq2th23_Flat_Up
+           );
+        fitmarg->SetPrior_IH(kPhypMixing23Bar,"flat",
+           conv::kPrior_Sinsq2th23_Flat_Low,
+           conv::kPrior_Sinsq2th23_Flat_Up
+           );
+      }
+
+      // dmsq23
+      fitmarg->SetPrior_NH(kPhypDm23sq,"flat",
+         conv::kPrior_Dm23sq_Flat_Low,
+         conv::kPrior_Dm23sq_Flat_Up
+         );
+      fitmarg->SetPrior_IH(kPhypDm23sq,"flat",
+         conv::kPrior_Dm23sq_Flat_Low,
+         conv::kPrior_Dm23sq_Flat_Up
+         );
+      cout << "setting 23bar priors " << endl;
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+        cout << "in here" << endl;
+        fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",
+           conv::kPrior_Dm23sq_Flat_Low,
+           conv::kPrior_Dm23sq_Flat_Up
+           );
+        fitmarg->SetPrior_IH(kPhypDm23sqBar,"flat",
+           conv::kPrior_Dm23sq_Flat_Low,
+           conv::kPrior_Dm23sq_Flat_Up
+           );
+      }
+    }
+
+    // dmsq12
+    fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",
+             conv::kPrior_Dm12sq_Used_Mean,
+             conv::kPrior_Dm12sq_Used_RMS
+             );
+    fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",
+             conv::kPrior_Dm12sq_Used_Mean,
+             conv::kPrior_Dm12sq_Used_RMS
+             );
+
+    // mixing12
+    fitmarg->SetPrior_NH(kPhypMixing12,"gaus",
+             conv::kPrior_Sinsq2th12_Used_Mean,
+             conv::kPrior_Sinsq2th12_Used_RMS
+             ); // prior on sinsq2th
+    fitmarg->SetPrior_IH(kPhypMixing12,"gaus",
+             conv::kPrior_Sinsq2th12_Used_Mean,
+             conv::kPrior_Sinsq2th12_Used_RMS
+             );
+  } // if(! read_priors_from_xml)
+
+  PhysHypothesis ph(hyp);
+  std::cout << "Marginalisation priors for osc params have been set as follows:" << std::endl;
+  for(int i = 0 ; i < (int) conv::kNuis000 ; i++) {
+    PhysParamId_t k = (PhysParamId_t) i ;
+    if(ph.Contains(k)) {
+      std::cout << "\t" << util::AsString(k) << " NH prior - " << fitmarg->GetPrior_NH(k) << std::endl;
+      std::cout << "\t" << util::AsString(k) << " IH prior - " << fitmarg->GetPrior_IH(k) << std::endl;
     }
   }
-  else{
-    // mixing23 
-    fitmarg->SetPrior_NH(kPhypMixing23,"flat",
-			 conv::kPrior_Sinsq2th23_Flat_Low,
-			 conv::kPrior_Sinsq2th23_Flat_Up
-			 ); // prior on sinsqth
-    fitmarg->SetPrior_IH(kPhypMixing23,"flat",
-			 conv::kPrior_Sinsq2th23_Flat_Low,
-			 conv::kPrior_Sinsq2th23_Flat_Up
-			 );
-    cout << "setting 23bar priors " << endl;
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
-      cout << "in here" << endl;
-      fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",
-			   conv::kPrior_Sinsq2th23_Flat_Low,
-			   conv::kPrior_Sinsq2th23_Flat_Up
-			   );
-      fitmarg->SetPrior_IH(kPhypMixing23Bar,"flat",
-			   conv::kPrior_Sinsq2th23_Flat_Low,
-			   conv::kPrior_Sinsq2th23_Flat_Up
-			   );
-    }
-    
-    // dmsq23
-    fitmarg->SetPrior_NH(kPhypDm23sq,"flat",
-			 conv::kPrior_Dm23sq_Flat_Low,
-			 conv::kPrior_Dm23sq_Flat_Up
-			 );
-    fitmarg->SetPrior_IH(kPhypDm23sq,"flat",
-			 conv::kPrior_Dm23sq_Flat_Low,
-			 conv::kPrior_Dm23sq_Flat_Up
-			 );
-    cout << "setting 23bar priors " << endl;
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
-      cout << "in here" << endl;
-      fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",
-			   conv::kPrior_Dm23sq_Flat_Low,
-			   conv::kPrior_Dm23sq_Flat_Up
-			   );
-      fitmarg->SetPrior_IH(kPhypDm23sqBar,"flat",
-			   conv::kPrior_Dm23sq_Flat_Low,
-			   conv::kPrior_Dm23sq_Flat_Up
-			   );
-    }
-  }
-  
-  // dmsq12
-  fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",
-		       conv::kPrior_Dm12sq_Used_Mean,
-		       conv::kPrior_Dm12sq_Used_RMS
-		       );
-  fitmarg->SetPrior_IH(kPhypDm12sq,"gaus",
-		       conv::kPrior_Dm12sq_Used_Mean,
-		       conv::kPrior_Dm12sq_Used_RMS
-		       );
 
-  // mixing12
-  fitmarg->SetPrior_NH(kPhypMixing12,"gaus",
-		       conv::kPrior_Sinsq2th12_Used_Mean,
-		       conv::kPrior_Sinsq2th12_Used_RMS
-		       ); // prior on sinsq2th
-  fitmarg->SetPrior_IH(kPhypMixing12,"gaus",
-		       conv::kPrior_Sinsq2th12_Used_Mean,
-		       conv::kPrior_Sinsq2th12_Used_RMS
-		       );
- 
 
   // Make toys and store in binary files
     
@@ -740,8 +730,6 @@ void build_marg_toys_joint
   TH1D *hToyHisto_Dm23Bar_ih;
   
   TH1D *hToyHisto_MH;
-
-  PhysHypothesis ph(hyp);
 
   if(ph.Contains(conv::kPhypMixing12) && fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12)){    
     hToyHisto_Mix12_nh = new TH1D(*fitmarg->GetFitParamList_NH()->GetToyHisto(conv::kPhypMixing12));
