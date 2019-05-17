@@ -72,6 +72,8 @@
 
 #include "valor/Conventions/Opt.h"
 #include "valor/Utilities/Rnd.h"
+#include "valor/Utilities/UtlStr.h"
+#include "valor/Utilities/UtlXML.h"
 #include "valor/DerivedUtilities/UtlHist.h"
 #include "valor/Oscillation/OscUtils.h"
 
@@ -8929,3 +8931,182 @@ void FitMarginalization::SaveTreeOfToyParamLists(TFile *file)
   t_pars->Write();
   delete t_pars;
 }
+
+//____________________________________________________________________________
+void FitMarginalization::SetPriorsFromXML(std::string file_priors)
+{
+  TString file_priors_full = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), file_priors.c_str());
+  // Check for priors file.
+  // If not found in inputs or config, see if it works as a normal path
+  FileStat_t dummy;
+  if (gSystem->GetPathInfo(file_priors_full.Data(), dummy))
+  {
+    file_priors_full = file_priors.c_str();
+    if (gSystem->GetPathInfo(file_priors_full.Data(), dummy)) {
+      cerr<<"Config file not found: "<<file_priors<<endl;
+      exit(-1);
+    }
+  }
+
+  FitParamList *fparm  = this->GetFitParamList();
+  PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  PhysHypothesis ph(hyp);
+  PhysParamList ppl = ph.AsPhysParamList();
+  int npriors_set = 0;
+
+  // Parse the input XML priors file
+  TXMLEngine* xmleng = new TXMLEngine;
+  XMLDocPointer_t xmldoc = xmleng->ParseFile(file_priors_full);
+  if (xmldoc==0) {
+    cerr << "Can not parse input XML file [" << file_priors_full << "]" << endl;
+    exit(-1);
+  }
+  XMLNodePointer_t root_node = xmleng->DocGetRootElement(xmldoc);
+  const char * list_name_cstr = xmleng->GetAttr(root_node,"name");
+  std::cout << "Reading priors from element list named" << list_name_cstr << std::endl;
+
+  XMLNodePointer_t curr_node = xmleng->GetChild(root_node);
+  while(curr_node) {
+    string curr_node_name = xmleng->GetNodeName(curr_node);
+    if(!strcmp(curr_node_name.c_str(),"param")) {
+      bool success = this->SetSingleParamPrior(xmleng,curr_node);
+      if (!success) {
+        std::cerr << "Failed to read prior list. Exiting." << std::endl;
+        exit(-1);
+      }
+      npriors_set++;
+    }
+    curr_node = xmleng->GetNext(curr_node);
+  }
+
+  if(npriors_set != ppl.NParams()) {
+    std::cerr << "ERROR: Priors have been set for " << npriors_set << " params, but there are " << ppl.NParams()
+              << " in the PhysHypothesis. Exiting.\n hypothesis = \n" << ph << std::endl;
+    exit(-1);
+  }
+}
+//____________________________________________________________________________
+bool FitMarginalization::SetSingleParamPrior(TXMLEngine* xmleng, XMLNodePointer_t top_node)
+{
+  string param_name     = "";
+  string prior_type     = "";  // 'flat' or 'gaus'
+  string prior_val1_str = "";  // if type = flat, this is the lower end of the range. If type = gaus, this is the mean
+  string prior_val2_str = "";  // if type = flat, this is the upper end of the range. If type = gaus, this is sigma
+  string opt            = "";
+
+  XMLNodePointer_t curr_node = xmleng->GetChild(top_node);
+  while(curr_node) {
+    string curr_node_name = xmleng->GetNodeName(curr_node);
+    if(xmleng->GetNodeContent(curr_node)) {
+      string content = util::TrimSpaces(xmleng->GetNodeContent(curr_node));
+      if(curr_node_name == "name"                               ) { param_name     = content; }
+      if(curr_node_name == "type"                               ) { prior_type     = content; }
+      if(curr_node_name == "low"  || curr_node_name == "mean"   ) { prior_val1_str = content; }
+      if(curr_node_name == "high" || curr_node_name == "sigma"  ) { prior_val2_str = content; }
+      if(curr_node_name == "scheme"                             ) { opt            = content; }
+    }
+    curr_node = xmleng->GetNext(curr_node);
+  }
+
+  conv::PhysParamId_t param = util::PhysParamIdFromString(param_name);
+  if(param == conv::kPhypUndefined) {
+    std::cerr << "Failed to read parameter named [" << param_name << "]. Exiting." << std::endl;
+    exit(-1);
+    return false;
+  }
+  if(!(prior_type == "flat" || prior_type == "gaus")) {
+    std::cerr << "Failed to read prior type [" << prior_type << "]. Exiting." << std::endl;
+    exit(-1);
+    return false;
+  }
+  if(prior_val1_str == "") {
+    std::cerr << "Prior val 1 is empty [" << prior_val1_str << "]. Exiting." << std::endl;
+    exit(-1);
+    return false;
+  }
+  if(prior_val2_str == "") {
+    std::cerr << "Prior val 2 is empty [" << prior_val2_str << "]. Exiting." << std::endl;
+    exit(-1);
+    return false;
+  }
+  double prior_val1 = atof(prior_val1_str.c_str());
+  double prior_val2 = atof(prior_val2_str.c_str());
+
+  // Make sure the mixing angle and dmsq conventions are set correctly
+  if(Opt::Instance()->Undefined()) {
+    std::cerr << "Global options not defined correctly. Exiting..." << std::endl;
+    std::cerr << *Opt::Instance() << std::endl;
+    exit(-1);
+    return false;
+  }
+  if(param == conv::kPhypMixing13) {
+#ifdef __USE_PRIOR_SINSQ2TH13__
+    // SetPrior_NH and SetPrior_IH expects to be input a sinsq2theta value
+    if(opt.find("sinsqtheta") != std::string::npos){
+      prior_val1 = util::FromSinsqthToSinsq2th(prior_val1);
+      prior_val2 = util::FromSinsqthToSinsq2th(prior_val2);
+    }
+#else
+    // SetPrior_NH and SetPrior_IH expects to be input a sinsqtheta value
+    if(opt.find("sinsq2theta") != std::string::npos){
+      prior_val1 = util::FromSinsq2thToSinsqth(prior_val1);
+      prior_val2 = util::FromSinsq2thToSinsqth(prior_val2);
+    }
+#endif
+  }
+  else if(param == conv::kPhypMixing12) {
+#ifdef __USE_PRIOR_SINSQ2TH12__
+    // SetPrior_NH and SetPrior_IH expects to be input a sinsq2theta value
+    if(opt.find("sinsqtheta") != std::string::npos) {
+      prior_val1 = util::FromSinsqthToSinsq2th(prior_val1);
+      prior_val2 = util::FromSinsqthToSinsq2th(prior_val2);
+    }
+#else
+    // SetPrior_NH and SetPrior_IH expects to be input a sinsqtheta value
+    if(opt.find("sinsq2theta") != std::string::npos){
+      prior_val1 = util::FromSinsq2thToSinsqth(prior_val1);
+      prior_val2 = util::FromSinsq2thToSinsqth(prior_val2);
+    }
+#endif
+  }
+  else if(param == conv::kPhypMixing23) {
+#ifdef __USE_PRIOR_SINSQ2TH23__
+    // SetPrior_NH and SetPrior_IH expects to be input a sinsq2theta value
+    if(opt.find("sinsqtheta") != std::string::npos) {
+      prior_val1 = util::FromSinsqthToSinsq2th(prior_val1);
+      prior_val2 = util::FromSinsqthToSinsq2th(prior_val2);
+    }
+#else
+    // SetPrior_NH and SetPrior_IH expects to be input a sinsqtheta value
+    if(opt.find("sinsq2theta") != std::string::npos){
+      prior_val1 = util::FromSinsq2thToSinsqth(prior_val1);
+      prior_val2 = util::FromSinsq2thToSinsqth(prior_val2);
+    }
+#endif
+  }
+  else if(util::IsMassSplitting(param)) {
+    //kNuDmsqAuto
+    if(opt.find("auto") == std::string::npos || Opt::Instance()->gOscDmsqScheme != conv::kNuDmsqAuto){
+      std::cerr << "ERROR: When reading priors from XML files, only the \'auto\' dmsq scheme is supported for now. Exiting..." << std::endl;
+      exit(-1);
+      return false;
+    }
+  }
+
+  // Only set the prior for parameters that appear in the PhysHypothesis
+  FitParamList *fparm  = this->GetFitParamList();
+  PhysHypothesis_t hyp = fparm->PhysicsHypothesis();
+  PhysHypothesis ph(hyp);
+  if(ph.Contains(param)) {
+    this->SetPrior_NH(param, prior_type, prior_val1, prior_val2);
+    this->SetPrior_IH(param, prior_type, prior_val1, prior_val2);
+  }
+  else {
+    std::cout << "WARNING: Skipping prior for param [" << param_name << "], as it was not in the PhysHypothesis." << std::endl;
+  }
+
+  std::cout << "Set prior from XML for parameter " << param_name << ": type = " << prior_type << ", val1 = " << prior_val1
+            << ", val2 = " << prior_val2 << ", option = " << opt << std::endl;
+  return true;
+}
+//____________________________________________________________________________

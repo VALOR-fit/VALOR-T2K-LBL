@@ -349,7 +349,13 @@ class FitMarginalization
   // Histo below is required for p-value statistical uncertainty
   TH1D* GetNuEBarHistoUnscaled(int i){return fNuEAppHistoUnscaled[i];};
 
+  // Read priors from an XML file
+  void SetPriorsFromXML(std::string file_priors);
+
 private:
+
+  // Read priors from an XML file
+  bool SetSingleParamPrior(TXMLEngine* xmleng, XMLNodePointer_t curr_node);
 
   //NuEBar app histogram one for each value of Beta (is only initialised and 
   //filled if beta is the only parameter of intereset 
