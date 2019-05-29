@@ -48,7 +48,7 @@ _POT["15E21"]  = "15"
 
 _box_half_width   = 0.2
 _title_width      = 1.5
-_title_offset     = 0.02
+_title_offset     = 0.015
 _half_title_hight = 0.25
 
 
@@ -79,6 +79,12 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
     mg = ROOT.TMultiGraph()
     box_list = []
     title_list = []
+
+    # For deltacp only
+    mg_dist_from_pi = ROOT.TMultiGraph()
+    mg_dist_from_0  = ROOT.TMultiGraph()
+    max_dist_to_pi  = 0
+    max_dist_to_0   = 0
 
     # force the whole range to be drawn by adding two almost invisible points at each end of the axis
     x_arr1, y_arr1, xerr_arr1, yerr_arr1 = array('d'), array('d'), array('d'), array('d')
@@ -505,7 +511,65 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                     ROOT.SetOwnership(graph_errors3, False)  # This stops the object being deleted from memory when it goes out of scope
                     mg.Add(graph_errors3,"AP")
 
-    # Plot everything
+                    # For deltacp we need plots of the distance between the confidence interval edges and the 0 and +/- pi boundaries
+                    if var == "deltacp":
+                        if not (bf_point_mean < 0 and bf_point_mean > -conv.kpi):
+                            print "WARNING: When drawing the distance to the deltacp boundaries, I've assumed that the " \
+                                  "mean BF point lies between -pi and 0, but this is not the case for this scenario."
+                        dist_to_pi          = None
+                        dist_to_pi_err_down = None
+                        dist_to_pi_err_up   = None
+                        if ROOT.TMath.Abs(xrange_low_mean + conv.kpi) < ROOT.TMath.Abs(conv.kpi - xrange_low_mean):
+                            dist_to_pi          = xrange_low_mean + conv.kpi
+                            dist_to_pi_err_down = xrange_low_err_down
+                            dist_to_pi_err_up   = xrange_low_err_up
+                        else:
+                            # Has crossed boundary
+                            dist_to_pi          = xrange_low_mean - conv.kpi
+                            dist_to_pi_err_down = xrange_low_err_up
+                            dist_to_pi_err_up   = xrange_low_err_down
+                        max_dist_to_pi = max(max_dist_to_pi, 1.05 * ROOT.TMath.Abs(dist_to_pi))
+
+                        dist_to_0          = -xrange_high_mean
+                        dist_to_0_err_down = None
+                        dist_to_0_err_up   = None
+                        if dist_to_0 > 0:
+                            dist_to_0_err_down = xrange_high_err_up
+                            dist_to_0_err_up   = xrange_high_err_down
+                        else:
+                            # Has crossed boundary
+                            dist_to_0_err_down = xrange_high_err_down
+                            dist_to_0_err_up   = xrange_high_err_up
+                        max_dist_to_0 = max(max_dist_to_0, 1.05 * ROOT.TMath.Abs(dist_to_0))
+                            
+                        # Dist to pi graph
+                        x_arr_pi, y_arr_pi, xerrdown_arr_pi, xerrup_arr_pi, yerrdown_arr_pi, yerrup_arr_pi = array('d'), array('d'), array('d'),  array('d'), array('d'), array('d')
+                        x_arr_pi.append(dist_to_pi)
+                        y_arr_pi.append(irow)
+                        xerrdown_arr_pi.append(dist_to_pi_err_down)
+                        xerrup_arr_pi.append(dist_to_pi_err_up)
+                        yerrdown_arr_pi.append(0.0)
+                        yerrup_arr_pi.append(0.0)
+                        graph_errors_pi = ROOT.TGraphAsymmErrors(1, x_arr_pi, y_arr_pi, xerrdown_arr_pi, xerrup_arr_pi, yerrdown_arr_pi, yerrup_arr_pi)
+                        graph_errors_pi.SetMarkerStyle(23)    # TODO: marker size may need automatically adjusting based on the number of rows
+                        ROOT.SetOwnership(graph_errors_pi, False)  # This stops the object being deleted from memory when it goes out of scope
+                        mg_dist_from_pi.Add(graph_errors_pi,"AP")
+                        
+                        # Dist to 0 graph
+                        x_arr_0, y_arr_0, xerrdown_arr_0, xerrup_arr_0, yerrdown_arr_0, yerrup_arr_0 = array('d'), array('d'), array('d'),  array('d'), array('d'), array('d')
+                        x_arr_0.append(dist_to_0)
+                        y_arr_0.append(irow)
+                        xerrdown_arr_0.append(dist_to_0_err_down)
+                        xerrup_arr_0.append(dist_to_0_err_up)
+                        yerrdown_arr_0.append(0.0)
+                        yerrup_arr_0.append(0.0)
+                        graph_errors_0 = ROOT.TGraphAsymmErrors(1, x_arr_0, y_arr_0, xerrdown_arr_0, xerrup_arr_0, yerrdown_arr_0, yerrup_arr_0)
+                        graph_errors_0.SetMarkerStyle(23)    # TODO: marker size may need automatically adjusting based on the number of rows
+                        ROOT.SetOwnership(graph_errors_0, False)  # This stops the object being deleted from memory when it goes out of scope
+                        mg_dist_from_0.Add(graph_errors_0,"AP")
+
+
+    # Plot the confidence intervals
     canvas = ROOT.TCanvas("ranges", "ranges", 1024, 768)
     canvas.SetLeftMargin(1.05*(_title_width - _title_offset)/(xaxis_range_high - xaxis_range_low + _title_width))
     canvas.SetRightMargin(0.01)
@@ -531,7 +595,100 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
     canvas.Update()
 
     print "saving image to file", outfilename
-    canvas.SaveAs(outfilename, "recreate")
+    outfilename_use = outfilename
+    if var == "deltacp":
+        outfilename_use += "("
+    canvas.SaveAs(outfilename_use, "recreate")
+
+
+    # For deltacp, plot graphs of the distance of the CI edges to the 0 and +/- pi boundaries
+    if var == "deltacp":
+        # deltacp = +/- pi boundary plot
+        canvas_pi = ROOT.TCanvas("dist_to_pi", "dist_to_pi", 1024, 768)
+        canvas_pi.SetLeftMargin(1.05*(_title_width - _title_offset)/(xaxis_range_high - xaxis_range_low + _title_width))
+        canvas_pi.SetRightMargin(0.01)
+
+        mg_dist_from_pi.Draw("AP")
+        canvas_pi.Range(-0.5 - _title_width - _title_offset, 0, max_dist_to_pi + _title_offset, max_lines+1)
+        canvas_pi.Update()
+        mg_dist_from_pi.GetYaxis().SetLabelOffset(999)   # Get rid of y-axis labels, as we've made our own
+        mg_dist_from_pi.GetYaxis().SetLabelSize(0)
+        mg_dist_from_pi.GetYaxis().SetTickLength(0)
+        mg_dist_from_pi.GetYaxis().SetLimits(0, max_lines+1)
+        mg_dist_from_pi.GetXaxis().SetLimits(-0.5, max_dist_to_pi)
+        mg_dist_from_pi.GetXaxis().SetTitle("Distance of CI edge to the #delta_{CP} = #pm #pi boundary (radians)")
+
+        for i in range(0, len(title_list)):
+            title_list[i].Draw("NB,same")
+
+        #pave_cross_pi = ROOT.TPaveText(-0.95*max_dist_to_pi, max_lines-3, -0.45*max_dist_to_pi, max_lines+1)
+        pave_cross_pi = ROOT.TPaveText(-0.48, max_lines-2.5, 0, max_lines+0.5)
+        pave_cross_pi.SetShadowColor(0)
+        pave_cross_pi.SetFillColor(0)
+        pave_cross_pi.SetFillStyle(0)
+        pave_cross_pi.SetLineColor(0)
+        pave_cross_pi.AddText("Crosses #delta_{CP} = #pm #pi")
+        pave_cross_pi.SetTextSize(0.02)
+        pave_cross_pi.Draw("NB,same")
+
+        #pave_no_cross_pi = ROOT.TPaveText(0.45*max_dist_to_pi, max_lines-3, 0.95*max_dist_to_pi, max_lines+1)
+        pave_no_cross_pi = ROOT.TPaveText(0, max_lines-2.5, max_dist_to_pi*0.98, max_lines+0.5)
+        pave_no_cross_pi.SetShadowColor(0)
+        pave_no_cross_pi.SetFillColor(0)
+        pave_no_cross_pi.SetFillStyle(0)
+        pave_no_cross_pi.SetLineColor(0)
+        pave_no_cross_pi.AddText("Doesn't cross #delta_{CP} = #pm #pi")
+        pave_no_cross_pi.SetTextSize(0.02)
+        pave_no_cross_pi.Draw("NB,same")
+
+        line_0 = ROOT.TLine(0, 0, 0, max_lines+1)
+        line_0.SetLineStyle(2)
+        line_0.Draw("same")
+        canvas_pi.Update()
+        canvas_pi.SaveAs(outfilename, "recreate")
+
+        # deltacp = 0 boundary plot
+        canvas_0 = ROOT.TCanvas("dist_to_0", "dist_to_0", 1024, 768)
+        canvas_0.SetLeftMargin(1.05*(_title_width - _title_offset)/(xaxis_range_high - xaxis_range_low + _title_width))
+        canvas_0.SetRightMargin(0.01)
+
+        mg_dist_from_0.Draw("AP")
+        canvas_0.Range(-0.5 - _title_width - _title_offset, 0, max_dist_to_0 + _title_offset, max_lines+1)
+        canvas_0.Update()
+        mg_dist_from_0.GetYaxis().SetLabelOffset(999)   # Get rid of y-axis labels, as we've made our own
+        mg_dist_from_0.GetYaxis().SetLabelSize(0)
+        mg_dist_from_0.GetYaxis().SetTickLength(0)
+        mg_dist_from_0.GetYaxis().SetLimits(0, max_lines+1)
+        mg_dist_from_0.GetXaxis().SetLimits(-0.5, max_dist_to_0)
+        mg_dist_from_0.GetXaxis().SetTitle("Distance of CI edge to the #delta_{CP} = 0 boundary (radians)")
+
+        for i in range(0, len(title_list)):
+            title_list[i].Draw("NB,same")
+
+        #pave_cross_0 = ROOT.TPaveText(-0.95*max_dist_to_0, max_lines-3, -0.45*max_dist_to_0, max_lines+1)
+        pave_cross_0 = ROOT.TPaveText(-0.48, max_lines-2.5, 0, max_lines+0.5)
+        pave_cross_0.SetShadowColor(0)
+        pave_cross_0.SetFillColor(0)
+        pave_cross_0.SetFillStyle(0)
+        pave_cross_0.SetLineColor(0)
+        pave_cross_0.AddText("Crosses #delta_{CP} = 0")
+        pave_cross_0.SetTextSize(0.02)
+        pave_cross_0.Draw("NB,same")
+
+        #pave_no_cross_0 = ROOT.TPaveText(0.45*max_dist_to_0, max_lines-3, 0.95*max_dist_to_0, max_lines+1)
+        pave_no_cross_0 = ROOT.TPaveText(0, max_lines-2.5, max_dist_to_0*0.98, max_lines+0.5)
+        pave_no_cross_0.SetShadowColor(0)
+        pave_no_cross_0.SetFillColor(0)
+        pave_no_cross_0.SetFillStyle(0)
+        pave_no_cross_0.SetLineColor(0)
+        pave_no_cross_0.AddText("Doesn't cross #delta_{CP} = 0")
+        pave_no_cross_0.SetTextSize(0.02)
+        pave_no_cross_0.Draw("NB,same")
+
+        line_0.Draw("same")
+        canvas_0.Update()
+        canvas_0.SaveAs(outfilename+")", "recreate")
+
     print "Done!"
 
 
