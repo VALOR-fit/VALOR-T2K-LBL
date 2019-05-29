@@ -85,6 +85,10 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
     mg_dist_from_0  = ROOT.TMultiGraph()
     max_dist_to_pi  = 0
     max_dist_to_0   = 0
+    mg_ddchisq_pi = ROOT.TMultiGraph()
+    mg_ddchisq_0  = ROOT.TMultiGraph()
+    max_ddchisq_pi  = 0
+    max_ddchisq_0   = 0
 
     # force the whole range to be drawn by adding two almost invisible points at each end of the axis
     x_arr1, y_arr1, xerr_arr1, yerr_arr1 = array('d'), array('d'), array('d'), array('d')
@@ -123,6 +127,8 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                     range_high = []
                     wrap_range = False
                     wrap_range_batch = [False for i in range(0, nbatch)]
+                    dchisq_at_pi = []   # for deltacp only
+                    dchisq_at_0  = []   # for deltacp only
                     for ibatch in range(0, nbatch):
                         file_in = file_pattern.replace("[BATCH]"     , str(ibatch))
                         file_in = file_in.replace     ("[DATATYPE]"  , type)
@@ -155,6 +161,14 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                         hchisq.GetBinXYZ(bf_bin, bf_bin_x, dummy, dummy)
                         bf_point.append(hchisq.GetXaxis().GetBinCenter(bf_bin_x))
 
+                        # For deltacp get the chisq values at +/- pi and 0
+                        if var == "deltacp":
+                            dchisq_at_pi.append(hchisq.GetBinContent(1))    # pi is at the centre of this bin, so no need to extrapolate
+                            deltacp_0_bin_glob = hchisq.FindBin(0.0)
+                            deltacp_0_bin_x = ROOT.Long()
+                            hchisq.GetBinXYZ(deltacp_0_bin_glob, deltacp_0_bin_x, dummy, dummy)
+                            dchisq_at_0.append(hchisq.GetBinContent(deltacp_0_bin_x))    # 0 is at the centre of this bin, so no need to extrapolate
+
                         # TODO: If there's no dchisq value in the hist > crit_dchisq, then just leave this row of the plot blank instead of dying
                         # Search forwards from left for the two bins directly greater than and less than the critical value:
                         ibin_high = -1  # chisq hist bin with content > critical value
@@ -167,7 +181,7 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                                 ibin_low = ibin
                                 if ibin_high != -1:
                                     # Interpolate between bins
-                                    range_low.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_high, ibin_low))
+                                    range_low.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_high, ibin_low, var))
                                     found = True
                                     break
                                 else:
@@ -188,7 +202,7 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                                     ibin_high = ibin
                                     if ibin_low != -1:
                                         # Interpolate between bins
-                                        range_low.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_high, ibin_low))
+                                        range_low.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_high, ibin_low, var))
                                         found = True
                                         wrap_range = True
                                         wrap_range_batch[ibatch] = True
@@ -196,13 +210,14 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                                     else:
                                         # Maybe the bins we want are either side of the +/- pi boundary, so try that
                                         if hchisq.GetBinContent(1) <= crit_dchisq and hchisq.GetBinContent(hchisq.GetNbinsX()) > crit_dchisq:
+                                            print "*** WARNING: dchisq hist crosses the crit dchisq at the +/- pi boundary. Behaviour may be strange as this is untested. ***"
                                             ibin_low  = 1
                                             ibin_high = hchisq.GetNbinsX()
                                             x1 = hchisq.GetBinLowEdge(ibin_high)    # high because treating it like moving the 1st bin onto the end of the last
                                             x2 = hchisq.GetBinLowEdge(ibin_high) + 2*hchisq.GetBinWidth(ibin_low)
                                             y1 = hchisq.GetBinContent(ibin_high)
                                             y2 = hchisq.GetBinContent(ibin_low)
-                                            range_low.append(interpolate_crit_x_no_hist(crit_dchisq, x1, x2, y1, y2))
+                                            range_low.append(interpolate_crit_x_no_hist(crit_dchisq, x1, x2, y1, y2, var))
                                         else:
                                             print "ERROR: No bins < critval, when searching from right. Exiting."
                                             sys.exit()
@@ -219,7 +234,7 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                                 ibin_low = ibin
                                 if ibin_high != -1:
                                     # Interpolate between bins
-                                    range_high.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_low, ibin_high))
+                                    range_high.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_low, ibin_high, var))
                                     found = True
                                     break
                                 else:
@@ -241,7 +256,7 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                                         ibin_high = ibin
                                         if ibin_low != -1:
                                             # Interpolate between bins
-                                            range_high.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_low, ibin_high))
+                                            range_high.append(interpolate_crit_x(crit_dchisq, hchisq, ibin_low, ibin_high, var))
                                             found = True
                                             wrap_range = True
                                             wrap_range_batch[ibatch] = True
@@ -249,13 +264,14 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                                         else:
                                             # Maybe the bins we want are either side of the +/- pi boundary, so try that
                                             if hchisq.GetBinContent(1) > crit_dchisq and hchisq.GetBinContent(hchisq.GetNbinsX()) <= crit_dchisq:
+                                                print "*** WARNING: dchisq hist crosses the crit dchisq at the +/- pi boundary. Behaviour may be strange as this is untested. ***"
                                                 ibin_low  = hchisq.GetNbinsX()
                                                 ibin_high = 1
                                                 x1 = hchisq.GetBinLowEdge(ibin_high) - hchisq.GetBinWidth(ibin_high)  # high - width because treating it like moving the last bin before the end of the 1st bin
                                                 x2 = hchisq.GetBinLowEdge(ibin_high) + hchisq.GetBinWidth(ibin_high)
                                                 y1 = hchisq.GetBinContent(ibin_low)
                                                 y2 = hchisq.GetBinContent(ibin_high)
-                                                range_high.append(interpolate_crit_x_no_hist(crit_dchisq, x1, x2, y1, y2))
+                                                range_high.append(interpolate_crit_x_no_hist(crit_dchisq, x1, x2, y1, y2, var))
                                                 found = True
                                                 wrap_range = True
                                                 wrap_range_batch[ibatch] = True
@@ -569,6 +585,47 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                         mg_dist_from_0.Add(graph_errors_0,"AP")
 
 
+                    # For deltacp we need plots of the mean difference in Delta chisq between the critical value and the Delta chisq at +/- pi and 0
+                    if var == "deltacp":
+                        # Difference at deltacp = +/- pi
+                        mean_dchisq_at_pi = np.mean(dchisq_at_pi)
+                        mean_dchisq_at_pi_err_down = mean_dchisq_at_pi - min(dchisq_at_pi)  # This is the same as the error on the difference, as the critical dchisq has no error
+                        mean_dchisq_at_pi_err_up   = max(dchisq_at_pi) - mean_dchisq_at_pi
+                        diff_dchisq_at_pi = mean_dchisq_at_pi - crit_dchisq
+                        max_ddchisq_pi = max(max_ddchisq_pi, 1.05 * diff_dchisq_at_pi)
+
+                        x_arr_pi, y_arr_pi, xerrdown_arr_pi, xerrup_arr_pi, yerrdown_arr_pi, yerrup_arr_pi = array('d'), array('d'), array('d'),  array('d'), array('d'), array('d')
+                        x_arr_pi.append(diff_dchisq_at_pi)
+                        y_arr_pi.append(irow)
+                        xerrdown_arr_pi.append(mean_dchisq_at_pi_err_down)
+                        xerrup_arr_pi.append(mean_dchisq_at_pi_err_up)
+                        yerrdown_arr_pi.append(0.0)
+                        yerrup_arr_pi.append(0.0)
+                        graph_errors_pi = ROOT.TGraphAsymmErrors(1, x_arr_pi, y_arr_pi, xerrdown_arr_pi, xerrup_arr_pi, yerrdown_arr_pi, yerrup_arr_pi)
+                        graph_errors_pi.SetMarkerStyle(23)    # TODO: marker size may need automatically adjusting based on the number of rows
+                        ROOT.SetOwnership(graph_errors_pi, False)  # This stops the object being deleted from memory when it goes out of scope
+                        mg_ddchisq_pi.Add(graph_errors_pi,"AP")
+                        
+                        # Difference at deltacp = 0
+                        mean_dchisq_at_0  = np.mean(dchisq_at_0)
+                        mean_dchisq_at_0_err_down = mean_dchisq_at_0 - min(dchisq_at_0)
+                        mean_dchisq_at_0_err_up   = max(dchisq_at_0) - mean_dchisq_at_0
+                        diff_dchisq_at_0 = mean_dchisq_at_0 - crit_dchisq
+                        max_ddchisq_0 = max(max_ddchisq_0, 1.05 * diff_dchisq_at_0)
+                        
+                        x_arr_0, y_arr_0, xerrdown_arr_0, xerrup_arr_0, yerrdown_arr_0, yerrup_arr_0 = array('d'), array('d'), array('d'),  array('d'), array('d'), array('d')
+                        x_arr_0.append(diff_dchisq_at_0)
+                        y_arr_0.append(irow)
+                        xerrdown_arr_0.append(mean_dchisq_at_0_err_down)
+                        xerrup_arr_0.append(mean_dchisq_at_0_err_up)
+                        yerrdown_arr_0.append(0.0)
+                        yerrup_arr_0.append(0.0)
+                        graph_errors_0 = ROOT.TGraphAsymmErrors(1, x_arr_0, y_arr_0, xerrdown_arr_0, xerrup_arr_0, yerrdown_arr_0, yerrup_arr_0)
+                        graph_errors_0.SetMarkerStyle(23)    # TODO: marker size may need automatically adjusting based on the number of rows
+                        ROOT.SetOwnership(graph_errors_0, False)  # This stops the object being deleted from memory when it goes out of scope
+                        mg_ddchisq_0.Add(graph_errors_0,"AP")
+
+
     # Plot the confidence intervals
     canvas = ROOT.TCanvas("ranges", "ranges", 1024, 768)
     canvas.SetLeftMargin(1.05*(_title_width - _title_offset)/(xaxis_range_high - xaxis_range_low + _title_width))
@@ -627,7 +684,7 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
         pave_cross_pi.SetFillColor(0)
         pave_cross_pi.SetFillStyle(0)
         pave_cross_pi.SetLineColor(0)
-        pave_cross_pi.AddText("Crosses #delta_{CP} = #pm #pi")
+        pave_cross_pi.AddText("CI crosses #delta_{CP} = #pm #pi")
         pave_cross_pi.SetTextSize(0.02)
         pave_cross_pi.Draw("NB,same")
 
@@ -637,7 +694,7 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
         pave_no_cross_pi.SetFillColor(0)
         pave_no_cross_pi.SetFillStyle(0)
         pave_no_cross_pi.SetLineColor(0)
-        pave_no_cross_pi.AddText("Doesn't cross #delta_{CP} = #pm #pi")
+        pave_no_cross_pi.AddText("CI doesn't cross #delta_{CP} = #pm #pi")
         pave_no_cross_pi.SetTextSize(0.02)
         pave_no_cross_pi.Draw("NB,same")
 
@@ -687,23 +744,130 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
 
         line_0.Draw("same")
         canvas_0.Update()
+        canvas_0.SaveAs(outfilename, "recreate")
+
+    # For deltacp plot the mean difference in Delta chisq between the critical value and the Delta chisq at +/- pi and 0
+    if var == "deltacp":
+        # deltacp = +/- pi boundary plot
+        canvas_pi = ROOT.TCanvas("ddchisq_pi", "ddchisq_pi", 1024, 768)
+        canvas_pi.SetLeftMargin(1.05*(_title_width - _title_offset)/(xaxis_range_high - xaxis_range_low + _title_width))
+        canvas_pi.SetRightMargin(0.01)
+
+        mg_ddchisq_pi.Draw("AP")
+        canvas_pi.Range(-max_ddchisq_pi - _title_width - _title_offset, 0, max_ddchisq_pi + _title_offset, max_lines+1)
+        canvas_pi.Update()
+        mg_ddchisq_pi.GetYaxis().SetLabelOffset(999)   # Get rid of y-axis labels, as we've made our own
+        mg_ddchisq_pi.GetYaxis().SetLabelSize(0)
+        mg_ddchisq_pi.GetYaxis().SetTickLength(0)
+        mg_ddchisq_pi.GetYaxis().SetLimits(0, max_lines+1)
+        mg_ddchisq_pi.GetXaxis().SetLimits(-max_ddchisq_pi, max_ddchisq_pi)
+        mg_ddchisq_pi.GetXaxis().SetTitle("#Delta #chi^{2} #left( #delta_{CP} = #pm #pi #right) - #Delta #chi^{2}_{crit.}")
+
+        for i in range(0, len(title_list)):
+            title_list[i].Draw("NB,same")
+
+        pave_cross_pi = ROOT.TPaveText(-max_ddchisq_pi*0.98, max_lines-2.5, 0, max_lines+0.5)
+        pave_cross_pi.SetShadowColor(0)
+        pave_cross_pi.SetFillColor(0)
+        pave_cross_pi.SetFillStyle(0)
+        pave_cross_pi.SetLineColor(0)
+        pave_cross_pi.AddText("CI crosses #delta_{CP} = #pm #pi")
+        pave_cross_pi.SetTextSize(0.02)
+        pave_cross_pi.Draw("NB,same")
+
+        pave_no_cross_pi = ROOT.TPaveText(0, max_lines-2.5, max_ddchisq_pi*0.98, max_lines+0.5)
+        pave_no_cross_pi.SetShadowColor(0)
+        pave_no_cross_pi.SetFillColor(0)
+        pave_no_cross_pi.SetFillStyle(0)
+        pave_no_cross_pi.SetLineColor(0)
+        pave_no_cross_pi.AddText("CI doesn't cross #delta_{CP} = #pm #pi")
+        pave_no_cross_pi.SetTextSize(0.02)
+        pave_no_cross_pi.Draw("NB,same")
+
+        line_0 = ROOT.TLine(0, 0, 0, max_lines+1)
+        line_0.SetLineStyle(2)
+        line_0.Draw("same")
+        canvas_pi.Update()
+        canvas_pi.SaveAs(outfilename, "recreate")
+
+        # deltacp = 0 boundary plot
+        canvas_0 = ROOT.TCanvas("ddchisq_0", "ddchisq_0", 1024, 768)
+        canvas_0.SetLeftMargin(1.05*(_title_width - _title_offset)/(xaxis_range_high - xaxis_range_low + _title_width))
+        canvas_0.SetRightMargin(0.01)
+
+        mg_ddchisq_0.Draw("AP")
+        canvas_0.Range(-max_ddchisq_0 - _title_width - _title_offset, 0, max_ddchisq_0 + _title_offset, max_lines+1)
+        canvas_0.Update()
+        mg_ddchisq_0.GetYaxis().SetLabelOffset(999)   # Get rid of y-axis labels, as we've made our own
+        mg_ddchisq_0.GetYaxis().SetLabelSize(0)
+        mg_ddchisq_0.GetYaxis().SetTickLength(0)
+        mg_ddchisq_0.GetYaxis().SetLimits(0, max_lines+1)
+        mg_ddchisq_0.GetXaxis().SetLimits(-max_ddchisq_0, max_ddchisq_0)
+        mg_ddchisq_0.GetXaxis().SetTitle("#Delta #chi^{2} #left( #delta_{CP} = 0 #right) - #Delta #chi^{2}_{crit.}")
+
+        for i in range(0, len(title_list)):
+            title_list[i].Draw("NB,same")
+
+        pave_cross_0 = ROOT.TPaveText(-max_ddchisq_0*0.98, max_lines-2.5, 0, max_lines+0.5)
+        pave_cross_0.SetShadowColor(0)
+        pave_cross_0.SetFillColor(0)
+        pave_cross_0.SetFillStyle(0)
+        pave_cross_0.SetLineColor(0)
+        pave_cross_0.AddText("CI crosses #delta_{CP} = #pm #pi")
+        pave_cross_0.SetTextSize(0.02)
+        pave_cross_0.Draw("NB,same")
+
+        pave_no_cross_0 = ROOT.TPaveText(0, max_lines-2.5, max_ddchisq_0*0.98, max_lines+0.5)
+        pave_no_cross_0.SetShadowColor(0)
+        pave_no_cross_0.SetFillColor(0)
+        pave_no_cross_0.SetFillStyle(0)
+        pave_no_cross_0.SetLineColor(0)
+        pave_no_cross_0.AddText("CI doesn't cross #delta_{CP} = #pm #pi")
+        pave_no_cross_0.SetTextSize(0.02)
+        pave_no_cross_0.Draw("NB,same")
+
+        line_0 = ROOT.TLine(0, 0, 0, max_lines+1)
+        line_0.SetLineStyle(2)
+        line_0.Draw("same")
+        canvas_0.Update()
         canvas_0.SaveAs(outfilename+")", "recreate")
 
     print "Done!"
 
 
 #_______________________________________________________________________________________________________________________
-def interpolate_crit_x(crit_dchisq, hchisq, ibin1, ibin2):
+def interpolate_crit_x(crit_dchisq, hchisq, ibin1, ibin2, var):
     y1 = hchisq.GetBinContent(ibin1)
     y2 = hchisq.GetBinContent(ibin2)
     x1 = hchisq.GetBinLowEdge(ibin1)
     x2 = hchisq.GetBinLowEdge(ibin2) + hchisq.GetBinWidth(ibin2)
-    gradient = (y2 - y1) / (x2 - x1)
-    intercept = y1 - gradient * x1
-    return (crit_dchisq - intercept) / gradient
+    return interpolate_crit_x_no_hist(crit_dchisq, x1, x2, y1, y2, var)
 
 #_______________________________________________________________________________________________________________________
-def interpolate_crit_x_no_hist(crit_dchisq, x1, x2, y1, y2):
+def interpolate_crit_x_no_hist(crit_dchisq, x1, x2, y1, y2, var):
+    # Keep values within physical limits
+    lim_low  = -conv.kALargeNum
+    lim_high =  conv.kALargeNum
+    if var == "deltacp":
+        lim_low  = -conv.kpi
+        lim_high =  conv.kpi
+    elif "mixing" in var:
+        lim_low  = 0
+        lim_high = 1
+    if x1 < lim_low:
+        x1 = lim_low
+    if x2 < lim_low:
+        x2 = lim_low
+    if x1 > lim_high:
+        x1 = lim_high
+    if x2 > lim_high:
+        x2 = lim_high
+    if y1 < 0:
+        y1 = 0
+    if y2 < 0:
+        y2 = 0
+
+    # Interpolate
     gradient = (y2 - y1) / (x2 - x1)
     intercept = y1 - gradient * x1
     return (crit_dchisq - intercept) / gradient
