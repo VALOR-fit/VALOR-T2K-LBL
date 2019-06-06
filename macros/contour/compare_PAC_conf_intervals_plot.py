@@ -58,6 +58,8 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
     crit_dchisq = get_crit_dchisq(critval_str)
     print "Input critical value string of", critval_str, "gives critical Delta chisq =", crit_dchisq
 
+    boundary_dchisq_str = ""
+
     max_lines = len(_hierarchy) * len(_data_type) * len(_allocation) * len(_POT)
 
     xaxis_range_low  = 0
@@ -627,6 +629,10 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
                         ROOT.SetOwnership(graph_errors_0, False)  # This stops the object being deleted from memory when it goes out of scope
                         mg_ddchisq_0.Add(graph_errors_0,"AP")
 
+                        boundary_dchisq_str += "For scenario " + hier_tex + " " + type_tex + " " + alloc_tex + " " + \
+                                               pot + " " + ": delta chisq at +/- pi = {0:.4f}".format(mean_dchisq_at_pi) \
+                                               + ", delta chisq at 0 = {0:.4f}".format(mean_dchisq_at_0) + "\n"
+
 
     # Plot the confidence intervals
     canvas = ROOT.TCanvas("ranges", "ranges", 1024, 768)
@@ -834,6 +840,8 @@ def main(file_pattern, outfilename, nbatch, critval_str, var, do_global):
         line_0.Draw("same")
         canvas_0.Update()
         canvas_0.SaveAs(outfilename+")", "recreate")
+
+    print boundary_dchisq_str
 
     print "Done!"
 
