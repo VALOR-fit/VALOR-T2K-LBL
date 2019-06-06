@@ -55,6 +55,8 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             dchisq_obj.SetLineWidth(line_width)
         if title_x:
             dchisq_obj.GetXaxis().SetTitle(title_x)
+            dchisq_obj.GetXaxis().SetTitleOffset(0.84)
+            dchisq_obj.GetXaxis().SetTitleSize(0.05)
         if title_y:
             dchisq_obj.GetYaxis().SetTitle(title_y)
         dchisq_obj.GetYaxis().SetTitleOffset(0.8)
@@ -77,8 +79,9 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     legend.SetBorderSize(0)
     legend.SetTextFont(132)
     legend.SetTextSize(text_size)
-    for i, dchisq_obj in enumerate(dchisq_objects):
-        legend.AddEntry(dchisq_obj, labels[i], "l")
+    if len(labels) > 0:
+        for i, dchisq_obj in enumerate(dchisq_objects):
+            legend.AddEntry(dchisq_obj, labels[i], "l")
 
     if "mix" in pdf_filename and not is_t2k_only and FC:
         fc_file = ROOT.TFile("FCgraphs.root", "READ")
@@ -129,6 +132,18 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         latLine2.SetTextColor(ROOT.kBlue)
         latLine2.SetTextSize(0.05)
         latLine2.Draw("same")
+
+        critval3 = 6.6349
+        critical3 = ROOT.TLine(xlow, critval3, xhigh, critval3)
+        critical3.SetLineColor(ROOT.kBlue)
+        critical3.SetLineStyle(1)
+        critical3.SetLineWidth(2)
+        critical3.Draw()
+
+        latLine3 = ROOT.TLatex(xpos, critval3 + 0.15, "99%")
+        latLine3.SetTextColor(ROOT.kBlue)
+        latLine3.SetTextSize(0.05)
+        latLine3.Draw("same")
 
     if prelim:
         title = ROOT.TLatex(0.5, 0.91, "T2K Run 1-9 Preliminary")
@@ -184,10 +199,11 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
     for i, dchisq_obj in enumerate(dchisq_objs):
         dchisq_obj.SetContour(1, np.array([4.61]))  #2, [2.3, 4.61]
         contours = get_contour(dchisq_obj)
-        if len(contours) > 1:
-            legend.AddEntry(contours[1], labels[i], "l")
-        elif len(contours) > 0:
-            legend.AddEntry(contours[0], labels[i], "l")
+        if len(labels) > 0:
+            if len(contours) > 1:
+                legend.AddEntry(contours[1], labels[i], "l")
+            elif len(contours) > 0:
+                legend.AddEntry(contours[0], labels[i], "l")
         for contour in contours:
             if not colours or not styles:
                 contour.SetLineColor(line_color)
@@ -326,7 +342,7 @@ def get_global_histos(filename):
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Index splines")
     parser.add_argument("-f", "--filename", dest="in_filenames", nargs="+", help="Input filename(s) for contour(s).")
-    parser.add_argument("-l", "--label", dest="labels", nargs="+", help="Legend label(s) for contours(s). This should have the same number of arguments as provided to --filename, or double if --global is used.")
+    parser.add_argument("-l", "--label", dest="labels", nargs="+", help="Legend label(s) for contours(s). This should have either 0 length or the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("-c", "--colour", dest="colours", nargs="+", help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("-s", "--style", dest="styles", nargs="+", help="Custom line style(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
     parser.add_argument("--best-fit-label", dest="best_fit_labels", nargs="+", help="Labels for best-fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if --global is used.")
@@ -344,14 +360,17 @@ if __name__=="__main__":
     parser.add_argument("--theta23", dest="theta23", type=float, help="Input value of theta23.")
     parser.add_argument("--dm23", dest="dm23", type=float, help="Input value of dm23.")
     args = parser.parse_args()
-    if not len(args.in_filenames) == len(args.labels) and not args.do_global:
-        print "Error: The number of filenames and labels should match"
-        sys.exit()
-    elif not 2 * len(args.in_filenames) == len(args.labels) and args.do_global:
-        print "Error: The number of labels should be twice the number of filenames"
-        print "filenames =", args.in_filenames
-        print "labels =", args.labels
-        sys.exit()
+    labels = []
+    if args.labels:
+        labels = [i for i in args.labels]
+        if not len(args.in_filenames) == len(labels) and not args.do_global:
+            print "Error: The number of filenames and labels should match"
+            sys.exit()
+        elif not 2 * len(args.in_filenames) == len(labels) and args.do_global:
+            print "Error: The number of labels should be twice the number of filenames"
+            print "filenames =", args.in_filenames
+            print "labels =", labels
+            sys.exit()
 
 
     dchisq_objects = []
@@ -383,9 +402,9 @@ if __name__=="__main__":
         best_fit_styles = [int(i) for i in args.best_fit_styles]
 
     if num_var == 1:
-        plot_contours_1d(dchisq_objects, args.labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim, args.title_x, "-2#Deltaln(L)", args.lwidth, args.tsize, args.FC)
+        plot_contours_1d(dchisq_objects, labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim, args.title_x, "-2#Deltaln(L)", args.lwidth, args.tsize, args.FC)
     elif num_var == 2:
-        plot_contours_2d(dchisq_objects, args.labels, args.theta23, args.dm23, args.out_filename, colours, styles, best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth, args.msize, args.tsize)
+        plot_contours_2d(dchisq_objects, labels, args.theta23, args.dm23, args.out_filename, colours, styles, best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth, args.msize, args.tsize)
     else:
         print "Error: Not all contours have the same dimensionality"
         sys.exit()
