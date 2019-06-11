@@ -19,8 +19,8 @@
  */
 //________________________________________________________________________________________
 
-#define __extract_selected_events__
-#define __print_mct_integrals__
+//#define __extract_selected_events__
+//#define __print_mct_integrals__
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
 //#define __ereco_scale_debug__
