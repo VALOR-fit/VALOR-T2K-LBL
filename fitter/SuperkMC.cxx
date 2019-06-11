@@ -19,6 +19,8 @@
  */
 //________________________________________________________________________________________
 
+#define __extract_selected_events__
+#define __print_mct_integrals__
 #define __show_init_mesg_info__
 //#define __show_init_mesg_debug__
 //#define __ereco_scale_debug__
@@ -723,6 +725,23 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
             this->FillTemplateHistogram(s,m);
         }
     }
+
+#ifdef __print_mct_integrals__
+    std::cout << "About to print MC template integrals:" << std::endl;
+    for(int is = 0; is < kns; is++) {
+        double tot_int = 0;
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        std::cout << "  sample = " << util::AsString(s) << std::endl;
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            std::cout << "    fMCTFinOb[" << util::AsString(m) << "] integral = " << this -> Template2D(s,m,kSKMCtNom) -> Integral() << std::endl;;
+            tot_int += this -> Template2D(s,m,kSKMCtNom) -> Integral();
+        }
+        std::cout << "fMCTFinOb integral summed over all modes = " << tot_int << std::endl;
+    }
+#endif
     
     
     this->FillTemplateArrays(true); // Fill the arrays - with niwg weights by default
@@ -1197,6 +1216,34 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #ifdef __show_init_mesg_debug__
     LOG("SuperkMC",pDEBUG) << "Exp/SKMC/FillTemplate >> Creating MC template for: "
     << util::AsString(s) << " / " << util::AsString(m);
+#endif
+
+#ifdef __extract_selected_events__
+    SuperkMode_t   selected_mode   = conv::kSKmNuENC1piC;
+    SuperkSample_t selected_sample = conv::kSKsFCFV1RingMuLike;
+    TTree * selected_events_tree = nullptr;
+    TString selec_sample_str ("");
+    //TString selec_beam_str   ("");
+    TString selec_mode_str   ("");
+    double  selec_enu_true   = 0.;
+    double  selec_enu_reco   = 0.;
+    double  selec_Theta_reco = 0.;
+    double  selec_wght       = 0.;
+    double  selec_wght_pot   = 0.;
+    double  selec_wght_tun   = 0.;
+    if(s == selected_sample && m == selected_mode) {
+        selected_events_tree = new TTree("selected_events_tree", "selected events");
+        selected_events_tree->Branch("sample_str", &selec_sample_str);
+        //selected_events_tree->Branch("beam_str"  , &selec_beam_str);
+        selected_events_tree->Branch("mode_str", &selec_mode_str);
+        selected_events_tree->Branch("enu_true", &selec_enu_true);
+        selected_events_tree->Branch("enu_reco", &selec_enu_reco);
+        selected_events_tree->Branch("Theta_reco", &selec_Theta_reco);
+        selected_events_tree->Branch("wght", &selec_wght);
+        selected_events_tree->Branch("wght_pot", &selec_wght_pot);
+        selected_events_tree->Branch("wght_tun", &selec_wght_tun);
+    }
+    int iev_selected = 0;
 #endif
     
     //filled in FillSpecialTemplates()
@@ -1759,7 +1806,38 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
 #endif// __show_init_mesg_debug__
         
 #endif
-        
+
+#ifdef __extract_selected_events__
+        if(s == selected_sample && m == selected_mode) {
+            if(iev_selected < 10) {
+                cout << "Inserting to MC teplates --> selected MC event #" << iev_selected
+                     << "\n sample           = " << " (" << util::AsString(s) << ")"
+                     << "\n imode            = " << " (" << util::AsString(m) << ")"
+                     << "\n fBrWghtBeRPA     = " << fBrWghtBeRPA
+                     << "\n fBrWghtSFRFG     = " << fBrWghtSFRFG
+                     << "\n fBrWghtCCcoh     = " << fBrWghtCCcoh
+                     << "\n NC1GammaWght     = " << NC1GammaWght
+                     << "\n fake_data_weight = " << fake_data_weight
+                     << "\n wght             = " << fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight
+                     << "\n pot_wght         = " << pot_wght
+                     << "\n ext_wght         = " << fBrWghtFlx
+                     << "\n  True: "<< Etrue
+                     << "\n  Reco: "<< ereco_fill << ", " << q2_fill << "\n\n" << std::endl;
+            }
+            selec_sample_str = util::AsStringCompact(s);
+            //selec_beam_str   = ;
+            selec_mode_str   = util::AsStringCompact(m);
+            selec_enu_true   = Etrue;
+            selec_enu_reco   = ereco_fill;
+            selec_Theta_reco = q2_fill;
+            selec_wght       = fBrWghtBeRPA * fBrWghtSFRFG * fBrWghtCCcoh * NC1GammaWght * fake_data_weight;
+            selec_wght_pot   = pot_wght;
+            selec_wght_tun   = fBrWghtFlx;
+            selected_events_tree->Fill();
+            iev_selected++;
+        }
+#endif
+
     }//iev loop over events
     
 #ifdef __show_init_mesg_debug__
@@ -1779,7 +1857,16 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
     LOG("SuperKMC", pDEBUG) << util::AsString(s) <<  " " << util::AsString(m)  << "Total events in MC: " << ntotevents;
     
 #endif
-    
+
+#ifdef __extract_selected_events__
+    if(s == selected_sample && m == selected_mode) {
+        TFile selected_events_file(Form("selected_mct_fill_events_t2xk_%s_%s.root", util::AsStringCompact(selected_sample).c_str(), util::AsStringCompact(selected_mode).c_str()), "RECREATE");
+        selected_events_file.cd();
+        selected_events_tree->Write();
+        delete selected_events_tree;
+        selected_events_file.Close();
+    }
+#endif
 }
 
 //________________________________________________________________________________________
