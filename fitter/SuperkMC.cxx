@@ -741,6 +741,21 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         }
         std::cout << "fMCTFinOb integral summed over all modes = " << tot_int << std::endl;
     }
+
+    std::cout << "About to print MC template Entries:" << std::endl;
+    for(int is = 0; is < kns; is++) {
+        double tot_entries = 0;
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        std::cout << "  sample = " << util::AsString(s) << std::endl;
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            std::cout << "    fMCTFinOb[" << util::AsString(m) << "] entries = " << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << std::endl;;
+            tot_entries += this -> Template2D(s,m,kSKMCtNom) -> GetEntries();
+        }
+        std::cout << "fMCTFinOb entries summed over all modes = " << tot_int << std::endl;
+    }
 #endif
     
     
