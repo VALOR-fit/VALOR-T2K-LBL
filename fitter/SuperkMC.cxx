@@ -754,7 +754,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
             std::cout << "    fMCTFinOb[" << util::AsString(m) << "] entries = " << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << std::endl;;
             tot_entries += this -> Template2D(s,m,kSKMCtNom) -> GetEntries();
         }
-        std::cout << "fMCTFinOb entries summed over all modes = " << tot_int << std::endl;
+        std::cout << "fMCTFinOb entries summed over all modes = " << tot_entries << std::endl;
     }
 #endif
     
