@@ -25,14 +25,20 @@ env     = valor.Env.Instance()
 rnd     = valor.Rnd.Instance()
 arridx  = util.ArrIdx.Instance()
 
-title_size_x     = 0.07
-title_size_y     = 0.08
-title_offset_y   = 1.05
-leg_text_size    = 0.06
-label_text_size  = 0.055
+title_size_x     = 0.09
+title_size_y     = 0.09
+title_offset_x   = 0.90
+title_offset_y   = 1.25 #1.05
+leg_text_size    = 0.09 #0.07
+label_text_size  = 0.07
 label_offset_x   = 0.005
 line_thickness   = 2
-ymax = 0.13
+ymax = 0.16
+font = 132
+
+# Check to see if the plot is colour-blind friendly at https://www.color-blindness.com/coblis-color-blindness-simulator/
+line_col_beta0 = ROOT.kAzure - 4
+line_col_beta1 = ROOT.kRed   + 2
 
 data_nev    = 15.
 data_dchisq = 3.81
@@ -73,30 +79,37 @@ def main():
 
     # Hist formatting
     hist_beta0_rate.SetMaximum(ymax)
-    hist_beta0_rate.SetLineColor(3)
-    hist_beta1_rate.SetLineColor(2)
+    hist_beta0_rate.SetLineColor(line_col_beta0)
+    hist_beta1_rate.SetLineColor(line_col_beta1)
     hist_beta0_rate.SetLineWidth(line_thickness)
     hist_beta1_rate.SetLineWidth(line_thickness)
-    hist_beta0_rate.GetXaxis().SetTitle("#splitline{Number of observed #bar{#nu} mode}{single-ring e-like events}")
+    #hist_beta0_rate.GetXaxis().SetTitle("#splitline{Number of observed #bar{#nu} mode}{single-ring e-like events}")
+    #hist_beta0_rate.GetXaxis().SetTitle("N_{#bar{#nu}_{e}}")
+    hist_beta0_rate.GetXaxis().SetTitle("N_{events}")
     hist_beta0_rate.GetYaxis().SetTitle("Fraction of pseudo-experiments")
     hist_beta0_rate.GetYaxis().SetTitleSize(title_size_y)
     hist_beta0_rate.GetXaxis().SetTitleSize(title_size_x)
     hist_beta0_rate.GetXaxis().CenterTitle(True)
     hist_beta0_rate.GetYaxis().CenterTitle(True)
     hist_beta0_rate.GetYaxis().SetTitleOffset(title_offset_y)
+    hist_beta0_rate.GetXaxis().SetTitleOffset(title_offset_x)
     hist_beta0_rate.GetXaxis().SetLabelSize(label_text_size)
     hist_beta0_rate.GetYaxis().SetLabelSize(label_text_size)
     hist_beta0_rate.GetXaxis().SetLabelOffset(label_offset_x)
+    hist_beta0_rate.GetXaxis().SetTitleFont(font)
+    hist_beta0_rate.GetYaxis().SetTitleFont(font)
 
     hist_beta0_shape.SetMaximum(ymax)
-    hist_beta0_shape.SetLineColor(3)
-    hist_beta1_shape.SetLineColor(2)
+    hist_beta0_shape.SetLineColor(line_col_beta0)
+    hist_beta1_shape.SetLineColor(line_col_beta1)
     hist_beta0_shape.SetLineWidth(line_thickness)
     hist_beta1_shape.SetLineWidth(line_thickness)
     hist_beta0_shape.GetXaxis().SetTitleSize(title_size_x)
     hist_beta0_shape.GetXaxis().CenterTitle(True)
     hist_beta0_shape.GetXaxis().SetLabelSize(label_text_size*1.1)
     hist_beta0_shape.GetXaxis().SetLabelOffset(label_offset_x)
+    hist_beta0_shape.GetXaxis().SetTitleOffset(title_offset_x*0.9)
+    hist_beta0_shape.GetXaxis().SetTitleFont(font)
 
     # Make data lines
     data_line_rate = ROOT.TLine(data_nev, 0, data_nev, ymax)
@@ -128,8 +141,10 @@ def main():
     hist_beta0_shape.GetYaxis().SetTitleSize(0)
 
     # Set the margins so that the two plots are joined together
-    pad_left .SetLeftMargin (0.17)
-    pad_right.SetRightMargin(0.02)
+    pad_left .SetLeftMargin (0.22)  # 0.20
+    pad_right.SetRightMargin(0.03)  # 0.04
+    pad_left .SetTopMargin(0.02)
+    pad_right.SetTopMargin(0.02)
 
     # Draw two blank pads over the overlapping axis labels (two as the labels are on both of the main pads)
     erase_xlow  = 0.95
@@ -149,11 +164,13 @@ def main():
     pe_right.SetBorderMode(0)
 
     # Make and draw the legend
-    leg = ROOT.TLegend(0.50, 0.75, 1.0 - pad_right.GetRightMargin(), 1.0)
+    leg = ROOT.TLegend(0.48, 0.80 - pad_right.GetTopMargin(), 1.0 - pad_right.GetRightMargin(), 1.0 - pad_right.GetTopMargin())
     leg.SetTextSize(leg_text_size)
-    leg.AddEntry(hist_beta0_shape, "#splitline{Pseudo-data}{#beta = 0}", "l")
-    leg.AddEntry(hist_beta1_shape, "#beta = 1"                         , "l")
-    leg.AddEntry(data_line_shape , "T2K Data"                          , "l")
+    leg.SetTextFont(font)
+    #leg.AddEntry(hist_beta0_shape, "#splitline{Pseudo-data}{#beta = 0}", "l")
+    leg.AddEntry(hist_beta0_shape, "#beta = 0", "l")
+    leg.AddEntry(hist_beta1_shape, "#beta = 1", "l")
+    leg.AddEntry(data_line_shape , "T2K Data" , "l")
     leg.Draw("same")
 
     canv.Update()
