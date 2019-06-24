@@ -1,5 +1,6 @@
 #data dir
-./inputs
+inputs/
+!macros/inputs/
 
 #build results
 *.o
@@ -18,3 +19,15 @@ make/Make.config
 
 #temporary files
 *~
+
+#run results
+*.err
+*.out
+*.root
+*.pdf
+*.png
+*.log
+*.tex
+*.jdl
+*.sh
+*.csv
