@@ -36,7 +36,13 @@ for type in nominal 8 11a 11b flux_lukas; do
     cd $dir
     if [ "$2" = "process" ]; then
 	for sample in 1Rmu 1Re RHC1Re RHC1Rmu; do
-	    run_on_condor.py -e $T2KOSCANA/root/root2k -a '-b -q $T2KOSCANA/macros/spectra/test_systematic_error_propagation_all_2015_joint_2dtempl.C+(0,"'$sample'","3f_osc",0.32,0.0256584,0.5,0,7.6E-5,2.4E-3,false,"'$config'","nuosc3f+nuisance","sinsqtheta","normal",-999,"f_tamesu",false,true,"postbanff_osc",true)' -l valorsyst_${systtag}_${sample} --escape-quotes;
+	    for x in true false; do
+		if [ "$x" = "true"]; then
+		    fijtag = "origsyst"
+		else
+		    fijtag = ""
+		fi
+		run_on_condor.py -e $T2KOSCANA/root/root2k -a '-b -q $T2KOSCANA/macros/spectra/test_systematic_error_propagation_all_2015_joint_2dtempl.C+(0,"'$sample'","3f_osc",0.32,0.0256584,0.5,0,7.6E-5,2.4E-3,false,"'$config'","nuosc3f+nuisance","sinsqtheta","normal",-999,"f_tamesu",false,true,"postbanff_osc_",true,'$x','$fijtag')' -l valorsyst_${systtag}_${sample}_${fijtag} --escape-quotes;
 	done
     elif [ "$2" = "finish" ]; then
 	mkdir -p ~/public_html/oa/$today/$systtag
@@ -60,7 +66,7 @@ for type in nominal 8 11a 11b flux_lukas; do
 	    echo $f
 	    if [ -f "$(basename $f)" ]; then
 		for checker in syserre_ syserretrue_ truespectrum_ recospectrum_; do
-		    if [[ $f == *"t2k.root"* ]]; then
+		    if [[ $f == *"fijorigsyst.t2k.root"* ]]; then
 			if [ "$checker" = "syserretrue_" ]; then
 			    continue
 			fi

@@ -223,7 +223,9 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
  const bool   drawplots          = false,
  const bool   per_mode           = false,//true,
  const char*  tag                = "postbanff_osc",
- const bool   make_osc3pp_inputs = true
+ const bool   make_osc3pp_inputs = true,
+ const bool   skipnewbanff       = false,
+ const bool   fijtag             = ""
  )
 {
   using namespace std;
@@ -571,6 +573,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     if(!fparm->IsNuisance(p)) continue;
     string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+    if(skipnewbanff && util::IsNewBANFF(p) continue;
 
     cout << "Tweak systematic parameter: " << sysstr << endl;
   }//ip
@@ -587,7 +590,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     if(!fparm->IsNuisance(p)) continue;
     string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-        
+    if(skipnewbanff && util::IsNewBANFF(p) continue;
+   
     cout << endl;
     cout << "///////////////////////////////////////////////" << endl;
     cout << endl;
@@ -917,7 +921,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       if(!fparm->IsNuisance(p)) continue;
       string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-        
+      if(skipnewbanff && util::IsNewBANFF(p) continue;
+ 
       cout << sysstr << endl;
         
       // Spectra
@@ -994,7 +999,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
           if(!fparm->IsNuisance(p)) continue;
           string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
           if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-                
+	  if(skipnewbanff && util::IsNewBANFF(p) continue;
+     
           // Spectra
           sprintf(name,"cspectra_%s_%s",mname,sysstr.c_str());
           TCanvas *cspectra = new TCanvas(name,name);
@@ -1071,9 +1077,9 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     c3pp.SaveAs(TString::Format("syst_variations_%s.pdf[", sname));
     c3pp.SaveAs(TString::Format("syst_variations_true_%s.pdf[", sname));
     c3pp_split.Divide(1,2);
-    output_rootfile_osc3pp = new TFile(Form("%s.fij.t2k.root", sname), file_mode.c_str());
-    output_rootfile_osc3pp_true = new TFile(Form("%s.fij.t2k.true.root", sname), file_mode.c_str());
-    output_rootfile_osc3pp_mode = new TFile(Form("%s.fij.t2k.mode.root", sname), file_mode.c_str());
+    output_rootfile_osc3pp = new TFile(Form("%s.fij%s.t2k.root", sname, fijtag), file_mode.c_str());
+    output_rootfile_osc3pp_true = new TFile(Form("%s.fij%s.t2k.true.root", sname, fijtag), file_mode.c_str());
+    output_rootfile_osc3pp_mode = new TFile(Form("%s.fij%s.t2k.mode.root", sname, fijtag), file_mode.c_str());
   }//make_osc3pp_inputs
   TFile * output_rootfile = new TFile(Form("systematic_variations%s_%s.root",tag,sname),file_mode.c_str());
   output_rootfile->cd();
@@ -1085,7 +1091,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     if(!fparm->IsNuisance(p)) continue;
     string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-    
+    if(skipnewbanff && util::IsNewBANFF(p) continue;
+
     output_rootfile->cd();
 
     cout << sysstr << "\t" << hErecoTun_m1sigma[ip] << endl;
@@ -1177,7 +1184,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
 	if(!fparm->IsNuisance(p)) continue;
 	string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
 	if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-            
+	if(skipnewbanff && util::IsNewBANFF(p) continue;
+   
 	hErecoTunMode_m1sigma[ip][im]->Write(Form("Spectrum_%s_%s_%s_m1",sname,mname,sysstr.c_str()));
 	hErecoTunMode_m3sigma[ip][im]->Write(Form("Spectrum_%s_%s_%s_m3",sname,mname,sysstr.c_str()));
 	hErecoTunMode_p1sigma[ip][im]->Write(Form("Spectrum_%s_%s_%s_p1",sname,mname,sysstr.c_str()));
@@ -1225,7 +1233,8 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
     if(!fparm->IsNuisance(p)) continue;
     string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
     if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
-    
+    if(skipnewbanff && util::IsNewBANFF(p) continue;
+
     // double totnom = hErecoNom->Integral();
     // double tot    = hErecoTun->Integral();    
     // double tot_p1  = fabs( hErecoTun_p1sigma[ip]->Integral() );
@@ -1361,6 +1370,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       if(!fparm->IsNuisance(p)) continue;
       string sysstr = util::AsStringCompact(p); // if before fparm->IsNuisance(p) gives problems !!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+      if(skipnewbanff && util::IsNewBANFF(p) continue;
 
       // double tot_p1  = hErecoTun_p1sigma[ip]->Integral();
       // double tot_m1  = hErecoTun_m1sigma[ip]->Integral();
@@ -1463,6 +1473,7 @@ void test_systematic_error_propagation_all_2015_joint_2dtempl
       if(!fparm->IsNuisance(p)) continue;
       string sysstr = util::AsStringCompact(p); //if before fparm->IsNuisance(p) gives problems !!!
       if(sysstr=="f_rpa")       continue;  // no tweaks for RPA, which is a discrete parameter
+      if(skipnewbanff && util::IsNewBANFF(p) continue;
       if( (tablesyst_idx != -99) && (tablesyst_name != sysstr) ) continue;
         
         

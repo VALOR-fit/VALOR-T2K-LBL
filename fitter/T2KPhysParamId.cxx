@@ -4685,6 +4685,54 @@ bool valor::util::IsRHCBANFF(PhysParamId_t p)
   return false;
 }
 //____________________________________________________________________________
+bool valor::util::IsNewBANFF(PhysParamId_t p)
+{
+  switch(p) {
+#ifdef ADDBANFF00
+  case kNuisBANFFNew00
+    return true;
+#endif//ADDBANFF00
+#ifdef ADDBANFF01
+  case kNuisBANFFNew01
+    return true;
+#endif//ADDBANFF01
+#ifdef ADDBANFF02
+  case kNuisBANFFNew02
+    return true;
+#endif//ADDBANFF02
+#ifdef ADDBANFF03
+  case kNuisBANFFNew03
+    return true;
+#endif//ADDBANFF03
+#ifdef ADDBANFF04
+  case kNuisBANFFNew04
+    return true;
+#endif//ADDBANFF04
+#ifdef ADDBANFF05
+  case kNuisBANFFNew05
+    return true;
+#endif//ADDBANFF05
+#ifdef ADDBANFF06
+  case kNuisBANFFNew06
+    return true;
+#endif//ADDBANFF06
+#ifdef ADDBANFF07
+  case kNuisBANFFNew07
+    return true;
+#endif//ADDBANFF07
+#ifdef ADDBANFF08
+  case kNuisBANFFNew08
+    return true;
+#endif//ADDBANFF08
+#ifdef ADDBANFF09
+  case kNuisBANFFNew09
+    return true;
+#endif//ADDBANFF09
+  default:
+    return false;
+  }
+}
+//____________________________________________________________________________
 string valor::util::AsStringSpline(PhysParamId_t p)
 {
   switch(p) {
