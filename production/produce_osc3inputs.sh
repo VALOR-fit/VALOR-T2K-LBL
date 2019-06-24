@@ -65,7 +65,17 @@ for type in nominal 8 11a 11b flux_lukas; do
 			    continue
 			fi
 		    fi
-		    run_on_condor.py -e $T2KOSCANA/root/root2k -a '-b -q $T2KOSCANA/macros/misc/compare/compare_1dhist_all.C("'$f'","'$(basename $f)'","'$(basename $f)_$checker'","'$checker'")' -l systdiff_$(basename $f)_$checker --escape-quotes;
+		    if [[ $checker = "syserre"* ]]; then
+			subtract=true
+		    else
+			subtract=false
+		    fi
+		    if [[ "$(basename $f)" = *"1Re"* ]]; then
+			maxx=1.25
+		    else
+			maxx=29.99
+		    fi
+		    run_on_condor.py -e $T2KOSCANA/root/root2k -a '-b -q $T2KOSCANA/macros/misc/compare/compare_1dhist_all.C("'$f'","'$(basename $f)'","'$(basename $f)_$checker'","'$checker'","XXXXXXXX",1.0,1E-6,false,false,-99999999,'$maxx',true,false,'$subtract')' -l systdiff_$(basename $f)_$checker --escape-quotes;
 		done
 	    fi
 	done
@@ -96,6 +106,6 @@ done
 if [ "$2" = "checkrootcopy" ]; then
     if [ -f ../nodiff.txt ]; then
 	echo "No differences in these files"
-	cat ../nodiff.txt
+	cat $T2KOSCANA/runs-lbl/inputsforosc3pp/$today/nodiff.txt
     fi
 fi
