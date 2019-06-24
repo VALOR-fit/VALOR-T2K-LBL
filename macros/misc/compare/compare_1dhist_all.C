@@ -9,6 +9,7 @@
 void compare_1dhist_all(
   const char * filename1,           /* name of 1st file */
   const char * filename2,           /* name of 2nd file */
+  const char * tag = "",            // tag for output filename
   string checkstr = "",             /* only check histograms that contain this string in their name */
   string skipstr  = "XXXXXXX",             /* skip checks for histograms with this in their name */
   double confidence = 1.0,          /* if a Kolmogorov test returns a value greater than this, assume compatible & don't draw */
@@ -16,9 +17,10 @@ void compare_1dhist_all(
   bool zeroOverZeroIsZero = false,  /* use the built in divide where 0/0=0, or use 0/0=1 */
   bool draw_only_ratio = false,     /* draw only the ratio? or also plot the 2 histograms overlaid */
   double xmin = -9999999,           /* minimum of x axis to draw */
-  double xmax = +9999999,           /* maximum of x axis to draw */
+  double xmax = +29.99,           /* maximum of x axis to draw */
   bool save_canvas = true,         /* save canvases to a .pdf? Also turns on batch mode*/
-  bool dividingTwoRatios = false    /* special option to use to compare 2 ratio histograms. Needs zerOverZeroIsZero = false */
+  bool dividingTwoRatios = false,   /* special option to use to compare 2 ratio histograms. Needs zerOverZeroIsZero = false */
+  bool drawSubtraction = false      /* compare via c2-c1, rather than division */
 )
 {
   if(save_canvas)
@@ -30,12 +32,14 @@ void compare_1dhist_all(
   TFile * f1 = new TFile(filename1,"read");
   TFile * f2 = new TFile(filename2,"read");
 
+  const double testaround = drawSubtraction ? 0 : 1;
+  
   //need to make this, otherwise the real canvas isn't made in the loop
   TCanvas * ct = new TCanvas("ct","",10,10,600,600);
   if(!draw_only_ratio)
     ct->Divide(1,2);
   if(save_canvas)
-    ct->Print("comparisons.pdf[");
+    ct->Print(TString::Format("comparisons_%s.pdf[", tag));
 
   //cycles through histogram names in file 1
   TKey *key;
@@ -62,6 +66,7 @@ void compare_1dhist_all(
       cout << ", dividing histograms" << endl;
       //also get the ratio, with 0/0 = 0 or 0/0 = 1 given in function argument
       TH1D * ratio = new TH1D(*h2);
+      ratio->GetYaxis()->SetTitle("Division");
       if (zeroOverZeroIsZero)
 	ratio->Divide(h1);
       else if(dividingTwoRatios) {
@@ -75,6 +80,10 @@ void compare_1dhist_all(
 	  else    w = 0;
 	  ratio->SetBinContent(binx,w);
 	}
+      }
+      else if(drawSubtraction) {
+	ratio->Add(h1, -1);
+	ratio->GetYaxis()->SetTitle("Subtraction");
       }
       else {
 	Int_t binx;
@@ -92,8 +101,8 @@ void compare_1dhist_all(
 	}
       } //zeroOverZeroIsZero?
       //Another check, to see if the ratio is small (e.g. from the migration of a single value from one bin to another)
-      if((ratio->GetBinContent(ratio->GetMaximumBin()) < 1 + ratiotest)
-	 && (ratio->GetBinContent(ratio->GetMinimumBin()) > 1 - ratiotest)) {
+      if((ratio->GetBinContent(ratio->GetMaximumBin()) < testaround + ratiotest)
+	 && (ratio->GetBinContent(ratio->GetMinimumBin()) > testaround - ratiotest)) {
 	cout << "skipping due to maximum/minimum ratio test" << endl;
 	cout << "Max " << ratio->GetBinContent(ratio->GetMaximumBin()) << "\tMin " << ratio->GetBinContent(ratio->GetMinimumBin()) << endl;
 	continue;
@@ -130,7 +139,7 @@ void compare_1dhist_all(
 	ratio->Draw();
 	ct->Update();
 	leg->Draw();
-	ct->Print("comparisons.pdf");
+	ct->Print(TString::Format("comparisons_%s.pdf", tag));
       }
 
       if(!save_canvas)
@@ -150,5 +159,5 @@ void compare_1dhist_all(
       i-=1;
   }//while there are TKeys
   if(save_canvas)
-    ct->Print("comparisons.pdf]");
+    ct->Print(TString::Format("comparisons_%s.pdf]", tag));
 }

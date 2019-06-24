@@ -1375,7 +1375,8 @@ void SuperkMC::FillTemplateHistogram(SuperkSample_t s, SuperkMode_t m)
         
         // Get reconstructed energy
         double ereco_fill = fBrEreco/1000.; // GeV
-        
+        if((util::Is1ReSample(s) || util::IsMultiReSample(s)) && ereco_fill > 1.25)
+	  continue;
         
         // NEW 2D TEMPLATES
         
@@ -7433,6 +7434,14 @@ TH3D SuperkMC::Get3DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) 
     h.GetYaxis()->SetTitle("E_{reco} (GeV)");
     h.GetZaxis()->SetTitle("E_{true} (GeV)");
     
+    /*
+    cout << "Created histogram in Get3DHist " << h.GetName() << "\t" << h.GetTitle() << "\t" << h.GetZaxis()->GetTitle() << " with bins " << n_etrue_bins << endl;
+    for(int i = 0; i <= n_etrue_bins; i++)
+      cout << "\t" << h.GetZaxis()->GetBinUpEdge(i) << endl;
+    cout << "\tand also ereco and theta bins " << n_ereco_bins << ", " << n_q2_bins
+         << endl;
+    */
+
     for (int im = 0 ; im < kNSuperkModes ; im++ ) {
         SuperkMode_t m = kSKReactionModes[is][im];
         if (m==kSKmUndefined) continue;
@@ -7440,17 +7449,18 @@ TH3D SuperkMC::Get3DHist(conv::SuperkSample_t s, conv::SKMCTemplateType_t type) 
             for (int ir = 0 ; ir < n_ereco_bins ; ir++) {
                 for (int iq = 0 ; iq < n_q2_bins ; iq++) {
                     int binno = h.GetBin(iq+1,ir+1,it+1);
+		    double curr = h.GetBinContent(binno);
                     if (type == conv::kSKMCtOri) {
-                        h.SetBinContent(binno, fMCTemplArrayOri2D[is]->GetEntryRef(im,it,ir,iq));
+                        h.SetBinContent(binno, curr + fMCTemplArrayOri2D[is]->GetEntryRef(im,it,ir,iq));
                     }
                     if (type == conv::kSKMCtNom) {
-                        h.SetBinContent(binno, fMCTemplArrayNom2D[is]->GetEntryRef(im,it,ir,iq));
+                        h.SetBinContent(binno, curr + fMCTemplArrayNom2D[is]->GetEntryRef(im,it,ir,iq));
                     }
                     if (type == conv::kSKMCtTun) {
-                        h.SetBinContent(binno, fMCTemplArrayTun2D[is]->GetEntryRef(im,it,ir,iq));
+                        h.SetBinContent(binno, curr + fMCTemplArrayTun2D[is]->GetEntryRef(im,it,ir,iq));
                     }
                     if (type == conv::kSKMCtFin) {
-                        h.SetBinContent(binno, fMCTemplArrayFin2D[is]->GetEntryRef(im,it,ir,iq));
+                        h.SetBinContent(binno, curr + fMCTemplArrayFin2D[is]->GetEntryRef(im,it,ir,iq));
                     }
                 }
             }

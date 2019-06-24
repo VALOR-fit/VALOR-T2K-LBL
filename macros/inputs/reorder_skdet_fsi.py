@@ -36,6 +36,8 @@ def main(skdet_file, output_file="skdetfsi.root",escale=0.024):
   summed_matrix = skdet_tf.Get("SKJointError_Erec_Total")
 
   n = summed_matrix.GetNrows()
+  print "Inputs"
+  print "    FSI       SK    SKDETFSI"
   for i in range(0,n):
     print "%02d: %.8f   %.8f   %.8f" % (i, fsi_only_matrix(i,i), sk_only_matrix(i,i), summed_matrix(i,i))
 
@@ -47,11 +49,15 @@ def main(skdet_file, output_file="skdetfsi.root",escale=0.024):
   sk_reordered = reorder_tmatrix(sk_only_matrix, reordered_range)
   fsi_reordered = reorder_tmatrix(fsi_only_matrix, reordered_range)
 
+  escale_index = summed_reordered.GetNrows() - 1
+  summed_reordered[escale_index][escale_index] = escale * escale
   summed_reordered.Write("skdetfsi")
   sk_reordered.Write("skdet")
   fsi_reordered.Write("fsi")
 
   print ""
+  print "Outputs"
+  print "    FSI       SK    SKDETFSI"
   for i in range(0,n):
     print "%02d: %.8f   %.8f   %.8f" % (i, fsi_reordered[i][i], sk_reordered[i][i], summed_reordered[i][i])
 
@@ -65,6 +71,8 @@ def main(skdet_file, output_file="skdetfsi.root",escale=0.024):
   skdet_tf  = ROOT.TFile(output_file)
   fsi_only_matrix = skdet_tf.Get("fsi")
   print ""
+  print "Outputs after saving"
+  print "    FSI       SK    SKDETFSI"
   for i in range(0,n):
     print "%02d: %.8f" % (i, fsi_only_matrix[i][i])
 

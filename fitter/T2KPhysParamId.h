@@ -554,7 +554,8 @@ namespace util {
   /// 
   bool IsMixingAngle          (conv::PhysParamId_t p);
   bool IsBANFF                (conv::PhysParamId_t p);
-  bool IsRHCBANFF             (conv::PhysParamId_t p); 
+  bool IsRHCBANFF             (conv::PhysParamId_t p);
+  bool IsNewBANFF             (conv::PhysParamId_t p);
   bool IsXSec                 (conv::PhysParamId_t p);
   bool IsUsingSplines         (conv::PhysParamId_t p);
   bool IsEff                  (conv::PhysParamId_t p);
