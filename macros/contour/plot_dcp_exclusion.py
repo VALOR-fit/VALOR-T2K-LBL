@@ -41,45 +41,80 @@ def plot_contours_dcp(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inve
 
     #create & fill the histograms
     exclusions = []
+    bfdiffs = []
     expercent = []
     max_val = 0.0 #get maximum of y-axis
+    max_val_bf = [0.0, 0.0, 0.0] #get maximum of y-axis
     for i, dchisq_objs in enumerate(dchisq_objects):
-        exclusions.append(ROOT.TH1D("hexclusions"+str(i), ";True #delta_{CP};#sigma=#sqrt{#chi^{2}_{true} - Min(#chi^{2}_{#delta_{CP}=0}, #chi^{2}_{#delta_{CP}=#pi})}", 101, -ROOT.TMath.Pi(), +ROOT.TMath.Pi()))
+        exclusions.append(ROOT.TH1D("hexclusions"+str(i), ";True #delta_{CP} [rad];#sigma=#sqrt{#chi^{2}_{true} - Min(#chi^{2}_{#delta_{CP}=0}, #chi^{2}_{#delta_{CP}=#pi})}", 101, -ROOT.TMath.Pi(), +ROOT.TMath.Pi()))
+        bfdiffs.append([ROOT.TH1D("hbdiff"+str(i), ";True #delta_{CP} [rad];#delta_{CP}^{Best fit} - #delta_{CP}^{True} [rad]", 101, -ROOT.TMath.Pi(), +ROOT.TMath.Pi()),
+                       ROOT.TH1D("hbdiffbin"+str(i), ";True #delta_{CP} [rad];#delta_{CP}^{Best fit} - #delta_{CP}^{True} [bins]", 101, -ROOT.TMath.Pi(), +ROOT.TMath.Pi()),
+                       ROOT.TH1D("hbddiffchisq"+str(i), ";True #delta_{CP} [rad];#Delta#chi^{2}_{Best fit} - #Delta#chi^{2}_{True}", 101, -ROOT.TMath.Pi(), +ROOT.TMath.Pi())
+                        ])
+        assert len(bfdiffs[i]) == len(max_val_bf)
         percent = 0
         for j, d in enumerate(dchisq_objs):
             ibin = j + 1
             assert(ibin == d.FindBin(trues[i][j][0]))
-            curr = d.GetBinContent(ibin)
+            true = d.GetBinContent(ibin)
+            bf   = d.GetBinContent(d.FindBin(bestfits[i][j][0]))
             pipl = d.GetBinContent(101)
             pimi = d.GetBinContent(1)
             zero = d.GetBinContent(50)
             mini = min(pipl, min(pimi, zero))
-            sigma = ROOT.TMath.Sqrt(mini - curr)
-            print ibin, "curr %.2f pipl %.2f pimi %.2f zero %.2f mini %.2f sigma %.2f" % (curr, pipl, pimi, zero, mini, sigma)
+            sigma = ROOT.TMath.Sqrt(mini - true)
+            print ibin, "bf %.2f true %.2f pipl %.2f pimi %.2f zero %.2f mini %.2f sigma %.2f" % (bf, true, pipl, pimi, zero, mini, sigma)
             exclusions[i].SetBinContent(ibin, 0 if ROOT.TMath.IsNaN(sigma) else sigma)
+            diff = bestfits[i][j][0] - trues[i][j][0]
+            bfbin = d.FindBin(bestfits[i][j][0])
+            diffbin = bfbin - ibin
+            print diff, "=", bestfits[i][j][0], "-", trues[i][j][0], diffbin, "bins"
+            bfdiffs[i][0].SetBinContent(ibin, diff)
+            bfdiffs[i][1].SetBinContent(ibin, diffbin)
+            bfdiffs[i][2].SetBinContent(ibin, bf - true)
             if(sigma >= 5):
               percent += 1
         percent = 100. * percent / float(len(dchisq_objs))
         expercent.append(percent)
         print percent, "percent"
-        #exclusions[i].SetLineColor(line_color)
+
+        #exclusions styles
         exclusions[i].SetLineColor(line_colors[i])
         exclusions[i].SetLineStyle(line_styles[i % len(line_styles)])
         if not i:
             exclusions[i].GetYaxis().SetTitleOffset(exclusions[i].GetYaxis().GetTitleOffset() * 0.94)
         exclusions[i].Draw("l" + ("SAME" if i else ""))
+
+        #bfdiffs styles
+        for ib, b in enumerate(bfdiffs[i]):
+          b.SetLineColor(line_colors[i])
+          b.SetLineStyle(line_styles[i % len(line_styles)])
+          if not i:
+            b.GetYaxis().SetTitleOffset(exclusions[i].GetYaxis().GetTitleOffset() * 0.94)
+          thismax = max(abs(b.GetMaximum()), abs(b.GetMinimum()))
+          if (ib == 1 and abs(thismax) > 10):
+            thismax = 10
+          elif(ib == 0 and abs(thismax) > 1):
+            thismax = 1
+          max_val_bf[ib] = max(thismax, max_val_bf[ib])
+          
         line_color += 1
         max_val = max(max_val, exclusions[i].GetMaximum())
+
     #set y-axis maximum
     max_val = np.ceil(max_val) * 1.2
     exclusions[0].GetYaxis().SetRangeUser(0, max_val)
+    for ib, bmax in enumerate(max_val_bf):
+       bmax = np.ceil(bmax) * 1.2
+       print bmax
+       bfdiffs[0][ib].GetYaxis().SetRangeUser(-bmax, +bmax)
 
     #info box
     l = ROOT.TLatex()
     l.SetTextSize(0.05)
     #print input_params
-    l.DrawLatexNDC(.01, .1, "#Delta_m^{2}_{32} = %.2f #times 10^{-3}" % (input_params[0][0][conv.kPhypDm23sq] * 1E3))
-    l.DrawLatexNDC(.01, .03, "#Delta_m^{2}_{21} = %.2f #times 10^{-5}" % (input_params[0][0][conv.kPhypDm12sq] * 1E5))
+    l.DrawLatexNDC(.01, .1, "#Deltam^{2}_{32} = %.2f #times 10^{-3}" % (input_params[0][0][conv.kPhypDm23sq] * 1E3))
+    l.DrawLatexNDC(.01, .03, "#Deltam^{2}_{21} = %.2f #times 10^{-5}" % (input_params[0][0][conv.kPhypDm12sq] * 1E5))
     l.DrawLatexNDC(.29, .1, "sin^{2}#theta_{23} = %.2f" % (input_params[0][0][conv.kPhypMixing23]))
     l.DrawLatexNDC(.29, .03, "sin^{2}#theta_{12} = %.2f" % (input_params[0][0][conv.kPhypMixing12]))
     l.DrawLatexNDC(.51, .1, "sin^{2}#theta_{13} = %.7f" % (input_params[0][0][conv.kPhypMixing13]))
@@ -114,6 +149,54 @@ def plot_contours_dcp(dchisq_objects, labels, pdf_filename, is_t2k_only, is_inve
     if len(dchisq_objects) > 1:
         legend.Draw()
     canvas.Print(pdf_filename)
+
+    #and draw the bfdiffs
+    for ib in xrange(len(max_val_bf)):
+      for i, bfdiff in enumerate(bfdiffs):
+        bfdiff[ib].Draw("l" + ("SAME" if i else ""))
+      legend.Draw()
+      critline.SetLineStyle(ROOT.kSolid)
+      critline.DrawLine(-np.pi, 0, np.pi, 0)
+      #print input_params
+      l.DrawLatexNDC(.01, .1, "#Deltam^{2}_{32} = %.2f #times 10^{-3}" % (input_params[0][0][conv.kPhypDm23sq] * 1E3))
+      l.DrawLatexNDC(.01, .03, "#Deltam^{2}_{21} = %.2f #times 10^{-5}" % (input_params[0][0][conv.kPhypDm12sq] * 1E5))
+      l.DrawLatexNDC(.29, .1, "sin^{2}#theta_{23} = %.2f" % (input_params[0][0][conv.kPhypMixing23]))
+      l.DrawLatexNDC(.29, .03, "sin^{2}#theta_{12} = %.2f" % (input_params[0][0][conv.kPhypMixing12]))
+      l.DrawLatexNDC(.51, .1, "sin^{2}#theta_{13} = %.7f" % (input_params[0][0][conv.kPhypMixing13]))
+      l.DrawLatexNDC(.51, .03, "Hierarchy: " + input_params[0][0]["MH"])
+      l.DrawLatexNDC(.15, .96, tag)
+      canvas.Print(pdf_filename)
+
+    #and draw all the raw dchisq...
+    debug_pdf_filename = pdf_filename.replace('.pdf', '_debug.pdf')
+    canvas.Print(debug_pdf_filename + '[')
+    line = ROOT.TLine()
+    line.SetLineStyle(ROOT.kDashed)
+    line3 = ROOT.TLine(-ROOT.TMath.Pi(), 9, +ROOT.TMath.Pi(), 9)
+    line3.SetLineStyle(ROOT.kDashed)
+    ymax = 25
+    for j in xrange(101):
+      legend.Clear()
+      for i in xrange(len(dchisq_objects)):
+        dchisq_objects[i][j].SetLineColor(line_colors[i])
+        dchisq_objects[i][j].SetLineStyle(line_styles[i % len(line_styles)])
+        if not i:
+          dchisq_objects[i][j].GetYaxis().SetRangeUser(0, ymax)
+        dchisq_objects[i][j].Draw("" if not i else "SAME")
+        true = trues[i][j][0]
+        legend.AddEntry(dchisq_objects[i][j], labels[i] + " (%.0f%%)" % (expercent[i]), "L")
+      line.DrawLine(true, 0, true, ymax)
+      line3.Draw()
+      legend.Draw()
+      l.DrawLatexNDC(.01, .1, "#Deltam^{2}_{32} = %.2f #times 10^{-3}" % (input_params[0][0][conv.kPhypDm23sq] * 1E3))
+      l.DrawLatexNDC(.01, .03, "#Deltam^{2}_{21} = %.2f #times 10^{-5}" % (input_params[0][0][conv.kPhypDm12sq] * 1E5))
+      l.DrawLatexNDC(.29, .1, "sin^{2}#theta_{23} = %.2f" % (input_params[0][0][conv.kPhypMixing23]))
+      l.DrawLatexNDC(.29, .03, "sin^{2}#theta_{12} = %.2f" % (input_params[0][0][conv.kPhypMixing12]))
+      l.DrawLatexNDC(.51, .1, "sin^{2}#theta_{13} = %.7f" % (input_params[0][0][conv.kPhypMixing13]))
+      l.DrawLatexNDC(.51, .03, "Hierarchy: " + input_params[0][0]["MH"])
+      l.DrawLatexNDC(.15, .96, tag)
+      canvas.Print(debug_pdf_filename)
+    canvas.Print(debug_pdf_filename + ']')
 
 def get_local_histo(filename):
     in_file_tree = ROOT.TFile(filename.replace("_contour",""))
