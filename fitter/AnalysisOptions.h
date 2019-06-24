@@ -127,8 +127,8 @@ Split valor::conv namespace into several smaller files
 //#define T2KBINNING
 //#define OSC3PPBINNING
 //#define OSC3PPISHBINNING //osc3pp for Etrue. T2K for Ereco (osc3pp Ereco binning doesn't line up with the spline binning)
-#define OSC3PPINPUTBINNING //osc3ppp for Etrue. T2K/Osc3++ combined for mu-like Ereco. T2K for e-like Ereco
-//#define OSC3PPINPUTSTARBINNING //osc3ppp for Etrue. T2K/Osc3++ combined for Ereco
+//#define OSC3PPINPUTBINNING //osc3ppp for Etrue. T2K/Osc3++ combined for mu-like Ereco. T2K for e-like Ereco
+#define OSC3PPINPUTSTARBINNING //osc3ppp for Etrue. T2K/Osc3++ combined for Ereco
 //#define FINEBINNING
 #ifdef T2KBINNING
 #define ETRUE_BINS_1RMU 2
@@ -205,6 +205,7 @@ Split valor::conv namespace into several smaller files
 //#define ERECO_BINS_1RMU 5 //39 bins, added for T2K Run 5-6 RHC analysis
 //#define ERECO_BINS_1RMU 7 // 25 MeV binning 0-30 GeV (1200 bins)
 //#define ERECO_BINS_1RMU 8 // osc3pp: 56 bins
+//#define ERECO_BINS_1RMU 9 // osc3pp+t2k: 87 bins
 #endif
 
 #ifndef ERECO_BINS_1RE
@@ -214,6 +215,8 @@ Split valor::conv namespace into several smaller files
 //#define ERECO_BINS_1RE 4 //Same as Linda's binning scheme
 //#define ERECO_BINS_1RE 7 // 25 MeV binning 0-1.25 GeV (50 bins)
 //#define ERECO_BINS_1RMU 8 // osc3pp: 56 bins
+//#define ERECO_BINS_1RMU 9 // osc3pp+t2k: 87 bins
+//#define ERECO_BINS_1RMU 10 // osc3pp+t2k 1Re: 57 bins
 #endif
 
 
