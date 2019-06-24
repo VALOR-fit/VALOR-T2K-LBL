@@ -149,28 +149,28 @@ string valor::util::AsString(PhysParamId_t p)
 #ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
-  case ( kNuisBANFFNew00 ):
+  case ( kNuisBANFFNew00 ): return "BANFF; Norm; nue; 0.1 - 0.6 GeV"; break;
 #endif //ADDBANFF00
 #ifdef ADDBANFF01
-  case ( kNuisBANFFNew01 ):
+  case ( kNuisBANFFNew01 ): return "BANFF; Norm; nue; 0.6 - 1.0 GeV"; break;
 #endif //ADDBANFF01
 #ifdef ADDBANFF02
-  case ( kNuisBANFFNew02 ):
+  case ( kNuisBANFFNew02 ): return "BANFF; Norm; nuebar; 0.1 - 0.6 GeV"; break;
 #endif //ADDBANFF02
 #ifdef ADDBANFF03
-  case ( kNuisBANFFNew03 ):
+  case ( kNuisBANFFNew03 ): return "BANFF; Norm; nuebar; 0.6 - 1.0 GeV"; break;
 #endif //ADDBANFF03
 #ifdef ADDBANFF04
-  case ( kNuisBANFFNew04 ):
+  case ( kNuisBANFFNew04 ): return "BANFF; Norm; numu 2p2h"; break;
 #endif //ADDBANFF04
 #ifdef ADDBANFF05
-  case ( kNuisBANFFNew05 ):
+  case ( kNuisBANFFNew05 ): return "BANFF; Norm; numubar 2p2h"; break;
 #endif //ADDBANFF05
 #ifdef ADDBANFF06
-  case ( kNuisBANFFNew06 ):
+  case ( kNuisBANFFNew06 ): return "BANFF; Norm; nue(bar) CC1pi CCcoh NC1piC"; break;
 #endif //ADDBANFF06
 #ifdef ADDBANFF07
-  case ( kNuisBANFFNew07 ):
+  case ( kNuisBANFFNew07 ): return "BANFF; Norm; numu(bar) CC1pi CCcoh NC1piC; 2 - 10 GeV"; break;
 #endif //ADDBANFF07
 #ifdef ADDBANFF08
   case ( kNuisBANFFNew08 ):
@@ -1187,28 +1187,28 @@ string valor::util::AsStringTex(PhysParamId_t p)
 #ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
-  case ( kNuisBANFFNew00 ):
+  case ( kNuisBANFFNew00 ): return "BANFF; Norm; $\\nu_e$; 0.1 - 0.6 GeV"; break;
 #endif //ADDBANFF00
 #ifdef ADDBANFF01
-  case ( kNuisBANFFNew01 ):
+  case ( kNuisBANFFNew01 ): return "BANFF; Norm; $\\nu_e$; 0.6 - 1.0 GeV"; break;
 #endif //ADDBANFF01
 #ifdef ADDBANFF02
-  case ( kNuisBANFFNew02 ):
+  case ( kNuisBANFFNew02 ): return "BANFF; Norm; $\\bar{\\nu}_e$; 0.1 - 0.6 GeV"; break;
 #endif //ADDBANFF02
 #ifdef ADDBANFF03
-  case ( kNuisBANFFNew03 ):
+  case ( kNuisBANFFNew03 ): return "BANFF; Norm; $\\bar{\\nu}_e$; 0.6 - 1.0 GeV"; break;
 #endif //ADDBANFF03
 #ifdef ADDBANFF04
-  case ( kNuisBANFFNew04 ):
+  case ( kNuisBANFFNew04 ): return "BANFF; Norm; $\\nu_\\mu$ 2p2h"; break;
 #endif //ADDBANFF04
 #ifdef ADDBANFF05
-  case ( kNuisBANFFNew05 ):
+  case ( kNuisBANFFNew05 ): return "BANFF; Norm; $\\bar{\\nu}_\\mu$ 2p2h"; break;
 #endif //ADDBANFF05
 #ifdef ADDBANFF06
-  case ( kNuisBANFFNew06 ):
+  case ( kNuisBANFFNew06 ): return "BANFF; Norm; $\\nu_e$ \& $\\bar{\\nu}_e$ CC1pi CCcoh NC1piC"; break;
 #endif //ADDBANFF06
 #ifdef ADDBANFF07
-  case ( kNuisBANFFNew07 ):
+  case ( kNuisBANFFNew07 ): return "BANFF; Norm; $\\nu_\\mu$ \& $\\bar{\\nu}_\\mu$ CC1pi CCcoh NC1piC; 2 - 10 GeV"; break;
 #endif //ADDBANFF07
 #ifdef ADDBANFF08
   case ( kNuisBANFFNew08 ):
@@ -2474,28 +2474,28 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
-  case ( kNuisBANFFNew00 ):
+  case ( kNuisBANFFNew00 ): return "f_banffnorm_nue_lowe"; break;
 #endif //ADDBANFF00
 #ifdef ADDBANFF01
-  case ( kNuisBANFFNew01 ):
+  case ( kNuisBANFFNew01 ): return "f_banffnorm_nue_mide"; break;
 #endif //ADDBANFF01
 #ifdef ADDBANFF02
-  case ( kNuisBANFFNew02 ):
+  case ( kNuisBANFFNew02 ): return "f_banffnorm_nuebar_lowe"; break;
 #endif //ADDBANFF02
 #ifdef ADDBANFF03
-  case ( kNuisBANFFNew03 ):
+  case ( kNuisBANFFNew03 ): return "f_banffnorm_nuebar_mide"; break;
 #endif //ADDBANFF03
 #ifdef ADDBANFF04
-  case ( kNuisBANFFNew04 ):
+  case ( kNuisBANFFNew04 ): return "f_banffnorm_numu2p2h"; break;
 #endif //ADDBANFF04
 #ifdef ADDBANFF05
-  case ( kNuisBANFFNew05 ):
+  case ( kNuisBANFFNew05 ): return "f_banffnorm_numubar2p2h"; break;
 #endif //ADDBANFF05
 #ifdef ADDBANFF06
-  case ( kNuisBANFFNew06 ):
+  case ( kNuisBANFFNew06 ): return "f_banffnorm_nuepbar_pic"; break;
 #endif //ADDBANFF06
 #ifdef ADDBANFF07
-  case ( kNuisBANFFNew07 ):
+  case ( kNuisBANFFNew07 ): return "f_banffnorm_numupbar_pic_highe"; break;
 #endif //ADDBANFF07
 #ifdef ADDBANFF08
   case ( kNuisBANFFNew08 ):
@@ -2558,28 +2558,28 @@ string valor::util::AsStringCompact(PhysParamId_t p)
 #ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
-  case ( kNuisBANFFNew00 ):
+  case ( kNuisBANFFNew00 ): return "f_banffnorm_nue_lowe"; break;
 #endif //ADDBANFF00
 #ifdef ADDBANFF01
-  case ( kNuisBANFFNew01 ):
+  case ( kNuisBANFFNew01 ): return "f_banffnorm_nue_mide"; break;
 #endif //ADDBANFF01
 #ifdef ADDBANFF02
-  case ( kNuisBANFFNew02 ):
+  case ( kNuisBANFFNew02 ): return "f_banffnorm_nuebar_lowe"; break;
 #endif //ADDBANFF02
 #ifdef ADDBANFF03
-  case ( kNuisBANFFNew03 ):
+  case ( kNuisBANFFNew03 ): return "f_banffnorm_nuebar_mide"; break;
 #endif //ADDBANFF03
 #ifdef ADDBANFF04
-  case ( kNuisBANFFNew04 ):
+  case ( kNuisBANFFNew04 ): return "f_banffnorm_numu2p2h"; break;
 #endif //ADDBANFF04
 #ifdef ADDBANFF05
-  case ( kNuisBANFFNew05 ):
+  case ( kNuisBANFFNew05 ): return "f_banffnorm_numubar2p2h"; break;
 #endif //ADDBANFF05
 #ifdef ADDBANFF06
-  case ( kNuisBANFFNew06 ):
+  case ( kNuisBANFFNew06 ): return "f_banffnorm_nuepbar_pic"; break;
 #endif //ADDBANFF06
 #ifdef ADDBANFF07
-  case ( kNuisBANFFNew07 ):
+  case ( kNuisBANFFNew07 ): return "f_banffnorm_numupbar_pic_highe"; break;
 #endif //ADDBANFF07
 #ifdef ADDBANFF08
   case ( kNuisBANFFNew08 ):
@@ -3246,28 +3246,28 @@ string valor::util::AsStringPaperTex(PhysParamId_t p)
 #ifdef EXPANDEDBANFF
     //NEW BANFF
 #ifdef ADDBANFF00
-  case ( kNuisBANFFNew00 ):
+  case ( kNuisBANFFNew00 ): return "$f_{Norm_{\\nu_e low E}}^{banff}$"; break;
 #endif //ADDBANFF00
 #ifdef ADDBANFF01
-  case ( kNuisBANFFNew01 ):
+  case ( kNuisBANFFNew01 ): return "$f_{Norm_{\\nu_e mid E}}^{banff}$";break;
 #endif //ADDBANFF01
 #ifdef ADDBANFF02
-  case ( kNuisBANFFNew02 ):
+  case ( kNuisBANFFNew02 ): return "$f_{Norm_{\\bar{nu}_e low E}}^{banff}$";break;
 #endif //ADDBANFF02
 #ifdef ADDBANFF03
-  case ( kNuisBANFFNew03 ):
+  case ( kNuisBANFFNew03 ): return "$f_{Norm_{\\bar{nu}_e mid E}}^{banff}$";break;
 #endif //ADDBANFF03
 #ifdef ADDBANFF04
-  case ( kNuisBANFFNew04 ):
+  case ( kNuisBANFFNew04 ): return "$f_{Norm_{\\nu_\\mu 2p2h}}^{banff}$";break;
 #endif //ADDBANFF04
 #ifdef ADDBANFF05
-  case ( kNuisBANFFNew05 ):
+  case ( kNuisBANFFNew05 ): return "$f_{Norm_{\\bar{\\nu}_\\mu 2p2h}}^{banff}$";break;
 #endif //ADDBANFF05
 #ifdef ADDBANFF06
-  case ( kNuisBANFFNew06 ):
+  case ( kNuisBANFFNew06 ): return "$f_{Norm_{\\nu_e \\bar{\\nu}_e \pi^\pm}}"; break;
 #endif //ADDBANFF06
 #ifdef ADDBANFF07
-  case ( kNuisBANFFNew07 ):
+  case ( kNuisBANFFNew07 ): return "$f_{Norm_{\\nu_\\mu \\bar{\\nu}_\\mu \pi^\pm high E}}"; break;
 #endif //ADDBANFF07
 #ifdef ADDBANFF08
   case ( kNuisBANFFNew08 ):
