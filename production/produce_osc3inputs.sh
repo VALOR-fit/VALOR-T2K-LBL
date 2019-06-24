@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[ "$#" -eq 2 ] || (echo "2 arguments required, $# provided. e.g. produce_osc3inputs.sh 190606 <process|finish|checktex|checkroot|checkrootcopy>" && exit)
+[ "$#" -eq 3 ] || (echo "3 arguments required, $# provided. e.g. produce_osc3inputs.sh 190606 <process|finish|checktex|checkroot|checkrootcopy> 1b" && exit)
 
 today=$1
 
@@ -8,7 +8,7 @@ today=$1
 if [ "$2" = "checkrootcopy" ]; then
     rm -f $T2KOSCANA/runs-lbl/inputsforosc3pp/$today/nodiff.txt
 fi
-for type in nominal 8 11a 11b flux_lukas; do
+for type in nominal 8 11a 11b flux_lukas $3; do
     if [ "$type" = "nominal" ]; then
 	config=analysis_configuration_hkfluxsophie_10year_postfit.xml
 	export systtag=0
@@ -24,6 +24,32 @@ for type in nominal 8 11a 11b flux_lukas; do
     elif [ "$type" = "flux_lukas" ]; then
 	config=analysis_configuration_hkfluxsophie_10year_postfit_lukasflux.xml
 	export systtag=flux_lukas
+    elif [ "$type" = "1a" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff00.xml
+	export systtag=1a
+    elif [ "$type" = "1b" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff01.xml
+	export systtag=1b
+    elif [ "$type" = "2a" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff02.xml
+	export systtag=2a
+    elif [ "$type" = "2b" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff03.xml
+	export systtag=2b
+    elif [ "$type" = "6a" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff04.xml
+	export systtag=6a
+    elif [ "$type" = "7a" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff05.xml
+	export systtag=7a
+    elif [ "$type" = "9" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff06.xml
+	export systtag=9
+    elif [ "$type" = "10" ]; then
+	config=analysis_configuration_hkfluxsophie_10year_postfit_addbanff07.xml
+	export systtag=10
+    elif [ "$type" = "pass" ]; then
+	continue
     else
 	echo Unknown option $type
 	continue
