@@ -116,9 +116,16 @@ void build_marg_toys_joint
  //TString file_priors = "../../inputs/priors/joint_T2Kreact_run14/Priors_T2Kreact_run14_Mach3_22Maj15.root", // Set to "" if no user priors are used (VALOR)
  int seed = 999,
  
- bool reactors       = false // reactor constraint
+ int priors = 0 //none 0; reactors 1; 23params 2; both 3
  )
 {  
+  bool reactors = false;
+  bool UsePrior_23 = false;
+  if(priors == 1 || priors == 3)
+    reactors = true;
+  if(priors == 2 || priors == 3)
+    UsePrior_23 = true;
+
   TString file_priors = "";
   FileStat_t dummy;
   TString config = Form("%s/config/%s", gSystem->Getenv("T2KOSCANA"), config_file);
@@ -490,7 +497,7 @@ void build_marg_toys_joint
   TH2D *hPrior_23_ih = 0;
  
   bool UsePrior_dcp = false;
-  bool UsePrior_23 = false;
+  //bool UsePrior_23 = false;
 
   if(file_priors!=""){
 
@@ -630,11 +637,40 @@ void build_marg_toys_joint
 			     );
       }
     }
-    
+        
   } // if(UsePrior_dcp)
 
   // Set 23 prior
   if(UsePrior_23){
+    //HK prior using its own data. Taken from HKDR Table XL
+    double prior_sinsq23_mean  = input_mixing23_nh;
+    //double prior_sinsq23_sigma = 0.017; //at 0.50
+    //double prior_sinsq23_sigma = 0.006; //at 0.45
+    double prior_sinsq23_sigma = 0.009; //at 0.55
+    double prior_dm32sq_mean  = input_dm23sq_nh;
+    double prior_dm32sq_sigma = 1.5E-5; //almost independent of oscillation parameters (1.4E-5 at 0.5 & NH 0.45)
+
+    // mixing23 
+    fitmarg->SetPrior_NH(kPhypMixing23,"gaus",
+			 prior_sinsq23_mean,
+			 prior_sinsq23_sigma
+			 ); // prior on sinsqth
+    fitmarg->SetPrior_IH(kPhypMixing23,"gaus",
+			 prior_sinsq23_mean,
+			 prior_sinsq23_sigma
+			 );
+
+    // dmsq23
+    fitmarg->SetPrior_NH(kPhypDm23sq,"gaus",
+			 prior_dm32sq_mean,
+			 prior_dm32sq_sigma
+			 );
+    fitmarg->SetPrior_IH(kPhypDm23sq,"gaus",
+			 prior_dm32sq_mean,
+			 prior_dm32sq_sigma
+			 );
+
+    /*
     fitmarg->SetPrior_NH(kPhypMixing23,"user",hPrior_23_nh);  // mix23 and dmsq must have the same prior
     fitmarg->SetPrior_IH(kPhypMixing23,"user",hPrior_23_ih);
     fitmarg->SetPrior_NH(kPhypDm23sq,"user",hPrior_23_nh);
@@ -647,7 +683,8 @@ void build_marg_toys_joint
       fitmarg->SetPrior_NH(kPhypDm23sqBar,"user",hPrior_23_nh);
       fitmarg->SetPrior_IH(kPhypDm23sqBar,"user",hPrior_23_ih);
     }
-  }
+    */
+  }//UsePrior_23
   else{
     // mixing23 
     fitmarg->SetPrior_NH(kPhypMixing23,"flat",
@@ -658,8 +695,8 @@ void build_marg_toys_joint
 			 conv::kPrior_Sinsq2th23_Flat_Low,
 			 conv::kPrior_Sinsq2th23_Flat_Up
 			 );
-    cout << "setting 23bar priors " << endl;
     if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+      cout << "setting 23bar priors " << endl;
       cout << "in here" << endl;
       fitmarg->SetPrior_NH(kPhypMixing23Bar,"flat",
 			   conv::kPrior_Sinsq2th23_Flat_Low,
@@ -669,30 +706,31 @@ void build_marg_toys_joint
 			   conv::kPrior_Sinsq2th23_Flat_Low,
 			   conv::kPrior_Sinsq2th23_Flat_Up
 			   );
-    }
     
-    // dmsq23
-    fitmarg->SetPrior_NH(kPhypDm23sq,"flat",
-			 conv::kPrior_Dm23sq_Flat_Low,
-			 conv::kPrior_Dm23sq_Flat_Up
-			 );
-    fitmarg->SetPrior_IH(kPhypDm23sq,"flat",
-			 conv::kPrior_Dm23sq_Flat_Low,
-			 conv::kPrior_Dm23sq_Flat_Up
-			 );
-    cout << "setting 23bar priors " << endl;
-    if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
-      cout << "in here" << endl;
-      fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",
+    
+      // dmsq23
+      fitmarg->SetPrior_NH(kPhypDm23sq,"flat",
 			   conv::kPrior_Dm23sq_Flat_Low,
 			   conv::kPrior_Dm23sq_Flat_Up
 			   );
-      fitmarg->SetPrior_IH(kPhypDm23sqBar,"flat",
+      fitmarg->SetPrior_IH(kPhypDm23sq,"flat",
 			   conv::kPrior_Dm23sq_Flat_Low,
 			   conv::kPrior_Dm23sq_Flat_Up
 			   );
+      cout << "setting 23bar priors " << endl;
+      if(hyp == kHypOsc3FBarNormBar || hyp == kHypOsc3FBar || hyp == kHypOsc3FBarDissap){
+	cout << "in here" << endl;
+	fitmarg->SetPrior_NH(kPhypDm23sqBar,"flat",
+			     conv::kPrior_Dm23sq_Flat_Low,
+			     conv::kPrior_Dm23sq_Flat_Up
+			     );
+	fitmarg->SetPrior_IH(kPhypDm23sqBar,"flat",
+			     conv::kPrior_Dm23sq_Flat_Low,
+			     conv::kPrior_Dm23sq_Flat_Up
+			     );
+      }
     }
-  }
+  }//!usePrior_23
   
   // dmsq12
   fitmarg->SetPrior_NH(kPhypDm12sq,"gaus",
