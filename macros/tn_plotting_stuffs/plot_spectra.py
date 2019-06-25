@@ -7,6 +7,8 @@ import os
 
 from array import array
 import numpy as np
+import copy
+from copy import deepcopy
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
@@ -440,8 +442,14 @@ def plot_theta_spectrum(histos, data, outfile):
     canvas.SaveAs(outfile + ".png")
 
 def plot_ereco_theta_spectrum(histos, data, outfile):
+    ROOT.gStyle.SetPalette(56)
+
+    data_markers_2 = copy.deepcopy(data)
     if not data is None:
         data.SetMarkerSize(2)
+        data.SetMarkerColor(ROOT.kAzure - 3)
+        data_markers_2.SetMarkerSize(1)
+        data_markers_2.SetMarkerColor(10)
     canvas = ROOT.TCanvas("canvas","Spectra", 0, 0, 1000, 750)
     total = histos[components[0]].Clone()
     for component in components[1:]:
@@ -479,6 +487,7 @@ def plot_ereco_theta_spectrum(histos, data, outfile):
     canvas.SetRightMargin(0.2)
     if not data is None:
         data.Draw("P0")
+        data_markers_2.Draw("P0")
 
     tx = swappedTotal.GetXaxis().GetBinLowEdge(swappedTotal.GetXaxis().GetLast())
     ty = 180 
