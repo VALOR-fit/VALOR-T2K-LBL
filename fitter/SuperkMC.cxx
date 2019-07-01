@@ -727,7 +727,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     }
 
 #ifdef __print_mct_integrals__
-    std::cout << "Just finished filling nominal MC templates. About to print MC template integrals:" << std::endl;
+    std::cout << "About to print MC template integrals:" << std::endl;
     for(int is = 0; is < kns; is++) {
         double tot_int = 0;
         SuperkSample_t s = kSKSamples[is];
@@ -736,13 +736,13 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
-            std::cout << "    fMCTFinOb[" << util::AsString(m) << "] integral = " << this -> Template2D(s,m,kSKMCtNom) -> Integral() << std::endl;
+            std::cout << "    fMCTFinOb[" << util::AsString(m) << "] integral = " << this -> Template2D(s,m,kSKMCtNom) -> Integral() << std::endl;;
             tot_int += this -> Template2D(s,m,kSKMCtNom) -> Integral();
         }
         std::cout << "fMCTFinOb integral summed over all modes = " << tot_int << std::endl;
     }
 
-    std::cout << "Just finished filling nominal MC templates. About to print MC template Entries:" << std::endl;
+    std::cout << "About to print MC template Entries:" << std::endl;
     for(int is = 0; is < kns; is++) {
         double tot_entries = 0;
         SuperkSample_t s = kSKSamples[is];
@@ -751,10 +751,10 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
         for(int im = 0; im < knm; im++) {
             SuperkMode_t m = kSKReactionModes[is][im];
             if(m == kSKmUndefined) continue;
-            std::cout << "    "<<util::AsString(m)<<":" << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << std::endl;
+            std::cout << "    fMCTFinOb[" << util::AsString(m) << "] entries = " << this -> Template2D(s,m,kSKMCtNom) -> GetEntries() << std::endl;;
             tot_entries += this -> Template2D(s,m,kSKMCtNom) -> GetEntries();
         }
-        std::cout << "entries summed over all modes = " << tot_entries << std::endl;
+        std::cout << "fMCTFinOb entries summed over all modes = " << tot_entries << std::endl;
     }
 #endif
     
@@ -851,24 +851,7 @@ bool SuperkMC::Read(TXMLEngine* xml, XMLNodePointer_t root_node)
     this->NevDebug2D(kSKMCtTun, "mcnorm_fluxtuned_banfftuned"); // NEW 2D TEMPLATES
 #endif
 #endif
-
-#ifdef __print_mct_integrals__
-    std::cout << "At the end of SuperkMC::Read. About to print tuned MC template integrals:" << std::endl;
-    for(int is = 0; is < kns; is++) {
-        double tot_int = 0;
-        SuperkSample_t s = kSKSamples[is];
-        if(s == kSKsUndefined) continue;
-        std::cout << "  sample = " << util::AsString(s) << std::endl;
-        for(int im = 0; im < knm; im++) {
-            SuperkMode_t m = kSKReactionModes[is][im];
-            if(m == kSKmUndefined) continue;
-            std::cout << "    fMCTTunOb[" << util::AsString(m) << "] integral = " << fMCTemplArrayTun2D[is]->Integral(im, im) << std::endl;
-            tot_int += fMCTemplArrayTun2D[is]->Integral(im, im);
-        }
-        std::cout << "fMCTTunOb integral summed over all modes = " << tot_int << std::endl;
-    }
-#endif
-
+    
 #ifdef __show_init_mesg_info__
     LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Done reading SuperK MC inputs!";
 #endif
@@ -4142,12 +4125,123 @@ void SuperkMC::ApplyBANFFTuningToTemplates2D(void)
     // Source template type: kSKMCtNom
     // Target template type: kSKMCtTun
     //
-
-    // The weights applied here are completely canceled out later, so I've disabled this as well as simplifying
-    // the application of flux weights downstream. This bin-by-bin flux tuning has been completely replaced by the
-    // event-by-event flux tuning, so there's no point in having it at all, especially if CPU time is wasted applying
-    // it and then cancelling it out!
-    //  - Francis (2019/06/25)
+    
+#ifdef __show_init_mesg_info__
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC >> Applying BANFF 2D flux and cross-section tuning.";
+#endif
+    
+    // loop over samples
+    for(int is = 0; is < kns; is++) {
+        SuperkSample_t s = kSKSamples[is];
+        if(s == kSKsUndefined) continue;
+        // loop over sample modes
+        for(int im = 0; im < knm; im++) {
+            SuperkMode_t m = kSKReactionModes[is][im];
+            if(m == kSKmUndefined) continue;
+            // consider template?
+            bool skip = this->SkipTemplate(m);
+            if(skip) continue;
+            
+#ifdef __show_banfftun_syst_var_wght_mesg_debug__
+             LOG("SuperkMC", pDEBUG) << "Applying BANFF 2D tuning to sample, mode: " << AsString(s) << "\t" << AsString(m);
+#endif
+            
+            //
+            // There are 600 50MeV Etrue energy bins in the templates, but
+            // the flux/xsec systematics only have up to ~10 Etrue bins (same as flux binning), so
+            // we can call NuXSec::FinTuningWght() and NuFlux::SuperkFluxFinTuningWght()
+            // a factor of 10 less often by looping over the kXsEtrueBinEdges.
+            // Note that the Ereco binning is identical between XSec and SuperkMC templates
+            //
+            for (int ivb = 0 ; ivb < fNNonEmptyVariableBins2D[is][im] ; ivb++ ) {
+                
+                // The array is built as following: fNonEmptyVariableBins2D = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                int itv = ( fNonEmptyVariableBins2D[is][im][ivb] % (conv::kBigIndex * conv::kBigIndex) ) % conv::kBigIndex;
+                int irv = ( ( fNonEmptyVariableBins2D[is][im][ivb] % (conv::kBigIndex * conv::kBigIndex) ) - itv ) / conv::kBigIndex;
+                int iqv = ( fNonEmptyVariableBins2D[is][im][ivb] - (conv::kBigIndex * irv + itv) ) / (conv::kBigIndex * conv::kBigIndex);
+                
+                // Get the min/max energy of the current variable flux Etrue bin
+                double EtrueVarMin = util::VariableMCEtrueBinEdges(s,m)[itv-1] + kOneMeV;
+                
+                // Plug-in BANFF flux systematics
+                double flux_wght = fNuFlux->SuperkFluxFinTuningWght(s,m,EtrueVarMin);
+                
+                //skip if the big bin is empty
+                if(fMCVariableTemplArray2D[is]->GetEntryRef(im, itv-1, irv-1, iqv-1) <= 0) continue;
+                
+                double ErecoVarMin = util::XsecErecoBinEdges(s,irv-1) + kOneMeV;
+                double Q2VarMin    = util::XsecQ2BinEdges(s,iqv-1) +kOneMeV;
+                // Plug-in BANFF & other xsec systematics
+                //double xsec_wght = fNuXSec->FinTuningWght(s,m,ErecoVarMin,EtrueVarMin,Q2VarMin); // Apply systematics in Ereco and Q2
+                // Don't apply the xsec weight here, this is now handled in ApplySystematicsToTemplates2D
+                double xsec_wght = 1.0;
+                
+                // Combined weight
+                double wght = flux_wght * xsec_wght;
+                
+#ifdef BANFFTUNEISONE
+                wght = 1;
+#endif
+                for (int ifb = 0 ; ifb < fNNonEmptyFixedBins2D[is][im][ivb] ; ifb++ ) {
+                    
+                    // The array is built as following: fNonEmptyVariableBins2D[is][im][i_ne_var_2d] = conv::kBigIndex*conv::kBigIndex * iqv + conv::kBigIndex * irv + itv;
+                    int it = ( fNonEmptyFixedBins2D[is][im][ivb][ifb] % (conv::kBigIndex * conv::kBigIndex) ) % conv::kBigIndex;
+                    int ir = ( ( fNonEmptyFixedBins2D[is][im][ivb][ifb] % (conv::kBigIndex * conv::kBigIndex) ) - it ) / conv::kBigIndex;
+                    int iq = ( fNonEmptyFixedBins2D[is][im][ivb][ifb] - (conv::kBigIndex * ir + it) ) / (conv::kBigIndex * conv::kBigIndex);
+                    
+                    //check for empty bins
+                    if(fMCTemplArrayOri2D[is]->GetEntryRef(im, it-1, ir-1, iq-1) <= 0) continue;
+                    ////
+                    //double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+                    
+                    // get number of events in current bin of source MC template
+                    double nev = fMCTemplArrayNom2D[is]->GetEntry(im, it-1, ir-1, iq-1);
+                    
+                    nev = TMath::Max(0.,nev);
+                    double nev_tuned = nev * wght;
+                    
+#ifdef NO_EVENTS_CAN_BE_NEGATIVE
+                    if(nev_tuned < 0) {
+#ifdef __show_negative_events_mesg_debug__
+                        LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> set negative number of events " << nev_tuned
+                        << " to " << 0 << "\t" << " Ereco: " << Ereco << " Etrue: " << util::EtrueBinEdges(s,it-1) + kOneMeV;
+#endif
+                        nev_tuned = 0;
+                    }
+#endif //NO_EVENTS_CAN_BE_NEGATIVE
+                    
+                    fMCTemplArrayTun2D[is]->GetEntryRef(im, it-1, ir-1, iq-1) = nev_tuned;
+                    fMCTemplArrayFin2D[is]->GetEntryRef(im, it-1, ir-1, iq-1) = nev_tuned;
+                    
+#ifdef __show_banfftun_syst_var_wght_mesg_debug__
+                    // Get the energy of the current bin
+                    double Etrue = util::EtrueBinEdges(s,it-1) + kOneMeV;
+                    double Ereco = util::ErecoBinEdges(s,ir-1) + kOneMeV;
+                    double Q2    = util::Q2BinEdges(s,iq-1)    + kOneMeV;
+                    if( flux_wght  != 1. ||
+                       xsec_wght  != 1. )
+                    {
+                      LOG("SuperkMC", pDEBUG) <<  "\nSystVarWght >> "
+                        << "Sample = " << util::AsString(s) << " / Mode = " << util::AsString(m)
+                        << ", Q2 = " << Q2 << " GeV"
+                        << ", Ereco = " << Ereco << " GeV"
+                        << ", Etrue = " << Etrue << " GeV => Weights: "
+                        << ", Flux = "  << flux_wght
+                        << ", XSec = "  << xsec_wght
+                        << " (total = " << wght << ")"
+                        << " Nom events = " << nev
+                        << " New events = " << nev_tuned;
+                    }
+#endif //__show_banfftun_syst_var_wght_mesg_debug__
+                    
+                }//ifb
+            }//ivb
+        }//im
+    }//is
+    
+#ifdef __show_init_mesg_info__
+    LOG("SuperkMC",pDEBUG) << "Exp/SKMC/ApplyBANFFTuningToTemplates2D >> Complete";
+#endif
 }
 
 //

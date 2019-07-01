@@ -1293,17 +1293,12 @@ double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue) const
 // Weights required to re-weight fin/tuned flux to current (fin/tuned + systematic
 // variarions) flux
 //
+  double flux_twk = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxCurrent    );
+  double flux     = this->SuperkFlux(nu_pdg, Etrue, conv::kFlxFinalTuning);
 
   double wght = 1.0;
-  for(int ip = 0; ip < conv::kNumOfFHCpRHCParamsInBANFFfit; ++ip) {
-    if(!conv::kFHCpRHCParamInBANFFfitIsSuperkFluxParam[ip])        { continue; }
-    if(conv::kNuPdgCodeOfFHCpRHCFluxParamInBANFFfit[ip] != nu_pdg) { continue; }
-    double Emin = conv::kEtrueRangeOfFHCpRHCFluxParamInBANFFfit[ip][0];
-    double Emax = conv::kEtrueRangeOfFHCpRHCFluxParamInBANFFfit[ip][1];
-    if(Etrue < Emin || Etrue >= Emax) { continue; }
-    const PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
-    if(util::IsRHCSystematic(p)) { continue; }
-    wght *= fBANFF->CurrentValue(p);
+  if(flux >= 0) {
+    wght = flux_twk / flux;
   }
   return wght;
 }
@@ -1313,17 +1308,12 @@ double NuFlux::SuperkRHCFluxSystWght(int nu_pdg, double Etrue) const
   // Weights required to re-weight fin/tuned flux to current (fin/tuned + systematic
   // variarions) flux
   //
+  double flux_twk = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxCurrent    );
+  double flux     = this->RHCSuperkFlux(nu_pdg, Etrue, conv::kRHCFlxFinalTuning);
 
   double wght = 1.0;
-  for(int ip = 0; ip < conv::kNumOfFHCpRHCParamsInBANFFfit; ++ip) {
-    if(!conv::kFHCpRHCParamInBANFFfitIsSuperkFluxParam[ip])        { continue; }
-    if(conv::kNuPdgCodeOfFHCpRHCFluxParamInBANFFfit[ip] != nu_pdg) { continue; }
-    double Emin = conv::kEtrueRangeOfFHCpRHCFluxParamInBANFFfit[ip][0];
-    double Emax = conv::kEtrueRangeOfFHCpRHCFluxParamInBANFFfit[ip][1];
-    if(Etrue < Emin || Etrue >= Emax) { continue; }
-    const PhysParamId_t p = conv::kListOfFHCpRHCBANFFParams[ip];
-    if(!util::IsRHCSystematic(p)) { continue; }
-    wght *= fBANFF->CurrentValue(p);
+  if(flux >= 0) {
+    wght = flux_twk / flux;
   }
   return wght;
 }
