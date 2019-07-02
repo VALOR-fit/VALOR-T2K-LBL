@@ -73,8 +73,8 @@ _param_fields = namedtuple('param_fields',
        'apply_detector',
        'apply_beam',
        'apply_selection',
-       'apply_flav',
-       'apply_osc',
+       'apply_flav_init',
+       'apply_flav_final',
        'apply_reac',
        'apply_target',
        'limits'
@@ -138,7 +138,8 @@ def main(filename, t2k_legacy_config, overwrite):
     # lists of apply mask types (used for printing)
     reac_types_list = []
     selec_list      = []
-    flav_list       = []
+    flav_list_init  = []
+    flav_list_final = []
 
     # Read the attributes of each T2K systematic parameter and write to the XML file
     params = valor.util.NamedParameterList("nuosc3f+nuisance")
@@ -166,21 +167,21 @@ def main(filename, t2k_legacy_config, overwrite):
 
         # Set all of the possible XML fields
         fields = _param_fields(
-            name_simple     = get_name(ip, p),
-            name_long       = util.ParamAsString(p),
-            name_rootex     = util.ParamAsStringPaperRooTex(p),
-            name_tex        = util.AsStringTex(p),
-            kine_ranges     = {},
-            type            = get_type(ip, p),
-            category        = [],
-            apply_detector  = "SuperK",
-            apply_beam      = get_beam_mode(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
-            apply_selection = get_selection(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
-            apply_flav      = get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
-            apply_osc       = get_osc(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
-            apply_reac      = get_reac_type(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
-            apply_target    = get_target(p),
-            limits          = get_limits(p)
+            name_simple      = get_name(ip, p),
+            name_long        = util.ParamAsString(p),
+            name_rootex      = util.ParamAsStringPaperRooTex(p),
+            name_tex         = util.AsStringTex(p),
+            kine_ranges      = {},
+            type             = get_type(ip, p),
+            category         = [],
+            apply_detector   = "SuperK",
+            apply_beam       = get_beam_mode(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
+            apply_selection  = get_selection(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
+            apply_flav_init  = get_flavour_init (ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
+            apply_flav_final = get_flavour_final(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
+            apply_reac       = get_reac_type(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring),
+            apply_target     = get_target(p),
+            limits           = get_limits(p)
         )
         set_kine_range(ip, p, fields)
         set_category(p, fields)
@@ -189,7 +190,8 @@ def main(filename, t2k_legacy_config, overwrite):
         # Collect additional info
         reac_types_list.append(fields.apply_reac)
         selec_list.append(fields.apply_selection)
-        flav_list.append(fields.apply_flav)
+        flav_list_init.append(fields.apply_flav_init)
+        flav_list_final.append(fields.apply_flav_final)
         reac_types_all_okay = reac_types_all_okay and check_reac_types(ip, p, apply_table_xsec, apply_table_SKDetFSI)
 
         # Write all parameter fields to the output XML file
@@ -203,7 +205,8 @@ def main(filename, t2k_legacy_config, overwrite):
 
     print "The following reaction type apply masks are used. Make sure they exist in FitParamApply\n", list(set(reac_types_list)), "\n"
     print "The following selection apply masks are used. Make sure they exist in FitParamApply\n", list(set(selec_list)), "\n"
-    print "The following nu flavour apply masks are used. Make sure they exist in FitParamApply\n", list(set(flav_list)), "\n"
+    print "The following initial nu flavour apply masks are used. Make sure they exist in FitParamApply\n", list(set(flav_list_init)), "\n"
+    print "The following final nu flavour apply masks are used. Make sure they exist in FitParamApply\n", list(set(flav_list_final)), "\n"
 
     if not reac_types_all_okay:
         print "WARNING: At least one of the parameters have different applied reaction types for different samples. This may be a problem for specifying parameters in this way."
@@ -220,7 +223,7 @@ def get_name(ip, p):
     if util.IsBANFF(p):
         if util.IsFlux(p):
             # Use a more descriptive name for flux params than e.g. banff00.
-            flavour_str = get_flavour(ip, p, 0, 0, 0)
+            flavour_str = get_flavour_init(ip, p, 0, 0, 0)
             counter = 0
             if util.IsRHCSystematic(p):
                 counter = _name_flux_counter_rhc[flavour_str]
@@ -249,7 +252,7 @@ def get_name(ip, p):
 def get_type(ip, p):
     global _first_xsec_index
     if p == conv.kNuisSuperkEnergyScale or p == conv.kRHCNuisSuperkEnergyScale:
-        return "lateral"
+        return "lateral_post_osc"
     elif util.IsBANFF(p) and not util.IsFlux(p):
         # Xsec params could have splines
         if util.IsRHCSystematic(p):
@@ -588,8 +591,42 @@ def get_apply_to_modes_skdetfsi(ip, p, apply_table_single_ring, apply_table_mult
                     apply_to_modes[m] = True
     return apply_to_modes
 
+def get_flavour_init(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring):
+    flavour = get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring, "init")   # Want only the initial flavours for the applied modes
+    if util.IsBANFF(p):
+        if util.IsFlux(p):
+            # BANFF flux params only care about the initial flavour
+            return flavour
+        else:
+            # BANFF interaction params only care about the final flavour
+            if "bar" in flavour:
+                return "nubar any"
+            elif flavour == "all":
+                return "all"
+            else:
+                return "nu any"
+    else:
+        return flavour
 
-def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring):
+def get_flavour_final(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring):
+    flavour = get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring, "final")   # Want only the final flavours for the applied modes
+    if util.IsBANFF(p):
+        if util.IsFlux(p):
+            # BANFF flux params only care about the initial flavour
+            if "bar" in flavour:
+                return "nubar any"
+            elif flavour == "all":
+                return "all"
+            else:
+                return "nu any"
+        else:
+            # BANFF interaction params only care about the final flavour
+            return flavour
+    else:
+        return flavour
+
+
+def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring, option = ""):
     apply_to_modes = None
     if util.IsBANFF(p):
         if util.IsFlux(p):
@@ -623,15 +660,31 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
     flavours["nue"] = False
     flavours["nuebar"] = False
     for mode in apply_to_modes:
-        if apply_to_modes[mode]:
-            if util.IsNuMu(mode):
-                flavours["numu"] = True
-            if util.IsNuMuBar(mode):
-                flavours["numubar"] = True
-            if util.IsNuE(mode) or util.IsOscNuE(mode):
-                flavours["nue"] = True
-            if util.IsNuEBar(mode) or util.IsOscNuEBar(mode):
-                flavours["nuebar"] = True
+        if "init" in option:
+            # if IsNuMu   : init flav = numu, osc flav = numu
+            # if IsOscNuMu: init flav = nue , osc flav = numu   etc.
+            if apply_to_modes[mode]:
+                if util.IsNuMu(mode) or util.IsOscNuE(mode):
+                    flavours["numu"] = True
+                if util.IsNuMuBar(mode) or util.IsOscNuEBar(mode):
+                    flavours["numubar"] = True
+                if util.IsNuE(mode):
+                    flavours["nue"] = True
+                if util.IsNuEBar(mode):
+                    flavours["nuebar"] = True
+        elif "final" in option:
+            if apply_to_modes[mode]:
+                if util.IsNuMu(mode):
+                    flavours["numu"] = True
+                if util.IsNuMuBar(mode):
+                    flavours["numubar"] = True
+                if util.IsNuE(mode) or util.IsOscNuE(mode):
+                    flavours["nue"] = True
+                if util.IsNuEBar(mode) or util.IsOscNuEBar(mode):
+                    flavours["nuebar"] = True
+        else:
+            print "Need to supply an \'init\' or\'final\' option to get the nu flavour"
+            util.Die(-1)
 
     has_mu = flavours["numu"] or flavours["numubar"]
     has_e = flavours["nue"] or flavours["nuebar"]
@@ -689,39 +742,6 @@ def get_flavour(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDet
     else:
         print "WARNING: Not applying param", util.ParamAsString(p), "to any true nu flavour"
         return "none"
-
-
-def get_osc(ip, p, apply_table_xsec, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring):
-    apply_to_modes = None
-    if util.IsBANFF(p):
-        if util.IsFlux(p):
-            return "all"
-        else:
-            # Use the 3D array kXsApplyXSecSystToSKMode to decide whether each xsec param is applied to each sample
-            apply_to_modes = get_apply_to_modes_xsec(ip, p, apply_table_xsec)
-    else:
-        apply_to_modes = get_apply_to_modes_skdetfsi(ip, p, apply_table_SKDetFSI, apply_table_SKDetFSI_multiring)
-
-    masks = {}
-    masks["osc"] = False
-    masks["unosc"] = False # No osc numu/numubar templates
-    for mode in apply_to_modes:
-        if apply_to_modes[mode]:
-            if util.IsNuMu(mode) or util.IsNuMuBar(mode) or util.IsNuE(mode) or util.IsNuEBar(mode):
-                masks["unosc"] = True
-            if util.IsOscNuEBar(mode) or util.IsOscNuE(mode):
-                masks["osc"] = True
-
-    if masks["osc"] and masks["unosc"]:
-        return "all"
-    elif masks["osc"]:
-        return "osc"
-    elif masks["unosc"]:
-        return "unosc"
-    else:
-        print "WARNING: Not applying param", util.ParamAsString(p), "to any mode"
-        return "none"
-
 
 
 def get_target(p):
@@ -804,7 +824,7 @@ def set_kine_range(ip, p, fields):
                 fields.kine_ranges["Ereco"] = str(range_low) + ", " + str(range_high)
         else:
             # SK energy scale
-            fields.kine_ranges["Etrue"] = "0, inf"
+            fields.kine_ranges["Ereco"] = "0, inf"
 
 
 def set_category(p, fields):
@@ -858,8 +878,8 @@ def add_param(root_node, fields):
     apply_beam_node   = add_node(apply_node, "beam"          , fields.apply_beam      , False, False)
     apply_selec_node  = add_node(apply_node, "selection"     , fields.apply_selection , False, False)
     apply_reac_node   = add_node(apply_node, "reac_type"     , fields.apply_reac      , False, False)
-    apply_flav_node   = add_node(apply_node, "flav"          , fields.apply_flav      , False, False)
-    apply_flav_node   = add_node(apply_node, "osc"           , fields.apply_osc       , False, False)
+    apply_flavi_node  = add_node(apply_node, "flav_init"     , fields.apply_flav_init , False, False)
+    apply_flavf_node  = add_node(apply_node, "flav_final"    , fields.apply_flav_final, False, False)
     apply_target_node = add_node(apply_node, "target"        , fields.apply_target    , False, False)
     limits_node       = add_node(param_node, "limits"        , fields.limits          , False, False)
     _xmleng.AddRawLine(root_node, "\n\n")     # Additional blank lines after each parameter, for readability
