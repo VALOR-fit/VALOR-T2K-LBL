@@ -51,7 +51,7 @@ public:
   // Calculate weight in response to systematic parameter variations of cross-section parameters
   // For the BANFF parameters, the weight is relative to the best-fit (tuned MC) parameter, not the nominal MC one
   double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue) const;
-  double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2) const;
+  double SystWght(conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double Etrue, double Q2, std::string option = "") const;
 
   // Tweak systematic parameters held in this object.
   // Note: BANFF cross-section systematic parameters are tweaked via the BANFF object and they are 

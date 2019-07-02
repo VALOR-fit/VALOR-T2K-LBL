@@ -2022,7 +2022,7 @@ double NuXSec::SystWght_1p(PhysParamId_t p, SuperkSample_t s, SuperkMode_t m, do
     return wght;
 }
 //________________________________________________________________________________________
-double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2) const
+double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double Etrue, double Q2, std::string option) const
 {
 
     double tot_wght = 1.;
@@ -2066,6 +2066,27 @@ double NuXSec::SystWght(SuperkSample_t s, SuperkMode_t m, double Ereco, double E
         LOG("NuXSec", pDEBUG) << wght << " Syst Weight for " << util::AsString(s) << " "
                               << util::AsString(p)  << " "   <<  util::AsString(m)
                               << " Ereco: " << Ereco << " Etrue: " << Etrue << "Theta: " << Q2 ;
+        if(option == "verbose") {
+          if(util::IsNormXSecParam(p)) {
+            std::cout
+              << "*** test: Applying norm param with kinematic dependence [" << util::AsString(p)
+              << "] with curr val = " << this->CurrentValue(p) << ", effective tweak = " << wght << std::endl;
+          }
+          else {
+            //tc = fBANFF->CurrentValue(p);
+            double untuned_value = -1.0;  //(*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+            if(is_rhc) {
+              untuned_value = (*fRHCUntunedCentralValues)[arr_index->RHCBANFFXSecSystIdx(p)];
+            }
+            else {
+              untuned_value = (*fUntunedCentralValues)[arr_index->BANFFXSecSystIdx(p)];
+            }
+            std::cout
+              << "*** test: Applying spline param [" << util::AsString(p)
+              << "] with curr val = " << fBANFF->CurrentValue(p) << ", untuned val = " << untuned_value
+              << ", weight = " << wght << std::endl;
+          }
+        }
         tot_wght *= wght;
     }//isyst
     return tot_wght;

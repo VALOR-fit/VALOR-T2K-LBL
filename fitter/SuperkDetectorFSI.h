@@ -36,7 +36,7 @@ public:
   
   // What weight to apply
   double SystWght(
-    conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const;
+    conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/, std::string option = "") const;
     
   double EnergyScale(conv::SuperkSample_t /*s*/ = conv::kSKsUndefined) const;
       

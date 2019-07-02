@@ -43,18 +43,18 @@ public:
   // SK flux tuning and systematic variation weights
   double SuperkFluxExtTuningWght     (int neutrino_pdg, double Etrue) const;  // wght: nominal --> ext/tuned flux
   double SuperkFluxFinTuningWght     (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned --> fin/tuned flux
-  double SuperkFluxSystWght          (int neutrino_pdg, double Etrue) const;  // wght: fin/tuned flux -> current (incl. syst. variation)
+  double SuperkFluxSystWght          (int neutrino_pdg, double Etrue, std::string option = "") const;  // wght: fin/tuned flux -> current (incl. syst. variation)
   double SuperkFlux2p2hSystWght       (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)
   double SuperkRHCFluxExtTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: nominal --> ext/tuned flux
   double SuperkRHCFluxFinTuningWght  (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned --> fin/tuned flux
-  double SuperkRHCFluxSystWght       (int neutrino_pdg, double Etrue) const;  // wght: fin/tuned flux -> current (incl. syst. variation)
+  double SuperkRHCFluxSystWght       (int neutrino_pdg, double Etrue, std::string option = "") const;  // wght: fin/tuned flux -> current (incl. syst. variation)
   double SuperkRHCFlux2p2hSystWght    (int neutrino_pdg, double Etrue) const;  // wght: ext/tuned flux -> current (incl. syst. variation)  
 
   // ... as above, slighty different interface
   // note that these check for FHC/RHC so there is only a single copy of each
   double SuperkFluxExtTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
   double SuperkFluxFinTuningWght  (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
-  double SuperkFluxSystWght       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const;  
+  double SuperkFluxSystWght       (conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue, std::string option = "") const;
 
   // SK flux (current, tuned/fin, tuned/ext, nominal - depending on input flux type)
   double SuperkFlux (conv::SuperkSample_t s,int neutrino_pdg, double Etrue, conv::FluxType_t type = conv::kFlxCurrent) const;

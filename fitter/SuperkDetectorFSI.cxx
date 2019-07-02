@@ -331,7 +331,7 @@ void SuperkDetectorFSI::CheckSKMode(int nparams, const conv::PhysParamId_t * par
 }
 //________________________________________________________________________________________
 double SuperkDetectorFSI::SystWght(
-  conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/) const
+  conv::SuperkSample_t s, conv::SuperkMode_t m, double Ereco, double /*Etrue*/, std::string option) const
 {
 #ifdef __use_1Rsyst_for_MultiR_sample__
   // ~#{ Hack for testing set multiring splines to single ring splines
@@ -379,7 +379,13 @@ double SuperkDetectorFSI::SystWght(
   {  // Fix an SK weight for testing
      skdetfsi_wght = 1.0;
   }*/
-  
+
+  if(option == "verbose") {
+    std::cout
+      << "*** test: Applying norm param with kinematic dependence [" << util::AsString(p)
+      << "] with curr val = " << skdetfsi_param_value << ", effective tweak = " << skdetfsi_param_value << std::endl;
+  }
+
   return skdetfsi_wght;
 }
 //________________________________________________________________________________________

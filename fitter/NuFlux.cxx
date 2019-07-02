@@ -1288,7 +1288,7 @@ double NuFlux::SuperkRHCFluxFinTuningWght(int nu_pdg, double Etrue) const
   return wght;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue) const
+double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue, std::string option) const
 {
 // Weights required to re-weight fin/tuned flux to current (fin/tuned + systematic
 // variarions) flux
@@ -1300,10 +1300,15 @@ double NuFlux::SuperkFluxSystWght(int nu_pdg, double Etrue) const
   if(flux >= 0) {
     wght = flux_twk / flux;
   }
+  if(option == "verbose" || option == "verbose-no_weight") {
+    cout
+      << "*** test: Applying flux weight = " << wght << std::endl;
+  }
+  if(option == "verbose-no_weight") { return 1.0; }
   return wght;
 }
 //________________________________________________________________________________________
-double NuFlux::SuperkRHCFluxSystWght(int nu_pdg, double Etrue) const
+double NuFlux::SuperkRHCFluxSystWght(int nu_pdg, double Etrue, std::string option) const
 {
   // Weights required to re-weight fin/tuned flux to current (fin/tuned + systematic
   // variarions) flux
@@ -1315,6 +1320,11 @@ double NuFlux::SuperkRHCFluxSystWght(int nu_pdg, double Etrue) const
   if(flux >= 0) {
     wght = flux_twk / flux;
   }
+  if(option == "verbose" || option == "verbose-no_weight") {
+    cout
+      << "*** test: Applying flux weight = " << wght << std::endl;
+  }
+  if(option == "verbose-no_weight") { return 1.0; }
   return wght;
 }
 //________________________________________________________________________________________
@@ -1369,16 +1379,16 @@ double NuFlux::SuperkFluxFinTuningWght(
 }
 //________________________________________________________________________________________
 double NuFlux::SuperkFluxSystWght(
-  conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue) const
+  conv::SuperkSample_t s, conv::SuperkMode_t m, double Etrue, std::string option) const
 {
   int flux_nu_pdg = util::SuperkMode2FluxNuPdg(m);
   if(IsRHCSample(s))
     {
-      return this->SuperkRHCFluxSystWght(flux_nu_pdg,Etrue);
+      return this->SuperkRHCFluxSystWght(flux_nu_pdg,Etrue,option);
     }
   else
     {
-      return this->SuperkFluxSystWght(flux_nu_pdg,Etrue);
+      return this->SuperkFluxSystWght(flux_nu_pdg,Etrue,option);
     }
 }
 //________________________________________________________________________________________
