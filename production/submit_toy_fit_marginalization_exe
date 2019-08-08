@@ -192,7 +192,7 @@ elsif($param_set eq "AsimovA"){
   $dmsq23          = 2.509E-3                  unless defined $dmsq23;
   $dmsq12          = 7.53E-5                   unless defined $dmsq12;
   $mix23           = 0.528                     unless defined $mix23;
-  $mix13           = 0.0219                    unless defined $mix13; # Updated for 2017
+  $mix13           = 0.0212                    unless defined $mix13; # Updated for PDG2018
   $mix12           = 0.304                     unless defined $mix12;
   $deltacp         = -1.601                    unless defined $deltacp;
   $mixparamoctant  = "two"                     unless defined $mixparamoctant;
@@ -665,7 +665,12 @@ $freepar0_first = $minfreepar0;
 $freepar0_last  = $maxfreepar0;
 $i_freepar0     = 0;
 $n_freepar0     = $npt_freepar0;
-$step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+
+$step_freepar0  = 0;
+if($n_freepar0 > 1)
+{
+   $step_freepar0  = ($freepar0_last - $freepar0_first) / ($n_freepar0-1);
+}
 
 if($freepar0 eq "deltacp")
 {
