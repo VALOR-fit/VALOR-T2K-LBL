@@ -121,6 +121,7 @@ foreach (@ARGV) {
     elsif($_ eq '--scale-gentoys-2dpenalty'                 ) { $scale_gentoys_2dpenalty               = $ARGV[$iarg+1]; }
     elsif($_ eq '--scale-gentoys-2dpenalty-hist-name'       ) { $scale_gentoys_2dpenalty_hist_name     = $ARGV[$iarg+1]; }
     elsif($_ eq '--scale-gentoys-2dpenalty-hist-file'       ) { $scale_gentoys_2dpenalty_hist_file     = $ARGV[$iarg+1]; }
+    elsif($_ eq '--top-level-data-dir' ) { $top_level_data_dir  = $ARGV[$iarg+1]; }
 
   #####################################################################################
     
@@ -252,7 +253,8 @@ $scale_gentoys_2dpenalty_hist_x        = "mixing23"  unless defined  $scale_gent
 $scale_gentoys_2dpenalty_hist_y        = "dmsq23"  unless defined  $scale_gentoys_2dpenalty_hist_y; 
 $scale_gentoys_2dpenalty               = 1   unless defined  $scale_gentoys_2dpenalty; 
 $scale_gentoys_2dpenalty_hist_name     = "likelihood_2D"  unless defined  $scale_gentoys_2dpenalty_hist_name; 
-$scale_gentoys_2dpenalty_hist_file     = "/scratch/cbarry/tmp/tn_toys/FC/dcp/fc_toys/fit_oa2017_fc_inverted_disapp.root"  unless defined  $scale_gentoys_2dpenalty_hist_file; 
+$scale_gentoys_2dpenalty_hist_file     = "/scratch/cbarry/tmp/tn_toys/FC/dcp/fc_toys/fit_oa2017_fc_inverted_disapp.root"  unless defined  $scale_gentoys_2dpenalty_hist_file;
+$top_level_data_dir											= "$ENV{'T2KOSCANA'}/inputs";
 
 
 ########################################################################################
@@ -494,7 +496,10 @@ while($i_freepar1 < $n_freepar1) {
 	    $dominimize              = 1;        # only true chisq values are computed --> if 1 then it only takes more time computing also betabar=0 stuffs
 
 	    $arguments = "$softw_dir//bin/run_fc_marginalization --file-tag \"$tag_freepar\" --run \"$irun\" --config-file \"$config_file\" --n-experiments $nexpts --first-experiment $ifile_first --rethrow-unphysical-toys $rethrow_unphysical --verbose-syst-throws $verbose_systthrows --verbose-fit $verbose_fit --synch-osc-ih-to-nh $sync_ih_to_nh --throw-mass-hierarchy $marg_hierarchy --prior-mode-toy $prior_mode --do-toys $do_toys --use-xml-file $using_xml_file --fakedata-root-file $fakedata_root_file --fakedata-xml-file $fakedata_xml_file --dmsq-scheme \"$dmsqscheme\" --mix-param-scheme \"$mixparamscheme\" --mass-hierarchy \"$masshierarchy\" --mix-param-octant \"$mixparamoctant\" --cpv-phase-scheme \"$cpvparamscheme\" --hypothesis \"$hypothesis\" --cpv-nh $deltacp --mixing13-nh $mix13 --mixing23-nh $mix23 --mixing12-nh $mix12 --dm12sq-nh $dmsq12 --dm23sq-nh $dmsq23 --beta-bar $betaBar --normal-mass-hierarchy-prior $prior_prob_nh --stat-fluct $stat_fluct --syst-tweak-mode $tweak_systematics --fit-param-list \"$fitparamlist\" --file-margtoys \"$file_margtoys\" --file-margtoys-nh \"$file_margtoys_nh\" --file-margtoys-ih \"$file_margtoys_ih\" --nfiles-margtoys $nfiles_margtoys --ntoys-margtoys $ntoys_margtoys --freepar0-name \"$freepar0\" --freepar1-name \"$freepar1\" --freepar0-min $minfreepar0 --freepar0-max $maxfreepar0 --freepar0-npt $npt_freepar0 --freepar1-min $minfreepar1 --freepar1-max $maxfreepar1 --freepar1-npt $npt_freepar1 --marginalize-mh-margtoys $marg_hierarchy_margtoys --mass-hierarchy-margtoys  \"$masshierarchy_marg\" --test-statistic \"$test_stat\" --full-chisq $draw_full_chisq --type-error \"$type_error\" --store-like-weights $store_like_weights --penalty-freepar0 $penalty_freepar0 --penalty-freepar1 $penalty_freepar1 --do-fc $do_fc --do-minimize $dominimize --read-skexp $read_skexp  --scale-gentoys-2dpenalty-hist-x \"$scale_gentoys_2dpenalty_hist_x\" --scale-gentoys-2dpenalty-hist-y \"$scale_gentoys_2dpenalty_hist_y\" --scale-gentoys-2dpenalty-hist-file \"$scale_gentoys_2dpenalty_hist_file\" --scale-gentoys-2dpenalty-hist-name \"$scale_gentoys_2dpenalty_hist_name\" --scale-gentoys-2dpenalty $scale_gentoys_2dpenalty ";
-	    
+
+	    if($resource ne "cedar") {
+	    	$arguments = "$arguments --top-level-data-dir $top_level_data_dir ";
+	    }
 	    # # $command = "$program $arguments $arguments_bool";
 	    $command = "$program $arguments";
 

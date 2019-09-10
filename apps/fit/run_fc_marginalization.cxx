@@ -108,6 +108,8 @@ private:
   }
 };
 
+void SaveTreeOfToyParamLists(TFile *file, int nexperiments, PhysParamList ** saved_toy_param_lists);
+bool should_save_lists = false;
 
 
 int main(int argc, char ** argv)
@@ -194,7 +196,12 @@ int main(int argc, char ** argv)
   int first_experiment = runopt->FirstExperiment();
   int last_experiment = runopt->LastExperiment();
   int nexperiments = last_experiment - first_experiment + 1;
-  
+
+  // Array of PhysParamLists to store FC toy thrown parameter values to an output tree
+  PhysParamList ** saved_toy_param_lists = 0; //[nexperiments]
+  if (should_save_lists) {
+    saved_toy_param_lists = (PhysParamList **) calloc(nexperiments,sizeof(PhysParamList*));
+  }
   
   // Print settings
   cout << "\n[Job inputs]" << endl;
@@ -685,6 +692,36 @@ int main(int argc, char ** argv)
       else{
         cout << "Use root file" << endl;
         skobs_fakedata->Read(rootfile2.Data(),iexperiment,runopt->Using_xml_file());
+      }
+    }
+
+    // Save FC toy throws
+    if (should_save_lists) {
+      if(!saved_toy_param_lists[iexperiment]) {
+        // Get Syst tweaks
+        PhysParamList true_nuisance_params = skexp->Tweaks();
+        PhysParamList * pparm = new PhysParamList (true_nuisance_params);
+
+        // Loop over all parameters to check we have enough info
+        for (int ip = 0 ; ip < conv::knppmax ; ip++) {
+          PhysParamId_t p = (PhysParamId_t)ip;
+          if (fparm->Exists(p)) {
+            if (not pparm->Contains(p)) {
+              // Add parameters that are in fitparamlist but not physparamlist (eg Osc)
+              pparm->SetValue(p,fparm->CurrValue(p));
+            }
+          }
+          else { //And remove things not in the fitparamlist
+            pparm->Remove(p);
+          }
+        }
+        saved_toy_param_lists[iexperiment] = pparm;
+      }
+      if(iexperiment == last_experiment) {
+        TFile *f_throws = new TFile(Form("%s-%s_%d_%d_toy_throws.root", runopt->FileTag().c_str(), oscstr.c_str(), first_experiment, last_experiment), "recreate");
+        SaveTreeOfToyParamLists(f_throws, nexperiments, saved_toy_param_lists);
+        f_throws->Close();
+        delete f_throws;
       }
     }
     
@@ -1407,4 +1444,49 @@ int main(int argc, char ** argv)
   f->Close();
   delete f;
   delete runopt;
+}
+
+void SaveTreeOfToyParamLists(TFile *file, int nexperiments, PhysParamList ** saved_toy_param_lists)
+{
+  TTree* t_pars = new TTree("marg_parameter_values","Input parameters used for FC toys");
+
+  //This is the only way I could make filling a tree with an array work
+  //parpoints is an array to store pointers to array objects above to allow me to fill tree :(
+
+  //conv::knppmax: large number for parameters
+  double params[conv::knppmax];
+  double* parpoints[conv::knppmax];
+  for(int i=0;i<conv::knppmax;i++){
+    parpoints[i] = params + i;
+  }
+
+  PhysParamList * iparm;
+
+  //use the first list to initialise the tree
+  iparm = saved_toy_param_lists[0];
+  int counter = 0;
+  for (int cip = 0 ; cip < conv::knppmax ; cip++) {
+    PhysParamId_t pip = (PhysParamId_t)cip;
+    if (iparm->Contains(pip)) {
+      t_pars->Branch(util::AsStringSimple(pip).c_str(),  (parpoints[counter]));
+      counter++;
+    }
+  }
+
+  for (int i = 0 ; i < nexperiments ; i++) {
+    iparm = saved_toy_param_lists[i];
+    int counter_2 = 0;
+    for (int cip = 0 ; cip < conv::knppmax ; cip++) {
+      PhysParamId_t pip = (PhysParamId_t)cip;
+      if (iparm->Contains(pip)) {
+        params[counter_2] = iparm->Value(pip);
+        counter_2++;
+      }
+    }
+    t_pars->Fill();
+
+  }
+
+  t_pars->Write();
+  delete t_pars;
 }
