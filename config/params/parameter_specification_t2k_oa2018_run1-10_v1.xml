@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <param_list name="T2K_Run1-9">
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu00  </simple>
@@ -53,11 +54,11 @@
     matrix -->
     <step_mode> frac </step_mode>
     <step> 0.01 </step>
-
   </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu01  </simple>
@@ -94,11 +95,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu02  </simple>
@@ -135,11 +136,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu03  </simple>
@@ -176,11 +177,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu04  </simple>
@@ -217,11 +218,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu05  </simple>
@@ -258,11 +259,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu06  </simple>
@@ -299,11 +300,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu07  </simple>
@@ -340,11 +341,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu08  </simple>
@@ -381,11 +382,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu09  </simple>
@@ -422,11 +423,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu10  </simple>
@@ -463,11 +464,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar00  </simple>
@@ -504,11 +505,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar01  </simple>
@@ -545,11 +546,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar02  </simple>
@@ -586,11 +587,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar03  </simple>
@@ -627,11 +628,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar04  </simple>
@@ -668,11 +669,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue00  </simple>
@@ -709,11 +710,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue01  </simple>
@@ -750,11 +751,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue02  </simple>
@@ -791,11 +792,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue03  </simple>
@@ -832,11 +833,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue04  </simple>
@@ -873,11 +874,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue05  </simple>
@@ -914,11 +915,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue06  </simple>
@@ -955,11 +956,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar00  </simple>
@@ -996,11 +997,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar01  </simple>
@@ -1037,11 +1038,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu00_rhc  </simple>
@@ -1078,11 +1079,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu01_rhc  </simple>
@@ -1119,11 +1120,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu02_rhc  </simple>
@@ -1160,11 +1161,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu03_rhc  </simple>
@@ -1201,11 +1202,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu04_rhc  </simple>
@@ -1242,11 +1243,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar00_rhc  </simple>
@@ -1283,11 +1284,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar01_rhc  </simple>
@@ -1324,11 +1325,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar02_rhc  </simple>
@@ -1365,11 +1366,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar03_rhc  </simple>
@@ -1406,11 +1407,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar04_rhc  </simple>
@@ -1447,11 +1448,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar05_rhc  </simple>
@@ -1488,11 +1489,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar06_rhc  </simple>
@@ -1529,11 +1530,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar07_rhc  </simple>
@@ -1570,11 +1571,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar08_rhc  </simple>
@@ -1611,11 +1612,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar09_rhc  </simple>
@@ -1652,11 +1653,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numubar10_rhc  </simple>
@@ -1693,11 +1694,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue00_rhc  </simple>
@@ -1734,11 +1735,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nue01_rhc  </simple>
@@ -1775,11 +1776,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar00_rhc  </simple>
@@ -1816,11 +1817,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar01_rhc  </simple>
@@ -1857,11 +1858,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar02_rhc  </simple>
@@ -1898,11 +1899,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar03_rhc  </simple>
@@ -1939,11 +1940,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar04_rhc  </simple>
@@ -1980,11 +1981,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar05_rhc  </simple>
@@ -2021,11 +2022,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_nuebar06_rhc  </simple>
@@ -2062,11 +2063,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_norm_nu  </simple>
@@ -2103,11 +2104,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CA5  </simple>
@@ -2144,11 +2145,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  ISO_BKG  </simple>
@@ -2185,11 +2186,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
-
+  </param>
 
 
+
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  ISO_BKG_LowPPi                                 </simple>
@@ -2229,11 +2230,11 @@
     <step>                   0.01  </step>
     <init>                   1.3   </init>
     <error>                  0.4   </error>
-
   </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  MAQE  </simple>
@@ -2270,11 +2271,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  MARES  </simple>
@@ -2311,11 +2312,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  pF_O  </simple>
@@ -2352,11 +2353,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_DIS  </simple>
@@ -2393,11 +2394,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_Coh_O  </simple>
@@ -2434,11 +2435,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  NC_Coh  </simple>
@@ -2475,11 +2476,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  NC_other_far  </simple>
@@ -2516,11 +2517,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  nue_numu  </simple>
@@ -2557,11 +2558,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  NC_1gamma  </simple>
@@ -2598,11 +2599,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  nuebar_numubar  </simple>
@@ -2639,11 +2640,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_norm_nubar  </simple>
@@ -2680,12 +2681,12 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
   <!-- TODO: The BeRPA params will need removing after the inital round of Run 10 testing -->
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  BeRPA_A  </simple>
@@ -2722,11 +2723,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  BeRPA_B  </simple>
@@ -2763,11 +2764,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  BeRPA_D  </simple>
@@ -2804,11 +2805,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  BeRPA_E  </simple>
@@ -2845,11 +2846,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  BeRPA_U  </simple>
@@ -2888,11 +2889,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_shape_O  </simple>
@@ -2929,11 +2930,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_normCtoO  </simple>
@@ -2970,11 +2971,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_shape_C                </simple>
@@ -3014,11 +3015,11 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  3     </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_Edep_lowEnu                   </simple>
@@ -3058,11 +3059,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.5   </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_Edep_highEnu                   </simple>
@@ -3102,11 +3103,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.5   </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_Edep_lowEnubar                   </simple>
@@ -3146,12 +3147,12 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.5   </error>
-
   </param>
 
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  2p2h_Edep_highEnubar                   </simple>
@@ -3191,11 +3192,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.5   </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  Q2_norm_0                 </simple>
@@ -3235,7 +3236,6 @@
     <step>                   0.01   </step>
     <init>                   0      </init>
     <error>                  0.165  </error>
-
   </param>
 
 
@@ -3245,6 +3245,7 @@
       This is because VALOR-T2K does not MC bin templates in Q2.
   -->
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  Q2_norm_1                 </simple>    <!-- TODO: why is it named 'norm' if it is a function/spline? -->
@@ -3284,11 +3285,11 @@
     <step>                   0.01   </step>
     <init>                   0      </init>
     <error>                  0.145  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  Q2_norm_2                 </simple>    <!-- TODO: why is it named 'norm' if it is a function/spline? -->
@@ -3328,12 +3329,12 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  0.13  </error>
-
   </param>
 
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  Q2_norm_3                 </simple>    <!-- TODO: why is it named 'norm' if it is a function/spline? -->
@@ -3373,11 +3374,11 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  0.15  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  Q2_norm_4                 </simple>    <!-- TODO: why is it named 'norm' if it is a function/spline? -->
@@ -3417,11 +3418,11 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  0.16  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  EB_dial_C                 </simple>
@@ -3461,11 +3462,11 @@
     <step>                   0.01  </step>
     <init>                   25    </init>
     <error>                  9     </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  ebo  </simple>
@@ -3512,11 +3513,11 @@
     <step>                   0.01  </step>
     <init>                   27    </init>
     <error>                  9     </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_norm_nu                </simple>
@@ -3556,11 +3557,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.02  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_norm_nubar                </simple>
@@ -3600,11 +3601,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.01  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_BY_DIS                              </simple>
@@ -3644,11 +3645,11 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  1     </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_BY_MPi                              </simple>
@@ -3688,11 +3689,11 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  1     </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_AGKY_Mult                     </simple>
@@ -3732,11 +3733,11 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  1     </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_Misc                     </simple>
@@ -3776,11 +3777,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  1     </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_DIS_MultPi_Norm_Nu             </simple>
@@ -3820,11 +3821,11 @@
     <step>                   0.01   </step>
     <init>                   1      </init>
     <error>                  0.035  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_DIS_MultPi_Norm_Nubar             </simple>
@@ -3864,11 +3865,11 @@
     <step>                   0.01   </step>
     <init>                   1      </init>
     <error>                  0.065  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_Coh_C                     </simple>
@@ -3908,11 +3909,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.3   </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_Coh_O                     </simple>
@@ -3952,11 +3953,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.3   </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  NC_other_near                   </simple>
@@ -3996,11 +3997,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.3   </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  NC_other_far                   </simple>
@@ -4040,11 +4041,11 @@
     <step>                   0.01  </step>
     <init>                   1     </init>
     <error>                  0.3   </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  FEFQE                               </simple>
@@ -4083,11 +4084,11 @@
     <step>                   0.01   </step>
     <init>                   1.069  </init>
     <error>                  0.313  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  FEFQEH                               </simple>
@@ -4126,11 +4127,11 @@
     <step>                   0.01   </step>
     <init>                   1.824  </init>
     <error>                  0.859  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  FEFINEL                                  </simple>
@@ -4169,11 +4170,11 @@
     <step>                   0.01   </step>
     <init>                   1.002  </init>
     <error>                  1.101  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  FEFABS                              </simple>
@@ -4212,11 +4213,11 @@
     <step>                   0.01   </step>
     <init>                   1.404  </init>
     <error>                  0.432  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  FEFCX                                     </simple>
@@ -4255,11 +4256,11 @@
     <step>                   0.01   </step>
     <init>                   1.8    </init>
     <error>                  0.305  </error>
-
   </param>
 
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi000  </simple>
@@ -4295,11 +4296,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi001  </simple>
@@ -4335,11 +4336,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi002  </simple>
@@ -4375,11 +4376,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi003  </simple>
@@ -4415,11 +4416,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi004  </simple>
@@ -4455,11 +4456,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi005  </simple>
@@ -4495,11 +4496,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi006  </simple>
@@ -4535,11 +4536,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi007  </simple>
@@ -4575,11 +4576,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi008  </simple>
@@ -4615,11 +4616,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi009  </simple>
@@ -4655,11 +4656,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi010  </simple>
@@ -4695,11 +4696,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi011  </simple>
@@ -4735,11 +4736,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi012  </simple>
@@ -4775,11 +4776,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi013  </simple>
@@ -4815,11 +4816,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi014  </simple>
@@ -4855,11 +4856,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi015  </simple>
@@ -4895,11 +4896,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi016  </simple>
@@ -4935,11 +4936,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi017  </simple>
@@ -4975,11 +4976,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi000_rhc  </simple>
@@ -5015,11 +5016,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi001_rhc  </simple>
@@ -5055,11 +5056,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi002_rhc  </simple>
@@ -5095,11 +5096,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi003_rhc  </simple>
@@ -5135,11 +5136,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi004_rhc  </simple>
@@ -5175,11 +5176,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi005_rhc  </simple>
@@ -5215,11 +5216,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi006_rhc  </simple>
@@ -5255,11 +5256,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi007_rhc  </simple>
@@ -5295,11 +5296,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi008_rhc  </simple>
@@ -5335,11 +5336,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi009_rhc  </simple>
@@ -5375,11 +5376,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi010_rhc  </simple>
@@ -5415,11 +5416,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi011_rhc  </simple>
@@ -5455,11 +5456,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi012_rhc  </simple>
@@ -5495,11 +5496,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi013_rhc  </simple>
@@ -5535,11 +5536,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi014_rhc  </simple>
@@ -5575,11 +5576,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi015_rhc  </simple>
@@ -5615,11 +5616,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi016_rhc  </simple>
@@ -5655,11 +5656,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi017_rhc  </simple>
@@ -5695,11 +5696,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi007_multiring  </simple>
@@ -5735,11 +5736,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi008_multiring  </simple>
@@ -5775,11 +5776,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi010_multiring  </simple>
@@ -5815,11 +5816,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi011_multiring  </simple>
@@ -5855,11 +5856,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi013_multiring  </simple>
@@ -5895,11 +5896,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi014_multiring  </simple>
@@ -5935,11 +5936,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi016_multiring  </simple>
@@ -5975,11 +5976,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi017_multiring  </simple>
@@ -6015,11 +6016,11 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
-
+  </param>
 
 
+
+  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  sk_e_scale  </simple>
@@ -6055,8 +6056,7 @@
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
-
-</param>
+  </param>
   
 
 
