@@ -72,7 +72,7 @@
   <parameter_definitions>
     <!-- Make sure that any config file containing default values is read first! -->
     <filename desc="default_physics_params"> params/default_physics_parameter_values.xml                      </filename>
-    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2018_run10_v1.xml           </filename> <!-- TODO: When we have the new BANFF matrix, re-enable all new params and delete the old ones -->
+    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2020_run1-10_v1.xml         </filename> <!-- TODO: When we have the new BANFF matrix, re-enable all new params and delete the old ones -->
     <filename desc="physics_params">         params/physics_parameter_specification_t2k_oa2018_run1-9d_v1.xml </filename>
   </parameter_definitions>
 

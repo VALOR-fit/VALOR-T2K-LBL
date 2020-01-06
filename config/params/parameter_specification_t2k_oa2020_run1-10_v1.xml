@@ -3197,6 +3197,10 @@
 
 
   <!-- ==================================================================================== -->
+  <!--
+      The next few params are named e.g. Q2_norm_0, but they have splines.
+      This is because VALOR-T2K does not MC bin templates in Q2.
+  -->
   <param>
     <name>
       <simple>  Q2_norm_0                 </simple>
@@ -3239,11 +3243,6 @@
   </param>
 
 
-
-  <!--
-      The next few params are named e.g. Q2_norm_0, but they have splines.
-      This is because VALOR-T2K does not MC bin templates in Q2.
-  -->
 
   <!-- ==================================================================================== -->
   <param>
@@ -3486,7 +3485,8 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <!--<type>  response  </type>  TODO: Enable this param eventually-->
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -4048,6 +4048,7 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
+      <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIINELLO -->
       <simple>  FEFQE                               </simple>
       <long>    BANFF; Shape; FSI QE low P scatter  </long>
       <rootex>  f_{Shape_{FSI QE low P}}^{banff}    </rootex>
@@ -4091,6 +4092,7 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
+      <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIINELHI -->
       <simple>  FEFQEH                               </simple>
       <long>    BANFF; Shape; FSI QE high P scatter  </long>
       <rootex>  f_{Shape_{FSI QE high P}}^{banff}    </rootex>
@@ -4134,6 +4136,7 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
+      <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIPIPROD -->
       <simple>  FEFINEL                                  </simple>
       <long>    BANFF; Shape; FSI Inelastic Hadron prod  </long>
       <rootex>  f_{Shape_{FSI Inelastic}}^{banff}        </rootex>
@@ -4177,8 +4180,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
+      <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIPIABS -->
       <simple>  FEFABS                              </simple>
-      <long>    BANFF; Shape; FSI Absorption        </long>
+      <long>    BANFF; Shape; FSI pion absorption   </long>
       <rootex>  f_{Shape_{FSI Absorption}}^{banff}  </rootex>
       <tex>     BANFF; Shape; FSI Absorption        </tex>
     </name>
@@ -4215,11 +4219,12 @@
     <error>                  0.432  </error>
   </param>
 
-
+q
 
   <!-- ==================================================================================== -->
   <param>
     <name>
+      <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSICEXLO -->
       <simple>  FEFCX                                     </simple>
       <long>    BANFF; Shape; FSI single charge exchange  </long>
       <rootex>  f_{Shape_{FSI charge exchange}}^{banff}   </rootex>
