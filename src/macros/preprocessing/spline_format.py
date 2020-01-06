@@ -23,7 +23,6 @@ conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
-arridx= util.ArrIdx.Instance()
 
 python_undefined = 2L*sys.maxint+1
 python_undefined_short =2**32 -1
@@ -73,7 +72,7 @@ def get_param_map():
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
-    if sample in ["1Rmu","1Re","MultiRe"]:
+    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe"]:
         return "250ka"
     elif sample in ["RHC1Rmu","RHC1Re"]:
         return "m250ka"
@@ -122,20 +121,20 @@ def build_spline_array_name(syst, flavour, mode):
 
 def get_fit_elements(config_file):
     elements = valor.CompoundFitElements()
-    elements.Read(config_file, "nomc+nosplines")
+    elements.Read(util.CompleteConfigPath(config_file), "nomc+nosplines")
     return elements
 
 def set_model_map(model):
     if model.Name() == "superk__JPARC_FHC__1rmu":
-        models["1Rmu"] = model
+        models["FHC1Rmu"] = model
     elif model.Name() == "superk__JPARC_RHC__1rmu":
         models["RHC1Rmu"] = model
     elif model.Name() == "superk__JPARC_FHC__1re":
-        models["1Re"] = model
+        models["FHC1Re"] = model
     elif model.Name() == "superk__JPARC_RHC__1re":
         models["RHC1Re"] = model
     elif model.Name() == "superk__JPARC_FHC__multire":
-        models["MultiRe"] = model
+        models["FHCMultiRe"] = model
     else:
         print "Unrecognised model ", model.Name()
         sys.exit()
@@ -223,6 +222,8 @@ def main(version, path, sample, config):
             m_enum = util.ReacModeFromString(mode_string)
             if m_enum == conv.kmUndefined or m_enum == python_undefined or m_enum == python_undefined_short:
                 print "Skipping param+mode combination with undefined mode:", par, mode_string
+                if "nc" in util.ToLowerCase(mode_string) and "to" in util.ToLowerCase(valor_type):
+                    print "(note: skipping oscillated NC modes is expected)"
                 continue
         
             # Get all the splines for this systematic+mode
@@ -295,10 +296,13 @@ def main(version, path, sample, config):
     print "Modes:"
     for m in modes:
         print m
+
+    print "Done!"
+
   
 if __name__=="__main__":
     import argparse
-    samples = ["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
+    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
     parser.add_argument('-p', '--prefix', default='spline2018v1', help="Spline filename prefix.")
     parser.add_argument('-i', '--input', help="Input spline directory.")
