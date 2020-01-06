@@ -38,15 +38,50 @@ def get_file_suffix(sample):
         return "erectheta"
     
 
+# This is a list containing parameters and the modes they apply to, in the format "param_mode",
+# using raw (T2KReWeight/NDfit) naming
 def get_systematics():
-    return ["maqe_ccqe", "pfo_ccqe",
-        "ebo_cc1pi", "ebo_cccoh", "ebo_ccoth", "ebo_ccqe", "ebo_mec",
-        "ebo_nc1gamma", "ebo_nccoh", "ebo_ncoth", "ebo_ncpiz", "ebo_ncpipm",
+    # TODO: I've left in the old run 9 syst+mode info for now (but commented out), but this should be removed once the run 10 splines are in
+    # return [
+    #         "maqe_ccqe",
+    #         "pfo_ccqe",
+    #         "ebo_cc1pi", "ebo_cccoh", "ebo_ccoth", "ebo_ccqe", "ebo_mec",
+    #             "ebo_nc1gamma", "ebo_nccoh", "ebo_ncoth", "ebo_ncpiz", "ebo_ncpipm",
+    #         "ca5_cc1pi", "ca5_ncpiz", "ca5_ncpipm",
+    #         "manff_cc1pi", "manff_ncpiz", "manff_ncpipm",
+    #         "bgscl_cc1pi", "bgscl_ncpiz", "bgscl_ncpipm",
+    #         "dismpishp_ccoth",
+    #         "mecpdd_mec",
+    #         "erpa_A_ccqe",
+    #         "erpa_B_ccqe",
+    #         "erpa_D_ccqe",
+    #         "erpa_E_ccqe"
+    #        ]
+
+    # TODO: Add effective Eb and Q2 splines, remove BeRPA, add other new params
+    return [
+        "maqe_ccqe",
+        "pfo_ccqe",
         "ca5_cc1pi", "ca5_ncpiz", "ca5_ncpipm",
         "manff_cc1pi", "manff_ncpiz", "manff_ncpipm",
         "bgscl_cc1pi", "bgscl_ncpiz", "bgscl_ncpipm",
-        "dismpishp_ccoth", "mecpdd_mec",
-        "erpa_A_ccqe", "erpa_B_ccqe", "erpa_D_ccqe", "erpa_E_ccqe"]
+        "dismpishp_ccoth",
+        "mecpdd_mec",
+        "erpa_A_ccqe",
+        "erpa_B_ccqe",
+        "erpa_D_ccqe",
+        "erpa_E_ccqe",
+        "FSIPIABS_ccqe", "FSIPIABS_cc1pi", "FSIPIABS_cccoh", "FSIPIABS_ccoth", "FSIPIABS_ncpiz",
+            "FSIPIABS_ncpipm", "FSIPIABS_nccoh", "FSIPIABS_ncoth", "FSIPIABS_mec", "FSIPIABS_nc1gamma",
+        "FSICEXLO_ccqe", "FSICEXLO_cc1pi", "FSICEXLO_cccoh", "FSICEXLO_ccoth", "FSICEXLO_ncpiz",
+            "FSICEXLO_ncpipm", "FSICEXLO_nccoh", "FSICEXLO_ncoth", "FSICEXLO_mec", "FSICEXLO_nc1gamma",
+        "FSIINELLO_ccqe", "FSIINELLO_cc1pi", "FSIINELLO_cccoh", "FSIINELLO_ccoth", "FSIINELLO_ncpiz",
+            "FSIINELLO_ncpipm", "FSIINELLO_nccoh", "FSIINELLO_ncoth", "FSIINELLO_mec", "FSIINELLO_nc1gamma",
+        "FSIPIPROD_ccqe", "FSIPIPROD_cc1pi", "FSIPIPROD_cccoh", "FSIPIPROD_ccoth", "FSIPIPROD_ncpiz",
+            "FSIPIPROD_ncpipm", "FSIPIPROD_nccoh", "FSIPIPROD_ncoth", "FSIPIPROD_mec", "FSIPIPROD_nc1gamma",
+        "FSIINELHI_ccqe", "FSIINELHI_cc1pi", "FSIINELHI_cccoh", "FSIINELHI_ccoth", "FSIINELHI_ncpiz",
+            "FSIINELHI_ncpipm", "FSIINELHI_nccoh", "FSIINELHI_ncoth", "FSIINELHI_mec", "FSIINELHI_nc1gamma"
+    ]
 
 def get_mode_map():
     valor_modes = ["CCQE","CCcoh","CCMEC","CCoth","CC1piC","NCcoh","NCoth",
@@ -65,10 +100,17 @@ def get_flavour_map():
     return list(zip(raw_flavours, valor_flavours))
 
 def get_param_map():
+    # NOTE (2020-01-03, run 10):
+    # The mapping between the raw (i.e. T2KReWeight/NDfit) and VALOR/NIWG param names for the FSI params (FSI.. or FEF...)
+    # is not intuitive, but they are listed in table 9 of TN-325 (see https://t2k.org/docs/technotes/325/tn-325-v1).
+    # In fact, the raw names use some old conventions, and they will probably change to being the same as the
+    # VALOR/NIWG names next time splines are generated.
     raw_params = ["ca5", "bgscl", "maqe", "manff", "pfo", "dismpishp",
-        "erpa_A", "erpa_B", "erpa_D", "erpa_E", "mecpdd", "ebo"]
+        "erpa_A", "erpa_B", "erpa_D", "erpa_E", "mecpdd",
+        "FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI"]
     valor_params = ["CA5", "ISO_BKG", "MAQE", "MARES", "pF_O", "CC_DIS",
-        "BeRPA_A", "BeRPA_B", "BeRPA_D", "BeRPA_E", "2p2h_shape_O", "ebo"]
+        "BeRPA_A", "BeRPA_B", "BeRPA_D", "BeRPA_E", "2p2h_shape_O",
+        "FEFABS", "FEFCX", "FEFQE", "FEFINEL", "FEFQEH"]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
