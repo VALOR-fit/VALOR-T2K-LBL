@@ -45,6 +45,7 @@
 // fmwk
 #include "valor/Conventions/Opt.h"
 #include "valor/Conventions/Names.h"
+#include "valor/Conventions/ParameterPool.h"
 #include "valor/CmdLine/CmdLnArgList.h"
 #include "valor/FitCore/CorrelatedSystematics.h"
 #include "valor/FitCore/PhysParamList.h"
@@ -178,7 +179,27 @@ int main(int argc, char ** argv)
     PhysParamId_t p = param_set[ip];
     if(!util::IsSystematic(p)) { continue; }
     double bestfit = fp->InitValue(p);
-    double sigma_err = syst->OneSigmaError(p);
+
+    // Look for the param in CorrelatedSystematics, if it's not there, look for the error in the ParameterPool
+    double sigma_err = -999;
+    bool found_err = false;
+    if(syst->Contains(p)) {
+      sigma_err = syst->OneSigmaError(p);
+      found_err = true;
+    }
+    else if(ParameterPool::Instance()->IsParamInPool(p)) {
+      Parameter param = ParameterPool::Instance()->GetParam(p);
+      if(param.ErrorWasSpecified()) {
+        sigma_err = param.GetError();
+        found_err = true;
+      }
+    }
+    if(!found_err) {
+      LOG("valor_dune", pFATAL) << "Could not get the 1 sigma error for param \'"
+                                << util::NameRegistry::Instance()->ParamAsString(p) << "\'";
+      util::Die(-1);
+    }
+
     double tweak_p1 = bestfit + (1 * sigma_err);
     double tweak_m1 = bestfit - (1 * sigma_err);
     double tweak_p3 = bestfit + (3 * sigma_err);
