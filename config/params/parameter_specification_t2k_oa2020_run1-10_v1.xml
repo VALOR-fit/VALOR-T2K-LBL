@@ -3460,7 +3460,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all CC     </reac_type>
+      <reac_type>   all CC     </reac_type>     <!-- TODO: In the XML file that goes with Will's dummy cov matrix, this param is set to MaCh3 mode -3, which is nubar kMaCh3_CCMpi. This doesn't seem right. Check this. -->
       <flav_init>   nuany      </flav_init>
       <flav_final>  nuany      </flav_final>
       <target>      all        </target>
@@ -3504,7 +3504,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all CC     </reac_type>
+      <reac_type>   all CC     </reac_type>     <!-- TODO: In the XML file that goes with Will's dummy cov matrix, this param is set to MaCh3 mode -3, which is nubar kMaCh3_CCMpi. This doesn't seem right. Check this. -->
       <flav_init>   nubarany   </flav_init>
       <flav_final>  nubarany   </flav_final>
       <target>      all        </target>
@@ -3548,7 +3548,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   CC DIS     </reac_type>   <!-- TODO: Separate the CCDIS mode from the CCOther mode -->
+      <reac_type>   all        </reac_type>   <!-- TODO: Make this apply to 'CC DIS' only. Separate the CCDIS mode from the CCOther mode -->
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3592,7 +3592,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   CC MPi     </reac_type>   <!-- TODO: Separate the CCMPi mode from the CCOther mode, if applicable? -->
+      <reac_type>   all        </reac_type>   <!-- TODO: Make this only apply to 'CC MPi'. Separate the CCMPi mode from the CCOther mode, if applicable? -->
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3636,7 +3636,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   CC MPi     </reac_type>   <!-- TODO: Separate the CCMPi mode from the CCOther mode, if applicable? -->
+      <reac_type>   all     </reac_type>   <!-- TODO: Make this only apply to 'CC MPi'. Separate the CCMPi mode from the CCOther mode, if applicable? -->
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3680,7 +3680,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   CC misc    </reac_type>   <!-- TODO: Separate the CCMisc mode from the CCOther mode -->
+      <reac_type>   all        </reac_type>   <!-- TODO: Make this only apply to 'CC misc'. Separate the CCMisc mode from the CCOther mode -->
       <flav_init>   nu any     </flav_init>
       <flav_final>  nu any     </flav_final>
       <target>      all        </target>
@@ -3724,7 +3724,7 @@
       <detector>    SuperK      </detector>
       <beam>        all         </beam>
       <selection>   all rings   </selection>
-      <reac_type>   CC DIS MPi  </reac_type>   <!-- TODO: Separate the CCDISMPi mode from the CCOther mode -->
+      <reac_type>   all  </reac_type>   <!-- TODO: Make this only apply to 'CC DIS MPi' or just 'CC DIS'?. Separate the CCDISMPi mode from the CCOther mode -->
       <flav_init>   nu any      </flav_init>
       <flav_final>  nu any      </flav_final>
       <target>      all         </target>
@@ -3768,7 +3768,7 @@
       <detector>    SuperK      </detector>
       <beam>        all         </beam>
       <selection>   all rings   </selection>
-      <reac_type>   CC DIS MPi  </reac_type>   <!-- TODO: Separate the CCDISMPi mode from the CCOther mode -->
+      <reac_type>   all  </reac_type>   <!-- TODO: Make this only apply to 'CC DIS MPi' or just 'CC DIS'?. Separate the CCDISMPi mode from the CCOther mode -->
       <flav_init>   nubar any   </flav_init>
       <flav_final>  nubar any   </flav_final>
       <target>      all         </target>
