@@ -81,11 +81,12 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
   compound_model = elements.FitModel()
 
   # Get the modes
-  if not modelist_file:
-    print "ERROR: could not open the input mode list file!"
-    sys.exit()
-  ml = valor.ModeList(util.CompleteConfigPath(modelist_file))
-  read_modes = ml.Modes()
+  if _by_mode:
+    if not modelist_file:
+      print "ERROR: could not open the input mode list file!"
+      sys.exit()
+    ml = valor.ModeList(util.CompleteConfigPath(modelist_file))
+    read_modes = ml.Modes()
 
   print "Reading from input VALOR file", in_file
   fin = ROOT.TFile(in_file, "read")
@@ -112,8 +113,8 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
     selection_model = compound_model.GetSubModel(i)
     selection_name = selection_model.Name()
     if not(selection_model.GetBeam()      == util.BeamConfFromString(_beam) and \
-           selection_model .GetDetector() == util.DetectorFromString(_det)  and \
-           selection_model .GetSample()   == util.SampleFromString  (_selec)):
+           selection_model.GetDetector()  == util.DetectorFromString(_det)  and \
+           selection_model.GetSample()    == util.SampleFromString  (_selec)):
       continue
 
     if _by_mode and sum_t2k_cc1pi and selection_model.GetDetector() == conv.kdSuperK \
