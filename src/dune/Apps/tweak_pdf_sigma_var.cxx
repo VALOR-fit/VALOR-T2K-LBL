@@ -180,25 +180,12 @@ int main(int argc, char ** argv)
     if(!util::IsSystematic(p)) { continue; }
     double bestfit = fp->InitValue(p);
 
-    // Look for the param in CorrelatedSystematics, if it's not there, look for the error in the ParameterPool
-    double sigma_err = -999;
-    bool found_err = false;
-    if(syst->Contains(p)) {
-      sigma_err = syst->OneSigmaError(p);
-      found_err = true;
-    }
-    else if(ParameterPool::Instance()->IsParamInPool(p)) {
-      Parameter param = ParameterPool::Instance()->GetParam(p);
-      if(param.ErrorWasSpecified()) {
-        sigma_err = param.GetError();
-        found_err = true;
-      }
-    }
-    if(!found_err) {
+    if(!syst->Contains(p)) {
       LOG("valor_dune", pFATAL) << "Could not get the 1 sigma error for param \'"
                                 << util::NameRegistry::Instance()->ParamAsString(p) << "\'";
       util::Die(-1);
     }
+    double sigma_err = syst->OneSigmaError(p);
 
     double tweak_p1 = bestfit + (1 * sigma_err);
     double tweak_m1 = bestfit - (1 * sigma_err);
