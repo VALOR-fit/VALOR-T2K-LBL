@@ -84,10 +84,8 @@ def get_systematics():
     ]
 
 def get_mode_map():
-    valor_modes = ["CCQE","CCcoh","CCMEC","CCoth","CC1piC","NCcoh","NCoth",
-        "NC1piC","NC1pi0","NC1Gamma"]
-    raw_modes = ["ccqe","cccoh","mec","ccoth","cc1pi","nccoh","ncoth","ncpipm",
-        "ncpiz","nc1gamma"]
+    valor_modes = ["CCQE","CCcoh","CCMEC","CCoth","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+    raw_modes   = ["ccqe","cccoh","mec"  ,"ccoth","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
     return list(zip(raw_modes, valor_modes))
 
 def get_flavour_map():
@@ -105,12 +103,8 @@ def get_param_map():
     # is not intuitive, but they are listed in table 9 of TN-325 (see https://t2k.org/docs/technotes/325/tn-325-v1).
     # In fact, the raw names use some old conventions, and they will probably change to being the same as the
     # VALOR/NIWG names next time splines are generated.
-    raw_params = ["ca5", "bgscl", "maqe", "manff", "pfo", "dismpishp",
-        "erpa_A", "erpa_B", "erpa_D", "erpa_E", "mecpdd",
-        "FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI"]
-    valor_params = ["CA5", "ISO_BKG", "MAQE", "MARES", "pF_O", "CC_DIS",
-        "BeRPA_A", "BeRPA_B", "BeRPA_D", "BeRPA_E", "2p2h_shape_O",
-        "FEFABS", "FEFCX", "FEFQE", "FEFINEL", "FEFQEH"]
+    raw_params   = ["ca5", "bgscl"  , "maqe", "manff", "pfo" , "dismpishp","erpa_A" , "erpa_B" , "erpa_D" , "erpa_E" , "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI"]
+    valor_params = ["CA5", "ISO_BKG", "MAQE", "MARES", "pF_O", "CC_DIS"   ,"BeRPA_A", "BeRPA_B", "BeRPA_D", "BeRPA_E", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
@@ -181,6 +175,9 @@ def set_model_map(model):
         print "Unrecognised model ", model.Name()
         sys.exit()
 
+# The raw spline file specified bins as true_reco1_reco2 (or true_reco1 if 2D), but in VALOR we put all
+# true kinevars into 1 dimension and all reco into another, so we want to convert the reco bin number
+# into VALOR format
 def get_new_binning(sample, flavour, mode, true_bin, reco_bin1, reco_bin2=0):
     # Flavour and mode included just in case this is required for true binning
     # in the future. For now, the simple 1D true binning means the index we
