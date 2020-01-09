@@ -77,27 +77,27 @@
   </parameter_definitions>
 
 
-  <!-- TODO: Update all this when we have the run 10 matricies -->
+  <!-- TODO: Update all this when we have the run 10 matrices -->
   <systematics name="t2k_run1-9d">
 
     <group name="banff">
       <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
            The order of params in this list must be the same as the order of params in the matrix.-->
-      <format> t2k_banff_params_run1-9d.xml </format>
+      <format> t2k_banff_params_run1-9d_plus_run10_fsi.xml </format>
       
       <covariance_matrix>
-        <filename> official/2018/banff/DataFit_Postfit_2018_final_v1_180907_sk_eb_valor_order_all.root </filename>
+        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_fsi_valor_order_all.root </filename>
         <objname>  postfit_cov    </objname>
         <objtype>  TMatrixD       </objtype>
       </covariance_matrix>
 
       <untuned_values>
-        <filename> official/2018/banff/DataFit_Postfit_2018_final_v1_180907_sk_eb_valor_order_all.root </filename>
+        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_fsi_valor_order_all.root </filename>
         <objname>  banff_untuned_central_values  </objname>
       </untuned_values>
 
       <initial_values>
-        <filename> official/2018/banff/DataFit_Postfit_2018_final_v1_180907_sk_eb_valor_order_all.root </filename>
+        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_fsi_valor_order_all.root </filename>
         <objname>  postfit_params  </objname>
       </initial_values>
     </group>

@@ -3995,13 +3995,11 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
     <step>                   0.01   </step>
-    <init>                   1.069  </init>
-    <error>                  0.313  </error>
   </param>
 
 
@@ -4039,13 +4037,11 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
     <step>                   0.01   </step>
-    <init>                   1.824  </init>
-    <error>                  0.859  </error>
   </param>
 
 
@@ -4083,13 +4079,11 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
     <step>                   0.01   </step>
-    <init>                   1.002  </init>
-    <error>                  1.101  </error>
   </param>
 
 
@@ -4127,13 +4121,11 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
     <step>                   0.01   </step>
-    <init>                   1.404  </init>
-    <error>                  0.432  </error>
   </param>
 
 
@@ -4171,13 +4163,11 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
     <step>                   0.01   </step>
-    <init>                   1.8    </init>
-    <error>                  0.305  </error>
   </param>
 
 
