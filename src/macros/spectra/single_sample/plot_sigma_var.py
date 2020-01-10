@@ -185,18 +185,18 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
               if sigma_var == "m3":
                 leg.AddEntry(h_comp, "comparison", "l")
 
-            # Throw a warning if the ratios have a difference greater than some threshold
-            for ibin in range(1, h.GetNbinsX()):
-              diff = 100 * ROOT.TMath.Abs(1.0 - (h_comp.GetBinContent(ibin) / h.GetBinContent(ibin)))
-              if diff > _ratio_diff_warn_threshold_percent:
-                if _by_mode:
-                  print "WARNING: For param =", param_name, "; sample =", selection_name, "; mode =", util.ModeAsString(m), "; kinevar val =", \
-                    h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
-                    "% in the ratios of input and compaison hist"
-                else:
-                  print "WARNING: For param =", param_name, "; sample =", selection_name, "; kinevar val =", \
-                    h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
-                    "% in the ratios of input and compaison hist"
+              # Throw a warning if the ratios have a difference greater than some threshold
+              for ibin in range(1, h.GetNbinsX()):
+                diff = 100 * ROOT.TMath.Abs(1.0 - (h_comp.GetBinContent(ibin) / h.GetBinContent(ibin)))
+                if diff > _ratio_diff_warn_threshold_percent:
+                  if _by_mode:
+                    print "WARNING: For param =", param_name, "; sample =", selection_name, "; mode =", util.ModeAsString(m), "; kinevar val =", \
+                      h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
+                      "% in the ratios of input and compaison hist"
+                  else:
+                    print "WARNING: For param =", param_name, "; sample =", selection_name, "; kinevar val =", \
+                      h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
+                      "% in the ratios of input and compaison hist"
 
         hvar_list[0].SetMaximum(1 + 1.1 * hist_max_var)
         hvar_list[0].SetMinimum(1 - 1.1 * hist_max_var)
@@ -277,6 +277,9 @@ def get_ratio_nom(fin, sigma_var, param_name, selection_name, m, hnom, is_compar
       if _by_mode:
         hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m) + "_" + param_name + "_" + sigma_var
       h = fin.Get(hname)
+      if not h:
+        print "WARNING: Could not find VALOR comparison hist named [{}], skipping this comparison".format(hname)
+        return None
 
       if _do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1piC:
         # If comparing to the legacy T2K analysis, sum the PDFs of the CC1pi0 and CC1piC modes
