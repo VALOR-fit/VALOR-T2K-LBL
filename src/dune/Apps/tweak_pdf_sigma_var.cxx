@@ -80,9 +80,11 @@ bool t2k = false;
 
 
 void SpecialCaseTweak(PhysParamId_t p, FitParamList * fp, double& tweak_p1, double& tweak_m1, double& tweak_p3, double& tweak_m3);
-void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv, TFile * outfile);
+void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv,
+                        TFile * outfile, bool test_force_untuned);
 void GeneratePDFTweaked(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv,
-                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile, std::string tag);
+                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile,
+                        std::string tag, bool test_force_untuned);
 
 int main(int argc, char ** argv)
 {
@@ -100,6 +102,9 @@ int main(int argc, char ** argv)
   string output_rootfile  = arg.GetString("output");
   string params_to_tweak  = arg.GetString("params");
   string kinevar_str      = arg.GetString("kinevar");
+
+  // If true, then force all systematic parameters to their untuned values. This is for testing weights as is intended to be used with e.g. the DEBUG_SINGLE_BIN preprocessor directive in GSSFM
+  bool test_force_untuned = arg.GetBool("test-force-untuned");
 
   KineVar_t kv = util::KineVarFromString(util::RemoveAllWhitespace(kinevar_str));
   if(kv == kvUndefined) {
@@ -175,7 +180,7 @@ int main(int argc, char ** argv)
   if (fp->Exists(conv::kPhypCPV     )) { fp->Update(conv::kPhypCPV     ,deltacp ); }
 
   // Generate pdfs
-  GeneratePDFNominal(model, cm, fp, kv, outfile);
+  GeneratePDFNominal(model, cm, fp, kv, outfile, test_force_untuned);
   for (unsigned int ip = 0 ; ip < param_set.size() ; ip++) {
     PhysParamId_t p = param_set[ip];
     if(!util::IsSystematic(p)) { continue; }
@@ -206,10 +211,10 @@ int main(int argc, char ** argv)
       << "\n  nominal +3 sigma tweak = " << tweak_p3
       << "\n  nominal -3 sigma tweak = " << tweak_m3;
 
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p1, outfile, "p1");
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m1, outfile, "m1");
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p3, outfile, "p3");
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m3, outfile, "m3");
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p1, outfile, "p1", test_force_untuned);
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m1, outfile, "m1", test_force_untuned);
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p3, outfile, "p3", test_force_untuned);
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m3, outfile, "m3", test_force_untuned);
   } // loop over params
 
   outfile->Close();
@@ -234,11 +239,16 @@ void SpecialCaseTweak(conv::PhysParamId_t p, FitParamList * fp, double& tweak_p1
   }
 }
 //________________________________________________________________________________________
-void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv, TFile * outfile)
+void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv, TFile * outfile, bool test_force_untuned)
 {
   cout << "\n\nGenerating nominal PDF:" << std::endl;
   outfile->cd();
-  model->ResetSystematics("all");
+  if(test_force_untuned) {
+    model->ForceSystematicsToUntuned();
+  }
+  else {
+    model->ResetSystematics("all");
+  }
   fp->FromPhysParamList(model->Tweaks(),"current-silent");
 
   // Generate predictions
@@ -295,12 +305,17 @@ void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList
 }
 //________________________________________________________________________________________
 void GeneratePDFTweaked(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv,
-                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile, std::string tag)
+                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile, std::string tag, bool test_force_untuned)
 {
   outfile->cd();
   std::string param_name = util::NameRegistry::Instance()->ParamAsString(p);
   cout << "\n\nGenerating " << tag << " PDF with tweak dial = " << tweak_dial << " for param " << param_name << std::endl;
-  model->ResetSystematics("all");
+  if(test_force_untuned) {
+    model->ForceSystematicsToUntuned();
+  }
+  else {
+    model->ResetSystematics("all");
+  }
 
   model->TweakSystematic(p, tweak_dial, "");
   fp->FromPhysParamList(model->Tweaks(),"current-silent");
