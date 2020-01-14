@@ -46,6 +46,7 @@
 #include "valor/Conventions/Opt.h"
 #include "valor/Conventions/Names.h"
 #include "valor/Conventions/ParameterPool.h"
+#include "valor/Conventions/SystType.h"
 #include "valor/CmdLine/CmdLnArgList.h"
 #include "valor/FitCore/CorrelatedSystematics.h"
 #include "valor/FitCore/PhysParamList.h"
@@ -178,6 +179,7 @@ int main(int argc, char ** argv)
   for (unsigned int ip = 0 ; ip < param_set.size() ; ip++) {
     PhysParamId_t p = param_set[ip];
     if(!util::IsSystematic(p)) { continue; }
+    if(ParameterPool::Instance()->GetParam(p).GetType() == conv::kSystDisabled) { continue; }
     double bestfit = fp->InitValue(p);
 
     if(!syst->Contains(p)) {
