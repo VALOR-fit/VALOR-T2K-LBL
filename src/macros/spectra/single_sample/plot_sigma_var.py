@@ -101,7 +101,16 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
     fin_comp = ROOT.TFile(comp_file, "READ")
 
   param_set_temp = list(util.GetParameterSet(param_set_str, True))   # Only get exact matches to any input param names (otherwise problems can be caused)
-  param_set = [ipar for ipar in param_set_temp if util.IsSystematic(ipar)]
+  param_set_temp2 = [ipar for ipar in param_set_temp if util.IsSystematic(ipar)]
+
+  # Remove any disabled params from the list
+  param_set = []
+  for ip in range(0, len(param_set_temp2)):
+    p = param_set_temp2[ip]
+    param = valor.ParameterPool.Instance().GetParam(p)
+    if param.GetType() != conv.kSystDisabled:
+      param_set.append(p)
+
   if len(param_set) == 0:
     print "ERROR: Got no prams to plot"
     sys.exit()
