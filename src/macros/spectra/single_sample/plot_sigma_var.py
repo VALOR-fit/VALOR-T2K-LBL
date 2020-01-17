@@ -258,6 +258,8 @@ def get_ratio_nom(fin, sigma_var, param_name, selection_name, m, hnom, is_compar
     if _by_mode:
       hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m) + "_" + param_name + "_" + sigma_var
     h = fin.Get(hname)
+    if not h:
+      print "WARNING: Could not get hist named [", hname, "] from the input file"
 
     if _do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1piC:
       # If comparing to the legacy T2K analysis, sum the PDFs of the CC1pi0 and CC1piC modes
