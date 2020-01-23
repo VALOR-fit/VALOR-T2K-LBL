@@ -46,23 +46,41 @@ def copy_eb_to_banff(banff_matrix, banff_nominal, banff_names):
 
 #_________________________________________________________________________________
 def copy_CC_norm_to_banff(banff_matrix, banff_nominal, banff_names):
-    params_to_add = ["CC_norm_nu", "CC_norm_nubar"]
+    params_to_add = ["CC_norm_nu", "CC_norm_nubar", "CC_Coh_C"]
     nominal_vals = {
-        "CC_norm_nu"   : 1.0,
-        "CC_norm_nubar"  : 1.0
+        "CC_norm_nu"     : 1.0,
+        "CC_norm_nubar"  : 1.0,
+        "CC_Coh_C"       : 1.0
     }
     error_vals = {
-        "CC_norm_nu"   : 0.02,
-        "CC_norm_nubar"  : 0.01
+        "CC_norm_nu  "   : 0.02,
+        "CC_norm_nubar"  : 0.01,
+        "CC_Coh_C"       : 0.01
     }
     correlation_vals = {
         "CC_norm_nu"     : { "CC_norm_nubar" : -0.999999},
-        "CC_norm_nubar"  : { "CC_norm_nu"    : -0.999999} 
+        "CC_norm_nubar"  : { "CC_norm_nu"    : -0.999999},
+        "CC_Coh_C"       : { "CC_Coh_O"      :  0.999999} 
     }
 
     return copy_params_to_banff(banff_matrix, banff_nominal, banff_names,
                                 params_to_add, nominal_vals, error_vals, correlation_vals)
 
+#_________________________________________________________________________________
+#def copy_CC_Coh_C_to_banff(banff_matrix, banff_nominal, banff_names):
+#    params_to_add = ["CC_Coh_C"]
+#    nominal_vals = {
+#        "CC_Coh_C"   : 1.0
+#    }
+#    error_vals = {
+#        "CC_Coh_C"   : 0.3,
+#    }
+#    correlation_vals = {
+#    }
+#
+#    return copy_params_to_banff(banff_matrix, banff_nominal, banff_names,
+#                                params_to_add, nominal_vals, error_vals, correlation_vals)
+#
 #_________________________________________________________________________________
 def copy_fsi_to_banff(banff_matrix, banff_nominal, banff_names):
     params_to_add = ["FEFQE", "FEFQEH", "FEFINEL", "FEFABS", "FEFCX"]

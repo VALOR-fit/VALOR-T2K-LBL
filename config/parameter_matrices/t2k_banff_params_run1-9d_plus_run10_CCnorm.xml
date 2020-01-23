@@ -57,6 +57,7 @@
   <parameter>	MARES                </parameter>
   <parameter>	pF_O                 </parameter>
   <parameter>	CC_DIS               </parameter>
+  <parameter>	CC_Coh_C             </parameter>
   <parameter>	CC_Coh_O             </parameter>
   <parameter>	NC_Coh               </parameter>
   <parameter>	NC_other_far         </parameter>
