@@ -89,7 +89,7 @@ def copy_fsi_to_banff(banff_matrix, banff_nominal, banff_names):
         "FEFQEH"  : 1.824,
         "FEFINEL" : 1.002,
         "FEFABS"  : 1.404,
-        "FEFCX"   : 1.800
+        "FEFCX"   : 0.697
     }
     error_vals = {
         "FEFQE"   : 0.313,
