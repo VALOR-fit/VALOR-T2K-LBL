@@ -44,7 +44,7 @@ abnormal_untuned_central_values["CC_DIS"] = 0.0
 #abnormal_untuned_central_values["CA5"] = 1.01
 #abnormal_untuned_central_values["ISO_BKG"] = 1.30
 abnormal_untuned_central_values["2p2h_shape_O"] = 0.0
-abnormal_untuned_central_values["ebo"] = 0.0
+#abnormal_untuned_central_values["ebo"] = 0.0
 
 
 def main(infile_name, parameter_config_filename, parameter_list_filename):

@@ -48,11 +48,11 @@ def copy_eb_to_banff(banff_matrix, banff_nominal, banff_names):
 def copy_CC_norm_to_banff(banff_matrix, banff_nominal, banff_names):
     params_to_add = ["CC_norm_nu", "CC_norm_nubar"]
     nominal_vals = {
-        "CC_norm_nu"   : 1.0,
+        "CC_norm_nu"     : 1.0,
         "CC_norm_nubar"  : 1.0
     }
     error_vals = {
-        "CC_norm_nu"   : 0.02,
+        "CC_norm_nu"     : 0.02,
         "CC_norm_nubar"  : 0.01
     }
     correlation_vals = {
@@ -62,6 +62,38 @@ def copy_CC_norm_to_banff(banff_matrix, banff_nominal, banff_names):
 
     return copy_params_to_banff(banff_matrix, banff_nominal, banff_names,
                                 params_to_add, nominal_vals, error_vals, correlation_vals)
+
+#_________________________________________________________________________________
+def copy_CC_dis_mutipi_to_banff(banff_matrix, banff_nominal, banff_names):
+    params_to_add = ["CC_DIS_MultPi_Norm_Nu", "CC_DIS_MultPi_Norm_Nubar"]
+    nominal_vals = {
+        "CC_DIS_MultPi_Norm_Nu"     : 1.0,
+        "CC_DIS_MultPi_Norm_Nubar"  : 1.0
+    }
+    error_vals = {
+        "CC_DIS_MultPi_Norm_Nu"     : 0.35,
+        "CC_DIS_MultPi_Norm_Nubar"  : 0.65
+    }
+    correlation_vals = {
+        "CC_DIS_MultPi_Norm_Nu"     : { "CC_DIS_MultPi_Norm_Nubar" : 0.999999},
+        "CC_DIS_MultPi_Norm_Nubar"  : { "CC_DIS_MultPi_Norm_Nu"    : 0.999999} 
+    }
+
+    return copy_params_to_banff(banff_matrix, banff_nominal, banff_names,
+                                params_to_add, nominal_vals, error_vals, correlation_vals)    
+#_________________________________________________________________________________
+def copy_CC_misc_to_banff(banff_matrix, banff_nominal, banff_names):
+    params_to_add = ["CC_Misc"]
+    nominal_vals = {
+        "CC_Misc"     : 1.0
+    }
+    error_vals = {
+        "CC_Misc"     : 1.0
+    }
+    correlation_vals = {None}
+    
+    return copy_params_to_banff(banff_matrix, banff_nominal, banff_names,
+                                params_to_add, nominal_vals, error_vals, correlation_vals)    
 
 #_________________________________________________________________________________
 def copy_fsi_to_banff(banff_matrix, banff_nominal, banff_names):
@@ -160,6 +192,13 @@ def add_param_to_banff(banff_filename, outputname, var):
     elif var == "CCnorm":
         new_prefit_matrix , new_prefit_nominal , new_names = copy_CC_norm_to_banff(prefit_matrix , prefit_nominal , banff_names)
         new_postfit_matrix, new_postfit_nominal, _         = copy_CC_norm_to_banff(postfit_matrix, postfit_nominal, banff_names)
+    elif var == "CCdis":
+        new_prefit_matrix , new_prefit_nominal , new_names = copy_CC_dis_mutipi_to_banff(prefit_matrix , prefit_nominal , banff_names)
+        new_postfit_matrix, new_postfit_nominal, _         = copy_CC_dis_mutipi_to_banff(postfit_matrix, postfit_nominal, banff_names)
+    elif var == "CCmisc":
+        new_prefit_matrix , new_prefit_nominal , new_names = copy_CC_misc_to_banff(prefit_matrix , prefit_nominal , banff_names)
+        new_postfit_matrix, new_postfit_nominal, _         = copy_CC_misc_to_banff(postfit_matrix, postfit_nominal, banff_names)
+    
     else:
         print "Currently only adding Eb or FSI params to the BANFF matrix are supported. Exiting."
         sys.exit()
@@ -192,7 +231,7 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--var", type=str, help="The name of the variable to add", required=True)
     parser.add_argument("--output", type=str, help="Name of the output file", required=True)
     args = parser.parse_args()
-    if args.var == "eb" or args.var == "fsi" or  args.var == "CCnorm" :
+    if args.var == "eb" or args.var == "fsi" or  args.var == "CCnorm" or  args.var == "CCdis" or  args.var == "CCmisc" :
         add_param_to_banff(args.banff, args.output, args.var)
     else:
         print "Currently only adding Eb or FSI params to the BANFF matrix are supported. Exiting."

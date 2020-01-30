@@ -394,15 +394,33 @@ def NeutIs2p2h(neut_reaction_mode):
   return neut_reaction_mode == 2
 
 #___________________________________________________________________________
-def NeutIsCCoth(neut_reaction_mode):
+def NeutIsCCDIS(neut_reaction_mode):
+  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  return neut_reaction_mode == 26
+
+#___________________________________________________________________________
+def NeutIsCCMpi(neut_reaction_mode):
+  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  return neut_reaction_mode == 21
+#___________________________________________________________________________
+def NeutIsCCmisc(neut_reaction_mode):
+  # CCmisc=CC1K+CC1eta+CC1gamma
+  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  return (neut_reaction_mode == 17 or
+          neut_reaction_mode == 22 or
+          neut_reaction_mode == 23 )   
+
+# this function is not used anymore, though can be put back in case of need
+#___________________________________________________________________________
+#def NeutIsCCoth(neut_reaction_mode):
   #this is a catch all for everything CC that is not QE, 1pi, or coh
   # needs to be updated if another subcategory is added
-  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
-  return ( neut_reaction_mode == 17 or
-           neut_reaction_mode == 21 or
-           neut_reaction_mode == 22 or
-           neut_reaction_mode == 23 or
-           neut_reaction_mode == 26 )
+ # neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  #return ( neut_reaction_mode == 17 or
+   #        neut_reaction_mode == 21 or
+    #       neut_reaction_mode == 22 or
+     #      neut_reaction_mode == 23 or
+      #     neut_reaction_mode == 26 )
 
 #___________________________________________________________________________
 def NeutIsNC1pi0(neut_reaction_mode):
@@ -507,15 +525,33 @@ def NeutModeToValorMode(neut_mode, flav,  is_oscillated):
       valor_mode = conv.kmNuMuBarCCcoh
     if flav == conv.kNuEBar:
       valor_mode = conv.kmNuEBarCCcoh
-  elif NeutIsCCoth(abs_mode):
+  elif NeutIsCCDIS(abs_mode):
     if flav == conv.kNuMu:
-      valor_mode = conv.kmNuMuCCoth
+      valor_mode = conv.kmNuMuCCDIS
     if flav == conv.kNuE:
-      valor_mode = conv.kmNuECCoth
+      valor_mode = conv.kmNuECCDIS
     if flav == conv.kNuMuBar:
-      valor_mode = conv.kmNuMuBarCCoth
+      valor_mode = conv.kmNuMuBarCCDIS
     if flav == conv.kNuEBar:
-      valor_mode = conv.kmNuEBarCCoth
+      valor_mode = conv.kmNuEBarCCDIS
+  elif NeutIsCCMpi(abs_mode):
+    if flav == conv.kNuMu:
+      valor_mode = conv.kmNuMuCCMpi
+    if flav == conv.kNuE:
+      valor_mode = conv.kmNuECCMpi
+    if flav == conv.kNuMuBar:
+      valor_mode = conv.kmNuMuBarCCMpi
+    if flav == conv.kNuEBar:
+      valor_mode = conv.kmNuEBarCCMpi
+  elif NeutIsCCmisc(abs_mode):
+    if flav == conv.kNuMu:
+      valor_mode = conv.kmNuMuCCmisc
+    if flav == conv.kNuE:
+      valor_mode = conv.kmNuECCmisc
+    if flav == conv.kNuMuBar:
+      valor_mode = conv.kmNuMuBarCCmisc
+    if flav == conv.kNuEBar:
+      valor_mode = conv.kmNuEBarCCmisc
   elif NeutIsNC1piC(abs_mode):
     if flav == conv.kNuMu:
       valor_mode = conv.kmNuMuNC1piC
