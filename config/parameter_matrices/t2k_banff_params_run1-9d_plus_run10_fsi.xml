@@ -59,6 +59,7 @@
   <parameter>	CC_DIS               </parameter>
   <parameter>	CC_Coh_O             </parameter>
   <parameter>	NC_Coh               </parameter>
+  <parameter>  NC_other_near        </parameter>
   <parameter>	NC_other_far         </parameter>
   <parameter>	nue_numu             </parameter>
   <parameter>	NC_1gamma            </parameter>
@@ -71,6 +72,8 @@
   <parameter>	BeRPA_U              </parameter>
   <parameter>	2p2h_shape_O         </parameter>
   <parameter>	2p2h_normCtoO        </parameter>
+  <parameter>  CC_norm_nu           </parameter>
+  <parameter>  CC_norm_nubar        </parameter>
   <parameter>	FEFQE	             </parameter>
   <parameter>	FEFQEH	             </parameter>
   <parameter>	FEFINEL	             </parameter>
