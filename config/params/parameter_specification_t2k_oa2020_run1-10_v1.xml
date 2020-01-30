@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <?xml version="1.0"?>
 <param_list name="T2K_Run1-9">
   <!-- ==================================================================================== -->
@@ -3887,8 +3888,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3907,7 +3907,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3931,8 +3931,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type> <!--Updated by Jaiden-->
 
     <categories>
       <category>  BANFF  </category>
@@ -3951,7 +3950,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
