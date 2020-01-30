@@ -3449,8 +3449,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3469,7 +3468,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3493,8 +3492,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3513,7 +3511,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3801,8 +3799,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3821,7 +3818,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3907,7 +3904,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> true  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3931,7 +3928,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  normalisation  </type> <!--Updated by Jaiden-->
+    <type>  normalisation  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3950,7 +3947,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> true  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3975,8 +3972,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  response  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3987,7 +3983,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>   <!-- TODO: Why do these FSI params apply to all modes? -->
+      <reac_type>   all        </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3995,7 +3991,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
@@ -4020,8 +4016,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  response  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -4040,7 +4035,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
@@ -4065,8 +4060,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  response  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -4085,7 +4079,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
@@ -4110,8 +4104,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  response  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -4130,7 +4123,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
@@ -4155,8 +4148,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  response  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -4175,7 +4167,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true   </update_from_cov_matrix>
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
