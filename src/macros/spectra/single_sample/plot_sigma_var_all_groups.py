@@ -16,7 +16,7 @@ import re
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
 
-
+# Names used internally within this macro
 _valid_formats    = ["VALOR", "MaCh3", "p-theta", "VALOR_legacy"]
 _valid_selections = ["FHC1Rmu", "FHC1Re", "RHC1Rmu", "RHC1Re", "FHCMultiRe"]
 _variations       = ["p3", "p1", "m1", "m3"]
@@ -24,6 +24,9 @@ _variations       = ["p3", "p1", "m1", "m3"]
 #===================================================================================
 # STUFF THAT CHANGES DEPENDING ON THE HIST NAMES AND FORMATS FOR EACH GROUP (START)
 #===================================================================================
+# In the following dictionaries, the keys are the names used internally within this
+# macro (and should stay as they are), and the values are the group-specific names
+# used to retrieve the stored hists from the input files (and can be altered as needed).
 
 # The naming pattern used for the nominal PDFs
 _hist_nom_name_patterns = dict()
@@ -62,8 +65,6 @@ _selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"s
 _selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHCMultiRe":"nue1RD"                     }
 _selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHCMultiRe":"MultiRe"                    }
 
-
-
 #==================================================================================
 # STUFF THAT CHANGES DEPENDING ON THE HIST NAMES AND FORMATS FOR EACH GROUP (END)
 #==================================================================================
@@ -91,13 +92,14 @@ _label_size   = 0.04
 _title_offset = 0.9
 _a_small_num  = 1E-10
 
+# Optionally throw a warning when the ratio hists from each group differ by more than this percentage
 _ratio_diff_warn_threshold_percent = 0.1
 
-# The legacy VALOR T2K analysis does not track CC1piC and CC1pi0 modes separately, like we do in the SDK.
+# The legacy VALOR T2K analysis does not track CC1piC and CC1pi0 modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes.
 _do_sum_cc1pi_modes = False
 
-# The legacy VALOR T2K analysis does not track CCmisc, CCMpi and CCDIS modes separately, like we do in the SDK.
+# The legacy VALOR T2K analysis does not track CCmisc, CCMpi and CCDIS modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes into CCoth.
 _do_sum_ccoth_modes = False
 
