@@ -12,6 +12,8 @@
 import ROOT
 import sys
 import re
+import copy
+from copy import deepcopy
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
@@ -207,7 +209,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
       del title_box
       del leg
 
-print "Done!"
+  print "Done!"
 
 #_______________________________________________________________________
 def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
@@ -254,23 +256,10 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
     print "ERROR: Could not open the input parameter map file!"
     sys.exit()
   _param_map = list_of_tuples(params_file)
-
+  _param_map = sort_map(_param_map, _formats)
   if len(_param_map) == 0:
     print "ERROR: Got no prams to plot"
     sys.exit()
-
-  if len(_param_map[0]) != len(_formats):
-    print "ERROR: The number of entries in each row of the parameter map file should equal the length of the --formats argument."
-    sys.exit()
-
-  # We require that the first line of each map file contains the group names and that they match the order of --format
-  for i,f in enumerate(_formats):
-    if _param_map[0][i] != f:
-      print "The parameter map file is required to have the first (non-commented) row be a list of " \
-            "which group name each column corresponds to. The order of these names must match the " \
-            "order of the group names given to the --format argument"
-      sys.exit()
-  del _param_map[0]   # now that we know the order is correct, there's no need to keep the group names in the list
 
   print "\nPlotting systematic variations for the following params:\n", \
     [param_tuple[0] for param_tuple in _param_map]
@@ -282,19 +271,10 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
       print "ERROR: Could not open the input mode map file!"
       sys.exit()
     _mode_map = list_of_tuples(modes_file)
-
-    if len(_mode_map[0]) != len(_formats):
-      print "ERROR: The number of entries in each row of the mode map file should equal the length of the --formats argument. Exiting."
+    _mode_map = sort_map(_mode_map, _formats)
+    if len(_mode_map) == 0:
+      print "ERROR: Got no modes to plot"
       sys.exit()
-
-    # We require that the first line of each map file contains the group names and that they match the order of --format
-    for i,f in enumerate(_formats):
-      if _mode_map[0][i] != f:
-        print "The mode map file is required to have the first (non-commented) row be a list of " \
-              "which group name each column corresponds to. The order of these names must match the " \
-              "order of the group names given to the --format argument"
-        sys.exit()
-    del _mode_map[0]   # now that we know the order is correct, there's no need to keep the group names in the list
 
     _n_modes = len(_mode_map)
 
@@ -546,6 +526,36 @@ def list_of_tuples(filename):
       tuplelist.append(tuple(filtered.split(',')))
 
   return tuplelist
+
+#_______________________________________________________________________
+def sort_map(old_list_in, new_order):
+  old_list = copy.deepcopy(old_list_in)
+  new_list = []
+  old_order = old_list[0]
+  if len(list(set(new_order))) != len(new_order):
+      print "WARNING: Tried to sort a naming map, but found duplicate names in the ordering, so will not attempt to sort"
+      del old_list[0]
+      return old_list
+  if(len(new_order) > len(old_order)):
+    print "ERROR: The length of the new order list was longer than the length old order list. \n New order =", \
+      new_order, "\n old order =", old_order
+    sys.exit()
+  if(len(new_order) == 0):
+    print "ERROR: The length of the new order list was 0. New order =", new_order
+    sys.exit()
+  order_map = []
+  for o in new_order:
+      if o not in old_order:
+          print "ERROR: New order \'{}\'".format(o), "is not in the old order list:", old_order
+          sys.exit()
+      order_map.append(old_order.index(o))
+  for i in range(1, len(old_list)):
+      # Skip index 0, as that corresponds to the order list
+      new_row = []
+      for j in range(0, len(new_order)):
+          new_row.append(old_list[i][order_map[j]])
+      new_list.append(new_row)
+  return new_list
 
 #_______________________________________________________________________
 def format_drawn_hist(h, x_max, is_binno):
