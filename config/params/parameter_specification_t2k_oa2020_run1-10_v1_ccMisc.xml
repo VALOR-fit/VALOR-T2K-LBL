@@ -2381,7 +2381,7 @@
       <detector>  SuperK  </detector>
       <beam>  all  </beam>
       <selection>  all rings  </selection>
-      <reac_type>  CC oth  </reac_type>
+      <reac_type> t2kleg  CC oth  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>

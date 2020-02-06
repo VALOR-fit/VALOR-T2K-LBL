@@ -2370,7 +2370,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
     
-    <type>  response  </type>
+    <type>  disabled  </type>
     
     <categories>
       <category>  BANFF  </category>
@@ -2389,7 +2389,7 @@
     
     <limits>  -inf, inf  </limits>
     
-    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <update_from_cov_matrix> false  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>            
     <range>                  -5, 5 </range>                 
     <step_mode>              frac  </step_mode>             
@@ -3448,8 +3448,8 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  disabled  </type>  
+    <!--<type>  enable  </type> -->
 
     <categories>
       <category>  BANFF  </category>
@@ -3492,8 +3492,9 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  disabled  </type>  
+    <!--<type>  enable  </type> -->
+
 
     <categories>
       <category>  BANFF  </category>
@@ -3592,7 +3593,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>   <!-- TODO: Make this only apply to 'CC MPi'. Separate the CCMPi mode from the CCOther mode, if applicable? -->
+      <reac_type>   CC Mpi       </reac_type>   <!-- TODO: Make this only apply to 'CC MPi'. Separate the CCMPi mode from the CCOther mode, if applicable? -->
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3636,7 +3637,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all     </reac_type>   <!-- TODO: Make this only apply to 'CC MPi'. Separate the CCMPi mode from the CCOther mode, if applicable? -->
+      <reac_type>   CC Mpi     </reac_type>   <!-- TODO: Make this only apply to 'CC MPi'. Separate the CCMPi mode from the CCOther mode, if applicable? -->
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3668,8 +3669,8 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type>  
+    <!--<type>  disabled  </type>-->
 
     <categories>
       <category>  BANFF  </category>
@@ -3680,7 +3681,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>   <!-- TODO: Make this only apply to 'CC misc'. Separate the CCMisc mode from the CCOther mode -->
+      <reac_type>   CC misc    </reac_type>   <!-- TODO: Make this only apply to 'CC misc'. Separate the CCMisc mode from the CCOther mode -->
       <flav_init>   nu any     </flav_init>
       <flav_final>  nu any     </flav_final>
       <target>      all        </target>
@@ -3688,7 +3689,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3713,7 +3714,7 @@
     </apply_to_range>
 
     <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3724,15 +3725,15 @@
       <detector>    SuperK      </detector>
       <beam>        all         </beam>
       <selection>   all rings   </selection>
-      <reac_type>   all  </reac_type>   <!-- TODO: Make this only apply to 'CC DIS MPi' or just 'CC DIS'?. Separate the CCDISMPi mode from the CCOther mode -->
+      <reac_type>   CC DIS      </reac_type>   <!-- TODO: Make this only apply to 'CC DIS MPi' or just 'CC DIS'?. Separate the CCDISMPi mode from the CCOther mode -->
       <flav_init>   nu any      </flav_init>
       <flav_final>  nu any      </flav_final>
       <target>      all         </target>
     </apply_to>
 
     <limits>  0, inf  </limits>
-
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+CC
+    <update_from_cov_matrix> true  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
@@ -3757,7 +3758,7 @@
     </apply_to_range>
 
     <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  normalisation  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3768,7 +3769,7 @@
       <detector>    SuperK      </detector>
       <beam>        all         </beam>
       <selection>   all rings   </selection>
-      <reac_type>   all  </reac_type>   <!-- TODO: Make this only apply to 'CC DIS MPi' or just 'CC DIS'?. Separate the CCDISMPi mode from the CCOther mode -->
+      <reac_type>   CC DIS  </reac_type>   <!-- TODO: Make this only apply to 'CC DIS MPi' or just 'CC DIS'?. Separate the CCDISMPi mode from the CCOther mode -->
       <flav_init>   nubar any   </flav_init>
       <flav_final>  nubar any   </flav_final>
       <target>      all         </target>
@@ -3776,7 +3777,7 @@
 
     <limits>  0, inf  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma  </range_mode>
     <range>                  -5, 5  </range>
     <step_mode>              frac   </step_mode>
