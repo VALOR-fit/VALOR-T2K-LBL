@@ -34,7 +34,7 @@ _variations       = ["p3", "p1", "m1", "m3"]
 _hist_nom_name_patterns = dict()
 _hist_nom_name_patterns["VALOR"]        = "env_sb_[SAMPLE][MODE]_nom"
 _hist_nom_name_patterns["MaCh3"]        = "[SAMPLE][MODE]_nom"
-_hist_nom_name_patterns["p-theta"]      = "[SAMPLE]_[PARAM][MODE]_nom_[OSC]"
+_hist_nom_name_patterns["p-theta"]      = "[SAMPLE][MODE]_nom_[OSC]"
 _hist_nom_name_patterns["VALOR_legacy"] = None
 
 # The naming pattern used for the PDFs produced by varying one of the parameters and
