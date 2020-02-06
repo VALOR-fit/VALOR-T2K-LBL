@@ -134,8 +134,10 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
       hist_max_var = -999
 
       # Get the +/- 1 and 3 sigma variations and take the ratio to the nominal
+      first_drawn_var = True
       for ivar, sigma_var in enumerate(_variations):
         comparison_dict = dict()
+        first_drawn_format = True
         for iformat, f in enumerate(_formats):
           h = get_ratio_hist(sigma_var, param_name_dict, mode_name_dict, iformat)
           if not h:
@@ -145,7 +147,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           h_binno = hist_to_bin_number(h)   # Also plot with the bin number on the x-axis
 
           draw_opt = "HIST"
-          if ivar != 0 or iformat != 0:
+          if not first_drawn_var or not first_drawn_format:
             draw_opt = "HIST,SAME"
           else:
             format_drawn_hist(h, x_max, False)
@@ -155,12 +157,12 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           canv_binno.cd()
           h_binno.Draw(draw_opt)
 
-          if iformat == 0:
+          if first_drawn_format:
             # Label for each variation
             leg.AddEntry(h, get_label(sigma_var), "l")
           if ivar == len(_variations) -1:
             # Label for each group
-            if iformat == 0:
+            if first_drawn_format:
               leg.AddEntry(None, "", "")  # Blank line
               leg.AddEntry(None, "Groups", "")
             h_copy = ROOT.TH1D(h)
@@ -172,6 +174,8 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           h_list_binno.append(h_binno)
           comparison_dict[f] = h
           hist_max_var = max(hist_max_var, get_max_var_in_range(h, x_max))
+          first_drawn_format = False
+          first_drawn_var = False
 
         # Throw a warning if any of the ratio hists have a difference greater than some threshold
         if not suppress_warn:
