@@ -2319,7 +2319,7 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  pF_O  </simple>
+      <simple>  pF_O  </simple>               <!-- TODO: Remove this param when we have run 10 splines -->
       <long>  BANFF; Fermi Momentum  </long>
       <rootex>  f_{p_{f}}^{banff}  </rootex>
       <tex>  BANFF; Fermi Momentum  </tex>
@@ -2890,50 +2890,6 @@
     <step_mode>              frac  </step_mode>             
     <step>                   0.01  </step>
   </param>
-  
-
-
-  <!-- ==================================================================================== -->
-  <param>
-    <name>
-      <simple>  2p2h_shape_C                </simple>
-      <long>    BANFF; Shape;  2p2h C       </long>
-      <rootex>  f_{Shape_{2p2h C}}^{banff}  </rootex>
-      <tex>     BANFF; Shape; 2p2h C        </tex>
-    </name>
-
-    <apply_to_range>
-      <Etrue>  0, inf  </Etrue>
-    </apply_to_range>
-
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
-
-    <categories>
-      <category>  BANFF  </category>
-      <category>  int    </category>
-    </categories>
-
-    <apply_to>
-      <detector>    SuperK     </detector>
-      <beam>        all        </beam>
-      <selection>   all rings  </selection>
-      <reac_type>   CC 2p2h    </reac_type>
-      <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
-      <target>      all        </target>
-    </apply_to>
-
-    <limits>  0.0, inf  </limits>
-
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
-    <range_mode>             sigma </range_mode>
-    <range>                  -5, 5 </range>
-    <step_mode>              frac  </step_mode>
-    <step>                   0.01  </step>
-    <init>                   0     </init>
-    <error>                  3     </error>
-  </param>
 
 
 
@@ -3335,50 +3291,6 @@
     <step>                   0.01  </step>
     <init>                   0     </init>
     <error>                  0.16  </error>
-  </param>
-
-
-
-  <!-- ==================================================================================== -->
-  <param>
-    <name>
-      <simple>  EB_dial_C                 </simple>
-      <long>    BANFF; Shape; Eb C        </long>
-      <rootex>  f_{Shape_{Eb C}}^{banff}  </rootex>
-      <tex>     BANFF; Shape; Eb C        </tex>
-    </name>
-    
-    <apply_to_range>
-      <Etrue>  0, inf  </Etrue>
-    </apply_to_range>
-
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
-    
-    <categories>
-      <category>  BANFF  </category>
-      <category>  int    </category>
-    </categories>
-    
-    <apply_to>
-      <detector>    SuperK     </detector>
-      <beam>        all        </beam>
-      <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
-      <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
-      <target>      all        </target>
-    </apply_to>
-    
-    <limits>  16, 43  </limits>
-
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
-    <range_mode>             sigma </range_mode>
-    <range>                  -5, 5 </range>
-    <step_mode>              frac  </step_mode>
-    <step>                   0.01  </step>
-    <init>                   25    </init>
-    <error>                  9     </error>
   </param>
 
 
@@ -3791,50 +3703,6 @@ CC
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  CC_Coh_C                     </simple>
-      <long>    BANFF; Norm; CC Coh C        </long>
-      <rootex>  f_{Norm_{CC Coh C}}^{banff}  </rootex>
-      <tex>     BANFF; Norm; CC Coh C        </tex>
-    </name>
-
-    <apply_to_range>
-      <Etrue>  0, inf  </Etrue>
-    </apply_to_range>
-
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
-
-    <categories>
-      <category>  BANFF  </category>
-      <category>  int    </category>
-    </categories>
-
-    <apply_to>
-      <detector>    SuperK      </detector>
-      <beam>        all         </beam>
-      <selection>   all rings   </selection>
-      <reac_type>   CC Coh      </reac_type>
-      <flav_init>   all         </flav_init>
-      <flav_final>  all         </flav_final>
-      <target>      all         </target>
-    </apply_to>
-
-    <limits>  0, inf  </limits>
-
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
-    <range_mode>             sigma </range_mode>
-    <range>                  -5, 5 </range>
-    <step_mode>              frac  </step_mode>
-    <step>                   0.01  </step>
-    <init>                   1     </init>
-    <error>                  0.3   </error>
-  </param>
-
-
-
-  <!-- ==================================================================================== -->
-  <param>
-    <name>
       <simple>  CC_Coh_O                     </simple>
       <long>    BANFF; Norm; CC Coh O        </long>
       <rootex>  f_{Norm_{CC Coh O}}^{banff}  </rootex>
@@ -3865,50 +3733,6 @@ CC
     <limits>  0, inf  </limits>
 
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>
-    <range>                  -5, 5 </range>
-    <step_mode>              frac  </step_mode>
-    <step>                   0.01  </step>
-    <init>                   1     </init>
-    <error>                  0.3   </error>
-  </param>
-
-
-
-  <!-- ==================================================================================== -->
-  <param>
-    <name>
-      <simple>  NC_other_near                   </simple>
-      <long>    BANFF; Norm; NC Oth near        </long>
-      <rootex>  f_{Norm_{NC Oth near}}^{banff}  </rootex>
-      <tex>     BANFF; Norm; NC Oth near        </tex>
-    </name>
-
-    <apply_to_range>
-      <Etrue>  0, inf  </Etrue>
-    </apply_to_range>
-
-    <!--<type>  normalisation  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
-
-    <categories>
-      <category>  BANFF  </category>
-      <category>  int    </category>
-    </categories>
-
-    <apply_to>
-      <detector>    SuperK      </detector>
-      <beam>        all         </beam>
-      <selection>   all rings   </selection>
-      <reac_type>   NC oth      </reac_type>
-      <flav_init>   all         </flav_init>
-      <flav_final>  all         </flav_final>
-      <target>      all         </target>
-    </apply_to>
-
-    <limits>  0, inf  </limits>
-
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
