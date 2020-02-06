@@ -34,7 +34,7 @@ _variations       = ["p3", "p1", "m1", "m3"]
 _hist_nom_name_patterns = dict()
 _hist_nom_name_patterns["VALOR"]        = "env_sb_[SAMPLE][MODE]_nom"
 _hist_nom_name_patterns["MaCh3"]        = "[SAMPLE][MODE]_nom"
-_hist_nom_name_patterns["p-theta"]      = "[SAMPLE][MODE]_nom_[OSC]"
+_hist_nom_name_patterns["p-theta"]      = "[SAMPLE]_nom[MODE]_[OSC]"
 _hist_nom_name_patterns["VALOR_legacy"] = None
 
 # The naming pattern used for the PDFs produced by varying one of the parameters and
@@ -194,10 +194,10 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
       canv_ereco.cd()
       canv_ereco.Update()
-      canv_ereco.SaveAs(get_output_name(output_filename, ip, im, False), "RECREATE")
+      canv_ereco.SaveAs(get_output_name(output_filename, selec, ip, im, False), "RECREATE")
       canv_binno.cd()
       canv_binno.Update()
-      canv_binno.SaveAs(get_output_name(output_filename, ip, im, True), "RECREATE")
+      canv_binno.SaveAs(get_output_name(output_filename, selec, ip, im, True), "RECREATE")
 
       # Free up memory
       del canv_ereco
@@ -593,8 +593,9 @@ def make_title_box(title):
   return title_box
 
 #_______________________________________________________________________
-def get_output_name(output_filename, ip, im, is_binno):
+def get_output_name(output_filename, selec, ip, im, is_binno):
   save_name = output_filename
+  save_name += "_" + selec
   if is_binno:
     save_name += "_binno"
   else:
