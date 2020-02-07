@@ -6,6 +6,31 @@
 # Input one ROOT file per group, each containing TH1D's of either the varied and
 # nominal spectra or the ratio of the two (depending on the options set below).
 #
+# Example usage (see the bottom of this file for explanations of each argument):
+#   Compare VALOR, MaCh3 and p-theta (non-mode; FHC single-ring mu-like sample):
+#     python plot_sigma_var_all_groups.py \
+#     --out-file sigma_var_VALOR_vs_MaCh3_vs_p-theta \
+#     --in-files \
+#       valor_file.root \
+#       mach3_file.root \
+#       p-theta_file.root \
+#     --formats VALOR MaCh3 p-theta \
+#     --selection FHC1Rmu \
+#     --x-max 3 \
+#     --params maps/valor_mach3_ptheta_xsec_param_name_map.arg
+#
+#  Compare p-theta and MaCh3 (by mode; FHC nueCC1pi-like sample):
+#    python plot_sigma_var_all_groups.py \
+#    --out-file sigma_var_p-theta_vs_MaCh3 \
+#    --in-files \
+#      p-theta_file.root \
+#      mach3_file.root \
+#    --formats p-theta MaCh3 \
+#    --selection FHCMultiRe \
+#    --x-max 1.25 \
+#    --params maps/valor_mach3_ptheta_xsec_param_name_map.arg \
+#    --modes $VALOR_EXPT/config/maps/valor_mach3_ptheta_mode_name_map.arg
+#
 # Francis Bench <F.Bench \at liverpool.ac.uk>
 # Feburary 2020
 
