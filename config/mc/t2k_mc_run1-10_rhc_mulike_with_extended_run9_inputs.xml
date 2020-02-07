@@ -54,12 +54,12 @@ Input MC templates
 
   <dst>
     <jparc_fhc>
-       <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v2.root </filename>
+       <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v3.root </filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v2.root </filename>
+        <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v3.root </filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>
@@ -118,8 +118,8 @@ Splines
 -->
 
 <splines>
-    <folder>          official/2020/xsec/splines2020v1/valor_format          </folder>
-    <pattern>         splines_spline2019fitqunflux13v2_[BEAM]_[SAMPLE].root  </pattern>
+    <folder>          official/2018/xsec/splines2018v1/valor_format          </folder>
+    <pattern>         splines_spline2018v1_[BEAM]_[SAMPLE].root  </pattern>
     <stored_as>       TObjArray                                              </stored_as>
     <array_pattern>   spl_[MODE]_[PARAM]                                     </array_pattern>
     <method>          curr_tweak                                             </method>           <!-- This uses weight = spline->Eval(current - untuned) -->

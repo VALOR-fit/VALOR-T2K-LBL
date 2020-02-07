@@ -1,0 +1,22 @@
+# List of ('VALOR', 'MaCh3') parameters, with the 1st row being the format names expected by plot_sigma_var_all_groups.py
+  (  'VALOR'          , 'MaCh3'       ),
+  (  'MAQE'           , 'xsec_par_0'  ) ,      #0    | MAQE
+  (  'pF_O'           , 'xsec_par_2'  ) ,      #2    | pF_O
+  (  '2p2h_norm_nu'   , 'xsec_par_3'  ) ,      #3    | 2p2h_norm_nu
+  (  '2p2h_norm_nubar', 'xsec_par_4'  ) ,      #4    | 2p2h_norm_nubar
+  (  '2p2h_normCtoO'  , 'xsec_par_5'  ) ,      #5    | 2p2h_norm_CtoO
+  (  '2p2h_shape_O'   , 'xsec_par_7'  ) ,      #7    | 2p2h_shape_O
+  (  'BeRPA_A'        , 'xsec_par_8'  ) ,      #8    | BeRPA_A
+  (  'BeRPA_B'        , 'xsec_par_9'  ) ,      #9    | BeRPA_B
+  (  'BeRPA_D'        , 'xsec_par_10' ) ,      #10   | BeRPA_D
+  (  'BeRPA_E'        , 'xsec_par_11' ) ,      #11   | BeRPA_E
+  (  'CA5'            , 'xsec_par_13' ) ,      #13   | CA5
+  (  'MARES'          , 'xsec_par_14' ) ,      #14   | MARES
+  (  'ISO_BKG'        , 'xsec_par_15' ) ,      #15   | ISO_BKG
+  (  'nue_numu'       , 'xsec_par_18' ) ,      #18   | nue_numu
+  (  'nuebar_numubar' ,'xsec_par_19'  ) ,      #19   | nuebar_numubar
+  (  'CC_DIS'         , 'xsec_par_20' ) ,      #20   | CC_DIS
+  (  'CC_Coh_O'       , 'xsec_par_22' ) ,      #22   | CC_Coh_O
+  (  'NC_Coh'         , 'xsec_par_23' ) ,      #23   | NC_Coh
+  (  'NC_1gamma'      , 'xsec_par_24' ) ,      #24   | NC_1gamma
+  (  'NC_other_far'   , 'xsec_par_26' )        #26   | NC_other_far

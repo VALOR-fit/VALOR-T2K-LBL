@@ -46,36 +46,42 @@ def copy_eb_to_banff(banff_matrix, banff_nominal, banff_names):
 
 #_________________________________________________________________________________
 def copy_intermediate_run10_params_to_banff(banff_matrix, banff_nominal, banff_names):
-    params_to_add = ["FEFQE", "FEFQEH", "FEFINEL", "FEFABS", "FEFCX", "CC_norm_nu", "CC_norm_nubar", "CC_Coh_C", "NC_other_near"]
+    params_to_add = ["FEFQE", "FEFQEH", "FEFINEL", "FEFABS", "FEFCX", "CC_norm_nu", "CC_norm_nubar",
+                     "CC_DIS_MultPi_Norm_Nu", "CC_DIS_MultPi_Norm_Nubar", "CC_Misc"]
     nominal_vals = {
-        "FEFQE"          : 1.069,
-        "FEFQEH"         : 1.824,
-        "FEFINEL"        : 1.002,
-        "FEFABS"         : 1.404,
-        "FEFCX"          : 0.697,
-        "CC_norm_nu"     : 1.0,
-        "CC_norm_nubar"  : 1.0,
-        "CC_Coh_C"       : 1.0
+        "FEFQE"                    : 1.069,
+        "FEFQEH"                   : 1.824,
+        "FEFINEL"                  : 1.002,
+        "FEFABS"                   : 1.404,
+        "FEFCX"                    : 0.697,
+        "CC_norm_nu"               : 1.0,
+        "CC_norm_nubar"            : 1.0,
+        "CC_DIS_MultPi_Norm_Nu"    : 1.0,
+        "CC_DIS_MultPi_Norm_Nubar" : 1.0,
+        "CC_Misc"                  : 1.0
     }
     error_vals = {
-        "FEFQE"          : 0.313,
-        "FEFQEH"         : 0.859,
-        "FEFINEL"        : 1.101,
-        "FEFABS"         : 0.432,
-        "FEFCX"          : 0.305,
-        "CC_norm_nu  "   : 0.02,
-        "CC_norm_nubar"  : 0.01,
-        "CC_Coh_C"       : 0.01
+        "FEFQE"                    : 0.313,
+        "FEFQEH"                   : 0.859,
+        "FEFINEL"                  : 1.101,
+        "FEFABS"                   : 0.432,
+        "FEFCX"                    : 0.305,
+        "CC_norm_nu  "             : 0.02,
+        "CC_norm_nubar"            : 0.01,
+        "CC_DIS_MultPi_Norm_Nu"    : 0.35,
+        "CC_DIS_MultPi_Norm_Nubar" : 0.65,
+        "CC_Misc"                  : 1.0
     }
     correlation_vals = {
-        "FEFQE"          : { "FEFQEH" : -0.03, "FEFINEL" :  0.03, "FEFABS"  : -0.27, "FEFCX"  : -0.20 },
-        "FEFQEH"         : { "FEFQE"  : -0.03, "FEFINEL" : -0.53, "FEFABS"  :  0.03, "FEFCX"  :  0.01 },
-        "FEFINEL"        : { "FEFQE"  :  0.03, "FEFQEH"  : -0.53, "FEFABS"  : -0.03, "FEFCX"  : -0.01 },
-        "FEFABS"         : { "FEFQE"  : -0.27, "FEFQEH"  :  0.03, "FEFINEL" : -0.03, "FEFCX"  : -0.31 },
-        "FEFCX"          : { "FEFQE"  : -0.20, "FEFQEH"  :  0.01, "FEFINEL" : -0.01, "FEFABS" : -0.31 },
-        "CC_norm_nu"     : { "CC_norm_nubar" : -0.999999},
-        "CC_norm_nubar"  : { "CC_norm_nu"    : -0.999999},
-        "CC_Coh_C"       : { "CC_Coh_O"      :  0.999999}
+        "FEFQE"                    : { "FEFQEH" : -0.03, "FEFINEL" :  0.03, "FEFABS"  : -0.27, "FEFCX"  : -0.20 },
+        "FEFQEH"                   : { "FEFQE"  : -0.03, "FEFINEL" : -0.53, "FEFABS"  :  0.03, "FEFCX"  :  0.01 },
+        "FEFINEL"                  : { "FEFQE"  :  0.03, "FEFQEH"  : -0.53, "FEFABS"  : -0.03, "FEFCX"  : -0.01 },
+        "FEFABS"                   : { "FEFQE"  : -0.27, "FEFQEH"  :  0.03, "FEFINEL" : -0.03, "FEFCX"  : -0.31 },
+        "FEFCX"                    : { "FEFQE"  : -0.20, "FEFQEH"  :  0.01, "FEFINEL" : -0.01, "FEFABS" : -0.31 },
+        "CC_norm_nu"               : { "CC_norm_nubar" : -0.999999},
+        "CC_norm_nubar"            : { "CC_norm_nu"    : -0.999999},
+        "CC_DIS_MultPi_Norm_Nu"    : { "CC_DIS_MultPi_Norm_Nubar" : 0.999999},
+        "CC_DIS_MultPi_Norm_Nubar" : { "CC_DIS_MultPi_Norm_Nu"    : 0.999999}
     }
     # TODO: Need untuned values too?
 
@@ -182,5 +188,5 @@ if __name__ == "__main__":
     if args.var == "eb" or args.var == "intermediate_run10":
         add_param_to_banff(args.banff, args.output, args.var)
     else:
-        print "Currently only adding Eb, FSI, CCnorm, or NC_other_near params to the BANFF matrix are supported. Exiting."
+        print "Currently only adding Eb, FSI, CCnorm, DIS and misc to the BANFF matrix are supported. Exiting."
         sys.exit()

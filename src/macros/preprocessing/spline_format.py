@@ -84,8 +84,11 @@ def get_systematics():
     ]
 
 def get_mode_map():
-    valor_modes = ["CCQE","CCcoh","CCMEC","CCoth","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+   
+    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
     raw_modes   = ["ccqe","cccoh","mec"  ,"ccoth","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
+   # valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMPi","CCMisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+   # raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
     return list(zip(raw_modes, valor_modes))
 
 def get_flavour_map():
@@ -325,6 +328,12 @@ def main(version, path, sample, config):
             # copy the newly made CC1piC spline into CC1pi0 as well (use the same spline for both modes)
             if mode == "CC1piC":
                 spline_array.Write(build_spline_array_name(par, valor_type, "CC1pi0"), 1)
+            
+            # The legacy T2K analysis did not distinguish between CCDIS, CCMpi and CCMisc (all three go to CCoth mode),
+            # but we do in the SDK.So copy the newly made CCDIS spline into CCMpi and CCMisc) as well (use the same spline for these modes)
+            if mode == "CCDIS":
+                spline_array.Write(build_spline_array_name(par, valor_type, "CCMpi"),  1)
+                spline_array.Write(build_spline_array_name(par, valor_type, "CCMisc"), 1)   
 
 
         tf.Close()
