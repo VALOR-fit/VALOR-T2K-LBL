@@ -28,7 +28,7 @@ python_undefined = 2L*sys.maxint+1
 python_undefined_short =2**32 -1
 
 # File naming convention
-pattern = "[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root"
+pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION].root"
 models = dict()
 
 def get_file_suffix(sample):
@@ -41,54 +41,41 @@ def get_file_suffix(sample):
 # This is a list containing parameters and the modes they apply to, in the format "param_mode",
 # using raw (T2KReWeight/NDfit) naming
 def get_systematics():
-    # TODO: I've left in the old run 9 syst+mode info for now (but commented out), but this should be removed once the run 10 splines are in
-    # return [
-    #         "maqe_ccqe",
-    #         "pfo_ccqe",
-    #         "ebo_cc1pi", "ebo_cccoh", "ebo_ccoth", "ebo_ccqe", "ebo_mec",
-    #             "ebo_nc1gamma", "ebo_nccoh", "ebo_ncoth", "ebo_ncpiz", "ebo_ncpipm",
-    #         "ca5_cc1pi", "ca5_ncpiz", "ca5_ncpipm",
-    #         "manff_cc1pi", "manff_ncpiz", "manff_ncpipm",
-    #         "bgscl_cc1pi", "bgscl_ncpiz", "bgscl_ncpipm",
-    #         "dismpishp_ccoth",
-    #         "mecpdd_mec",
-    #         "erpa_A_ccqe",
-    #         "erpa_B_ccqe",
-    #         "erpa_D_ccqe",
-    #         "erpa_E_ccqe"
-    #        ]
-
-    # TODO: Add effective Eb and Q2 splines, remove BeRPA, add other new params
+    # TODO: Add effective Eb and Q2 splines
     return [
         "maqe_ccqe",
-        "pfo_ccqe",
+        "mecpdd_mec",
         "ca5_cc1pi", "ca5_ncpiz", "ca5_ncpipm",
         "manff_cc1pi", "manff_ncpiz", "manff_ncpipm",
         "bgscl_cc1pi", "bgscl_ncpiz", "bgscl_ncpipm",
-        "dismpishp_ccoth",
-        "mecpdd_mec",
-        "erpa_A_ccqe",
-        "erpa_B_ccqe",
-        "erpa_D_ccqe",
-        "erpa_E_ccqe",
-        "FSIPIABS_ccqe", "FSIPIABS_cc1pi", "FSIPIABS_cccoh", "FSIPIABS_ccoth", "FSIPIABS_ncpiz",
-            "FSIPIABS_ncpipm", "FSIPIABS_nccoh", "FSIPIABS_ncoth", "FSIPIABS_mec", "FSIPIABS_nc1gamma",
-        "FSICEXLO_ccqe", "FSICEXLO_cc1pi", "FSICEXLO_cccoh", "FSICEXLO_ccoth", "FSICEXLO_ncpiz",
-            "FSICEXLO_ncpipm", "FSICEXLO_nccoh", "FSICEXLO_ncoth", "FSICEXLO_mec", "FSICEXLO_nc1gamma",
-        "FSIINELLO_ccqe", "FSIINELLO_cc1pi", "FSIINELLO_cccoh", "FSIINELLO_ccoth", "FSIINELLO_ncpiz",
-            "FSIINELLO_ncpipm", "FSIINELLO_nccoh", "FSIINELLO_ncoth", "FSIINELLO_mec", "FSIINELLO_nc1gamma",
-        "FSIPIPROD_ccqe", "FSIPIPROD_cc1pi", "FSIPIPROD_cccoh", "FSIPIPROD_ccoth", "FSIPIPROD_ncpiz",
-            "FSIPIPROD_ncpipm", "FSIPIPROD_nccoh", "FSIPIPROD_ncoth", "FSIPIPROD_mec", "FSIPIPROD_nc1gamma",
-        "FSIINELHI_ccqe", "FSIINELHI_cc1pi", "FSIINELHI_cccoh", "FSIINELHI_ccoth", "FSIINELHI_ncpiz",
-            "FSIINELHI_ncpipm", "FSIINELHI_nccoh", "FSIINELHI_ncoth", "FSIINELHI_mec", "FSIINELHI_nc1gamma"
+        "bgsclbar_cc1pi", "bgsclbar_ncpiz", "bgsclbar_ncpipm",
+        "FSIPIABS_ccqe", "FSIPIABS_cc1pi", "FSIPIABS_cccoh", "FSIPIABS_ccmisc",
+            "FSIPIABS_ccmpi", "FSIPIABS_ccdis", "FSIPIABS_ncpiz", "FSIPIABS_ncpipm",
+            "FSIPIABS_nccoh", "FSIPIABS_ncoth", "FSIPIABS_mec", "FSIPIABS_nc1gamma",
+        "FSICEXLO_ccqe", "FSICEXLO_cc1pi", "FSICEXLO_cccoh", "FSICEXLO_ccmisc",
+            "FSICEXLO_ccmpi", "FSICEXLO_ccdis", "FSICEXLO_ncpiz", "FSICEXLO_ncpipm",
+            "FSICEXLO_nccoh", "FSICEXLO_ncoth", "FSICEXLO_mec", "FSICEXLO_nc1gamma",
+        "FSIINELLO_ccqe", "FSIINELLO_cc1pi", "FSIINELLO_cccoh", "FSIINELLO_ccmisc",
+            "FSIINELLO_ccmpi", "FSIINELLO_ccdis", "FSIINELLO_ncpiz", "FSIINELLO_ncpipm",
+            "FSIINELLO_nccoh", "FSIINELLO_ncoth", "FSIINELLO_mec", "FSIINELLO_nc1gamma",
+        "FSIPIPROD_ccqe", "FSIPIPROD_cc1pi", "FSIPIPROD_cccoh", "FSIPIPROD_ccmisc",
+            "FSIPIPROD_ccmpi", "FSIPIPROD_ccdis", "FSIPIPROD_ncpiz", "FSIPIPROD_ncpipm",
+            "FSIPIPROD_nccoh", "FSIPIPROD_ncoth", "FSIPIPROD_mec", "FSIPIPROD_nc1gamma",
+        "FSIINELHI_ccqe", "FSIINELHI_cc1pi", "FSIINELHI_cccoh", "FSIINELHI_ccmisc",
+            "FSIINELHI_ccmpi", "FSIINELHI_ccdis", "FSIINELHI_ncpiz", "FSIINELHI_ncpipm",
+            "FSIINELHI_nccoh", "FSIINELHI_ncoth", "FSIINELHI_mec", "FSIINELHI_nc1gamma",
+        "DISBY_ccdis",
+        "MPiBY_ccmpi",
+        "MPiAGKYXsec_ccmpi",
+        "2p2hedeplowenu_mec",
+        "2p2hedephienu_mec",
+        "2p2hedeplowenubar_mec",
+        "2p2hedephienubar_mec"
     ]
 
 def get_mode_map():
-   
-    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
-    raw_modes   = ["ccqe","cccoh","mec"  ,"ccoth","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
-   # valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMPi","CCMisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
-   # raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
+    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMPi","CCMisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+    raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
     return list(zip(raw_modes, valor_modes))
 
 def get_flavour_map():
@@ -106,15 +93,15 @@ def get_param_map():
     # is not intuitive, but they are listed in table 9 of TN-325 (see https://t2k.org/docs/technotes/325/tn-325-v1).
     # In fact, the raw names use some old conventions, and they will probably change to being the same as the
     # VALOR/NIWG names next time splines are generated.
-    raw_params   = ["ca5", "bgscl"  , "maqe", "manff", "pfo" , "dismpishp","erpa_A" , "erpa_B" , "erpa_D" , "erpa_E" , "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI"]
-    valor_params = ["CA5", "ISO_BKG", "MAQE", "MARES", "pF_O", "CC_DIS"   ,"BeRPA_A", "BeRPA_B", "BeRPA_D", "BeRPA_E", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"]
+    raw_params   = ["ca5", "bgscl"  , "bgsclbar"      , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    ]
+    valor_params = ["CA5", "ISO_BKG", "ISO_BKG_LowPPi", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar"]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
     if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe"]:
-        return "250ka"
+        return "fhc"
     elif sample in ["RHC1Rmu","RHC1Re"]:
-        return "m250ka"
+        return "rhc"
     else:
         print "Error: Unknown sample ", sample
         sys.exit()
@@ -317,6 +304,13 @@ def main(version, path, sample, config):
                 new_spline.SetName(new_spl_name)
 
                 idx = true_bin * nbins_reco + reco_bin
+                if idx >= nbins_true * nbins_reco:
+                    print "ERROR: Tried to add spline \'{}\'".format(new_spl_name), "to array", \
+                        build_spline_array_name(par, valor_type, mode), ", but the index ({})".format(idx), \
+                        "is out of range [0, {}]".format(nbins_true * nbins_reco), "; true bin =", true_bin, \
+                        "(max = {})".format(nbins_true), "; reco bin =", reco_bin, "(max = {})".format(nbins_reco), \
+                        "; input spline bins =", all_bins
+                    sys.exit()
                 #if build_spline_array_name(par, valor_type, mode) == "spl_numuCCQE_MAQE":
                 #    print "Adding spline", new_spl_name, "to array", build_spline_array_name(par, valor_type, mode), "at idx =", idx
                 spline_array.AddAt(new_spline, idx)
@@ -328,13 +322,6 @@ def main(version, path, sample, config):
             # copy the newly made CC1piC spline into CC1pi0 as well (use the same spline for both modes)
             if mode == "CC1piC":
                 spline_array.Write(build_spline_array_name(par, valor_type, "CC1pi0"), 1)
-            
-            # The legacy T2K analysis did not distinguish between CCDIS, CCMpi and CCMisc (all three go to CCoth mode),
-            # but we do in the SDK.So copy the newly made CCDIS spline into CCMpi and CCMisc) as well (use the same spline for these modes)
-            if mode == "CCDIS":
-                spline_array.Write(build_spline_array_name(par, valor_type, "CCMpi"),  1)
-                spline_array.Write(build_spline_array_name(par, valor_type, "CCMisc"), 1)   
-
 
         tf.Close()
     output_file.Close()
