@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<!--
+  The ROOT colour codes are from https://root.cern.ch/doc/v608/classTColor.html
+  kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
+  kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
+  kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
+
+
+  The ROOT fill styles are from https://root.cern.ch/doc/master/classTAttFill.html
+
+  The ROOT line colours are from https://root.cern.ch/doc/master/classTAttLine.html
+-->
+
+<coarse_mode_list name="dummy">
+  <coarse_mode>
+    <name>       oscnueCC  </name>
+    <line_col>   1         </line_col>
+    <fill_col>   616       </fill_col>
+    <fill_sty>   1001      </fill_sty>
+  </coarse_mode>
+
+
+
+  <coarse_mode>
+    <name>       NC    </name>
+    <line_col>   1     </line_col>
+    <fill_col>   632   </fill_col>
+    <fill_sty>   1001  </fill_sty>
+  </coarse_mode>
+  
+
+
+  <coarse_mode>
+    <name>       nueCC  </name>
+    <line_col>   1      </line_col>
+    <fill_col>   400    </fill_col>
+    <fill_sty>   1001   </fill_sty>
+  </coarse_mode>
+  
+
+
+  <coarse_mode>
+    <name>       numuCC  </name>
+    <line_col>   1       </line_col>
+    <fill_col>   432     </fill_col>
+    <fill_sty>   1001    </fill_sty>
+  </coarse_mode>
+</coarse_mode_list>

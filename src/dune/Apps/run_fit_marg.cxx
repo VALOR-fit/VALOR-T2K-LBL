@@ -190,6 +190,10 @@ void Fit(CmdLnArgList& arg)
       data->Generate(model, *fpl, with_stat_fluct);
    }
    else if(read_data_from_binary) {
+      // First generate a dummy fake data toy to be overwritten (so that the data arrays can be initialised)
+      FitParamList* fpl_void = util::GetFitParameterList("void", "");
+      data->Generate(model, *fpl_void, with_stat_fluct);
+
       // Fit to data read from an input binary toy file
       std::string data_file_name = arg.GetString("data-file");
       LOG("valor_dune", pNOTICE) << "Will read fake/real data from file [" << data_file_name << "]";

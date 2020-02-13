@@ -31,7 +31,6 @@ util =  valor.util
 conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
-arridx = util.ArrIdx.Instance()
 
 python_undefined = 2L*sys.maxint+1
 python_undefined_short = 2**32 -1

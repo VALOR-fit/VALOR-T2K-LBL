@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<systematic_list name="banff_Run1-9">
+  <parameter>	flux_numu00          </parameter>
+  <parameter>	flux_numu01          </parameter>
+  <parameter>	MAQE                 </parameter>
+  <parameter>	e_scale              </parameter>
+</systematic_list>

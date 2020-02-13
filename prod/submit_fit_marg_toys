@@ -202,10 +202,10 @@ $hierarchy           = "normal"                                                 
 $marg_hierarchy      = 0                                                                   unless defined $marg_hierarchy;
 $mix_param_choice    = "sinsqtheta"                                                        unless defined $mix_param_choice;
 $mix_param_octant    = "two"                                                               unless defined $mix_param_octant;
-$seed_syst           = 1                                                                   unless defined $seed_syst;
-$seed_osc            = 1                                                                   unless defined $seed_osc;
-$seed_stat           = 1                                                                   unless defined $seed_stat;
-$seed_other          = 1                                                                   unless defined $seed_other;
+$seed_syst           = 0                                                                   unless defined $seed_syst;
+$seed_osc            = 0                                                                   unless defined $seed_osc;
+$seed_stat           = 0                                                                   unless defined $seed_stat;
+$seed_other          = 0                                                                   unless defined $seed_other;
 $tag_prefix          = "fit"                                                               unless defined $tag_prefix;
 $config              = "analysis/t2k_analysis_configuration_oa2018_run1-9d_v1_postfit.xml" unless defined $config;
 $param_set           = "random"                                                            unless defined $param_set;
@@ -507,19 +507,11 @@ for($i_fc_par2 = $start_pt_fc_par2; $i_fc_par2 < $start_pt_fc_par2 + $npt_fc_par
 		# If doing FC, work out the correct input FC toy file name
 		$data_file_use = $data_file;
 
-		# TODO: Find a different way of doing this that works both at RAL and elsewhere
 		if($marg_fc_toys == 1) {
-			if($resource eq "RAL" || $resource eq "RAL_HTC") {
-				my $tmpstr = $data_file =~ "s/\[x\]/$i_fc_par1/r";
-        my $fc_filename = $tmpstr =~ "s/\[y\]/$i_fc_par2/r";
-			}
-			else {
-				my $tmpstr = $data_file =~ s/\[x\]/$i_fc_par1/r;
-      	my $fc_filename = $tmpstr =~ s/\[y\]/$i_fc_par2/r;
-			}
-
-			$data_file_use = $fc_filename;
-			print "\n======================================\n";
+      (my $tmpstr = $data_file) =~ s/\[x\]/$i_fc_par1/;
+      ($data_file_use = $tmpstr) =~ s/\[y\]/$i_fc_par2/;
+			
+      print "\n======================================\n";
 			print "= Submitting jobs for FC point \#$i_fc_par1, $i_fc_par2 =\n";
 			print "======================================\n\n";
 		}

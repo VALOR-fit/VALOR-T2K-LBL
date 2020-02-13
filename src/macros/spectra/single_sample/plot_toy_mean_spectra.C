@@ -69,7 +69,7 @@ void plot_toy_mean_spectra(
   CompoundFitData  * cd = dynamic_cast<CompoundFitData*> (data);
 
   cout << "Reading fake data from file [" << filename << "]" << endl;
-  std::ifstream * is_fakedata = new std::ifstream(filename, std::ios::binary | std::ios::in);
+  util::ToyStream* toy_stream = model->InitToyStream(filename, "read", read_opt);
 
   vector<TH1*> mean_hists(cd->GetNSubData(), nullptr);
   vector<vector<TH1*>> mean_hists_mode(cd->GetNSubData(), vector<TH1*>(conv::kNReacModes, nullptr));
@@ -84,13 +84,11 @@ void plot_toy_mean_spectra(
   for(int itoy = 0; itoy < ntoys; ++itoy) {
     if(itoy % 1000 == 0) { cout << "Reading toy #" << itoy << endl; }
 
-    // TODO: I don't like reading the input toy stream into a CFM first, then converting to a CFD. Instead save the toys as a CFD stream.
     // Read a fakedata toy from the input file and write hists to an array
-    model->Read(*is_fakedata, read_opt);   // The input fakedata toy stream must be first read into the model, as they were generated as models.
+    model->Read(toy_stream);
     TObjArray * data_array = new TObjArray();
     if(!by_mode) {
-      data->Generate(model, stat_fluct, gen_opt);
-      data->Write(data_array, tag, write_opt);
+      model->Write(data_array, tag, write_opt);
     }
     else {
       model->Write(data_array, tag, write_opt_model);
@@ -176,6 +174,7 @@ void plot_toy_mean_spectra(
     }
     delete data_array;
   } // itoy
+  delete toy_stream;
   cout << "Finished reading fakedata toys. Will start plotting" << endl;
 
   // Draw and save plots of the mean spectra to the output file

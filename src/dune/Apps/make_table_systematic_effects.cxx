@@ -161,14 +161,15 @@ int main(int argc, char ** argv)
     else                    { syst_param_map[p] = true; }
   }
 
+  FitParamList * fp = util::GetFitParameterList(hypname.c_str(), fplopt.c_str());
+  util::oscillation::SetOscillationParameterPriors(arg, *fp);
+
   // Generate pdfs
   for(int itoy = 0; itoy < ntoys; itoy++) {
     // Randomise the systematics in the model, and copy them to the FPL
     model->ResetSystematics("all");
     model->RandomizeSystematics(syst_param_map);
-
-    FitParamList * fp = util::GetFitParameterList(hypname.c_str(), fplopt.c_str());
-    util::oscillation::SetOscillationParameterPriors(arg, *fp);
+    fp->FromPhysParamList(model->Tweaks(),"current-silent");
 
     // Set input parameters
     RgKeyList input_args = arg.FindKeys("input-");
@@ -201,7 +202,7 @@ int main(int argc, char ** argv)
     }
     
     for(PhysParamId_t p : osc_params) {
-      // TODO: need a consistent treatment of osc param priors specified in a config file.
+      // TODO: Can this be removed now that we have osc params in the config files?
       std::cerr << "Osc param randomisation is not yet supported. Exiting" << std::endl;
       util::Die(-1);
 

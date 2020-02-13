@@ -21,4 +21,5 @@ input-dm23sq                         |   double       |  optional   |   0.00244
 input-deltaCP                        |   double       |  optional   |   0.0
 normal,inverted                      |   boolean_list |  optional   |   normal
 sinsqtheta, sinsq2theta              |   boolean_list |  optional   |   sinsqtheta
-dmsq12abs23,foglilisi                |   boolean_list |  optional   |   dmsq12abs23           
+dmsq12abs23,foglilisi                |   boolean_list |  optional   |   dmsq12abs23
+dmsq-scheme                          |   string       |  optional   |   auto
