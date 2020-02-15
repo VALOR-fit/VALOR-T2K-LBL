@@ -68,7 +68,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
 
     if not text_size:
         text_size = 0.03
-    lymax = 0.89
+    lymax = 0.86
     lymin = lymax - (1 + len(dchisq_objects)) * text_size
     lxmin = 0.15
     lxmax = 0.3
@@ -345,7 +345,7 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
             histo_other_MH = None
             for hname in potential_chisq_hist_names:
                 if file_other_MH.GetListOfKeys().Contains(hname):
-                    histo_other_MH = file.Get(hname)
+                    histo_other_MH = file_other_MH.Get(hname)
                     histo_other_MH.SetDirectory(0)
 
                     # Check the dimensionality of the histogram
@@ -434,7 +434,7 @@ if __name__=="__main__":
     labels = []
     if args.labels:
         labels = [i for i in args.labels]
-        if not len(args.in_filenames) == len(labels) and not args.chisq_calc != "MHpair":
+        if not len(args.in_filenames) == len(labels) and args.chisq_calc != "MHpair":
             print "Error: The number of filenames and labels should match"
             sys.exit()
         elif not 2 * len(args.in_filenames) == len(labels) and args.chisq_calc == "MHpair":
