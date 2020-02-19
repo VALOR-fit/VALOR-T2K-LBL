@@ -110,6 +110,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   # Set up the output tree
   tree_out = ROOT.TTree("valor_t2k_dst","valor_t2k_dst")
   sample     = array('i', [-1])   # For why an array is used see https://root.cern.ch/how/how-write-ttree-python
+  detector   = array('i', [-1])
   beam       = array('i', [-1])
   reac_mode  = array('i', [-1])
   enu_true   = array('d', [-1])
@@ -118,6 +119,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   wght       = array('d', [-1])
   wght_pot   = array('d', [-1])
   tree_out.Branch("sample"       , sample        , "sample/I"    )
+  tree_out.Branch("detector"     , detector      , "detector/I"  )
   tree_out.Branch("beam"         , beam          , "beam/I"      )
   tree_out.Branch("reac_mode"    , reac_mode     , "reac_mode/I" )
   tree_out.Branch("enu_true"     , enu_true      , "enu_true/D"  )
@@ -138,6 +140,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
     nev_input[ifile] += in_tree.GetEntries()
 
     sample[0]       = get_selection(file_in_name)
+    detector[0]     = conv.kdSuperK
     beam[0]         = get_beam(file_in_name)
     true_nu_flavour = get_flavour(file_in_name)
     is_oscillated   = get_osc(file_in_name)
