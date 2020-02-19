@@ -41,7 +41,7 @@ def get_file_suffix(sample):
 # This is a list containing parameters and the modes they apply to, in the format "param_mode",
 # using raw (T2KReWeight/NDfit) naming
 def get_systematics():
-    # TODO: Add effective Eb and Q2 splines
+    # TODO: Add effective Eb splines
     return [
         "maqe_ccqe",
         "mecpdd_mec",
@@ -70,7 +70,12 @@ def get_systematics():
         "2p2hedeplowenu_mec",
         "2p2hedephienu_mec",
         "2p2hedeplowenubar_mec",
-        "2p2hedephienubar_mec"
+        "2p2hedephienubar_mec",
+        "LowQ2Suppression0_ccqe",
+        "LowQ2Suppression1_ccqe",
+        "LowQ2Suppression2_ccqe",
+        "LowQ2Suppression3_ccqe",
+        "LowQ2Suppression4_ccqe"
     ]
 
 def get_mode_map():
@@ -93,8 +98,8 @@ def get_param_map():
     # is not intuitive, but they are listed in table 9 of TN-325 (see https://t2k.org/docs/technotes/325/tn-325-v1).
     # In fact, the raw names use some old conventions, and they will probably change to being the same as the
     # VALOR/NIWG names next time splines are generated.
-    raw_params   = ["ca5", "bgscl"  , "bgsclbar"      , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    ]
-    valor_params = ["CA5", "ISO_BKG", "ISO_BKG_LowPPi", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar"]
+    raw_params   = ["ca5", "bgscl"  , "bgsclbar"      , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4"]
+    valor_params = ["CA5", "ISO_BKG", "ISO_BKG_LowPPi", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        ]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
