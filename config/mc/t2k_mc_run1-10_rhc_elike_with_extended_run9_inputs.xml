@@ -102,16 +102,16 @@ Splines
 -->
 
 <splines>
-    <folder>          official/2018/xsec/splines2018v1/valor_format                  </folder>
-    <pattern>         splines_spline2018v1erectheta_[BEAM]_[SAMPLE].root </pattern>
-    <stored_as>       TObjArray                                                      </stored_as>
-    <array_pattern>   spl_[MODE]_[PARAM]                                             </array_pattern>
-    <method>          curr_tweak                                                     </method>           <!-- This uses weight = spline->Eval(current - untuned) -->
-    <type>            TSpline3                                                       </type>             <!-- For T2K use ROOT's splines rather than GSL's, as GSL spline can't be evaluated outside the limits -->
-    <sort_knot_order> false                                                          </sort_knot_order>  <!-- For T2K some of the spline knots are out-of-order. These knots appear to be ignored? Setting this to true re-orders the splines so that all the knots are in order, which changes the spline behaviour -->
-    <within_limits>   false                                                          </within_limits>    <!-- Some T2K params have a small spline range, where even a 1 sigma variation takes us beyond a limit. Setting this to false allows extrapolation beyond the spline limits -->
-    <allow_negative>  true                                                           </allow_negative>   <!-- Splines that go negative are no longer replaced with flat splines, but the weight cannot go below 0 -->
-    <set_neg_wght_to> 2e-10                                                          </set_neg_wght_to>
+    <folder>          official/2020/xsec/splines2020v2/valor_format                    </folder>
+    <pattern>         splines_spline2019splinesfitqunPreerectheta_[BEAM]_[SAMPLE].root </pattern>
+    <stored_as>       TObjArray                                                        </stored_as>
+    <array_pattern>   spl_[MODE]_[PARAM]                                               </array_pattern>
+    <method>          curr_tweak                                                       </method>           <!-- This uses weight = spline->Eval(current - untuned) -->
+    <type>            TSpline3                                                         </type>             <!-- For T2K use ROOT's splines rather than GSL's, as GSL spline can't be evaluated outside the limits -->
+    <sort_knot_order> false                                                            </sort_knot_order>  <!-- For T2K some of the spline knots are out-of-order. These knots appear to be ignored? Setting this to true re-orders the splines so that all the knots are in order, which changes the spline behaviour -->
+    <within_limits>   false                                                            </within_limits>    <!-- Some T2K params have a small spline range, where even a 1 sigma variation takes us beyond a limit. Setting this to false allows extrapolation beyond the spline limits -->
+    <allow_negative>  true                                                             </allow_negative>   <!-- Splines that go negative are no longer replaced with flat splines, but the weight cannot go below 0 -->
+    <set_neg_wght_to> 2e-10                                                            </set_neg_wght_to>
 </splines>
 
 <!--
