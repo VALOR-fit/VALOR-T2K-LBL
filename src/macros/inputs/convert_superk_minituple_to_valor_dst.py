@@ -150,7 +150,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       enu_reco[0]   = ROOT.TMath.Min(event.erec / 1000., 29.9)      # Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
       enu_true[0]   = event.pnu[0]                                  # Already in GeV/c
       Theta_reco[0] = calc_theta_degrees(event.fq1rdir, event.fqnse, sample[0])  # event.fq1rdir is a 3D list that contains info on the lepton direction and is dependant on the sample
-      wght[0]       = group_NIWG_weights(event, neut_mode)          # Group all of the standard multiplicative NIWG weights into a single weight
+      wght[0]       = group_misc_weights(event, neut_mode)          # Group all of the standard multiplicative NIWG weights into a single weight
 
       if enu_reco[0] < 0. \
          or (is_oscillated and not util.ModeIsCC(reac_mode[0])):
@@ -317,17 +317,19 @@ def calc_theta_degrees(lep_dir_in, size, sample):
   return LepThetaDegrees
 
 #_______________________________________________________________________
-# Group all of the standard multiplicative NIWG weights into a single weight
-def group_NIWG_weights(event, neut_mode):
+# Group all of the standard multiplicative NIWG and flux weights etc. into a single weight
+def group_misc_weights(event, neut_mode):
   weight_NC1Gamma = 1.
+  weight_flux_tuning = event.wgtflx    # NOTE (2020-02-19): Before run 10, we would calculate & apply the flux tuning weights at runtime using tuning histograms; however, these weights are now in the mtuple
 
-  # TODO: Why do we set the NC1Gamma weight to 2?
+  # The NC1gamma production cross-section in NEUT is off by factor 2
+  # NOTE (2020-02-19): This is still true as of NEUT 5.4.0, so will be used in the run 10 analysis
   if NeutIsNC1Gamma(neut_mode):
     weight_NC1Gamma = 2.
 
   # NOTE: If, in the future, you want to put in fake data weights, do so here. See L1597 of SuperkMC.cxx and util::UtlMakeFakeData (in VALOR-T2K-LBL) for examples
 
-  return weight_NC1Gamma
+  return weight_NC1Gamma * weight_flux_tuning
 
 #___________________________________________________________________________
 def NeutIsCCQE(neut_reaction_mode):
