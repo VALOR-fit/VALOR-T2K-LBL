@@ -54,19 +54,19 @@ Input MC templates
 
   <dst>
     <jparc_fhc>
-       <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v3.root </filename>
+       <filename> official/2020/superk/mc/mtuples_19b_procv1/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v1.root </filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v3.root </filename>
+        <filename> official/2020/superk/mc/mtuples_19b_procv1/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v1.root </filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>
   </dst>
   
   <template>
-    <filename> dune/ndfit/2016b/fd/nonexistent.root </filename>
+    <filename> nonexistent.root </filename>
     <tag> pass </tag>
   </template>
   
@@ -86,22 +86,6 @@ Modelist
 <modelist>        modelists/SuperK.xml            </modelist>
 <coarse_modelist> modelists/coarse/t2k/SuperK.xml </coarse_modelist>
 
-
-<!--
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-External Tuning Histograms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
-
-<tuning>
-
-    <tuning_group name="NA61_event-by-event_flux_tuning">
-        <type>      event-by-event                                </type>
-        <operation> multiply                                      </operation>  <!-- TODO: Implement this as an option (it's currently assumed) -->
-        <file>      mc/tuning/t2k_event_by_event_flux_tuning.xml  </file>
-    </tuning_group>
-
-</tuning>
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
