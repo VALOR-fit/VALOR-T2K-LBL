@@ -72,32 +72,32 @@
   <parameter_definitions>
     <!-- Make sure that any config file containing default values is read first! -->
     <filename desc="default_physics_params"> params/default_physics_parameter_values.xml                      </filename>
-    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2020_run1-10_v1_ccMisc.xml  </filename> <!-- TODO: When we have the new BANFF matrix, re-enable all new params and delete the old ones -->
+    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2020_run1-10.xml            </filename> <!-- TODO: When we have the new BANFF matrix, re-enable all new params and delete the old ones -->
     <filename desc="physics_params">         params/physics_parameter_specification_t2k_oa2018_run1-9d_v1.xml </filename>
   </parameter_definitions>
 
 
-  <!-- TODO: Update all this when we have the run 10 matrices -->
-  <systematics name="t2k_run1-9d">
+  <!-- TODO: Update this with the run 10 postfit BANFF matrix -->
+  <systematics name="t2k_run1-10_intermediate">
 
     <group name="banff">
       <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
            The order of params in this list must be the same as the order of params in the matrix.-->
-      <format> t2k_banff_params_run1-9d_plus_run10_CCmisc.xml </format>
+      <format> t2k_banff_params_run1-10.xml </format>
       
       <covariance_matrix>
-        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_CCmisc_valor_order_all.root </filename>
+        <filename> official/2020/banff/run9+intermediate_run10/DataFit_Postfit_2018_final_v1_180907_sk_run9_plus_intermediate_run10_valor_order_all.root </filename>
         <objname>  postfit_cov    </objname>
         <objtype>  TMatrixD       </objtype>
       </covariance_matrix>
 
       <untuned_values>
-        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_CCmisc_valor_order_all.root </filename>
+        <filename> official/2020/banff/run9+intermediate_run10/DataFit_Postfit_2018_final_v1_180907_sk_run9_plus_intermediate_run10_valor_order_all.root </filename>
         <objname>  banff_untuned_central_values  </objname>
       </untuned_values>
 
       <initial_values>
-        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_CCmisc_valor_order_all.root </filename>
+        <filename> official/2020/banff/run9+intermediate_run10/DataFit_Postfit_2018_final_v1_180907_sk_run9_plus_intermediate_run10_valor_order_all.root </filename>
         <objname>  postfit_params  </objname>
       </initial_values>
     </group>
