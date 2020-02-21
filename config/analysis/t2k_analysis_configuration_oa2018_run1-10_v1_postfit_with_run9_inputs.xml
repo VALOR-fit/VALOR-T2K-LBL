@@ -16,7 +16,7 @@
       <mc>           mc/t2k_mc_run1-10_fhc_mulike_with_extended_run9_inputs.xml                     </mc> <!-- TODO -->
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
-      <binning>      binning/t2k_fhc_mulike_run1-9d_bins.xml              </binning>
+      <binning>      binning/t2k_fhc_mulike_run1-10_bins.xml              </binning>
     </element>
 
     <element name="sk_rhc_1rmu">
@@ -28,7 +28,7 @@
       <mc>           mc/t2k_mc_run1-10_rhc_mulike_with_extended_run9_inputs.xml                     </mc> <!-- TODO -->
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
-      <binning>      binning/t2k_rhc_mulike_run1-9d_bins.xml              </binning>
+      <binning>      binning/t2k_rhc_mulike_run1-10_bins.xml              </binning>
     </element>
 
     <element name="sk_fhc_1re">
@@ -40,7 +40,7 @@
       <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
-      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning>
+      <binning>      binning/t2k_fhc_elike_run1-10_bins.xml               </binning>
     </element>
 
     <element name="sk_rhc_1re">
@@ -52,7 +52,7 @@
       <mc>           mc/t2k_mc_run1-10_rhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
-      <binning>      binning/t2k_rhc_elike_run1-9d_bins.xml               </binning>
+      <binning>      binning/t2k_rhc_elike_run1-10_bins.xml               </binning>
     </element>
 
     <element name="sk_fhc_multire">
@@ -64,7 +64,7 @@
       <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
-      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning>
+      <binning>      binning/t2k_fhc_elike_run1-10_bins.xml               </binning>
     </element>
     
   </element_list>
