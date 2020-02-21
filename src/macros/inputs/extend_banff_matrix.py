@@ -46,8 +46,14 @@ def copy_eb_to_banff(banff_matrix, banff_nominal, banff_names):
 
 #_________________________________________________________________________________
 def copy_intermediate_run10_params_to_banff(banff_matrix, banff_nominal, banff_names):
+    # NOTE: untuned values are added in reorder_banff_matrix.py, as the file supplied
+    #       by the BANFF group does not contain untuned values, and this macro needs
+    #       to output a file in the same format as the BANFF file.
     params_to_add = ["FEFQE", "FEFQEH", "FEFINEL", "FEFABS", "FEFCX", "CC_norm_nu", "CC_norm_nubar",
-                     "CC_DIS_MultPi_Norm_Nu", "CC_DIS_MultPi_Norm_Nubar", "CC_Misc"]
+                     "CC_DIS_MultPi_Norm_Nu", "CC_DIS_MultPi_Norm_Nubar", "CC_Misc", "ISO_BKG_LowPPi",
+                     "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar",
+                     "Q2_norm_0", "Q2_norm_1", "Q2_norm_2", "Q2_norm_3", "Q2_norm_4",
+                     "EB_dial_O_nu", "EB_dial_O_nubar", "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult"]
     nominal_vals = {
         "FEFQE"                    : 1.069,
         "FEFQEH"                   : 1.824,
@@ -58,7 +64,49 @@ def copy_intermediate_run10_params_to_banff(banff_matrix, banff_nominal, banff_n
         "CC_norm_nubar"            : 1.0,
         "CC_DIS_MultPi_Norm_Nu"    : 1.0,
         "CC_DIS_MultPi_Norm_Nubar" : 1.0,
-        "CC_Misc"                  : 1.0
+        "CC_Misc"                  : 1.0,
+        "ISO_BKG_LowPPi"           : 0.96,
+        "2p2h_Edep_lowEnu"         : 1.0,
+        "2p2h_Edep_highEnu"        : 1.0,
+        "2p2h_Edep_lowEnubar"      : 1.0,
+        "2p2h_Edep_highEnubar"     : 1.0,
+        "Q2_norm_0"                : 0.495,
+        "Q2_norm_1"                : 0.695,
+        "Q2_norm_2"                : 0.78,
+        "Q2_norm_3"                : 0.89,
+        "Q2_norm_4"                : 0.93,
+        "EB_dial_O_nu"             : 4.0,
+        "EB_dial_O_nubar"          : 0.0,
+        "CC_BY_DIS"                : 0.0,
+        "CC_BY_MPi"                : 0.0,
+        "CC_AGKY_Mult"             : 0.0
+    }
+    untuned_vals = {
+        "FEFQE"                    : 1.069,
+        "FEFQEH"                   : 1.824,
+        "FEFINEL"                  : 1.002,
+        "FEFABS"                   : 1.404,
+        "FEFCX"                    : 0.697,
+        "CC_norm_nu"               : 1.0,
+        "CC_norm_nubar"            : 1.0,
+        "CC_DIS_MultPi_Norm_Nu"    : 1.0,
+        "CC_DIS_MultPi_Norm_Nubar" : 1.0,
+        "CC_Misc"                  : 1.0,
+        "ISO_BKG_LowPPi"           : 1.3,
+        "2p2h_Edep_lowEnu"         : 1.0,
+        "2p2h_Edep_highEnu"        : 1.0,
+        "2p2h_Edep_lowEnubar"      : 1.0,
+        "2p2h_Edep_highEnubar"     : 1.0,
+        "Q2_norm_0"                : 1.0,
+        "Q2_norm_1"                : 1.0,
+        "Q2_norm_2"                : 1.0,
+        "Q2_norm_3"                : 1.0,
+        "Q2_norm_4"                : 1.0,
+        "EB_dial_O_nu"             : 0.0,
+        "EB_dial_O_nubar"          : 0.0,
+        "CC_BY_DIS"                : 0.0,
+        "CC_BY_MPi"                : 0.0,
+        "CC_AGKY_Mult"             : 0.0
     }
     error_vals = {
         "FEFQE"                    : 0.313,
@@ -66,11 +114,26 @@ def copy_intermediate_run10_params_to_banff(banff_matrix, banff_nominal, banff_n
         "FEFINEL"                  : 1.101,
         "FEFABS"                   : 0.432,
         "FEFCX"                    : 0.305,
-        "CC_norm_nu  "             : 0.02,
+        "CC_norm_nu"               : 0.02,
         "CC_norm_nubar"            : 0.01,
-        "CC_DIS_MultPi_Norm_Nu"    : 0.35,
-        "CC_DIS_MultPi_Norm_Nubar" : 0.65,
-        "CC_Misc"                  : 1.0
+        "CC_DIS_MultPi_Norm_Nu"    : 0.035,
+        "CC_DIS_MultPi_Norm_Nubar" : 0.065,
+        "CC_Misc"                  : 1.0,
+        "ISO_BKG_LowPPi"           : 1.3,
+        "2p2h_Edep_lowEnu"         : 1.0,
+        "2p2h_Edep_highEnu"        : 1.0,
+        "2p2h_Edep_lowEnubar"      : 1.0,
+        "2p2h_Edep_highEnubar"     : 1.0,
+        "Q2_norm_0"                : 0.165,
+        "Q2_norm_1"                : 0.145,
+        "Q2_norm_2"                : 0.13,
+        "Q2_norm_3"                : 0.15,
+        "Q2_norm_4"                : 0.16,
+        "EB_dial_O_nu"             : 6.0,
+        "EB_dial_O_nubar"          : 6.0,
+        "CC_BY_DIS"                : 1.0,
+        "CC_BY_MPi"                : 1.0,
+        "CC_AGKY_Mult"             : 1.0
     }
     correlation_vals = {
         "FEFQE"                    : { "FEFQEH" : -0.03, "FEFINEL" :  0.03, "FEFABS"  : -0.27, "FEFCX"  : -0.20 },
@@ -78,15 +141,16 @@ def copy_intermediate_run10_params_to_banff(banff_matrix, banff_nominal, banff_n
         "FEFINEL"                  : { "FEFQE"  :  0.03, "FEFQEH"  : -0.53, "FEFABS"  : -0.03, "FEFCX"  : -0.01 },
         "FEFABS"                   : { "FEFQE"  : -0.27, "FEFQEH"  :  0.03, "FEFINEL" : -0.03, "FEFCX"  : -0.31 },
         "FEFCX"                    : { "FEFQE"  : -0.20, "FEFQEH"  :  0.01, "FEFINEL" : -0.01, "FEFABS" : -0.31 },
-        "CC_norm_nu"               : { "CC_norm_nubar" : -0.999999},
-        "CC_norm_nubar"            : { "CC_norm_nu"    : -0.999999},
-        "CC_DIS_MultPi_Norm_Nu"    : { "CC_DIS_MultPi_Norm_Nubar" : 0.999999},
-        "CC_DIS_MultPi_Norm_Nubar" : { "CC_DIS_MultPi_Norm_Nu"    : 0.999999}
+        "CC_norm_nu"               : { "CC_norm_nubar"            : -0.999999 },
+        "CC_norm_nubar"            : { "CC_norm_nu"               : -0.999999 },
+        "CC_DIS_MultPi_Norm_Nu"    : { "CC_DIS_MultPi_Norm_Nubar" : 0.999999  },
+        "CC_DIS_MultPi_Norm_Nubar" : { "CC_DIS_MultPi_Norm_Nu"    : 0.999999  },
+        "EB_dial_O_nu"             : { "EB_dial_O_nubar"          : 0.70      },
+        "EB_dial_O_nubar"          : { "EB_dial_O_nu"             : 0.70      }
     }
-    # TODO: Need untuned values too?
 
-    return copy_params_to_banff(banff_matrix, banff_nominal, banff_names,
-                                params_to_add, nominal_vals, error_vals, correlation_vals)
+    return copy_params_to_banff(banff_matrix, banff_nominal, banff_names, params_to_add,
+                                nominal_vals, error_vals, correlation_vals)
 #_________________________________________________________________________________
 def copy_params_to_banff(banff_matrix, banff_nominal, banff_names, params_to_add, nominal_vals, error_vals, correlation_vals):
     # Get extended matrices/vectors with the already-existing params as they were + space for the new params
@@ -188,5 +252,5 @@ if __name__ == "__main__":
     if args.var == "eb" or args.var == "intermediate_run10":
         add_param_to_banff(args.banff, args.output, args.var)
     else:
-        print "Currently only adding Eb, FSI, CCnorm, DIS and misc to the BANFF matrix are supported. Exiting."
+        print "Currently only adding Eb, or intermediate run 10 params to the BANFF matrix are supported. Exiting."
         sys.exit()
