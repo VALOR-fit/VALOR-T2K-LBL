@@ -79,7 +79,7 @@ def get_systematics():
     ]
 
 def get_mode_map():
-    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMPi","CCMisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCMisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
     raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
     return list(zip(raw_modes, valor_modes))
 
