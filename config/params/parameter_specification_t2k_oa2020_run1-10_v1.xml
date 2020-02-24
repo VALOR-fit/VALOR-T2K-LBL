@@ -2803,7 +2803,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
+      <reac_type>   CCQE       </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -2846,7 +2846,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
+      <reac_type>   CCQE        </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -2889,7 +2889,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
+      <reac_type>   CCQE       </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -2933,7 +2933,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
+      <reac_type>   CCQE       </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -2976,7 +2976,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
+      <reac_type>   CCQE       </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
