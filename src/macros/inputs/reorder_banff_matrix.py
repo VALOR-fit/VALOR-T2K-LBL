@@ -140,7 +140,7 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
 
 
     # Produce untuned central values - all
-    vec = ROOT.TVectorD(n_banff_params)
+    vec = ROOT.TVectorD(len(ordered_param_name_dict))
 
     for i in xrange(vec.GetNrows()):
       vec[i] = 1.
