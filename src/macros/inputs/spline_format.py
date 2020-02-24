@@ -79,7 +79,7 @@ def get_systematics():
     ]
 
 def get_mode_map():
-    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCMisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCmisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
     raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
     return list(zip(raw_modes, valor_modes))
 
@@ -94,12 +94,15 @@ def get_flavour_map():
 
 def get_param_map():
     # NOTE (2020-01-03, run 10):
-    # The mapping between the raw (i.e. T2KReWeight/NDfit) and VALOR/NIWG param names for the FSI params (FSI.. or FEF...)
-    # is not intuitive, but they are listed in table 9 of TN-325 (see https://t2k.org/docs/technotes/325/tn-325-v1).
-    # In fact, the raw names use some old conventions, and they will probably change to being the same as the
-    # VALOR/NIWG names next time splines are generated.
-    raw_params   = ["ca5", "bgscl"  , "bgsclbar"      , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4"]
-    valor_params = ["CA5", "ISO_BKG", "ISO_BKG_LowPPi", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        ]
+    #   The mapping between the raw (i.e. T2KReWeight/NDfit) and VALOR/NIWG param names for the FSI params (FSI.. or FEF...)
+    #   is not intuitive, but they are listed in table 9 of TN-325 (see https://t2k.org/docs/technotes/325/tn-325-v1).
+    #   In fact, the raw names use some old conventions, and they will probably change to being the same as the
+    #   VALOR/NIWG names next time splines are generated.
+    # NOTE:
+    #   Make sure that if any param name is a subset of another param name, then in the lists below, it appears after
+    #   the param it is a subset of. Otherwise, the wrong param may be fetched.
+    raw_params   = ["ca5", "bgsclbar"      , "bgscl"  , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4"]
+    valor_params = ["CA5", "ISO_BKG_LowPPi", "ISO_BKG", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        ]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
