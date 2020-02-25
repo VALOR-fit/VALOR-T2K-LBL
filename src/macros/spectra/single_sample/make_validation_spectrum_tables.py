@@ -48,7 +48,12 @@ def main(config_file, param_values,
   fpl = util.GetFitParameterListFromHypothesisName(hypname, fplopt)
 
   if force_untuned:
-    model.ForceSystematicsToUntuned()
+    syst = model.GetSystematics()
+    for p in range(0, conv.knppmax):
+      if p == conv.kPhypUndefined:
+          continue
+      if fpl.Exists(p) and syst.Contains(p):
+          fpl.Update(p, syst.UntunedValue(p))
 
   relevant_params = []
   for (parname,val) in param_values.iteritems():
