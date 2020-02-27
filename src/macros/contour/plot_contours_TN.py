@@ -24,8 +24,13 @@ opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
 
+_hatch_fill_style = 3003    # For filling in FC intervals
+
+#________________________________________________________________________________________________________
 def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours, styles, prelim, title_x, title_y,
-                     line_width, text_size, conf_levels, leg_coords, titlesize, FC=False, is_inverted=False, force_max_y = -1):
+                     line_width, text_size, conf_levels, leg_coords, titlesize,
+                     fc_files, fc_graph_names, fc_line_styles, fc_line_colours, fc_draw_critvals, fc_draw_boxes,
+                     is_inverted=False, force_max_y = -1):
     max_val = 0.0
     min_val = 999
     for dchisq_obj in dchisq_objects:
@@ -107,24 +112,8 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         for i, dchisq_obj in enumerate(dchisq_objects):
             legend.AddEntry(dchisq_obj, labels[i], "l")
 
-    if "mix" in pdf_filename and not is_t2k_only and FC:
-        fc_file = ROOT.TFile("FCgraphs.root", "READ")
-        if not is_inverted:
-            g_3sigma_p1 = fc_file.Get("gFC3sigma_nh_p1")
-            g_3sigma_m1 = fc_file.Get("gFC3sigma_nh_m1")
-        else:
-            g_3sigma_p1 = fc_file.Get("gFC3sigma_ih_p1")
-            g_3sigma_m1 = fc_file.Get("gFC3sigma_ih_m1")
-        g_3sigma_p1.SetLineColor(ROOT.kBlack)
-        g_3sigma_p1.SetLineStyle(2)
-        g_3sigma_m1.SetLineColor(ROOT.kBlack)
-        g_3sigma_m1.SetLineStyle(2)
-        fc_file.Close()
-        g_3sigma_p1.Draw("SAME")
-        g_3sigma_m1.Draw("SAME")
-        legend.AddEntry(g_3sigma_p1, "~FC 3#sigma region", "l")
-
-    if not FC:
+    if not fc_files:
+        # Draw constant Delta chisq critical value line
         xlow = dchisq_objects[0].GetXaxis().GetBinLowEdge(1)
         xhigh = dchisq_objects[0].GetXaxis().GetBinUpEdge(dchisq_objects[0].GetNbinsX())
         xpos_frac = 0.8
@@ -144,11 +133,63 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             critical.Draw(critval_draw_opt)
             critval_draw_opt = "same"
 
-            latLine = ROOT.TLatex(xpos, critval + 0.15, util.AsStringRooTex(conf_level))
+            latLine = ROOT.TLatex(xpos, critval + 0.15, util.ConfLevelAsStringRooTex(conf_level))
             latLine.SetTextColor(ROOT.kBlue)
             latLine.SetTextSize(0.05)
             critval_objects.append(latLine)
             latLine.Draw("same")
+    else:
+        # Draw boxes to represent the Feldman-Cousins allowed regions
+        fc_tgraphs  = []
+        hatch_boxes = []
+        for i, dchisq_obj in enumerate(dchisq_objects):
+            fc_tfile = ROOT.TFile(fc_files[i])
+            fc_critval_tgraph = fc_tfile.Get(fc_graph_names[i])
+            if not fc_critval_tgraph:
+                print "ERROR: Could not find a TGraph named \'{}\'".format(fc_graph_names[i]), \
+                      "in the file", fc_files[i]
+                sys.exit()
+            fc_tgraphs.append(fc_critval_tgraph)
+
+            if fc_draw_boxes:
+                [left_boundary, right_boundary] = calc_1d_fc_xrange(dchisq_obj, fc_critval_tgraph)
+                hist_left_edge  = dchisq_obj.GetXaxis().GetBinLowEdge(1)
+                hist_right_edge = dchisq_obj.GetXaxis().GetBinUpEdge(dchisq_obj.GetNbinsX())
+                hatch_box_max_y = 0.66 * max_val
+                if left_boundary > right_boundary:
+                    hatch_interval  = ROOT.TBox(left_boundary , 0, hist_right_edge, hatch_box_max_y)
+                    hatch_interval.SetLineWidth(0)
+                    hatch_interval.SetFillStyle(_hatch_fill_style)
+                    hatch_interval.SetFillColor(dchisq_obj.GetLineColor())
+                    hatch_boxes.append(hatch_interval)
+                    hatch_interval.Draw("same")
+
+                    hatch_interval2 = ROOT.TBox(hist_left_edge, 0, right_boundary , hatch_box_max_y)
+                    hatch_interval2.SetLineWidth(0)
+                    hatch_interval2.SetFillStyle(_hatch_fill_style)
+                    hatch_interval2.SetFillColor(dchisq_obj.GetLineColor())
+                    hatch_boxes.append(hatch_interval2)
+                    hatch_interval2.Draw("same")
+                else:
+                    hatch_interval  = ROOT.TBox(left_boundary , 0, right_boundary , hatch_box_max_y)
+                    hatch_interval.SetLineWidth(0)
+                    hatch_interval.SetFillStyle(_hatch_fill_style)
+                    hatch_interval.SetFillColor(dchisq_obj.GetLineColor())
+                    hatch_boxes.append(hatch_interval)
+                    hatch_interval.Draw("same")
+
+        # Draw the FC critical values in a separate loop to the FC boxes to ensure that the critical value
+        # lines are always in front of the boxes.
+        if fc_draw_critvals:
+            for i, dchisq_obj in enumerate(dchisq_objects):
+                fc_tgraphs[i].SetLineColor(fc_line_colours[i])
+                fc_tgraphs[i].SetLineStyle(fc_line_styles[i])
+                fc_tgraphs[i].Draw("L,same")
+
+                if i == 0:
+                    fc_tgraph_leg_label  = "-2 #Delta lnL_{crit.} " # Have to split this up so that the RooTex subscript/superscript doesn't mess up format()
+                    fc_tgraph_leg_label += "({} CL)".format(util.ConfLevelAsStringRooTex(conf_levels[0]))
+                    legend.AddEntry(fc_tgraphs[i], fc_tgraph_leg_label, "l")
 
     if prelim:
         title = ROOT.TLatex(0.5, 0.91, "T2K Run 1-9 Preliminary")
@@ -164,6 +205,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     canvas.Print(pdf_filename + ".pdf")
     canvas.Print(pdf_filename + ".root")
 
+#________________________________________________________________________________________________________
 def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, styles, best_fit_styles,
                      best_fit_labels, prelim, title_x, title_y, line_width, marker_size, text_size,
                      conf_levels, leg_coords, bf_leg_coords, titlesize, draw_reactor=False, is_inverted=False):
@@ -327,6 +369,7 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
     canvas.Print(pdf_filename + ".pdf")
     canvas.Print(pdf_filename + ".root")
 
+#________________________________________________________________________________________________________
 def get_contour(dchisq_obj):
     canvas = ROOT.TCanvas("c", "c", 0, 0, 700, 500)
     dchisq_obj.Draw("cont3same")
@@ -347,7 +390,7 @@ def get_contour(dchisq_obj):
             graphs.append(g.Clone())
     return graphs
 
-
+#________________________________________________________________________________________________________
 def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
     potential_chisq_hist_names = ["chi2", "h_chisq", "chisq_map_2D"]
     ndim = 0
@@ -417,7 +460,7 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
 
     return ndim
 
-
+#________________________________________________________________________________________________________
 def get_ndims(histo):
     if type(histo) == type(ROOT.TH1D()):
         return 1
@@ -427,7 +470,7 @@ def get_ndims(histo):
         print "ERROR: Could not get the number of histogram dimensions. Exiting."
         sys.exit()
 
-
+#________________________________________________________________________________________________________
 def get_chisq_min(chisq_hists):
     local_min_vals = [h.GetMinimum() for h in chisq_hists]
     chisq_min = min(local_min_vals)
@@ -436,7 +479,7 @@ def get_chisq_min(chisq_hists):
         sys.exit()
     return chisq_min
 
-
+#________________________________________________________________________________________________________
 def convert_to_delta_chisq(chisq_histos, ndim, chisq_min = -1):
     for histo in chisq_histos:
         use_chisq_min = chisq_min
@@ -449,35 +492,185 @@ def convert_to_delta_chisq(chisq_histos, ndim, chisq_min = -1):
             else:
                 histo.SetBinContent(i, histo.GetBinContent(i) - use_chisq_min)
 
+#________________________________________________________________________________________________________
+# Search for the boundaries of the 1D allowed FC region.
+# Returns [left boundary, right boundary].
+# NOTE: This assumes the free parameter is deltacp and that the input Delta chisq
+#       hist spans the full range of [-pi, +pi]
+def calc_1d_fc_xrange(histo, fc_critval_tgraph):
+    lim_x_min = None
+    lim_x_max = None
 
+    # This function assumes the free parameter is deltacp and that the input Delta chisq
+    # hist spans the full range of [-pi, +pi]. Test this assumption.
+    first_bin_centre = histo.GetBinCenter(1)
+    last_bin_centre  = histo.GetBinCenter(histo.GetNbinsX())
+    if ROOT.TMath.Abs(first_bin_centre + ROOT.TMath.Pi()) > conv.kASmallNum or \
+       ROOT.TMath.Abs(last_bin_centre  - ROOT.TMath.Pi()) > conv.kASmallNum:
+        print "ERROR: calc_1d_fc_xrange() assumes the input Delta chisq hist spans the full range of [-pi, +pi].", \
+              "This is not the case. Instead, the hist bins centres span the range [", first_bin_centre, \
+              ",", last_bin_centre, "]"
+        sys.exit()
+
+    # Shift the input Delta chisq hist by the critical values in each bin centre.
+    # This allows us to calculate the range by comparing to a constant (shifted) critical value of 0.
+    # This is equivalent to comparing to a variable critical value, but is easier to handle
+    critval_shifted = 0.0
+    hist_shifted = ROOT.TH1D(histo)
+    for ibin in range(1, hist_shifted.GetNbinsX()+1):
+        bincenter = histo.GetBinCenter(ibin)
+        bincont = histo.GetBinContent(ibin)
+        bincont_new = bincont - fc_critval_tgraph.Eval(bincenter)
+        hist_shifted.SetBinContent(ibin, bincont_new)
+
+    bin_bf = hist_shifted.GetMinimumBin()
+    val_bf = hist_shifted.GetBinCenter(bin_bf)
+    
+    # Bins before (b) and after (a) the intersection with critical value
+    bin_left_search_a  = conv.kBadResult
+    bin_left_search_b  = conv.kBadResult
+    bin_right_search_a = conv.kBadResult
+    bin_right_search_b = conv.kBadResult
+    
+    # Search left of the chisq min for the boundary of the allowed FC region,
+    # wrapping around the deltacp = +/- pi boundary, as needed
+    found = False
+    for ibin in range(bin_bf, 0, -1):
+        bincont = hist_shifted.GetBinContent(ibin)
+        if bincont > critval_shifted:
+            # bins before (b) and after (a) DeltaChisq = critical value (following x direction)
+            bin_left_search_b = ibin
+            bin_left_search_a = bin_left_search_b+1
+            found = True
+            break
+    if not found:
+        # The interval hit the boundary, wrap around
+        for ibin in range(hist_shifted.GetNbinsX(), bin_bf, -1):
+            bincont = hist_shifted.GetBinContent(ibin)
+            if bincont > critval_shifted:
+                # bins before (b) and after (a) DeltaChisq = critical value (following x direction)
+                bin_left_search_b = ibin
+                bin_left_search_a = bin_left_search_b+1
+                found = True
+                break
+    if not found:
+        # If no bin is found it means the DeltaChisq = critical value bin is outside the physical region.
+        # If so, set the left extreme to 1 (first bin of the histogram)
+        print "WARNING: Could not form an allowed FC range when looking left of the chisq min"
+        bin_left_search_a = 1
+        bin_left_search_b = 1
+
+    # Search right of the chisq min for the boundary of the allowed FC region,
+    # wrapping around the deltacp = +/- pi boundary, as needed
+    found = False
+    for ibin in range(bin_bf, hist_shifted.GetNbinsX()+1):
+        bincont = hist_shifted.GetBinContent(ibin)
+        if bincont > critval_shifted:
+            # bins before (b) and after (a) DeltaChisq = critical value
+            bin_right_search_a = ibin
+            bin_right_search_b = bin_right_search_a-1
+            found = True
+            break
+    if not found:
+        # The interval hit the boundary, wrap around
+        for ibin in range(1, bin_bf):
+            bincont = hist_shifted.GetBinContent(ibin)
+            if bincont > critval_shifted:
+                # bins before (b) and after (a) DeltaChisq = critical value (following x direction)
+                bin_right_search_b = ibin
+                bin_right_search_a = bin_right_search_b+1
+                found = True
+                break
+    if not found:
+        # If no bin is found it means the DeltaChisq = critical value bin is outside the physical region.
+        # If so, set the right extreme to Nbins (last bin of the histogram)
+        print "WARNING: Could not form an allowed FC range when looking right of the chisq min"
+        bin_right_search_a = hist_shifted.GetNbinsX()
+        bin_right_search_b = hist_shifted.GetNbinsX()
+
+    # Extrapolation for the left extreme.
+    # Extrapolate between bins to get the x-axis value corresponding to DeltaChisq = critical value.
+    # Do it only if DeltaChisq = critical value bin is within the dchisq histogram
+    if bin_left_search_a > 1:
+        X1 = hist_shifted.GetXaxis().GetBinCenter(bin_left_search_b)
+        X2 = hist_shifted.GetXaxis().GetBinCenter(bin_left_search_a)
+        Y1 = hist_shifted.GetBinContent(bin_left_search_b)
+        Y2 = hist_shifted.GetBinContent(bin_left_search_a)
+        lim_x_min = get_interpolation_x(X1,Y1,X2,Y2,critval_shifted)
+    else:
+        lim_x_min = hist_shifted.GetBinCenter(bin_left_search_a)
+    errneg = ROOT.TMath.Abs(val_bf - lim_x_min)
+
+    # Extrapolation for the right extreme.
+    # Extrapolate between bins to get the x-axis value corresponding to DeltaChisq = critical value.
+    # Do it only if DeltaChisq = critical value bin is within the dchisq histogram
+    if bin_right_search_b < hist_shifted.GetNbinsX():
+        X1 = hist_shifted.GetXaxis().GetBinCenter(bin_right_search_b)
+        X2 = hist_shifted.GetXaxis().GetBinCenter(bin_right_search_a)
+        Y1 = hist_shifted.GetBinContent(bin_right_search_b)
+        Y2 = hist_shifted.GetBinContent(bin_right_search_a)
+        lim_x_max = get_interpolation_x(X1,Y1,X2,Y2,critval_shifted)
+    else:
+        lim_x_max = hist_shifted.GetBinCenter(bin_right_search_b)
+    errpos = ROOT.TMath.Abs(val_bf - lim_x_max)
+
+    # TODO: We use this function for multiple hists, so input a name so that the following printout is clearer
+    print "\nDelta chisq min +/- allowed FC range =", val_bf, "+", errpos, "-", errneg
+    print "\nThe FC confidence interval is: [", val_bf - errneg, ";", val_bf + errpos, "]"
+
+    return [lim_x_min, lim_x_max]
+
+#________________________________________________________________________________________________________
+# Linearly interpolate between two points to get the x-value corresponding to an input y-value
+def get_interpolation_x(X1, Y1, X2, Y2, Yin):
+    if Y1 <= Y2:
+        if Yin < Y1 or Yin > Y2:
+            print "WARNING: Trying to linearly interpolate y =", Yin, \
+                  "outside of the valid y range: [", Y1, ",", Y2, "]"
+    else:
+        if Yin < Y2 or Yin > Y1:
+            print "WARNING: Trying to linearly interpolate y =", Yin, \
+                "outside of the valid y range: [", Y2, ",", Y1, "]"
+    slope = (Y2-Y1)/(X2-X1)
+    Xout = (Yin-Y1)/slope + X1
+    return Xout
+
+#________________________________________________________________________________________________________
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Index splines")
-    parser.add_argument("-f", "--filename"      , dest="in_filenames"     , nargs="+"              , help="Input filename(s) for contour(s).")
-    parser.add_argument("-l", "--label"         , dest="labels"           , nargs="+"              , help="Legend label(s) for contours(s). This should have either 0 length or the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument("-c", "--colour"        , dest="colours"          , nargs="+"              , help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the colours is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
-    parser.add_argument("-s", "--style"         , dest="styles"           , nargs="+"              , help="Custom line style(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename  (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the styles is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
-    parser.add_argument(      "--best-fit-label", dest="best_fit_labels"  , nargs="+"              , help="Labels for best-fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--best-fit-style", dest="best_fit_styles"  , nargs="+"              , help="Marker styles for best fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--conf-levels"   , dest="conf_levels_str"  , nargs="+"              , help="The confidence levels to plot const chisq lines/contours for. See ConfLevel::AsString() for the choices")
-    parser.add_argument(      "--title-x"       , dest="title_x"                                   , help="Override default x-axis title")
-    parser.add_argument(      "--title-y"       , dest="title_y"                                   , help="Override default y-axis title")
-    parser.add_argument(      "--line-width"    , dest="lwidth"           , type=int               , help="Contour line width")
-    parser.add_argument(      "--marker-size"   , dest="msize"            , type=float             , help="Best-fit marker size")
-    parser.add_argument(      "--text-size"     , dest="tsize"            , type=float             , help="Legend text size")
-    parser.add_argument(      "--title-size"    , dest="titlesize"        , type=float,default=0.05, help="Title text size")
-    parser.add_argument("-o", "--output"        , dest="out_filename"                              , help="Output PDF filename")
-    parser.add_argument(      "--chisq-calc"    , dest="chisq_calc"                                , help="If \'global\', the min. Dchisq of each contour is set to 0. If \'local\', Dchisq is calculated relative to the min. of all contours. If \'MHpair\', the contour for the opposite MH is found and the Dchisq of each contour set is relative to the min. of pair of NH/IH contours")
-    parser.add_argument(      "--t2k"           , dest="is_t2k_only"      , action="store_true"    )
-    parser.add_argument(      "--fc"            , dest="FC"               , action="store_true"    )
-    parser.add_argument(      "--prelim"        , dest="prelim"           , action="store_true"    )
-    parser.add_argument(      "--theta23"       , dest="theta23"          , type=float             , help="Input value of theta23.")
-    parser.add_argument(      "--dm23"          , dest="dm23"             , type=float             , help="Input value of dm23.")
-    parser.add_argument(      "--draw-reactor"  , dest="draw_reactor"     , action="store_true"    , help="Draw a vertical band indicating the PDG 2018 reactor constraint on sinsq(theta13) used in the T2K oscillation analysis")
-    parser.add_argument(      "--force-max-y"   , dest="force_max_y"      , type=float             , help="Set the maximum y-axis value in 1D plots to this.")
-    parser.add_argument(      "--max-ndigits-y" , dest="max_ndigits_y"    , type=int, default=3    , help="Max number of digits on the y-axis labels.")
-    parser.add_argument(      "--leg-coords"    , dest="leg_coords_str"   , nargs="+"              , help="Legend corner coordinates [xmin, ymin, xmax, ymax].")
-    parser.add_argument(      "--bf-leg-coords" , dest="bf_leg_coords_str", nargs="+"              , help="Best-fit marker legend corner coordinates [xmin, ymin, xmax, ymax] (for 2D plots only).")
+    parser.add_argument("-f", "--filename"       , dest="in_filenames"     , nargs="+"              , help="Input filename(s) for contour(s).")
+    parser.add_argument("-l", "--label"          , dest="labels"           , nargs="+"              , help="Legend label(s) for contours(s). This should have either 0 length or the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument("-c", "--colour"         , dest="colours"          , nargs="+"              , help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the colours is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument("-s", "--style"          , dest="styles"           , nargs="+"              , help="Custom line style(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename  (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the styles is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument(      "--best-fit-label" , dest="best_fit_labels"  , nargs="+"              , help="Labels for best-fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--best-fit-style" , dest="best_fit_styles"  , nargs="+"              , help="Marker styles for best fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--conf-levels"    , dest="conf_levels_str"  , nargs="+"              , help="The confidence levels to plot const chisq lines/contours for. See ConfLevel::AsString() for the choices")
+    parser.add_argument(      "--title-x"        , dest="title_x"                                   , help="Override default x-axis title")
+    parser.add_argument(      "--title-y"        , dest="title_y"                                   , help="Override default y-axis title")
+    parser.add_argument(      "--line-width"     , dest="lwidth"           , type=int               , help="Contour line width")
+    parser.add_argument(      "--marker-size"    , dest="msize"            , type=float             , help="Best-fit marker size")
+    parser.add_argument(      "--text-size"      , dest="tsize"            , type=float             , help="Legend text size")
+    parser.add_argument(      "--title-size"     , dest="titlesize"        , type=float,default=0.05, help="Title text size")
+    parser.add_argument("-o", "--output"         , dest="out_filename"                              , help="Output PDF filename")
+    parser.add_argument(      "--chisq-calc"     , dest="chisq_calc"                                , help="If \'global\', the min. Dchisq of each contour is set to 0. If \'local\', Dchisq is calculated relative to the min. of all contours. If \'MHpair\', the contour for the opposite MH is found and the Dchisq of each contour set is relative to the min. of pair of NH/IH contours")
+    parser.add_argument(      "--fc-files"       , dest="fc_files"         , nargs="+"              , help="ROOT files containing TGraphs of the FC critical values as a function of the parameter of interest and the mass hierarchy. For 1D fits only. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--fc-graph-names" , dest="fc_graph_names"   , nargs="+"              , help="Names of the TGraphs containing the FC critical values. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--fc-line-styles" , dest="fc_line_styles"   , nargs="+"              , help="Line styles used for plotting the FC critical values with \'--fc-draw-vals\'. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--fc-line-colours", dest="fc_line_colours"  , nargs="+"              , help="Line colours used for plotting the FC critical values with \'--fc-draw-vals\'. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--fc-draw-vals"   , dest="fc_draw_vals"     , action="store_true"    , help="If true, draws the FC critical values on top of the Delta chisq hists")
+    parser.add_argument(      "--fc-draw-boxes"  , dest="fc_draw_boxes"    , action="store_true"    , help="If true, draws shaded boxes representing the FC allowed region on top of the Delta chisq hists")
+    parser.add_argument(      "--t2k"            , dest="is_t2k_only"      , action="store_true"    )
+    parser.add_argument(      "--prelim"         , dest="prelim"           , action="store_true"    )
+    parser.add_argument(      "--theta23"        , dest="theta23"          , type=float             , help="Input value of theta23.")
+    parser.add_argument(      "--dm23"           , dest="dm23"             , type=float             , help="Input value of dm23.")
+    parser.add_argument(      "--draw-reactor"   , dest="draw_reactor"     , action="store_true"    , help="Draw a vertical band indicating the PDG 2018 reactor constraint on sinsq(theta13) used in the T2K oscillation analysis")
+    parser.add_argument(      "--force-max-y"    , dest="force_max_y"      , type=float             , help="Set the maximum y-axis value in 1D plots to this.")
+    parser.add_argument(      "--max-ndigits-y"  , dest="max_ndigits_y"    , type=int, default=3    , help="Max number of digits on the y-axis labels.")
+    parser.add_argument(      "--leg-coords"     , dest="leg_coords_str"   , nargs="+"              , help="Legend corner coordinates [xmin, ymin, xmax, ymax].")
+    parser.add_argument(      "--bf-leg-coords"  , dest="bf_leg_coords_str", nargs="+"              , help="Best-fit marker legend corner coordinates [xmin, ymin, xmax, ymax] (for 2D plots only).")
     args = parser.parse_args()
+
+    # Check the validity of the input arguments
 
     labels = []
     if args.labels:
@@ -578,6 +771,37 @@ if __name__=="__main__":
         if len(leg_coords) != 4:
             print "ERROR: The number of best-fit point legend coordinates must equal 4"
 
+    fc_line_styles  = []
+    fc_line_colours = []
+    if args.fc_files:
+        if args.chisq_calc != "MHpair":
+            if len(args.fc_files) != len(args.in_filenames):
+                print "ERROR: The number of input FC files must match the number of input chisq hist files."
+                sys.exit()
+        else:
+            if len(args.fc_files) != 2 * len(args.in_filenames):
+                print "ERROR: The number of input FC files must be double the number of input chisq hist files."
+                sys.exit()
+        if len(args.fc_graph_names) != len(args.fc_files):
+            print "ERROR: The number of input FC TGraph names must match the number of input FC files."
+            sys.exit()
+        if len(args.fc_line_styles) != len(args.fc_files):
+            print "ERROR: The number of input FC line styles must match the number of input FC files."
+            sys.exit()
+        if len(args.fc_line_colours) != len(args.fc_files):
+            print "ERROR: The number of input FC line colours must match the number of input FC files."
+            sys.exit()
+        if len(conf_levels) != 1:
+            print "ERROR: Tried to plot 1D Feldman-Cousins with != 1 input confidence levels. Plotting FC is only supported for a single confidence level."
+            sys.exit()
+        if num_var != 1:
+            print "ERROR: Only 1D Feldman-Cousins is supported."
+            sys.exit()
+        if "cp" not in args.title_x.lower():
+            print "ERROR: Currently plotting Feldman-Cousins is only supported for deltacp"
+            sys.exit()
+        fc_line_styles  = [int(i) for i in args.fc_line_styles ]
+        fc_line_colours = [int(i) for i in args.fc_line_colours]
 
     ROOT.TGaxis.SetMaxDigits(args.max_ndigits_y)
 
@@ -585,8 +809,9 @@ if __name__=="__main__":
 
     if num_var == 1:
         plot_contours_1d(dchisq_objects, labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim,
-                         args.title_x, "-2#Deltaln(L)", args.lwidth, args.tsize, conf_levels, leg_coords, args.titlesize, args.FC,
-                         is_inverted, args.force_max_y)
+                         args.title_x, "-2#Deltaln(L)", args.lwidth, args.tsize, conf_levels, leg_coords, args.titlesize,
+                         args.fc_files, args.fc_graph_names, fc_line_styles, fc_line_colours, args.fc_draw_vals,
+                         args.fc_draw_boxes, is_inverted, args.force_max_y)
     elif num_var == 2:
         plot_contours_2d(dchisq_objects, labels, args.theta23, args.dm23, args.out_filename, colours, styles,
                          best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth,
