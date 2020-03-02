@@ -376,6 +376,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
 def group_misc_weights(event, neut_mode):
   weight_NC1Gamma = 1.
   weight_flux_tuning = event.wgtflx    # NOTE (2020-02-19): Before run 10, we would calculate & apply the flux tuning weights at runtime using tuning histograms; however, these weights are now in the mtuple
+  weight_maqe_H = event.wgts_maqeh     # NOTE (2020-02-20): In NEUT, MaQE was set to 1.21Gev, instead of 1.03GeV as decided by the NIWG. So In T2KReWeight, this weight was produced to fix this.
 
   # The NC1gamma production cross-section in NEUT is off by factor 2
   # NOTE (2020-02-19): This is still true as of NEUT 5.4.0, so will be used in the run 10 analysis
@@ -384,7 +385,7 @@ def group_misc_weights(event, neut_mode):
 
   # NOTE: If, in the future, you want to put in fake data weights, do so here. See L1597 of SuperkMC.cxx and util::UtlMakeFakeData (in VALOR-T2K-LBL) for examples
 
-  return weight_NC1Gamma * weight_flux_tuning
+  return weight_NC1Gamma * weight_maqe_H * weight_flux_tuning
 
 #___________________________________________________________________________
 def NeutIsCCQE(neut_reaction_mode):
