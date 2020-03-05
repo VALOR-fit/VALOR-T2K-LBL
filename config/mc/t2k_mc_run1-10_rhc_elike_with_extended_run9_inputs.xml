@@ -102,7 +102,7 @@ Splines
 -->
 
 <splines>
-    <folder>          official/2020/xsec/splines2020v4/valor_format                    </folder>
+    <folder>          official/2020/xsec/splines2020v5/valor_format                    </folder>
     <pattern>         splines_spline2019splinesfitqunPreerectheta_[BEAM]_[SAMPLE].root </pattern>
     <stored_as>       TObjArray                                                        </stored_as>
     <array_pattern>   spl_[MODE]_[PARAM]                                               </array_pattern>
