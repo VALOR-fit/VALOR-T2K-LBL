@@ -185,15 +185,14 @@ int main(int argc, char ** argv)
     PhysParamId_t p = param_set[ip];
     if(!util::IsSystematic(p)) { continue; }
     if(ParameterPool::Instance()->GetParam(p).GetType() == conv::kSystDisabled) { continue; }
-    double bestfit = fp->InitValue(p);
-
     if(!syst->Contains(p)) {
       LOG("valor_dune", pFATAL) << "Could not get the 1 sigma error for param \'"
                                 << util::NameRegistry::Instance()->ParamAsString(p) << "\'";
       util::Die(-1);
     }
-    double sigma_err = syst->OneSigmaError(p);
 
+    double bestfit = (test_force_untuned ? syst->UntunedValue(p) : fp->InitValue(p));
+    double sigma_err = syst->OneSigmaError(p);
     double tweak_p1 = bestfit + (1 * sigma_err);
     double tweak_m1 = bestfit - (1 * sigma_err);
     double tweak_p3 = bestfit + (3 * sigma_err);
