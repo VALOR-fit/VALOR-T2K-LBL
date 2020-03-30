@@ -238,7 +238,10 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
         lymax = leg_coords[3]
         use_lxmin = lxmin
 
-    bf_lxmin = lxmin - 0.15 + lx_tsize_scale + 0.07*(1 - float(max([len(i) for i in best_fit_labels]))/15.0) - 0.03
+    maxlen_bf_labels = 0
+    if best_fit_labels:
+        maxlen_bf_labels = float(max([len(i) for i in best_fit_labels]))
+    bf_lxmin = lxmin - 0.15 + lx_tsize_scale + 0.07*(1 - maxlen_bf_labels/15.0) - 0.03
     bf_lxmax = lxmin + lx_tsize_scale - 0.03
     bf_lymin = lymax - (len(filter(None, best_fit_labels)) + int(draw_reactor) + 1) * text_size
     bf_lymax = lymax
