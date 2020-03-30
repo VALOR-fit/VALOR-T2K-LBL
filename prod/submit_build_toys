@@ -306,7 +306,7 @@ if($use_t2k_presets == 1) {
 	} # 1D sinsqth13
 
 	# 1D fit - sinsqth23
-	if(($par1 eq "mixing12") and ($par2 eq "none")) {
+	if(($par1 eq "mixing23") and ($par2 eq "none")) {
 		if($use_reactors == 1) {
 			$ntoys      = 40000      unless defined $ntoys;
 			$cput       = "8:00:00"  unless defined $cput;
