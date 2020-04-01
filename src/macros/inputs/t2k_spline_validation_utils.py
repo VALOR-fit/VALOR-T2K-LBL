@@ -153,3 +153,24 @@ def check_all_spline_binning():
                         sys.exit()
                     bins[run] = get_spline_nbins(files[run])
                 print current, flav, selec, "\n    run9 bins:", bins["r9"], "\n    run10 bins:", bins["r10"]
+
+#________________________________________________________________________________________
+def is_spline_flat(spline):
+    nk = spline.GetNp()
+    for ik in range(0, nk):
+        kx = ROOT.Double(-999)
+        ky = ROOT.Double(-999)
+        spline.GetKnot(ik, kx, ky)
+        if ROOT.TMath.Abs(ky - 1.0) > 1E-10:
+            return False
+    return True
+
+#________________________________________________________________________________________
+def print_nonflat_spline_names(tfile):
+    keys = tfile.GetListOfKeys()
+    for k in keys:
+        name = k.GetName()
+        if not "_sp_" in name:
+            continue
+        if not is_spline_flat(tfile.Get(name)):
+            print name
