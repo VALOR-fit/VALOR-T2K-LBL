@@ -28,7 +28,7 @@ python_undefined = 2L*sys.maxint+1
 python_undefined_short =2**32 -1
 
 # File naming convention
-pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION].root"
+pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_plus_Eb.root"
 models = dict()
 
 def get_file_suffix(sample):
@@ -41,7 +41,7 @@ def get_file_suffix(sample):
 # This is a list containing parameters and the modes they apply to, in the format "param_mode",
 # using raw (T2KReWeight/NDfit) naming
 def get_systematics():
-    # TODO: Add effective Eb splines
+    # TODO: Add the extra new Q2 params
     return [
         "maqe_ccqe",
         "mecpdd_mec",
@@ -75,8 +75,13 @@ def get_systematics():
         "LowQ2Suppression1_ccqe",
         "LowQ2Suppression2_ccqe",
         "LowQ2Suppression3_ccqe",
-        "LowQ2Suppression4_ccqe"
+        "LowQ2Suppression4_ccqe",
+        "EB_dial_O_nu_ccqe", "EB_dial_O_nu_cccoh", "EB_dial_O_nu_mec","EB_dial_O_nu_ccdis",
+            "EB_dial_O_nu_ccmpi", "EB_dial_O_nu_ccmisc", "EB_dial_O_nu_cc1pi",
+        "EB_dial_O_nubar_ccqe", "EB_dial_O_nubar_cccoh", "EB_dial_O_nubar_mec", "EB_dial_O_nubar_ccdis",
+            "EB_dial_O_nubar_ccmpi", "EB_dial_O_nubar_ccmisc", "EB_dial_O_nubar_cc1pi"
     ]
+    # TODO: EB_dial_O_nu and EB_dial_O_nubar have > 1 underscore in their names, account for this when splitting the param from the mode
 
 def get_mode_map():
     valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCmisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
@@ -101,8 +106,8 @@ def get_param_map():
     # NOTE:
     #   Make sure that if any param name is a subset of another param name, then in the lists below, it appears after
     #   the param it is a subset of. Otherwise, the wrong param may be fetched.
-    raw_params   = ["ca5", "bgsclbar"      , "bgscl"  , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4"]
-    valor_params = ["CA5", "ISO_BKG_LowPPi", "ISO_BKG", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        ]
+    raw_params   = ["ca5", "bgsclbar"      , "bgscl"  , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4", "Eb_dial_O_nu", "Eb_dial_O_nubar"]
+    valor_params = ["CA5", "ISO_BKG_LowPPi", "ISO_BKG", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        , "Eb_dial_O_nu", "Eb_dial_O_nubar"]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
@@ -250,6 +255,9 @@ def main(version, path, sample, config):
             if "erpa" in syst:
                 ppar,coeff,mode = syst.split("_")
                 par = ppar +"_"+ coeff
+            elif "EB_dial_O_nu" in syst:
+                p1,p2,p3,p4,mode = syst.split("_")
+                par = p1 +"_"+ p2 +"_"+ p3 +"_"+ p4
             else:  
                 par,mode = syst.split("_")
             for (old,new) in get_mode_map():
@@ -274,6 +282,9 @@ def main(version, path, sample, config):
                 if p == "erpa":
                     p = "erpa_" + tokens[2]
                     m = tokens[3]
+                elif p == "EB":
+                    p = tokens[1] +"_"+ tokens[2] +"_"+ tokens[3] +"_"+ tokens[4]
+                    m = tokens[5]
                 else:
                     m = tokens[2]
                 modes.add(m)
