@@ -41,7 +41,7 @@
 #include "TObjArray.h"
 #include "TString.h"
 #include "TSystem.h"
-
+#include "TVector.h"
 // fmwk
 #include "valor/Conventions/Opt.h"
 #include "valor/Conventions/Names.h"
@@ -198,6 +198,11 @@ int main(int argc, char ** argv)
     double tweak_p3 = bestfit + (3 * sigma_err);
     double tweak_m3 = bestfit - (3 * sigma_err);
 
+    TVectorD nomsigvaluesbefore(0, 4, tweak_m3, tweak_m1, bestfit, tweak_p1, tweak_p3, "END");
+
+
+    nomsigvaluesbefore.Write(TString::Format("nom_sig_values_vector_before_%s", util::NameRegistry::Instance()->ParamAsString(p).c_str() ));
+
     // Apply any special cases here (e.g. to force the tweaks to a certain value)
     SpecialCaseTweak(p, fp, tweak_p1, tweak_m1, tweak_p3, tweak_m3);
 
@@ -210,6 +215,11 @@ int main(int argc, char ** argv)
       << "\n  nominal +3 sigma tweak = " << tweak_p3
       << "\n  nominal -3 sigma tweak = " << tweak_m3;
 
+    TVectorD nomsigvaluesafter(0, 4, tweak_m3, tweak_m1, bestfit, tweak_p1, tweak_p3, "END"); 
+    
+      
+    nomsigvaluesafter.Write(TString::Format("nom_sig_values_vector_after_%s", util::NameRegistry::Instance()->ParamAsString(p).c_str() ));
+
     GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p1, outfile, "p1", test_force_untuned);
     GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m1, outfile, "m1", test_force_untuned);
     GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p3, outfile, "p3", test_force_untuned);
@@ -221,19 +231,96 @@ int main(int argc, char ** argv)
 
   LOG("valor_dune",pNOTICE)<<"Finished writing to file: "<<output_rootfile;
   std::cout << "Done!" << std::endl;
+  fp->Print(cout);
 }
 //________________________________________________________________________________________
 void SpecialCaseTweak(conv::PhysParamId_t p, FitParamList * fp, double& tweak_p1, double& tweak_m1, double& tweak_p3, double& tweak_m3)
 {
   if(t2k) {
     if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_shape_O")) {
-      double bestfit = fp->InitValue(p);
-      double one_sigma_err   = 0.5;
-      double three_sigma_err = 1.0;
-      tweak_p1 = bestfit + one_sigma_err;
-      tweak_m1 = bestfit - one_sigma_err;
-      tweak_p3 = bestfit + three_sigma_err;
-      tweak_m3 = bestfit - three_sigma_err;
+      //  double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = -0.5;
+      double three_sigma_err_upper = 1.0;
+      double three_sigma_err_lower = -1.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+    
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_lowEnu")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_highEnu")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_lowEnubar")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_highEnubar")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("Eb_dial_O_nu")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 15;
+      double one_sigma_err_lower   = 7;
+      double three_sigma_err_upper = -5;
+      double three_sigma_err_lower = -10;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("Eb_dial_O_nubar")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 15;
+      double one_sigma_err_lower   = 7;
+      double three_sigma_err_upper = -5;
+      double three_sigma_err_lower = -10;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
     }
   }
 }

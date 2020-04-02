@@ -32,7 +32,7 @@
 #    --modes $VALOR_EXPT/config/maps/valor_mach3_ptheta_mode_name_map.arg
 #
 # Francis Bench <F.Bench \at liverpool.ac.uk>
-# Feburary 2020
+# February 2020
 
 import ROOT
 import sys
@@ -42,6 +42,8 @@ from copy import deepcopy
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
+ROOT.gStyle.SetOptTitle(0)
+ROOT.gStyle.SetOptStat(0) #Remove box in top right
 
 # Names used internally within this macro
 _valid_formats    = ["VALOR", "MaCh3", "p-theta", "VALOR_legacy"]
@@ -124,7 +126,7 @@ _ratio_diff_warn_threshold_percent = 0.1
 
 # The legacy VALOR T2K analysis does not track CC1piC and CC1pi0 modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes.
-_do_sum_cc1pi_modes = False
+_do_sum_cc1pi_modes = True
 
 # The legacy VALOR T2K analysis does not track CCmisc, CCMpi and CCDIS modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes into CCoth.
@@ -134,8 +136,9 @@ _do_sum_ccoth_modes = False
 def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
   setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth)
 
-  for ip in range(0, len(_param_map)):
-    param_name_dict = get_param_name_dict(ip)
+  for ip in range(-1, len(_param_map)):
+    plot_nominal = (ip == -1)
+    param_name_dict = get_param_name_dict(ip if not plot_nominal else 0)
     for im in range(0, _n_modes):
       mode_name_dict = None
       if _by_mode:
@@ -143,7 +146,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
         if(should_skip_mode(mode_name_dict)):
           continue
 
-      canv_name = "sigma_var_ratio_" + _selecs[_formats[0]] + "_" + param_name_dict[_formats[0]]
+      canv_name = "sigma_var_ratio_" + _selecs[_formats[0]] + "_" + (param_name_dict[_formats[0]] if not plot_nominal else "nominal")
       if _by_mode:
         canv_name += "_" + mode_name_dict[_formats[0]]
       canv_ereco = ROOT.TCanvas(canv_name + "_Ereco", canv_name + "_Ereco", 800, 600)
@@ -153,7 +156,8 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
       print "Making plot named", canv_name
 
       leg = ROOT.TLegend(1.0-_margin_r, 0.65, 0.995, 1.0-_margin_t)
-      leg.AddEntry(None, "Variations", "")
+      if not plot_nominal:
+          leg.AddEntry(None, "Variations", "")
       h_list       = []
       h_list_binno = []
       hist_max_var = -999
@@ -164,11 +168,15 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
         comparison_dict = dict()
         first_drawn_format = True
         for iformat, f in enumerate(_formats):
-          h = get_ratio_hist(sigma_var, param_name_dict, mode_name_dict, iformat)
+          if not plot_nominal:
+            h = get_ratio_hist(sigma_var, param_name_dict, mode_name_dict, iformat)
+          else:
+            h = get_nominal_for_plot(mode_name_dict, iformat)
+
           if not h:
             # Skip any hists that we couldn't read from the input file
             continue
-          h.SetName(canv_name + "_" + sigma_var + "_" + f)
+          h.SetName(canv_name + ("_" + sigma_var if not plot_nominal else "") + "_" + f)
           h_binno = hist_to_bin_number(h)   # Also plot with the bin number on the x-axis
 
           draw_opt = "HIST"
@@ -182,13 +190,14 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           canv_binno.cd()
           h_binno.Draw(draw_opt)
 
-          if first_drawn_format:
+          if first_drawn_format and not plot_nominal:
             # Label for each variation
             leg.AddEntry(h, get_label(sigma_var), "l")
           if ivar == len(_variations) -1:
             # Label for each group
             if first_drawn_format:
-              leg.AddEntry(None, "", "")  # Blank line
+              if not plot_nominal:
+                leg.AddEntry(None, "", "")  # Blank line
               leg.AddEntry(None, "Groups", "")
             h_copy = ROOT.TH1D(h)
             h_copy.SetLineColor(1)  # Keep the group labels in black, so the focus is just on the line style
@@ -203,17 +212,23 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           first_drawn_var = False
 
         # Throw a warning if any of the ratio hists have a difference greater than some threshold
-        if not suppress_warn:
+        if not suppress_warn and not plot_nominal:
           compare_ratio_hists(param_name_dict, mode_name_dict, sigma_var, comparison_dict)
         del comparison_dict
 
-      # Set the y-axis range to be symmetric around ratio = 1
-      h_list      [0].SetMaximum(1 + 1.1 * hist_max_var)
-      h_list      [0].SetMinimum(1 - 1.1 * hist_max_var)
-      h_list_binno[0].SetMaximum(1 + 1.1 * hist_max_var)
-      h_list_binno[0].SetMinimum(1 - 1.1 * hist_max_var)
+      if not plot_nominal:
+        # Set the y-axis range to be symmetric around ratio = 1
+        h_list      [0].SetMaximum(1 + 1.1 * hist_max_var)
+        h_list      [0].SetMinimum(1 - 1.1 * hist_max_var)
+        h_list_binno[0].SetMaximum(1 + 1.1 * hist_max_var)
+        h_list_binno[0].SetMinimum(1 - 1.1 * hist_max_var)
+      else:
+        h_list      [0].SetMaximum(1 + 1.1 * hist_max_var)
+        h_list      [0].SetMinimum(0.)
+        h_list_binno[0].SetMaximum(1 + 1.1 * hist_max_var)
+        h_list_binno[0].SetMinimum(0.)
 
-      title_box = make_title_box(get_title_box_text(param_name_dict, mode_name_dict))
+      title_box = make_title_box(get_title_box_text(param_name_dict if not plot_nominal else None, mode_name_dict))
       canv_ereco.cd()
       title_box.Draw("SAME")
       leg.Draw("SAME")
@@ -355,7 +370,7 @@ def should_skip_mode(mode_name_dict):
 #_______________________________________________________________________
 def get_title_box_text(param_name_dict, mode_name_dict):
   print_selec_name = _selecs[_formats[0]]
-  print_param_name = param_name_dict[_formats[0]]
+  print_param_name = param_name_dict[_formats[0]] if param_name_dict else ""
   title_text = print_selec_name + "  " + print_param_name
   if _by_mode:
     print_mode_name  = mode_name_dict[_formats[0]]
@@ -406,6 +421,19 @@ def get_ratio_hist(sigma_var, param_name_dict, mode_name_dict, iformat):
 
   ROOT.SetOwnership(hratio, False)       # This stops the object being deleted from memory when it goes out of scope
   return hratio
+
+#_______________________________________________________________________
+def get_nominal_for_plot(mode_name_dict, iformat):
+  format = _formats[iformat]
+  hnom   = get_nominal(mode_name_dict, format)
+  if not hnom:
+    return None
+
+  hnom.SetLineStyle(1 + iformat)
+  hnom.SetLineWidth(1 + iformat)
+
+  ROOT.SetOwnership(hnom, False)       # This stops the object being deleted from memory when it goes out of scope
+  return hnom
 
 #_______________________________________________________________________
 def set_empty_bins_to_one(h):
@@ -632,7 +660,7 @@ def get_output_name(output_filename, selec, ip, im, is_binno):
   if _by_mode:
     save_name += "_mode"
   save_name += ".pdf"
-  start_pdf = (ip == 0) and (im == 0)
+  start_pdf = (ip == -1) and (im == 0)
   end_pdf   = (ip == len(_param_map) - 1) and (im == _n_modes - 1)
   if start_pdf:
     save_name += "("
