@@ -76,7 +76,7 @@ using namespace valor;
 using namespace valor::conv;
 
 
-bool t2k = true;
+bool t2k = false;
 
 
 void SpecialCaseTweak(PhysParamId_t p, FitParamList * fp, double& tweak_p1, double& tweak_m1, double& tweak_p3, double& tweak_m3);
@@ -297,7 +297,7 @@ void SpecialCaseTweak(conv::PhysParamId_t p, FitParamList * fp, double& tweak_p1
       tweak_m3 = three_sigma_err_lower;
     }
 
-    if(p == util::NameRegistry::Instance()->PhysParamFromString("Eb_dial_O_nu")) {
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("EB_dial_O_nu")) {
       // double bestfit = fp->InitValue(p);
       double one_sigma_err_upper   = 15;
       double one_sigma_err_lower   = 7;
@@ -311,7 +311,7 @@ void SpecialCaseTweak(conv::PhysParamId_t p, FitParamList * fp, double& tweak_p1
 
 
 
-    if(p == util::NameRegistry::Instance()->PhysParamFromString("Eb_dial_O_nubar")) {
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("EB_dial_O_nubar")) {
       // double bestfit = fp->InitValue(p);
       double one_sigma_err_upper   = 15;
       double one_sigma_err_lower   = 7;
