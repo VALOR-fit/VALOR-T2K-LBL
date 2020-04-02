@@ -75,9 +75,7 @@ using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
-
 bool t2k = true;
-
 
 void SpecialCaseTweak(PhysParamId_t p, FitParamList * fp, double& tweak_p1, double& tweak_m1, double& tweak_p3, double& tweak_m3);
 void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv,
@@ -198,11 +196,6 @@ int main(int argc, char ** argv)
     double tweak_p3 = bestfit + (3 * sigma_err);
     double tweak_m3 = bestfit - (3 * sigma_err);
 
-    TVectorD nomsigvaluesbefore(0, 4, tweak_m3, tweak_m1, bestfit, tweak_p1, tweak_p3, "END");
-
-
-    nomsigvaluesbefore.Write(TString::Format("nom_sig_values_vector_before_%s", util::NameRegistry::Instance()->ParamAsString(p).c_str() ));
-
     // Apply any special cases here (e.g. to force the tweaks to a certain value)
     SpecialCaseTweak(p, fp, tweak_p1, tweak_m1, tweak_p3, tweak_m3);
 
@@ -215,10 +208,9 @@ int main(int argc, char ** argv)
       << "\n  nominal +3 sigma tweak = " << tweak_p3
       << "\n  nominal -3 sigma tweak = " << tweak_m3;
 
-    TVectorD nomsigvaluesafter(0, 4, tweak_m3, tweak_m1, bestfit, tweak_p1, tweak_p3, "END"); 
+    TVectorD nomsigvalues(0, 4, tweak_m3, tweak_m1, bestfit, tweak_p1, tweak_p3, "END"); 
     
-      
-    nomsigvaluesafter.Write(TString::Format("nom_sig_values_vector_after_%s", util::NameRegistry::Instance()->ParamAsString(p).c_str() ));
+    nomsigvalues.Write(TString::Format("nom_sig_values_vector_%s", util::NameRegistry::Instance()->ParamAsString(p).c_str() ));
 
     GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p1, outfile, "p1", test_force_untuned);
     GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m1, outfile, "m1", test_force_untuned);
