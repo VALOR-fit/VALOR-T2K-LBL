@@ -3008,8 +3008,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  response  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3020,15 +3019,15 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
-      <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
+      <reac_type>   all CC     </reac_type>
+      <flav_init>   nu any     </flav_init>
+      <flav_final>  nu any     </flav_final>
       <target>      all        </target>
     </apply_to>
 
     <limits>  -10.0, 15.0  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3052,8 +3051,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <!--<type>  response  </type>  TODO: Enable this param eventually-->
-    <type>  disabled  </type>
+    <type>  response  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3064,15 +3062,15 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all        </reac_type>
-      <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
+      <reac_type>   all CC     </reac_type>
+      <flav_init>   nubar any  </flav_init>
+      <flav_final>  nubar any  </flav_final>
       <target>      all        </target>
     </apply_to>
 
     <limits>  -10.0, 15.0  </limits>
 
-    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>

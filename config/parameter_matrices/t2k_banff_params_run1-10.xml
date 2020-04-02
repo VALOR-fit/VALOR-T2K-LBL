@@ -64,8 +64,8 @@
   <parameter>	Q2_norm_2                 </parameter>
   <parameter>	Q2_norm_3                 </parameter>
   <parameter>	Q2_norm_4                 </parameter>
-  <!-- <parameter>	EB_dial_O_nu              </parameter>
-  <parameter>	EB_dial_O_nubar           </parameter>  TODO: enable these params -->
+  <parameter>	EB_dial_O_nu              </parameter>
+  <parameter>	EB_dial_O_nubar           </parameter>
   <parameter>	CA5                       </parameter>
   <parameter>	MARES                     </parameter>
   <parameter>	ISO_BKG_LowPPi            </parameter>

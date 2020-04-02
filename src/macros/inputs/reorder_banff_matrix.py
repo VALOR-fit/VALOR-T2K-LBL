@@ -255,6 +255,8 @@ def check_param_list(ordered_param_name_dict, input_banff_param_list, n_banff_pa
   if not del_not_in_list and n_banff_params != len(ordered_param_name_dict):
     print "ERROR: The number of parameters in the input XML param list (", len(ordered_param_name_dict), ") " \
           "does not match the number of parameters in the input matrix (", n_banff_params, ")"
+    print "input XML params:\n", ordered_param_name_dict.keys()
+    print "input matrix params:\n", input_banff_param_list
     sys.exit()
 
   # Does each converted param name from the XML list exist in the param list from the BANFF matrix file?
