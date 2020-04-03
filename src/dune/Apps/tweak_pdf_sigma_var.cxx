@@ -291,9 +291,9 @@ void SpecialCaseTweak(conv::PhysParamId_t p, FitParamList * fp, double& tweak_p1
 
     if(p == util::NameRegistry::Instance()->PhysParamFromString("EB_dial_O_nu")) {
       // double bestfit = fp->InitValue(p);
-      double one_sigma_err_upper   = 15;
-      double one_sigma_err_lower   = 7;
-      double three_sigma_err_upper = -5;
+      double one_sigma_err_upper   = 7;
+      double one_sigma_err_lower   = -5;
+      double three_sigma_err_upper = 15;
       double three_sigma_err_lower = -10;
       tweak_p1 = one_sigma_err_upper;
       tweak_m1 = one_sigma_err_lower;
@@ -301,13 +301,11 @@ void SpecialCaseTweak(conv::PhysParamId_t p, FitParamList * fp, double& tweak_p1
       tweak_m3 = three_sigma_err_lower;
     }
 
-
-
     if(p == util::NameRegistry::Instance()->PhysParamFromString("EB_dial_O_nubar")) {
       // double bestfit = fp->InitValue(p);
-      double one_sigma_err_upper   = 15;
-      double one_sigma_err_lower   = 7;
-      double three_sigma_err_upper = -5;
+      double one_sigma_err_upper   = 7;
+      double one_sigma_err_lower   = -5;
+      double three_sigma_err_upper = 15;
       double three_sigma_err_lower = -10;
       tweak_p1 = one_sigma_err_upper;
       tweak_m1 = one_sigma_err_lower;
