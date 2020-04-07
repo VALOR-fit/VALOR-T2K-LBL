@@ -34,15 +34,29 @@ def extend_banff(N, banff_matrix, banff_nominal, banff_names):
     return new_matrix, new_nominal, new_names
 #_________________________________________________________________________________
 def copy_eb_to_banff(banff_matrix, banff_nominal, banff_names):
-    eb_cov = 2.0 ** 2
-    eb_nominal = 0.0
-    N = len(banff_nominal) + 1
-    new_matrix, new_nominal, new_names = extend_banff(N, banff_matrix, banff_nominal, banff_names)
-    new_matrix[N - 1][N - 1] = eb_cov
-    new_nominal[N - 1] = eb_nominal
-    eb_name = "ebo"
-    new_names.Add(ROOT.TObjString(eb_name))
-    return new_matrix, new_nominal, new_names
+    # NOTE: untuned values are added in reorder_banff_matrix.py, as the file supplied
+    #       by the BANFF group does not contain untuned values, and this macro needs
+    #       to output a file in the same format as the BANFF file.
+    params_to_add = ["EB_dial_O_nu", "EB_dial_O_nubar"]
+    nominal_vals = {
+        "EB_dial_O_nu"    : 4.0,
+        "EB_dial_O_nubar" : 0.0
+    }
+    untuned_vals = {
+        "EB_dial_O_nu"    : 0.0,
+        "EB_dial_O_nubar" : 0.0
+    }
+    error_vals = {
+        "EB_dial_O_nu"    : 6.0,
+        "EB_dial_O_nubar" : 6.0
+    }
+    correlation_vals = {
+        "EB_dial_O_nu"    : { "EB_dial_O_nubar" : 0.70 },
+        "EB_dial_O_nubar" : { "EB_dial_O_nu"    : 0.70 }
+    }
+
+    return copy_params_to_banff(banff_matrix, banff_nominal, banff_names, params_to_add,
+                                nominal_vals, error_vals, correlation_vals)
 
 #_________________________________________________________________________________
 def copy_intermediate_run10_params_to_banff(banff_matrix, banff_nominal, banff_names):
