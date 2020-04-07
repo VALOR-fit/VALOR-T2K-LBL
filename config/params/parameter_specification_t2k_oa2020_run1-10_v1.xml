@@ -3020,8 +3020,8 @@
       <beam>        all        </beam>
       <selection>   all rings  </selection>
       <reac_type>   all CC     </reac_type>
-      <flav_init>   nu any     </flav_init>
-      <flav_final>  nu any     </flav_final>
+      <flav_init>   all        </flav_init>
+      <flav_final>  all        </flav_final>
       <target>      all        </target>
     </apply_to>
 
@@ -3063,8 +3063,8 @@
       <beam>        all        </beam>
       <selection>   all rings  </selection>
       <reac_type>   all CC     </reac_type>
-      <flav_init>   nubar any  </flav_init>
-      <flav_final>  nubar any  </flav_final>
+      <flav_init>   all        </flav_init>
+      <flav_final>  all        </flav_final>
       <target>      all        </target>
     </apply_to>
 

@@ -77,11 +77,12 @@ def get_systematics():
         "LowQ2Suppression3_ccqe",
         "LowQ2Suppression4_ccqe",
         "EB_dial_O_nu_ccqe", "EB_dial_O_nu_cccoh", "EB_dial_O_nu_mec","EB_dial_O_nu_ccdis",
-            "EB_dial_O_nu_ccmpi", "EB_dial_O_nu_ccmisc", "EB_dial_O_nu_cc1pi",
+            "EB_dial_O_nu_ccmpi", "EB_dial_O_nu_ccmisc", "EB_dial_O_nu_cc1pi", "EB_dial_O_nu_NCcoh",
+            "EB_dial_O_nu_NCoth","EB_dial_O_nu_NC1piC","EB_dial_O_nu_NC1pi0","EB_dial_O_nu_NC1Gamma",
         "EB_dial_O_nubar_ccqe", "EB_dial_O_nubar_cccoh", "EB_dial_O_nubar_mec", "EB_dial_O_nubar_ccdis",
-            "EB_dial_O_nubar_ccmpi", "EB_dial_O_nubar_ccmisc", "EB_dial_O_nubar_cc1pi"
+            "EB_dial_O_nubar_ccmpi", "EB_dial_O_nubar_ccmisc", "EB_dial_O_nubar_cc1pi", "EB_dial_O_nubar_NCcoh",
+            "EB_dial_O_nubar_NCoth","EB_dial_O_nubar_NC1piC","EB_dial_O_nubar_NC1pi0","EB_dial_O_nubar_NC1Gamma"
     ]
-    # TODO: EB_dial_O_nu and EB_dial_O_nubar have > 1 underscore in their names, account for this when splitting the param from the mode
 
 def get_mode_map():
     valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCmisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
