@@ -40,27 +40,12 @@ python_undefined_short = 2**32 -1
 # List strange untuned central values. Will assume 1 for all others.
 # Want to grab these from the TVector of untuned values instead
 abnormal_untuned_central_values = {
-  "MAQE"                     : 1.21,
-  "MARES"                    : 0.95,
-  "CA5"                      : 1.01,
   "2p2h_shape_O"             : 0.0,
-  "FEFQE"                    : 1.069,
-  "FEFQEH"                   : 1.824,
-  "FEFINEL"                  : 1.002,
-  "FEFABS"                   : 1.404,
-  "FEFCX"                    : 0.697,
-  "ISO_BKG"                  : 1.3,
-  "ISO_BKG_LowPPi"           : 1.3,
   "EB_dial_O_nu"             : 0.0,
   "EB_dial_O_nubar"          : 0.0,
   "CC_BY_DIS"                : 0.0,
   "CC_BY_MPi"                : 0.0,
-  "CC_AGKY_Mult"             : 0.0,
-  "Q2_norm_0"                : 0.0,
-  "Q2_norm_1"                : 0.0,
-  "Q2_norm_2"                : 0.0,
-  "Q2_norm_3"                : 0.0,
-  "Q2_norm_4"                : 0.0
+  "CC_AGKY_Mult"             : 0.0
 }
 
 
