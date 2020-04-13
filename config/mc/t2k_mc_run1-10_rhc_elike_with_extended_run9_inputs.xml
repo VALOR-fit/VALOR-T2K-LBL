@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<analysis_inputs analysis="T2K" version="run1-9d" detector="SuperK">
+<analysis_inputs analysis="T2K" version="run1-10" detector="SuperK">
 
 <!--
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,12 +54,12 @@ Input MC templates
 
   <dst>
     <jparc_fhc>
-       <filename> official/2020/superk/mc/mtuples_19b_procv3/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v3.root </filename>
+       <filename> official/2020/superk/mc/mtuples_19b_procv4/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v4.root </filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2020/superk/mc/mtuples_19b_procv3/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v3.root </filename>
+        <filename> official/2020/superk/mc/mtuples_19b_procv4/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v4.root </filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>
@@ -102,7 +102,7 @@ Splines
 -->
 
 <splines>
-    <folder>          official/2020/xsec/splines2020v5/valor_format                    </folder>
+    <folder>          official/2020/xsec/splines2020v6/valor_format                    </folder>
     <pattern>         splines_spline2019splinesfitqunPreerectheta_[BEAM]_[SAMPLE].root </pattern>
     <stored_as>       TObjArray                                                        </stored_as>
     <array_pattern>   spl_[MODE]_[PARAM]                                               </array_pattern>
