@@ -354,7 +354,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     elep = ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom)
     theta_reco_rads = Theta_reco * (ROOT.TMath.Pi() / 180.0)   # Theta_reco is input in degrees, so convert to radians here
 
-    if util.IsNC(reac_mode):
+    if not util.ModeIsCC(reac_mode):
         # Don't apply the Coulomb shift to NC events
         ereco_MeV = event.erec
     else:
