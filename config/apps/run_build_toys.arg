@@ -29,3 +29,11 @@ prior-file                           |   string       |  mandatory  |   -
 read-throws-from                     |   string       |  optional   |   NONE
 read-throws-param-map                |   string       |  optional   |   NONE
 valor-array-format                   |   string       |  optional   |   pdft
+npt-job-par1                         |   integer      |  mandatory  |   0
+npt-job-par2                         |   integer      |  optional   |   0
+npt-par1                             |   integer      |  mandatory  |   0
+npt-par2                             |   integer      |  optional   |   0
+min-par1                             |   double       |  mandatory  |   0
+min-par2                             |   double       |  optional   |   0
+step-par1                            |   double       |  mandatory  |   0
+step-par2                            |   double       |  optional   |   0

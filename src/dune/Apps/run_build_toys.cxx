@@ -125,10 +125,18 @@ void BuildToys(CmdLnArgList& arg)
    string fp_name1      = arg.GetString("fit-param1");
    const double fp_val1 = arg.GetDouble("fit-param1-value");
    const int fp_bin1    = arg.GetInt("fit-param1-bin");
+   const int npt_job_par1  = arg.GetInt("npt-job-par1");
+   const int npt_par1      = arg.GetInt("npt-par1");
+   double min_par1      = arg.GetDouble("min-par1");
+   double step_par1     = arg.GetDouble("step-par1"); 
 
    string fp_name2;
    double fp_val2;
    int fp_bin2;
+   int npt_job_par2;
+   int npt_par2;
+   double min_par2;
+   double step_par2;
 
    string toy_throw_file_to_read = arg.GetString("read-throws-from");
    string param_name_map_file    = arg.GetString("read-throws-param-map");
@@ -142,11 +150,15 @@ void BuildToys(CmdLnArgList& arg)
    LOG("valor_dune", pNOTICE) << "Fit parameter " << fp_name1 << "(" <<
       fp_bin1 << ") = " << fp_val1;
 
-   if(arg.Exists("fit-param2"))
+   if(arg.Exists("fit-param2") and arg.GetString("fit-param2") != "-" )
    {
       fp_name2 = arg.GetString("fit-param2");
       fp_val2 = arg.GetDouble("fit-param2-value");
       fp_bin2 = arg.GetInt("fit-param2-bin");
+      npt_job_par2  = arg.GetInt("npt-job-par2");
+      npt_par2      = arg.GetInt("npt-par2");
+      min_par2      = arg.GetDouble("min-par2");
+      step_par2     = arg.GetDouble("step-par2");
       LOG("valor_dune", pNOTICE) << "Fit parameter " << fp_name2 << "(" <<
          fp_bin2 << ") = " << fp_val2;
    }
@@ -171,16 +183,44 @@ void BuildToys(CmdLnArgList& arg)
    TStopwatch clock;
    clock.Start();
    ToyBuilder toys(*elements, arg.GetString("tag"), use_simple_binning, store_mode_arrays, gen_marg_toys, save_throws);
-   if(!arg.Exists("fit-param2"))
+   if(!arg.Exists("fit-param2") or arg.GetString("fit-param2") == "-")
    {  // Build toys for 1D fit
-      toys.BuildToys(fp_bin1, batch, Ntoys, *fpl, randomise_systematics, stat_fluct, param_val_opts.c_str(),
+      for (int fp_bin01 = fp_bin1; (fp_bin01 < fp_bin1 + npt_job_par1) && (fp_bin01 < npt_par1); fp_bin01++)// loop over param first subrange
+      {
+         LOG("valor_dune", pDEBUG) << "Now submitting bin " << fp_bin01 <<" in subrange: par1  [ " << fp_bin01 <<
+                                      "; "<<fp_bin01 +npt_par1 << "]";
+        Rnd::Instance()->SetSeeds(arg);// set seeds at every point in the group 
+        util::oscillation::IncreaseFreeParameterVal(*fpl, fp_name1, min_par1, fp_bin01, step_par1);
+        toys.BuildToys(fp_bin01, batch, Ntoys, *fpl, randomise_systematics, stat_fluct, param_val_opts.c_str(),
                      rethrow_unphysical, toy_throw_file_to_read, param_name_map_file);
-   }
+      }
+    }
    else
    {  // Build toys for 2D fit
-      toys.BuildToys(fp_bin1, fp_bin2, batch, Ntoys, *fpl, randomise_systematics, stat_fluct, param_val_opts.c_str(),
-                     rethrow_unphysical, toy_throw_file_to_read, param_name_map_file);
-   }
+      for (int fp_bin01 = fp_bin1; (fp_bin01 < fp_bin1 + npt_job_par1) && (fp_bin01 < npt_par1); fp_bin01++)// loop over param first subrange
+      {
+
+        util::oscillation::IncreaseFreeParameterVal(*fpl, fp_name1, min_par1, fp_bin01, step_par1);
+           
+        for (int fp_bin02 = fp_bin2; (fp_bin02 < fp_bin2 + npt_job_par2) && (fp_bin02 < npt_par2); fp_bin02++) 
+        {
+               
+          LOG("valor_dune", pDEBUG) << "Now submitting " << fp_bin01 <<" in subrange: par1 bin [ " << fp_bin01 <<
+                                         "; "<<fp_bin01 +npt_par1 << "]";
+          LOG("valor_dune", pDEBUG) << "Now submitting " << fp_bin02 <<" in subrange: par2 bin [ " << fp_bin02 <<
+                                         "; "<<fp_bin02 +npt_par2 << "]"; 
+
+          util::oscillation::IncreaseFreeParameterVal(*fpl, fp_name2, min_par2, fp_bin02, step_par2);
+               //unsigned int seed_offset = fp_bin02*Ntoys + fp_bin01*Ntoys*npt_par2 + batch*Ntoys*npt_par2*npt_par1; 
+               //Rnd::Instance()->SetSeeds(arg, seed_offset); // seed has to be randomized  for every point
+          Rnd::Instance()->SetSeeds(arg);// set seeds at every point in the group 
+          toys.BuildToys(fp_bin01, fp_bin02, batch, Ntoys, *fpl, randomise_systematics, stat_fluct,
+                              param_val_opts.c_str(),
+                              rethrow_unphysical, toy_throw_file_to_read, param_name_map_file);
+
+        }
+      }               
+    }
    clock.Stop();
 
    LOG("valor_dune", pNOTICE) << "Generate batch " << batch << ": " << Ntoys <<
@@ -206,7 +246,5 @@ void Init(CmdLnArgList& arg)
       util::Die(-1);
    }
    Opt::Instance()->gOscDmsqScheme = dmsq_scheme;
-
-   Rnd::Instance()->SetSeeds(arg);
 }
 

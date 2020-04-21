@@ -12,7 +12,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
-      <data>         data/t2k_data_run1-9d.xml                            </data>
+      <data>                                 </data>
       <mc>           mc/t2k_mc_run1-9d_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -24,7 +24,7 @@
       <beam>         JPARC_RHC                                            </beam>
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
-      <data>         data/t2k_data_run1-9d.xml                            </data>
+      <data>                                    </data>
       <mc>           mc/t2k_mc_run1-9d_rhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -36,7 +36,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>         data/t2k_data_run1-9d.xml                            </data>
+      <data>                                   </data>
       <mc>           mc/t2k_mc_run1-9d_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -48,7 +48,7 @@
       <beam>         JPARC_RHC                                            </beam>
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>         data/t2k_data_run1-9d.xml                            </data>
+      <data>                                   </data>
       <mc>           mc/t2k_mc_run1-9d_rhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -60,7 +60,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       multire                                              </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>         data/t2k_data_run1-9d.xml                            </data>
+      <data>                                    </data>
       <mc>           mc/t2k_mc_run1-9d_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>

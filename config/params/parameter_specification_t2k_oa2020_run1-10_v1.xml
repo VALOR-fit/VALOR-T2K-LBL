@@ -3008,7 +3008,8 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <!--<type>  response  </type>  TODO: Enable this param eventually-->
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3019,7 +3020,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all CC     </reac_type>
+      <reac_type>   all        </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3027,7 +3028,7 @@
 
     <limits>  -10.0, 15.0  </limits>
 
-    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
@@ -3051,7 +3052,8 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <!--<type>  response  </type>  TODO: Enable this param eventually-->
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3062,7 +3064,7 @@
       <detector>    SuperK     </detector>
       <beam>        all        </beam>
       <selection>   all rings  </selection>
-      <reac_type>   all CC     </reac_type>
+      <reac_type>   all        </reac_type>
       <flav_init>   all        </flav_init>
       <flav_final>  all        </flav_final>
       <target>      all        </target>
@@ -3070,7 +3072,7 @@
 
     <limits>  -10.0, 15.0  </limits>
 
-    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <update_from_cov_matrix> false  </update_from_cov_matrix>  <!-- TODO: Change this to true when we have this in the BANFF matrix -->
     <range_mode>             sigma </range_mode>
     <range>                  -5, 5 </range>
     <step_mode>              frac  </step_mode>
