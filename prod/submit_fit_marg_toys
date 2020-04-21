@@ -77,7 +77,8 @@
 #  --param-set              : When fitting with a fake data set, osc param values must be specified to generate it.
 #                             This option sets the osc params to preset values depending on the set name.
 #
-#
+#  --use-penalty-term       : Specify to which parameter the penalty term should be applied. 
+#                             Make sure penalty term parameters are correctly specified in chosen .xml input file 
 # F.Bench
 #-------------------------------------------------------------------------------------------------------------------------------
 #

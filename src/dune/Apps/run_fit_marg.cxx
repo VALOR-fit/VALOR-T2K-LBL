@@ -269,7 +269,7 @@ void Fit(CmdLnArgList& arg)
       // Perform a fit and populate the entire chi2 and likelihood surfaces
       // This version of the fit works for both 1D and 2D
       if(fusepenalty)
-      {
+      { // if penalty term flag is on, set penalty term parameters 
         penaltyset = util::oscillation::SetPenaltyTermParameters(arg, penaltyparam);
       }
       else { penaltyset = {0,0,"",""};}
