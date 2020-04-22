@@ -369,10 +369,18 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
         title.SetTextSize(0.05)
         title.SetNDC(True)
         title.Draw("same")
+    
+    multigraph.SetName("contours_mulitgraph")
+    output_file = ROOT.TFile(pdf_filename + "_contours.root","recreate")
+    multigraph.Write()
 
     canvas.Update()
     canvas.Print(pdf_filename + ".pdf")
     canvas.Print(pdf_filename + ".root")
+    output_file.Close()
+    del output_file
+
+    
 
 #________________________________________________________________________________________________________
 def get_contour(dchisq_obj):
