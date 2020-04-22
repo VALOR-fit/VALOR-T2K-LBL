@@ -375,8 +375,8 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
     multigraph.Write()
 
     canvas.Update()
+    canvas.Write()
     canvas.Print(pdf_filename + ".pdf")
-    canvas.Print(pdf_filename + ".root")
     output_file.Close()
     del output_file
 

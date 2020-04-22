@@ -517,13 +517,6 @@ for($ibin1 = 0; $ibin1 < $npt_par1; $ibin1 = $ibin1_p1) {
 
 	  if($resource eq "cedar") {
 
-		  #if(($ibin1 >78 && $ibin1 <88) || ($ibin1 >96 && $ibin1 <99)) {
-		  # }
-		  # else
-		  #{
-		  #  $irun++;
-		  # next;
-		  # }
 	 	  open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
 	 	  print Slurm "#!/bin/bash \n";
 	 	  print Slurm "#SBATCH --account=def-tanaka-ac \n";		# A larger allocation is available on "rpp-tanaka-ab", but it's only available on cedar

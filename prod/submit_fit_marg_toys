@@ -576,11 +576,11 @@ for($i_fc_par2 = $start_pt_fc_par2; $i_fc_par2 < $start_pt_fc_par2 + $npt_fc_par
 				if($stat_fluct         == 1)       { $arguments = "$arguments --with-stat-fluct"    } else { $arguments = "$arguments --without-stat-fluct" }
 				if($use_simple_binning == 1)       { $arguments = "$arguments --use-simple-binning" } else { $arguments = "$arguments --no-simple-binning"  }
 				if($mix_param_octant   eq "two")   { $arguments = "$arguments --second-octant"      } else { $arguments = "$arguments --first-octant"       }
-        if($use_penalty_term   eq "mixing13")       { $arguments = "$arguments --use-penalty-term mixing13" }
-         elsif($use_penalty_term   eq "mixing23")       { $arguments = "$arguments --use-penalty-term mixing23" }
-         elsif($use_penalty_term   eq "mixing12")       { $arguments = "$arguments --use-penalty-term mixing12" }
-         elsif($use_penalty_term   eq "dmsq23")         { $arguments = "$arguments --use-penalty-term dmsq23"   }
-         else{$arguments = "$arguments --use-penalty-term $use_penalty_term"}
+        if($use_penalty_term      eq "mixing13")       { $arguments = "$arguments --use-penalty-term mixing13" }
+        elsif($use_penalty_term   eq "mixing23")       { $arguments = "$arguments --use-penalty-term mixing23" }
+        elsif($use_penalty_term   eq "mixing12")       { $arguments = "$arguments --use-penalty-term mixing12" }
+        elsif($use_penalty_term   eq "dmsq23")         { $arguments = "$arguments --use-penalty-term dmsq23"   }
+        else{$arguments = "$arguments --use-penalty-term $use_penalty_term"}
 
 				$command = "$program $arguments";
 				print "$command \n";
