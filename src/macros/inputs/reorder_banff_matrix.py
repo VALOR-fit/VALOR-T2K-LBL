@@ -60,11 +60,7 @@ abnormal_untuned_central_values = {
     "Q2_norm_1"                : 0.0,
     "Q2_norm_2"                : 0.0,
     "Q2_norm_3"                : 0.0,
-    "Q2_norm_4"                : 0.0,
-    "2p2h_Edep_lowEnu"         : 0.0,
-    "2p2h_Edep_highEnu"        : 0.0,
-    "2p2h_Edep_lowEnubar"      : 0.0,
-    "2p2h_Edep_highEnubar"     : 0.0,
+    "Q2_norm_4"                : 0.0
 }
 
 
