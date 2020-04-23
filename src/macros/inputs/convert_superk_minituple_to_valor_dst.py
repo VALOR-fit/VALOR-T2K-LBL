@@ -339,6 +339,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     mass = None
     mom  = None
     if util.SampleIsELike(sample):
+        # Must use reco info for consistency with how we select the Erec equation
         mass = me
         mom = event.fqmome
     else:
@@ -348,7 +349,9 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     mom_shift_nu    = -4.3   # MeV
     mom_shift_nubar =  3.3   # MeV
     mom_shift = None
-    if "bar" in util.FlavourAsString(util.ReacModeToFinalFlavor(reac_mode)).lower():
+    final_nu_flavour = util.ReacModeToFinalFlavor(reac_mode)
+    if final_nu_flavour == conv.kNuMuBar or final_nu_flavour == conv.kNuEBar or final_nu_flavour == conv.kNuTauBar:
+        # The momentum shift must be chosen using true info
         mom_shift = mom_shift_nubar
     else:
         mom_shift = mom_shift_nu
@@ -357,8 +360,8 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     elep = ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom)
     theta_reco_rads = Theta_reco * (ROOT.TMath.Pi() / 180.0)   # Theta_reco is input in degrees, so convert to radians here
 
-    if not util.ModeIsCC(reac_mode):
-        # Don't apply the Coulomb shift to NC events
+    if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
+        # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
         ereco_MeV = event.erec
     else:
         if sample != conv.ksMultiRe:
