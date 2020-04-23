@@ -166,11 +166,24 @@ def is_spline_flat(spline):
     return True
 
 #________________________________________________________________________________________
-def print_nonflat_spline_names(tfile):
+def print_nonflat_spline_names(tfile, param = ""):
     keys = tfile.GetListOfKeys()
     for k in keys:
         name = k.GetName()
         if not "_sp_" in name:
             continue
+        if param and not param in name:
+            continue
         if not is_spline_flat(tfile.Get(name)):
             print name
+
+#________________________________________________________________________________________
+def print_nonflat_valor_splines_for_param(tfile, param_name):
+    for k in tfile.GetListOfKeys():
+        name = k.GetName()
+        if (not "spl_" in name) or (not param_name in name):
+            continue
+        arr = k.ReadObj()
+        for spl in arr:
+            if not is_spline_flat(spl):
+                print name

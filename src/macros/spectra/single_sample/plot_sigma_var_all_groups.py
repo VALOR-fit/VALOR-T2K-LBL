@@ -207,7 +207,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           h_list.append(h)
           h_list_binno.append(h_binno)
           comparison_dict[f] = h
-          hist_max_var = max(hist_max_var, get_max_var_in_range(h, x_max))
+          hist_max_var = max(hist_max_var, get_max_var_in_range(h, x_max, not plot_nominal))
           first_drawn_format = False
           first_drawn_var = False
 
@@ -223,9 +223,9 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
         h_list_binno[0].SetMaximum(1 + 1.1 * hist_max_var)
         h_list_binno[0].SetMinimum(1 - 1.1 * hist_max_var)
       else:
-        h_list      [0].SetMaximum(1 + 1.1 * hist_max_var)
+        h_list      [0].SetMaximum(1.1 * hist_max_var)
         h_list      [0].SetMinimum(0.)
-        h_list_binno[0].SetMaximum(1 + 1.1 * hist_max_var)
+        h_list_binno[0].SetMaximum(1.1 * hist_max_var)
         h_list_binno[0].SetMinimum(0.)
 
       title_box = make_title_box(get_title_box_text(param_name_dict if not plot_nominal else None, mode_name_dict))
@@ -630,11 +630,14 @@ def format_drawn_hist(h, x_max, is_binno):
   h.GetXaxis().SetRangeUser(h.GetXaxis().GetBinLowEdge(1), x_max)
 
 #_______________________________________________________________________
-def get_max_var_in_range(h, x_max):
+def get_max_var_in_range(h, x_max, is_ratio_hist = True):
   max_var = -999
   for i in range(1, h.GetNbinsX()):
     if h.GetXaxis().GetBinUpEdge(i) <= x_max:
-      max_var = max(max_var, ROOT.TMath.Abs(h.GetBinContent(i)-1))  # -1 to make the plot symmetric around ratio = 1
+      if is_ratio_hist:
+        max_var = max(max_var, ROOT.TMath.Abs(h.GetBinContent(i)-1))  # -1 to make the plot symmetric around ratio = 1
+      else:
+        max_var = max(max_var, h.GetBinContent(i))
   return max_var
 
 #_______________________________________________________________________
