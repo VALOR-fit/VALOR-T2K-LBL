@@ -78,7 +78,7 @@
 #                             This option sets the osc params to preset values depending on the set name.
 #
 #  --use-penalty-term       : Specify to which parameter the penalty term should be applied. 
-#                             Make sure penalty term parameters are correctly specified in chosen .xml input file 
+#                             Make sure penalty term parameters are correctly specified in chosen prior .xml input file 
 # F.Bench
 #-------------------------------------------------------------------------------------------------------------------------------
 #
