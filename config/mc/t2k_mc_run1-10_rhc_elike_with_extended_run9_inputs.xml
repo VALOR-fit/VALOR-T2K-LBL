@@ -119,7 +119,7 @@ Splines
 Default binning
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<default_binning> binning/t2k_rhc_elike_run1-9d_bins.xml </default_binning>
+<default_binning> binning/t2k_rhc_elike_run1-10_bins.xml </default_binning>
 
 </analysis_inputs>
 
