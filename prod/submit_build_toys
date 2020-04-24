@@ -279,8 +279,8 @@ if($use_t2k_presets == 1) {
 		  # Marginalisation presets
 			if($use_reactors == 1) {
 				$ntoys      = 40000                     unless defined $ntoys;
-				$cput       = "10:00:00"                unless defined $cput;
-				$mem        = "4000M"                  unless defined $mem;
+				$cput       = "8:00:00"                unless defined $cput;
+				$mem        = "3500M"                  unless defined $mem;
 			}
 			else {
 				$ntoys      = 80000                    unless defined $ntoys;
@@ -306,7 +306,7 @@ if($use_t2k_presets == 1) {
 	} # 1D sinsqth13
 
 	# 1D fit - sinsqth23
-	if(($par1 eq "mixing12") and ($par2 eq "none")) {
+	if(($par1 eq "mixing23") and ($par2 eq "none")) {
 		if($use_reactors == 1) {
 			$ntoys      = 40000      unless defined $ntoys;
 			$cput       = "8:00:00"  unless defined $cput;
@@ -349,7 +349,7 @@ if($use_t2k_presets == 1) {
 	  }
 		if($use_reactors == 1) {
 			$ntoys      = 10000                    unless defined $ntoys;
-			$cput       = "35:00:00"               unless defined $cput;
+			$cput       = "20:00:00"               unless defined $cput;
 			$mem        = "4096M"                  unless defined $mem;
 			$min_par1   = 0.015                    unless defined $min_par1;
       $max_par1   = 0.036                    unless defined $max_par1;
