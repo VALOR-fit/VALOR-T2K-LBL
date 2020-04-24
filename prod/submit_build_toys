@@ -477,10 +477,10 @@ for($ibin1 = 0; $ibin1 < $npt_par1; $ibin1 = $ibin1_p1) {
 		             "--seed-toys-osc $seed_osc --seed-toys-stat $seed_stat --seed-other $seed_other " .
 		             "--prior-file $prior_file --read-throws-from $read_throws_from " .
 		             "--read-throws-param-map $read_throws_param_map --dmsq-scheme $dmsq_scheme " .
-                 "--npt-job-par1 $npt_job_par1 --npt-job-par2 $npt_job_par2 " .
-                 "--npt-par1 $npt_par1 --npt-par2 $npt_par2 " . 
-                 "--min-par1 $min_par1 --min-par2 $min_par2 " .
-                 "--step-par1 $step_par1 --step-par2 $step_par2 ";
+                             "--npt-job-par1 $npt_job_par1 --npt-job-par2 $npt_job_par2 " .
+                	     "--npt-par1 $npt_par1 --npt-par2 $npt_par2 " . 
+                 	     "--min-par1 $min_par1 --min-par2 $min_par2 " .
+                	     "--step-par1 $step_par1 --step-par2 $step_par2 ";
 
 
     if($store_specra       == 1)       { $arguments = "$arguments --store-spectra"      } else { $arguments = "$arguments --discard-spectra"    }
