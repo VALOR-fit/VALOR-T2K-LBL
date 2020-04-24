@@ -278,7 +278,7 @@ if($use_t2k_presets == 1) {
 		else {
 		  # Marginalisation presets
 			if($use_reactors == 1) {
-				$ntoys      = 40000                    unless defined $ntoys;
+				$ntoys      = 40000                     unless defined $ntoys;
 				$cput       = "8:00:00"                unless defined $cput;
 				$mem        = "3500M"                  unless defined $mem;
 			}
@@ -287,10 +287,10 @@ if($use_t2k_presets == 1) {
 				$cput       = "15:00:00"               unless defined $cput;
 				$mem        = "5000M"                  unless defined $mem;
 			}
-			$npt_par1     = 101                      unless defined $npt_par1;
-			$min_par1     = -3.14159265358979312e+00 unless defined $min_par1;
-			$max_par1     = +3.14159265358979312e+00 unless defined $max_par1;
-			$npt_job_par1 = 1                        unless defined $npt_job_par1;
+			$npt_par1     = 101                       unless defined $npt_par1;
+			$min_par1     = -3.14159265358979312e+00  unless defined $min_par1;
+			$max_par1     = +3.14159265358979312e+00  unless defined $max_par1;
+			$npt_job_par1 = 1                         unless defined $npt_job_par1;
 		}
 	} # 1D CPV
 
@@ -343,7 +343,7 @@ if($use_t2k_presets == 1) {
 
 	# 2D fit - sinsqth13 vs. CPV
 	if( (($par1 eq "cpv") and ($par2 eq "mixing13")) or (($par1 eq "mixing13") and ($par2 eq "cpv")) ) {
-	  if($par1 eq "deltacp") {
+	  if($par1 eq "cpv") {
 	 	  $par1 = "mixing13";
 	 	  $par2 = "cpv";
 	  }
@@ -437,11 +437,22 @@ $step_par2 = 0;
 if($npt_par1 > 1) { $step_par1 = ($max_par1 - $min_par1) / ($npt_par1 - 1); }
 if($npt_par2 > 1) { $step_par2 = ($max_par2 - $min_par2) / ($npt_par2 - 1); }
 
-for($ibin1 = 0; $ibin1 < $npt_par1; $ibin1++) {
+for($ibin1 = 0; $ibin1 < $npt_par1; $ibin1 = $ibin1_p1) {
   $val_par1 = $min_par1 + $ibin1 * $step_par1;
-  for($ibin2 = 0; $ibin2 < $npt_par2; $ibin2++) {
-		$val_par2 = $min_par2 + $ibin2 * $step_par2;
+  for($ibin2 = 0; $ibin2 < $npt_par2; $ibin2 = $ibin2_p1) {
+    $val_par2 = $min_par2 + $ibin2 * $step_par2;
 
+
+    $ibin1_p1 = $ibin1 + $npt_job_par1;
+    $ibin2_p1 = $ibin2 + $npt_job_par2;
+
+        # loop in build_marg_toy is min <= bin <= max, avoid repetition of the last bin
+    if( $ibin1_p1 == $ibin1 ){
+      last;
+    }
+    if( $ibin2_p1 == $ibin2 ){
+      last;
+    }
 		print "/////////////////////////////// \n \n";
 		print "File output ID: $fileid \n";
 		print "   - bin param 1: $ibin1 \n";
@@ -465,7 +476,12 @@ for($ibin1 = 0; $ibin1 < $npt_par1; $ibin1++) {
 		             "--fit-param2-bin $sub_ibin2 --$hierarchy --$mix_param_choice --seed-toys-syst $seed_syst " .
 		             "--seed-toys-osc $seed_osc --seed-toys-stat $seed_stat --seed-other $seed_other " .
 		             "--prior-file $prior_file --read-throws-from $read_throws_from " .
-		             "--read-throws-param-map $read_throws_param_map --dmsq-scheme $dmsq_scheme";
+		             "--read-throws-param-map $read_throws_param_map --dmsq-scheme $dmsq_scheme " .
+                             "--npt-job-par1 $npt_job_par1 --npt-job-par2 $npt_job_par2 " .
+                	     "--npt-par1 $npt_par1 --npt-par2 $npt_par2 " . 
+                 	     "--min-par1 $min_par1 --min-par2 $min_par2 " .
+                	     "--step-par1 $step_par1 --step-par2 $step_par2 ";
+
 
     if($store_specra       == 1)       { $arguments = "$arguments --store-spectra"      } else { $arguments = "$arguments --discard-spectra"    }
     if($rethrow_unphysical == 1)       { $arguments = "$arguments --rethrow-unphysical" } else { $arguments = "$arguments --accept-unphysical"  }
@@ -500,6 +516,7 @@ for($ibin1 = 0; $ibin1 < $npt_par1; $ibin1++) {
 		}
 
 	  if($resource eq "cedar") {
+
 	 	  open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
 	 	  print Slurm "#!/bin/bash \n";
 	 	  print Slurm "#SBATCH --account=def-tanaka-ac \n";		# A larger allocation is available on "rpp-tanaka-ab", but it's only available on cedar
@@ -628,6 +645,24 @@ for($ibin1 = 0; $ibin1 < $npt_par1; $ibin1++) {
 		    close(JDL);
 		    `condor_submit $job_dir/$tag-$irun.jdl`;
 		}
+
+      # IFIC 
+    #
+    if($resource eq "IFIC") {
+        open(PBS, ">$job_dir/$tag-$irun.pbs") or die("Cannot create the PBS batch script");
+        print PBS "#!/bin/bash \n";
+        print PBS "#PBS -N $tag-$irun \n";
+        print PBS "#PBS -l mem=$mem \n";
+        print PBS "#PBS -q long \n"; # Max walltime of for long - 24h, in case of 2D fit use long4
+        print PBS "#PBS -l nodes=1:ppn=1 \n"; #use only ppn=1 
+        print PBS "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+        print PBS "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+        print PBS "cd $job_dir \n";
+        print PBS "source $softw_dir/setup/setup_at_cvmfs_root6.sh $softw_dir $fmwk_dir\n";
+        print PBS "$command \n";
+        close(PBS);
+        `qsub $job_dir/$tag-$irun.pbs`;
+    }
 
 		#
 		# interactive

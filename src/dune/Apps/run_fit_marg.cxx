@@ -119,6 +119,7 @@ void Fit(CmdLnArgList& arg)
    const double fp1_maxval = arg.GetDouble("fit-param1-max-value");
    const int fp1_nbins     = arg.GetInt("fit-param1-nbins");
    const int fp1_start_bin = arg.GetInt("fit-param1-start-bin");
+   string penaltyparam  = arg.GetString("use-penalty-term");
 
    bool fit_is_2D = false;
    string fp2_name;
@@ -154,6 +155,19 @@ void Fit(CmdLnArgList& arg)
                                 << "(don't use --data-file and --gen-fakedata together)";
       util::Die(-1);
    }
+
+    bool fusepenalty = false;
+
+    if(arg.Exists("use-penalty-term") and arg.GetString("use-penalty-term") != "-" ){
+
+        if (penaltyparam == fp1_name || penaltyparam == fp2_name ){fusepenalty = true;}
+        else{
+            LOG("valor_dune", pFATAL) << "Penalty term specified for a parameter that is different from fitting one(s)" <<
+                                      " penalty set for " << penaltyparam;
+            util::Die(-1);
+        }
+    }
+
 
    CompoundFitElements* elements = new CompoundFitElements();
    elements->Read(util::CompleteConfigPath(arg.GetString("config")));
@@ -216,6 +230,7 @@ void Fit(CmdLnArgList& arg)
    int Nbatches = arg.GetInt("nbatches");
    int firstBatch = arg.GetInt("first-batch");
    int Ntoys = arg.GetInt("nmargtoy");
+   util::oscillation::PenaltyTerm penaltyset;
 
    TStopwatch clock;
    clock.Start();
@@ -253,7 +268,12 @@ void Fit(CmdLnArgList& arg)
 
       // Perform a fit and populate the entire chi2 and likelihood surfaces
       // This version of the fit works for both 1D and 2D
-      result = marginalisation.Fit(data, Ntoys, Nbatches, firstBatch);
+      if(fusepenalty)
+      { // if penalty term flag is on, set penalty term parameters 
+        penaltyset = util::oscillation::SetPenaltyTermParameters(arg, penaltyparam);
+      }
+      else { penaltyset = {0,0,"",""};}
+      result = marginalisation.Fit(data, Ntoys, Nbatches, penaltyset, firstBatch);
 
       // Perform an optimised fit starting at the specified value
    /*   if(!fit_is_2D)
