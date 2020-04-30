@@ -76,6 +76,9 @@ def get_systematics():
         "LowQ2Suppression2_ccqe",
         "LowQ2Suppression3_ccqe",
         "LowQ2Suppression4_ccqe",
+        "LowQ2Suppression5_ccqe",
+        "LowQ2Suppression6_ccqe",
+        "LowQ2Suppression7_ccqe",
         "EB_dial_O_nu_ccqe",
         "EB_dial_O_nubar_ccqe"
     ]
@@ -103,8 +106,8 @@ def get_param_map():
     # NOTE:
     #   Make sure that if any param name is a subset of another param name, then in the lists below, it appears after
     #   the param it is a subset of. Otherwise, the wrong param may be fetched.
-    raw_params   = ["ca5", "bgsclbar"      , "bgscl"  , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4", "Eb_dial_O_nu", "Eb_dial_O_nubar"]
-    valor_params = ["CA5", "ISO_BKG_LowPPi", "ISO_BKG", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        , "Eb_dial_O_nu", "Eb_dial_O_nubar"]
+    raw_params   = ["ca5", "bgsclbar"      , "bgscl"  , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4", "LowQ2Suppression5", "LowQ2Suppression6", "LowQ2Suppression7", "Eb_dial_O_nu", "Eb_dial_O_nubar"]
+    valor_params = ["CA5", "ISO_BKG_LowPPi", "ISO_BKG", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        , "Q2_norm_5"        , "Q2_norm_6"        , "Q2_norm_7"        , "Eb_dial_O_nu", "Eb_dial_O_nubar"]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
