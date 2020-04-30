@@ -2993,6 +2993,131 @@
     <error>                  0.16  </error>
   </param>
 
+  <!-- ==================================================================================== -->
+  <param>
+    <name>
+      <simple>  Q2_norm_5                 </simple>
+      <long>    BANFF; Shape; Q2 5        </long>
+      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <tex>     BANFF; Shape; Q2 5 nubar  </tex>
+    </name>
+
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+
+    <!-- <type>  response  </type> -->
+    <type>  disabled  </type>
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int    </category>
+    </categories>
+
+    <apply_to>
+      <detector>    SuperK     </detector>
+      <beam>        all        </beam>
+      <selection>   all rings  </selection>
+      <reac_type>   CCQE       </reac_type>
+      <flav_init>   all        </flav_init>
+      <flav_final>  all        </flav_final>
+      <target>      all        </target>
+    </apply_to>
+
+    <limits>  -inf, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+    <init>                   0     </init>
+    <error>                  0.11  </error>
+  </param>
+
+  <!-- ==================================================================================== -->
+  <param>
+    <name>
+      <simple>  Q2_norm_6                 </simple>
+      <long>    BANFF; Shape; Q2 6        </long>
+      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <tex>     BANFF; Shape; Q2 6 nubar  </tex>
+    </name>
+
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+
+     <!-- <type>  response  </type> -->
+    <type>  disabled  </type>
+
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int    </category>
+    </categories>
+
+    <apply_to>
+      <detector>    SuperK     </detector>
+      <beam>        all        </beam>
+      <selection>   all rings  </selection>
+      <reac_type>   CCQE       </reac_type>
+      <flav_init>   all        </flav_init>
+      <flav_final>  all        </flav_final>
+      <target>      all        </target>
+    </apply_to>
+
+    <limits>  -inf, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+    <init>                   0     </init>
+    <error>                  0.18  </error>
+  </param>
+
+  <!-- ==================================================================================== -->
+  <param>
+    <name>
+      <simple>  Q2_norm_7                 </simple>
+      <long>    BANFF; Shape; Q2 7        </long>
+      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <tex>     BANFF; Shape; Q2 7 nubar  </tex>
+    </name>
+
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+
+     <!-- <type>  response  </type> -->
+    <type>  disabled  </type>
+
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int    </category>
+    </categories>
+
+    <apply_to>
+      <detector>    SuperK     </detector>
+      <beam>        all        </beam>
+      <selection>   all rings  </selection>
+      <reac_type>   CCQE       </reac_type>
+      <flav_init>   all        </flav_init>
+      <flav_final>  all        </flav_final>
+      <target>      all        </target>
+    </apply_to>
+
+    <limits>  -inf, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+    <init>                   0     </init>
+    <error>                  0.40  </error>
+  </param>
+
 
 
   <!-- ==================================================================================== -->
