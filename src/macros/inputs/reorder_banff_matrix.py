@@ -55,7 +55,7 @@ abnormal_untuned_central_values = {
     "EB_dial_O_nubar"          : 0.0,
     "CC_BY_DIS"                : 0.0,
     "CC_BY_MPi"                : 0.0,
-    "CC_AGKY_Mult"             : 0.0
+    "CC_AGKY_Mult"             : 0.0,
     "Q2_norm_0"                : 0.0,
     "Q2_norm_1"                : 0.0,
     "Q2_norm_2"                : 0.0,
