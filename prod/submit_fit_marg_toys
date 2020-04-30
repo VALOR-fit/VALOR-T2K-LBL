@@ -610,7 +610,7 @@ for($i_fc_par2 = $start_pt_fc_par2; $i_fc_par2 < $start_pt_fc_par2 + $npt_fc_par
 				if($resource eq "cedar") {
 					open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
 					print Slurm "#!/bin/bash \n";
-					print Slurm "#SBATCH --account=def-tanaka-ac \n";		# A larger allocation is available on "rpp-tanaka-ab", but it's only available on cedar
+					print Slurm "#SBATCH --account=def-blairt2k \n";		# A larger allocation is available on "rpp-blairt2k", but it's only available on cedar
 					print Slurm "#SBATCH --nodes=1 \n";
 					print Slurm "#SBATCH --time=$cput \n";
 					print Slurm "#SBATCH --mem=$mem \n";
@@ -637,7 +637,7 @@ for($i_fc_par2 = $start_pt_fc_par2; $i_fc_par2 < $start_pt_fc_par2 + $npt_fc_par
 					print Slurm "rm -rf \$node_dir \n";
 					open(Slurm, ">$job_dir/${tag}.slurm") or die("Can not create the Slurm batch script");
 					print Slurm "#!/bin/bash \n";
-					print Slurm "#SBATCH --account=rpp-tanaka-ab \n";
+					print Slurm "#SBATCH --account=rpp-blairt2k \n";
 					print Slurm "#SBATCH --nodes=1 \n";
 					print Slurm "#SBATCH --time=$cput \n";
 					print Slurm "#SBATCH --mem=$mem \n";
