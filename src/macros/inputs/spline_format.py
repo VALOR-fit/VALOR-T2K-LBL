@@ -23,13 +23,12 @@ conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
 rnd  =  valor.Rnd.Instance()
-arridx= util.ArrIdx.Instance()
 
 python_undefined = 2L*sys.maxint+1
 python_undefined_short =2**32 -1
 
 # File naming convention
-pattern = "[VERSION]_t2ksk.14a.neut5.3.2.13a_tuned_v1r1.[CURRENT].fine.[TYPE]_[SELECTION].root"
+pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_plus_Eb.root"
 models = dict()
 
 def get_file_suffix(sample):
@@ -39,21 +38,54 @@ def get_file_suffix(sample):
         return "erectheta"
     
 
+# This is a list containing parameters and the modes they apply to, in the format "param_mode",
+# using raw (T2KReWeight/NDfit) naming
 def get_systematics():
-    return ["maqe_ccqe", "pfo_ccqe",
-        "ebo_cc1pi", "ebo_cccoh", "ebo_ccoth", "ebo_ccqe", "ebo_mec",
-        "ebo_nc1gamma", "ebo_nccoh", "ebo_ncoth", "ebo_ncpiz", "ebo_ncpipm",
+    # TODO: Add the extra new Q2 params
+    return [
+        "maqe_ccqe",
+        "mecpdd_mec",
         "ca5_cc1pi", "ca5_ncpiz", "ca5_ncpipm",
         "manff_cc1pi", "manff_ncpiz", "manff_ncpipm",
         "bgscl_cc1pi", "bgscl_ncpiz", "bgscl_ncpipm",
-        "dismpishp_ccoth", "mecpdd_mec",
-        "erpa_A_ccqe", "erpa_B_ccqe", "erpa_D_ccqe", "erpa_E_ccqe"]
+        "bgsclbar_cc1pi", "bgsclbar_ncpiz", "bgsclbar_ncpipm",
+        "FSIPIABS_ccqe", "FSIPIABS_cc1pi", "FSIPIABS_cccoh", "FSIPIABS_ccmisc",
+            "FSIPIABS_ccmpi", "FSIPIABS_ccdis", "FSIPIABS_ncpiz", "FSIPIABS_ncpipm",
+            "FSIPIABS_nccoh", "FSIPIABS_ncoth", "FSIPIABS_mec", "FSIPIABS_nc1gamma",
+        "FSICEXLO_ccqe", "FSICEXLO_cc1pi", "FSICEXLO_cccoh", "FSICEXLO_ccmisc",
+            "FSICEXLO_ccmpi", "FSICEXLO_ccdis", "FSICEXLO_ncpiz", "FSICEXLO_ncpipm",
+            "FSICEXLO_nccoh", "FSICEXLO_ncoth", "FSICEXLO_mec", "FSICEXLO_nc1gamma",
+        "FSIINELLO_ccqe", "FSIINELLO_cc1pi", "FSIINELLO_cccoh", "FSIINELLO_ccmisc",
+            "FSIINELLO_ccmpi", "FSIINELLO_ccdis", "FSIINELLO_ncpiz", "FSIINELLO_ncpipm",
+            "FSIINELLO_nccoh", "FSIINELLO_ncoth", "FSIINELLO_mec", "FSIINELLO_nc1gamma",
+        "FSIPIPROD_ccqe", "FSIPIPROD_cc1pi", "FSIPIPROD_cccoh", "FSIPIPROD_ccmisc",
+            "FSIPIPROD_ccmpi", "FSIPIPROD_ccdis", "FSIPIPROD_ncpiz", "FSIPIPROD_ncpipm",
+            "FSIPIPROD_nccoh", "FSIPIPROD_ncoth", "FSIPIPROD_mec", "FSIPIPROD_nc1gamma",
+        "FSIINELHI_ccqe", "FSIINELHI_cc1pi", "FSIINELHI_cccoh", "FSIINELHI_ccmisc",
+            "FSIINELHI_ccmpi", "FSIINELHI_ccdis", "FSIINELHI_ncpiz", "FSIINELHI_ncpipm",
+            "FSIINELHI_nccoh", "FSIINELHI_ncoth", "FSIINELHI_mec", "FSIINELHI_nc1gamma",
+        "DISBY_ccdis",
+        "MPiBY_ccmpi",
+        "MPiAGKYXsec_ccmpi",
+        "2p2hedeplowenu_mec",
+        "2p2hedephienu_mec",
+        "2p2hedeplowenubar_mec",
+        "2p2hedephienubar_mec",
+        "LowQ2Suppression0_ccqe",
+        "LowQ2Suppression1_ccqe",
+        "LowQ2Suppression2_ccqe",
+        "LowQ2Suppression3_ccqe",
+        "LowQ2Suppression4_ccqe",
+        "LowQ2Suppression5_ccqe",
+        "LowQ2Suppression6_ccqe",
+        "LowQ2Suppression7_ccqe",
+        "EB_dial_O_nu_ccqe",
+        "EB_dial_O_nubar_ccqe"
+    ]
 
 def get_mode_map():
-    valor_modes = ["CCQE","CCcoh","CCMEC","CCoth","CC1piC","NCcoh","NCoth",
-        "NC1piC","NC1pi0","NC1Gamma"]
-    raw_modes = ["ccqe","cccoh","mec","ccoth","cc1pi","nccoh","ncoth","ncpipm",
-        "ncpiz","nc1gamma"]
+    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCmisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+    raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
     return list(zip(raw_modes, valor_modes))
 
 def get_flavour_map():
@@ -66,17 +98,23 @@ def get_flavour_map():
     return list(zip(raw_flavours, valor_flavours))
 
 def get_param_map():
-    raw_params = ["ca5", "bgscl", "maqe", "manff", "pfo", "dismpishp",
-        "erpa_A", "erpa_B", "erpa_D", "erpa_E", "mecpdd", "ebo"]
-    valor_params = ["CA5", "ISO_BKG", "MAQE", "MARES", "pF_O", "CC_DIS",
-        "BeRPA_A", "BeRPA_B", "BeRPA_D", "BeRPA_E", "2p2h_shape_O", "ebo"]
+    # NOTE (2020-01-03, run 10):
+    #   The mapping between the raw (i.e. T2KReWeight/NDfit) and VALOR/NIWG param names for the FSI params (FSI.. or FEF...)
+    #   is not intuitive, but they are listed in table 9 of TN-325 (see https://t2k.org/docs/technotes/325/tn-325-v1).
+    #   In fact, the raw names use some old conventions, and they will probably change to being the same as the
+    #   VALOR/NIWG names next time splines are generated.
+    # NOTE:
+    #   Make sure that if any param name is a subset of another param name, then in the lists below, it appears after
+    #   the param it is a subset of. Otherwise, the wrong param may be fetched.
+    raw_params   = ["ca5", "bgsclbar"      , "bgscl"  , "maqe", "manff", "mecpdd"      ,"FSIPIABS", "FSICEXLO", "FSIINELLO", "FSIPIPROD", "FSIINELHI", "DISBY"    , "MPiBY"    , "MPiAGKYXsec" , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "LowQ2Suppression0", "LowQ2Suppression1", "LowQ2Suppression2", "LowQ2Suppression3", "LowQ2Suppression4", "LowQ2Suppression5", "LowQ2Suppression6", "LowQ2Suppression7", "Eb_dial_O_nu", "Eb_dial_O_nubar"]
+    valor_params = ["CA5", "ISO_BKG_LowPPi", "ISO_BKG", "MAQE", "MARES", "2p2h_shape_O","FEFABS"  , "FEFCX"   , "FEFQE"    , "FEFINEL"  , "FEFQEH"   , "CC_BY_DIS", "CC_BY_MPi", "CC_AGKY_Mult", "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_0"        , "Q2_norm_1"        , "Q2_norm_2"        , "Q2_norm_3"        , "Q2_norm_4"        , "Q2_norm_5"        , "Q2_norm_6"        , "Q2_norm_7"        , "Eb_dial_O_nu", "Eb_dial_O_nubar"]
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
-    if sample in ["1Rmu","1Re","MultiRe"]:
-        return "250ka"
+    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe"]:
+        return "fhc"
     elif sample in ["RHC1Rmu","RHC1Re"]:
-        return "m250ka"
+        return "rhc"
     else:
         print "Error: Unknown sample ", sample
         sys.exit()
@@ -122,24 +160,27 @@ def build_spline_array_name(syst, flavour, mode):
 
 def get_fit_elements(config_file):
     elements = valor.CompoundFitElements()
-    elements.Read(config_file, "nomc+nosplines")
+    elements.Read(util.CompleteConfigPath(config_file), "nomc+nosplines")
     return elements
 
 def set_model_map(model):
     if model.Name() == "superk__JPARC_FHC__1rmu":
-        models["1Rmu"] = model
+        models["FHC1Rmu"] = model
     elif model.Name() == "superk__JPARC_RHC__1rmu":
         models["RHC1Rmu"] = model
     elif model.Name() == "superk__JPARC_FHC__1re":
-        models["1Re"] = model
+        models["FHC1Re"] = model
     elif model.Name() == "superk__JPARC_RHC__1re":
         models["RHC1Re"] = model
     elif model.Name() == "superk__JPARC_FHC__multire":
-        models["MultiRe"] = model
+        models["FHCMultiRe"] = model
     else:
         print "Unrecognised model ", model.Name()
         sys.exit()
 
+# The raw spline file specified bins as true_reco1_reco2 (or true_reco1 if 2D), but in VALOR we put all
+# true kinevars into 1 dimension and all reco into another, so we want to convert the reco bin number
+# into VALOR format
 def get_new_binning(sample, flavour, mode, true_bin, reco_bin1, reco_bin2=0):
     # Flavour and mode included just in case this is required for true binning
     # in the future. For now, the simple 1D true binning means the index we
@@ -214,6 +255,9 @@ def main(version, path, sample, config):
             if "erpa" in syst:
                 ppar,coeff,mode = syst.split("_")
                 par = ppar +"_"+ coeff
+            elif "EB_dial_O_nu" in syst:
+                p1,p2,p3,p4,mode = syst.split("_")
+                par = p1 +"_"+ p2 +"_"+ p3 +"_"+ p4
             else:  
                 par,mode = syst.split("_")
             for (old,new) in get_mode_map():
@@ -223,6 +267,8 @@ def main(version, path, sample, config):
             m_enum = util.ReacModeFromString(mode_string)
             if m_enum == conv.kmUndefined or m_enum == python_undefined or m_enum == python_undefined_short:
                 print "Skipping param+mode combination with undefined mode:", par, mode_string
+                if "nc" in util.ToLowerCase(mode_string) and "to" in util.ToLowerCase(valor_type):
+                    print "(note: skipping oscillated NC modes is expected)"
                 continue
         
             # Get all the splines for this systematic+mode
@@ -236,6 +282,9 @@ def main(version, path, sample, config):
                 if p == "erpa":
                     p = "erpa_" + tokens[2]
                     m = tokens[3]
+                elif p == "EB":
+                    p = tokens[1] +"_"+ tokens[2] +"_"+ tokens[3] +"_"+ tokens[4]
+                    m = tokens[5]
                 else:
                     m = tokens[2]
                 modes.add(m)
@@ -274,6 +323,13 @@ def main(version, path, sample, config):
                 new_spline.SetName(new_spl_name)
 
                 idx = true_bin * nbins_reco + reco_bin
+                if idx >= nbins_true * nbins_reco:
+                    print "ERROR: Tried to add spline \'{}\'".format(new_spl_name), "to array", \
+                        build_spline_array_name(par, valor_type, mode), ", but the index ({})".format(idx), \
+                        "is out of range [0, {}]".format(nbins_true * nbins_reco), "; true bin =", true_bin, \
+                        "(max = {})".format(nbins_true), "; reco bin =", reco_bin, "(max = {})".format(nbins_reco), \
+                        "; input spline bins =", all_bins
+                    sys.exit()
                 #if build_spline_array_name(par, valor_type, mode) == "spl_numuCCQE_MAQE":
                 #    print "Adding spline", new_spl_name, "to array", build_spline_array_name(par, valor_type, mode), "at idx =", idx
                 spline_array.AddAt(new_spline, idx)
@@ -286,7 +342,6 @@ def main(version, path, sample, config):
             if mode == "CC1piC":
                 spline_array.Write(build_spline_array_name(par, valor_type, "CC1pi0"), 1)
 
-
         tf.Close()
     output_file.Close()
     print "Params:"
@@ -295,10 +350,13 @@ def main(version, path, sample, config):
     print "Modes:"
     for m in modes:
         print m
+
+    print "Done!"
+
   
 if __name__=="__main__":
     import argparse
-    samples = ["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
+    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
     parser.add_argument('-p', '--prefix', default='spline2018v1', help="Spline filename prefix.")
     parser.add_argument('-i', '--input', help="Input spline directory.")

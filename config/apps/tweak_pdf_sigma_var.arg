@@ -12,6 +12,7 @@ kinevar                              |   string       |  optional   |   Ereco
 rethrow-unphysical,accept-unphysical |   boolean_list |  optional   |   rethrow-unphysical
 load-prior-from-file                 |   string       |  optional   |   none
 prior-fit-number                     |   integer      |  optional   |   0
+test-force-untuned                   |   boolean      |  optional   |   -
 #
 input-mixing12                       |   double       |  optional   |   0.304
 input-mixing13                       |   double       |  optional   |   0.0219

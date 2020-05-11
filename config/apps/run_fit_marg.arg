@@ -37,3 +37,4 @@ fit-param2-nbins                     |   integer      |  optional   |   0
 fit-param2-start-bin                 |   integer      |  optional   |   0
 n-sigma-limit                        |   double       |  optional   |   0.0
 prior-file                           |   string       |  mandatory  |   -
+use-penalty-term                     |   string       |  optional   |   -

@@ -41,10 +41,12 @@
 #include "TObjArray.h"
 #include "TString.h"
 #include "TSystem.h"
-
+#include "TVector.h"
 // fmwk
 #include "valor/Conventions/Opt.h"
 #include "valor/Conventions/Names.h"
+#include "valor/Conventions/ParameterPool.h"
+#include "valor/Conventions/SystType.h"
 #include "valor/CmdLine/CmdLnArgList.h"
 #include "valor/FitCore/CorrelatedSystematics.h"
 #include "valor/FitCore/PhysParamList.h"
@@ -73,14 +75,14 @@ using namespace std;
 using namespace valor;
 using namespace valor::conv;
 
-
 bool t2k = false;
 
-
 void SpecialCaseTweak(PhysParamId_t p, FitParamList * fp, double& tweak_p1, double& tweak_m1, double& tweak_p3, double& tweak_m3);
-void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv, TFile * outfile);
+void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv,
+                        TFile * outfile, bool test_force_untuned);
 void GeneratePDFTweaked(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv,
-                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile, std::string tag);
+                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile,
+                        std::string tag, bool test_force_untuned);
 
 int main(int argc, char ** argv)
 {
@@ -98,6 +100,9 @@ int main(int argc, char ** argv)
   string output_rootfile  = arg.GetString("output");
   string params_to_tweak  = arg.GetString("params");
   string kinevar_str      = arg.GetString("kinevar");
+
+  // If true, then force all systematic parameters to their untuned values. This is for testing weights as is intended to be used with e.g. the DEBUG_SINGLE_BIN preprocessor directive in GSSFM
+  bool test_force_untuned = arg.GetBool("test-force-untuned");
 
   KineVar_t kv = util::KineVarFromString(util::RemoveAllWhitespace(kinevar_str));
   if(kv == kvUndefined) {
@@ -173,11 +178,18 @@ int main(int argc, char ** argv)
   if (fp->Exists(conv::kPhypCPV     )) { fp->Update(conv::kPhypCPV     ,deltacp ); }
 
   // Generate pdfs
-  GeneratePDFNominal(model, cm, fp, kv, outfile);
+  GeneratePDFNominal(model, cm, fp, kv, outfile, test_force_untuned);
   for (unsigned int ip = 0 ; ip < param_set.size() ; ip++) {
     PhysParamId_t p = param_set[ip];
     if(!util::IsSystematic(p)) { continue; }
-    double bestfit = fp->InitValue(p);
+    if(ParameterPool::Instance()->GetParam(p).GetType() == conv::kSystDisabled) { continue; }
+    if(!syst->Contains(p)) {
+      LOG("valor_dune", pFATAL) << "Could not get the 1 sigma error for param \'"
+                                << util::NameRegistry::Instance()->ParamAsString(p) << "\'";
+      util::Die(-1);
+    }
+
+    double bestfit = (test_force_untuned ? syst->UntunedValue(p) : fp->InitValue(p));
     double sigma_err = syst->OneSigmaError(p);
     double tweak_p1 = bestfit + (1 * sigma_err);
     double tweak_m1 = bestfit - (1 * sigma_err);
@@ -196,10 +208,14 @@ int main(int argc, char ** argv)
       << "\n  nominal +3 sigma tweak = " << tweak_p3
       << "\n  nominal -3 sigma tweak = " << tweak_m3;
 
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p1, outfile, "p1");
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m1, outfile, "m1");
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p3, outfile, "p3");
-    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m3, outfile, "m3");
+    TVectorD nomsigvalues(0, 4, tweak_m3, tweak_m1, bestfit, tweak_p1, tweak_p3, "END");
+    
+    nomsigvalues.Write(TString::Format("nom_sig_values_vector_%s", util::NameRegistry::Instance()->ParamAsString(p).c_str() ));
+
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p1, outfile, "p1", test_force_untuned);
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m1, outfile, "m1", test_force_untuned);
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_p3, outfile, "p3", test_force_untuned);
+    GeneratePDFTweaked(model, cm, fp, kv, ip, p, tweak_m3, outfile, "m3", test_force_untuned);
   } // loop over params
 
   outfile->Close();
@@ -207,28 +223,108 @@ int main(int argc, char ** argv)
 
   LOG("valor_dune",pNOTICE)<<"Finished writing to file: "<<output_rootfile;
   std::cout << "Done!" << std::endl;
+  fp->Print(cout);
 }
 //________________________________________________________________________________________
 void SpecialCaseTweak(conv::PhysParamId_t p, FitParamList * fp, double& tweak_p1, double& tweak_m1, double& tweak_p3, double& tweak_m3)
 {
   if(t2k) {
     if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_shape_O")) {
-      double bestfit = fp->InitValue(p);
-      double one_sigma_err   = 0.5;
-      double three_sigma_err = 1.0;
-      tweak_p1 = bestfit + one_sigma_err;
-      tweak_m1 = bestfit - one_sigma_err;
-      tweak_p3 = bestfit + three_sigma_err;
-      tweak_m3 = bestfit - three_sigma_err;
+      //  double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = -0.5;
+      double three_sigma_err_upper = 1.0;
+      double three_sigma_err_lower = -1.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+    
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_lowEnu")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_highEnu")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_lowEnubar")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("2p2h_Edep_highEnubar")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 0.5;
+      double one_sigma_err_lower   = 0.25;
+      double three_sigma_err_upper = 0.75;
+      double three_sigma_err_lower = 0.0;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("EB_dial_O_nu")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 7;
+      double one_sigma_err_lower   = -5;
+      double three_sigma_err_upper = 15;
+      double three_sigma_err_lower = -10;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
+    }
+
+    if(p == util::NameRegistry::Instance()->PhysParamFromString("EB_dial_O_nubar")) {
+      // double bestfit = fp->InitValue(p);
+      double one_sigma_err_upper   = 7;
+      double one_sigma_err_lower   = -5;
+      double three_sigma_err_upper = 15;
+      double three_sigma_err_lower = -10;
+      tweak_p1 = one_sigma_err_upper;
+      tweak_m1 = one_sigma_err_lower;
+      tweak_p3 = three_sigma_err_upper;
+      tweak_m3 = three_sigma_err_lower;
     }
   }
 }
 //________________________________________________________________________________________
-void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv, TFile * outfile)
+void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv, TFile * outfile, bool test_force_untuned)
 {
   cout << "\n\nGenerating nominal PDF:" << std::endl;
   outfile->cd();
-  model->ResetSystematics("all");
+  if(test_force_untuned) {
+    model->ForceSystematicsToUntuned();
+  }
+  else {
+    model->ResetSystematics("all");
+  }
   fp->FromPhysParamList(model->Tweaks(),"current-silent");
 
   // Generate predictions
@@ -285,12 +381,17 @@ void GeneratePDFNominal(FitModelABC * model, CompoundFitModel * cm, FitParamList
 }
 //________________________________________________________________________________________
 void GeneratePDFTweaked(FitModelABC * model, CompoundFitModel * cm, FitParamList * fp, KineVar_t kv,
-                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile, std::string tag)
+                        unsigned int ip, PhysParamId_t p, double tweak_dial, TFile * outfile, std::string tag, bool test_force_untuned)
 {
   outfile->cd();
   std::string param_name = util::NameRegistry::Instance()->ParamAsString(p);
   cout << "\n\nGenerating " << tag << " PDF with tweak dial = " << tweak_dial << " for param " << param_name << std::endl;
-  model->ResetSystematics("all");
+  if(test_force_untuned) {
+    model->ForceSystematicsToUntuned();
+  }
+  else {
+    model->ResetSystematics("all");
+  }
 
   model->TweakSystematic(p, tweak_dial, "");
   fp->FromPhysParamList(model->Tweaks(),"current-silent");

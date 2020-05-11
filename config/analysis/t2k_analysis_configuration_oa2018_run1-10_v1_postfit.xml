@@ -101,8 +101,9 @@
     </group>
 
 
+
     <group name="skdetsipn">
-      <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
+       <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
            The order of params in this list must be the same as the order of params in the matrix.-->
       <format> t2k_sk_params_run1-9d.xml </format>
 

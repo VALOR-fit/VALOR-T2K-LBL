@@ -77,7 +77,8 @@
 #  --param-set              : When fitting with a fake data set, osc param values must be specified to generate it.
 #                             This option sets the osc params to preset values depending on the set name.
 #
-#
+#  --use-penalty-term       : Specify to which parameter the penalty term should be applied. 
+#                             Make sure penalty term parameters are correctly specified in chosen prior .xml input file 
 # F.Bench
 #-------------------------------------------------------------------------------------------------------------------------------
 #
@@ -148,6 +149,7 @@ foreach (@ARGV) {
   elsif($_ eq '--start-pt-fc-par2'   ) { $start_pt_fc_par2    = $ARGV[$iarg+1]; }
   elsif($_ eq '--use-t2k-presets'    ) { $use_t2k_presets     = $ARGV[$iarg+1]; }
   elsif($_ eq '--param-set'          ) { $param_set           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--use-penalty-term'   ) { $use_penalty_term    = $ARGV[$iarg+1]; }
 
   else {
       print "Unrecognised argument ".$_."\n"; exit;
@@ -214,7 +216,7 @@ $npt_fc_par1         = 1                                                        
 $npt_fc_par2         = 1                                                                   unless defined $npt_fc_par2;
 $start_pt_fc_par1    = 0                                                                   unless defined $start_pt_fc_par1;
 $start_pt_fc_par2    = 0                                                                   unless defined $start_pt_fc_par2;
-
+$use_penalty_term    = "-"                                                                 unless defined $use_penalty_term;
 # If we have only a single parameter of interest defined, set the options for par2 appropriately
 if($par2 eq "") {
 	$min_par2     = 0.;
@@ -308,7 +310,7 @@ if($use_t2k_presets == 1) {
         $npt_fc_par2 = 1                        unless defined $npt_fc_par2;
       }
       else {
-        $cput        = "00:15:00"               unless defined $cput;
+        $cput        = "00:30:00"               unless defined $cput;
       }
 			$mem           = "2500M"                  unless defined $mem;
 		}
@@ -398,7 +400,7 @@ if($use_t2k_presets == 1) {
     $max_par2     = +3.14159265358979312e+00 unless defined $max_par2;
     $npt_par2     = 51                       unless defined $npt_par2;
     $npt_job_par2 = 3                        unless defined $npt_job_par2;
-    $cput         = "03:00:00"               unless defined $cput;		# TODO: these default CPU time and memory for this fit was not set in the old analysis, so these are a guess
+    $cput         = "05:00:00"               unless defined $cput;		# TODO: these default CPU time and memory for this fit was not set in the old analysis, so these are a guess
     $mem          = "3500M"                  unless defined $mem;
 	} # 2D sinsqth13 vs. CPV
 
@@ -574,6 +576,11 @@ for($i_fc_par2 = $start_pt_fc_par2; $i_fc_par2 < $start_pt_fc_par2 + $npt_fc_par
 				if($stat_fluct         == 1)       { $arguments = "$arguments --with-stat-fluct"    } else { $arguments = "$arguments --without-stat-fluct" }
 				if($use_simple_binning == 1)       { $arguments = "$arguments --use-simple-binning" } else { $arguments = "$arguments --no-simple-binning"  }
 				if($mix_param_octant   eq "two")   { $arguments = "$arguments --second-octant"      } else { $arguments = "$arguments --first-octant"       }
+        if($use_penalty_term      eq "mixing13")       { $arguments = "$arguments --use-penalty-term mixing13" }
+        elsif($use_penalty_term   eq "mixing23")       { $arguments = "$arguments --use-penalty-term mixing23" }
+        elsif($use_penalty_term   eq "mixing12")       { $arguments = "$arguments --use-penalty-term mixing12" }
+        elsif($use_penalty_term   eq "dmsq23")         { $arguments = "$arguments --use-penalty-term dmsq23"   }
+        else{$arguments = "$arguments --use-penalty-term $use_penalty_term"}
 
 				$command = "$program $arguments";
 				print "$command \n";
@@ -603,7 +610,7 @@ for($i_fc_par2 = $start_pt_fc_par2; $i_fc_par2 < $start_pt_fc_par2 + $npt_fc_par
 				if($resource eq "cedar") {
 					open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
 					print Slurm "#!/bin/bash \n";
-					print Slurm "#SBATCH --account=def-tanaka-ac \n";		# A larger allocation is available on "rpp-tanaka-ab", but it's only available on cedar
+					print Slurm "#SBATCH --account=def-blairt2k \n";		# A larger allocation is available on "rpp-blairt2k", but it's only available on cedar
 					print Slurm "#SBATCH --nodes=1 \n";
 					print Slurm "#SBATCH --time=$cput \n";
 					print Slurm "#SBATCH --mem=$mem \n";
@@ -630,7 +637,7 @@ for($i_fc_par2 = $start_pt_fc_par2; $i_fc_par2 < $start_pt_fc_par2 + $npt_fc_par
 					print Slurm "rm -rf \$node_dir \n";
 					open(Slurm, ">$job_dir/${tag}.slurm") or die("Can not create the Slurm batch script");
 					print Slurm "#!/bin/bash \n";
-					print Slurm "#SBATCH --account=rpp-tanaka-ab \n";
+					print Slurm "#SBATCH --account=rpp-blairt2k \n";
 					print Slurm "#SBATCH --nodes=1 \n";
 					print Slurm "#SBATCH --time=$cput \n";
 					print Slurm "#SBATCH --mem=$mem \n";
