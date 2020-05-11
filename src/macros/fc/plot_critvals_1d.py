@@ -35,11 +35,11 @@ env  =  valor.Env.Instance()
 python_undefined = 2L*sys.maxint+1
 python_undefined_short = 2**32 -1
 
-_conf_levels = [conv.kCL1Sigma, conv.kCL90, conv.kCL2Sigma]
+_conf_levels = [conv.kCL1Sigma, conv.kCL90, conv.kCL2Sigma, conv.kCL3Sigma]
 _n_points = 9
 
 def plot_critical_values(output_file, input_file_nh, input_file_ih):
-  colours = [ROOT.kOrange, ROOT.kRed, ROOT.kBlue]
+  colours = [ROOT.kOrange, ROOT.kRed, ROOT.kBlue, ROOT.kGreen+2]
   line_styles = [1, 2]
 
   canvas = ROOT.TCanvas("canvas","canvas")

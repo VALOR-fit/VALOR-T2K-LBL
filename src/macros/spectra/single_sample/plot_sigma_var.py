@@ -59,15 +59,19 @@ _ratio_diff_warn_threshold_percent = 0.1
 # systematic variations to the legacy analysis, sum these modes.
 _do_sum_cc1pi_modes = False
 
+# The legacy T2K analysis does not track CCmisc, CCMpi and CCDIS modes separately, like we do in the SDK. So when comparing
+# systematic variations to the legacy analysis, sum these modes into CCoth.
+_do_sum_ccoth_modes = False
 #_______________________________________________________________________
 
-def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp_file, comp_format, x_max, by_mode, x_title, sum_t2k_cc1pi, modelist_file):
+def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp_file, comp_format, x_max, by_mode, x_title, sum_t2k_cc1pi, sum_t2k_ccoth, modelist_file):
   global _det
   global _beam
   global _selec
   global _by_mode
   global _x_title
   global _do_sum_cc1pi_modes
+  global _do_sum_ccoth_modes
   _det     = det
   _beam    = beam
   _selec   = selec
@@ -81,11 +85,12 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
   compound_model = elements.FitModel()
 
   # Get the modes
-  if not modelist_file:
-    print "ERROR: could not open the input mode list file!"
-    sys.exit()
-  ml = valor.ModeList(util.CompleteConfigPath(modelist_file))
-  read_modes = ml.Modes()
+  if _by_mode:
+    if not modelist_file:
+      print "ERROR: could not open the input mode list file!"
+      sys.exit()
+    ml = valor.ModeList(util.CompleteConfigPath(modelist_file))
+    read_modes = ml.Modes()
 
   print "Reading from input VALOR file", in_file
   fin = ROOT.TFile(in_file, "read")
@@ -100,7 +105,16 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
     fin_comp = ROOT.TFile(comp_file, "READ")
 
   param_set_temp = list(util.GetParameterSet(param_set_str, True))   # Only get exact matches to any input param names (otherwise problems can be caused)
-  param_set = [ipar for ipar in param_set_temp if util.IsSystematic(ipar)]
+  param_set_temp2 = [ipar for ipar in param_set_temp if util.IsSystematic(ipar)]
+
+  # Remove any disabled params from the list
+  param_set = []
+  for ip in range(0, len(param_set_temp2)):
+    p = param_set_temp2[ip]
+    param = valor.ParameterPool.Instance().GetParam(p)
+    if param.GetType() != conv.kSystDisabled:
+      param_set.append(p)
+
   if len(param_set) == 0:
     print "ERROR: Got no prams to plot"
     sys.exit()
@@ -112,8 +126,8 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
     selection_model = compound_model.GetSubModel(i)
     selection_name = selection_model.Name()
     if not(selection_model.GetBeam()      == util.BeamConfFromString(_beam) and \
-           selection_model .GetDetector() == util.DetectorFromString(_det)  and \
-           selection_model .GetSample()   == util.SampleFromString  (_selec)):
+           selection_model.GetDetector()  == util.DetectorFromString(_det)  and \
+           selection_model.GetSample()    == util.SampleFromString  (_selec)):
       continue
 
     if _by_mode and sum_t2k_cc1pi and selection_model.GetDetector() == conv.kdSuperK \
@@ -122,6 +136,13 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
       print "Will sum T2K CC1piC and CC1pi0 modes"
     else:
       _do_sum_cc1pi_modes = False
+
+    if _by_mode and sum_t2k_ccoth and selection_model.GetDetector() == conv.kdSuperK \
+            and comp_format == "t2k_legacy":
+      _do_sum_ccoth_modes = True
+      print "Will sum T2K CCmisc, CCMpi and CCDIS modes"
+    else:
+      _do_sum_ccoth_modes = False
 
     hnom      = get_nominal(fin, "valor", selection_name)
     hnom_comp = None
@@ -146,6 +167,11 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
         if _do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1pi0:
           # If comparing to the legacy T2K analysis, skip the CC1pi0 modes, because we've already summed them with CC1piC
           continue
+
+        if _do_sum_ccoth_modes and (util.ReacModeToType(m) == conv.kmtCCMpi or util.ReacModeToType(m) == conv.kmtCCDIS):
+          # If comparing to the legacy T2K analysis, skip the kmtCCDIS and kmtCCmisc modes, because we've already summed them with CCmisc 
+          continue
+ 
 
         canv_name = "sigma_var_ratio_" + selection_name + "_" + param_name
         if _by_mode:
@@ -184,28 +210,35 @@ def main(output_filename, in_file, param_set_str, config, det, beam, selec, comp
               if sigma_var == "m3":
                 leg.AddEntry(h_comp, "comparison", "l")
 
-            # Throw a warning if the ratios have a difference greater than some threshold
-            for ibin in range(1, h.GetNbinsX()):
-              diff = 100 * ROOT.TMath.Abs(1.0 - (h_comp.GetBinContent(ibin) / h.GetBinContent(ibin)))
-              if diff > _ratio_diff_warn_threshold_percent:
-                if _by_mode:
-                  print "WARNING: For param =", param_name, "; sample =", selection_name, "; mode =", util.ModeAsString(m), "; kinevar val =", \
-                    h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
-                    "% in the ratios of input and compaison hist"
-                else:
-                  print "WARNING: For param =", param_name, "; sample =", selection_name, "; kinevar val =", \
-                    h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
-                    "% in the ratios of input and compaison hist"
+              # Throw a warning if the ratios have a difference greater than some threshold
+              for ibin in range(1, h.GetNbinsX()):
+                diff = 100 * ROOT.TMath.Abs(1.0 - (h_comp.GetBinContent(ibin) / h.GetBinContent(ibin)))
+                if diff > _ratio_diff_warn_threshold_percent:
+                  if _by_mode:
+                    print "WARNING: For param =", param_name, "; sample =", selection_name, "; mode =", util.ModeAsString(m), "; kinevar val =", \
+                      h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
+                      "% in the ratios of input and compaison hist"
+                  else:
+                    print "WARNING: For param =", param_name, "; sample =", selection_name, "; kinevar val =", \
+                      h.GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
+                      "% in the ratios of input and compaison hist"
 
         hvar_list[0].SetMaximum(1 + 1.1 * hist_max_var)
         hvar_list[0].SetMinimum(1 - 1.1 * hist_max_var)
 
         title_text = selection_name + "  " + param_name
         if _by_mode:
-          if not (_do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1piC):
+          if not (_do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1piC) or (_do_sum_ccoth_modes and util.ReacModeToType(m) == conv.kmtCCmisc):
             title_text = selection_name + "  " + util.ModeAsString(m) + "  " + param_name
-          else:
+          
+          elif (_do_sum_ccoth_modes and util.ReacModeToType(m) == conv.kmtCCmisc):
+            title_text = selection_name + "  " + util.ModeAsString(m).replace("CCmisc", "CCoth (CCmisc+CCDIS+CCMpi)") + "  " + param_name
+            print "changing histo name hehe", util.ModeAsString(m)
+          
+          elif (_do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1piC):
             title_text = selection_name + "  " + util.ModeAsString(m).replace("CC1piC", "CC1pi(C+0)") + "  " + param_name
+          
+        print title_text
         title_box = make_title_box(title_text)
         title_box.Draw("SAME")
         leg.Draw("SAME")
@@ -257,6 +290,8 @@ def get_ratio_nom(fin, sigma_var, param_name, selection_name, m, hnom, is_compar
     if _by_mode:
       hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m) + "_" + param_name + "_" + sigma_var
     h = fin.Get(hname)
+    if not h:
+      print "WARNING: Could not get hist named [", hname, "] from the input file"
 
     if _do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1piC:
       # If comparing to the legacy T2K analysis, sum the PDFs of the CC1pi0 and CC1piC modes
@@ -265,6 +300,20 @@ def get_ratio_nom(fin, sigma_var, param_name, selection_name, m, hnom, is_compar
       if not hCC1pi0:
         print "WARNING: Could not get hist named [", hname, "] from the input file"
       h.Add(hCC1pi0)
+    
+    if _do_sum_ccoth_modes and util.ReacModeToType(m) == conv.kmtCCmisc:
+      # If comparing to the legacy T2K analysis, sum the PDFs of the CCMpi, CCMisc and CCDIS modes
+      hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m).replace("CCmisc", "CCDIS") + "_" + param_name + "_" + sigma_var
+      hCCDIS = fin.Get(hname)
+      if not hCCDIS:
+        print "WARNING: Could not get hist named [", hname, "] from the input file"
+      h.Add(hCCDIS)
+
+      hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m).replace("CCmisc", "CCMpi") + "_" + param_name + "_" + sigma_var
+      hCCMpi = fin.Get(hname)
+      if not hCCMpi:
+        print "WARNING: Could not get hist named [", hname, "] from the input file"
+      h.Add(hCCMpi)
 
     # If we're considering the contribution from each mode, get the nominal hist here instead of using the input nominal hist
     if _by_mode:
@@ -276,6 +325,9 @@ def get_ratio_nom(fin, sigma_var, param_name, selection_name, m, hnom, is_compar
       if _by_mode:
         hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m) + "_" + param_name + "_" + sigma_var
       h = fin.Get(hname)
+      if not h:
+        print "WARNING: Could not find VALOR comparison hist named [{}], skipping this comparison".format(hname)
+        return None
 
       if _do_sum_cc1pi_modes and util.ReacModeToType(m) == conv.kmtCC1piC:
         # If comparing to the legacy T2K analysis, sum the PDFs of the CC1pi0 and CC1piC modes
@@ -285,6 +337,21 @@ def get_ratio_nom(fin, sigma_var, param_name, selection_name, m, hnom, is_compar
           print "WARNING: Could not get hist named [", hname, "] from the input file"
         h.Add(hCC1pi0)
 
+
+      if _do_sum_ccoth_modes and util.ReacModeToType(m) == conv.kmtCCmisc:
+      # If comparing to the legacy T2K analysis, sum the PDFs of the CCMpi, CCMisc and CCDIS modes
+        hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m).replace("CCmisc", "CCDIS") + "_" + param_name + "_" + sigma_var
+        hCCDIS = fin.Get(hname)
+        if not hCCDIS:
+          print "WARNING: Could not get hist named [", hname, "] from the input file"
+        h.Add(hCCDIS)
+  
+        hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(m).replace("CCmisc", "CCMpi") + "_" + param_name + "_" + sigma_var
+        hCCMpi = fin.Get(hname)
+        if not hCCMpi:
+          print "WARNING: Could not get hist named [", hname, "] from the input file"
+        h.Add(hCCMpi)
+  
       # If we're considering the contribution from each mode, get the nominal hist here instead of using the input nominal hist
       if _by_mode:
         hnom = get_nominal(fin, "valor", selection_name, m)
@@ -332,6 +399,21 @@ def get_nominal(fin, format, selection_name, mode = conv.kmUndefined):
       if not hCC1pi0:
         print "WARNING: Could not get hist named [", hname, "] from the input file"
       hnom.Add(hCC1pi0)
+
+    elif _do_sum_ccoth_modes and util.ReacModeToType(mode) == conv.kmtCCmisc:
+      # If comparing to the legacy T2K analysis, sum the PDFs of the CCMpi, CCMisc and CCDIS modes
+      hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(mode).replace("CCmisc", "CCDIS") + "_nom"
+      hCCDIS = fin.Get(hname)
+      if not hCCDIS:
+        print "WARNING: Could not get hist named [", hname, "] from the input file"
+      hnom.Add(hCCDIS)
+
+      hname = _name_prefix + "_" + selection_name + "_" + util.ModeAsString(mode).replace("CCmisc", "CCMpi") + "_nom"
+      hCCMpi = fin.Get(hname)
+      if not hCCMpi:
+        print "WARNING: Could not get hist named [", hname, "] from the input file"
+      hnom.Add(hCCMpi)
+
   elif format == "t2k_legacy":
     # The legacy T2K syst var hists have already had the ratio taken, so do nothing here
     return None
@@ -399,6 +481,8 @@ def get_t2k_legacy_hist_name(param_name, sigma_var, m):
     comp_mode_name = comp_mode_name.replace("nc1pic", "nc1piC")
     comp_mode_name = comp_mode_name.replace("numutonue", "oscnue")
     comp_mode_name = comp_mode_name.replace("numubartonuebar", "oscnuebar")
+    comp_mode_name = comp_mode_name.replace("ccmisc", "ccoth") #testing name replacing for comparison by mode 
+
 
   hname = "Ratio_" + comp_sample + "_" + comp_param_name + "_" + sigma_var
   if _by_mode:
@@ -468,11 +552,12 @@ if __name__=="__main__":
   parser.add_option(      '--comp-file'    , dest='comp_file'      , default=""     , help="Name of file to compare to")
   parser.add_option(      '--comp-format'  , dest='comp_format'    , default=""     , help="Choose from: \'valor\', \'t2k_legacy\'")
   parser.add_option(      '--sum-t2k-cc1pi', dest='sum_t2k_cc1pi'  , default=False  , action="store_true", help="Sum T2k CC1piC and CC1pi0 modes when comparing to T2K legacy")
+  parser.add_option(      '--sum-t2k-ccoth', dest='sum_t2k_ccoth'  , default=False  , action="store_true", help="Sum T2k CCmisc, CCMpi and CCDIS modes when comparing to T2K legacy")
   parser.add_option(      '--mode-list'    , dest='modelist_file'  , default=""     , help="File containing the list of used reaction modes")
 
   o,other = parser.parse_args()
 
-  main(o.output_filename, o.in_file, o.params, o.config, o.det, o.beam, o.selec, o.comp_file, o.comp_format, o.x_max, o.by_mode, o.x_title, o.sum_t2k_cc1pi, o.modelist_file)
+  main(o.output_filename, o.in_file, o.params, o.config, o.det, o.beam, o.selec, o.comp_file, o.comp_format, o.x_max, o.by_mode, o.x_title, o.sum_t2k_cc1pi, o.sum_t2k_ccoth, o.modelist_file)
 
   if other:
     print "Warning - ignored arguments: ", other

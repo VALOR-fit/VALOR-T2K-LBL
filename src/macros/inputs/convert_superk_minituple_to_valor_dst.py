@@ -65,26 +65,9 @@ is_osc["numubar_x_numubar"] = False
 is_osc["numu_x_nue"]        = True
 is_osc["numu_x_numu"]       = False
 
-# Scales for 14a MC, 13a nominal flux from http://www.t2k.org/t2ksk/documentation-page/MCWeighting/MCReweighting14a
-scales_FHC = dict()
-scales_FHC["numu_x_numu"        ] = ( 1396.245 , 634881. )
-scales_FHC["nue_x_nue"          ] = (   26.663 , 126899. )
-scales_FHC["numubar_x_numubar"  ] = (   50.964 , 634600. )
-scales_FHC["nuebar_x_nuebar"    ] = (    2.884 , 126728. )
-scales_FHC["numu_x_nue"         ] = ( 1483.994 , 126916. )
-scales_FHC["numubar_x_nuebar"   ] = (   52.939 , 126984. )
-
-scales_RHC = dict()
-scales_RHC["numu_x_numu"        ] = ( 208.369 , 634659. )
-scales_RHC["nue_x_nue"          ] = (   8.941 , 127262. )
-scales_RHC["numubar_x_numubar"  ] = ( 353.789 , 633988. )
-scales_RHC["nuebar_x_nuebar"    ] = (   6.811 , 127013. )
-scales_RHC["numu_x_nue"         ] = ( 215.099 , 127278. )
-scales_RHC["numubar_x_nuebar"   ] = ( 376.420 , 126812. )
-
 orig_treename = "mtuple"
-rhc_file_name_conv = "m250ka"   # All RHC file names contain this string, search for this before FHC
-fhc_file_name_conv = "250ka"    # All FHC file names contain this string
+rhc_file_name_conv = ".rhc."   # All RHC file names contain this string, search for this before FHC
+fhc_file_name_conv = ".fhc."    # All FHC file names contain this string
 t2k_beam_dir = [0.669764, -0.742179, 0.024223]  # This is a direct copy of kBeamDir from VALOR-SDK/src/Conventions/Constants.h. The reason for this is that pyROOT often completely fails to read 1D C arrays.  # TODO: use a getter function instead
 
 # NOTE: See https://www.t2k.org/t2ksk/code/ntuplevariables  for reading in any other variables from the input MC trees
@@ -107,16 +90,13 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   ml = valor.ModeList(util.CompleteConfigPath(modelist_file))
   modes = ml.Modes()
 
-  files_fhc = glob.glob(fhc_dir+"/*root")
-  files_rhc = glob.glob(rhc_dir+"/*root")
+  files_fhc = glob.glob(fhc_dir+"/*fhc*root")
+  files_rhc = glob.glob(rhc_dir+"/*rhc*root")
   print "Registered the following FHC files, will select the relevant files\n", [f.rsplit("/")[-1] for f in files_fhc], "\n\n"
   print "Registered the following RHC files, will select the relevant files\n", [f.rsplit("/")[-1] for f in files_rhc], "\n\n"
   files = files_fhc + files_rhc
 
   f = files[0].rsplit("/")[-1]  # Gets the filename of the first file (strips the path)
-  if not "t2ksk.14a" in f:
-    print "ERROR: Unknown MC scaling"
-    util.Die(-1)
 
   appropriate_files = get_appropriate_files(files)
   print "Reading from the following input files:\n", [f.rsplit("/")[-1] for f in appropriate_files], "\n"
@@ -130,7 +110,9 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   # Set up the output tree
   tree_out = ROOT.TTree("valor_t2k_dst","valor_t2k_dst")
   sample     = array('i', [-1])   # For why an array is used see https://root.cern.ch/how/how-write-ttree-python
+  detector   = array('i', [-1])
   beam       = array('i', [-1])
+  baseline   = array('d', [-1])
   reac_mode  = array('i', [-1])
   enu_true   = array('d', [-1])
   enu_reco   = array('d', [-1])
@@ -138,7 +120,9 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   wght       = array('d', [-1])
   wght_pot   = array('d', [-1])
   tree_out.Branch("sample"       , sample        , "sample/I"    )
+  tree_out.Branch("detector"     , detector      , "detector/I"  )
   tree_out.Branch("beam"         , beam          , "beam/I"      )
+  tree_out.Branch("baseline"     , baseline      , "baseline/D"  )
   tree_out.Branch("reac_mode"    , reac_mode     , "reac_mode/I" )
   tree_out.Branch("enu_true"     , enu_true      , "enu_true/D"  )
   tree_out.Branch("enu_reco"     , enu_reco      , "enu_reco/D"  )
@@ -158,19 +142,21 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
     nev_input[ifile] += in_tree.GetEntries()
 
     sample[0]       = get_selection(file_in_name)
+    detector[0]     = conv.kdSuperK
     beam[0]         = get_beam(file_in_name)
+    baseline[0]     = conv.kJPARCTgt2SuperK
     true_nu_flavour = get_flavour(file_in_name)
     is_oscillated   = get_osc(file_in_name)
-    this_scale      = get_scale(file_in_name)
-    wght_pot[0]     = get_pot_weight(file_in_name, this_scale)
+    this_scale      = get_scale(file_in)
+    wght_pot[0]     = get_pot_weight(this_scale)
 
     for event in in_tree:
       neut_mode     = event.mode
       reac_mode[0]  = NeutModeToValorMode(neut_mode, true_nu_flavour, is_oscillated)
-      enu_reco[0]   = ROOT.TMath.Min(event.erec / 1000., 29.9)      # Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
-      enu_true[0]   = event.pnu[0]                                  # Already in GeV/c
-      Theta_reco[0] = calc_theta_degrees(event.fq1rdir, event.fqnse, sample[0])  # event.fq1rdir is a 3D list that contains info on the lepton direction and is dependant on the sample
-      wght[0]       = group_NIWG_weights(event, neut_mode)          # Group all of the standard multiplicative NIWG weights into a single weight
+      enu_true[0]   = event.pnu[0]                                                  # Already in GeV/c
+      Theta_reco[0] = calc_theta_degrees(event.fq1rdir, event.fqnse, sample[0])     # event.fq1rdir is a 3D list that contains info on the lepton direction and is dependant on the sample
+      enu_reco[0]   = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])  # Already in GeV
+      wght[0]       = group_misc_weights(event, neut_mode)                          # Group all of the standard multiplicative NIWG weights into a single weight
 
       if enu_reco[0] < 0. \
          or (is_oscillated and not util.ModeIsCC(reac_mode[0])):
@@ -249,20 +235,14 @@ def get_appropriate_files(files):
 
 #_______________________________________________________________________
 # Get the POT scale corresponding to the input file
-def get_scale(file_in_name):
-  this_scale = None
-  if rhc_file_name_conv in file_in_name:
-    # File is RHC
-    print "Using RHC scaling for input file", file_in_name.rsplit("/")[-1]
-    this_scale = scales_RHC
-  elif fhc_file_name_conv in file_in_name:
-    # File is FHC
-    print "Using FHC scaling for input file", file_in_name.rsplit("/")[-1]
-    this_scale = scales_FHC
-  else:
-    print "ERROR: Unknown horn current for file", file_in_name
+def get_scale(file_in):
+  scale_hist = file_in.Get("norm")
+  if not scale_hist:
+    print "ERROR: could not find the scaling hist named \'{}\'".format("norm"), "in the input file:", file_in.GetName()
     util.Die(-1)
-  return this_scale
+  scale_factor = scale_hist.GetBinContent(1)
+  print "Using scaling factor of \'{}\'".format(scale_factor), "for input file", file_in.GetName()
+  return scale_factor
 
 #_______________________________________________________________________
 # Get the selection corresponding to the input file
@@ -289,6 +269,7 @@ def get_beam(file_in_name):
     beam = conv.kbJPARC_FHC
   else:
     print "FATAL: Could not determine the horn current for input file ", file_in_name
+    util.Die(-1)
   return beam
 
 #_______________________________________________________________________
@@ -315,13 +296,8 @@ def get_osc(file_in_name):
 
 #_______________________________________________________________________
 # This returns 1 / MC POT. When the tree is later read in GSSFM::FillFromDST, this will be multiplied by the data POT to get the true POT weight
-def get_pot_weight(file_in_name, this_scale):
-  for partial_filename in types:
-    if partial_filename in file_in_name:
-      scale_events,scale_per_mc = this_scale[partial_filename]
-      return  scale_events / (scale_per_mc * 1E21)
-  print "FATAL: Could not determine the POT weight for file", file_in_name
-  util.Die(-1)
+def get_pot_weight(this_scale):
+  return  this_scale / 1E21
 
 #_______________________________________________________________________
 # Takes the scalar product between the beam and lepton directions
@@ -347,26 +323,75 @@ def calc_theta_degrees(lep_dir_in, size, sample):
   return LepThetaDegrees
 
 #_______________________________________________________________________
-# Group all of the standard multiplicative NIWG weights into a single weight
-def group_NIWG_weights(event, neut_mode):
-  weight_SF_RFG   = event.wgtsfrfg
-  weight_BeRPA    = event.wgtBeRPA_nom
-  weight_CCcoh    = event.wght_CCcoh
+# Calculate the reconstructed neutrino energy, taking into account the Coulomb shift for CC events.
+# See https://www.t2k.org/asg/oagroup/meeting/2018/2018-02-22/coulombcorrections for details.
+# The Erec calculation uses the QE approximation, see e.g. TN315v5 p31.
+def calc_enu_reco(event, sample, reac_mode, Theta_reco):
+    ereco_MeV = None
+
+    Vnuc = 27.0                          # Nominal binding energy, MeV
+    mn   = conv.kNeutronMassGeV  * 1000. # MeV
+    mp   = conv.kProtonMassGeV   * 1000. # MeV
+    me   = conv.kElectronMassGeV * 1000. # MeV
+    mm   = conv.kMuonMassGeV     * 1000. # MeV
+    md   = conv.kDeltaMassGeV    * 1000. # MeV
+
+    mass = None
+    mom  = None
+    if util.SampleIsELike(sample):
+        # Must use reco info for consistency with how we select the Erec equation
+        mass = me
+        mom = event.fqmome
+    else:
+        mass = mm
+        mom = event.fqmomm
+
+    mom_shift_nu    = -4.3   # MeV
+    mom_shift_nubar =  3.3   # MeV
+    mom_shift = None
+    final_nu_flavour = util.ReacModeToFinalFlavor(reac_mode)
+    if final_nu_flavour == conv.kNuMuBar or final_nu_flavour == conv.kNuEBar or final_nu_flavour == conv.kNuTauBar:
+        # The momentum shift must be chosen using true info
+        mom_shift = mom_shift_nubar
+    else:
+        mom_shift = mom_shift_nu
+    shifted_mom = mom + mom_shift
+
+    elep = ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom)
+    theta_reco_rads = Theta_reco * (ROOT.TMath.Pi() / 180.0)   # Theta_reco is input in degrees, so convert to radians here
+
+    if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
+        # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
+        ereco_MeV = event.erec
+    else:
+        if sample != conv.ksMultiRe:
+            ereco_MeV  = (mn - Vnuc)*elep - mass*mass/2.
+            ereco_MeV += mn*Vnuc - Vnuc*Vnuc/2.
+            ereco_MeV += (mp*mp - mn*mn)/2.
+            ereco_MeV /= (mn - Vnuc - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
+        else:
+            ereco_MeV  = (mp*elep-mass*mass/2.)
+            ereco_MeV += (md*md - mp*mp)/2.
+            ereco_MeV /= (mp - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
+
+    # Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
+    return ROOT.TMath.Min(ereco_MeV / 1000., 29.9)
+
+#_______________________________________________________________________
+# Group all of the standard multiplicative NIWG and flux weights etc. into a single weight
+def group_misc_weights(event, neut_mode):
   weight_NC1Gamma = 1.
+  weight_flux_tuning = event.wgtflx    # NOTE (2020-02-19): Before run 10, we would calculate & apply the flux tuning weights at runtime using tuning histograms; however, these weights are now in the mtuple
+  weight_maqe_H = event.wgts_maqeh     # NOTE (2020-02-20): In NEUT, MaQE was set to 1.21Gev, instead of 1.03GeV as decided by the NIWG. So In T2KReWeight, this weight was produced to fix this.
 
-  # In 2017 analysis SuperK mtuples included NC1Gamma and 2p2h weights in CCCoh weight
-  # creating problems with double-weighting these events. As CCCoh does not apply to these
-  # events, we override the mtuple weight and apply the weighting manually
-  if NeutIsNC1Gamma(neut_mode) or NeutIs2p2h(neut_mode):
-    weight_CCcoh = 1.
-
-  # TODO: Why do we set the NC1Gamma weight to 2?
+  # The NC1gamma production cross-section in NEUT is off by factor 2
+  # NOTE (2020-02-19): This is still true as of NEUT 5.4.0, so will be used in the run 10 analysis
   if NeutIsNC1Gamma(neut_mode):
     weight_NC1Gamma = 2.
 
   # NOTE: If, in the future, you want to put in fake data weights, do so here. See L1597 of SuperkMC.cxx and util::UtlMakeFakeData (in VALOR-T2K-LBL) for examples
 
-  return weight_SF_RFG * weight_BeRPA * weight_CCcoh * weight_NC1Gamma
+  return weight_NC1Gamma * weight_maqe_H * weight_flux_tuning
 
 #___________________________________________________________________________
 def NeutIsCCQE(neut_reaction_mode):
@@ -394,15 +419,34 @@ def NeutIs2p2h(neut_reaction_mode):
   return neut_reaction_mode == 2
 
 #___________________________________________________________________________
-def NeutIsCCoth(neut_reaction_mode):
+def NeutIsCCDIS(neut_reaction_mode):
+  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  return neut_reaction_mode == 26
+
+#___________________________________________________________________________
+def NeutIsCCMpi(neut_reaction_mode):
+  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  return neut_reaction_mode == 21
+#___________________________________________________________________________
+def NeutIsCCmisc(neut_reaction_mode):
+  # CCmisc=CCdiffractive+CC1K+CC1eta+CC1gamma
+  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  return (neut_reaction_mode == 15 or
+          neut_reaction_mode == 17 or
+          neut_reaction_mode == 22 or
+          neut_reaction_mode == 23 )   
+
+# this function is not used anymore, though can be put back in case of need
+#___________________________________________________________________________
+#def NeutIsCCoth(neut_reaction_mode):
   #this is a catch all for everything CC that is not QE, 1pi, or coh
   # needs to be updated if another subcategory is added
-  neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
-  return ( neut_reaction_mode == 17 or
-           neut_reaction_mode == 21 or
-           neut_reaction_mode == 22 or
-           neut_reaction_mode == 23 or
-           neut_reaction_mode == 26 )
+ # neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+  #return ( neut_reaction_mode == 17 or
+   #        neut_reaction_mode == 21 or
+    #       neut_reaction_mode == 22 or
+     #      neut_reaction_mode == 23 or
+      #     neut_reaction_mode == 26 )
 
 #___________________________________________________________________________
 def NeutIsNC1pi0(neut_reaction_mode):
@@ -429,7 +473,8 @@ def NeutIsNCoth(neut_reaction_mode):
   #this is a catch all for everything NC that is not 1pi0, 1piC or coh
   # needs to be updated if another subcategory is added
   neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
-  return ( neut_reaction_mode == 41 or
+  return ( neut_reaction_mode == 35 or
+           neut_reaction_mode == 41 or
            neut_reaction_mode == 42 or
            neut_reaction_mode == 43 or
            neut_reaction_mode == 44 or
@@ -507,15 +552,33 @@ def NeutModeToValorMode(neut_mode, flav,  is_oscillated):
       valor_mode = conv.kmNuMuBarCCcoh
     if flav == conv.kNuEBar:
       valor_mode = conv.kmNuEBarCCcoh
-  elif NeutIsCCoth(abs_mode):
+  elif NeutIsCCDIS(abs_mode):
     if flav == conv.kNuMu:
-      valor_mode = conv.kmNuMuCCoth
+      valor_mode = conv.kmNuMuCCDIS
     if flav == conv.kNuE:
-      valor_mode = conv.kmNuECCoth
+      valor_mode = conv.kmNuECCDIS
     if flav == conv.kNuMuBar:
-      valor_mode = conv.kmNuMuBarCCoth
+      valor_mode = conv.kmNuMuBarCCDIS
     if flav == conv.kNuEBar:
-      valor_mode = conv.kmNuEBarCCoth
+      valor_mode = conv.kmNuEBarCCDIS
+  elif NeutIsCCMpi(abs_mode):
+    if flav == conv.kNuMu:
+      valor_mode = conv.kmNuMuCCMpi
+    if flav == conv.kNuE:
+      valor_mode = conv.kmNuECCMpi
+    if flav == conv.kNuMuBar:
+      valor_mode = conv.kmNuMuBarCCMpi
+    if flav == conv.kNuEBar:
+      valor_mode = conv.kmNuEBarCCMpi
+  elif NeutIsCCmisc(abs_mode):
+    if flav == conv.kNuMu:
+      valor_mode = conv.kmNuMuCCmisc
+    if flav == conv.kNuE:
+      valor_mode = conv.kmNuECCmisc
+    if flav == conv.kNuMuBar:
+      valor_mode = conv.kmNuMuBarCCmisc
+    if flav == conv.kNuEBar:
+      valor_mode = conv.kmNuEBarCCmisc
   elif NeutIsNC1piC(abs_mode):
     if flav == conv.kNuMu:
       valor_mode = conv.kmNuMuNC1piC

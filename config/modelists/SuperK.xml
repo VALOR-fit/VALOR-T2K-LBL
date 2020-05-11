@@ -4,7 +4,9 @@
   <mode> numuCC1pi0                    </mode>
   <mode> numuCCcoh                     </mode>
   <mode> numuCCMEC                     </mode>
-  <mode> numuCCoth                     </mode>
+  <mode> numuCCDIS                     </mode>
+  <mode> numuCCMpi                     </mode>
+  <mode> numuCCmisc                    </mode>
   <mode> numuNC1piC                    </mode>
   <mode> numuNC1pi0                    </mode>
   <mode> numuNCcoh                     </mode>
@@ -15,7 +17,9 @@
   <mode> numubarCC1pi0                 </mode>
   <mode> numubarCCcoh                  </mode>
   <mode> numubarCCMEC                  </mode>
-  <mode> numubarCCoth                  </mode>
+  <mode> numubarCCDIS                  </mode>
+  <mode> numubarCCMpi                  </mode>
+  <mode> numubarCCmisc                 </mode>
   <mode> numubarNC1piC                 </mode>
   <mode> numubarNC1pi0                 </mode>
   <mode> numubarNCcoh                  </mode>
@@ -26,7 +30,9 @@
   <mode> nueCC1pi0                     </mode>
   <mode> nueCCcoh                      </mode>
   <mode> nueCCMEC                      </mode>
-  <mode> nueCCoth                      </mode>
+  <mode> nueCCDIS                      </mode>
+  <mode> nueCCMpi                      </mode>
+  <mode> nueCCmisc                     </mode>
   <mode> nueNC1piC                     </mode>
   <mode> nueNC1pi0                     </mode>
   <mode> nueNCcoh                      </mode>
@@ -37,13 +43,17 @@
   <mode> numutonueCC1pi0               </mode>
   <mode> numutonueCCcoh                </mode>
   <mode> numutonueCCMEC                </mode>
-  <mode> numutonueCCoth                </mode>
+  <mode> numutonueCCDIS                </mode>
+  <mode> numutonueCCMpi                </mode>
+  <mode> numutonueCCmisc               </mode>
   <mode> nuebarCCQE                    </mode>
   <mode> nuebarCC1piC                  </mode>
   <mode> nuebarCC1pi0                  </mode>
   <mode> nuebarCCcoh                   </mode>
   <mode> nuebarCCMEC                   </mode>
-  <mode> nuebarCCoth                   </mode>
+  <mode> nuebarCCDIS                   </mode>
+  <mode> nuebarCCMpi                   </mode>
+  <mode> nuebarCCmisc                  </mode>
   <mode> nuebarNC1piC                  </mode>
   <mode> nuebarNC1pi0                  </mode>
   <mode> nuebarNCcoh                   </mode>
@@ -54,5 +64,7 @@
   <mode> numubartonuebarCC1pi0         </mode>
   <mode> numubartonuebarCCcoh          </mode>
   <mode> numubartonuebarCCMEC          </mode>
-  <mode> numubartonuebarCCoth          </mode>
+  <mode> numubartonuebarCCDIS          </mode>
+  <mode> numubartonuebarCCMpi          </mode>
+  <mode> numubartonuebarCCmisc         </mode>
 </mode_list>

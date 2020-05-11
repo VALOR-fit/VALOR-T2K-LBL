@@ -29,7 +29,8 @@ min_channels_to_landscape = 7   # If we get more than this number of channels, t
 
 def main(config_file, param_values,
     hierarchy,angle_scheme,octant,dmsqscheme,
-    output_file,label,hypname,fplopt,num_decimal_places):
+    output_file,label,hypname,fplopt,num_decimal_places,
+    force_untuned):
   
   opt.gMassHierarchyAssumed = util.HierarchyFromString(hierarchy)
   opt.gOscMixingParamChoice = util.MixingTypeFromString(angle_scheme)
@@ -45,6 +46,14 @@ def main(config_file, param_values,
 
   model = fit_elements.FitModel()
   fpl = util.GetFitParameterListFromHypothesisName(hypname, fplopt)
+
+  if force_untuned:
+    syst = model.GetSystematics()
+    for p in range(0, conv.knppmax):
+      if p == conv.kPhypUndefined:
+          continue
+      if fpl.Exists(p) and syst.Contains(p):
+          fpl.Update(p, syst.UntunedValue(p))
 
   relevant_params = []
   for (parname,val) in param_values.iteritems():
@@ -240,6 +249,8 @@ if __name__=="__main__":
 
   parser.add_option('-d', '--n-decimal-places' , dest='ndp' , default=3, type=int, help="Number of decimal places used to print event rates.")
 
+  parser.add_option('-u', '--force-untuned' , dest='force_untuned' , default=False, action="store_true", help="If true, force all systematics to their untuned values (so their weights should = 1).")
+
   all_parnames = []
   for p in xrange(conv.kNuis000):
     parname = util.NameRegistry.Instance().ParamAsStringVerySimple(p)
@@ -257,7 +268,7 @@ if __name__=="__main__":
 
   main(o.config, param_values,
     o.hierarchy,o.mixparamchoice,o.mixparamoctant,o.dmsqscheme,
-    o.output_file,o.label,o.hypname,o.fplopt,o.ndp)
+    o.output_file,o.label,o.hypname,o.fplopt,o.ndp, o.force_untuned)
   
   if other:
     print "Warning - ignored arguments: ",other
