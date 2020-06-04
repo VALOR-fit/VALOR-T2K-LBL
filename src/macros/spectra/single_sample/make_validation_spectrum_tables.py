@@ -56,12 +56,12 @@ def main(config_file, param_values,
           fpl.Update(p, syst.UntunedValue(p))
 
   relevant_params = []
-  for (parname,val) in param_values.iteritems():
+  for (parname,val) in param_values.items():
     p = util.NameRegistry.Instance().PhysParamFromString(parname)
     if (fpl.Exists(p)):
       fpl.Update(p,val)
       fpl.SetInitValue(p,val)
-      print util.NameRegistry.Instance().ParamAsString(p).ljust(25),fpl.CurrValue(p)
+      print(util.NameRegistry.Instance().ParamAsString(p).ljust(25),fpl.CurrValue(p))
       relevant_params.append(p)
   relevant_params.sort()
   
@@ -103,7 +103,7 @@ def main(config_file, param_values,
   
   n_submodels = model.GetNSubModels()
   
-  for imodel in xrange(n_submodels):
+  for imodel in range(n_submodels):
     
     submodel = model.GetSubModel(imodel)
     submodel_name = submodel.Name()
@@ -210,7 +210,7 @@ def main(config_file, param_values,
     assert(total_spectrum)
     total_events = total_spectrum.Integral()
     
-    print submodel_name,total_events
+    print(submodel_name,total_events)
     
     tex_output.write("\nTotal: "           +to_ndp.format(total_events)     +"    ("+to_ndp.format(nev_tot)+")\n\n")
     # ~ tex_output.write("\nTotal signal: "    +to_ndp.format(signal_events)    +"\n\n")
@@ -226,7 +226,7 @@ def main(config_file, param_values,
   
   tex_output.write("\\end{document}\n")
   
-  print "Table output written to ",output_file
+  print("Table output written to ",output_file)
 
 if __name__=="__main__":
   
@@ -252,7 +252,7 @@ if __name__=="__main__":
   parser.add_option('-u', '--force-untuned' , dest='force_untuned' , default=False, action="store_true", help="If true, force all systematics to their untuned values (so their weights should = 1).")
 
   all_parnames = []
-  for p in xrange(conv.kNuis000):
+  for p in range(conv.kNuis000):
     parname = util.NameRegistry.Instance().ParamAsStringVerySimple(p)
     default = opt.GetGlobalBestFit(p)
     parser.add_option('--%s'%parname, dest=parname,default=default,type=float, help='Value of %s'%parname)
@@ -271,4 +271,4 @@ if __name__=="__main__":
     o.output_file,o.label,o.hypname,o.fplopt,o.ndp, o.force_untuned)
   
   if other:
-    print "Warning - ignored arguments: ",other
+    print("Warning - ignored arguments: ",other)
