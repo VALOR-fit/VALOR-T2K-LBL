@@ -75,7 +75,7 @@ def main(config_file, param_values,
 \\usepackage{fullpage}
 \\usepackage{lscape}
 \\usepackage{geometry}
-\\geometry{margin=1in}
+\\geometry{margin=0.1in}
 \\begin{document}
 """)
 
@@ -119,13 +119,15 @@ def main(config_file, param_values,
     channels = [] # here channel is init neutrino flavour + final neutrino flavour
     
     for m in modes:
-      init_flav  = util.ReacModeToInitFlavor(m)
-      final_flav = util.ReacModeToFinalFlavor(m)
-      reac_type  = util.ReacModeToType(m)
-      if reac_type not in reac_types: reac_types.append(reac_type)
-      channel = (init_flav,final_flav)
-      if channel not in channels: channels.append(channel)
-
+        init_flav  = util.ReacModeToInitFlavor(m)
+        final_flav = util.ReacModeToFinalFlavor(m)
+        reac_type  = util.ReacModeToType(m)
+        if reac_type not in reac_types: reac_types.append(reac_type)
+        if util.IsNeutrinoAny(m):
+          channel = (init_flav,final_flav)
+          if channel not in channels: channels.append(channel)
+    channels.append("Non-neutrino")
+    
     if len(channels) > min_channels_to_landscape:
       tex_output.write("\\begin{landscape}\n")
 
@@ -140,10 +142,15 @@ def main(config_file, param_values,
       
     for channel in channels:
       total_event_counts_per_channel[channel] = 0.
-      
+    
+    total_event_counts_per_channel["Non-neutrino"] = 0.
+    
     # Signal not implemented yet
     signal_events     = 0.
     background_events = 0.
+    
+    osc_channel_pattern = r"$%s \rightarrow %s$"
+    formatted_channels = dict()
     
     for m in modes:
       
@@ -155,6 +162,11 @@ def main(config_file, param_values,
       
       channel = (util.ReacModeToInitFlavor(m),util.ReacModeToFinalFlavor(m))
       reac_type = util.ReacModeToType(m)
+      if util.IsNeutrinoAny(m):
+        formatted_channels[channel] = osc_channel_pattern%tuple(map(util.FlavourAsStringTeX,channel))
+      else:
+        channel = "Non-neutrino"
+        formatted_channels[channel] = channel
       
       nev = spectrum.Integral()
       nev_tot += nev
@@ -169,15 +181,13 @@ def main(config_file, param_values,
       
     
     # Format the chanenls in a nice way
-    channel_pattern = r"$%s \rightarrow %s$"
-    fancy_channels = dict([(c,channel_pattern%tuple(map(util.FlavourAsStringTeX,c))) for c in channels])
-    fancy_channels["total"] = "Total"
+    formatted_channels["total"] = "Total"
     
     # Start writing output
     submodel_name_escaped_underscores = submodel_name.replace("_",r"\_")
     tex_output.write("\n\\section*{"+submodel_name_escaped_underscores+"}\n")
     tex_output.write("\\begin{tabular} { | l ||"+("r | "*len(channels))+"| r | }\n\\hline\n")
-    tex_output.write(" "+"".ljust(col1_width)+" & "+ " & ".join([fancy_channels[c].ljust(coln_width) for c in channels+["total"]]) + " \\\\ \\hline\\hline\n")
+    tex_output.write(" "+"".ljust(col1_width)+" & "+ " & ".join([formatted_channels[c].ljust(coln_width) for c in channels+["total"]]) + " \\\\ \\hline\\hline\n")
     
     for reac_type in reac_types:
       ev = event_counts_per_channel[reac_type]
