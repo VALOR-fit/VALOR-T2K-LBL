@@ -94,6 +94,20 @@ _selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"s
 _selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHCMultiRe":"nue1RD"                     }
 _selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHCMultiRe":"MultiRe"                    }
 
+# Whether or not to compare the tweaked parameter values between groups
+_compare_param_values = dict()
+_compare_param_values["VALOR"         ] = True
+_compare_param_values["MaCh3"         ] = False
+_compare_param_values["p-theta"       ] = True
+_compare_param_values["p-VALOR_legacy"] = False
+
+# The naming format used for the comparison mentioned above
+_param_value_array_patterns = dict()
+_param_value_array_patterns["VALOR"       ] = "nom_sig_values_vector_[PARAM]"
+_param_value_array_patterns["MaCh3"       ] = None
+_param_value_array_patterns["p-theta"     ] = "sig_var_pts_[PARAM]"
+_param_value_array_patterns["VALOR_legacy"] = None
+
 #==================================================================================
 # STUFF THAT CHANGES DEPENDING ON THE HIST NAMES AND FORMATS FOR EACH GROUP (END)
 #==================================================================================
@@ -133,8 +147,18 @@ _do_sum_cc1pi_modes = True
 _do_sum_ccoth_modes = False
 
 #_______________________________________________________________________
-def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
+def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, compare_sigma, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
   setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth)
+
+  # Should we check that each group has evaluated each parameter at the same values?
+  compare_counter = 0
+  for format in _formats:
+    if _compare_param_values[format] and _param_value_array_patterns[format]:
+      compare_counter += 1
+  do_compare_param_values = (compare_counter > 1 and compare_sigma)
+
+  if do_compare_param_values:
+    compare_sigma_between_groups()
 
   for ip in range(-1, len(_param_map)):
     plot_nominal = (ip == -1)
@@ -157,7 +181,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
       leg = ROOT.TLegend(1.0-_margin_r, 0.65, 0.995, 1.0-_margin_t)
       if not plot_nominal:
-          leg.AddEntry(None, "Variations", "")
+        leg.AddEntry(None, "Variations", "")
       h_list       = []
       h_list_binno = []
       hist_max_var = -999
@@ -274,7 +298,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
   # Check that the inputs are valid
   if(len(in_files) != len(formats)):
     print "ERROR: The number of input files and formats should be the same, but instead we have", \
-      len(in_files), "input files,", len(formats), "formats."
+          len(in_files), "input files,", len(formats), "formats."
     sys.exit()
 
   for format_name in formats:
@@ -306,7 +330,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
     sys.exit()
 
   print "\nPlotting systematic variations for the following params:\n", \
-    [param_tuple[0] for param_tuple in _param_map]
+        [param_tuple[0] for param_tuple in _param_map]
 
   # Get the list of modes, if required
   _n_modes = 1
@@ -323,7 +347,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
     _n_modes = len(_mode_map)
 
     print "\nPlotting systematic variations for the following modes:\n", \
-      [mode_tuple[0] for mode_tuple in _mode_map]
+          [mode_tuple[0] for mode_tuple in _mode_map]
 
   # In VALOR, the CC1piC and CC1pi0 treated separately, so their PDFs must be summed when comparing to
   # groups who keep track of the sum of these modes
@@ -590,28 +614,28 @@ def sort_map(old_list_in, new_order):
   new_list = []
   old_order = old_list[0]
   if len(list(set(new_order))) != len(new_order):
-      print "WARNING: Tried to sort a naming map, but found duplicate names in the ordering, so will not attempt to sort"
-      del old_list[0]
-      return old_list
+    print "WARNING: Tried to sort a naming map, but found duplicate names in the ordering, so will not attempt to sort"
+    del old_list[0]
+    return old_list
   if(len(new_order) > len(old_order)):
     print "ERROR: The length of the new order list was longer than the length old order list. \n New order =", \
-      new_order, "\n old order =", old_order
+          new_order, "\n old order =", old_order
     sys.exit()
   if(len(new_order) == 0):
     print "ERROR: The length of the new order list was 0. New order =", new_order
     sys.exit()
   order_map = []
   for o in new_order:
-      if o not in old_order:
-          print "ERROR: New order \'{}\'".format(o), "is not in the old order list:", old_order
-          sys.exit()
-      order_map.append(old_order.index(o))
+    if o not in old_order:
+      print "ERROR: New order \'{}\'".format(o), "is not in the old order list:", old_order
+      sys.exit()
+    order_map.append(old_order.index(o))
   for i in range(1, len(old_list)):
-      # Skip index 0, as that corresponds to the order list
-      new_row = []
-      for j in range(0, len(new_order)):
-          new_row.append(old_list[i][order_map[j]])
-      new_list.append(new_row)
+    # Skip index 0, as that corresponds to the order list
+    new_row = []
+    for j in range(0, len(new_order)):
+      new_row.append(old_list[i][order_map[j]])
+    new_list.append(new_row)
   return new_list
 
 #_______________________________________________________________________
@@ -698,20 +722,39 @@ def compare_ratio_hists(param_name_dict, mode_name_dict, sigma_var, comparison_d
         if diff > _ratio_diff_warn_threshold_percent:
           if _by_mode:
             print "WARNING: For param =", param_name_dict[fi], "; sample =", _selecs[fi], "; mode =", \
-              mode_name_dict[fi], "; Ereco =", comparison_dict[fi].GetBinCenter(ibin), "; variation =", \
-              sigma_var, "; difference of", diff, "% in the ratios of input and comparison hist"
+                  mode_name_dict[fi], "; Ereco =", comparison_dict[fi].GetBinCenter(ibin), "; variation =", \
+                  sigma_var, "; difference of", diff, "% in the ratios of input and comparison hist"
           else:
             print "WARNING: For param =", param_name_dict[fi], "; sample =", _selecs[fi], "; Ereco =", \
-              comparison_dict[fi].GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
-              "% in the ratios of input and comparison hist"
+                  comparison_dict[fi].GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
+                  "% in the ratios of input and comparison hist"
       already_compared.append([iformat, jformat])
 
 #_______________________________________________________________________
+def compare_sigma_between_groups():
+  maxlen_format = max([len(f) for f in _formats])
+  for ip in range(0, len(_param_map)):
+    param_name_dict = get_param_name_dict(ip)
+    print param_name_dict[_formats[0]]
+    for i, f in enumerate(_formats):
+      if _compare_param_values[f] and _param_value_array_patterns[f]:
+        name = _param_value_array_patterns[f].replace("[PARAM]", param_name_dict[f])
+        param_values_vector = _input_files[f].Get(name)
+        if not param_values_vector:
+          print "ERROR: Could not find an object named", name, "in file", _input_files[f].GetName()
+          sys.exit()
+        nom = param_values_vector[2]    # We're not comparing the nominal values between groups, because some normalise this value to the generated value while other groups don't.
+        sigma = param_values_vector[3] - param_values_vector[2]
+        #row = "\t" + f + ": " + " "*(maxlen_format-len(f)) + " nom = " + str(nom) + ", sigma = " + str(sigma)
+        row = "\t" + f + ": " + " "*(maxlen_format-len(f)) + ", sigma = " + str(sigma)
+        print row
+
+#_______________________________________________________________________
 if __name__=="__main__":
-  
+
   import argparse
   parser = argparse.ArgumentParser(description="Plot single-sample +/- 1 and 3 sigma variations and compare between groups")
-  
+
   parser.add_argument('-o', '--out-file'         , dest='output_filename', default=""     , help="Name of the output image file")
   parser.add_argument('-i', '--in-files'         , dest='in_files'       , nargs="+"      , help="Input file names containing spectra to plot. One file per group")
   parser.add_argument('-f', '--formats'          , dest='formats'        , nargs="+"      , help="Name used to identify the format used for hist naming. Choose from: \'VALOR\', \'MaCh3\', \'p-theta\', \'VALOR_legacy\'")
@@ -720,10 +763,11 @@ if __name__=="__main__":
   parser.add_argument('-m', '--modes'            , dest='modes'          , default=""     , help="File containing a map between mode names used by each group. Also used to decide which plots to produce.")
   parser.add_argument('-x', '--x-max'            , dest='x_max'          , type=float     , default=3.0, help="Maximum Ereco value")
   parser.add_argument('-w', '--suppress-warnings', dest='suppress_warn'  , default=False  , action="store_true", help="Usually warnings are printed if any of the ratio hist bin contents are sufficiently different from that of other groups. Use this option to disable these warnings.")
+  parser.add_argument('-c', '--compare-sigma'    , dest='compare_sigma'  , default=False  , action="store_true", help="Print a comparison between the sigma values used by each group for each param.")
   parser.add_argument(      '--is-unosc'         , dest='is_unosc'       , default=False  , action="store_true", help="The p-theta hists names contain the string \'osc\' or \'unosc\', this flag switches between them. ")
   parser.add_argument(      '--sum-t2k-cc1pi'    , dest='sum_t2k_cc1pi'  , default=False  , action="store_true", help="Sum VALOR T2K CC1piC and CC1pi0 modes when comparing to VALOR T2K legacy")
   parser.add_argument(      '--sum-t2k-ccoth'    , dest='sum_t2k_ccoth'  , default=False  , action="store_true", help="Sum VALOR T2K CCmisc, CCMpi and CCDIS modes when comparing to VALOR T2K legacy")
 
   o = parser.parse_args()
 
-  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)
+  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.compare_sigma, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)
