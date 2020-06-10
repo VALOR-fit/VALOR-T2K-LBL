@@ -108,7 +108,7 @@
 
       <covariance_matrix>
         <filename> official/2020/skdetsipn/SKJointErrorMatrix2020_Total_fitqun_v4_16062020_valor_format.root </filename>
-        <objname>  skdetsipn    </objname>
+        <objname>  skdetfsi    </objname>
         <objtype>  TMatrixD    </objtype>
       </covariance_matrix>
     </group>
