@@ -1,5 +1,5 @@
 #
-# Costas Andreopoulos (Rutherford Lab.) <costas.andreopoulos \at stfc.ac.uk>
+# Costas Andreopoulos (Rutherford Lab.) <constantinos.andreopoulos \at cern.ch>
 #
 
 VALOR_SDK_TOPDIR  = $(VALOR_FMWK)
