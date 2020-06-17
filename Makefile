@@ -18,7 +18,7 @@ BUILD_TARGETS =  print-make-info      \
 		 make-bin-lib-dir     \
 		 copy-scripts-to-bin  \
 		 build-libs           \
-		 build-apps
+		 | build-apps
 
 # define targets
 
@@ -39,7 +39,7 @@ copy-scripts-to-bin: | make-bin-lib-dir FORCE
 	cp ${VALOR_EXPT_TOPDIR}/root/valor             ${VALOR_EXPT_TOPDIR}/bin
 	cp ${VALOR_EXPT_TOPDIR}/root/pyvalor           ${VALOR_EXPT_TOPDIR}/bin
 
-build-libs: make-bin-lib-dir copy-scripts-to-bin 
+build-libs: | make-bin-lib-dir copy-scripts-to-bin 
 
 build-apps: make-bin-lib-dir build-libs copy-scripts-to-bin FORCE
 	@echo " "
