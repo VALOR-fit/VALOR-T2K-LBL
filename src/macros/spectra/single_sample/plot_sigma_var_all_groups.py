@@ -43,7 +43,6 @@ from copy import deepcopy
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptTitle(0)
-ROOT.gStyle.SetOptStat(0) #Remove box in top right
 
 # Names used internally within this macro
 _valid_formats    = ["VALOR", "MaCh3", "p-theta", "VALOR_legacy"]
@@ -108,6 +107,18 @@ _param_value_array_patterns["MaCh3"       ] = None
 _param_value_array_patterns["p-theta"     ] = "sig_var_pts_[PARAM]"
 _param_value_array_patterns["VALOR_legacy"] = None
 
+# copy all the p-theta settings for p-theta internally calculated using either PTheta or ETheta instead of Erec (the actual output files are the same structure)
+# the Erec is obviously the default, but adding here for clarity in plots
+_ptheta_internal_format_suffixes = ["_Erec", "_ETheta", "_PTheta", "_old", "_new"]
+for suffix in _ptheta_internal_format_suffixes:
+  _valid_formats += ["p-theta"+suffix]
+  _hist_nom_name_patterns    ["p-theta"+suffix] = _hist_nom_name_patterns    ["p-theta"]
+  _hist_tweaked_name_patterns["p-theta"+suffix] = _hist_tweaked_name_patterns["p-theta"]
+  _ratio_already_taken       ["p-theta"+suffix] = _ratio_already_taken       ["p-theta"]
+  _var_names                 ["p-theta"+suffix] = _var_names                 ["p-theta"]
+  _selecs_all                ["p-theta"+suffix] = _selecs_all                ["p-theta"]
+
+
 #==================================================================================
 # STUFF THAT CHANGES DEPENDING ON THE HIST NAMES AND FORMATS FOR EACH GROUP (END)
 #==================================================================================
@@ -142,14 +153,14 @@ _ratio_diff_warn_threshold_percent = 0.1
 
 # The legacy VALOR T2K analysis does not track CC1piC and CC1pi0 modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes.
-_do_sum_cc1pi_modes = True
+_do_sum_cc1pi_modes = False
 
 # The legacy VALOR T2K analysis does not track CCmisc, CCMpi and CCDIS modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes into CCoth.
 _do_sum_ccoth_modes = False
 
 #_______________________________________________________________________
-def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, compare_sigma, plot_nom_ratio, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
+def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_etrue, compare_sigma, plot_nom_ratio, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
   setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth)
 
   # Should we check that each group has evaluated each parameter at the same values?
@@ -188,7 +199,10 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
       canv_name = "sigma_var_ratio_" + _selecs[_formats[0]] + "_" + (param_name_dict[_formats[0]] if not plot_nominal else "nominal")
       if _by_mode:
         canv_name += "_" + mode_name_dict[_formats[0]]
-      canv_ereco = ROOT.TCanvas(canv_name + "_Ereco", canv_name + "_Ereco", 800, 600)
+      if is_etrue:
+        canv_ereco = ROOT.TCanvas(canv_name + "_Etrue", canv_name + "_Etrue", 800, 600)
+      else:
+        canv_ereco = ROOT.TCanvas(canv_name + "_Ereco", canv_name + "_Ereco", 800, 600)
       canv_binno = ROOT.TCanvas(canv_name + "_binno", canv_name + "_binno", 800, 600)
       canv_ereco.SetMargin(_margin_l, _margin_r, _margin_t, _margin_b)
       canv_binno.SetMargin(_margin_l, _margin_r, _margin_t, _margin_b)
@@ -222,8 +236,8 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           if not first_drawn_var or not first_drawn_format:
             draw_opt = "HIST,SAME"
           else:
-            format_drawn_hist(h, x_max, False)
-            format_drawn_hist(h_binno, h.FindBin(x_max) -1, True)
+            format_drawn_hist(h, x_max, False, is_etrue, plot_nominal)
+            format_drawn_hist(h_binno, h.FindBin(x_max) -1, True, is_etrue, plot_nominal)
           canv_ereco.cd()
           h.Draw(draw_opt)
           canv_binno.cd()
@@ -374,10 +388,10 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
       canv_ereco.cd()
       canv_ereco.Update()
-      canv_ereco.SaveAs(get_output_name(output_filename, selec, ip, im, False), "RECREATE")
+      canv_ereco.SaveAs(get_output_name(output_filename, selec, ip, im, False, is_etrue), "RECREATE")
       canv_binno.cd()
       canv_binno.Update()
-      canv_binno.SaveAs(get_output_name(output_filename, selec, ip, im, True), "RECREATE")
+      canv_binno.SaveAs(get_output_name(output_filename, selec, ip, im, True, is_etrue), "RECREATE")
 
       # Free up memory
       del canv_ereco
@@ -436,6 +450,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
     print "ERROR: Could not open the input parameter map file!"
     sys.exit()
   _param_map = list_of_tuples(params_file)
+  _param_map = add_entries_for_internal_formats(_param_map, "p-theta", _ptheta_internal_format_suffixes)
   _param_map = sort_map(_param_map, _formats)
   if len(_param_map) == 0:
     print "ERROR: Got no prams to plot"
@@ -451,6 +466,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
       print "ERROR: Could not open the input mode map file!"
       sys.exit()
     _mode_map = list_of_tuples(modes_file)
+    _mode_map = add_entries_for_internal_formats(_mode_map, "p-theta", _ptheta_internal_format_suffixes)
     _mode_map = sort_map(_mode_map, _formats)
     if len(_mode_map) == 0:
       print "ERROR: Got no modes to plot"
@@ -649,12 +665,16 @@ def get_hist(get_tweaked_hist, sigma_var, param_name_dict, mode_name_dict, forma
   elif format == "MaCh3":
     h = get_mach3_hist(hname)
   elif format == "p-theta":
-    h = get_ptheta_hist(hname)
+    h = get_ptheta_hist(hname, format)
   elif format == "VALOR_legacy":
     h = get_t2k_legacy_hist(hname)
   else:
-    print "ERROR: Unrecognised format \'{}\'".format(format)
-    sys.exit()
+    for suffix in _ptheta_internal_format_suffixes:
+      if format == "p-theta"+suffix:
+        h = get_ptheta_hist(hname, format)
+    if h is None:
+      print "ERROR: Unrecognised format \'{0}\'".format(format)
+      sys.exit()
 
   if h:
     ROOT.SetOwnership(h, False)       # This stops the object being deleted from memory when it goes out of scope
@@ -706,9 +726,9 @@ def get_mach3_hist(hname):
   return h
 
 #_______________________________________________________________________
-def get_ptheta_hist(hname):
+def get_ptheta_hist(hname, format):
   # Put in any special cases related to getting p-theta hists here
-  fin = _input_files["p-theta"]
+  fin = _input_files[format]
   h = fin.Get(hname)
   if not h:
     print "WARNING: Could not get hist named [", hname, "] from the input file,", fin.GetName()
@@ -754,6 +774,23 @@ def list_of_tuples(filename):
   return tuplelist
 
 #_______________________________________________________________________
+def add_entries_for_internal_formats(tuples, matchFormat, suffixes):
+  formats = tuples[0]
+  newtuples = []
+  for i,f in enumerate(formats):
+    if f == matchFormat:
+      iorg = i
+      for row,tup in enumerate(tuples):
+        newtup = tup
+        for suffix in suffixes:
+          if row == 0:
+            newtup += (matchFormat+suffix,)
+          else:
+            newtup += (tup[iorg],) # copy the value for matchFormat
+        newtuples.append(newtup)
+  return newtuples
+
+#_______________________________________________________________________
 def sort_map(old_list_in, new_order):
   old_list = copy.deepcopy(old_list_in)
   new_list = []
@@ -784,12 +821,17 @@ def sort_map(old_list_in, new_order):
   return new_list
 
 #_______________________________________________________________________
-def format_drawn_hist(h, x_max, is_binno):
+def format_drawn_hist(h, x_max, is_binno, is_etrue, plot_nominal):
   if is_binno:
     h.GetXaxis().SetTitle("Bin Number")
+  elif is_etrue:
+    h.GetXaxis().SetTitle("E_{true} (GeV)")
   else:
     h.GetXaxis().SetTitle("E_{rec.} (GeV)")
-  h.GetYaxis().SetTitle("Ratio to Nominal")
+  if plot_nominal:
+    h.GetYaxis().SetTitle("Nominal Event Rate")
+  else:
+    h.GetYaxis().SetTitle("Ratio to Nominal")
   h.GetYaxis().SetLabelSize(_label_size)
   h.GetXaxis().SetLabelSize(_label_size)
   h.GetYaxis().SetTitleSize(_title_size)
@@ -822,11 +864,13 @@ def make_title_box(title):
   return title_box
 
 #_______________________________________________________________________
-def get_output_name(output_filename, selec, ip, im, is_binno):
+def get_output_name(output_filename, selec, ip, im, is_binno, is_etrue):
   save_name = output_filename
   save_name += "_" + selec
   if is_binno:
     save_name += "_binno"
+  elif is_etrue:
+    save_name += "_etrue"
   else:
     save_name += "_ereco"
   if _by_mode:
@@ -916,10 +960,11 @@ if __name__=="__main__":
   parser.add_argument('-w', '--suppress-warnings', dest='suppress_warn'  , default=False  , action="store_true", help="Usually warnings are printed if any of the ratio hist bin contents are sufficiently different from that of other groups. Use this option to disable these warnings.")
   parser.add_argument('-c', '--compare-sigma'    , dest='compare_sigma'  , default=False  , action="store_true", help="Print a comparison between the sigma values used by each group for each param.")
   parser.add_argument('-n', '--plot-nom-ratio'   , dest='plot_nom_ratio' , default=False  , action="store_true", help="Plot the ratios of the nominal spectra for each group superimposed onto the systematic variations")
+  parser.add_argument(      '--is-etrue'         , dest='is_etrue'       , default=False  , action="store_true", help="Set to true if the histograms use etrue binning, and thus the x label should be E_{true}")
   parser.add_argument(      '--is-unosc'         , dest='is_unosc'       , default=False  , action="store_true", help="The p-theta hists names contain the string \'osc\' or \'unosc\', this flag switches between them. ")
   parser.add_argument(      '--sum-t2k-cc1pi'    , dest='sum_t2k_cc1pi'  , default=False  , action="store_true", help="Sum VALOR T2K CC1piC and CC1pi0 modes when comparing to VALOR T2K legacy")
   parser.add_argument(      '--sum-t2k-ccoth'    , dest='sum_t2k_ccoth'  , default=False  , action="store_true", help="Sum VALOR T2K CCmisc, CCMpi and CCDIS modes when comparing to VALOR T2K legacy")
 
   o = parser.parse_args()
 
-  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.compare_sigma, o.plot_nom_ratio, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)
+  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_etrue, o.compare_sigma, o.plot_nom_ratio, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)
