@@ -388,10 +388,21 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
       canv_ereco.cd()
       canv_ereco.Update()
-      canv_ereco.SaveAs(get_output_name(output_filename, selec, ip, im, False, is_etrue), "RECREATE")
+      print_opt = ""
+      if plot_nominal:
+        if _by_mode:
+          print_opt = "Title:Nominal_" + mode_name_dict[_formats[0]]
+        else:
+          print_opt = "Title:Nominal"
+      else:
+        if _by_mode:
+          print_opt = "Title:" + param_name_dict[_formats[0]] + "_" + mode_name_dict[_formats[0]]
+        else:
+          print_opt = "Title:" + param_name_dict[_formats[0]]
+      canv_ereco.Print(get_output_name(output_filename, selec, ip, im, False, is_etrue), print_opt)
       canv_binno.cd()
       canv_binno.Update()
-      canv_binno.SaveAs(get_output_name(output_filename, selec, ip, im, True, is_etrue), "RECREATE")
+      canv_binno.Print(get_output_name(output_filename, selec, ip, im, True, is_etrue), print_opt)
 
       # Free up memory
       del canv_ereco
