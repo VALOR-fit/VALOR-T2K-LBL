@@ -13,7 +13,7 @@ ROOT.gROOT.SetBatch(1)
 
 samples=["1Rmu", "RHC1Rmu", "1Re", "RHC1Re", "MultiRe"]
 
-def convert_hybrid(outfile, datafile, fakefile, ntoys, data_samples=[]):
+def convert_hybrid(outfile, datafile, fakefile, ntoys, start, data_samples=[]):
     data = ROOT.TFile(datafile, "READ")
     hybrid = ROOT.TFile(outfile, "RECREATE")
     fake = ROOT.TFile(fakefile, "READ")
@@ -25,7 +25,7 @@ def convert_hybrid(outfile, datafile, fakefile, ntoys, data_samples=[]):
     for sample in data_samples:
         data_hists[sample] = data.Get("mock_data_" + sample + "_0")
 
-    for itoy in range (0, ntoys):
+    for itoy in range (start, start + ntoys):
         if itoy % 1000 == 0:
             print "Processing toy", str(itoy)
         # Copy over the data and fake data spectra to the hybrid file
@@ -77,12 +77,13 @@ if __name__=="__main__":
     parser.add_option("-d", "--data-file", dest="datafile", help='Input file containing data spectra')
     parser.add_option("-f", "--fake-data", dest="fakefile", help='Full path of fake data toys')
     parser.add_option('-n', "--ntoys", dest='ntoys', default=1, type=int, help='Number of fake data toys in the input file')
-    
+    parser.add_option('-s', "--start", dest='start', default=0, type=int, help='Toy number of the first toy in the file')
+
     v = optparse.Values()
     parser.parse_args(values = v)
     o, other = parser.parse_args()
 
-    convert_hybrid(o.outfile, o.datafile, o.fakefile, o.ntoys, ["1Rmu","1Re","RHC1Rmu","MultiRe"])
+    convert_hybrid(o.outfile, o.datafile, o.fakefile, o.ntoys, o.start, ["1Rmu","1Re","RHC1Rmu","MultiRe"])
 
     if other:
         print "Warning - ignored arguments: ", other

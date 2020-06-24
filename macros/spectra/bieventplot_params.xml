@@ -8,12 +8,12 @@
   </input_parameters>
 
   <bf_values_nh>
-	  <input_mixing12>0.304</input_mixing12>
-  	<input_mixing13>0.02235</input_mixing13>
-    <input_mixing23>0.530</input_mixing23>
-    <input_deltacp>0</input_deltacp>
+    <input_mixing12>0.304</input_mixing12>
+    <input_mixing13>0.0212</input_mixing13>
+    <input_mixing23>0.50</input_mixing23>
+    <input_deltacp>-1.5708</input_deltacp>
     <input_dm12sq>7.53E-5</input_dm12sq>
-    <input_dm23sq>2.460E-3</input_dm23sq>
+    <input_dm23sq>2.45E-3</input_dm23sq>
     <input_betabar>-99.</input_betabar>
     <disable_banff_tuning>false</disable_banff_tuning>
     <config_file>analysis_configuration_oa2018_run1-9d_v1_postfit.xml</config_file>
@@ -34,13 +34,13 @@
       0.304,0.304 <!-- size of NMH-->
     </ss12>
     <ss13>
-      0.02235,0.0226125 <!-- size of NMH-->
+      0.0212,0.0212 <!-- size of NMH-->
     </ss13>
     <dm12>
       7.53E-5,7.53E-5 <!-- size of NMH-->
     </dm12>
     <dm23>
-      2.440E-3, 2.410E-3 <!-- size of NMH-->
+      2.45E-3, 2.43E-3 <!-- size of NMH-->
     </dm23>
     <ss23>
       0.450,0.500,0.550 <!-- size of N23-->
