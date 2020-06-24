@@ -151,14 +151,17 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
     wght_pot[0]     = get_pot_weight(this_scale)
 
     for event in in_tree:
+      temp_enu_reco = ROOT.Double(-999)
+      plep_reco     = ROOT.Double(-999)
       neut_mode     = event.mode
       reac_mode[0]  = NeutModeToValorMode(neut_mode, true_nu_flavour, is_oscillated)
       enu_true[0]   = event.pnu[0]                                                  # Already in GeV/c
       Theta_reco[0] = calc_theta_degrees(event.fq1rdir, event.fqnse, sample[0])     # event.fq1rdir is a 3D list that contains info on the lepton direction and is dependant on the sample
-      enu_reco[0]   = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])  # Already in GeV
+      temp_enu_reco, plep_reco = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])
+      enu_reco[0]   = temp_enu_reco   # Already in GeV
       wght[0]       = group_misc_weights(event, neut_mode)                          # Group all of the standard multiplicative NIWG weights into a single weight
 
-      if enu_reco[0] < 0. \
+      if plep_reco < 0. or enu_reco[0] < 0. \
          or (is_oscillated and not util.ModeIsCC(reac_mode[0])):
         # Skip oscillated NC events, because NC is always just the sum of events in numu, nue, nutau. So the oscillation
         # is already accounted for.
@@ -304,7 +307,7 @@ def get_pot_weight(this_scale):
 def calc_theta_degrees(lep_dir_in, size, sample):
   # lep_dir contains info on the lepton direction and is dependant on the sample
   lep_dir = c_to_pyroot_array_hack(lep_dir_in, size, 7, 3)
-  costheta = -999.
+  costheta = ROOT.Double(-999.)
   if util.SampleIsELike(sample):
     costheta = t2k_beam_dir[0] * lep_dir[0][1][0] + t2k_beam_dir[1] * lep_dir[0][1][1] + t2k_beam_dir[2] * lep_dir[0][1][2]
   if util.SampleIsMuLike(sample):
@@ -314,8 +317,8 @@ def calc_theta_degrees(lep_dir_in, size, sample):
     print "ERROR: costheta = " << costheta << " --> outside allowed range"
     util.Die(1)
 
-  LepTheta        = ROOT.TMath.ACos(costheta)          # radians
-  LepThetaDegrees = LepTheta / ROOT.TMath.Pi() * 180.  # degrees
+  LepTheta        = ROOT.Double(ROOT.TMath.ACos(costheta))          # radians
+  LepThetaDegrees = ROOT.Double(LepTheta / ROOT.TMath.Pi() * 180.)  # degrees
   if LepTheta < 0.:
     print "ERROR: Theta lepton is negative: " << LepThetaDegrees << " degrees"
     util.Die(1)
@@ -324,20 +327,21 @@ def calc_theta_degrees(lep_dir_in, size, sample):
 
 #_______________________________________________________________________
 # Calculate the reconstructed neutrino energy, taking into account the Coulomb shift for CC events.
+# Returns [Ereco (GeV), Plep (GeV/c)]
 # See https://www.t2k.org/asg/oagroup/meeting/2018/2018-02-22/coulombcorrections for details.
 # The Erec calculation uses the QE approximation, see e.g. TN315v5 p31.
 def calc_enu_reco(event, sample, reac_mode, Theta_reco):
-    ereco_MeV = None
+    ereco_MeV = ROOT.Double(-999)
 
-    Vnuc = 27.0                          # Nominal binding energy, MeV
-    mn   = conv.kNeutronMassGeV  * 1000. # MeV
-    mp   = conv.kProtonMassGeV   * 1000. # MeV
-    me   = conv.kElectronMassGeV * 1000. # MeV
-    mm   = conv.kMuonMassGeV     * 1000. # MeV
-    md   = conv.kDeltaMassGeV    * 1000. # MeV
+    Vnuc = ROOT.Double(27.0)                          # Nominal binding energy, MeV
+    mn   = ROOT.Double(conv.kNeutronMassGeV  * 1000.) # MeV
+    mp   = ROOT.Double(conv.kProtonMassGeV   * 1000.) # MeV
+    me   = ROOT.Double(conv.kElectronMassGeV * 1000.) # MeV
+    mm   = ROOT.Double(conv.kMuonMassGeV     * 1000.) # MeV
+    md   = ROOT.Double(conv.kDeltaMassGeV    * 1000.) # MeV
 
-    mass = None
-    mom  = None
+    mass = ROOT.Double(0)
+    mom  = ROOT.Double(0)
     if util.SampleIsELike(sample):
         # Must use reco info for consistency with how we select the Erec equation
         mass = me
@@ -346,19 +350,19 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
         mass = mm
         mom = event.fqmomm
 
-    mom_shift_nu    = -4.3   # MeV
-    mom_shift_nubar =  3.3   # MeV
-    mom_shift = None
+    mom_shift_nu    = ROOT.Double(-4.3)   # MeV
+    mom_shift_nubar = ROOT.Double( 3.3)   # MeV
+    mom_shift = ROOT.Double(0)
     final_nu_flavour = util.ReacModeToFinalFlavor(reac_mode)
     if final_nu_flavour == conv.kNuMuBar or final_nu_flavour == conv.kNuEBar or final_nu_flavour == conv.kNuTauBar:
         # The momentum shift must be chosen using true info
         mom_shift = mom_shift_nubar
     else:
         mom_shift = mom_shift_nu
-    shifted_mom = mom + mom_shift
+    shifted_mom = ROOT.Double(mom + mom_shift)
 
-    elep = ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom)
-    theta_reco_rads = Theta_reco * (ROOT.TMath.Pi() / 180.0)   # Theta_reco is input in degrees, so convert to radians here
+    elep = ROOT.Double(ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom))
+    theta_reco_rads = ROOT.Double(Theta_reco * (ROOT.TMath.Pi() / 180.0))   # Theta_reco is input in degrees, so convert to radians here
 
     if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
         # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
@@ -375,7 +379,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
             ereco_MeV /= (mp - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
 
     # Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
-    return ROOT.TMath.Min(ereco_MeV / 1000., 29.9)
+    return [ROOT.Double(ROOT.TMath.Min(ereco_MeV / 1000., 29.9)), shifted_mom / 1000.]
 
 #_______________________________________________________________________
 # Group all of the standard multiplicative NIWG and flux weights etc. into a single weight

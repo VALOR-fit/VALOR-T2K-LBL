@@ -66,6 +66,17 @@ abnormal_untuned_central_values = {
     "Q2_norm_7"                : 0.0
 }
 
+shifted_nom_params = [
+  "Q2_norm_0",
+  "Q2_norm_1",
+  "Q2_norm_2",
+  "Q2_norm_3",
+  "Q2_norm_4",
+  "Q2_norm_5",
+  "Q2_norm_6",
+  "Q2_norm_7"
+]
+
 
 def main(infile_name, parameter_config_filename, parameter_list_filename, del_not_in_list):
 
@@ -135,7 +146,13 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
       reordered_cov    = ROOT.TMatrixD(n_elements,n_elements)
       reordered_params = ROOT.TVectorD(n_elements)
       for i,orig_i in enumerate(param_order_list):
-        reordered_params[i] = orig_params[orig_i]
+        if str(output_names.At(i)) in shifted_nom_params:
+          # Special handling to account for the Q2_norm params as they're
+          # proper normalisation params in NIWG, but spline params in VALOR
+          reordered_params[i] = orig_params[orig_i] - 1
+        else:
+          reordered_params[i] = orig_params[orig_i]
+
         for j,orig_j in enumerate(param_order_list):
           reordered_cov[i][j] = orig_cov[orig_i][orig_j]
 

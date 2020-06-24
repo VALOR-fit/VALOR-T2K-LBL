@@ -43,7 +43,6 @@ from copy import deepcopy
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptTitle(0)
-ROOT.gStyle.SetOptStat(0) #Remove box in top right
 
 # Names used internally within this macro
 _valid_formats    = ["VALOR", "MaCh3", "p-theta", "VALOR_legacy"]
@@ -94,6 +93,32 @@ _selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"s
 _selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHCMultiRe":"nue1RD"                     }
 _selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHCMultiRe":"MultiRe"                    }
 
+# Whether or not to compare the tweaked parameter values between groups
+_compare_param_values = dict()
+_compare_param_values["VALOR"         ] = True
+_compare_param_values["MaCh3"         ] = False
+_compare_param_values["p-theta"       ] = True
+_compare_param_values["p-VALOR_legacy"] = False
+
+# The naming format used for the comparison mentioned above
+_param_value_array_patterns = dict()
+_param_value_array_patterns["VALOR"       ] = "nom_sig_values_vector_[PARAM]"
+_param_value_array_patterns["MaCh3"       ] = None
+_param_value_array_patterns["p-theta"     ] = "sig_var_pts_[PARAM]"
+_param_value_array_patterns["VALOR_legacy"] = None
+
+# copy all the p-theta settings for p-theta internally calculated using either PTheta or ETheta instead of Erec (the actual output files are the same structure)
+# the Erec is obviously the default, but adding here for clarity in plots
+_ptheta_internal_format_suffixes = ["_Erec", "_ETheta", "_PTheta", "_old", "_new"]
+for suffix in _ptheta_internal_format_suffixes:
+  _valid_formats += ["p-theta"+suffix]
+  _hist_nom_name_patterns    ["p-theta"+suffix] = _hist_nom_name_patterns    ["p-theta"]
+  _hist_tweaked_name_patterns["p-theta"+suffix] = _hist_tweaked_name_patterns["p-theta"]
+  _ratio_already_taken       ["p-theta"+suffix] = _ratio_already_taken       ["p-theta"]
+  _var_names                 ["p-theta"+suffix] = _var_names                 ["p-theta"]
+  _selecs_all                ["p-theta"+suffix] = _selecs_all                ["p-theta"]
+
+
 #==================================================================================
 # STUFF THAT CHANGES DEPENDING ON THE HIST NAMES AND FORMATS FOR EACH GROUP (END)
 #==================================================================================
@@ -112,6 +137,8 @@ _line_col["p1"] = ROOT.kCyan
 _line_col["m1"] = ROOT.kViolet
 _line_col["m3"] = ROOT.kRed
 
+_default_nom_ratio_col = ROOT.kGray
+
 _margin_l     = 0.1
 _margin_r     = 0.1
 _margin_t     = 0.1
@@ -126,15 +153,38 @@ _ratio_diff_warn_threshold_percent = 0.1
 
 # The legacy VALOR T2K analysis does not track CC1piC and CC1pi0 modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes.
-_do_sum_cc1pi_modes = True
+_do_sum_cc1pi_modes = False
 
 # The legacy VALOR T2K analysis does not track CCmisc, CCMpi and CCDIS modes separately, like we do in the VALOR SDK.
 # So when comparing systematic variations to the legacy analysis, sum these modes into CCoth.
 _do_sum_ccoth_modes = False
 
 #_______________________________________________________________________
-def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
+def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_etrue, compare_sigma, plot_nom_ratio, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
   setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth)
+
+  # Should we check that each group has evaluated each parameter at the same values?
+  compare_counter = 0
+  for format in _formats:
+    if _compare_param_values[format] and _param_value_array_patterns[format]:
+      compare_counter += 1
+  do_compare_param_values = (compare_counter > 1 and compare_sigma)
+
+  if do_compare_param_values:
+    compare_sigma_between_groups()
+
+  # Should we superimpose ratio plots of the nominal spectra onto the sigma variation plots? (e.g. plot valor nominal / mach3 nominal etc.)
+  nom_ratio_format_pairs = []
+  if plot_nom_ratio:
+    ROOT.gStyle.SetPadTickY(0)  # Don't draw y-axis tick marks on the right hand side, as we'll draw a separate y-axis there for the plots of the ratio of nominal spectra
+    for iformat, fi in enumerate(_formats):
+      for jformat, fj in enumerate(_formats):
+        if iformat == jformat:
+          continue
+        if [fj, fi] in nom_ratio_format_pairs:
+          # If we've already compared A to B there's no need to compare B to A
+          continue
+        nom_ratio_format_pairs.append([fi, fj])
 
   for ip in range(-1, len(_param_map)):
     plot_nominal = (ip == -1)
@@ -149,15 +199,18 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
       canv_name = "sigma_var_ratio_" + _selecs[_formats[0]] + "_" + (param_name_dict[_formats[0]] if not plot_nominal else "nominal")
       if _by_mode:
         canv_name += "_" + mode_name_dict[_formats[0]]
-      canv_ereco = ROOT.TCanvas(canv_name + "_Ereco", canv_name + "_Ereco", 800, 600)
+      if is_etrue:
+        canv_ereco = ROOT.TCanvas(canv_name + "_Etrue", canv_name + "_Etrue", 800, 600)
+      else:
+        canv_ereco = ROOT.TCanvas(canv_name + "_Ereco", canv_name + "_Ereco", 800, 600)
       canv_binno = ROOT.TCanvas(canv_name + "_binno", canv_name + "_binno", 800, 600)
       canv_ereco.SetMargin(_margin_l, _margin_r, _margin_t, _margin_b)
       canv_binno.SetMargin(_margin_l, _margin_r, _margin_t, _margin_b)
       print "Making plot named", canv_name
 
-      leg = ROOT.TLegend(1.0-_margin_r, 0.65, 0.995, 1.0-_margin_t)
+      leg = ROOT.TLegend(1.0-_margin_r, 0.65 - (0.25 * int(plot_nom_ratio and not plot_nominal)), 0.995, 1.0-_margin_t)
       if not plot_nominal:
-          leg.AddEntry(None, "Variations", "")
+        leg.AddEntry(None, "Variations", "")
       h_list       = []
       h_list_binno = []
       hist_max_var = -999
@@ -183,8 +236,8 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           if not first_drawn_var or not first_drawn_format:
             draw_opt = "HIST,SAME"
           else:
-            format_drawn_hist(h, x_max, False)
-            format_drawn_hist(h_binno, h.FindBin(x_max) -1, True)
+            format_drawn_hist(h, x_max, False, is_etrue, plot_nominal)
+            format_drawn_hist(h_binno, h.FindBin(x_max) -1, True, is_etrue, plot_nominal)
           canv_ereco.cd()
           h.Draw(draw_opt)
           canv_binno.cd()
@@ -228,6 +281,103 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
         h_list_binno[0].SetMaximum(1.1 * hist_max_var)
         h_list_binno[0].SetMinimum(0.)
 
+      # Superimpose plots of (group 1 nominal) / (group 2 nominal) etc.
+      h_list_nom_ratio = []
+      if plot_nom_ratio:
+        # Iterate over all pairs of groups twice: First to get the max and min values so we can scale the hists
+        # to fit in the same plot as the sigma variation ratios, then second to actually draw the hists.
+        max_nom_ratio = -999
+        for i, format_pair in enumerate(nom_ratio_format_pairs):
+          h_ratio_of_nominals = get_ratio_of_nominal_hists(format_pair, mode_name_dict, i, plot_nominal)
+          h_ratio_of_nominals.SetName(canv_name + "_nom_ratio_" + format_pair[0] + "_" + format_pair[1])
+          max_nom_ratio = max(max_nom_ratio, get_max_var_in_range(h_ratio_of_nominals, x_max, not plot_nominal))
+          h_list_nom_ratio.append(h_ratio_of_nominals)
+        axis_value_ymax = 1 + 1.1 * max_nom_ratio
+        axis_value_ymin = 1 - 1.1 * max_nom_ratio
+        if plot_nominal:
+          axis_value_ymax = 1.1 * max_nom_ratio
+          axis_value_ymin = 0
+        if axis_value_ymax == 1 and axis_value_ymin == 1:
+          axis_value_ymin = 0.9
+          axis_value_ymax = 1.1
+
+        for i, format_pair in enumerate(nom_ratio_format_pairs):
+          if i == 0:
+            leg.AddEntry(None, "", "")
+            leg.AddEntry(None, "#splitline{Ratio of}{nominal spectra}", "")
+
+          h_ratio_of_nominals = h_list_nom_ratio[i]
+          scale_factor = 1.0
+          if max_nom_ratio != 0:
+            if hist_max_var == 0:
+              scale_factor = (ROOT.gPad.GetUymax() - ROOT.gPad.GetUymin()) / max_nom_ratio
+            else:
+              scale_factor = hist_max_var / max_nom_ratio
+
+            if plot_nominal:
+              h_ratio_of_nominals.Scale(scale_factor)
+            else:
+              rescale_around_y_eq_one(h_ratio_of_nominals, scale_factor) # Scale so it will fit on the sigma variations plot
+
+          canv_ereco.cd()
+          h_ratio_of_nominals.Draw("HIST,SAME")
+
+          canv_binno.cd()
+          h_ratio_of_nominals_binno = hist_to_bin_number(h_ratio_of_nominals)
+          h_ratio_of_nominals_binno.Draw("HIST,SAME")
+
+          leg.AddEntry(h_ratio_of_nominals, "#frac{" + format_pair[0] + "}{" + format_pair[1] + "}", "l")
+          h_list_nom_ratio.append(h_ratio_of_nominals)
+
+        axis_ymin = h_list[0].GetMinimum()
+        axis_ymax = h_list[0].GetMaximum()
+        ndiv      = h_list[0].GetYaxis().GetNdivisions()
+        if axis_ymin == axis_ymax:
+          axis_ymin = 0
+          axis_ymax = 2
+          ndiv = 510
+        axis_ratio_of_nominals = ROOT.TGaxis(x_max, axis_ymin, x_max, axis_ymax,    # The position of the axis, in the coordinate system used by the sigma var ratio hists
+                                             axis_value_ymin, axis_value_ymax, ndiv, "+C")
+        axis_ratio_of_nominals.SetLineColor  (_default_nom_ratio_col)
+        axis_ratio_of_nominals.SetLabelColor (_default_nom_ratio_col)
+        axis_ratio_of_nominals.SetLabelSize  (h_list[0].GetYaxis().GetLabelSize())
+        axis_ratio_of_nominals.SetLabelFont  (h_list[0].GetYaxis().GetLabelFont())
+        axis_ratio_of_nominals.SetLabelOffset(-0.05)
+
+        xmax_binno = h_list_nom_ratio[0].FindBin(x_max) -1
+        axis_ratio_of_nominals_binno = ROOT.TGaxis(xmax_binno, axis_ymin, xmax_binno, axis_ymax,    # The position of the axis, in the coordinate system used by the sigma var ratio hists
+                                                   axis_value_ymin, axis_value_ymax, ndiv, "+C")
+        axis_ratio_of_nominals_binno.SetLineColor  (_default_nom_ratio_col)
+        axis_ratio_of_nominals_binno.SetLabelColor (_default_nom_ratio_col)
+        axis_ratio_of_nominals_binno.SetLabelSize  (h_list[0].GetYaxis().GetLabelSize())
+        axis_ratio_of_nominals_binno.SetLabelFont  (h_list[0].GetYaxis().GetLabelFont())
+        axis_ratio_of_nominals_binno.SetLabelOffset(-0.05)
+
+        canv_ereco.cd()
+        axis_ratio_of_nominals.Draw()
+
+        canv_binno.cd()
+        axis_ratio_of_nominals_binno.Draw()
+
+        title_box_ratio_of_nominals = ROOT.TPaveText(0.92, 0.10, 1.0, 0.37, "NDC")
+        text = title_box_ratio_of_nominals.AddText("#splitline{Ratio of}{Nominal Spectra}")
+        text.SetTextAngle(270)
+        text.SetTextAlign(22)
+        title_box_ratio_of_nominals.SetTextSize(h_list[0].GetYaxis().GetTitleSize())
+        title_box_ratio_of_nominals.SetTextColor(_default_nom_ratio_col)
+        title_box_ratio_of_nominals.SetFillColor(0)
+        title_box_ratio_of_nominals.SetFillColorAlpha(0, 0)
+        title_box_ratio_of_nominals.SetFillStyle(0)
+        title_box_ratio_of_nominals.SetLineStyle(0)
+        title_box_ratio_of_nominals.SetLineColor(0)
+        ROOT.SetOwnership(title_box_ratio_of_nominals, False)
+
+        canv_ereco.cd()
+        title_box_ratio_of_nominals.Draw("SAME")
+
+        canv_binno.cd()
+        title_box_ratio_of_nominals.Draw("SAME")
+
       title_box = make_title_box(get_title_box_text(param_name_dict if not plot_nominal else None, mode_name_dict))
       canv_ereco.cd()
       title_box.Draw("SAME")
@@ -238,10 +388,21 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
       canv_ereco.cd()
       canv_ereco.Update()
-      canv_ereco.SaveAs(get_output_name(output_filename, selec, ip, im, False), "RECREATE")
+      print_opt = ""
+      if plot_nominal:
+        if _by_mode:
+          print_opt = "Title:Nominal_" + mode_name_dict[_formats[0]]
+        else:
+          print_opt = "Title:Nominal"
+      else:
+        if _by_mode:
+          print_opt = "Title:" + param_name_dict[_formats[0]] + "_" + mode_name_dict[_formats[0]]
+        else:
+          print_opt = "Title:" + param_name_dict[_formats[0]]
+      canv_ereco.Print(get_output_name(output_filename, selec, ip, im, False, is_etrue), print_opt)
       canv_binno.cd()
       canv_binno.Update()
-      canv_binno.SaveAs(get_output_name(output_filename, selec, ip, im, True), "RECREATE")
+      canv_binno.Print(get_output_name(output_filename, selec, ip, im, True, is_etrue), print_opt)
 
       # Free up memory
       del canv_ereco
@@ -274,7 +435,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
   # Check that the inputs are valid
   if(len(in_files) != len(formats)):
     print "ERROR: The number of input files and formats should be the same, but instead we have", \
-      len(in_files), "input files,", len(formats), "formats."
+          len(in_files), "input files,", len(formats), "formats."
     sys.exit()
 
   for format_name in formats:
@@ -300,13 +461,14 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
     print "ERROR: Could not open the input parameter map file!"
     sys.exit()
   _param_map = list_of_tuples(params_file)
+  _param_map = add_entries_for_internal_formats(_param_map, "p-theta", _ptheta_internal_format_suffixes)
   _param_map = sort_map(_param_map, _formats)
   if len(_param_map) == 0:
     print "ERROR: Got no prams to plot"
     sys.exit()
 
   print "\nPlotting systematic variations for the following params:\n", \
-    [param_tuple[0] for param_tuple in _param_map]
+        [param_tuple[0] for param_tuple in _param_map]
 
   # Get the list of modes, if required
   _n_modes = 1
@@ -315,6 +477,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
       print "ERROR: Could not open the input mode map file!"
       sys.exit()
     _mode_map = list_of_tuples(modes_file)
+    _mode_map = add_entries_for_internal_formats(_mode_map, "p-theta", _ptheta_internal_format_suffixes)
     _mode_map = sort_map(_mode_map, _formats)
     if len(_mode_map) == 0:
       print "ERROR: Got no modes to plot"
@@ -323,7 +486,7 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
     _n_modes = len(_mode_map)
 
     print "\nPlotting systematic variations for the following modes:\n", \
-      [mode_tuple[0] for mode_tuple in _mode_map]
+          [mode_tuple[0] for mode_tuple in _mode_map]
 
   # In VALOR, the CC1piC and CC1pi0 treated separately, so their PDFs must be summed when comparing to
   # groups who keep track of the sum of these modes
@@ -406,7 +569,7 @@ def get_ratio_hist(sigma_var, param_name_dict, mode_name_dict, iformat):
     if not hratio:
       return None
 
-  set_empty_bins_to_one(hratio)
+  set_empty_bins_to_value(hratio, 1.0)
 
   # Set the line style and colour differently for each group
   col_offset = (2 * iformat)
@@ -418,6 +581,39 @@ def get_ratio_hist(sigma_var, param_name_dict, mode_name_dict, iformat):
   hratio.SetLineColor(_line_col[sigma_var] + col_offset)
   hratio.SetLineStyle(1 + iformat)
   hratio.SetLineWidth(1 + iformat)
+
+  ROOT.SetOwnership(hratio, False)       # This stops the object being deleted from memory when it goes out of scope
+  return hratio
+
+#_______________________________________________________________________
+def get_ratio_of_nominal_hists(format_pair, mode_name_dict, style_index, plot_nominal):
+  hratio = None
+
+  if _ratio_already_taken[format_pair[0]] or _ratio_already_taken[format_pair[1]]:
+    print "ERROR: Cannot get ratio of nominal hists between groups", format_pair[0], "and", format_pair[1]
+    sys.exit()
+
+  # Make the ratio hist
+  hnumerator   = get_nominal(mode_name_dict, format_pair[0])
+  hdenominator = get_nominal(mode_name_dict, format_pair[1])
+  if not hnumerator or not hdenominator:
+    return None
+  hratio = ROOT.TH1D(hnumerator)
+  hratio.Divide(hdenominator)
+
+  if plot_nominal:
+    set_empty_bins_to_value(hratio, 0.0)
+  else:
+    set_empty_bins_to_value(hratio, 1.0)
+
+  # Set the line style and colour differently for each pair of groups
+  # col_offset = style_index
+  # # The kGray colour offset values in TColor range from 0 to +3 (inclusive), so keep within range
+  # if col_offset > 3 or col_offset < 0:
+  #   print "WARNING: Setting the kGray TColor offset to", col_offset, ", which may not be a valid colour."
+  hratio.SetLineColor(_default_nom_ratio_col)
+  hratio.SetLineStyle(len(_formats) + 1 + style_index)  # To Make sure that we don't get the same style as any of the sigma var hists
+  hratio.SetLineWidth(1 + style_index)
 
   ROOT.SetOwnership(hratio, False)       # This stops the object being deleted from memory when it goes out of scope
   return hratio
@@ -436,10 +632,10 @@ def get_nominal_for_plot(mode_name_dict, iformat):
   return hnom
 
 #_______________________________________________________________________
-def set_empty_bins_to_one(h):
+def set_empty_bins_to_value(h, value):
   for ibin in range(1, h.GetNbinsX()+1):
     if h.GetBinContent(ibin) < _a_small_num:
-      h.SetBinContent(ibin, 1)
+      h.SetBinContent(ibin, value)
 
 #_______________________________________________________________________
 def get_nominal(mode_name_dict, format):
@@ -480,12 +676,16 @@ def get_hist(get_tweaked_hist, sigma_var, param_name_dict, mode_name_dict, forma
   elif format == "MaCh3":
     h = get_mach3_hist(hname)
   elif format == "p-theta":
-    h = get_ptheta_hist(hname)
+    h = get_ptheta_hist(hname, format)
   elif format == "VALOR_legacy":
     h = get_t2k_legacy_hist(hname)
   else:
-    print "ERROR: Unrecognised format \'{}\'".format(format)
-    sys.exit()
+    for suffix in _ptheta_internal_format_suffixes:
+      if format == "p-theta"+suffix:
+        h = get_ptheta_hist(hname, format)
+    if h is None:
+      print "ERROR: Unrecognised format \'{0}\'".format(format)
+      sys.exit()
 
   if h:
     ROOT.SetOwnership(h, False)       # This stops the object being deleted from memory when it goes out of scope
@@ -537,9 +737,9 @@ def get_mach3_hist(hname):
   return h
 
 #_______________________________________________________________________
-def get_ptheta_hist(hname):
+def get_ptheta_hist(hname, format):
   # Put in any special cases related to getting p-theta hists here
-  fin = _input_files["p-theta"]
+  fin = _input_files[format]
   h = fin.Get(hname)
   if not h:
     print "WARNING: Could not get hist named [", hname, "] from the input file,", fin.GetName()
@@ -585,42 +785,64 @@ def list_of_tuples(filename):
   return tuplelist
 
 #_______________________________________________________________________
+def add_entries_for_internal_formats(tuples, matchFormat, suffixes):
+  formats = tuples[0]
+  newtuples = []
+  for i,f in enumerate(formats):
+    if f == matchFormat:
+      iorg = i
+      for row,tup in enumerate(tuples):
+        newtup = tup
+        for suffix in suffixes:
+          if row == 0:
+            newtup += (matchFormat+suffix,)
+          else:
+            newtup += (tup[iorg],) # copy the value for matchFormat
+        newtuples.append(newtup)
+  return newtuples
+
+#_______________________________________________________________________
 def sort_map(old_list_in, new_order):
   old_list = copy.deepcopy(old_list_in)
   new_list = []
   old_order = old_list[0]
   if len(list(set(new_order))) != len(new_order):
-      print "WARNING: Tried to sort a naming map, but found duplicate names in the ordering, so will not attempt to sort"
-      del old_list[0]
-      return old_list
+    print "WARNING: Tried to sort a naming map, but found duplicate names in the ordering, so will not attempt to sort"
+    del old_list[0]
+    return old_list
   if(len(new_order) > len(old_order)):
     print "ERROR: The length of the new order list was longer than the length old order list. \n New order =", \
-      new_order, "\n old order =", old_order
+          new_order, "\n old order =", old_order
     sys.exit()
   if(len(new_order) == 0):
     print "ERROR: The length of the new order list was 0. New order =", new_order
     sys.exit()
   order_map = []
   for o in new_order:
-      if o not in old_order:
-          print "ERROR: New order \'{}\'".format(o), "is not in the old order list:", old_order
-          sys.exit()
-      order_map.append(old_order.index(o))
+    if o not in old_order:
+      print "ERROR: New order \'{}\'".format(o), "is not in the old order list:", old_order
+      sys.exit()
+    order_map.append(old_order.index(o))
   for i in range(1, len(old_list)):
-      # Skip index 0, as that corresponds to the order list
-      new_row = []
-      for j in range(0, len(new_order)):
-          new_row.append(old_list[i][order_map[j]])
-      new_list.append(new_row)
+    # Skip index 0, as that corresponds to the order list
+    new_row = []
+    for j in range(0, len(new_order)):
+      new_row.append(old_list[i][order_map[j]])
+    new_list.append(new_row)
   return new_list
 
 #_______________________________________________________________________
-def format_drawn_hist(h, x_max, is_binno):
+def format_drawn_hist(h, x_max, is_binno, is_etrue, plot_nominal):
   if is_binno:
     h.GetXaxis().SetTitle("Bin Number")
+  elif is_etrue:
+    h.GetXaxis().SetTitle("E_{true} (GeV)")
   else:
     h.GetXaxis().SetTitle("E_{rec.} (GeV)")
-  h.GetYaxis().SetTitle("Ratio to Nominal")
+  if plot_nominal:
+    h.GetYaxis().SetTitle("Nominal Event Rate")
+  else:
+    h.GetYaxis().SetTitle("Ratio to Nominal")
   h.GetYaxis().SetLabelSize(_label_size)
   h.GetXaxis().SetLabelSize(_label_size)
   h.GetYaxis().SetTitleSize(_title_size)
@@ -653,11 +875,13 @@ def make_title_box(title):
   return title_box
 
 #_______________________________________________________________________
-def get_output_name(output_filename, selec, ip, im, is_binno):
+def get_output_name(output_filename, selec, ip, im, is_binno, is_etrue):
   save_name = output_filename
   save_name += "_" + selec
   if is_binno:
     save_name += "_binno"
+  elif is_etrue:
+    save_name += "_etrue"
   else:
     save_name += "_ereco"
   if _by_mode:
@@ -698,20 +922,45 @@ def compare_ratio_hists(param_name_dict, mode_name_dict, sigma_var, comparison_d
         if diff > _ratio_diff_warn_threshold_percent:
           if _by_mode:
             print "WARNING: For param =", param_name_dict[fi], "; sample =", _selecs[fi], "; mode =", \
-              mode_name_dict[fi], "; Ereco =", comparison_dict[fi].GetBinCenter(ibin), "; variation =", \
-              sigma_var, "; difference of", diff, "% in the ratios of input and comparison hist"
+                  mode_name_dict[fi], "; Ereco =", comparison_dict[fi].GetBinCenter(ibin), "; variation =", \
+                  sigma_var, "; difference of", diff, "% in the ratios of input and comparison hist"
           else:
             print "WARNING: For param =", param_name_dict[fi], "; sample =", _selecs[fi], "; Ereco =", \
-              comparison_dict[fi].GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
-              "% in the ratios of input and comparison hist"
+                  comparison_dict[fi].GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
+                  "% in the ratios of input and comparison hist"
       already_compared.append([iformat, jformat])
 
 #_______________________________________________________________________
+def compare_sigma_between_groups():
+  maxlen_format = max([len(f) for f in _formats])
+  for ip in range(0, len(_param_map)):
+    param_name_dict = get_param_name_dict(ip)
+    print param_name_dict[_formats[0]]
+    for i, f in enumerate(_formats):
+      if _compare_param_values[f] and _param_value_array_patterns[f]:
+        name = _param_value_array_patterns[f].replace("[PARAM]", param_name_dict[f])
+        param_values_vector = _input_files[f].Get(name)
+        if not param_values_vector:
+          print "ERROR: Could not find an object named", name, "in file", _input_files[f].GetName()
+          sys.exit()
+        nom = param_values_vector[2]    # We're not comparing the nominal values between groups, because some normalise this value to the generated value while other groups don't.
+        sigma = param_values_vector[3] - param_values_vector[2]
+        #row = "\t" + f + ": " + " "*(maxlen_format-len(f)) + " nom = " + str(nom) + ", sigma = " + str(sigma)
+        row = "\t" + f + ": " + " "*(maxlen_format-len(f)) + ", sigma = " + str(sigma)
+        print row
+
+#_______________________________________________________________________
+def rescale_around_y_eq_one(h, scale_factor):
+  for i in range(1, h.GetNbinsX()):
+    scaled_content = 1 + (h.GetBinContent(i) - 1.0) * scale_factor
+    h.SetBinContent(i, scaled_content)
+
+#_______________________________________________________________________
 if __name__=="__main__":
-  
+
   import argparse
   parser = argparse.ArgumentParser(description="Plot single-sample +/- 1 and 3 sigma variations and compare between groups")
-  
+
   parser.add_argument('-o', '--out-file'         , dest='output_filename', default=""     , help="Name of the output image file")
   parser.add_argument('-i', '--in-files'         , dest='in_files'       , nargs="+"      , help="Input file names containing spectra to plot. One file per group")
   parser.add_argument('-f', '--formats'          , dest='formats'        , nargs="+"      , help="Name used to identify the format used for hist naming. Choose from: \'VALOR\', \'MaCh3\', \'p-theta\', \'VALOR_legacy\'")
@@ -720,10 +969,13 @@ if __name__=="__main__":
   parser.add_argument('-m', '--modes'            , dest='modes'          , default=""     , help="File containing a map between mode names used by each group. Also used to decide which plots to produce.")
   parser.add_argument('-x', '--x-max'            , dest='x_max'          , type=float     , default=3.0, help="Maximum Ereco value")
   parser.add_argument('-w', '--suppress-warnings', dest='suppress_warn'  , default=False  , action="store_true", help="Usually warnings are printed if any of the ratio hist bin contents are sufficiently different from that of other groups. Use this option to disable these warnings.")
+  parser.add_argument('-c', '--compare-sigma'    , dest='compare_sigma'  , default=False  , action="store_true", help="Print a comparison between the sigma values used by each group for each param.")
+  parser.add_argument('-n', '--plot-nom-ratio'   , dest='plot_nom_ratio' , default=False  , action="store_true", help="Plot the ratios of the nominal spectra for each group superimposed onto the systematic variations")
+  parser.add_argument(      '--is-etrue'         , dest='is_etrue'       , default=False  , action="store_true", help="Set to true if the histograms use etrue binning, and thus the x label should be E_{true}")
   parser.add_argument(      '--is-unosc'         , dest='is_unosc'       , default=False  , action="store_true", help="The p-theta hists names contain the string \'osc\' or \'unosc\', this flag switches between them. ")
   parser.add_argument(      '--sum-t2k-cc1pi'    , dest='sum_t2k_cc1pi'  , default=False  , action="store_true", help="Sum VALOR T2K CC1piC and CC1pi0 modes when comparing to VALOR T2K legacy")
   parser.add_argument(      '--sum-t2k-ccoth'    , dest='sum_t2k_ccoth'  , default=False  , action="store_true", help="Sum VALOR T2K CCmisc, CCMpi and CCDIS modes when comparing to VALOR T2K legacy")
 
   o = parser.parse_args()
 
-  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)
+  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_etrue, o.compare_sigma, o.plot_nom_ratio, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)

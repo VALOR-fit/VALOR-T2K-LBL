@@ -101,15 +101,14 @@
     </group>
 
 
-
     <group name="skdetsipn">
-       <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
+      <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
            The order of params in this list must be the same as the order of params in the matrix.-->
       <format> t2k_sk_params_run1-9d.xml </format>
 
       <covariance_matrix>
-        <filename> official/2020/skdetsipn/SKJointErrorMatrix2020_Total_fitqun_v4_16062020_valor_order.root </filename>
-        <objname>  skdetsipn    </objname>
+        <filename> official/2020/skdetsipn/SKJointErrorMatrix2020_Total_fitqun_v4_16062020_valor_format.root </filename>
+        <objname>  skdetfsi    </objname>
         <objtype>  TMatrixD    </objtype>
       </covariance_matrix>
     </group>
