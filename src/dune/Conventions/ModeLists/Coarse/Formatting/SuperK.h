@@ -1,9 +1,0 @@
-{ kBlack, kMagenta, 1001 },  // kmcOscNuECC
-{ kBlack, kGreen+1, 1001 },  // kmcOscNuEBarCC
-{ kBlack, kRed,     1001 },  // kmcNC
-{ kBlack, kYellow,  1001 },  // kmcNuECC
-{ kBlack, kOrange,  1001 },  // kmcNuEBarCC
-{ kBlack, kCyan,    1001 },  // kmcNuMuCC
-{ kBlack, kBlue,    1001 },  // kmcNuMuBarCC
-{ 0,      0,        0    },  // kmUndefined
-{ 0,      0,        0    }   // kmUndefined

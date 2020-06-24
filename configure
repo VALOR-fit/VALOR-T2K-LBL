@@ -1,11 +1,13 @@
 #! /usr/bin/perl -w
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# VALOR/EXPT configuration script
+# VALOR/DUNE configuration script
 #
 # For help, type ./configure --help
 #
-# Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
+# Costas Andreopoulos <constantinos.andreopoulos \at cern.ch>
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+use File::Path;
 
 # print out info & exit if any of the command-line arguments was --help
 #
@@ -18,7 +20,6 @@ if(($match = grep(/--help/i, @ARGV)) > 0) {
   print "\n enable/disable options with either --enable- or --disable- (eg --enable-lhapdf --disable-flux-drivers)\n\n";
   print "    debug               Adds -g in the compiler options to request debug info         default: disabled \n";
   print "    low-level-messages  Turns on error logging in speed-critical areas.               default: disabled \n";
-  print "    sbnana              Turns on SBNanalysis integration                              default: if_exists \n";
   print "\n options for 3rd party software, prefix with --with- (eg --with-lhapdf-lib=/some/path/)\n\n";
   print "    compiler          Compiler to use (any of clang,g++)                          default: use what the framework uses \n";
   print "    optimiz-level     Compiler optimization (any of O,O2,O3,OO,Os)                default: O2 \n";
@@ -105,7 +106,7 @@ if(($match = grep(/--prefix/i, @ARGV)) > 0) {
   }
 }
 
-# Default --enable/--disable config options (for a minimal genie build)
+# Default --enable/--disable config options (for a minimal build)
 #
 my $opt_enable_debug              = "NO";
 my $opt_enable_low_level_messages = "NO";
@@ -144,13 +145,6 @@ if(! -d $opt_with_valor_framework) {
   print "*** Error *** Could not locate the VALOR framework package. Please define \$VALOR_FMWK \n\n";
   exit 1;
 } 
-
-if(($match = grep(/--disable-sbnana/i, @ARGV)) == 0) {
-  $SBNANALYSIS_ENABLED = int(!(`which sbn 2>/dev/null` eq ''));
-}
-else {
-  $SBNANALYSIS_ENABLED = 0;
-}
 
 # Make sure we use the correct version of the framework package
 #
@@ -191,20 +185,29 @@ if($have_fmwk_requirement) {
   print "No VALOR framework package version requirement\n\n";
 }
 
-# Work out the GENIE version
-if ($ENV{GENIE}) {
-  $GENIE_ENABLED = 1;
-  if (`genie-config --version` >= 3) {
-    $GENIE_VERSION = 3;
-  }
-  else {
-    $GENIE_VERSION = 2;
-  }
-}
-else {
-  $GENIE_ENABLED = 0;
-}
+# This in SDK now:
+#
+## Work out the GENIE version
+#if ($ENV{GENIE}) {
+#  $GENIE_ENABLED = 1;
+#  if (`genie-config --version` >= 3) {
+#    $GENIE_VERSION = 3;
+#  }
+#  else {
+#    $GENIE_VERSION = 2;
+#  }
+#}
+#else {
+#  $GENIE_ENABLED = 0;
+#}
+#
 
+#
+# Create a Conventions package, if none exists
+#
+$conventions_path="$VALOR_EXPT/src/dune/Conventions/";
+mkpath ($conventions_path, {verbose => 1, mode=>0777}); 
+die("$conventions_path doesn't exist") unless -d $conventions_path;
 # 
 # Read version info and automatically generate a header file with relevant flags that
 # can be used to make code conditional upon specific version numbers
@@ -247,17 +250,8 @@ if ($opt_enable_low_level_messages eq "YES") {
   print BLD_HEADER_FILE "#define VALOR_EXPT_LOW_LEVEL_MESG_ENABLED\n\n";
 }
 
-print BLD_HEADER_FILE "#define GENIE_ENABLED $GENIE_ENABLED\n";
-if ($GENIE_ENABLED) {
-  print BLD_HEADER_FILE "#define GENIE_VERSION $GENIE_VERSION\n\n";
-}
-
-print BLD_HEADER_FILE "#define SBNANALYSIS_ENABLED $SBNANALYSIS_ENABLED\n\n";
-
 print BLD_HEADER_FILE "\n\n#endif //_VALOR_EXPT_BUILD_H_ \n\n";
 close(BLD_HEADER_FILE);
-
-
 
 #
 # Save config options to src/make/Make.config for inclusion in other Makefiles
@@ -279,7 +273,6 @@ if ($opt_with_compiler ne "fmwk") {
 print MKCONF "OPT_WITH_CXX_DEBUG_FLAG=$opt_with_cxx_debug_flag\n";
 print MKCONF "OPT_WITH_CXX_OPTIMIZ_FLAG=-$opt_with_cxx_optimiz_flag\n";
 print MKCONF "OPT_WITH_VALOR_FRAMEWORK=$opt_with_valor_framework\n";
-print MKCONF "SBNANALYSIS_ENABLED=$SBNANALYSIS_ENABLED\n";
 
 close(MKCONF);
 if(-e $MKCONF_FILENAME) {
@@ -295,7 +288,7 @@ if(-e $MKCONF_FILENAME) {
   print "\n";
 }
 if(-e $BLD_HEADER_FILENAME) {
-  print "\nThe following config options were set in DuneBuild.h: \n";
+  print "\nThe following config options were set in Build.h: \n";
   open(BUILDHR, "<$BLD_HEADER_FILENAME") or die("Can not read back the $BLD_HEADER_FILENAME");
   @buildh=<BUILDHR>;
   close(BUILDHR);
