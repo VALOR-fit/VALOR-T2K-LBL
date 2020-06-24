@@ -113,13 +113,16 @@ VALOR-T2K-LBL| VALOR-SDK      | Summary
              |          | appearance and muon-neutrino/muon-antineutrino disappearance analysis (5 SuperK samples).
              |          | Details may be found in T2K-TN-327.
              |          |        
-?            |  ?       | Code used for the 2018 Run 1-9 electron-antineutrino appearance analysis.
-             |          | Details may be found in T2K-TN-356.
-             |          |        
-?            |  ?       | Code used for the 2018 Run 1-9 3-flavour joint electron-neutrino/electron-antineutrino 
+2018_v1.0.0  |  v1.5.0  | Code used for the 2018 Run 1-9c 3-flavour joint electron-neutrino/electron-antineutrino 
              |          | appearance and muon-neutrino/muon-antineutrino disappearance analysis (5 SuperK samples).
-             |          | Details may be found in T2K-TN-360.
+             |          | Also used for the 2018 Run 1-9c electron-antineutrino appearance analysis.
+             |          | Details may be found in the 2018 statistical update to T2K-TN-327 and in T2K-TN-356.
              |          |        
+2019_v1.0.0  |  v1.6.0  | Code used for the 2019 Run 1-9d 3-flavour joint electron-neutrino/electron-antineutrino 
+             |          | appearance and muon-neutrino/muon-antineutrino disappearance analysis (5 SuperK samples).
+             |          | Also used for the 2019 Run 1-9d electron-antineutrino appearance analysis.
+             |          | Details may be found in T2K-TN-360 and T2K-TN-356.
+             |          |       
 ?            |  ?       | Code used for the 2020 Run 1-10 3-flavour joint electron-neutrino/electron-antineutrino 
              |          | appearance and muon-neutrino/muon-antineutrino disappearance analysis (5 SuperK samples).
              |          | Details may be found in T2K-TN-394.
