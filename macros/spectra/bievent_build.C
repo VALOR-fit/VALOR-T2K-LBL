@@ -22,7 +22,8 @@ void bievent_build
 (
  const int ntoys = 100,
  const int seed = 1,
- const char* tag 
+ const char* tag,
+ const char* xml_params
 )
 
 {
@@ -33,7 +34,7 @@ void bievent_build
 
       // Parse the input XML configuration file
    TXMLEngine* xml = new TXMLEngine;
-   XMLDocPointer_t doc = xml->ParseFile("bieventplot_params.xml");
+   XMLDocPointer_t doc = xml->ParseFile(xml_params);
    if(!doc)
    {
       util::Die(1);
