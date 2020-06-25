@@ -1,0 +1,37 @@
+# argument                           |   type         |  require?   |   default
+# .......................................................................................................
+input-mixing12                       |   double       |  optional   |   -999
+input-mixing13                       |   double       |  optional   |   -999
+input-mixing23                       |   double       |  optional   |   -999
+input-dm12sq                         |   double       |  optional   |   -999
+input-dm23sq                         |   double       |  optional   |   -999
+input-cpv                            |   double       |  optional   |   -999
+fix-mixing12                         |   boolean      |  optional   |   false
+fix-mixing13                         |   boolean      |  optional   |   false
+fix-mixing23                         |   boolean      |  optional   |   false
+fix-dm12sq                           |   boolean      |  optional   |   false
+fix-dm23sq                           |   boolean      |  optional   |   false
+fix-cpv                              |   boolean      |  optional   |   false
+fix-at-cpv                           |   double       |  optional   |   -999
+fix-at-mixing12                      |   double       |  optional   |   -999
+fix-at-mixing13                      |   double       |  optional   |   -999
+fix-at-mixing23                      |   double       |  optional   |   -999
+fix-at-dm23sq                        |   double       |  optional   |   -999
+fix-at-dm12sq                        |   double       |  optional   |   -999
+normal,inverted                      |   boolean_list |  optional   |   normal
+first-octant,second-octant           |   boolean_list |  optional   |   first-octant
+sinsqtheta, sinsq2theta              |   boolean_list |  optional   |   sinsqtheta
+dmsq-scheme                          |   string       |  optional   |   auto
+# steriles
+input-dm41sq                         |   double       |  optional   |   -999
+fix-dm41sq                           |   boolean      |  optional   |   false
+fix-at-dm41sq                        |   double       |  optional   |   -999
+input-sinsq2thMuMu                   |   double       |  optional   |   -999
+fix-sinsq2thMuMu                     |   boolean      |  optional   |   false
+fix-at-sinsq2thMuMu                  |   double       |  optional   |   -999
+input-sinsq2thMuE                    |   double       |  optional   |   -999
+fix-sinsq2thMuE                      |   boolean      |  optional   |   false
+fix-at-sinsq2thMuE                   |   double       |  optional   |   -999
+input-sinsq2thEE                     |   double       |  optional   |   -999
+fix-sinsq2thEE                       |   boolean      |  optional   |   false
+fix-at-sinsq2thEE                    |   double       |  optional   |   -999

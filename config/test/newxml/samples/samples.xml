@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!--
+  A single sample_list contains all of the selections for the analysis
+-->
+<sample_list name="analysis_name">
+  <!--
+    Each sample_list can contain an arbitrary number of samples.
+    
+    Recommended sample name format:
+      <exp>_<det>_<beam>_<reac mode>
+   -->
+  <sample name="sample_name">
+    <detector>dune_nd</detector>
+    <beam>lbnf_fhc</beam>
+    <selection>numucc0pi1trk</selection>
+    <data>observations.root</data>
+    <mc>test/newxml/mc/mc.xml</mc>
+    <data_class>valor::GenericSingleSampleFitData</data_class>
+    <model_class>valor::GenericSingleSampleFitModel</model_class>
+  </sample>
+</sample_list>
+

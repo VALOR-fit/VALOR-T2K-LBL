@@ -1,0 +1,8 @@
+# argument                           |   type         |  require?   |   default
+# .......................................................................................................
+config                               |   string       |  mandatory  |   -
+tag                                  |   string       |  optional   |   valor_spectra_universes
+mesg-thresholds                      |   string       |  optional   |   verbosity.xml
+syst-list                            |   string       |  optional   |   flux
+first-universe                       |   integer      |  mandatory  |   0
+n-universes                          |   integer      |  mandatory  |   20

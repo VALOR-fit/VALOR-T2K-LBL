@@ -1,0 +1,13 @@
+# argument                           |   type         |  require?   |   default
+# .......................................................................................................
+ntoys                                |   integer      |  optional   |   200
+output                               |   string       |  optional   |   tweaks_[PARAMS].root
+physics-hypothesis                   |   string       |  optional   |   3f_osc
+fit-param-opt                        |   string       |  optional   |   NONE
+config                               |   string       |  mandatory  |   -
+mesg-thresholds                      |   string       |  optional   |   verbosity.xml
+nthreads                             |   integer      |  optional   |   -1
+#
+params                               |   string       |  optional   |   allsyst
+prior-file                           |   string       |  mandatory  |   -
+rethrow-unphysical,accept-unphysical |   boolean_list |  optional   |   rethrow-unphysical

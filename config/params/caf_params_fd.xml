@@ -1,0 +1,1634 @@
+<param_list name="from_caf">
+  <param>
+    <name>
+      <simple> MaCCQE </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> VecFFCCQEshape </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MaNCEL </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> EtaNCEL </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MaCCRES </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MvCCRES </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MaNCRES </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MvNCRES </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> RDecBR1gamma </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> RDecBR1eta </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> Theta_Delta2Npi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> AhtBY </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> BhtBY </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> CV1uBY </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> CV2uBY </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FormZone </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MFP_pi </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrCEx_pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrElas_pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrInel_pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrAbs_pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrPiProd_pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MFP_N </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrCEx_N </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrElas_N </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrInel_N </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrAbs_N </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FrPiProd_N </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> CCQEPauliSupViaKF </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> Mnv2p2hGaussEnhancement </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> MKSPP_ReWeight </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> E2p2h_A_nu </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> E2p2h_B_nu </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> E2p2h_A_nubar </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> E2p2h_B_nubar </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_n_CC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_n_CC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_p_CC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_p_CC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_np_CC_1Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_n_NC_1Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_n_NC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_n_NC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_p_NC_1Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_p_NC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nu_p_NC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_n_CC_1Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_n_CC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_n_CC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_p_CC_1Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_p_CC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_p_CC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_n_NC_1Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_n_NC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_n_NC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_p_NC_1Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_p_NC_2Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> NR_nubar_p_NC_3Pi </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> BeRPA_A </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> BeRPA_B </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> BeRPA_D </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> BeRPA_E </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> C12ToAr40_2p2hScaling_nu </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> C12ToAr40_2p2hScaling_nubar </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> nuenuebar_xsec_ratio </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> nuenumu_xsec_ratio </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> SPPLowQ2Suppression </simple>
+    </name>
+    
+    <type>
+      response
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+  <param>
+    <name>
+      <simple> FSILikeEAvailSmearing </simple>
+    </name>
+    
+    <type>
+      disabled
+    </type>
+    
+    <categories>
+      <category> int </category>
+      <category> caf </category>
+    </categories>
+      
+    <apply_to>
+      <detector>  all    </detector>
+      <beam>      all    </beam>
+      <selection> all    </selection>
+      <reac_type> all    </reac_type>
+      <flav>      all    </flav>
+      <target>    all    </target>
+    </apply_to>
+  </param>
+
+</param_list>

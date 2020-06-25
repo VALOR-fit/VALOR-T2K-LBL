@@ -1,0 +1,249 @@
+#!/usr/bin/perl
+
+#
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit a batch of compound single sample valor_dune-adaptive_mcmc jobs.
+#
+# Inputs
+#   --resource               : Computer resource, <RAL_HTC, RAL_HTCPBS, RAL_PBS, Oxford_PBS, interactive>. Default: interactive.
+#   --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
+#   --dune-softw-dir         : VALOR/DUNE code top-level directory. Default: `pwd`.
+#   --fmwk-softw-dir         : VALOR/FMWK code top-level directory. Default: `pwd`/../fmwk/
+#   --njobs                  : The number of times to submit the job
+#   --cputime                : Max CPU time per job.
+
+#   --input                    : File containing VALOR ND Tree of fit result
+#   --output                   : Output file name
+#   --config                   : Analysis configuration
+#  [--nsteps ]                 : Number of steps to process [ 30000 ]
+#  [--fit-number ]             : Entry in the input tree to use [ 0 ]
+#  [--proposal-step]           : Proposal step size factor. Smaller makes it it more likely to accept a given step, but slows mixing. [0.3]
+#  [--enable-adaptive]         : Automatically tune the proposal step over time
+#  [--burn-in]                 : Number of iterations to ignore in final covariance
+#  [--start-at-bestfit]        : Don't throw a random start point
+#  [--use-prefit-correlations] : Use correlations from prefit rather than postfit matrix for proposal
+#  [--use-no-correlations]     : Use diagonal matrix for proposals
+#  [--use-prefit-errors]       : Use errors from prefit rather than postfit matrix for proposal
+#  [--write-expanded-tree]     : Write each parameter value in its own branch. No extra info, just easier to browse.
+#  [--mesg-thresholds]         : Versbosity file [ "verbosity.xml" ]
+#  [--ncores ]                 : Number of cores-per-job to request and thus threads to use (requires C++11) [ 1 ]
+#
+# S. Dennis
+# University of Liverpool
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+use Cwd 'abs_path';
+
+$iarg=0;
+foreach (@ARGV) {
+     
+  if($iarg % 2 == 1) {$iarg++; next;} # only even arguments are flags, the odd ones are values
+  
+  if   ($_ eq '--resource'               ) { $resource            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job_dir'                ) { $job_dir             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dune-softw-dir'         ) { $dune_softw_dir      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fmwk-softw-dir'         ) { $fmwk_softw_dir      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--njobs'                  ) { $njobs               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--ncores'                 ) { $ncores               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cputime'                ) { $cputime             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--memory'                 ) { $memory              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                    ) { $tag                 = $ARGV[$iarg+1]; }
+  
+  elsif($_ eq '--input'                     ) { $input                   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--output'                    ) { $output                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config'                    ) { $config                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nsteps'                    ) { $nsteps                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-number'                ) { $fit_number              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--enable-adaptive'           ) { $enable_adaptive         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--proposal-step'             ) { $proposal_step           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--burn-in'                   ) { $burn_in                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--start-at-bestfit'          ) { $start_at_bestfit        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--use-prefit-correlations'   ) { $use_prefit_correlations = $ARGV[$iarg+1]; }
+  elsif($_ eq '--use-no-correlations'       ) { $use_no_correlations     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--use-prefit-errors'         ) { $use_prefit_errors       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--write-expanded-tree'       ) { $write_expanded_tree     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mesg-thresholds'           ) { $mesg_thresholds         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--pot-override'              ) { $pot_override            = $ARGV[$iarg+1]; }
+  
+  else {
+    print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+
+if (not defined $input or not defined $output) {
+  print "input and output must be defined"; exit;
+}
+
+$resource               = "interactive"      unless defined $resource;
+$job_dir                = `pwd`              unless defined $job_dir;
+$dune_softw_dir         = $ENV{'VALOR_EXPT'} unless defined $dune_softw_dir;
+$fmwk_softw_dir         = $ENV{'VALOR_FMWK'} unless defined $fmwk_softw_dir;
+$njobs                  = 1                  unless defined $njobs;
+$tag                    = "run"              unless defined $tag;
+$memory                 = "4G"               unless defined $memory;
+
+$config                 = "fit/dunend_ndtf_2ndpassthrough_18sample_toymc_fit.xml" unless defined $config;
+$mesg_thresholds        = $ENV{'VALOR_EXPT'}."/config/verbosity.xml"              unless defined $mesg_thresholds;
+
+$nsteps                  = 50000   unless defined $nsteps;
+$ncores                  = 1       unless defined $ncores;
+$fit_number              = 0       unless defined $fit_number;
+$enable_adaptive         = 0       unless defined $enable_adaptive;
+$proposal_step           = 0.3     unless defined $proposal_step;
+$burn_in                 = 1000    unless defined $burn_in;
+$start_at_bestfit        = 0       unless defined $start_at_bestfit;
+$use_prefit_correlations = 0       unless defined $use_prefit_correlations;
+$use_no_correlations     = 0       unless defined $use_no_correlations;
+$use_prefit_errors       = 0       unless defined $use_prefit_errors;
+$write_expanded_tree     = 0       unless defined $write_expanded_tree;
+$pot_override            = -999    unless defined $pot_override;
+
+
+chomp($job_dir);
+
+if( !defined $cput ) {
+  if($resource =~ "RAL"       ) { $cput =  "6:00:00"; }
+  if($resource =~ "Oxford"    ) { $cput = "11:50:00"; }
+  if($resource =~ "Liverpool" ) { $cput = "17:50:00"; }
+}
+
+mkpath ($job_dir, {verbose => 1, mode=>0777}); 
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+$job_dir = abs_path($job_dir);
+
+$irun = 0;
+while($irun < $njobs) {
+  print "Submitting run: $irun \n";
+  $jobID = $irun;
+  
+  # If we're running multiple jobs, number the output files
+  $full_output = $output;
+  if ($njobs > 1) {
+    $full_output =~ s/([.]root)$/_$jobID$1/;
+  }
+  
+  $program = "valor_dune-adaptive_mcmc";
+  
+  $arguments   = "--config $config --mesg-thresholds $mesg_thresholds " .
+    " --nsteps $nsteps --fit-number $fit_number --proposal-step $proposal_step ".
+    " --burn-in $burn_in --input $input --output $full_output --nthreads $ncores";  
+ 
+  if ( $enable_adaptive         ) {$arguments = $arguments." --enable-adaptive"          ;}
+  if ( $start_at_bestfit        ) {$arguments = $arguments." --start-at-bestfit"          ;}
+  if ( $use_prefit_correlations ) {$arguments = $arguments." --use-prefit-correlations"   ;}
+  if ( $use_no_correlations     ) {$arguments = $arguments." --use-no-correlations"       ;}
+  if ( $use_prefit_errors       ) {$arguments = $arguments." --use-prefit-errors"         ;}
+  if ( $write_expanded_tree     ) {$arguments = $arguments." --write-expanded-tree"       ;}
+  if ( $pot_override > 0        ) {$arguments = $arguments." --pot-override $pot_override";}
+  
+  $command = $program." ".$arguments;
+  print "Running: $command \n";
+  
+  #
+  # HTCondor @ RAL
+  #
+  if($resource eq "RAL" || $resource eq "RAL_HTC") {
+    $fullprogram = abs_path(`which $program`);
+    $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+    $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+    $jobname = "mcmc-${tag}-${jobID}";
+    $cndfn = "$job_dir/${jobname}.condor";
+    open(BATCH_SCRIPT, ">".$cndfn) or die("Cannot create the Condor batch script");
+    print BATCH_SCRIPT "Executable               = $fullprogram \n";
+    print BATCH_SCRIPT "Arguments                = $arguments \n";
+    print BATCH_SCRIPT "initialdir               = $job_dir \n";
+    print BATCH_SCRIPT "Error                    = ${jobname}_\$\(Process\).err \n";
+    print BATCH_SCRIPT "Output                   = ${jobname}_\$\(Process\).out \n";
+    print BATCH_SCRIPT "Universe                 = vanilla \n";
+    print BATCH_SCRIPT "Getenv                   = True \n";
+    print BATCH_SCRIPT "should_transfer_files    = YES \n";
+    print BATCH_SCRIPT "when_to_transfer_output  = ON_EXIT \n";
+    print BATCH_SCRIPT "request_memory           = $memory \n";
+    if ($ncores > 0) {
+      print BATCH_SCRIPT "request_cpus             = $ncores \n";
+    }
+    print BATCH_SCRIPT "\nqueue\n";    
+    close(BATCH_SCRIPT);
+    system("condor_submit",$cndfn);
+  }
+
+  #
+  # PBS (or HTCondor with PBS-like interface) @ RAL
+  #
+  elsif($resource eq "RAL_PBS" || $resource eq "RAL_HTCPBS") {    
+     $batch_script = "$job_dir/$tag-$irun.pbs";
+     open(BATCH_SCRIPT, ">$batch_script") or die("Can not create the PBS batch script");
+     print BATCH_SCRIPT "#!/bin/bash \n";
+     print BATCH_SCRIPT "#PBS -N $tag-$irun \n";
+     print BATCH_SCRIPT "#PBS -l cput=$cput \n";
+     print BATCH_SCRIPT "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+     print BATCH_SCRIPT "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print BATCH_SCRIPT "#PBS -q prod \n";
+     print BATCH_SCRIPT "#PBS -V \n";
+     print BATCH_SCRIPT "#PBS -l walltime=$cput \n";
+     print BATCH_SCRIPT "source $fmwk_softw_dir/setup/setup_at_ral_no_cvmfs.sh \n";
+     print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_ral_no_cvmfs.sh \n";
+     print BATCH_SCRIPT "cd $job_dir \n";
+#    print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_cvmfs.sh $dune_softw_dir $fmwk_softw_dir\n";
+     print BATCH_SCRIPT "$command \n";
+     close(BATCH_SCRIPT);
+     $job_submission_command = "qsub";
+     if($resource eq "RAL_HTCPBS") {
+         $job_submission_command = "condor_qsub";
+     }
+     `$job_submission_command -q prod $job_dir/$tag-$irun.pbs`;
+  }
+
+  #
+  # Oxford/PBS
+  #
+  elsif($resource eq "Oxford_PBS") {
+     open(BATCH_SCRIPT, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     print BATCH_SCRIPT "#!/bin/bash \n";
+     print BATCH_SCRIPT "#PBS -N $tag-$irun \n";
+     print BATCH_SCRIPT "#PBS -l cput=$cput \n";
+     print BATCH_SCRIPT "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+     print BATCH_SCRIPT "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print BATCH_SCRIPT "cd $job_dir \n";
+     print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_oxford.sh $dune_softw_dir $fmwk_softw_dir\n";
+     print BATCH_SCRIPT "$command \n";
+     close(BATCH_SCRIPT);
+     `qsub $job_dir/$tag-$irun.pbs`;
+  }
+  
+  #
+  # Liverpool
+  #
+  elsif($resource eq "Liverpool_PBS") {
+     open(BATCH_SCRIPT, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     print BATCH_SCRIPT "#!/bin/bash \n";
+     print BATCH_SCRIPT "#PBS -q all64 \n";
+     print BATCH_SCRIPT "#PBS -N $tag-$irun \n";
+     print BATCH_SCRIPT "#PBS -l cput=$cput \n";
+     print BATCH_SCRIPT "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+     print BATCH_SCRIPT "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print BATCH_SCRIPT "cd $job_dir \n";
+     print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_cvmfs.sh $dune_softw_dir $fmwk_softw_dir\n";
+     print BATCH_SCRIPT "$command \n";
+     close(BATCH_SCRIPT);
+     `qsub $job_dir/$tag-$irun.pbs`;
+  }
+
+  #
+  # interactive
+  #
+  elsif($resource eq "interactive") {
+     system($command);
+  }
+  
+  else {
+    print "Unknown resource $resource\n";
+    exit;
+  }
+
+  $irun++;
+}

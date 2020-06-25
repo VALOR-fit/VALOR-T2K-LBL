@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<parameters>
+	<!--
+		Parameter names follow the convention used in the old enum format,
+		e.g. kPhypMixing23
+	-->
+	<parameter name="kPhypMixing13">
+		<!-- Optionally override the default values -->
+		<bestfit>0.093</bestfit>
+		<init>0.093</init>
+		<minimum>0.077</minimum>
+		<maximum>0.109</maximum>
+		<nuisance>false</nuisance>
+		<marginalise>true</marginalise>
+		<!-- Optionally, errors can also be specified -->
+		<errors>
+			<!-- Choose one of migrad, hesse or minos -->
+			<migrad>
+				<error>0.6</error>
+			</migrad>
+      <!--
+			<hesse>
+				<error>0.0</error>
+			</hesse>
+			<minos>
+				<low_error>0.0</low_error>
+				<high_error>0.0</high_error>
+			</minos>
+      -->
+		</errors>
+	</parameter>
+</parameters>
+

@@ -1,0 +1,29 @@
+# argument                           |   type         |  require?   |   default
+# .......................................................................................................
+tag                                  |   string       |  optional   |   toymc
+run                                  |   integer      |  optional   |   0
+ntoymc                               |   integer      |  optional   |   1
+physics-hypothesis                   |   string       |  optional   |   3f_osc
+fit-param-opt                        |   string       |  optional   |   NONE
+param-values-option                  |   string       |  optional   |   randomize-all;prefit-errors
+fitter                               |   string       |  optional   |   minuit
+config                               |   string       |  mandatory  |   -
+mesg-thresholds                      |   string       |  optional   |   verbosity.xml
+nthreads                             |   integer      |  optional   |   -1
+#
+with-stat-fluct,without-stat-fluct   |   boolean_list |  optional   |   with-stat-fluct
+store-spectra,discard-spectra        |   boolean_list |  optional   |   discard-spectra
+start-at-true,start-at-central       |   boolean_list |  optional   |   start-at-true
+rethrow-unphysical,accept-unphysical |   boolean_list |  optional   |   rethrow-unphysical
+true-from-filename                   |   string       |  optional   |   NONE 
+true-from-objname                    |   string       |  optional   |   central_values
+pot-override                         |   double       |  optional   |   -999
+load-prior-from-file                 |   string       |  optional   |   none
+prior-fit-number                     |   integer      |  optional   |   0
+prior-file                           |   string       |  mandatory  |   -
+#
+tweak-parameter-set                  |   string       |  optional   |   none
+force-tweak-size                     |   double       |  optional   |   0
+#
+flip-true-octant                     |   boolean      |  optional   |   0
+read-data, generate-data             |   boolean_list |  optional   |   generate-data

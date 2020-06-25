@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<analysis_inputs analysis="marginalisation_test" version="v1" detector="FGTv1">
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Assumed exposure for various beam configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<data>
+  <exposure> 
+    <lbnf_fhc>
+     1.5288e+22
+    </lbnf_fhc>
+    <lbnf_rhc>
+     1.5288e+22
+    </lbnf_rhc>
+  </exposure>
+</data>
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Information about the detector configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<fiducial_mass>
+ -999
+</fiducial_mass>
+
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Input MC templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<mc>
+  <using_dst_format> 
+     false 
+  </using_dst_format> 
+
+  <dst> 
+    <lbnf_fhc>
+       <filename> test/dummy_nu_minidst.root </filename> 
+       <objname>  valor_dune_nd_mini_dst </objname> 
+       <objtype>  TTree    </objtype> 
+    </lbnf_fhc>
+    <lbnf_rhc>
+       <filename> test/dummy_nubar_minidst.root </filename> 
+       <objname>  valor_dune_nd_mini_dst  </objname> 
+       <objtype>  TTree     </objtype> 
+    </lbnf_rhc>
+  </dst>
+  
+  <template>
+    <filename> test/dummy_templates.root </filename>
+    <tag> valor </tag>
+  </template>
+  
+  <!-- in kg, for calculating CCinc xsec-->
+  <interaction_mass> 
+    -999 
+  </interaction_mass>
+
+</mc>
+
+
+<splines>
+  <folder>  test/splines </folder>
+  <pattern> valor_splines_[BEAM]_[SAMPLE]_[PARAM].root    </pattern>
+</splines>
+
+
+<default_binning> test/marginalisation/default_binning.xml </default_binning>
+
+</analysis_inputs>
+

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<param_list name="example_default_osc_param_values">
+
+    <!--
+     The values specified for any oscillation parameters in this file must correspond to these schemes,
+     which must also match the schemes set in Opt::Instance()
+     -->
+    <schemes>
+        <mixing> sinsqtheta </mixing>
+        <phase>  delta      </phase>
+        <Dmsq>   abs23      </Dmsq>
+    </schemes>
+
+    <param>
+        <name>
+            <simple> mixing13 </simple>     <!-- used to find the relavant PhysParamId -->
+        </name>
+
+        <type> special </type>
+
+        <!-- Physical limits of this parameter -->
+        <limits>  0, 1  </limits>
+
+        <!-- Options used to set the FitParamList -->
+        <init>        0.0212  </init>
+        <error>       0.0002  </error>
+        <range_mode>  value   </range_mode>
+        <range>       0, 1    </range>
+        <step>        0.01    </step>
+        <fixed>       false   </fixed>
+        <nuisance>    false   </nuisance>
+        <marginalise> false   </marginalise>
+    </param>
+
+
+    <param>
+        <name>
+            <simple> mixing23 </simple>     <!-- used to find the relavant PhysParamId -->
+        </name>
+
+        <type> special </type>
+
+        <!-- Physical limits of this parameter -->
+        <limits>  0, 1  </limits>
+
+        <!-- Options used to set the FitParamList -->
+        <init>        0.7     </init>
+        <error>       0.1     </error>
+        <range_mode>  value   </range_mode>
+        <range>       0, 1    </range>
+        <step>        0.01    </step>
+        <fixed>       false   </fixed>
+        <nuisance>    false   </nuisance>
+        <marginalise> false   </marginalise>
+    </param>
+</param_list>

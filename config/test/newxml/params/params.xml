@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!--
+	Define a fit parameter list with all of the desired parameters for an
+	analysis
+-->
+<parameter_list name="name">
+	<!--
+		A set of default values for all parameters is used if not
+		overriden below
+	-->
+	<defaults>
+		<bestfit>1.0</bestfit>
+		<init>1.0</init>
+		<minimum>0.0</minimum>
+		<maximum>2.0</maximum>
+		<step_size>0.0001</step_size>
+		<scaling>1.0</scaling>
+		<fixed>false</fixed>
+		<nuisance>true</nuisance>
+		<marginalise>false</marginalise>
+	</defaults>
+	<!-- Oscillation parameters -->
+	<parameter_group name="oscillation">
+		<!-- Specify a file where the oscillation parameters are defined -->
+		<parameters>test/newxml/params/oscillation/osc_params.xml</parameters>
+		<!--
+			Optionally define penalty terms, if this is omitted, parameters are
+			left free.
+		-->
+		<penalty_term type="gaussian">
+			<!--
+				The covariance_matrix element specifies where the covariance
+				matrix defining the penalties can be found, along with
+				the object name and type in the ROOT file.
+			-->
+			<covariance_matrix>
+				<filename>osc_covariance.root</filename>
+				<objname>osc_covariance</objname>
+				<objtype>TMatrixD</objtype>
+			</covariance_matrix>
+		</penalty_term>
+	</parameter_group>
+	<!--
+		Systematic parameters can be defined along the same lines as
+		the oscillation parameters, with the requirement that the
+		parameter_group_name should be consistent with the name
+		specified for the coresponding systematics group in the top-
+		level configuration file.
+	-->
+	<!-- Flux systematics -->
+	<parameter_group name="flux">
+		<!-- Specify a file where the oscillation parameters are defined -->
+		<parameters>test/newxml/params/systematic/flux/flux_params.xml</parameters>
+    <!--
+			Optionally define penalty terms, if this is omitted, parameters are
+			left free.
+		-->
+		<penalty_term type="gaussian">
+			<!--
+				The covariance_matrix element specifies where the covariance
+				matrix defining the penalties can be found, along with
+				the object name and type in the ROOT file.
+			-->
+			<covariance_matrix>
+				<filename>flux_covariance.root</filename>
+				<objname>flux_covariance</objname>
+				<objtype>TMatrixD</objtype>
+			</covariance_matrix>
+		</penalty_term>
+		<!-- Optionally specify a postfit file for non-unit means -->
+		<postfit>
+			<filename>flux_postfit.root</filename>
+			<objname>flux_postfit</objname>    
+			<objtype>TVectorD</objtype>
+		</postfit>
+	</parameter_group>
+	<!-- Interaction systematics -->
+	<parameter_group name="interaction">
+ 		<!-- Specify a file where the oscillation parameters are defined -->
+		<parameters>test/newxml/params/systematic/interaction/int_params.xml</parameters>
+    <!--
+			Optionally define penalty terms, if this is omitted, parameters are
+			left free.
+		-->
+		<penalty_term type="gaussian">
+			<!--
+				The covariance_matrix element specifies where the covariance
+				matrix defining the penalties can be found, along with
+				the object name and type in the ROOT file.
+			-->
+			<covariance_matrix>
+				<filename>int_covariance.root</filename>
+				<objname>int_covariance</objname>
+				<objtype>TMatrixD</objtype>
+			</covariance_matrix>
+		</penalty_term>
+		<!-- Optionally specify a postfit file for non-unit means -->
+		<postfit>
+			<filename>int_postfit.root</filename>
+			<objname>int_postfit</objname>    
+			<objtype>TVectorD</objtype>
+		</postfit>
+	</parameter_group>	
+	<!-- Detector systematics -->
+	<parameter_group name="detector">
+		<!-- Specify a file where the oscillation parameters are defined -->
+		<parameters>test/newxml/params/systematic/detector/det_params.xml</parameters>
+    <!--
+			Optionally define penalty terms, if this is omitted, parameters are
+			left free.
+		-->
+		<penalty_term type="gaussian">
+			<!--
+				The covariance_matrix element specifies where the covariance
+				matrix defining the penalties can be found, along with
+				the object name and type in the ROOT file.
+			-->
+			<covariance_matrix>
+				<filename>det_covariance.root</filename>
+				<objname>det_covariance</objname>
+				<objtype>TMatrixD</objtype>
+			</covariance_matrix>
+		</penalty_term>
+		<!-- Optionally specify a postfit file for non-unit means -->
+		<postfit>
+			<filename>det_postfit.root</filename>
+			<objname>det_postfit</objname>    
+			<objtype>TVectorD</objtype>
+		</postfit>
+	</parameter_group>
+</parameter_list>

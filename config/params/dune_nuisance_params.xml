@@ -1,0 +1,640 @@
+<?xmlversion="1.0"?>
+
+<!--
+  This configuration file is used to specify a complete set of mappings between
+  Dune-specific nuisance parameters and generic nuisance parameter IDs
+-->
+
+<nuisance_params>
+
+  <flux>
+
+    <nd>
+
+      <fhc>
+
+        <param name="kNuisFHCNuMuFlux00">kNuis000</param>
+        <param name="kNuisFHCNuMuFlux01">kNuis001</param>
+        <param name="kNuisFHCNuMuFlux02">kNuis002</param>
+        <param name="kNuisFHCNuMuFlux03">kNuis003</param>
+        <param name="kNuisFHCNuMuFlux04">kNuis004</param>
+        <param name="kNuisFHCNuMuFlux05">kNuis005</param>
+        <param name="kNuisFHCNuMuFlux06">kNuis006</param>
+        <param name="kNuisFHCNuMuFlux07">kNuis007</param>
+        <param name="kNuisFHCNuMuFlux08">kNuis008</param>
+        <param name="kNuisFHCNuMuFlux09">kNuis009</param>
+        <param name="kNuisFHCNuMuFlux10">kNuis010</param>
+        <param name="kNuisFHCNuMuFlux11">kNuis011</param>
+        <param name="kNuisFHCNuMuFlux12">kNuis012</param>
+        <param name="kNuisFHCNuMuFlux13">kNuis013</param>
+        <param name="kNuisFHCNuMuFlux14">kNuis014</param>
+        <param name="kNuisFHCNuMuFlux15">kNuis015</param>
+        <param name="kNuisFHCNuMuFlux16">kNuis016</param>
+        <param name="kNuisFHCNuMuFlux17">kNuis017</param>
+        <param name="kNuisFHCNuMuFlux18">kNuis018</param>
+        <param name="kNuisFHCNuMuBarFlux00">kNuis019</param>
+        <param name="kNuisFHCNuMuBarFlux01">kNuis020</param>
+        <param name="kNuisFHCNuMuBarFlux02">kNuis021</param>
+        <param name="kNuisFHCNuMuBarFlux03">kNuis022</param>
+        <param name="kNuisFHCNuMuBarFlux04">kNuis023</param>
+        <param name="kNuisFHCNuMuBarFlux05">kNuis024</param>
+        <param name="kNuisFHCNuMuBarFlux06">kNuis025</param>
+        <param name="kNuisFHCNuMuBarFlux07">kNuis026</param>
+        <param name="kNuisFHCNuMuBarFlux08">kNuis027</param>
+        <param name="kNuisFHCNuMuBarFlux09">kNuis028</param>
+        <param name="kNuisFHCNuMuBarFlux10">kNuis029</param>
+        <param name="kNuisFHCNuMuBarFlux11">kNuis030</param>
+        <param name="kNuisFHCNuMuBarFlux12">kNuis031</param>
+        <param name="kNuisFHCNuMuBarFlux13">kNuis032</param>
+        <param name="kNuisFHCNuMuBarFlux14">kNuis033</param>
+        <param name="kNuisFHCNuMuBarFlux15">kNuis034</param>
+        <param name="kNuisFHCNuMuBarFlux16">kNuis035</param>
+        <param name="kNuisFHCNuMuBarFlux17">kNuis036</param>
+        <param name="kNuisFHCNuMuBarFlux18">kNuis037</param>
+
+      </fhc>
+
+      <rhc>
+
+        <param name="kNuisRHCNuMuFlux00">kNuis052</param>
+        <param name="kNuisRHCNuMuFlux01">kNuis053</param>
+        <param name="kNuisRHCNuMuFlux02">kNuis054</param>
+        <param name="kNuisRHCNuMuFlux03">kNuis055</param>
+        <param name="kNuisRHCNuMuFlux04">kNuis056</param>
+        <param name="kNuisRHCNuMuFlux05">kNuis057</param>
+        <param name="kNuisRHCNuMuFlux06">kNuis058</param>
+        <param name="kNuisRHCNuMuFlux07">kNuis059</param>
+        <param name="kNuisRHCNuMuFlux08">kNuis060</param>
+        <param name="kNuisRHCNuMuFlux09">kNuis061</param>
+        <param name="kNuisRHCNuMuFlux10">kNuis062</param>
+        <param name="kNuisRHCNuMuFlux11">kNuis063</param>
+        <param name="kNuisRHCNuMuFlux12">kNuis064</param>
+        <param name="kNuisRHCNuMuFlux13">kNuis065</param>
+        <param name="kNuisRHCNuMuFlux14">kNuis066</param>
+        <param name="kNuisRHCNuMuFlux15">kNuis067</param>
+        <param name="kNuisRHCNuMuFlux16">kNuis068</param>
+        <param name="kNuisRHCNuMuFlux17">kNuis069</param>
+        <param name="kNuisRHCNuMuFlux18">kNuis070</param>
+        <param name="kNuisRHCNuMuBarFlux00">kNuis071</param>
+        <param name="kNuisRHCNuMuBarFlux01">kNuis072</param>
+        <param name="kNuisRHCNuMuBarFlux02">kNuis073</param>
+        <param name="kNuisRHCNuMuBarFlux03">kNuis074</param>
+        <param name="kNuisRHCNuMuBarFlux04">kNuis075</param>
+        <param name="kNuisRHCNuMuBarFlux05">kNuis076</param>
+        <param name="kNuisRHCNuMuBarFlux06">kNuis077</param>
+        <param name="kNuisRHCNuMuBarFlux07">kNuis078</param>
+        <param name="kNuisRHCNuMuBarFlux08">kNuis079</param>
+        <param name="kNuisRHCNuMuBarFlux09">kNuis080</param>
+        <param name="kNuisRHCNuMuBarFlux10">kNuis081</param>
+        <param name="kNuisRHCNuMuBarFlux11">kNuis082</param>
+        <param name="kNuisRHCNuMuBarFlux12">kNuis083</param>
+        <param name="kNuisRHCNuMuBarFlux13">kNuis084</param>
+        <param name="kNuisRHCNuMuBarFlux14">kNuis085</param>
+        <param name="kNuisRHCNuMuBarFlux15">kNuis086</param>
+        <param name="kNuisRHCNuMuBarFlux16">kNuis087</param>
+        <param name="kNuisRHCNuMuBarFlux17">kNuis088</param>
+        <param name="kNuisRHCNuMuBarFlux18">kNuis089</param>
+        <param name="kNuisRHCNuEFlux00">kNuis090</param>
+        <param name="kNuisRHCNuEFlux01">kNuis091</param>
+        <param name="kNuisRHCNuEFlux02">kNuis092</param>
+        <param name="kNuisRHCNuEFlux03">kNuis093</param>
+        <param name="kNuisRHCNuEFlux04">kNuis094</param>
+        <param name="kNuisRHCNuEFlux05">kNuis095</param>
+        <param name="kNuisRHCNuEFlux06">kNuis096</param>
+        <param name="kNuisRHCNuEBarFlux00">kNuis097</param>
+        <param name="kNuisRHCNuEBarFlux01">kNuis098</param>
+        <param name="kNuisRHCNuEBarFlux02">kNuis099</param>
+        <param name="kNuisRHCNuEBarFlux03">kNuis100</param>
+        <param name="kNuisRHCNuEBarFlux04">kNuis101</param>
+        <param name="kNuisRHCNuEBarFlux05">kNuis102</param>
+        <param name="kNuisRHCNuEBarFlux06">kNuis103</param>
+
+      </rhc>
+
+    </nd>
+
+    <fd>
+
+      <fhc>
+
+        <param name="kNuisFHCNuMuFDFlux00">kNuis104</param>
+        <param name="kNuisFHCNuMuFDFlux01">kNuis105</param>
+        <param name="kNuisFHCNuMuFDFlux02">kNuis106</param>
+        <param name="kNuisFHCNuMuFDFlux03">kNuis107</param>
+        <param name="kNuisFHCNuMuFDFlux04">kNuis108</param>
+        <param name="kNuisFHCNuMuFDFlux05">kNuis109</param>
+        <param name="kNuisFHCNuMuFDFlux06">kNuis110</param>
+        <param name="kNuisFHCNuMuFDFlux07">kNuis111</param>
+        <param name="kNuisFHCNuMuFDFlux08">kNuis112</param>
+        <param name="kNuisFHCNuMuFDFlux09">kNuis113</param>
+        <param name="kNuisFHCNuMuFDFlux10">kNuis114</param>
+        <param name="kNuisFHCNuMuFDFlux11">kNuis115</param>
+        <param name="kNuisFHCNuMuFDFlux12">kNuis116</param>
+        <param name="kNuisFHCNuMuFDFlux13">kNuis117</param>
+        <param name="kNuisFHCNuMuFDFlux14">kNuis118</param>
+        <param name="kNuisFHCNuMuFDFlux15">kNuis119</param>
+        <param name="kNuisFHCNuMuFDFlux16">kNuis120</param>
+        <param name="kNuisFHCNuMuFDFlux17">kNuis121</param>
+        <param name="kNuisFHCNuMuFDFlux18">kNuis122</param>
+        <param name="kNuisFHCNuMuBarFDFlux00">kNuis123</param>
+        <param name="kNuisFHCNuMuBarFDFlux01">kNuis124</param>
+        <param name="kNuisFHCNuMuBarFDFlux02">kNuis125</param>
+        <param name="kNuisFHCNuMuBarFDFlux03">kNuis126</param>
+        <param name="kNuisFHCNuMuBarFDFlux04">kNuis127</param>
+        <param name="kNuisFHCNuMuBarFDFlux05">kNuis128</param>
+        <param name="kNuisFHCNuMuBarFDFlux06">kNuis129</param>
+        <param name="kNuisFHCNuMuBarFDFlux07">kNuis130</param>
+        <param name="kNuisFHCNuMuBarFDFlux08">kNuis131</param>
+        <param name="kNuisFHCNuMuBarFDFlux09">kNuis132</param>
+        <param name="kNuisFHCNuMuBarFDFlux10">kNuis133</param>
+        <param name="kNuisFHCNuMuBarFDFlux11">kNuis134</param>
+        <param name="kNuisFHCNuMuBarFDFlux12">kNuis135</param>
+        <param name="kNuisFHCNuMuBarFDFlux13">kNuis136</param>
+        <param name="kNuisFHCNuMuBarFDFlux14">kNuis137</param>
+        <param name="kNuisFHCNuMuBarFDFlux15">kNuis138</param>
+        <param name="kNuisFHCNuMuBarFDFlux16">kNuis139</param>
+        <param name="kNuisFHCNuMuBarFDFlux17">kNuis140</param>
+        <param name="kNuisFHCNuMuBarFDFlux18">kNuis141</param>
+        <param name="kNuisFHCNuEFDFlux00">kNuis142</param>
+        <param name="kNuisFHCNuEFDFlux01">kNuis143</param>
+        <param name="kNuisFHCNuEFDFlux02">kNuis144</param>
+        <param name="kNuisFHCNuEFDFlux03">kNuis145</param>
+        <param name="kNuisFHCNuEFDFlux04">kNuis146</param>
+        <param name="kNuisFHCNuEFDFlux05">kNuis147</param>
+        <param name="kNuisFHCNuEFDFlux06">kNuis148</param>
+        <param name="kNuisFHCNuEBarFDFlux00">kNuis149</param>
+        <param name="kNuisFHCNuEBarFDFlux01">kNuis150</param>
+        <param name="kNuisFHCNuEBarFDFlux02">kNuis151</param>
+        <param name="kNuisFHCNuEBarFDFlux03">kNuis152</param>
+        <param name="kNuisFHCNuEBarFDFlux04">kNuis153</param>
+        <param name="kNuisFHCNuEBarFDFlux05">kNuis154</param>
+        <param name="kNuisFHCNuEBarFDFlux06">kNuis155</param>
+
+      </fhc>
+
+      <rhc>
+
+        <param name="kNuisRHCNuMuFDFlux00">kNuis156</param>
+        <param name="kNuisRHCNuMuFDFlux01">kNuis157</param>
+        <param name="kNuisRHCNuMuFDFlux02">kNuis158</param>
+        <param name="kNuisRHCNuMuFDFlux03">kNuis159</param>
+        <param name="kNuisRHCNuMuFDFlux04">kNuis160</param>
+        <param name="kNuisRHCNuMuFDFlux05">kNuis161</param>
+        <param name="kNuisRHCNuMuFDFlux06">kNuis162</param>
+        <param name="kNuisRHCNuMuFDFlux07">kNuis163</param>
+        <param name="kNuisRHCNuMuFDFlux08">kNuis164</param>
+        <param name="kNuisRHCNuMuFDFlux09">kNuis165</param>
+        <param name="kNuisRHCNuMuFDFlux10">kNuis166</param>
+        <param name="kNuisRHCNuMuFDFlux11">kNuis167</param>
+        <param name="kNuisRHCNuMuFDFlux12">kNuis168</param>
+        <param name="kNuisRHCNuMuFDFlux13">kNuis169</param>
+        <param name="kNuisRHCNuMuFDFlux14">kNuis170</param>
+        <param name="kNuisRHCNuMuFDFlux15">kNuis171</param>
+        <param name="kNuisRHCNuMuFDFlux16">kNuis172</param>
+        <param name="kNuisRHCNuMuFDFlux17">kNuis173</param>
+        <param name="kNuisRHCNuMuFDFlux18">kNuis174</param>
+        <param name="kNuisRHCNuMuBarFDFlux00">kNuis175</param>
+        <param name="kNuisRHCNuMuBarFDFlux01">kNuis176</param>
+        <param name="kNuisRHCNuMuBarFDFlux02">kNuis177</param>
+        <param name="kNuisRHCNuMuBarFDFlux03">kNuis178</param>
+        <param name="kNuisRHCNuMuBarFDFlux04">kNuis179</param>
+        <param name="kNuisRHCNuMuBarFDFlux05">kNuis180</param>
+        <param name="kNuisRHCNuMuBarFDFlux06">kNuis181</param>
+        <param name="kNuisRHCNuMuBarFDFlux07">kNuis182</param>
+        <param name="kNuisRHCNuMuBarFDFlux08">kNuis183</param>
+        <param name="kNuisRHCNuMuBarFDFlux09">kNuis184</param>
+        <param name="kNuisRHCNuMuBarFDFlux10">kNuis185</param>
+        <param name="kNuisRHCNuMuBarFDFlux11">kNuis186</param>
+        <param name="kNuisRHCNuMuBarFDFlux12">kNuis187</param>
+        <param name="kNuisRHCNuMuBarFDFlux13">kNuis188</param>
+        <param name="kNuisRHCNuMuBarFDFlux14">kNuis189</param>
+        <param name="kNuisRHCNuMuBarFDFlux15">kNuis190</param>
+        <param name="kNuisRHCNuMuBarFDFlux16">kNuis191</param>
+        <param name="kNuisRHCNuMuBarFDFlux17">kNuis192</param>
+        <param name="kNuisRHCNuMuBarFDFlux18">kNuis193</param>
+        <param name="kNuisRHCNuEFDFlux00">kNuis194</param>
+        <param name="kNuisRHCNuEFDFlux01">kNuis195</param>
+        <param name="kNuisRHCNuEFDFlux02">kNuis196</param>
+        <param name="kNuisRHCNuEFDFlux03">kNuis197</param>
+        <param name="kNuisRHCNuEFDFlux04">kNuis198</param>
+        <param name="kNuisRHCNuEFDFlux05">kNuis199</param>
+        <param name="kNuisRHCNuEFDFlux06">kNuis200</param>
+        <param name="kNuisRHCNuEBarFDFlux00">kNuis201</param>
+        <param name="kNuisRHCNuEBarFDFlux01">kNuis202</param>
+        <param name="kNuisRHCNuEBarFDFlux02">kNuis203</param>
+        <param name="kNuisRHCNuEBarFDFlux03">kNuis204</param>
+        <param name="kNuisRHCNuEBarFDFlux04">kNuis205</param>
+        <param name="kNuisRHCNuEBarFDFlux05">kNuis206</param>
+        <param name="kNuisRHCNuEBarFDFlux06">kNuis207</param>
+
+      </rhc>
+
+    </fd>
+
+  </flux>
+
+  <xsec>
+
+        <param name="kNuisNormCCQE">kNuis208</param>
+        <param name="kNuisNormCC1piC">kNuis209</param>
+        <param name="kNuisNormCC1pi0">kNuis210</param>
+        <param name="kNuisNormCCoth">kNuis211</param>
+        <param name="kNuisNormNC">kNuis212</param>
+        <param name="kNuisRatioNuENuMu">kNuis213</param>
+
+  </xsec>
+
+  <det>
+
+        <param name="kNuisEffNuMuCC0pi1trk">kNuis214</param>
+        <param name="kNuisEffNuMuCC0pi2trk">kNuis215</param>
+        <param name="kNuisEffNuMuCC1piC">kNuis216</param>
+        <param name="kNuisEffNuMuCC1pi0">kNuis217</param>
+        <param name="kNuisEffNuMuCC1piC1pi0">kNuis218</param>
+        <param name="kNuisEffNuMuCCoth">kNuis219</param>
+        <param name="kNuisEffNuECC">kNuis220</param>
+        <param name="kNuisEffNuMuCCWS">kNuis221</param>
+        <param name="kNuisEffNC">kNuis222</param>
+
+        <param name="kNuisEffFDNuMuLikeCCHigh">kNuis223</param>
+        <param name="kNuisEffFDNuMuLikeCCLow">kNuis224</param>
+        <param name="kNuisEffFDNuELikeCCHigh">kNuis225</param>
+        <param name="kNuisEffFDNuELikeCCLow">kNuis226</param>
+
+        <param name="kNuisEffFHCnumuCC0pi1trk01">kNuis300</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk02">kNuis301</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk03">kNuis302</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk04">kNuis303</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk05">kNuis304</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk06">kNuis305</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk07">kNuis306</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk08">kNuis307</param>
+        <param name="kNuisEffFHCnumuCC0pi1trk09">kNuis308</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk01">kNuis309</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk02">kNuis310</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk03">kNuis311</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk04">kNuis312</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk05">kNuis313</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk06">kNuis314</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk07">kNuis315</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk08">kNuis316</param>
+        <param name="kNuisEffFHCnumuCC0pi2trk09">kNuis317</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk01">kNuis318</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk02">kNuis319</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk03">kNuis320</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk04">kNuis321</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk05">kNuis322</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk06">kNuis323</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk07">kNuis324</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk08">kNuis325</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk09">kNuis326</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk10">kNuis327</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk11">kNuis328</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk12">kNuis329</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk13">kNuis330</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk14">kNuis331</param>
+        <param name="kNuisEffFHCnumuCC0piNtrk15">kNuis332</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta01">kNuis333</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta02">kNuis334</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta03">kNuis335</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta04">kNuis336</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta05">kNuis337</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta06">kNuis338</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta07">kNuis339</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta08">kNuis340</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta09">kNuis341</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta10">kNuis342</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta11">kNuis343</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta12">kNuis344</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta13">kNuis345</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta14">kNuis346</param>
+        <param name="kNuisEffFHCnumuCC1pi3trkDelta15">kNuis347</param>
+        <param name="kNuisEffFHCnumuCC1pic01">kNuis348</param>
+        <param name="kNuisEffFHCnumuCC1pic02">kNuis349</param>
+        <param name="kNuisEffFHCnumuCC1pic03">kNuis350</param>
+        <param name="kNuisEffFHCnumuCC1pic04">kNuis351</param>
+        <param name="kNuisEffFHCnumuCC1pic05">kNuis352</param>
+        <param name="kNuisEffFHCnumuCC1pic06">kNuis353</param>
+        <param name="kNuisEffFHCnumuCC1pic07">kNuis354</param>
+        <param name="kNuisEffFHCnumuCC1pic08">kNuis355</param>
+        <param name="kNuisEffFHCnumuCC1pic09">kNuis356</param>
+        <param name="kNuisEffFHCnumuCC1piz01">kNuis357</param>
+        <param name="kNuisEffFHCnumuCC1piz02">kNuis358</param>
+        <param name="kNuisEffFHCnumuCC1piz03">kNuis359</param>
+        <param name="kNuisEffFHCnumuCC1piz04">kNuis360</param>
+        <param name="kNuisEffFHCnumuCC1piz05">kNuis361</param>
+        <param name="kNuisEffFHCnumuCC1piz06">kNuis362</param>
+        <param name="kNuisEffFHCnumuCC1piz07">kNuis363</param>
+        <param name="kNuisEffFHCnumuCC1piz08">kNuis364</param>
+        <param name="kNuisEffFHCnumuCC1piz09">kNuis365</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz01">kNuis366</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz02">kNuis367</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz03">kNuis368</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz04">kNuis369</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz05">kNuis370</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz06">kNuis371</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz07">kNuis372</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz08">kNuis373</param>
+        <param name="kNuisEffFHCnumuCC1pic1piz09">kNuis374</param>
+        <param name="kNuisEffFHCnumuCCother01">kNuis375</param>
+        <param name="kNuisEffFHCnumuCCother02">kNuis376</param>
+        <param name="kNuisEffFHCnumuCCother03">kNuis377</param>
+        <param name="kNuisEffFHCnumuCCother04">kNuis378</param>
+        <param name="kNuisEffFHCnumuCCother05">kNuis379</param>
+        <param name="kNuisEffFHCnumuCCother06">kNuis380</param>
+        <param name="kNuisEffFHCnumuCCother07">kNuis381</param>
+        <param name="kNuisEffFHCnumuCCother08">kNuis382</param>
+        <param name="kNuisEffFHCnumuCCother09">kNuis383</param>
+        <param name="kNuisEffFHCnumuCCother10">kNuis384</param>
+        <param name="kNuisEffFHCnumuCCother11">kNuis385</param>
+        <param name="kNuisEffFHCnumuCCWS0pi01">kNuis386</param>
+        <param name="kNuisEffFHCnumuCCWS0pi02">kNuis387</param>
+        <param name="kNuisEffFHCnumuCCWS0pi03">kNuis388</param>
+        <param name="kNuisEffFHCnumuCCWS0pi04">kNuis389</param>
+        <param name="kNuisEffFHCnumuCCWS0pi05">kNuis390</param>
+        <param name="kNuisEffFHCnumuCCWS1pic01">kNuis391</param>
+        <param name="kNuisEffFHCnumuCCWS1pic02">kNuis392</param>
+        <param name="kNuisEffFHCnumuCCWS1pic03">kNuis393</param>
+        <param name="kNuisEffFHCnumuCCWS1pic04">kNuis394</param>
+        <param name="kNuisEffFHCnumuCCWS1pic05">kNuis395</param>
+        <param name="kNuisEffFHCnumuCCWS1pic06">kNuis396</param>
+        <param name="kNuisEffFHCnumuCCWS1pic07">kNuis397</param>
+        <param name="kNuisEffFHCnumuCCWS1pic08">kNuis398</param>
+        <param name="kNuisEffFHCnumuCCWS1piz01">kNuis399</param>
+        <param name="kNuisEffFHCnumuCCWS1piz02">kNuis400</param>
+        <param name="kNuisEffFHCnumuCCWS1piz03">kNuis401</param>
+        <param name="kNuisEffFHCnumuCCWSother01">kNuis402</param>
+        <param name="kNuisEffFHCnueCC0pi01">kNuis403</param>
+        <param name="kNuisEffFHCnueCC0pi02">kNuis404</param>
+        <param name="kNuisEffFHCnueCC0pi03">kNuis405</param>
+        <param name="kNuisEffFHCnueCC0pi04">kNuis406</param>
+        <param name="kNuisEffFHCnueCC0pi05">kNuis407</param>
+        <param name="kNuisEffFHCnueCC0pi06">kNuis408</param>
+        <param name="kNuisEffFHCnueCC0pi07">kNuis409</param>
+        <param name="kNuisEffFHCnueCC0pi08">kNuis410</param>
+        <param name="kNuisEffFHCnueCC0pi09">kNuis411</param>
+        <param name="kNuisEffFHCnueCC1pic01">kNuis412</param>
+        <param name="kNuisEffFHCnueCC1pic02">kNuis413</param>
+        <param name="kNuisEffFHCnueCC1pic03">kNuis414</param>
+        <param name="kNuisEffFHCnueCC1pic04">kNuis415</param>
+        <param name="kNuisEffFHCnueCC1pic05">kNuis416</param>
+        <param name="kNuisEffFHCnueCC1pic06">kNuis417</param>
+        <param name="kNuisEffFHCnueCC1pic07">kNuis418</param>
+        <param name="kNuisEffFHCnueCC1pic08">kNuis419</param>
+        <param name="kNuisEffFHCnueCC1pic09">kNuis420</param>
+        <param name="kNuisEffFHCnueCC1piz01">kNuis421</param>
+        <param name="kNuisEffFHCnueCC1piz02">kNuis422</param>
+        <param name="kNuisEffFHCnueCC1piz03">kNuis423</param>
+        <param name="kNuisEffFHCnueCC1piz04">kNuis424</param>
+        <param name="kNuisEffFHCnueCC1piz05">kNuis425</param>
+        <param name="kNuisEffFHCnueCC1piz06">kNuis426</param>
+        <param name="kNuisEffFHCnueCC1piz07">kNuis427</param>
+        <param name="kNuisEffFHCnueCC1piz08">kNuis428</param>
+        <param name="kNuisEffFHCnueCC1piz09">kNuis429</param>
+        <param name="kNuisEffFHCnueCCother01">kNuis430</param>
+        <param name="kNuisEffFHCnueCCother02">kNuis431</param>
+        <param name="kNuisEffFHCnueCCother03">kNuis432</param>
+        <param name="kNuisEffFHCnueCCother04">kNuis433</param>
+        <param name="kNuisEffFHCnueCCother05">kNuis434</param>
+        <param name="kNuisEffFHCnueCCother06">kNuis435</param>
+        <param name="kNuisEffFHCnueCCother07">kNuis436</param>
+        <param name="kNuisEffFHCnueCCother08">kNuis437</param>
+        <param name="kNuisEffFHCnueCCother09">kNuis438</param>
+        <param name="kNuisEffFHCnueCCother10">kNuis439</param>
+        <param name="kNuisEffFHCnueCCother11">kNuis440</param>
+        <param name="kNuisEffFHCnueCCWS01">kNuis441</param>
+        <param name="kNuisEffFHCnueCCWS02">kNuis442</param>
+        <param name="kNuisEffFHCNC0pi01">kNuis443</param>
+        <param name="kNuisEffFHCNC0pi02">kNuis444</param>
+        <param name="kNuisEffFHCNC0pi03">kNuis445</param>
+        <param name="kNuisEffFHCNC1pic01">kNuis446</param>
+        <param name="kNuisEffFHCNC1pic02">kNuis447</param>
+        <param name="kNuisEffFHCNC1pic03">kNuis448</param>
+        <param name="kNuisEffFHCNC1piz01">kNuis449</param>
+        <param name="kNuisEffFHCNC1piz02">kNuis450</param>
+        <param name="kNuisEffFHCNC1piz03">kNuis451</param>
+        <param name="kNuisEffFHCNCother01">kNuis452</param>
+        <param name="kNuisEffFHCNCother02">kNuis453</param>
+        <param name="kNuisEffFHCNCother03">kNuis454</param>
+        <param name="kNuisEffFHCNeutrinoElec">kNuis455</param>
+        <param name="kNuisEffFHCIMD">kNuis456</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk01">kNuis500</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk02">kNuis501</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk03">kNuis502</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk04">kNuis503</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk05">kNuis504</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk06">kNuis505</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk07">kNuis506</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk08">kNuis507</param>
+        <param name="kNuisEffRHCnumuCC0pi1trk09">kNuis508</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk01">kNuis509</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk02">kNuis510</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk03">kNuis511</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk04">kNuis512</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk05">kNuis513</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk06">kNuis514</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk07">kNuis515</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk08">kNuis516</param>
+        <param name="kNuisEffRHCnumuCC0pi2trk09">kNuis517</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk01">kNuis518</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk02">kNuis519</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk03">kNuis520</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk04">kNuis521</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk05">kNuis522</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk06">kNuis523</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk07">kNuis524</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk08">kNuis525</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk09">kNuis526</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk10">kNuis527</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk11">kNuis528</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk12">kNuis529</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk13">kNuis530</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk14">kNuis531</param>
+        <param name="kNuisEffRHCnumuCC0piNtrk15">kNuis532</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta01">kNuis533</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta02">kNuis534</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta03">kNuis535</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta04">kNuis536</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta05">kNuis537</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta06">kNuis538</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta07">kNuis539</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta08">kNuis540</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta09">kNuis541</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta10">kNuis542</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta11">kNuis543</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta12">kNuis544</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta13">kNuis545</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta14">kNuis546</param>
+        <param name="kNuisEffRHCnumuCC1pi3trkDelta15">kNuis547</param>
+        <param name="kNuisEffRHCnumuCC1pic01">kNuis548</param>
+        <param name="kNuisEffRHCnumuCC1pic02">kNuis549</param>
+        <param name="kNuisEffRHCnumuCC1pic03">kNuis550</param>
+        <param name="kNuisEffRHCnumuCC1pic04">kNuis551</param>
+        <param name="kNuisEffRHCnumuCC1pic05">kNuis552</param>
+        <param name="kNuisEffRHCnumuCC1pic06">kNuis553</param>
+        <param name="kNuisEffRHCnumuCC1pic07">kNuis554</param>
+        <param name="kNuisEffRHCnumuCC1pic08">kNuis555</param>
+        <param name="kNuisEffRHCnumuCC1pic09">kNuis556</param>
+        <param name="kNuisEffRHCnumuCC1piz01">kNuis557</param>
+        <param name="kNuisEffRHCnumuCC1piz02">kNuis558</param>
+        <param name="kNuisEffRHCnumuCC1piz03">kNuis559</param>
+        <param name="kNuisEffRHCnumuCC1piz04">kNuis560</param>
+        <param name="kNuisEffRHCnumuCC1piz05">kNuis561</param>
+        <param name="kNuisEffRHCnumuCC1piz06">kNuis562</param>
+        <param name="kNuisEffRHCnumuCC1piz07">kNuis563</param>
+        <param name="kNuisEffRHCnumuCC1piz08">kNuis564</param>
+        <param name="kNuisEffRHCnumuCC1piz09">kNuis565</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz01">kNuis566</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz02">kNuis567</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz03">kNuis568</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz04">kNuis569</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz05">kNuis570</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz06">kNuis571</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz07">kNuis572</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz08">kNuis573</param>
+        <param name="kNuisEffRHCnumuCC1pic1piz09">kNuis574</param>
+        <param name="kNuisEffRHCnumuCCother01">kNuis575</param>
+        <param name="kNuisEffRHCnumuCCother02">kNuis576</param>
+        <param name="kNuisEffRHCnumuCCother03">kNuis577</param>
+        <param name="kNuisEffRHCnumuCCother04">kNuis578</param>
+        <param name="kNuisEffRHCnumuCCother05">kNuis579</param>
+        <param name="kNuisEffRHCnumuCCother06">kNuis580</param>
+        <param name="kNuisEffRHCnumuCCother07">kNuis581</param>
+        <param name="kNuisEffRHCnumuCCother08">kNuis582</param>
+        <param name="kNuisEffRHCnumuCCother09">kNuis583</param>
+        <param name="kNuisEffRHCnumuCCother10">kNuis584</param>
+        <param name="kNuisEffRHCnumuCCother11">kNuis585</param>
+        <param name="kNuisEffRHCnumuCCWS0pi01">kNuis586</param>
+        <param name="kNuisEffRHCnumuCCWS0pi02">kNuis587</param>
+        <param name="kNuisEffRHCnumuCCWS0pi03">kNuis588</param>
+        <param name="kNuisEffRHCnumuCCWS0pi04">kNuis589</param>
+        <param name="kNuisEffRHCnumuCCWS0pi05">kNuis590</param>
+        <param name="kNuisEffRHCnumuCCWS1pic01">kNuis591</param>
+        <param name="kNuisEffRHCnumuCCWS1pic02">kNuis592</param>
+        <param name="kNuisEffRHCnumuCCWS1pic03">kNuis593</param>
+        <param name="kNuisEffRHCnumuCCWS1pic04">kNuis594</param>
+        <param name="kNuisEffRHCnumuCCWS1pic05">kNuis595</param>
+        <param name="kNuisEffRHCnumuCCWS1pic06">kNuis596</param>
+        <param name="kNuisEffRHCnumuCCWS1pic07">kNuis597</param>
+        <param name="kNuisEffRHCnumuCCWS1pic08">kNuis598</param>
+        <param name="kNuisEffRHCnumuCCWS1piz01">kNuis599</param>
+        <param name="kNuisEffRHCnumuCCWS1piz02">kNuis600</param>
+        <param name="kNuisEffRHCnumuCCWS1piz03">kNuis601</param>
+        <param name="kNuisEffRHCnumuCCWSother01">kNuis602</param>
+        <param name="kNuisEffRHCnueCC0pi01">kNuis603</param>
+        <param name="kNuisEffRHCnueCC0pi02">kNuis604</param>
+        <param name="kNuisEffRHCnueCC0pi03">kNuis605</param>
+        <param name="kNuisEffRHCnueCC0pi04">kNuis606</param>
+        <param name="kNuisEffRHCnueCC0pi05">kNuis607</param>
+        <param name="kNuisEffRHCnueCC0pi06">kNuis608</param>
+        <param name="kNuisEffRHCnueCC0pi07">kNuis609</param>
+        <param name="kNuisEffRHCnueCC0pi08">kNuis610</param>
+        <param name="kNuisEffRHCnueCC0pi09">kNuis611</param>
+        <param name="kNuisEffRHCnueCC1pic01">kNuis612</param>
+        <param name="kNuisEffRHCnueCC1pic02">kNuis613</param>
+        <param name="kNuisEffRHCnueCC1pic03">kNuis614</param>
+        <param name="kNuisEffRHCnueCC1pic04">kNuis615</param>
+        <param name="kNuisEffRHCnueCC1pic05">kNuis616</param>
+        <param name="kNuisEffRHCnueCC1pic06">kNuis617</param>
+        <param name="kNuisEffRHCnueCC1pic07">kNuis618</param>
+        <param name="kNuisEffRHCnueCC1pic08">kNuis619</param>
+        <param name="kNuisEffRHCnueCC1pic09">kNuis620</param>
+        <param name="kNuisEffRHCnueCC1piz01">kNuis621</param>
+        <param name="kNuisEffRHCnueCC1piz02">kNuis622</param>
+        <param name="kNuisEffRHCnueCC1piz03">kNuis623</param>
+        <param name="kNuisEffRHCnueCC1piz04">kNuis624</param>
+        <param name="kNuisEffRHCnueCC1piz05">kNuis625</param>
+        <param name="kNuisEffRHCnueCC1piz06">kNuis626</param>
+        <param name="kNuisEffRHCnueCC1piz07">kNuis627</param>
+        <param name="kNuisEffRHCnueCC1piz08">kNuis628</param>
+        <param name="kNuisEffRHCnueCC1piz09">kNuis629</param>
+        <param name="kNuisEffRHCnueCCother01">kNuis630</param>
+        <param name="kNuisEffRHCnueCCother02">kNuis631</param>
+        <param name="kNuisEffRHCnueCCother03">kNuis632</param>
+        <param name="kNuisEffRHCnueCCother04">kNuis633</param>
+        <param name="kNuisEffRHCnueCCother05">kNuis634</param>
+        <param name="kNuisEffRHCnueCCother06">kNuis635</param>
+        <param name="kNuisEffRHCnueCCother07">kNuis636</param>
+        <param name="kNuisEffRHCnueCCother08">kNuis637</param>
+        <param name="kNuisEffRHCnueCCother09">kNuis638</param>
+        <param name="kNuisEffRHCnueCCother10">kNuis639</param>
+        <param name="kNuisEffRHCnueCCother11">kNuis640</param>
+        <param name="kNuisEffRHCnueCCWS01">kNuis641</param>
+        <param name="kNuisEffRHCnueCCWS02">kNuis642</param>
+        <param name="kNuisEffRHCNC0pi01">kNuis643</param>
+        <param name="kNuisEffRHCNC0pi02">kNuis644</param>
+        <param name="kNuisEffRHCNC0pi03">kNuis645</param>
+        <param name="kNuisEffRHCNC1pic01">kNuis646</param>
+        <param name="kNuisEffRHCNC1pic02">kNuis647</param>
+        <param name="kNuisEffRHCNC1pic03">kNuis648</param>
+        <param name="kNuisEffRHCNC1piz01">kNuis649</param>
+        <param name="kNuisEffRHCNC1piz02">kNuis650</param>
+        <param name="kNuisEffRHCNC1piz03">kNuis651</param>
+        <param name="kNuisEffRHCNCother01">kNuis652</param>
+        <param name="kNuisEffRHCNCother02">kNuis653</param>
+        <param name="kNuisEffRHCNCother03">kNuis654</param>
+        <param name="kNuisEffRHCNeutrinoElec">kNuis655</param>
+        <param name="kNuisEffRHCIMD">kNuis656</param>
+  </det>
+
+  <int>
+
+        <param name="kNuisIntNuCCQE1">kNuis227</param>
+        <param name="kNuisIntNuCCQE2">kNuis228</param>
+        <param name="kNuisIntNuCCQE3">kNuis229</param>
+        <param name="kNuisIntNuBarCCQE1">kNuis230</param>
+        <param name="kNuisIntNuBarCCQE2">kNuis231</param>
+        <param name="kNuisIntNuBarCCQE3">kNuis232</param>
+
+        <param name="kNuisIntNuCCMEC">kNuis233</param>
+        <param name="kNuisIntNuBarCCMEC">kNuis234</param>
+
+        <param name="kNuisIntNuCC1piz1">kNuis235</param>
+        <param name="kNuisIntNuCC1piz2">kNuis236</param>
+        <param name="kNuisIntNuCC1piz3">kNuis237</param>
+        <param name="kNuisIntNuCC1pic1">kNuis238</param>
+        <param name="kNuisIntNuCC1pic2">kNuis239</param>
+        <param name="kNuisIntNuCC1pic3">kNuis240</param>
+
+        <param name="kNuisIntNuBarCC1piz1">kNuis241</param>
+        <param name="kNuisIntNuBarCC1piz2">kNuis242</param>
+        <param name="kNuisIntNuBarCC1piz3">kNuis243</param>
+        <param name="kNuisIntNuBarCC1pic1">kNuis244</param>
+        <param name="kNuisIntNuBarCC1pic2">kNuis245</param>
+        <param name="kNuisIntNuBarCC1pic3">kNuis246</param>
+
+        <param name="kNuisIntNuCC2Pi">kNuis247</param>
+        <param name="kNuisIntNuBarCC2Pi">kNuis248</param>
+
+        <param name="kNuisIntNuDIS1">kNuis249</param>
+        <param name="kNuisIntNuDIS2">kNuis250</param>
+        <param name="kNuisIntNuDIS3">kNuis251</param>
+        <param name="kNuisIntNuBarDIS1">kNuis252</param>
+        <param name="kNuisIntNuBarDIS2">kNuis253</param>
+        <param name="kNuisIntNuBarDIS3">kNuis254</param>
+
+        <param name="kNuisIntNormNuCoherent">kNuis255</param>
+        <param name="kNuisIntNormNuBarCoherent">kNuis256</param>
+        <param name="kNuisIntNuNormNC">kNuis257</param>
+        <param name="kNuisIntNuBarNormNC">kNuis258</param>
+        <param name="kNuisIntNormNuMuToNuE">kNuis259</param>
+        <param name="kNuisIntNormNuMuBarToNuEBar">kNuis260</param>
+
+        <param name="kNuisIntPiMeanFreePath">kNuis261</param>
+        <param name="kNuisIntNucMeanFreePath">kNuis262</param>
+        <param name="kNuisIntFracPiChargeExchange">kNuis263</param>
+        <param name="kNuisIntFracPiInelastic">kNuis264</param>
+        <param name="kNuisIntFracPiAbsorb">kNuis265</param>
+        <param name="kNuisIntFracPiProduction">kNuis266</param>
+        <param name="kNuisIntFracNucChargeExchange">kNuis267</param>
+        <param name="kNuisIntFracNucInelastic">kNuis268</param>
+        <param name="kNuisIntFracNucAbsorb">kNuis269</param>
+        <param name="kNuisIntFracNucProduction">kNuis270</param>
+
+        <param name="kNuisIntHadronization">kNuis271</param>
+        <param name="kNuisIntTarget">kNuis272</param>
+
+  </int>
+
+</nuisance_params>
+

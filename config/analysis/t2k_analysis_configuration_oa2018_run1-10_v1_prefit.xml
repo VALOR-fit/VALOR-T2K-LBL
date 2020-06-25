@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+
+<valor> 
+
+  <element_list name="t2k_run10">
+<!--
+   Far detector selections
+-->
+
+    <element name="sk_fhc_1rmu">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_FHC                                            </beam>
+      <sample>       1rmu                                                 </sample>
+      <observable>   Ereco                                                </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_mulike.xml                     </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_fhc_mulike_run1-10_bins.xml              </binning>
+    </element>
+
+    <element name="sk_rhc_1rmu">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_RHC                                            </beam>
+      <sample>       1rmu                                                 </sample>
+      <observable>   Ereco                                                </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_rhc_mulike.xml                     </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_rhc_mulike_run1-10_bins.xml              </binning>
+    </element>
+
+    <element name="sk_fhc_1re">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_FHC                                            </beam>
+      <sample>       1re                                                  </sample>
+      <observable>   Ereco,Thetareco                                      </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_fhc_elike_run1-10_bins.xml               </binning>
+    </element>
+
+    <element name="sk_rhc_1re">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_RHC                                            </beam>
+      <sample>       1re                                                  </sample>
+      <observable>   Ereco,Thetareco                                      </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_rhc_elike.xml                      </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_rhc_elike_run1-10_bins.xml               </binning>
+    </element>
+
+    <element name="sk_fhc_multire">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_FHC                                            </beam>
+      <sample>       multire                                              </sample>
+      <observable>   Ereco,Thetareco                                      </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_fhc_elike_run1-10_bins.xml               </binning>
+    </element>
+    
+  </element_list>
+
+  <parameter_definitions>
+    <!-- Make sure that any config file containing default values is read first! -->
+    <filename desc="default_physics_params"> params/default_physics_parameter_values.xml                      </filename>
+    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2020_run1-10_v1.xml         </filename>
+    <filename desc="physics_params">         params/physics_parameter_specification_t2k_oa2018_run1-9d_v1.xml </filename>
+  </parameter_definitions>
+
+  <systematics name="t2k_run1-10">
+
+    <group name="banff">
+      <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
+           The order of params in this list must be the same as the order of params in the matrix.-->
+      <format> t2k_banff_params_run1-10.xml </format>
+      
+      <covariance_matrix>
+        <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
+        <objname>  prefit_cov    </objname>
+        <objtype>  TMatrixD       </objtype>
+      </covariance_matrix>
+
+      <untuned_values>
+        <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
+        <objname>  banff_untuned_central_values  </objname>
+      </untuned_values>
+
+      <initial_values>
+        <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
+        <objname>  prefit_params  </objname>
+      </initial_values>
+    </group>
+
+
+    <group name="skdetsipn">
+      <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
+           The order of params in this list must be the same as the order of params in the matrix.-->
+      <format> t2k_sk_params_run1-9d.xml </format>
+
+      <covariance_matrix>
+        <filename> official/2020/skdetsipn/SKJointErrorMatrix2020_Total_fitqun_v4_16062020_valor_format.root </filename>
+        <objname>  skdetfsi    </objname>
+        <objtype>  TMatrixD    </objtype>
+      </covariance_matrix>
+    </group>
+    
+  </systematics>
+
+</valor> 

@@ -1,0 +1,350 @@
+#!/usr/bin/perl
+#
+#
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit the jobs to make a deltaCP discovery sensitivity plot
+#
+# Inputs
+#  --resource               : Computer resource, <RAL, Oxford, Grid, ETH-Monch, interactive>. Default: interactive.
+#  --tag                    : Tag for output files. Default: "toymc".
+#  --npoints                : Number of points you want to consider for deltaCP. Default: 24
+#  --min-value              : Min param value for the sensitivity study. Default: -pi
+#  --max-value              : Max param value for the sensitivity study. Default: +pi
+#  --cpu-time               : Required CPU time. Default: "8:00:00" for RAL, "11:50:00" for Oxford.
+#  --physics-hypothesis     : Specifies the physics hypothesis. Default: "3f_osc"
+#  --hierarchy              : Specifies the mass hierarchy option. Default: "normal"
+#  --fit-option             : Option passed to fitter. Default: "minuit".
+#  --store-spectra          : Store the generated toy MC and best-fit spectra? Default: false.
+#  --load-prior-from-file   : Get a ND fit covariance from an ND-fitted output file [ - ] 
+
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
+#  --dune-softw-dir         : VALOR/DUNE code top-level directory. Default: `pwd`.
+#  --fmwk-softw-dir         : VALOR/FMWK code top-level directory. Default: `pwd`/../fmwk/
+#  --config-file            : Analysis configuration file. Default: "dunendfd_ndtf_fgt_3passthrough_46selection_toymc_fit.xml"
+#  --mesg-thresholds        : Message thresholds file. Default: "verbosity.xml"
+#  [--ncores ]                 : Number of cores-per-job to request and thus threads to use (requires C++11) [ 1 ]
+#
+#
+# Example usage: 
+# (for normal MH, FGT)
+# prod/submit_deltacp_discovery_sensitivty_study --resource interactive --tag deltacp_fgt --npoints 24 --hierarchy normal --config-file fit/dunendfd_ndtf_fgt_3passthrough_46selection_toymc_fit.xml 
+#
+# Lorena
+#
+# C.Andreopoulos
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+use Cwd 'abs_path';
+
+$iarg=0;
+foreach (@ARGV) {
+  
+  if($iarg % 2 == 1) {$iarg++; next;} # only even arguments are flags, the odd ones are values
+  
+  if   ($_ eq '--resource'               ) { $resource             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--ncores'                 ) { $ncores               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                    ) { $tag                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--npoints'                ) { $npoints              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--min_value'              ) { $min_value            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--min_theta23_value'      ) { $min_theta23_value    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--max_value'              ) { $max_value            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--max_theta23_value'      ) { $max_theta23_value    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'               ) { $cput                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--physics-hypothesis'     ) { $fitparamlist         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--hierarchy'              ) { $mhchoice             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-option'             ) { $fitoption            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--store-spectra'          ) { $store_spectra        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--load-prior-from-file'   ) { $prior_file           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                ) { $job_dir              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dune-softw-dir'         ) { $dune_softw_dir       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fmwk-softw-dir'         ) { $fmwk_softw_dir       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config-file'            ) { $config_file          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mesg-thresholds'        ) { $mesg_thresholds      = $ARGV[$iarg+1]; }
+  
+  else {
+    print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+$resource               = "interactive"                           unless defined $resource;
+$tag                    = "deltaCP_discovery_sens_FGT"            unless defined $tag;
+$npoints                = 24                                      unless defined $npoints;
+$min_value              = -3.141592653589793                      unless defined $min_value;
+$max_value              = 3.141592653589793                       unless defined $max_value;
+$min_theta23_value      = 0.3                                     unless defined $min_theta23_value;
+$max_theta23_value      = 0.7                                     unless defined $max_theta23_value;
+$fitparamlist           = "3f_osc"                                unless defined $fitparamlist;
+$mhchoice               = "normal"                                unless defined $mhchoice;
+$fitoption              = "minuit"                                unless defined $fitoption;
+$store_spectra          = 0                                       unless defined $store_spectra;
+$prior_file             = "-"                                     unless defined $prior_file;
+$ncores                 = 1                                       unless defined $ncores;
+
+$job_dir                = `pwd`                                   unless defined $job_dir;
+$dune_softw_dir         = $ENV{'VALOR_EXPT'}                      unless defined $dune_softw_dir;
+$fmwk_softw_dir         = $ENV{'VALOR_FMWK'}                      unless defined $fmwk_softw_dir;
+$config_file            = "dunendfd_ndtf_fgt_3passthrough_46selection_toymc_fit.xml"           unless defined $config_file;
+#$mesg_thresholds        = $ENV{'VALOR_EXPT'}."/config/verbosity.xml"              unless defined $mesg_thresholds;
+$mesg_thresholds        = "verbosity.xml"                         unless defined $mesg_thresholds;
+
+$param_values    = "prefit-errors"; #not randomized-all now, Asimov dataset! 
+
+chomp($job_dir);
+
+if( !defined $cput ) {
+    if($resource =~ "RAL"    ) { $cput =  "8:00:00"; }
+    if($resource eq "Oxford" ) { $cput = "11:50:00"; }
+}
+
+mkpath ($job_dir, {verbose => 1, mode=>0777}); 
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+$job_dir = abs_path($job_dir);
+
+$step = ($max_value-$min_value)/$npoints;
+$step_theta23 = ($max_theta23_value-$min_theta23_value)/$npoints;
+
+for($jpoint = 0; $jpoint < $npoints; $jpoint++) {
+    $theta23_input_value = $min_theta23_value + ($jpoint+1)*$step_theta23;
+
+for($ipoint = 0; $ipoint < $npoints; $ipoint++) {
+
+    $deltacp_input_value = $min_value + ($ipoint+1)*$step; #skip point 0 (-pi) as it is the same as last (pi)
+    
+    print "Submitting point: $ipoint \n";
+    
+    #
+    # Perform all $npoints fits (fixing deltaCP in the fit at $npoints values) 
+  # each fit is actually done three times: fixing deltaCP to its true value, to 0 and to pi
+  # each fit is a separate job, with the fit type label appended 
+  # 
+  # Note that this may be several fits per job, so the job may exceed the maximum allowed wall time.
+  #
+    
+    $kpoint = $jpoint*$npoints+$ipoint;
+
+    $program   = "valor_dune-run_fit";
+    
+    #first fit in first octanct, deltacp 0
+    $arguments1 = "--tag $tag --run $kpoint --ntoymc 1 --physics-hypothesis $fitparamlist --param-values-option  $param_values --fitter $fitoption --config $config_file --mesg-thresholds $mesg_thresholds --without-stat-fluct --input-mixing23 $theta23_input_value --input-deltaCP $deltacp_input_value --fix-deltaCP --fix-at-deltaCP 0  --$mhchoice --first-octant --start-at-true --cons-osc-from-init";
+
+    #second fit in second octanct, deltacp 0
+    $arguments2 = "--tag $tag-cp=0-octant=2 --run $kpoint --ntoymc 1 ".
+      " --physics-hypothesis $fitparamlist --param-values-option  $param_values --fitter $fitoption ".
+      " --config $config_file --mesg-thresholds $mesg_thresholds --without-stat-fluct ".
+      " --input-mixing23 $theta23_input_value --input-deltaCP $deltacp_input_value --fix-deltaCP --fix-at-deltaCP 0  --$mhchoice --second-octant ".
+      " --load-prior-from-file $prior_file";
+
+    #third fit in first octanct, deltacp pi
+    $arguments3 = "--tag $tag-cp=pi-octant=1 --run $kpoint --ntoymc 1 ".
+      " --physics-hypothesis $fitparamlist --param-values-option  $param_values --fitter $fitoption ".
+      " --config $config_file --mesg-thresholds $mesg_thresholds --without-stat-fluct ".
+      " --input-mixing23 $theta23_input_value --input-deltaCP $deltacp_input_value --fix-deltaCP --fix-at-deltaCP $max_value  --$mhchoice --first-octant ".
+      " --load-prior-from-file $prior_file";
+
+    #forth fit in second octanct, deltacp pi
+    $arguments4 = "--tag $tag-cp=pi-octant=2 --run $kpoint --ntoymc 1 ".
+      " --physics-hypothesis $fitparamlist --param-values-option  $param_values --fitter $fitoption ".
+      " --config $config_file --mesg-thresholds $mesg_thresholds --without-stat-fluct ".
+      " --input-mixing23 $theta23_input_value --input-deltaCP $deltacp_input_value --fix-deltaCP --fix-at-deltaCP $max_value  --$mhchoice --second-octant ".
+      " --load-prior-from-file $prior_file";
+
+
+    $command1 = $program." ".$arguments1;
+    $command2 = $program." ".$arguments2;
+    $command3 = $program." ".$arguments3;
+    $command4 = $program." ".$arguments4;
+    print "Running: $command1 \n";
+    print "Running: $command2 \n";
+    print "Running: $command3 \n";
+    print "Running: $command4 \n";
+    
+    $jobID = $ipoint;
+    
+    #
+    # ETH (Monch cluster), $job_dir not used, $tag gives path/name of output file
+    #
+    if($resource eq "ETH-Monch") {
+      print "Not supported just yet!\n";
+    }
+    
+    #
+    # HTCondor @ RAL
+    #
+    
+    if($resource eq "RAL" || $resource eq "RAL_HTC") {
+       $fullprogram = abs_path(`which $program`);
+       $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+       $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+       $jobname = "${tag}-cp=0-octant=1-${jobID}";
+       $cndfn = "$job_dir/${jobname}.condor";
+       open(CND, ">".$cndfn) or die("Cannot create the Condor batch script");
+       print CND "Executable               = $fullprogram \n";
+       print CND "Arguments                = $arguments1 \n";
+       print CND "initialdir               = $job_dir \n";
+       print CND "Error                    = ${jobname}_\$\(Process\).err \n";
+       print CND "Output                   = ${jobname}_\$\(Process\).out \n";
+       print CND "Universe                 = vanilla \n";
+       print CND "Getenv                   = True \n";
+       print CND "should_transfer_files    = YES \n";
+       print CND "when_to_transfer_output  = ON_EXIT \n";
+       if ($ncores > 0) {
+         print CND "request_cpus             = $ncores \n";
+       } 
+       print CND "\nqueue\n";
+       
+       close(CND);
+       system("condor_submit",$cndfn);
+
+       $jobname = "${tag}-cp=0-octant=2-${jobID}";
+       $cndfn = "$job_dir/${jobname}.condor";
+       open(CND, ">".$cndfn) or die("Cannot create the Condor batch script");
+       print CND "Executable               = $fullprogram \n";
+       print CND "Arguments                = $arguments2 \n";
+       print CND "initialdir               = $job_dir \n";
+       print CND "Error                    = ${jobname}_\$\(Process\).err \n";
+       print CND "Output                   = ${jobname}_\$\(Process\).out \n";
+       print CND "Universe                 = vanilla \n";
+       print CND "Getenv                   = True \n";
+       print CND "should_transfer_files    = YES \n";
+       print CND "when_to_transfer_output  = ON_EXIT \n";
+       if ($ncores > 0) {
+         print CND "request_cpus             = $ncores \n";
+       } 
+       print CND "\nqueue\n";
+       
+       close(CND);
+       system("condor_submit",$cndfn);
+
+       $jobname = "${tag}-cp=pi-octant=1-${jobID}";
+       $cndfn = "$job_dir/${jobname}.condor";
+       open(CND, ">".$cndfn) or die("Cannot create the Condor batch script");
+       print CND "Executable               = $fullprogram \n";
+       print CND "Arguments                = $arguments3 \n";
+       print CND "initialdir               = $job_dir \n";
+       print CND "Error                    = ${jobname}_\$\(Process\).err \n";
+       print CND "Output                   = ${jobname}_\$\(Process\).out \n";
+       print CND "Universe                 = vanilla \n";
+       print CND "Getenv                   = True \n";
+       print CND "should_transfer_files    = YES \n";
+       print CND "when_to_transfer_output  = ON_EXIT \n";
+       if ($ncores > 0) {
+         print CND "request_cpus             = $ncores \n";
+       } 
+       print CND "\nqueue\n";
+       
+       close(CND);
+       system("condor_submit",$cndfn);
+
+       $jobname = "${tag}-cp=pi-octant=2-${jobID}";
+       $cndfn = "$job_dir/${jobname}.condor";
+       open(CND, ">".$cndfn) or die("Cannot create the Condor batch script");
+       print CND "Executable               = $fullprogram \n";
+       print CND "Arguments                = $arguments4 \n";
+       print CND "initialdir               = $job_dir \n";
+       print CND "Error                    = ${jobname}_\$\(Process\).err \n";
+       print CND "Output                   = ${jobname}_\$\(Process\).out \n";
+       print CND "Universe                 = vanilla \n";
+       print CND "Getenv                   = True \n";
+       print CND "should_transfer_files    = YES \n";
+       print CND "when_to_transfer_output  = ON_EXIT \n";
+       if ($ncores > 0) {
+         print CND "request_cpus             = $ncores \n";
+       } 
+       print CND "\nqueue\n";
+       
+       close(CND);
+       system("condor_submit",$cndfn);
+
+    }
+  
+    #
+    # RAL
+    #
+    if($resource eq "RAL_HTCPBS") {
+       open(PBS, ">$job_dir/$tag.pbs") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/bash \n";
+       print PBS "#PBS -N $tag \n";
+       print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -o $job_dir/$tag.pbs.out \n";
+       print PBS "#PBS -e $job_dir/$tag.pbs.err \n";
+       print PBS "#PBS -V \n";
+       print PBS "#PBS -l walltime=$cput \n";
+       print PBS "cd $job_dir \n";
+       print PBS "source $dune_softw_dir/setup/setup_at_ral.sh $dune_softw_dir $fmwk_softw_dir\n";
+       print PBS "$command1 \n";
+#       print PBS "$command2 \n";
+#       print PBS "$command3 \n";
+#       print PBS "$command4 \n";
+       close(PBS);
+       system("condor_qsub","$job_dir/$tag.pbs");
+    }
+    #
+    # RAL (old system, may be helpful elsewhere)
+    #
+    if($resource eq "RAL_PBS") {
+       open(PBS, ">$job_dir/$tag.pbs") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/bash \n";
+       print PBS "#PBS -N $tag \n";
+       print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -o $job_dir/$tag.pbs.out \n";
+       print PBS "#PBS -e $job_dir/$tag.pbs.err \n";
+       print PBS "#PBS -q prod \n";
+       print PBS "#PBS -l walltime=$cput \n";
+       print PBS "cd $job_dir \n";
+       print PBS "source $dune_softw_dir/setup/setup_at_ral.sh $dune_softw_dir $fmwk_softw_dir\n";
+       print PBS "$command1 \n";
+#       print PBS "$command2 \n";
+#       print PBS "$command3 \n";
+#       print PBS "$command4 \n";
+       close(PBS);
+       `qsub -q prod $job_dir/$tag.pbs`;
+    }
+	#
+    # Liverpool
+    #
+	if($resource eq "Liverpool_PBS") {
+       open(PBS, ">$job_dir/$tag.pbs") or die("Can not create the PBS batch script");
+       print PBS "#!/bin/bash \n";
+       print PBS "#PBS -N $tag \n";
+       print PBS "#PBS -l cput=$cput \n";
+       print PBS "#PBS -o $job_dir/$tag.pbs.out \n";
+       print PBS "#PBS -e $job_dir/$tag.pbs.err \n";
+       print PBS "#PBS -q prod \n";
+       print PBS "#PBS -l walltime=$cput \n";
+       print PBS "cd $job_dir \n";
+       print PBS "source $dune_softw_dir/setup/setup_at_cvmfs.sh $dune_softw_dir $fmwk_softw_dir\n";
+       print PBS "$command1 \n";
+#       print PBS "$command2 \n";
+#       print PBS "$command3 \n";
+#       print PBS "$command4 \n";
+       close(PBS);
+       `qsub -q medium64 $job_dir/$tag.pbs`;
+    }
+    #
+    # Oxford
+    #
+    if($resource eq "Oxford") {
+       print "Not supported just yet!\n";
+    }
+    #
+    # Grid
+    #
+    if($resource eq "Grid") {
+       print "Not supported just yet!\n";
+    }
+    #
+    # interactive
+    #
+    if($resource eq "interactive") {
+       system($command1);
+       system($command2);
+       system($command3);
+       system($command4);
+    }
+
+}
+
+}

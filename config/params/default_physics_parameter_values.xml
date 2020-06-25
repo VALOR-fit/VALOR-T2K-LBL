@@ -1,0 +1,712 @@
+<?xml version="1.0"?>
+<param_list name="default_physics_param_values">
+
+  <!--
+    EXPLANATION: This file specifies default values for physics parameters, all of which can be
+    overwritten by reading in another parameter XML file containing parameters with the same simple name.
+    For a explanation of what each node is, see Parameter.h
+  -->
+
+  <!--
+     NOTE: The values specified for any physics parameters in this file must correspond to these schemes,
+     which must also match the schemes set in Opt::Instance()
+  -->
+  <schemes>
+    <mixing> sinsqtheta </mixing>
+    <phase>  delta      </phase>
+    <Dmsq>   abs23      </Dmsq>
+  </schemes>
+
+  <!--
+      NOTE: The following params currently have their default init values and step sizes set to 0
+      thetadecay
+      thetadecoh
+      delta12
+      delta13
+      delta15
+      delta34
+      delta35
+      nsi
+      alphadecay
+      musqdecoh
+   -->
+
+  <param>
+    <name>
+      <simple>  mixing23  </simple>   <!-- The simple name is used to match up each XML param to the relevant PhysParamId_t -->
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.005  </step>
+    
+    <init>  0.58  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing13  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.001  </step>
+    
+    <init>  0.02241  </init>  <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing12  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.01  </step>
+    
+    <init>  0.31  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  cpv  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -3.1416, 3.1416  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.01  </step>
+    
+    <init>  -1.55  </init>  <!-- T2K BF NH with reactor -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm23sq  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -inf, inf  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.001, 0.005  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0001  </step>
+    
+    <init>  0.002525  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm12sq  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -inf, inf  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  1e-05, 0.00015  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  2e-06  </step>
+    
+    <init>  7.39e-05  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing23bar  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.005  </step>
+    
+    <init>  0.58  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing13bar  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.001  </step>
+    
+    <init>  0.02241  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing12bar  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.01  </step>
+    
+    <init>  0.31  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  cpvbar  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -3.1416, 3.1416  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.01  </step>
+    
+    <init>  -1.55  </init>     <!-- T2K BF NH with reactor -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm23sqbar  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -inf, inf  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.001, 0.005  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0001  </step>
+    
+    <init>  0.002525  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm12sqbar  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -inf, inf  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  1e-05, 0.00015  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  2e-06  </step>
+    
+    <init>  7.39e-05  </init>     <!-- NuFit 4.0 2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  thetadecay  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0.0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  thetadecoh  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0.0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing14  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  5.0E-3  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing15  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  5.0E-3  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing24  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  5.0E-3  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing25  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  5.0E-3  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing34  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  5.0E-3  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing35  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  5.0E-3  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm41sq  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -inf, inf  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 10000000000.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.05  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm51sq  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -inf, inf  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  2.509E-3, 1.0E-2  </range>   <!-- min: T2K+reactors joint fit results (Mach3, only normal hierarchy) -->
+    
+    <step_mode>  value  </step_mode>
+    <step>  1.0E-4  </step>
+    
+    <init>  3E-3  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  delta12  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -3.1416, 3.1416  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  delta13  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -3.1416, 3.1416  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  delta15  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -3.1416, 3.1416  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  delta34  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -3.1416, 3.1416  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  delta35  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  -3.1416, 3.1416  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  sinsq2thEE  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.05  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  sinsq2thMuMu  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.05  </step>
+    
+    <init>  0.0  </init>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  sinsq2thMuE  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <limits>  0, 1.0  </limits>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <step_mode>  value  </step_mode>
+    <step>  0.05  </step>
+    
+    <init>  0.0  </init>
+  </param>
+
+
+
+  <param>
+    <name>
+      <simple>  betabar  </simple>
+    </name>
+
+    <type>  special  </type>
+
+    <limits>  0, 1  </limits>
+
+    <range_mode>  value  </range_mode>
+    <range>  0, 1  </range>
+
+    <step_mode>  value  </step_mode>
+    <step>  1  </step>
+
+    <init>  1  </init>
+  </param>
+
+
+
+  <param>
+    <name>
+      <simple>  alphadecay  </simple>
+    </name>
+
+    <type>  special  </type>
+
+    <limits>  -inf, inf  </limits>
+
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 0.0  </range>
+
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+
+    <init>  0.0  </init>
+  </param>
+
+
+
+  <param>
+    <name>
+      <simple>  musqdecoh  </simple>
+    </name>
+
+    <type>  special  </type>
+
+    <limits>  -inf, inf  </limits>
+
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 0.0  </range>
+
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+
+    <init>  0.0  </init>
+  </param>
+
+
+
+  <param>
+    <name>
+      <simple>  nsi  </simple>
+    </name>
+
+    <type>  special  </type>
+
+    <limits>  -inf, inf  </limits>
+
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 0.0  </range>
+
+    <step_mode>  value  </step_mode>
+    <step>  0.0  </step>
+
+    <init>  0.0  </init>
+  </param>
+
+</param_list>

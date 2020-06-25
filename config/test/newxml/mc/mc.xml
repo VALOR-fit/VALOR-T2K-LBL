@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+A single analysis_inputs elemtn contains all of the MC-related inputs
+for the analysis.
+-->
+<mc_inputs name="mc_name" version="ver" detector="det">
+	<!-- Information relevant to the data sample -->
+	<data>
+		<!-- POT information -->
+		<exposure> 
+			<fhc>5.1518e+21</fhc>
+			<rhc>5.1518e+21</rhc>     
+		</exposure>
+	</data>
+	<!-- Information about the detector configuration -->
+	<fiducial_mass>35.09</fiducial_mass>
+	<!-- Input MC templates -->
+	<mc>
+		<using_dst_format>true</using_dst_format> 
+		<!--
+			The dst specification is only required if using_dst_format
+			was true
+		-->		
+		<dst>
+			<!--
+				The lbnf_fhc element specifies where MC for neutrino-mode
+				running can be found, along with the object name and type
+				in the ROOT file.
+			-->
+			<fhc>
+				<filename>FHC_NuE_high.root</filename>
+				<objname>valor_dune_nd_mini_dst</objname> 
+				<objtype>TTree</objtype>
+			</fhc>
+			<!--
+				The lbnf_rhc element specifies where MC for antineutrino-mode
+				running	can be found, along with the object name and type in the
+				ROOT file.
+			-->
+			<rhc>
+				<filename>RHC_NuE_high.root</filename> 
+				<objname>valor_dune_nd_mini_dst</objname>
+				<objtype>TTree</objtype> 
+			</rhc>
+		</dst>
+		<!--
+			If not using the dst format, retrieve the MC from a tempalte
+			file
+		-->
+		<template>
+			<filename>template.root</filename>
+			<tag>pass</tag>
+		</template>
+		<!-- in kg, for calculating CCinc xsec-->
+		<interaction_mass>-999</interaction_mass>
+	</mc>
+</mc_inputs>
+

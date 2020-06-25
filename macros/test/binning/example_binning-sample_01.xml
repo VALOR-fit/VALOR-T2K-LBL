@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<sample_binning>
+
+   <!-- 
+     Single Mondrian binning scheme for reco quantities 
+    -->
+   <reco_optimized>
+       example_binning-Ereco,yreco-mondrian_01.xml
+   </reco_optimized>
+
+   <!-- 
+     Single edge-to-edge binning scheme for reco quantities 
+    -->
+   <reco_simple>
+       example_binning-Ereco,yreco-e2e_01.xml
+   </reco_simple>
+
+   <!-- 
+     Single edge-to-edge binning scheme for treue quantities.
+     Used both for optimized and simple templates
+    -->
+    <true_simple>
+       <!-- 
+         Applies to all modes unless a mode binning scheme
+         is specified explicitly below 
+        -->
+       <default>
+           example_binning-Etrue-e2e_01.xml
+       </default>
+
+       <!--
+          Exception for specific modes (optional) 
+        -->
+       <numuCCQE>
+           example_binning-Etrue,Q2true-e2e_01.xml
+       </numuCCQE>
+
+       <numubarCCQE>
+           example_binning-Etrue,Q2true-e2e_02.xml
+       </numubarCCQE>
+
+    </true_simple>
+
+           
+</sample_binning>
+ 

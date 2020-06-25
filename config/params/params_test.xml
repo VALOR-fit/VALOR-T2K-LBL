@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<param_list name="dune_nd">
+
+    <!--
+     The values specified for any oscillation parameters in this file must correspond to these schemes,
+     which must also match the schemes set in Opt::Instance()
+     -->
+    <schemes>
+        <mixing> sinsqtheta </mixing>
+        <phase>  delta      </phase>
+        <Dmsq>   abs23      </Dmsq>
+    </schemes>
+
+    <param>
+        <name>
+            <simple> int_ccqe_nu_1 </simple>
+            <rootex> f_{int^{ccqe}_{#nu ; 1}} </rootex>
+        </name>
+        <apply_to_range>
+            <etrue> 0, inf  </etrue>
+            <q2true> 0, 0.3 </q2true>
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>   all    </detector>
+            <beam>       all    </beam>
+            <selection>  all    </selection>
+            <reac_type>  ccqe   </reac_type>
+            <flav_init>  nu any </flav_init>
+            <flav_final> nu any </flav_final>
+            <target>     all    </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+
+        <!-- Options used to set the FitParamList -->
+        <update_from_cov_matrix> false </update_from_cov_matrix>
+        <init>        2.0     </init>
+        <error>       0.01    </error>
+        <range_mode>  value   </range_mode>
+        <range>       0.1, 10 </range>
+        <step>        0.01    </step>
+        <fixed>       true    </fixed>
+        <nuisance>    false   </nuisance>
+        <marginalise> false   </marginalise>
+    </param>
+
+    <param>
+        <name>
+            <simple> test_param2  </simple>
+           <!-- <rootex>  </rootex> -->
+        </name>
+
+        <apply_to_range>
+            <q2true> 0, 0.1 </q2true>
+            <etrue> 0, 1  </etrue>
+        </apply_to_range>
+
+
+        <type> lateral </type>
+
+        <categories>
+            <category> whatever         </category>
+            <category> you    </category>
+            <category> like          </category>
+        </categories>
+        <apply_to>
+            <detector>  all    </detector>
+            <beam>          </beam>
+            <selection> nc 0 pi    </selection>
+            <reac_type> ccqe   </reac_type>
+            <flav_init>  nu any </flav_init>
+            <flav_final> nu any </flav_final>
+            <target>    all    </target>
+        </apply_to>
+    </param>
+
+    <param>
+        <name>
+            <simple> mixing13 </simple>     <!-- used to find the relavant PhysParamId -->
+        </name>
+
+        <type> special </type>
+
+        <!-- Physical limits of this parameter -->
+        <limits>  0, 1  </limits>
+
+        <!-- Options used to set the FitParamList -->
+        <init>        0.0212 </init>
+        <error>       0.0002 </error>
+        <range_mode>  sigma  </range_mode>
+        <range>       -5, 5  </range>
+        <step>        0.01   </step>
+        <fixed>       false  </fixed>
+        <nuisance>    false  </nuisance>
+        <marginalise> false  </marginalise>
+    </param>
+
+    <param>
+        <name>
+            <simple> mixing23 </simple>     <!-- used to find the relavant PhysParamId -->
+        </name>
+
+        <type> special </type>
+
+        <!-- Physical limits of this parameter -->
+        <limits>  0, 1  </limits>
+
+        <!-- Options used to set the FitParamList -->
+        <init>  0.3  </init>
+        <error> 0.5  </error>
+    </param>
+</param_list>

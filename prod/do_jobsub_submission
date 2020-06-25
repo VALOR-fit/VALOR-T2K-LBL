@@ -1,0 +1,147 @@
+#!/bin/sh
+
+#Setup the sbnd experiment for ease -- Can change for DUNE GUYS
+source /cvmfs/sbnd.opensciencegrid.org/products/sbnd/setup_sbnd.sh
+setup fife_utils;
+
+INTERACTIVE=false
+CPUTIME="8h"
+MEMORY="8000MB"
+DISK="40GB"
+GROUP=""
+SHELLSCRIPT=""
+JOBDIR=""
+
+#Collect command params if set 
+while [ $# -gt 0 ]; do
+  case "$1" in
+
+      --shellscript )
+	  if [ $# -gt 1 ]; then
+              SHELLSCRIPT=$2
+              shift
+	  fi
+	  ;;
+
+      --cputime )
+	  if [ $# -gt 1 ]; then
+              CPUTIME=$2
+              shift
+	  fi
+	  ;;
+
+      --memory )
+      	  if [ $# -gt 1 ]; then
+              MEMORY=$2
+              shift
+	  fi
+	  ;;
+
+      --disk )
+      	  if [ $# -gt 1 ]; then
+              DISK=$2
+              shift
+	  fi
+	  ;;
+
+      --group )
+      	  if [ $# -gt 1 ]; then
+              GROUP=$2
+              shift
+	  fi
+	  ;;
+
+      --jobdir )
+      	  if [ $# -gt 1 ]; then
+              JOBDIR=$2
+              shift
+	  fi
+	  ;;
+
+
+      --interactive )
+	  INTERACTIVE=true
+	  ;;
+
+      # Other.
+      * )
+	  echo "Invalid Setting $1 with value $2"
+	  exit 1;
+  esac
+  shift
+done
+
+
+echo "INTERACTIVE = $INTERACTIVE"
+echo "CPUTIME = $CPUTIME"
+echo "MEMORY = $MEMORY"
+echo "DISK = $DISK"
+echo "GROUP = $GROUP"
+echo "SHELLSCRIPT = $SHELLSCRIPT"
+echo "JOBDIR = $JOBDIR"
+
+
+#Check things have been properly set 
+if [ x$SHELLSCRIPT = x ]; then
+    echo "Shell script not specificed"
+    exit 1;
+fi
+
+if [ x$GROUP = x ]; then
+    echo "Group not specificed"
+    exit 1;
+fi
+
+if [ x$JOBDIR = x ]; then
+    echo "No job directory"
+    exit 1
+fi
+
+JOBDIRCUT=${JOBDIR:0:5}
+
+if [ "$JOBDIRCUT" != "/pnfs" ] && ! [ $INTERACTIVE ]; then
+    echo "Job directory is not on dCache. Please fix"
+    exit 1
+fi
+
+if [ ! -d "$JOBDIR" ]; then 
+    echo "Job directory does not exist"
+    exit 1
+fi 
+
+#Make a tarballs in dCache
+CURRENTDIR=$PWD 
+cd $JOBDIR
+if [ ! -f $JOBDIR/valorsdk.tar ]; then 
+    tar -C $VALOR_FMWK -czf  valorsdk.tar .
+fi
+
+if [ ! -f $JOBDIR/valordune.tar ]; then 
+    tar -C $VALOR_EXPT -czf  valordune.tar .
+fi
+
+cd $CURRENTDIR
+#Copy over the shell script 
+SHELLSCRIPTNAME="${SHELLSCRIPT##*/}"
+
+if [ -f $JOBDIR/$SHELLSCRIPTNAME ] && [ "$JOBDIR/$SHELLSCRIPTNAME" != "$SHELLSCRIPT" ];  then 
+    ifdh rm $JOBDIR/$SHELLSCRIPTNAME
+fi
+
+if [ "$JOBDIR/$SHELLSCRIPTNAME" != "$SHELLSCRIPT" ]; then
+    timeout 20s ifdh cp -D $SHELLSCRIPT $JOBDIR
+fi 
+
+chmod +x $JOBDIR/$SHELLSCRIPTNAME
+
+cp $VALOR_EXPT/generic_jobsub.sh $VALOR_EXPT/generic_jobsub_$SHELLSCRIPT.sh
+
+#Run Jobsub
+if [ $INTERACTIVE = false ]; then 
+
+    jobsub_submit -G $GROUP --role=Analysis --memory=$MEMORY --expected-lifetime=$CPUTIME --disk=$DISK --resource-provides=usage_model=DEDICATED,OPPORTUNISTIC --OS=SL6 -N 1 --generate-email-summary file://$VALOR_EXPT/prod/generic_jobsub_$SHELLSCRIPT.sh --shellscript $JOBDIR/$SHELLSCRIPTNAME --tarballsdk $JOBDIR/valorsdk.tar --tarballdune $JOBDIR/valordune.tar --jobdir $JOBDIR
+    rm -rf $VALOR_EXPT/generic_jobsub_$SHELLSCRIPT.sh
+else
+    echo "interactive"
+    $VALOR_EXPT/prod/generic_jobsub.sh --shellscript $JOBDIR/$SHELLSCRIPTNAME --tarballsdk $JOBDIR/valorsdk.tar --tarballdune $JOBDIR/valordune.tar --jobdir $JOBDIR --interactive
+fi

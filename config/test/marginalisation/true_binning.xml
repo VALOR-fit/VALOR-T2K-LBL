@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<binning>
+
+   <space>
+      Etrue,Q2true
+   </space>
+             
+   <type> 
+      edge-to-edge 
+   </type>
+              
+   <Etrue_binning>
+      <bin_size> variable </bin_size>
+      <nbins>    4       </nbins>
+      <bin_edges>
+        0.00 , 0.25 , 0.50 , 0.75 , 1.00
+      </bin_edges>
+   </Etrue_binning>
+
+   <Q2true_binning>
+      <bin_size> variable  </bin_size>
+      <nbins>    3     </nbins>
+      <bin_edges>    0.0, 0.2, 0.55, 1E5  </bin_edges>
+   </Q2true_binning>
+
+</binning>
+

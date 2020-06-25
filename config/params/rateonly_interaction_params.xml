@@ -1,0 +1,509 @@
+<?xml version="1.0"?>
+<param_list name="rateonly_int">
+    
+    <!-- CCQE -->
+    <param>
+        <name>
+            <simple> int_ccqe_nu </simple>
+            <rootex> f_{int^{ccqe}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> ccqe     </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> int_ccqe_nubar </simple>
+            <rootex> f_{int^{ccqe}_{#bar{#nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all       </detector>
+            <beam>      all       </beam>
+            <selection> all       </selection>
+            <reac_type> ccqe      </reac_type>
+            <flav>      nubarany  </flav>
+            <target>    all       </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <!-- 2p2h -->
+    <param>
+        <name>
+            <simple> int_2p2h_nu </simple>
+            <rootex> f_{int^{2p2h}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> ccmec    </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> int_2p2h_nubar </simple>
+            <rootex> f_{int^{2p2h}_{#bar{#nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all       </detector>
+            <beam>      all       </beam>
+            <selection> all       </selection>
+            <reac_type> mec       </reac_type>
+            <flav>      nubarany  </flav>
+            <target>    all       </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <!-- CC1pi -->
+    <param>
+        <name>
+            <simple> f_int_nu_cc1piz </simple>
+            <rootex> f_{int^{1#pi^{0}}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> cc1pi0   </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> f_int_nu_cc1pic </simple>
+            <rootex> f_{int^{1#pi^{#pm}}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> cc1pic   </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> f_int_nubar_cc1piz </simple>
+            <rootex> f_{int^{1#pi^{0}}_{#bar{nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> cc1pi0   </reac_type>
+            <flav>      nubarany </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> f_int_nubar_cc1pic </simple>
+            <rootex> f_{int^{1#pi^{#pm}}_{#bar{#nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> cc1pic   </reac_type>
+            <flav>      nubarany </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <!-- CC2pi -->
+    <param>
+        <name>
+            <simple> f_int_nu_cc2pi </simple>
+            <rootex> f_{int^{2#pi}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> cc2pi    </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> f_int_nubar_cc2pi </simple>
+            <rootex> f_{int^{2#pi}_{#bar{nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> cc2pi    </reac_type>
+            <flav>      nubarany </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <!-- CC Other (mostly DIS) -->
+    <param>
+        <name>
+            <simple> f_int_nu_ccoth </simple>
+            <rootex> f_{int^{CCoth}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> ccoth    </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> f_int_nubar_ccoth </simple>
+            <rootex> f_{int^{CCoth}_{#bar{nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> ccoth    </reac_type>
+            <flav>      nubarany </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    
+    <!-- Coherent -->
+    <param>
+        <name>
+            <simple> f_int_nu_coh </simple>
+            <rootex> f_{int^{Coh}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> allcoh   </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> f_int_nubar_coh </simple>
+            <rootex> f_{int^{coh}_{#bar{nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> allcoh      </reac_type>
+            <flav>      nubarany </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+  <!-- All NC-->
+  
+      <param>
+        <name>
+            <simple> f_int_nu_nc </simple>
+            <rootex> f_{int^{NC}_{#nu}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nu          </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> allnc    </reac_type>
+            <flav>      nuany    </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    <param>
+        <name>
+            <simple> f_int_nubar_nc </simple>
+            <rootex> f_{int^{NC}_{#bar{nu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nubar       </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> allnc    </reac_type>
+            <flav>      nubarany </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    
+    <!-- nue to numu -->
+    <param>
+        <name>
+            <simple> f_int_nuenumu </simple>
+            <rootex> f_{int^{#nu_{e}/#nu_{#mu}}} </rootex>
+        </name>
+        <apply_to_range>
+            
+        </apply_to_range>
+
+        <type> normalisation </type>
+
+        <categories>
+            <category> int         </category>
+            <category> constrained </category>
+            <category> nue         </category>
+        </categories>
+
+        <apply_to>
+            <detector>  all      </detector>
+            <beam>      all      </beam>
+            <selection> all      </selection>
+            <reac_type> all      </reac_type>
+            <flav>      nueany   </flav>
+            <target>    all      </target>
+        </apply_to>
+
+        <limits> 0, inf  </limits>
+    </param>
+    
+    
+</param_list>

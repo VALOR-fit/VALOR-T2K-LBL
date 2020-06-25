@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<binning>
+
+   <space>
+      Etrue
+   </space>
+             
+   <type> 
+      edge-to-edge 
+   </type>
+              
+   <Etrue_binning>
+      <bin_size> fixed  </bin_size>
+      <nbins>    400    </nbins>
+      <range>    0.,100.  </range>
+   </Etrue_binning>
+
+</binning>
+

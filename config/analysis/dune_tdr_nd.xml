@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<valor> 
+
+  <element_list name="dune_fd_ndtf_3rdpass">
+<!--
+   Far detector selections
+-->
+
+<!-- FHC -->
+    <element name="dune_nd_fhc_numulikecchigh">
+      <detector>     dune_nd                                              </detector>
+      <beam>         lbnf_fhc                                             </beam>
+      <sample>       numulikecchigh                                       </sample>
+      <observable>   Ereco,yreco                                          </observable>
+      <data>                                                              </data>
+      <mc>           mc/dune_tdr_nd_mcc11.xml                             </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/dune_fd_fhc_numulikecchigh_bins.xml          </binning>
+    </element>
+
+<!-- RHC -->
+
+  </element_list>
+  
+  <systematics name="DUNE_2018aFD">
+<!--
+    <group name="flux">
+      <class> valor::MINERVAFlux2016aFD </class>
+      
+      <covariance_matrix>
+        <filename>   dune/ndfit/2016a/flux/2016av1_flux_optimized.root </filename>
+        <objname>    far_only             </objname>    
+        <objtype>    TMatrixD             </objtype>
+      </covariance_matrix> 
+    </group>
+    
+    <group name="interaction">
+      <class> valor::VALORInt2016a </class>
+      <covariance_matrix>
+         <filename>   dune/ndfit/2016a/xsec/xsec_covariance_2016a_gevgen_v2.root </filename>
+         <objname>    frac_cov_max    </objname>    
+         <objtype>    TMatrixD          </objtype>
+      </covariance_matrix>
+    </group>
+-->
+    
+  </systematics>
+
+</valor> 

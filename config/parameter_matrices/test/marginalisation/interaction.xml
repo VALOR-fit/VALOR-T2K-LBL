@@ -1,0 +1,8 @@
+<systematic_list name="dummy_interaction">
+  <parameter> f_int_nu_ccqe_1      </parameter>
+  <parameter> f_int_nu_ccqe_2      </parameter>
+  <parameter> f_int_nu_ccqe_3      </parameter>
+  <parameter> f_int_nubar_ccqe_1   </parameter>
+  <parameter> f_int_nubar_ccqe_2   </parameter>
+  <parameter> f_int_nubar_ccqe_3   </parameter>
+</systematic_list>

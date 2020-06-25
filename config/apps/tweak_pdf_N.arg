@@ -1,0 +1,25 @@
+# argument                           |   type         |  require?   |   default
+# .......................................................................................................
+ntoys                                |   integer      |  optional   |   200
+output                               |   string       |  optional   |   tweaks_[PARAMS].root
+physics-hypothesis                   |   string       |  optional   |   3f_osc
+fit-param-opt                        |   string       |  optional   |   NONE
+config                               |   string       |  mandatory  |   -
+mesg-thresholds                      |   string       |  optional   |   verbosity.xml
+nthreads                             |   integer      |  optional   |   -1
+#
+params                               |   string       |  optional   |   allsyst
+rethrow-unphysical,accept-unphysical |   boolean_list |  optional   |   rethrow-unphysical
+load-prior-from-file                 |   string       |  optional   |   none
+prior-fit-number                     |   integer      |  optional   |   0
+#
+input-mixing12                       |   double       |  optional   |   0.304
+input-mixing13                       |   double       |  optional   |   0.0219
+input-mixing23                       |   double       |  optional   |   0.514
+input-dm12sq                         |   double       |  optional   |   0.000075
+input-dm23sq                         |   double       |  optional   |   0.00244
+input-deltaCP                        |   double       |  optional   |   0.0
+normal,inverted                      |   boolean_list |  optional   |   normal
+sinsqtheta, sinsq2theta              |   boolean_list |  optional   |   sinsqtheta
+dmsq12abs23,foglilisi                |   boolean_list |  optional   |   dmsq12abs23
+dmsq-scheme                          |   string       |  optional   |   auto

@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+
+<!--
+   This file is intended for testing purposes. The values aren't intended to be
+   meaningful, they're set to values to ensure that they are being reads
+   correctly.
+-->
+
+<parameters>
+
+   <defaults>
+
+      <values>
+         <bestfit>1.0</bestfit>
+         <init>1.0</init>
+         <minimum>0.0</minimum>
+         <maximum>2.0</maximum>
+         <step_size>0.0001</step_size>
+         <scaling>1.0</scaling>
+      </values>
+
+      <marginalisation>
+         <set>False</set>               <!-- True/False -->
+         <priors>
+            
+            <gaus>
+               <mean>1.0</mean>
+               <sigma>0.2</sigma>
+            </gaus>
+
+            <flat>
+               <minimum>0.0</minimum>
+               <maximum>2.0</maximum>
+            </flat>
+
+            <user>
+               <histogram></histogram>  <!-- Filename -->
+            </user>
+
+         </priors>
+
+      </marginalisation>
+
+      <properties>
+         <fixed>False</fixed>           <!-- True/False -->
+         <nuisance>True</nuisance>      <!-- True/False -->
+      </properties>
+
+      <errors>
+
+         <migrad>
+           <set>False</set>             <!-- True/False -->
+           <error>0.0</error>
+         </migrad>
+
+         <hesse>
+           <set>False</set>             <!-- True/False -->
+           <error>0.0</error>
+         </hesse>
+
+         <minos>
+           <set>False</set>             <!-- True/False -->
+           <low_error>0.0</low_error>
+           <high_error>0.0</high_error>
+         </minos>
+
+      </errors>
+
+   </defaults>
+
+   <parameter name="kPhypMixing23" />
+
+   <parameter name="kPhypMixing13">
+
+      <values>
+         <bestfit>0.2</bestfit>
+         <init>0.3</init>
+         <minimum>0.05</minimum>
+         <maximum>0.4</maximum>
+         <step_size>0.0002</step_size>
+         <scaling>0.999</scaling>
+      </values>
+
+      <marginalisation>
+         <set>True</set>                <!-- True/False -->
+         <priors>
+            
+            <gaus>
+               <mean>0.2</mean>
+               <sigma>0.05</sigma>
+            </gaus>
+
+            <flat>
+               <minimum>0.01</minimum>
+               <maximum>0.35</maximum>
+            </flat>
+
+            <user>
+               <histogram>random</histogram>  <!-- Filename -->
+            </user>
+
+         </priors>
+
+      </marginalisation>
+
+      <properties>
+         <fixed>True</fixed>           <!-- True/False -->
+         <nuisance>False</nuisance>      <!-- True/False -->
+      </properties>
+
+      <errors>
+
+         <migrad>
+           <set>True</set>              <!-- True/False -->
+           <error>0.2</error>
+         </migrad>
+
+         <hesse>
+           <set>True</set>              <!-- True/False -->
+           <error>0.25</error>
+         </hesse>
+
+         <minos>
+           <set>True</set>              <!-- True/False -->
+           <low_error>0.15</low_error>
+           <high_error>0.25</high_error>
+         </minos>
+
+      </errors>
+
+   </parameter>
+
+</parameters>
+

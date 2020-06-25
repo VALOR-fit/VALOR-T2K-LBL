@@ -1,0 +1,232 @@
+#!/usr/bin/perl
+
+#
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit a batch of compound single sample valor_dune-run_fit jobs.
+#
+# Inputs
+#  --resource               : Computer resource, <RAL_HTC, RAL_HTCPBS, RAL_PBS, Oxford_PBS, interactive>. Default: interactive.
+#  --tag                    : Tag for output files. Default: "toymc".
+#  --nruns                  : Number of runs (jobs) to submit. Default: 1.
+#  --ntoymc                 : Number of toy-MC fits per run. Default: 1.
+#  --cpu-time               : Required CPU time. Default: "6:00:00" for RAL, "11:50:00" for Oxford.
+#  --physics-hypothesis     : Specifies the physics hypothesis. Default: "3f_osc"
+#  --param-values           : Specifies how to set model parameters in toy-MC generation. Default: "randomize-all;prefit-errors"
+#  --no-stat-fluctuations   : Disable statistical fluctuation in toy-MC generation. Default: enabled.
+#  --start-at-true          : The fitter starts at the true values of the parameters rather than the central values. Default: diabled.
+#  --fitter                 : Option passed to fitter. Default: "minuit".
+#  --store-spectra          : Store the generated toy MC and best-fit spectra? Default: false.
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
+#  --dune-softw-dir         : VALOR/DUNE code top-level directory. Default: `pwd`.
+#  --fmwk-softw-dir         : VALOR/FMWK code top-level directory. Default: `pwd`/../fmwk/
+#  --config                 : Analysis configuration file. Default: "dune_ndfit-2015v1-FGTv1.xml".
+#  --mesg-thresholds        : Message thresholds file. Default: "verbosity.xml"
+#  --load-prior-from-file   : Get a ND fit covariance from an ND-fitted output file [ - ] 
+#  --tweak-parameter-set    : Tweak a set of parameters (eg CCQE, flux, DIS etc)
+#  --force-tweak-size       : Tweaks above are done by N-sigma, rather than randomising
+#
+# S. Dennis & C. Andreopoulos
+# University of Liverpool & STFC/RAL
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+use Cwd 'abs_path';
+
+$iarg=0;
+foreach (@ARGV) {
+     
+  if($iarg % 2 == 1) {$iarg++; next;} # only even arguments are flags, the odd ones are values
+  
+  if   ($_ eq '--resource'               ) { $resource            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                    ) { $tag                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--nruns'                  ) { $nruns               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--ntoymc'                 ) { $ntoymc              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'               ) { $cput                = $ARGV[$iarg+1]; }
+  elsif($_ eq '--physics-hypothesis'     ) { $fitparamlist        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--param-values'           ) { $param_values        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--no-stat-fluctuations'   ) { $stat_fluct          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--start-at-true'          ) { $start_at_true       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fitter'                 ) { $fitoption           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--store-spectra'          ) { $store_spectra       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                ) { $job_dir             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dune-softw-dir'         ) { $dune_softw_dir      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fmwk-softw-dir'         ) { $fmwk_softw_dir      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config'                 ) { $config              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mesg-thresholds'        ) { $mesg_thresholds     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--load-prior-from-file'   ) { $prior_file          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tweak-parameter-set'    ) { $tweak_set           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--force-tweak-size'       ) { $tweak_size          = $ARGV[$iarg+1]; }
+  
+  else {
+    print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+$resource               = "interactive"                                           unless defined $resource;
+$tag                    = "toymc"                                                 unless defined $tag;
+$nruns                  = 1                                                       unless defined $nruns;
+$ntoymc                 = 1                                                       unless defined $ntoymc;
+$fitparamlist           = "3f_osc"                                              unless defined $fitparamlist;
+$param_values           = "randomize-all;prefit-errors"                           unless defined $param_values;
+$fitoption              = "minuit"                                                unless defined $fitoption;
+#$stat_fluct             = 1                                                       unless defined $stat_fluct;
+#$store_spectra          = 0                                                       unless defined $store_spectra;
+$job_dir                = `pwd`                                                   unless defined $job_dir;
+$dune_softw_dir         = $ENV{'VALOR_EXPT'}                                      unless defined $dune_softw_dir;
+$fmwk_softw_dir         = $ENV{'VALOR_FMWK'}                                      unless defined $fmwk_softw_dir;
+$config                 = "fit/dunend_ndtf_2ndpassthrough_18sample_toymc_fit.xml" unless defined $config;
+$mesg_thresholds        = $ENV{'VALOR_EXPT'}."/config/verbosity.xml"              unless defined $mesg_thresholds;
+$prior_file             = "-"                                                     unless defined $prior_file;
+$tweak_set              = "none"                                                  unless defined $tweak_set;
+
+chomp($job_dir);
+
+if( !defined $cput ) {
+  if($resource =~ "RAL"       ) { $cput =  "6:00:00"; }
+  if($resource =~ "Oxford"    ) { $cput = "11:50:00"; }
+  if($resource =~ "Liverpool" ) { $cput = "17:50:00"; }
+}
+
+mkpath ($job_dir, {verbose => 1, mode=>0777}); 
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+$job_dir = abs_path($job_dir);
+
+$irun = 0;
+while($irun < $nruns) {
+  print "Submitting run: $irun \n";
+  $jobID = $irun;  
+
+# $program = "valor_dune";
+# $arguments   = " -l -b -q \'$dune_softw_dir/src/macros/fit/nd/run_fit.C(\"$tag\",$irun,$ntoymc,\"$fitparamlist\",\"$param_values\",$stat_fluct,\"$fitoption\",$store_spectra,\"$config\")\'";
+
+  $program = "valor_dune-run_fit";
+  # use "" in some cases as the existence of ; as part of the name can wreak havoc
+  $arguments   = " --tag $tag --run $irun --ntoymc $ntoymc --physics-hypothesis \"$fitparamlist\" --param-values-option \"$param_values\" --fitter \"$fitoption\" --config $config --mesg-thresholds $mesg_thresholds --load-prior-from-file $prior_file --tweak-parameter-set $tweak_set ";
+
+  if(defined $store_spectra) {
+    $arguments = $arguments . " --store-spectra";
+  } else {
+    $arguments = $arguments . " --discard-spectra";
+  }
+
+  if(defined $stat_fluct) {
+    $arguments = $arguments . " --with-stat-fluct";
+  } else {
+    $arguments = $arguments . " --without-stat-fluct";
+  }
+  
+  if(defined $start_at_true) {
+    $arguments = $arguments . " --start-at-true";
+  } else {
+    $arguments = $arguments . " --start-at-central";
+  }
+  
+  if(defined $tweak_size) {
+    $arguments = $arguments . " --force-tweak-size $tweak_size";
+  }
+  
+  $command = $program." ".$arguments;
+  print "Running: $command \n";
+  
+  #
+  # HTCondor @ RAL
+  #
+  if($resource eq "RAL" || $resource eq "RAL_HTC") {
+    $fullprogram = abs_path(`which $program`);
+    $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+    $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+    $jobname = "ndfit-${tag}-${jobID}";
+    $cndfn = "$job_dir/${jobname}.condor";
+    open(BATCH_SCRIPT, ">".$cndfn) or die("Cannot create the Condor batch script");
+    print BATCH_SCRIPT "Executable               = $fullprogram \n";
+    print BATCH_SCRIPT "Arguments                = $arguments \n";
+    print BATCH_SCRIPT "initialdir               = $job_dir \n";
+    print BATCH_SCRIPT "Error                    = ${jobname}_\$\(Process\).err \n";
+    print BATCH_SCRIPT "Output                   = ${jobname}_\$\(Process\).out \n";
+    print BATCH_SCRIPT "Universe                 = vanilla \n";
+    print BATCH_SCRIPT "Getenv                   = True \n";
+    print BATCH_SCRIPT "should_transfer_files    = YES \n";
+    print BATCH_SCRIPT "when_to_transfer_output  = ON_EXIT \n";
+    print BATCH_SCRIPT "\nqueue\n";    
+    close(BATCH_SCRIPT);
+    system("condor_submit",$cndfn);
+  }
+
+  #
+  # PBS (or HTCondor with PBS-like interface) @ RAL
+  #
+  elsif($resource eq "RAL_PBS" || $resource eq "RAL_HTCPBS") {    
+     $batch_script = "$job_dir/$tag-$irun.pbs";
+     open(BATCH_SCRIPT, ">$batch_script") or die("Can not create the PBS batch script");
+     print BATCH_SCRIPT "#!/bin/bash \n";
+     print BATCH_SCRIPT "#PBS -N $tag-$irun \n";
+     print BATCH_SCRIPT "#PBS -l cput=$cput \n";
+     print BATCH_SCRIPT "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+     print BATCH_SCRIPT "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print BATCH_SCRIPT "#PBS -q prod \n";
+     print BATCH_SCRIPT "#PBS -V \n";
+     print BATCH_SCRIPT "#PBS -l walltime=$cput \n";
+     print BATCH_SCRIPT "source $fmwk_softw_dir/setup/setup_at_ral_no_cvmfs.sh \n";
+     print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_ral_no_cvmfs.sh \n";
+     print BATCH_SCRIPT "cd $job_dir \n";
+#    print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_cvmfs.sh $dune_softw_dir $fmwk_softw_dir\n";
+     print BATCH_SCRIPT "$command \n";
+     close(BATCH_SCRIPT);
+     $job_submission_command = "qsub";
+     if($resource eq "RAL_HTCPBS") {
+         $job_submission_command = "condor_qsub";
+     }
+     `$job_submission_command -q prod $job_dir/$tag-$irun.pbs`;
+  }
+
+  #
+  # Oxford/PBS
+  #
+  elsif($resource eq "Oxford_PBS") {
+     open(BATCH_SCRIPT, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     print BATCH_SCRIPT "#!/bin/bash \n";
+     print BATCH_SCRIPT "#PBS -N $tag-$irun \n";
+     print BATCH_SCRIPT "#PBS -l cput=$cput \n";
+     print BATCH_SCRIPT "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+     print BATCH_SCRIPT "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print BATCH_SCRIPT "cd $job_dir \n";
+     print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_oxford.sh $dune_softw_dir $fmwk_softw_dir\n";
+     print BATCH_SCRIPT "$command \n";
+     close(BATCH_SCRIPT);
+     `qsub $job_dir/$tag-$irun.pbs`;
+  }
+  
+  #
+  # Liverpool
+  #
+  elsif($resource eq "Liverpool_PBS") {
+     open(BATCH_SCRIPT, ">$job_dir/$tag-$irun.pbs") or die("Can not create the PBS batch script");
+     print BATCH_SCRIPT "#!/bin/bash \n";
+     print BATCH_SCRIPT "#PBS -q all64 \n";
+     print BATCH_SCRIPT "#PBS -N $tag-$irun \n";
+     print BATCH_SCRIPT "#PBS -l cput=$cput \n";
+     print BATCH_SCRIPT "#PBS -o $job_dir/$tag-$irun.pbs.out \n";
+     print BATCH_SCRIPT "#PBS -e $job_dir/$tag-$irun.pbs.err \n";
+     print BATCH_SCRIPT "cd $job_dir \n";
+     print BATCH_SCRIPT "source $dune_softw_dir/setup/setup_at_cvmfs.sh $dune_softw_dir $fmwk_softw_dir\n";
+     print BATCH_SCRIPT "$command \n";
+     close(BATCH_SCRIPT);
+     `qsub $job_dir/$tag-$irun.pbs`;
+  }
+
+  #
+  # interactive
+  #
+  elsif($resource eq "interactive") {
+     system($command);
+  }
+  
+  else {
+    print "Unknown resource $resource\n";
+    exit;
+  }
+
+  $irun++;
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<!--
+		Specify the spline location and the pattern for generating per-sample
+		splines.
+-->
+<splines>
+	<folder>dune/ndfit/2016b/fd/splines</folder>
+	<pattern>valor_splines_[BEAM]_[SELECTION]_[PARAM].root</pattern>
+</splines>
+

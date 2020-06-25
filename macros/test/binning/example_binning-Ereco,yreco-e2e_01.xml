@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<binning>
+
+   <space>
+      Ereco,yreco
+   </space>
+             
+   <type> 
+      edge-to-edge 
+   </type>
+              
+   <Ereco_binning>
+      <bin_size> variable </bin_size>
+      <nbins>    8       </nbins>
+      <bin_edges>
+           0.0,  4.5,   8.6,   20.0,   30.0,   50.0,
+          60.0, 70.0, 100.0
+      </bin_edges>
+   </Ereco_binning>
+
+   <yreco_binning>
+      <bin_size> fixed  </bin_size>
+      <nbins>    10     </nbins>
+      <range>    0.,1.  </range>
+   </yreco_binning>
+
+
+</binning>
+

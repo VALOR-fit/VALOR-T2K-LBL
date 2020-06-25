@@ -1,0 +1,18 @@
+# argument                           |   type         |  require?   |   default
+# .......................................................................................................
+input                                |   string       |  mandatory  |   
+output                               |   string       |  mandatory  |   
+config                               |   string       |  mandatory  |   
+nsteps                               |   integer      |  optional   |   30000
+burn-in                              |   integer      |  optional   |   1000
+fit-number                           |   integer      |  optional   |   0
+proposal-step                        |   double       |  optional   |   0.3
+mesg-thresholds                      |   string       |  optional   |   verbosity.xml
+disable-adaptive,enable-adaptive     |   boolean_list |  optional   |   disable-adaptive
+use-prefit-errors                    |   boolean      |  optional   |   use-postfit-errors
+start-at-bestfit                     |   boolean      |  optional   |   start-at-thrown
+write-expanded-tree                  |   boolean      |  optional   |   no-write-expanded-tree
+pot-override                         |   double       |  optional   |   -999
+nthreads                             |   integer      |  optional   |   -1
+
+use-postfit-correlations,use-prefit-correlations,use-no-correlations|   boolean_list |  optional   |   use-postfit-correlations

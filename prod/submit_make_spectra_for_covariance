@@ -1,0 +1,150 @@
+#!/usr/bin/perl
+#
+#
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit the jobs to scan across 1 or 2 parameters
+#
+# Inputs
+#  --resource               : Computer resource, <RAL, Oxford, Grid, ETH-Monch, interactive>. Default: interactive.
+#  --tag                    : Tag for output files. Default: "param_scan".
+
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`.
+#  --dune-softw-dir         : VALOR/DUNE code top-level directory. Default: $VALOR_EXPT
+#  --fmwk-softw-dir         : VALOR/FMWK code top-level directory. Default: $VALOR_FMWK
+#  --config-file            : Analysis configuration file. Default: "default_config.xml"
+#  --mesg-thresholds        : Message thresholds file. Default: "verbosity.xml"
+#
+#-------------------------------------------------------------------------------
+
+use File::Path;
+use Cwd 'abs_path';
+use List::Util qw[min max];
+
+$iarg=0;
+foreach (@ARGV) {
+  
+  if($iarg % 2 == 1) {$iarg++; next;} # only even arguments are flags, the odd ones are values
+  
+  if   ($_ eq '--resource'               ) { $resource             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                    ) { $tag                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'                ) { $job_dir              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dune-softw-dir'         ) { $dune_softw_dir       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fmwk-softw-dir'         ) { $fmwk_softw_dir       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config-file'            ) { $config_file          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--syst-list'              ) { $syst_list            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--n-universe-per-job'     ) { $n_universe_per_job   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mesg-thresholds'        ) { $mesg_thresholds      = $ARGV[$iarg+1]; }
+  
+  elsif($_ eq '--tarball'                ) { $tarball              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--group'                  ) { $group                = $ARGV[$iarg+1]; }
+  elsif($_ eq '--memory'                 ) { $memory               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--disk'                   ) { $disk                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--numjobs'                ) { $numjobs              = $ARGV[$iarg+1]; }
+
+  else {
+    print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+$resource               = "interactive"                           unless defined $resource;
+$tag                    = "spectra_for_universe"                  unless defined $tag;
+$group                  = ""                                      unless defined $group;
+$job_dir                = `pwd`                                   unless defined $job_dir;
+$dune_softw_dir         = $ENV{'VALOR_EXPT'}                      unless defined $dune_softw_dir;
+$fmwk_softw_dir         = $ENV{'VALOR_FMWK'}                      unless defined $fmwk_softw_dir;
+$config_file            = "default_config.xml"                    unless defined $config_file;
+#$mesg_thresholds        = $ENV{'VALOR_EXPT'}."/config/verbosity.xml"              unless defined $mesg_thresholds;
+$mesg_thresholds        = "verbosity.xml"                         unless defined $mesg_thresholds;
+$n_universe_per_job     = 20                                      unless defined $n_universe_per_job;
+$syst_list              = "flux"                                  unless defined $syst_list;
+
+chomp($job_dir);
+
+if( !defined $cput ) {
+    if($resource =~ "RAL"    ) { $cput =  "8:00:00"; }
+    if($resource eq "Oxford" ) { $cput = "11:50:00"; }
+}
+
+mkpath ($job_dir, {verbose => 1, mode=>0777}); 
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+$job_dir = abs_path($job_dir);
+    
+
+$n_universes = 1000;
+$last_universe_run = -1;
+
+${jobID} = 0;
+
+while ($last_universe_run < $n_universes-1) {
+    
+  $program   = "valor_dune-write_sbn_spectra_using_universes";
+  $this_first_universe = $last_universe_run + 1;
+  $this_n_universes = min($n_universes-$this_first_universe,$n_universe_per_job);
+  $last_universe_run = $this_first_universe + $this_n_universes - 1;
+  
+  $arguments = "--config ${config_file} ".
+    " --output-name ${tag}-${syst_list}-${this_first_universe}-to-${last_universe_run}-job${jobID}.root".
+    " --syst-list ${syst_list} --first-universe ${this_first_universe} --n-universes $this_n_universes ".
+    " --mesg-thresholds ${mesg_thresholds}" ;
+      
+  $command = $program." ".$arguments;
+  
+  print "Running: $command \n";
+  
+  #
+  # HTCondor @ RAL
+  #
+  
+  if($resource eq "RAL" || $resource eq "RAL_HTC") {
+    $fullprogram = abs_path(`which $program`);
+    chomp($fullprogram);
+    
+    $fmwk_setup_script = "$fmwk_softw_dir/setup/setup_at_cvmfs_root6.sh";
+    $dune_setup_script = "$dune_softw_dir/setup/setup_at_cvmfs_root6.sh";
+    
+    $jobname = "${tag}-${this_first_universe}-to-${last_universe_run}-${jobID}";
+    $shellfn = "$job_dir/${jobname}.sh";
+    
+    open(shell,">".$shellfn);
+    print shell "hostname \n";
+    print shell "date \n";
+    print shell "source $fmwk_setup_script \n";
+    print shell "source $dune_setup_script \n";
+    print shell "$command \n";
+    print shell "date \n";
+    close(shell);
+    
+    $default_cnd_options =
+        "Executable               = /bin/bash \n".
+        "initialdir               = $job_dir \n".
+        "Universe                 = vanilla \n".
+        "Getenv                   = False \n".
+        "should_transfer_files    = YES \n".
+        "when_to_transfer_output  = ON_EXIT \n".
+        (ncores > 1 ? "request_cpus             = $ncores \n":"").
+        "\nqueue\n";
+    
+    $cndfn = "$job_dir/${jobname}.condor";
+    open(CND, ">".$cndfn) or die("Cannot create the Condor batch script");
+    print CND "Arguments                = $shellfn \n";
+    print CND "Error                    = ${jobname}_\$\(Process\).err \n";
+    print CND "Output                   = ${jobname}_\$\(Process\).out \n";
+    print CND $default_cnd_options;
+    close(CND);
+    system("condor_submit",$cndfn);
+  
+  }
+  
+  #
+  # interactive
+  #
+  if($resource eq "interactive") {
+    system($command);
+  }
+  
+  $jobID++;
+  
+} #njobs
+
+

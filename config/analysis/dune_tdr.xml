@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<valor> 
+
+  <element_list name="dune_tdr_nd">
+<!--
+   Far detector selections
+-->
+
+<!-- FHC -->
+    <element name="dune_nd_fhc_numulikecchigh">
+      <detector>     dune_nd                                              </detector>
+      <beam>         lbnf_fhc                                             </beam>
+      <sample>       numulikecchigh                                       </sample>
+      <observable>   Ereco,yreco                                          </observable>
+      <data>                                                              </data>
+      <mc>           mc/dune_tdr_nd_mcc11.xml                             </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/dune_fd_fhc_numulikecchigh_bins.xml          </binning>
+    </element>
+
+<!-- RHC -->
+    <element name="dune_nd_fhc_numulikecchigh">
+      <detector>     dune_nd                                              </detector>
+      <beam>         lbnf_rhc                                             </beam>
+      <sample>       numulikecchigh                                       </sample>
+      <observable>   Ereco,yreco                                          </observable>
+      <data>                                                              </data>
+      <mc>           mc/dune_tdr_nd_mcc11.xml                             </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/dune_fd_fhc_numulikecchigh_bins.xml          </binning>
+    </element>
+    
+    
+    
+<!--
+   Far detector selections
+-->
+
+<!-- FHC -->
+    <element name="dune_fd_fhc_numulikecchigh">
+      <detector>     dune_fd1ph                                           </detector>
+      <beam>         lbnf_fhc                                             </beam>
+      <sample>       numulikecchigh                                       </sample>
+      <observable>   Ereco,yreco                                          </observable>
+      <data>                                                              </data>
+      <mc>           mc/dune_tdr_fd_mcc11.xml                             </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/dune_fd_fhc_numulikecchigh_bins.xml          </binning>
+    </element>
+
+    <element name="dune_fd_fhc_nuelikecchigh">
+      <detector>     dune_fd1ph                                           </detector>
+      <beam>         lbnf_fhc                                             </beam>
+      <sample>       nuelikecchigh                                        </sample>
+      <observable>   Ereco,yreco                                          </observable>
+      <data>                                                              </data>
+      <mc>           mc/dune_tdr_fd_mcc11.xml                             </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/dune_fd_fhc_nuelikecchigh_bins.xml           </binning>
+    </element>
+
+<!-- RHC -->
+    <element name="dune_fd_rhc_numulikecchigh">
+      <detector>     dune_fd1ph                                           </detector>
+      <beam>         lbnf_rhc                                             </beam>
+      <sample>       numulikecchigh                                       </sample>
+      <observable>   Ereco,yreco                                          </observable>
+      <data>                                                              </data>
+      <mc>           mc/dune_tdr_fd_mcc11.xml                             </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/dune_fd_fhc_numulikecchigh_bins.xml          </binning>
+    </element>
+
+    <element name="dune_fd_rhc_nuelikecchigh">
+      <detector>     dune_fd1ph                                           </detector>
+      <beam>         lbnf_rhc                                             </beam>
+      <sample>       nuelikecchigh                                        </sample>
+      <observable>   Ereco,yreco                                          </observable>
+      <data>                                                              </data>
+      <mc>           mc/dune_tdr_fd_mcc11.xml                             </mc>
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/dune_fd_fhc_nuelikecchigh_bins.xml           </binning>
+    </element>
+    
+  </element_list>
+
+  <parameter_definitions>
+    <filename> params/dune_default_params.xml </filename>
+  </parameter_definitions>
+  
+  <systematics name="DUNE_2018aFD">
+
+    <group name="flux">
+      <format> MINERVAFlux2016a.xml </format>
+      
+      <covariance_matrix>
+        <filename>   dune/ndfit/2016a/flux/2016av1_flux_optimized.root </filename>
+        <objname>    Flux_Covariance    </objname>    
+        <objtype>    TH2D             </objtype>
+      </covariance_matrix> 
+    </group>
+<!--
+    <group name="interaction">
+      <class> valor::VALORInt2016a </class>
+      <covariance_matrix>
+         <filename>   dune/ndfit/2016a/xsec/xsec_covariance_2016a_gevgen_v2.root </filename>
+         <objname>    frac_cov_max    </objname>    
+         <objtype>    TMatrixD          </objtype>
+      </covariance_matrix>
+    </group>
+-->
+    
+  </systematics>
+
+</valor> 

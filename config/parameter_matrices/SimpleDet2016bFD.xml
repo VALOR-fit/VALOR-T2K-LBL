@@ -1,0 +1,6 @@
+<systematic_list name="SimpleDet2016bFD">
+  <parameter> f_eff_fd_numulike_cchigh </parameter>
+  <parameter> f_eff_fd_numulike_cclow </parameter>
+  <parameter> f_eff_fd_nuelike_cchigh </parameter>
+  <parameter> f_eff_fd_nuelike_cclow </parameter>
+</systematic_list>

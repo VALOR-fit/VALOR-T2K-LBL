@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<binning>
+<!-- Define the kinematic space for the binning -->
+<space>Ereco,yreco</space>
+<type>edge-to-edge</type>
+	<!--
+		For each kinematic variable define a binning scheme within an
+		XML element named as <kinematic variable>_binning, e.g.
+		yreco_binning
+	-->
+	<Ereco_binning>
+		<bin_size>variable</bin_size>
+		<nbins>3</nbins>
+		<bin_edges>0.0, 1.0, 3.0, 10.0</bin_edges>
+	</Ereco_binning>
+	<yreco_binning>
+		<bin_size>fixed</bin_size>
+		<nbins>4</nbins>
+		<bin_edges>0.0, 0.25, 0.5, 0.75, 1.0</bin_edges>
+	</yreco_binning>
+</binning>

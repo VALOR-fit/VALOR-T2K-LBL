@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<analysis_inputs analysis="DUNE-NDFIT" version="2015v1" detector="FGTv1">
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Assumed exposure for various beam configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<data>
+  <exposure> 
+    <lbnf_fhc>
+     1.5288e+22
+    </lbnf_fhc>
+    <lbnf_rhc>
+     1.5288e+22
+    </lbnf_rhc>
+  </exposure>
+</data>
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Information about the detector configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<fiducial_mass>
+ -999
+</fiducial_mass>
+
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Input MC templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<mc>
+  <using_dst_format> 
+     false 
+  </using_dst_format> 
+
+  <dst> 
+    <lbnf_fhc>
+       <filename> dune/ndfit/2017a/fgt_nu_minidst_pt4.root </filename> 
+       <objname>  valor_dune_nd_mini_dst </objname> 
+       <objtype>  TTree    </objtype> 
+    </lbnf_fhc>
+    <lbnf_rhc>
+       <filename> dune/ndfit/2017a/fgt_nubar_minidst_pt4.root </filename> 
+       <objname>  valor_dune_nd_mini_dst  </objname> 
+       <objtype>  TTree     </objtype> 
+    </lbnf_rhc>
+  </dst>
+  
+  <template>
+    <filename> dune/ndfit/2017a/fgt_templates.root </filename>
+    <tag> valor </tag>
+  </template>
+  
+  <!-- in kg, for calculating CCinc xsec-->
+  <interaction_mass> 
+    -999 
+  </interaction_mass>
+
+</mc>
+
+<splines>
+  <folder>  dune/ndfit/2017a/xsec/splines/fgt/ </folder>
+  <pattern> valor_splines_[BEAM]_[SAMPLE]_[PARAM].root    </pattern>
+</splines>
+
+
+</analysis_inputs>
+
+

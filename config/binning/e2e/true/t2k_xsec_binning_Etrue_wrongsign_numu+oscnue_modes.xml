@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<binning>
+
+	<type>
+		edge-to-edge
+	</type>
+
+	<space>
+		Etrue
+	</space>
+
+	<Etrue_binning>
+		<bin_size> variable </bin_size>
+		<nbins> 5 </nbins>
+		<bin_edges>
+			0.0,	0.7,	1.0,	1.5,	2.5,	30.0
+		</bin_edges>
+	</Etrue_binning>
+
+</binning>

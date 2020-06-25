@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<sample_binning>
+
+  <!-- Single Mondrian binning scheme for reco quantities -->
+  <reco_optimized>
+    binning/e2e/reco/valor_dune_tdr_fd_e2e_binning.xml
+  </reco_optimized>
+
+  <!-- Single edge-to-edge binning scheme for reco quantities -->
+  <reco_simple>
+    binning/e2e/reco/valor_dune_tdr_fd_e2e_binning.xml
+  </reco_simple>
+
+  <!-- Single edge-to-edge binning scheme for true quantities.
+       Used both for optimized and simple templates -->
+  <true_simple>
+    <!-- Applies to all modes unless a mode binning scheme
+         is specified explicitly below -->
+    <default>
+      binning/e2e/true/valor_dune_tdr_fd_e2e_binning.xml
+    </default>
+
+  </true_simple>
+
+  <xsec_reco>
+    binning/e2e/reco/valor_dune_tdr_fd_e2e_binning.xml 
+  </xsec_reco>
+
+  <xsec_true>
+    <!-- Applies to all modes unless a mode binning scheme
+         is specified explicitly below -->
+    <default>
+      binning/e2e/true/valor_dune_tdr_fd_e2e_binning.xml
+    </default>
+  </xsec_true>
+
+</sample_binning>

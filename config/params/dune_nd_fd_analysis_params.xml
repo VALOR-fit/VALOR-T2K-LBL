@@ -1,0 +1,1011 @@
+<?xml version="1.0"?>
+
+<analysis name="dune_nd_fd_analysis">
+
+  <osc_params>
+
+    <param_list>
+
+      kPhypMixing23,
+      kPhypMixing13,
+      kPhypMixing12,
+      kPhypCPV,
+      kPhypDm23sq,
+      kPhypDm12sq
+
+    </param_list>
+
+  </osc_params>
+
+  <rule name="dune_nd_fhc_numu_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>numu</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuMuFlux00,
+      kNuisFHCNuMuFlux01,
+      kNuisFHCNuMuFlux02,
+      kNuisFHCNuMuFlux03,
+      kNuisFHCNuMuFlux04,
+      kNuisFHCNuMuFlux05,
+      kNuisFHCNuMuFlux06,
+      kNuisFHCNuMuFlux07,
+      kNuisFHCNuMuFlux08,
+      kNuisFHCNuMuFlux09,
+      kNuisFHCNuMuFlux10,
+      kNuisFHCNuMuFlux11,
+      kNuisFHCNuMuFlux12,
+      kNuisFHCNuMuFlux13,
+      kNuisFHCNuMuFlux14,
+      kNuisFHCNuMuFlux15,
+      kNuisFHCNuMuFlux16,
+      kNuisFHCNuMuFlux17,
+      kNuisFHCNuMuFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_rhc_numu_flux">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>numu</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuMuFlux00,
+      kNuisRHCNuMuFlux01,
+      kNuisRHCNuMuFlux02,
+      kNuisRHCNuMuFlux03,
+      kNuisRHCNuMuFlux04,
+      kNuisRHCNuMuFlux05,
+      kNuisRHCNuMuFlux06,
+      kNuisRHCNuMuFlux07,
+      kNuisRHCNuMuFlux08,
+      kNuisRHCNuMuFlux09,
+      kNuisRHCNuMuFlux10,
+      kNuisRHCNuMuFlux11,
+      kNuisRHCNuMuFlux12,
+      kNuisRHCNuMuFlux13,
+      kNuisRHCNuMuFlux14,
+      kNuisRHCNuMuFlux15,
+      kNuisRHCNuMuFlux16,
+      kNuisRHCNuMuFlux17,
+      kNuisRHCNuMuFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_fhc_nue_flux">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>nue</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuEFlux00,
+      kNuisFHCNuEFlux01,
+      kNuisFHCNuEFlux02,
+      kNuisFHCNuEFlux03,
+      kNuisFHCNuEFlux04,
+      kNuisFHCNuEFlux05,
+      kNuisFHCNuEFlux06
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_rhc_nue_flux">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>nue</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuEFlux00,
+      kNuisRHCNuEFlux01,
+      kNuisRHCNuEFlux02,
+      kNuisRHCNuEFlux03,
+      kNuisRHCNuEFlux04,
+      kNuisRHCNuEFlux05,
+      kNuisRHCNuEFlux06,
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_fhc_numubar_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>numubar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuMuBarFlux00,
+      kNuisFHCNuMuBarFlux01,
+      kNuisFHCNuMuBarFlux02,
+      kNuisFHCNuMuBarFlux03,
+      kNuisFHCNuMuBarFlux04,
+      kNuisFHCNuMuBarFlux05,
+      kNuisFHCNuMuBarFlux06,
+      kNuisFHCNuMuBarFlux07,
+      kNuisFHCNuMuBarFlux08,
+      kNuisFHCNuMuBarFlux09,
+      kNuisFHCNuMuBarFlux10,
+      kNuisFHCNuMuBarFlux11,
+      kNuisFHCNuMuBarFlux12,
+      kNuisFHCNuMuBarFlux13,
+      kNuisFHCNuMuBarFlux14,
+      kNuisFHCNuMuBarFlux15,
+      kNuisFHCNuMuBarFlux16,
+      kNuisFHCNuMuBarFlux17,
+      kNuisFHCNuMuBarFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_rhc_numubar_flux">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>numubar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuMuBarFlux00,
+      kNuisRHCNuMuBarFlux01,
+      kNuisRHCNuMuBarFlux02,
+      kNuisRHCNuMuBarFlux03,
+      kNuisRHCNuMuBarFlux04,
+      kNuisRHCNuMuBarFlux05,
+      kNuisRHCNuMuBarFlux06,
+      kNuisRHCNuMuBarFlux07,
+      kNuisRHCNuMuBarFlux08,
+      kNuisRHCNuMuBarFlux09,
+      kNuisRHCNuMuBarFlux10,
+      kNuisRHCNuMuBarFlux11,
+      kNuisRHCNuMuBarFlux12,
+      kNuisRHCNuMuBarFlux13,
+      kNuisRHCNuMuBarFlux14,
+      kNuisRHCNuMuBarFlux15,
+      kNuisRHCNuMuBarFlux16,
+      kNuisRHCNuMuBarFlux17,
+      kNuisRHCNuMuBarFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_fhc_nuebar_flux">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>nuebar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuEBarFlux00,
+      kNuisFHCNuEBarFlux01,
+      kNuisFHCNuEBarFlux02,
+      kNuisFHCNuEBarFlux03,
+      kNuisFHCNuEBarFlux04,
+      kNuisFHCNuEBarFlux05,
+      kNuisFHCNuEBarFlux06
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_rhc_nuebar_flux">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>nuebar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuEBarFlux00,
+      kNuisRHCNuEBarFlux01,
+      kNuisRHCNuEBarFlux02,
+      kNuisRHCNuEBarFlux03,
+      kNuisRHCNuEBarFlux04,
+      kNuisRHCNuEBarFlux05,
+      kNuisRHCNuEBarFlux06
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_fhc_numu_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>numu</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuMuFDFlux00,
+      kNuisFHCNuMuFDFlux01,
+      kNuisFHCNuMuFDFlux02,
+      kNuisFHCNuMuFDFlux03,
+      kNuisFHCNuMuFDFlux04,
+      kNuisFHCNuMuFDFlux05,
+      kNuisFHCNuMuFDFlux06,
+      kNuisFHCNuMuFDFlux07,
+      kNuisFHCNuMuFDFlux08,
+      kNuisFHCNuMuFDFlux09,
+      kNuisFHCNuMuFDFlux10,
+      kNuisFHCNuMuFDFlux11,
+      kNuisFHCNuMuFDFlux12,
+      kNuisFHCNuMuFDFlux13,
+      kNuisFHCNuMuFDFlux14,
+      kNuisFHCNuMuFDFlux15,
+      kNuisFHCNuMuFDFlux16,
+      kNuisFHCNuMuFDFlux17,
+      kNuisFHCNuMuFDFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_rhc_numu_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>numu</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuMuFDFlux00,
+      kNuisRHCNuMuFDFlux01,
+      kNuisRHCNuMuFDFlux02,
+      kNuisRHCNuMuFDFlux03,
+      kNuisRHCNuMuFDFlux04,
+      kNuisRHCNuMuFDFlux05,
+      kNuisRHCNuMuFDFlux06,
+      kNuisRHCNuMuFDFlux07,
+      kNuisRHCNuMuFDFlux08,
+      kNuisRHCNuMuFDFlux09,
+      kNuisRHCNuMuFDFlux10,
+      kNuisRHCNuMuFDFlux11,
+      kNuisRHCNuMuFDFlux12,
+      kNuisRHCNuMuFDFlux13,
+      kNuisRHCNuMuFDFlux14,
+      kNuisRHCNuMuFDFlux15,
+      kNuisRHCNuMuFDFlux16,
+      kNuisRHCNuMuFDFlux17,
+      kNuisRHCNuMuFDFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_fhc_nue_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>nue</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuEFDFlux00,
+      kNuisFHCNuEFDFlux01,
+      kNuisFHCNuEFDFlux02,
+      kNuisFHCNuEFDFlux03,
+      kNuisFHCNuEFDFlux04,
+      kNuisFHCNuEFDFlux05,
+      kNuisFHCNuEFDFlux06
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_rhc_nue_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>nue</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuEFDFlux00,
+      kNuisRHCNuEFDFlux01,
+      kNuisRHCNuEFDFlux02,
+      kNuisRHCNuEFDFlux03,
+      kNuisRHCNuEFDFlux04,
+      kNuisRHCNuEFDFlux05,
+      kNuisRHCNuEFDFlux06
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_fhc_numubar_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>numubar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuMuBarFDFlux00,
+      kNuisFHCNuMuBarFDFlux01,
+      kNuisFHCNuMuBarFDFlux02,
+      kNuisFHCNuMuBarFDFlux03,
+      kNuisFHCNuMuBarFDFlux04,
+      kNuisFHCNuMuBarFDFlux05,
+      kNuisFHCNuMuBarFDFlux06,
+      kNuisFHCNuMuBarFDFlux07,
+      kNuisFHCNuMuBarFDFlux08,
+      kNuisFHCNuMuBarFDFlux09,
+      kNuisFHCNuMuBarFDFlux10,
+      kNuisFHCNuMuBarFDFlux11,
+      kNuisFHCNuMuBarFDFlux12,
+      kNuisFHCNuMuBarFDFlux13,
+      kNuisFHCNuMuBarFDFlux14,
+      kNuisFHCNuMuBarFDFlux15,
+      kNuisFHCNuMuBarFDFlux16,
+      kNuisFHCNuMuBarFDFlux17,
+      kNuisFHCNuMuBarFDFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_rhc_numubar_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>numubar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuMuBarFDFlux00,
+      kNuisRHCNuMuBarFDFlux01,
+      kNuisRHCNuMuBarFDFlux02,
+      kNuisRHCNuMuBarFDFlux03,
+      kNuisRHCNuMuBarFDFlux04,
+      kNuisRHCNuMuBarFDFlux05,
+      kNuisRHCNuMuBarFDFlux06,
+      kNuisRHCNuMuBarFDFlux07,
+      kNuisRHCNuMuBarFDFlux08,
+      kNuisRHCNuMuBarFDFlux09,
+      kNuisRHCNuMuBarFDFlux10,
+      kNuisRHCNuMuBarFDFlux11,
+      kNuisRHCNuMuBarFDFlux12,
+      kNuisRHCNuMuBarFDFlux13,
+      kNuisRHCNuMuBarFDFlux14,
+      kNuisRHCNuMuBarFDFlux15,
+      kNuisRHCNuMuBarFDFlux16,
+      kNuisRHCNuMuBarFDFlux17,
+      kNuisRHCNuMuBarFDFlux18
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_fhc_nuebar_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>nuebar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisFHCNuEBarFDFlux00,
+      kNuisFHCNuEBarFDFlux01,
+      kNuisFHCNuEBarFDFlux02,
+      kNuisFHCNuEBarFDFlux03,
+      kNuisFHCNuEBarFDFlux04,
+      kNuisFHCNuEBarFDFlux05,
+      kNuisFHCNuEBarFDFlux06
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_rhc_nuebar_flux">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>nuebar</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisRHCNuEBarFDFlux00,
+      kNuisRHCNuEBarFDFlux01,
+      kNuisRHCNuEBarFDFlux02,
+      kNuisRHCNuEBarFDFlux03,
+      kNuisRHCNuEBarFDFlux04,
+      kNuisRHCNuEBarFDFlux05,
+      kNuisRHCNuEBarFDFlux06
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_fhc_numu_eff">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>numu</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffFHCnumuCC0pi1trk01,
+      kNuisEffFHCnumuCC0pi1trk02,
+      kNuisEffFHCnumuCC0pi1trk03,
+      kNuisEffFHCnumuCC0pi1trk04,
+      kNuisEffFHCnumuCC0pi1trk05,
+      kNuisEffFHCnumuCC0pi1trk06,
+      kNuisEffFHCnumuCC0pi1trk07,
+      kNuisEffFHCnumuCC0pi1trk08,
+      kNuisEffFHCnumuCC0pi1trk09,
+      kNuisEffFHCnumuCC0pi2trk01,
+      kNuisEffFHCnumuCC0pi2trk02,
+      kNuisEffFHCnumuCC0pi2trk03,
+      kNuisEffFHCnumuCC0pi2trk04,
+      kNuisEffFHCnumuCC0pi2trk05,
+      kNuisEffFHCnumuCC0pi2trk06,
+      kNuisEffFHCnumuCC0pi2trk07,
+      kNuisEffFHCnumuCC0pi2trk08,
+      kNuisEffFHCnumuCC0pi2trk09,
+      kNuisEffFHCnumuCC0piNtrk01,
+      kNuisEffFHCnumuCC0piNtrk02,
+      kNuisEffFHCnumuCC0piNtrk03,
+      kNuisEffFHCnumuCC0piNtrk04,
+      kNuisEffFHCnumuCC0piNtrk05,
+      kNuisEffFHCnumuCC0piNtrk06,
+      kNuisEffFHCnumuCC0piNtrk07,
+      kNuisEffFHCnumuCC0piNtrk08,
+      kNuisEffFHCnumuCC0piNtrk09,
+      kNuisEffFHCnumuCC0piNtrk10,
+      kNuisEffFHCnumuCC0piNtrk11,
+      kNuisEffFHCnumuCC0piNtrk12,
+      kNuisEffFHCnumuCC0piNtrk13,
+      kNuisEffFHCnumuCC0piNtrk14,
+      kNuisEffFHCnumuCC0piNtrk15,
+      kNuisEffFHCnumuCC1pi3trkDelta01,
+      kNuisEffFHCnumuCC1pi3trkDelta02,
+      kNuisEffFHCnumuCC1pi3trkDelta03,
+      kNuisEffFHCnumuCC1pi3trkDelta04,
+      kNuisEffFHCnumuCC1pi3trkDelta05,
+      kNuisEffFHCnumuCC1pi3trkDelta06,
+      kNuisEffFHCnumuCC1pi3trkDelta07,
+      kNuisEffFHCnumuCC1pi3trkDelta08,
+      kNuisEffFHCnumuCC1pi3trkDelta09,
+      kNuisEffFHCnumuCC1pi3trkDelta10,
+      kNuisEffFHCnumuCC1pi3trkDelta11,
+      kNuisEffFHCnumuCC1pi3trkDelta12,
+      kNuisEffFHCnumuCC1pi3trkDelta13,
+      kNuisEffFHCnumuCC1pi3trkDelta14,
+      kNuisEffFHCnumuCC1pi3trkDelta15,
+      kNuisEffFHCnumuCC1pic01,
+      kNuisEffFHCnumuCC1pic02,
+      kNuisEffFHCnumuCC1pic03,
+      kNuisEffFHCnumuCC1pic04,
+      kNuisEffFHCnumuCC1pic05,
+      kNuisEffFHCnumuCC1pic06,
+      kNuisEffFHCnumuCC1pic07,
+      kNuisEffFHCnumuCC1pic08,
+      kNuisEffFHCnumuCC1pic09,
+      kNuisEffFHCnumuCC1piz01,
+      kNuisEffFHCnumuCC1piz02,
+      kNuisEffFHCnumuCC1piz03,
+      kNuisEffFHCnumuCC1piz04,
+      kNuisEffFHCnumuCC1piz05,
+      kNuisEffFHCnumuCC1piz06,
+      kNuisEffFHCnumuCC1piz07,
+      kNuisEffFHCnumuCC1piz08,
+      kNuisEffFHCnumuCC1piz09,
+      kNuisEffFHCnumuCC1pic1piz01,
+      kNuisEffFHCnumuCC1pic1piz02,
+      kNuisEffFHCnumuCC1pic1piz03,
+      kNuisEffFHCnumuCC1pic1piz04,
+      kNuisEffFHCnumuCC1pic1piz05,
+      kNuisEffFHCnumuCC1pic1piz06,
+      kNuisEffFHCnumuCC1pic1piz07,
+      kNuisEffFHCnumuCC1pic1piz08,
+      kNuisEffFHCnumuCC1pic1piz09,
+      kNuisEffFHCnumuCCother01,
+      kNuisEffFHCnumuCCother02,
+      kNuisEffFHCnumuCCother03,
+      kNuisEffFHCnumuCCother04,
+      kNuisEffFHCnumuCCother05,
+      kNuisEffFHCnumuCCother06,
+      kNuisEffFHCnumuCCother07,
+      kNuisEffFHCnumuCCother08,
+      kNuisEffFHCnumuCCother09,
+      kNuisEffFHCnumuCCother10,
+      kNuisEffFHCnumuCCother11,
+      kNuisEffFHCnumuCCWS0pi01,
+      kNuisEffFHCnumuCCWS0pi02,
+      kNuisEffFHCnumuCCWS0pi03,
+      kNuisEffFHCnumuCCWS0pi04,
+      kNuisEffFHCnumuCCWS0pi05,
+      kNuisEffFHCnumuCCWS1pic01,
+      kNuisEffFHCnumuCCWS1pic02,
+      kNuisEffFHCnumuCCWS1pic03,
+      kNuisEffFHCnumuCCWS1pic04,
+      kNuisEffFHCnumuCCWS1pic05,
+      kNuisEffFHCnumuCCWS1pic06,
+      kNuisEffFHCnumuCCWS1pic07,
+      kNuisEffFHCnumuCCWS1pic08,
+      kNuisEffFHCnumuCCWS1piz01,
+      kNuisEffFHCnumuCCWS1piz02,
+      kNuisEffFHCnumuCCWS1piz03,
+      kNuisEffFHCnumuCCWSother01     
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_rhc_numu_eff">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>numu</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffRHCnumuCC0pi1trk01,
+      kNuisEffRHCnumuCC0pi1trk02,
+      kNuisEffRHCnumuCC0pi1trk03,
+      kNuisEffRHCnumuCC0pi1trk04,
+      kNuisEffRHCnumuCC0pi1trk05,
+      kNuisEffRHCnumuCC0pi1trk06,
+      kNuisEffRHCnumuCC0pi1trk07,
+      kNuisEffRHCnumuCC0pi1trk08,
+      kNuisEffRHCnumuCC0pi1trk09,
+      kNuisEffRHCnumuCC0pi2trk01,
+      kNuisEffRHCnumuCC0pi2trk02,
+      kNuisEffRHCnumuCC0pi2trk03,
+      kNuisEffRHCnumuCC0pi2trk04,
+      kNuisEffRHCnumuCC0pi2trk05,
+      kNuisEffRHCnumuCC0pi2trk06,
+      kNuisEffRHCnumuCC0pi2trk07,
+      kNuisEffRHCnumuCC0pi2trk08,
+      kNuisEffRHCnumuCC0pi2trk09,
+      kNuisEffRHCnumuCC0piNtrk01,
+      kNuisEffRHCnumuCC0piNtrk02,
+      kNuisEffRHCnumuCC0piNtrk03,
+      kNuisEffRHCnumuCC0piNtrk04,
+      kNuisEffRHCnumuCC0piNtrk05,
+      kNuisEffRHCnumuCC0piNtrk06,
+      kNuisEffRHCnumuCC0piNtrk07,
+      kNuisEffRHCnumuCC0piNtrk08,
+      kNuisEffRHCnumuCC0piNtrk09,
+      kNuisEffRHCnumuCC0piNtrk10,
+      kNuisEffRHCnumuCC0piNtrk11,
+      kNuisEffRHCnumuCC0piNtrk12,
+      kNuisEffRHCnumuCC0piNtrk13,
+      kNuisEffRHCnumuCC0piNtrk14,
+      kNuisEffRHCnumuCC0piNtrk15,
+      kNuisEffRHCnumuCC1pi3trkDelta01,
+      kNuisEffRHCnumuCC1pi3trkDelta02,
+      kNuisEffRHCnumuCC1pi3trkDelta03,
+      kNuisEffRHCnumuCC1pi3trkDelta04,
+      kNuisEffRHCnumuCC1pi3trkDelta05,
+      kNuisEffRHCnumuCC1pi3trkDelta06,
+      kNuisEffRHCnumuCC1pi3trkDelta07,
+      kNuisEffRHCnumuCC1pi3trkDelta08,
+      kNuisEffRHCnumuCC1pi3trkDelta09,
+      kNuisEffRHCnumuCC1pi3trkDelta10,
+      kNuisEffRHCnumuCC1pi3trkDelta11,
+      kNuisEffRHCnumuCC1pi3trkDelta12,
+      kNuisEffRHCnumuCC1pi3trkDelta13,
+      kNuisEffRHCnumuCC1pi3trkDelta14,
+      kNuisEffRHCnumuCC1pi3trkDelta15,
+      kNuisEffRHCnumuCC1pic01,
+      kNuisEffRHCnumuCC1pic02,
+      kNuisEffRHCnumuCC1pic03,
+      kNuisEffRHCnumuCC1pic04,
+      kNuisEffRHCnumuCC1pic05,
+      kNuisEffRHCnumuCC1pic06,
+      kNuisEffRHCnumuCC1pic07,
+      kNuisEffRHCnumuCC1pic08,
+      kNuisEffRHCnumuCC1pic09,
+      kNuisEffRHCnumuCC1piz01,
+      kNuisEffRHCnumuCC1piz02,
+      kNuisEffRHCnumuCC1piz03,
+      kNuisEffRHCnumuCC1piz04,
+      kNuisEffRHCnumuCC1piz05,
+      kNuisEffRHCnumuCC1piz06,
+      kNuisEffRHCnumuCC1piz07,
+      kNuisEffRHCnumuCC1piz08,
+      kNuisEffRHCnumuCC1piz09,
+      kNuisEffRHCnumuCC1pic1piz01,
+      kNuisEffRHCnumuCC1pic1piz02,
+      kNuisEffRHCnumuCC1pic1piz03,
+      kNuisEffRHCnumuCC1pic1piz04,
+      kNuisEffRHCnumuCC1pic1piz05,
+      kNuisEffRHCnumuCC1pic1piz06,
+      kNuisEffRHCnumuCC1pic1piz07,
+      kNuisEffRHCnumuCC1pic1piz08,
+      kNuisEffRHCnumuCC1pic1piz09,
+      kNuisEffRHCnumuCCother01,
+      kNuisEffRHCnumuCCother02,
+      kNuisEffRHCnumuCCother03,
+      kNuisEffRHCnumuCCother04,
+      kNuisEffRHCnumuCCother05,
+      kNuisEffRHCnumuCCother06,
+      kNuisEffRHCnumuCCother07,
+      kNuisEffRHCnumuCCother08,
+      kNuisEffRHCnumuCCother09,
+      kNuisEffRHCnumuCCother10,
+      kNuisEffRHCnumuCCother11,
+      kNuisEffRHCnumuCCWS0pi01,
+      kNuisEffRHCnumuCCWS0pi02,
+      kNuisEffRHCnumuCCWS0pi03,
+      kNuisEffRHCnumuCCWS0pi04,
+      kNuisEffRHCnumuCCWS0pi05,
+      kNuisEffRHCnumuCCWS1pic01,
+      kNuisEffRHCnumuCCWS1pic02,
+      kNuisEffRHCnumuCCWS1pic03,
+      kNuisEffRHCnumuCCWS1pic04,
+      kNuisEffRHCnumuCCWS1pic05,
+      kNuisEffRHCnumuCCWS1pic06,
+      kNuisEffRHCnumuCCWS1pic07,
+      kNuisEffRHCnumuCCWS1pic08,
+      kNuisEffRHCnumuCCWS1piz01,
+      kNuisEffRHCnumuCCWS1piz02,
+      kNuisEffRHCnumuCCWS1piz03,
+      kNuisEffRHCnumuCCWSother01
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_fhc_nue_eff">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>nue</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffFHCnueCC0pi01,
+      kNuisEffFHCnueCC0pi02,
+      kNuisEffFHCnueCC0pi03,
+      kNuisEffFHCnueCC0pi04,
+      kNuisEffFHCnueCC0pi05,
+      kNuisEffFHCnueCC0pi06,
+      kNuisEffFHCnueCC0pi07,
+      kNuisEffFHCnueCC0pi08,
+      kNuisEffFHCnueCC0pi09,
+      kNuisEffFHCnueCC1pic01,
+      kNuisEffFHCnueCC1pic02,
+      kNuisEffFHCnueCC1pic03,
+      kNuisEffFHCnueCC1pic04,
+      kNuisEffFHCnueCC1pic05,
+      kNuisEffFHCnueCC1pic06,
+      kNuisEffFHCnueCC1pic07,
+      kNuisEffFHCnueCC1pic08,
+      kNuisEffFHCnueCC1pic09,
+      kNuisEffFHCnueCC1piz01,
+      kNuisEffFHCnueCC1piz02,
+      kNuisEffFHCnueCC1piz03,
+      kNuisEffFHCnueCC1piz04,
+      kNuisEffFHCnueCC1piz05,
+      kNuisEffFHCnueCC1piz06,
+      kNuisEffFHCnueCC1piz07,
+      kNuisEffFHCnueCC1piz08,
+      kNuisEffFHCnueCC1piz09,
+      kNuisEffFHCnueCCother01,
+      kNuisEffFHCnueCCother02,
+      kNuisEffFHCnueCCother03,
+      kNuisEffFHCnueCCother04,
+      kNuisEffFHCnueCCother05,
+      kNuisEffFHCnueCCother06,
+      kNuisEffFHCnueCCother07,
+      kNuisEffFHCnueCCother08,
+      kNuisEffFHCnueCCother09,
+      kNuisEffFHCnueCCother10,
+      kNuisEffFHCnueCCother11,
+      kNuisEffFHCnueCCWS01,
+      kNuisEffFHCnueCCWS02
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_rhc_nue_eff">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>nue</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffRHCnueCC0pi01,
+      kNuisEffRHCnueCC0pi02,
+      kNuisEffRHCnueCC0pi03,
+      kNuisEffRHCnueCC0pi04,
+      kNuisEffRHCnueCC0pi05,
+      kNuisEffRHCnueCC0pi06,
+      kNuisEffRHCnueCC0pi07,
+      kNuisEffRHCnueCC0pi08,
+      kNuisEffRHCnueCC0pi09,
+      kNuisEffRHCnueCC1pic01,
+      kNuisEffRHCnueCC1pic02,
+      kNuisEffRHCnueCC1pic03,
+      kNuisEffRHCnueCC1pic04,
+      kNuisEffRHCnueCC1pic05,
+      kNuisEffRHCnueCC1pic06,
+      kNuisEffRHCnueCC1pic07,
+      kNuisEffRHCnueCC1pic08,
+      kNuisEffRHCnueCC1pic09,
+      kNuisEffRHCnueCC1piz01,
+      kNuisEffRHCnueCC1piz02,
+      kNuisEffRHCnueCC1piz03,
+      kNuisEffRHCnueCC1piz04,
+      kNuisEffRHCnueCC1piz05,
+      kNuisEffRHCnueCC1piz06,
+      kNuisEffRHCnueCC1piz07,
+      kNuisEffRHCnueCC1piz08,
+      kNuisEffRHCnueCC1piz09,
+      kNuisEffRHCnueCCother01,
+      kNuisEffRHCnueCCother02,
+      kNuisEffRHCnueCCother03,
+      kNuisEffRHCnueCCother04,
+      kNuisEffRHCnueCCother05,
+      kNuisEffRHCnueCCother06,
+      kNuisEffRHCnueCCother07,
+      kNuisEffRHCnueCCother08,
+      kNuisEffRHCnueCCother09,
+      kNuisEffRHCnueCCother10,
+      kNuisEffRHCnueCCother11,
+      kNuisEffRHCnueCCWS01,
+      kNuisEffRHCnueCCWS02
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_fhc_nc_eff">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_fhc</beam_mask>
+    <flavour_mask>nc</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffFHCNC0pi01,
+      kNuisEffFHCNC0pi02,
+      kNuisEffFHCNC0pi03,
+      kNuisEffFHCNC1pic01,
+      kNuisEffFHCNC1pic02,
+      kNuisEffFHCNC1pic03,
+      kNuisEffFHCNC1piz01,
+      kNuisEffFHCNC1piz02,
+      kNuisEffFHCNC1piz03,
+      kNuisEffFHCNCother01,
+      kNuisEffFHCNCother02,
+      kNuisEffFHCNCother03,
+      kNuisEffFHCNeutrinoElec,
+      kNuisEffFHCIMD
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_nd_rhc_nc_eff">
+
+    <detector_mask>dune_nd</detector_mask>
+    <beam_mask>lbnf_rhc</beam_mask>
+    <flavour_mask>nc</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffRHCNC0pi01,
+      kNuisEffRHCNC0pi02,
+      kNuisEffRHCNC0pi03,
+      kNuisEffRHCNC1pic01,
+      kNuisEffRHCNC1pic02,
+      kNuisEffRHCNC1pic03,
+      kNuisEffRHCNC1piz01,
+      kNuisEffRHCNC1piz02,
+      kNuisEffRHCNC1piz03,
+      kNuisEffRHCNCother01,
+      kNuisEffRHCNCother02,
+      kNuisEffRHCNCother03,
+      kNuisEffRHCNeutrinoElec,
+      kNuisEffRHCIMD
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_numu_eff">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <flavour_mask>numu</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffFDNuMuLikeCCHigh,
+      kNuisEffFDNuMuLikeCCLow,
+      kNuisEffNuMuCC0pi1trk,
+      kNuisEffNuMuCC0pi2trk,
+      kNuisEffNuMuCC1piC,
+      kNuisEffNuMuCC1pi0,
+      kNuisEffNuMuCC1piC1pi0,
+      kNuisEffNuMuCCoth
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_nue_eff">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <flavour_mask>nue</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffFDNuELikeCCHigh,
+      kNuisEffFDNuELikeCCLow
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_fd1ph_nc_eff">
+
+    <detector_mask>dune_fd1ph</detector_mask>
+    <flavour_mask>nc</flavour_mask>
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisEffNuECC,
+      kNuisEffNuMuCCWS,
+      kNuisEffNC
+
+    </param_list>
+
+  </rule>
+
+  <rule name="dune_int">
+
+    <selection_mask>all</selection_mask>
+    <reactype_mask>all</reactype_mask>
+    <nuctarget_mask>all</nuctarget_mask>
+
+    <param_list>
+
+      kNuisIntNuCCQE1,
+      kNuisIntNuCCQE2,
+      kNuisIntNuCCQE3,
+      kNuisIntNuBarCCQE1,
+      kNuisIntNuBarCCQE2,
+      kNuisIntNuBarCCQE3,
+      kNuisIntNuCCMEC,
+      kNuisIntNuBarCCMEC,
+      kNuisIntNuCC1piz1,
+      kNuisIntNuCC1piz2,
+      kNuisIntNuCC1piz3,
+      kNuisIntNuCC1pic1,
+      kNuisIntNuCC1pic2,
+      kNuisIntNuCC1pic3,
+      kNuisIntNuBarCC1piz1,
+      kNuisIntNuBarCC1piz2,
+      kNuisIntNuBarCC1piz3,
+      kNuisIntNuBarCC1pic1,
+      kNuisIntNuBarCC1pic2,
+      kNuisIntNuBarCC1pic3,
+      kNuisIntNuCC2Pi,
+      kNuisIntNuBarCC2Pi,
+      kNuisIntNuDIS1,
+      kNuisIntNuDIS2,
+      kNuisIntNuDIS3,
+      kNuisIntNuBarDIS1,
+      kNuisIntNuBarDIS2,
+      kNuisIntNuBarDIS3,
+      kNuisIntNormNuCoherent,
+      kNuisIntNormNuBarCoherent,
+      kNuisIntNuNormNC,
+      kNuisIntNuBarNormNC,
+      kNuisIntNormNuMuToNuE,
+      kNuisIntNormNuMuBarToNuEBar,
+      kNuisIntPiMeanFreePath,
+      kNuisIntNucMeanFreePath,
+      kNuisIntFracPiChargeExchange,
+      kNuisIntFracPiInelastic,
+      kNuisIntFracPiAbsorb,
+      kNuisIntFracPiProduction,
+      kNuisIntFracNucChargeExchange,
+      kNuisIntFracNucInelastic,
+      kNuisIntFracNucAbsorb,
+      kNuisIntFracNucProduction,
+      kNuisIntTarget
+
+    </param_list>
+
+  </rule>
+
+</analysis>
+

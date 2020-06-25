@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+External Tuning Histograms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<tuning>
+    <tune name="flux_fhc_numu">
+        <filename>  official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_numu  </objname>
+        <objtype>   TH1D                  </objtype>
+        <kinevars>  Etrue                 </kinevars>
+        <apply_to>
+            <detector>  allt2k  </detector>
+            <flav_init> numu    </flav_init>
+            <flav_final>nu any  </flav_final>
+            <beam>      FHC     </beam>
+        </apply_to>
+    </tune>
+
+    <tune name="flux_fhc_numubar">
+        <filename>  official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_numub   </objname>
+        <objtype>   TH1D                    </objtype>
+        <kinevars>  Etrue                   </kinevars>
+        <apply_to>
+            <detector>  allt2k   </detector>
+            <flav_init> numubar  </flav_init>
+            <flav_final>nubar any</flav_final>
+            <beam>      FHC      </beam>
+        </apply_to>
+    </tune>
+
+    <tune name="flux_fhc_nue">
+        <filename>  official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_nue  </objname>
+        <objtype>   TH1D                 </objtype>
+        <kinevars>  Etrue                </kinevars>
+        <apply_to>
+            <detector>  allt2k  </detector>
+            <flav_init> nue     </flav_init>
+            <flav_final>nu any  </flav_final>
+            <beam>      FHC     </beam>
+        </apply_to>
+    </tune>
+
+    <tune name="flux_fhc_nuebar">
+        <filename>  official/2018/flux/tuned13av3/run1-9a_v1/sk_tuned13av3_13anom_run1-9a_numode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_nueb  </objname>
+        <objtype>   TH1D                  </objtype>
+        <kinevars>  Etrue                 </kinevars>
+        <apply_to>
+            <detector>  allt2k  </detector>
+            <flav_init> nuebar  </flav_init>
+            <flav_final>nubar any</flav_final>
+            <beam>      FHC     </beam>
+        </apply_to>
+    </tune>
+
+    <tune name="flux_rhc_numu">
+        <filename>  official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_numu  </objname>
+        <objtype>   TH1D                  </objtype>
+        <kinevars>  Etrue                 </kinevars>
+        <apply_to>
+            <detector>  allt2k  </detector>
+            <flav_init> numu    </flav_init>
+            <flav_final>nu any  </flav_final>
+            <beam>      RHC     </beam>
+        </apply_to>
+    </tune>
+
+    <tune name="flux_rhc_numubar">
+        <filename>  official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_numub  </objname>
+        <objtype>   TH1D                   </objtype>
+        <kinevars>  Etrue                  </kinevars>
+        <apply_to>
+            <detector>  allt2k   </detector>
+            <flav_init> numubar  </flav_init>
+            <flav_final>nubar any</flav_final>
+            <beam>      RHC      </beam>
+        </apply_to>
+    </tune>
+
+    <tune name="flux_rhc_nue">
+        <filename>  official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_nue  </objname>
+        <objtype>   TH1D                 </objtype>
+        <kinevars>  Etrue                </kinevars>
+        <apply_to>
+            <detector>  allt2k  </detector>
+            <flav_init> nue     </flav_init>
+            <flav_final>nu any  </flav_final>
+            <beam>      RHC     </beam>
+        </apply_to>
+    </tune>
+
+    <tune name="flux_rhc_nuebar">
+        <filename>  official/2018/flux/tuned13av3/run5c-9d_v1/sk_tuned13av3_13anom_run5c-9d_antinumode_fine.root </filename>
+        <objname>   enu_sk_tuned13a_nueb  </objname>
+        <objtype>   TH1D                  </objtype>
+        <kinevars>  Etrue                 </kinevars>
+        <apply_to>
+            <detector>  allt2k  </detector>
+            <flav_init> nuebar  </flav_init>
+            <flav_final>nubar any</flav_final>
+            <beam>      RHC     </beam>
+        </apply_to>
+    </tune>
+</tuning>
+
+
