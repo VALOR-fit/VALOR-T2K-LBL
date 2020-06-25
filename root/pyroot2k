@@ -1,9 +1,0 @@
-#!/bin/sh
-if hash ipython 2>/dev/null; then
-    mypy=ipython
-else
-    mypy=python
-fi
-
-"$mypy" -i $T2KOSCANA/root/python-root2k.py $*
-

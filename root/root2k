@@ -1,3 +1,0 @@
-#!/bin/sh
-
-root -l $T2KOSCANA/root/root2k.C $*
