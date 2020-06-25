@@ -1,9 +1,0 @@
-# argument                         |   type         |  require?   |   default
-# .....................................................................................................
-input                              |   string       |  mandatory  |   -
-output                             |   string       |  optional   |  valor_fd_caf_minidst.root 
-disable-checks                     |   boolean      |  optional   |  false
-mesg-thresholds                    |   string       |  optional   |  verbosity.xml
-disable-extra-cuts                 |   boolean      |  optional   |  false
-split-sample-by-res                |   boolean      |  optional   |  false
-nc-factor                          |   double       |  optional   |  1.
