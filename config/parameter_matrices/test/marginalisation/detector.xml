@@ -1,6 +1,0 @@
-<systematic_list name="dummy_detector">
-  <parameter> f_eff_fhc_numucc_0pi_1trk_01 </parameter>
-  <parameter> f_eff_fhc_numucc_0pi_1trk_02 </parameter>
-  <parameter> f_eff_rhc_numucc_0pi_1trk_01 </parameter>
-  <parameter> f_eff_rhc_numucc_0pi_1trk_02 </parameter>
-</systematic_list>

@@ -57,23 +57,6 @@ ifeq ("false",$(is_cln))
   VALOR_APP_LIBRARIES = $(shell valor_expt-config --libs)
 endif
 
-
-#-------------------------------------------------------------------
-#                      SBN analysis
-#-------------------------------------------------------------------
-ifeq (1,$(SBNANALYSIS_ENABLED))
-  # This is wrong but it'll work until we have a proper directory to get these from
-  SBNANALYSIS_INC = -I$(SBN_ANALYSIS_DIR)/../ 
-  SBNANALYSIS_LIB = -lsbnanalysis_Event -L$(SBN_LIB_DIR)
-
-  LARSOFT_INCLUDES += -I/cvmfs/larsoft.opensciencegrid.org/products/canvas/v3_03_03/include
-  LARSOFT_INCLUDES += -I$(CETLIB_INC)
-  LARSOFT_INCLUDES += -I$(CETLIB_EXCEPT_INC)
-
-  LARSOFT_LIBRARIES += -L$(CANVAS_LIB)
-  LARSOFT_LIBRARIES += -L$(CETLIB_LIB)
-endif
-
 #-------------------------------------------------------------------
 #                            SUMMING-UP
 #-------------------------------------------------------------------

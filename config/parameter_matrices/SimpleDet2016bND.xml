@@ -1,9 +1,0 @@
-<systematic_list name="SimpleDet2016bND">
-  <parameter> f_eff_numucc0pi1trk  </parameter>
-  <parameter> f_eff_numucc0pi2trk  </parameter>
-  <parameter> f_eff_numucc1pic     </parameter>
-  <parameter> f_eff_numucc1pi0     </parameter>
-  <parameter> f_eff_numuccoth      </parameter>
-  <parameter> f_eff_nuecc          </parameter>
-  <parameter> f_eff_nc             </parameter>
-</systematic_list>

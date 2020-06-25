@@ -1,8 +1,0 @@
-# argument                         |   type         |  require?   |   default
-# .....................................................................................................
-input                              |   string       |  mandatory  |   -
-output                             |   string       |  mandatory  |  valor_fd_minidst.root
-sample                             |   string       |  mandatory  |   -
-disable-checks                     |   boolean      |  optional   |  false
-mesg-thresholds                    |   string       |  optional   |  verbosity.xml
-beam                               |   string       |  mandatory  | -
