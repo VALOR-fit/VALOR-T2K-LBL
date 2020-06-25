@@ -89,6 +89,8 @@ def get_axis_labels(fit, is_normal, mach3_present):
             return ("sin^{2}#theta_{23}", "#Deltam^{2}_{32} (eV^{2} / c^{4})")
         else:
             return ("sin^{2}#theta_{23}", "#Deltam^{2}_{32} (eV^{2}  / c^{4})")
+    elif fit == "main":
+        return ("sin^{2}#theta_{23}", "#Delta#chi^{2}")
 
 def get_common_axis_range(m_dchisq, p_dchisq, v_dchisq):
     x_min = -sys.float_info.max
@@ -955,6 +957,7 @@ def compare(fit, is_normal, mach3_filename, ptheta_filename, valor_filename, plo
             ymin = -(axis_histo.GetYaxis().GetXmax() + 7.53E-5)
             ymax = -(axis_histo.GetYaxis().GetXmin() + 7.53E-5)
             axis_histo = ROOT.TH2D("dummy", "", nx, xmin, xmax, ny, ymin, ymax)
+
         format_plot(axis_histo)
         axis_histo.GetXaxis().SetTitle(x_axis_label)
         axis_histo.GetYaxis().SetTitle(y_axis_label)
@@ -994,6 +997,7 @@ if __name__ == "__main__":
     group.add_argument("--dmsq", action="store_true", help="1D dmsq fit")
     group.add_argument("--appearance", action="store_true", help="Appearance fit")
     group.add_argument("--disappearance", action="store_true", help="Disappearance fit")
+    group.add_argument("--main", action="store_true", help="dcp v th23 fit")
     parser.add_argument("--fc", action="store_true", help="Display FC critical values")
     parser.add_argument("--global_min", action="store_true", help="Use global hierarchy minima")
     args = parser.parse_args()
@@ -1013,8 +1017,10 @@ if __name__ == "__main__":
             fit = "dmsq"
         elif args.appearance:
             fit = "app"
-        else:
+        elif args.disappearance:
             fit = "disapp"
+        else:
+            fit = "main"
         if args.nova is None:
             compare(fit, is_normal, args.mach3, args.ptheta, args.valor, args.fc, args.global_min, args.output)
         else:

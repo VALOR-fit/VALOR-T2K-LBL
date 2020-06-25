@@ -1,0 +1,3936 @@
+<?xml version="1.0"?>
+<param_list name="T2K_Run1-9">
+  <param>
+    <name>
+      <simple>  flux_numu00  </simple>
+      <long>  BANFF  0; SK numu flux; 0.0 - 0.4 GeV  </long>
+      <rootex>  f_{0; t, r}^{banff}  </rootex>
+      <tex>  BANFF  0, SK numu flux, 0.0 - 0.4 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 0.4  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu01  </simple>
+      <long>  BANFF  1; SK numu flux; 0.4 - 0.5 GeV  </long>
+      <rootex>  f_{1; t, r}^{banff}  </rootex>
+      <tex>  BANFF  1, SK numu flux, 0.4 - 0.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.4, 0.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu02  </simple>
+      <long>  BANFF  2; SK numu flux; 0.5 - 0.6 GeV  </long>
+      <rootex>  f_{2; t, r}^{banff}  </rootex>
+      <tex>  BANFF  2, SK numu flux, 0.5 - 0.6 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.5, 0.6  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu03  </simple>
+      <long>  BANFF  3; SK numu flux; 0.6 - 0.7 GeV  </long>
+      <rootex>  f_{3; t, r}^{banff}  </rootex>
+      <tex>  BANFF  3, SK numu flux, 0.6 - 0.7 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.6, 0.7  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu04  </simple>
+      <long>  BANFF  4; SK numu flux; 0.7 - 1.0 GeV  </long>
+      <rootex>  f_{4; t, r}^{banff}  </rootex>
+      <tex>  BANFF  4, SK numu flux, 0.7 - 1.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.7, 1.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu05  </simple>
+      <long>  BANFF  5; SK numu flux; 1.0 - 1.5 GeV  </long>
+      <rootex>  f_{5; t, r}^{banff}  </rootex>
+      <tex>  BANFF  5, SK numu flux, 1.0 - 1.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.0, 1.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu06  </simple>
+      <long>  BANFF  6; SK numu flux; 1.5 - 2.5 GeV  </long>
+      <rootex>  f_{6; t, r}^{banff}  </rootex>
+      <tex>  BANFF  6, SK numu flux, 1.5 - 2.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.5, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu07  </simple>
+      <long>  BANFF  7; SK numu flux; 2.5 - 3.5 GeV  </long>
+      <rootex>  f_{7; t, r}^{banff}  </rootex>
+      <tex>  BANFF  7, SK numu flux, 2.5 - 3.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 3.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu08  </simple>
+      <long>  BANFF  8; SK numu flux; 3.5 - 5.0 GeV  </long>
+      <rootex>  f_{8; t, r}^{banff}  </rootex>
+      <tex>  BANFF  8, SK numu flux, 3.5 - 5.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  3.5, 5.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu09  </simple>
+      <long>  BANFF  9; SK numu flux; 5.0 - 7.0 GeV  </long>
+      <rootex>  f_{9; t, r}^{banff}  </rootex>
+      <tex>  BANFF  9, SK numu flux, 5.0 - 7.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  5.0, 7.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu10  </simple>
+      <long>  BANFF 10; SK numu flux; 7.0 - 30.0 GeV  </long>
+      <rootex>  f_{10; t, r}^{banff}  </rootex>
+      <tex>  BANFF 10, SK numu flux, 7.0 - 30.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  7.0, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar00  </simple>
+      <long>  BANFF 11; SK numubar flux; 0.0 - 0.7 GeV  </long>
+      <rootex>  f_{11; t, r}^{banff}  </rootex>
+      <tex>  BANFF 11, SK numubar flux, 0.0 - 0.7 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 0.7  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar01  </simple>
+      <long>  BANFF 12; SK numubar flux; 0.7 - 1.0 GeV  </long>
+      <rootex>  f_{12; t, r}^{banff}  </rootex>
+      <tex>  BANFF 12, SK numubar flux, 0.7 - 1.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.7, 1.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar02  </simple>
+      <long>  BANFF 13; SK numubar flux; 1.0 - 1.5 GeV  </long>
+      <rootex>  f_{13; t, r}^{banff}  </rootex>
+      <tex>  BANFF 13, SK numubar flux, 1.0 - 1.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.0, 1.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar03  </simple>
+      <long>  BANFF 14; SK numubar flux; 1.5 - 2.5 GeV  </long>
+      <rootex>  f_{14; t, r}^{banff}  </rootex>
+      <tex>  BANFF 14, SK numubar flux, 1.5 - 2.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.5, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar04  </simple>
+      <long>  BANFF 15; SK numubar flux; 2.5 - 30.0 GeV  </long>
+      <rootex>  f_{15; t, r}^{banff}  </rootex>
+      <tex>  BANFF 15, SK numubar flux, 2.5 - 30.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue00  </simple>
+      <long>  BANFF 16; SK nue flux; 0.0 - 0.5 GeV  </long>
+      <rootex>  f_{16; t, r}^{banff}  </rootex>
+      <tex>  BANFF 16, SK nue flux, 0.0 - 0.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 0.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue01  </simple>
+      <long>  BANFF 17; SK nue flux; 0.5 - 0.7 GeV  </long>
+      <rootex>  f_{17; t, r}^{banff}  </rootex>
+      <tex>  BANFF 17, SK nue flux, 0.5 - 0.7 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.5, 0.7  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue02  </simple>
+      <long>  BANFF 18; SK nue flux; 0.7 - 0.8 GeV  </long>
+      <rootex>  f_{18; t, r}^{banff}  </rootex>
+      <tex>  BANFF 18, SK nue flux, 0.7 - 0.8 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.7, 0.8  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue03  </simple>
+      <long>  BANFF 19; SK nue flux; 0.8 - 1.5 GeV  </long>
+      <rootex>  f_{19; t, r}^{banff}  </rootex>
+      <tex>  BANFF 19, SK nue flux, 0.8 - 1.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.8, 1.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue04  </simple>
+      <long>  BANFF 20; SK nue flux; 1.5 - 2.5 GeV  </long>
+      <rootex>  f_{20; t, r}^{banff}  </rootex>
+      <tex>  BANFF 20, SK nue flux, 1.5 - 2.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.5, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue05  </simple>
+      <long>  BANFF 21; SK nue flux; 2.5 - 4.0 GeV  </long>
+      <rootex>  f_{21; t, r}^{banff}  </rootex>
+      <tex>  BANFF 21, SK nue flux, 2.5 - 4.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 4.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue06  </simple>
+      <long>  BANFF 22; SK nue flux; 4.0 - 30.0 GeV  </long>
+      <rootex>  f_{22; t, r}^{banff}  </rootex>
+      <tex>  BANFF 22, SK nue flux, 4.0 - 30.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  4.0, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar00  </simple>
+      <long>  BANFF 23; SK nuebar flux; 0.0 - 2.5 GeV  </long>
+      <rootex>  f_{23; t, r}^{banff}  </rootex>
+      <tex>  BANFF 23, SK nuebar flux, 0.0 - 2.5 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar01  </simple>
+      <long>  BANFF 24; SK nuebar flux; 2.5 - 30.0 GeV  </long>
+      <rootex>  f_{24; t, r}^{banff}  </rootex>
+      <tex>  BANFF 24, SK nuebar flux, 2.5 - 30.0 GeV  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu00_rhc  </simple>
+      <long>  BANFF  0; SK numu flux; 0.0 - 0.7 GeV; RHC  </long>
+      <rootex>  f_{0; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  0, SK numu flux, 0.0 - 0.7 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 0.7  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu01_rhc  </simple>
+      <long>  BANFF  1; SK numu flux; 0.7 - 1.0 GeV; RHC  </long>
+      <rootex>  f_{1; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  1, SK numu flux, 0.7 - 1.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.7, 1.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu02_rhc  </simple>
+      <long>  BANFF  2; SK numu flux; 1.0 - 1.5 GeV; RHC  </long>
+      <rootex>  f_{2; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  2, SK numu flux, 1.0 - 1.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.0, 1.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu03_rhc  </simple>
+      <long>  BANFF  3; SK numu flux; 1.5 - 2.5 GeV; RHC  </long>
+      <rootex>  f_{3; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  3, SK numu flux, 1.5 - 2.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.5, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numu04_rhc  </simple>
+      <long>  BANFF  4; SK numu flux; 2.5 - 30.0 GeV; RHC  </long>
+      <rootex>  f_{4; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  4, SK numu flux, 2.5 - 30.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numu  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar00_rhc  </simple>
+      <long>  BANFF  5; SK numubar flux; 0.0 - 0.4 GeV; RHC  </long>
+      <rootex>  f_{5; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  5, SK numubar flux, 0.0 - 0.4 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 0.4  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar01_rhc  </simple>
+      <long>  BANFF  6; SK numubar flux; 0.4 - 0.5 GeV; RHC  </long>
+      <rootex>  f_{6; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  6, SK numubar flux, 0.4 - 0.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.4, 0.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar02_rhc  </simple>
+      <long>  BANFF  7; SK numubar flux; 0.5 - 0.6 GeV; RHC  </long>
+      <rootex>  f_{7; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  7, SK numubar flux, 0.5 - 0.6 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.5, 0.6  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar03_rhc  </simple>
+      <long>  BANFF  8; SK numubar flux; 0.6 - 0.7 GeV; RHC  </long>
+      <rootex>  f_{8; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  8, SK numubar flux, 0.6 - 0.7 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.6, 0.7  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar04_rhc  </simple>
+      <long>  BANFF  9; SK numubar flux; 0.7 - 1.0 GeV; RHC  </long>
+      <rootex>  f_{9; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF  9, SK numubar flux, 0.7 - 1.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.7, 1.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar05_rhc  </simple>
+      <long>  BANFF 10; SK numubar flux; 1.0 - 1.5 GeV; RHC  </long>
+      <rootex>  f_{10; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 10, SK numubar flux, 1.0 - 1.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.0, 1.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar06_rhc  </simple>
+      <long>  BANFF 11; SK numubar flux; 1.5 - 2.5 GeV; RHC  </long>
+      <rootex>  f_{11; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 11, SK numubar flux, 1.5 - 2.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.5, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar07_rhc  </simple>
+      <long>  BANFF 12; SK numubar flux; 2.5 - 3.5 GeV; RHC  </long>
+      <rootex>  f_{12; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 12, SK numubar flux, 2.5 - 3.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 3.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar08_rhc  </simple>
+      <long>  BANFF 13; SK numubar flux; 3.5 - 5.0 GeV; RHC  </long>
+      <rootex>  f_{13; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 13, SK numubar flux, 3.5 - 5.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  3.5, 5.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar09_rhc  </simple>
+      <long>  BANFF 14; SK numubar flux; 5.0 - 7.0 GeV; RHC  </long>
+      <rootex>  f_{14; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 14, SK numubar flux, 5.0 - 7.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  5.0, 7.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_numubar10_rhc  </simple>
+      <long>  BANFF 15; SK numubar flux; 7.0 - 30.0 GeV; RHC  </long>
+      <rootex>  f_{15; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 15, SK numubar flux, 7.0 - 30.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  7.0, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  numubar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue00_rhc  </simple>
+      <long>  BANFF 16; SK nue flux; 0.0 - 2.5 GeV; RHC  </long>
+      <rootex>  f_{16; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 16, SK nue flux, 0.0 - 2.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nue01_rhc  </simple>
+      <long>  BANFF 17; SK nue flux; 2.5 - 30.0 GeV; RHC  </long>
+      <rootex>  f_{17; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 17, SK nue flux, 2.5 - 30.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar00_rhc  </simple>
+      <long>  BANFF 18; SK nuebar flux; 0.0 - 0.5 GeV; RHC  </long>
+      <rootex>  f_{18; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 18, SK nuebar flux, 0.0 - 0.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.0, 0.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar01_rhc  </simple>
+      <long>  BANFF 19; SK nuebar flux; 0.5 - 0.7 GeV; RHC  </long>
+      <rootex>  f_{19; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 19, SK nuebar flux, 0.5 - 0.7 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.5, 0.7  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar02_rhc  </simple>
+      <long>  BANFF 20; SK nuebar flux; 0.7 - 0.8 GeV; RHC  </long>
+      <rootex>  f_{20; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 20, SK nuebar flux, 0.7 - 0.8 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.7, 0.8  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar03_rhc  </simple>
+      <long>  BANFF 21; SK nuebar flux; 0.8 - 1.5 GeV; RHC  </long>
+      <rootex>  f_{21; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 21, SK nuebar flux, 0.8 - 1.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0.8, 1.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar04_rhc  </simple>
+      <long>  BANFF 22; SK nuebar flux; 1.5 - 2.5 GeV; RHC  </long>
+      <rootex>  f_{22; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 22, SK nuebar flux, 1.5 - 2.5 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  1.5, 2.5  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar05_rhc  </simple>
+      <long>  BANFF 23; SK nuebar flux; 2.5 - 4.0 GeV; RHC  </long>
+      <rootex>  f_{23; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 23, SK nuebar flux, 2.5 - 4.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  2.5, 4.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  flux_nuebar06_rhc  </simple>
+      <long>  BANFF 24; SK nuebar flux; 4.0 - 30.0 GeV; RHC  </long>
+      <rootex>  f_{24; t, r}^{banff} RHC  </rootex>
+      <tex>  BANFF 24, SK nuebar flux, 4.0 - 30.0 GeV; RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  4.0, 30.0  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  flux  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  2p2h_norm_nu  </simple>
+      <long>  BANFF; Norm; 2p2h  </long>
+      <rootex>  f_{Norm_{2p2h}}^{banff}  </rootex>
+      <tex>  BANFF; Norm; 2p2h  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC 2p2h  </reac_type>
+      <flav>  nu any  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  CA5  </simple>
+      <long>  BANFF; CA5 RES  </long>
+      <rootex>  f_{C^{A}_{5}}^{banff}  </rootex>
+      <tex>  BANFF; CA5 RES  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  all 1pi  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  ISO_BKG  </simple>
+      <long>  BANFF; BgRES Isospin 1/2  </long>
+      <rootex>  f_{Bg_{RES}}^{banff}  </rootex>
+      <tex>  BANFF; Norm; BgRES Isospin 1/2  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  all 1pi  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  MAQE  </simple>
+      <long>  BANFF; Ma QE  </long>
+      <rootex>  f_{M_A^{QE}}^{banff}  </rootex>
+      <tex>  BANFF, Ma QE  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC QE  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  MARES  </simple>
+      <long>  BANFF; Ma RES  </long>
+      <rootex>  f_{M_A^{RES}}^{banff}  </rootex>
+      <tex>  BANFF, Ma RES  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  all 1pi  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  pF_O  </simple>
+      <long>  BANFF; Fermi Momentum  </long>
+      <rootex>  f_{p_{f}}^{banff}  </rootex>
+      <tex>  BANFF; Fermi Momentum  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC QE  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.89, 1.22  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  CC_DIS  </simple>
+      <long>  BANFF; Shape; CC Oth  </long>
+      <rootex>  f_{Shape_{CCoth}}^{banff}  </rootex>
+      <tex>  BANFF; Shape; CC Oth  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC oth  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  -inf, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  CC_Coh_O  </simple>
+      <long>  BANFF; Norm; CC Coh  </long>
+      <rootex>  f_{Norm_{CCcoh}}^{banff}  </rootex>
+      <tex>  BANFF; Norm, CC Coh  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC coh  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  NC_Coh  </simple>
+      <long>  BANFF; Norm; NC Coh  </long>
+      <rootex>  f_{Norm_{NCcoh}}^{banff}  </rootex>
+      <tex>  BANFF; Norm, NC Coh  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  NC coh  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  NC_other_far  </simple>
+      <long>  BANFF; Norm; NC Oth  </long>
+      <rootex>  f_{Norm_{NCother}}^{banff}  </rootex>
+      <tex>  BANFF; Norm, NC Oth  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  NC oth  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  nue_numu  </simple>
+      <long>  BANFF; Norm; NuE To NuMu  </long>
+      <rootex>  f_{Norm_{#nu_e #rightarrow #nu_#mu}}^{banff}  </rootex>
+      <tex>  BANFF; Norm, $\nu_{e}$ To $\nu_{\mu}$  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  NC_1gamma  </simple>
+      <long>  BANFF; Norm; NC 1 Gamma  </long>
+      <rootex>  f_{Norm_{NC1#gamma}}^{banff}  </rootex>
+      <tex>  BANFF; Norm; NC 1 $\gamma$  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  NC 1gamma  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  nuebar_numubar  </simple>
+      <long>  BANFF; Norm; NuEBar To NuMuBar  </long>
+      <rootex>  f_{Norm_{#bar{#nu}_e #rightarrow #bar{#nu}_{#mu}}}^{banff}  </rootex>
+      <tex>  BANFF; Norm, $\bar{\nu}_{e}$ To $\bar{\nu}_{\mu}$  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nuebar  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  2p2h_norm_nubar  </simple>
+      <long>  BANFF; Norm; 2p2hBar  </long>
+      <rootex>  f_{Norm_{2p2hBar}}^{banff}  </rootex>
+      <tex>  BANFF; Norm; 2p2hBar  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC 2p2h  </reac_type>
+      <flav>  nubar any  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  BeRPA_A  </simple>
+      <long>  BANFF; BeRPA A  </long>
+      <rootex>  f_{Shape_{BeRPA_{A}}}^{banff}  </rootex>
+      <tex>  BANFF; BeRPA A  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC QE  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  BeRPA_B  </simple>
+      <long>  BANFF; BeRPA B  </long>
+      <rootex>  f_{Shape_{BeRPA_{B}}}^{banff}  </rootex>
+      <tex>  BANFF; BeRPA B  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC QE  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  BeRPA_D  </simple>
+      <long>  BANFF; BeRPA D  </long>
+      <rootex>  f_{Shape_{BeRPA_{D}}}^{banff}  </rootex>
+      <tex>  BANFF; BeRPA D  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC QE  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  BeRPA_E  </simple>
+      <long>  BANFF; BeRPA E  </long>
+      <rootex>  f_{Shape_{BeRPA_{E}}}^{banff}  </rootex>
+      <tex>  BANFF; BeRPA E  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC QE  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  BeRPA_U  </simple>
+      <long>  BANFF; BeRPA U  </long>
+      <rootex>  f_{Shape_{BeRPA_{U}}}^{banff}  </rootex>
+      <tex>  BANFF; BeRPA U  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC QE  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  2p2h_shape_O  </simple>
+      <long>  BANFF; Shape; 2p2h nu  </long>
+      <rootex>  f_{Shape_{2p2h#nu}}^{banff}  </rootex>
+      <tex>  BANFF; Shape; 2p2h  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC 2p2h  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  -1.0, 1.0  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  2p2h_normCtoO  </simple>
+      <long>  BANFF; Norm;  2p2h C to O  </long>
+      <rootex>  f_{Norm_{2p2h C to O}}^{banff}  </rootex>
+      <tex>  BANFF; Norm; 2p2h C to O  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  CC 2p2h  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  ebo  </simple>
+      <long>  BANFF; Eb  </long>
+      <rootex>  f_{Shape_{Eb}}^{banff}  </rootex>
+      <tex>  BANFF; Eb  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  response  </type>
+    
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all rings  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  -3.0, 10.0  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi000  </simple>
+      <long>  SKDet + FSI/SI  0; Ereco range 0.00 - 0.40 GeV; numu/numubar CCQE (1Rmu)  </long>
+      <rootex>  f_{0; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  0; $E_{reco}$( 0.00 - 0.40 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.4  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC QE like  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi001  </simple>
+      <long>  SKDet + FSI/SI  1; Ereco range 0.40 - 1.10 GeV; numu/numubar CCQE (1Rmu)  </long>
+      <rootex>  f_{1; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  1; $E_{reco}$( 0.40 - 1.10 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.4, 1.1  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC QE like  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi002  </simple>
+      <long>  SKDet + FSI/SI  2; Ereco range 1.10 - 30.00 GeV; numu/numubar CCQE (1Rmu)  </long>
+      <rootex>  f_{2; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  2; $E_{reco}$( 1.10 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  1.1, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC QE like  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi003  </simple>
+      <long>  SKDet + FSI/SI  3; Ereco range 0.00 - 30.00 GeV; numu/numubar CCnQE (1Rmu)  </long>
+      <rootex>  f_{3; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  3; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCnQE ($1R_{\mu}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC nQE  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi004  </simple>
+      <long>  SKDet + FSI/SI  4; Ereco range 0.00 - 30.00 GeV; nue/nuebar/signue CC (1Rmu)  </long>
+      <rootex>  f_{4; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  4; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$/sig$\nu_{e}$ CC ($1R_{\mu}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi005  </simple>
+      <long>  SKDet + FSI/SI  5; Ereco range 0.00 - 30.00 GeV; all NC (1Rmu)  </long>
+      <rootex>  f_{5; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  5; $E_{reco}$( 0.00 - 30.00 )GeV; all NC ($1R_{\mu}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi006  </simple>
+      <long>  SKDet + FSI/SI  6; Ereco range 0.00 - 0.35 GeV; oscillated nue CC (1Re)  </long>
+      <rootex>  f_{6; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  6; $E_{reco}$( 0.00 - 0.35 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi007  </simple>
+      <long>  SKDet + FSI/SI  7; Ereco range 0.35 - 0.80 GeV; oscillated nue CC (1Re)  </long>
+      <rootex>  f_{7; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  7; $E_{reco}$( 0.35 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi008  </simple>
+      <long>  SKDet + FSI/SI  8; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (1Re)  </long>
+      <rootex>  f_{8; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  8; $E_{reco}$( 0.80 - 1.25 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi009  </simple>
+      <long>  SKDet + FSI/SI  9; Ereco range 0.00 - 0.35 GeV; numu/numubar CC (1Re)  </long>
+      <rootex>  f_{9; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI  9; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi010  </simple>
+      <long>  SKDet + FSI/SI 10; Ereco range 0.35 - 0.80 GeV; numu/numubar CC (1Re)  </long>
+      <rootex>  f_{10; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 10; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi011  </simple>
+      <long>  SKDet + FSI/SI 11; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (1Re)  </long>
+      <rootex>  f_{11; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 11; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi012  </simple>
+      <long>  SKDet + FSI/SI 12; Ereco range 0.00 - 0.35 GeV; nue/nuebar CC (1Re)  </long>
+      <rootex>  f_{12; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 12; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi013  </simple>
+      <long>  SKDet + FSI/SI 13; Ereco range 0.35 - 0.80 GeV; nue/nuebar CC (1Re)  </long>
+      <rootex>  f_{13; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 13; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi014  </simple>
+      <long>  SKDet + FSI/SI 14; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (1Re)  </long>
+      <rootex>  f_{14; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 14; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi015  </simple>
+      <long>  SKDet + FSI/SI 15; Ereco range 0.00 - 0.35 GeV; all NC (1Re)  </long>
+      <rootex>  f_{15; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 15; $E_{reco}$( 0.00 - 0.35 )GeV; all NC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi016  </simple>
+      <long>  SKDet + FSI/SI 16; Ereco range 0.35 - 0.80 GeV; all NC (1Re)  </long>
+      <rootex>  f_{16; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 16; $E_{reco}$( 0.35 - 0.80 )GeV; all NC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi017  </simple>
+      <long>  SKDet + FSI/SI 17; Ereco range 0.80 - 1.25 GeV; all NC (1Re)  </long>
+      <rootex>  f_{17; t, r}^{SK+FSI}  </rootex>
+      <tex>  SKDet + FSI/SI 17; $E_{reco}$( 0.80 - 1.25 )GeV; all NC ($1R_{e}$)  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi000_rhc  </simple>
+      <long>  SKDet + FSI/SI  0; Ereco range 0.00 - 0.40 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
+      <rootex>  f_{0; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  0; $E_{reco}$( 0.00 - 0.40 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.4  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC QE like  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi001_rhc  </simple>
+      <long>  SKDet + FSI/SI  1; Ereco range 0.40 - 1.10 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
+      <rootex>  f_{1; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  1; $E_{reco}$( 0.40 - 1.10 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.4, 1.1  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC QE like  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi002_rhc  </simple>
+      <long>  SKDet + FSI/SI  2; Ereco range 1.10 - 30.00 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
+      <rootex>  f_{2; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  2; $E_{reco}$( 1.10 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  1.1, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC QE like  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi003_rhc  </simple>
+      <long>  SKDet + FSI/SI  3; Ereco range 0.00 - 30.00 GeV; numu/numubar CCnQE (1Rmu); RHC  </long>
+      <rootex>  f_{3; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  3; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCnQE ($1R_{\mu}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  CC nQE  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi004_rhc  </simple>
+      <long>  SKDet + FSI/SI  4; Ereco range 0.00 - 30.00 GeV; nue/nuebar/signue CC (1Rmu); RHC  </long>
+      <rootex>  f_{4; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  4; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$/sig$\nu_{e}$ CC ($1R_{\mu}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi005_rhc  </simple>
+      <long>  SKDet + FSI/SI  5; Ereco range 0.00 - 30.00 GeV; all NC (1Rmu); RHC  </long>
+      <rootex>  f_{5; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  5; $E_{reco}$( 0.00 - 30.00 )GeV; all NC ($1R_{\mu}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 30.0  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Rmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi006_rhc  </simple>
+      <long>  SKDet + FSI/SI  6; Ereco range 0.00 - 0.35 GeV; oscillated nue CC (1Re); RHC  </long>
+      <rootex>  f_{6; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  6; $E_{reco}$( 0.00 - 0.35 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi007_rhc  </simple>
+      <long>  SKDet + FSI/SI  7; Ereco range 0.35 - 0.80 GeV; oscillated nue CC (1Re); RHC  </long>
+      <rootex>  f_{7; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  7; $E_{reco}$( 0.35 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi008_rhc  </simple>
+      <long>  SKDet + FSI/SI  8; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (1Re); RHC  </long>
+      <rootex>  f_{8; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  8; $E_{reco}$( 0.80 - 1.25 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi009_rhc  </simple>
+      <long>  SKDet + FSI/SI  9; Ereco range 0.00 - 0.35 GeV; numu/numubar CC (1Re); RHC  </long>
+      <rootex>  f_{9; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI  9; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi010_rhc  </simple>
+      <long>  SKDet + FSI/SI 10; Ereco range 0.35 - 0.80 GeV; numu/numubar CC (1Re); RHC  </long>
+      <rootex>  f_{10; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 10; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi011_rhc  </simple>
+      <long>  SKDet + FSI/SI 11; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (1Re); RHC  </long>
+      <rootex>  f_{11; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 11; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi012_rhc  </simple>
+      <long>  SKDet + FSI/SI 12; Ereco range 0.00 - 0.35 GeV; nue/nuebar CC (1Re); RHC  </long>
+      <rootex>  f_{12; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 12; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi013_rhc  </simple>
+      <long>  SKDet + FSI/SI 13; Ereco range 0.35 - 0.80 GeV; nue/nuebar CC (1Re); RHC  </long>
+      <rootex>  f_{13; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 13; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi014_rhc  </simple>
+      <long>  SKDet + FSI/SI 14; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (1Re); RHC  </long>
+      <rootex>  f_{14; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 14; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi015_rhc  </simple>
+      <long>  SKDet + FSI/SI 15; Ereco range 0.00 - 0.35 GeV; all NC (1Re); RHC  </long>
+      <rootex>  f_{15; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 15; $E_{reco}$( 0.00 - 0.35 )GeV; all NC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.0, 0.35  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi016_rhc  </simple>
+      <long>  SKDet + FSI/SI 16; Ereco range 0.35 - 0.80 GeV; all NC (1Re); RHC  </long>
+      <rootex>  f_{16; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 16; $E_{reco}$( 0.35 - 0.80 )GeV; all NC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.35, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi017_rhc  </simple>
+      <long>  SKDet + FSI/SI 17; Ereco range 0.80 - 1.25 GeV; all NC (1Re); RHC  </long>
+      <rootex>  f_{17; t, r}^{SK+FSI}RHC  </rootex>
+      <tex>  SKDet + FSI/SI 17; $E_{reco}$( 0.80 - 1.25 )GeV; all NC ($1R_{e}$); RHC  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  RHC  </beam>
+      <selection>  1Re  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi007_multiring  </simple>
+      <long>  SKDet + FSI/SI  0; Ereco range 0.30 - 0.80 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
+      <rootex>  f_{0; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  0; $E_{reco}$( 0.30 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.3, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi008_multiring  </simple>
+      <long>  SKDet + FSI/SI  1; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
+      <rootex>  f_{1; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  1; $E_{reco}$( 0.80 - 1.25 )GeV; Osc. $\nu_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  osc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi010_multiring  </simple>
+      <long>  SKDet + FSI/SI  2; Ereco range 0.30 - 0.80 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
+      <rootex>  f_{2; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  2; $E_{reco}$( 0.30 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.3, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi011_multiring  </simple>
+      <long>  SKDet + FSI/SI  3; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
+      <rootex>  f_{3; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  3; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  numu any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi013_multiring  </simple>
+      <long>  SKDet + FSI/SI  4; Ereco range 0.30 - 0.80 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
+      <rootex>  f_{4; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  4; $E_{reco}$( 0.30 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.3, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi014_multiring  </simple>
+      <long>  SKDet + FSI/SI  5; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
+      <rootex>  f_{5; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  5; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all CC  </reac_type>
+      <flav>  nue any  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi016_multiring  </simple>
+      <long>  SKDet + FSI/SI  6; Ereco range 0.30 - 0.80 GeV; all NC (MultiRe); MultiRing  </long>
+      <rootex>  f_{6; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  6; $E_{reco}$( 0.30 - 0.80 )GeV; all NC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.3, 0.8  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  skdetfsi017_multiring  </simple>
+      <long>  SKDet + FSI/SI  7; Ereco range 0.80 - 1.25 GeV; all NC (MultiRe); MultiRing  </long>
+      <rootex>  f_{7; t, r}^{SK+FSI}MultiRing  </rootex>
+      <tex>  SKDet + FSI/SI  7; $E_{reco}$( 0.80 - 1.25 )GeV; all NC ($MultiR_{e}$); MultiRing  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Ereco>  0.8, 1.25  </Ereco>
+    </apply_to_range>
+    
+    <type>  normalisation  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRe  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav>  all  </flav>
+      <osc>  unosc  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  0.0, inf  </limits>
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  sk_e_scale  </simple>
+      <long>  SK energy scale  </long>
+      <rootex>  f_{E; r}^{SK}  </rootex>
+      <tex>  SK energy scale  </tex>
+    </name>
+    
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+    
+    <type>  lateral  </type>
+    
+    <categories>
+      <category>  SKDetFSI  </category>
+    </categories>
+    
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  all  </beam>
+      <selection>  all  </selection>
+      <reac_type>  all  </reac_type>
+      <flav>  all  </flav>
+      <osc>  all  </osc>
+      <target>  all  </target>
+    </apply_to>
+    
+    <limits>  -inf, inf  </limits>
+  </param>
+  
+
+
+</param_list>

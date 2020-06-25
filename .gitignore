@@ -1,0 +1,20 @@
+#data dir
+./inputs
+
+#build results
+*.o
+_RootDict*
+bin/
+lib/
+
+#configure results
+fitter/Build.h
+fitter/Version.h
+make/Make.config
+
+#compiled macros
+*_C.d
+*_C.so
+
+#temporary files
+*~

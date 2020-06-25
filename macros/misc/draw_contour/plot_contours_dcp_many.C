@@ -505,21 +505,11 @@ void plot_contours_dcp_many
   TLine *max90CL_nh_2;
   TLine *min90CL_ih;
   TLine *max90CL_ih;
-  TBox *hatch_min90CL_nh;
-  TBox *hatch_max90CL_nh;
-  TBox *hatch_min90CL_nh_2;
-  TBox *hatch_max90CL_nh_2;
-  TBox *hatch_min90CL_ih;
-  TBox *hatch_max90CL_ih;
-  
+  TBox *hatch_interval_nh = NULL;
+  TBox *hatch_interval2_nh = NULL;
+  TBox *hatch_interval_ih = NULL; 
+  TBox *hatch_interval2_ih = NULL;
 
-  
-  
-  
-  
-  
-  
-  
   /////////////////////////////////////////////
   //                                         //
   //            Draw histograms              //
@@ -727,28 +717,25 @@ void plot_contours_dcp_many
     // //max90CL_nh_2 = new TLine(lim_max_nh_2,0.,lim_max_nh_2,max_line_y);
     min90CL_ih = new TLine(lim_min_ih,minimum,lim_min_ih,max_line_y);
     max90CL_ih = new TLine(lim_max_ih,minimum,lim_max_ih,max_line_y);
-    
-    double min_box = (lim_min_nh + 0.25 );
-    if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
-    hatch_min90CL_nh = new TBox(lim_min_nh,minimum,min_box,max_line_y);
-    double max_box = (lim_max_nh - 0.25);
-    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
-    hatch_max90CL_nh = new TBox(max_box,minimum,lim_max_nh,max_line_y);
-    
-    min_box = (lim_min_nh_2 + 0.25 );
-    if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
-    hatch_min90CL_nh_2 = new TBox(lim_min_nh_2,minimum,min_box,max_line_y);
-    max_box = (lim_max_nh_2 - 0.25);
-    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
-    hatch_max90CL_nh_2 = new TBox(max_box,minimum,lim_max_nh_2,max_line_y);
-    
-    min_box = (lim_min_ih + lim_max_ih) /2;
-    if(min_box < -TMath::Pi()) min_box = -TMath::Pi();
-    hatch_min90CL_ih = new TBox(lim_min_ih,minimum,min_box,max_line_y);
-    max_box = (lim_min_ih + lim_max_ih) /2;
-    if(min_box > +TMath::Pi()) max_box = +TMath::Pi();
-    hatch_max90CL_ih = new TBox(max_box,minimum,lim_max_ih,max_line_y);
-    
+   
+    if(lim_min_nh > lim_max_nh)
+    {  // Interval wraps around
+       hatch_interval_nh = new TBox(lim_min_nh, minimum, +TMath::Pi(), max_line_y);
+       hatch_interval2_nh = new TBox(-TMath::Pi(), minimum, lim_max_nh, max_line_y);
+    }
+    else
+    {
+       hatch_interval_nh = new TBox(lim_min_nh, minimum, lim_max_nh, max_line_y);
+    }
+    if(lim_min_ih > lim_max_ih)
+    {  // Interval wraps around
+       hatch_interval_ih = new TBox(lim_min_ih, minimum, +TMath::Pi(), max_line_y);
+       hatch_interval2_ih = new TBox(-TMath::Pi(), minimum, lim_max_ih, max_line_y);
+    }
+    else
+    {
+       hatch_interval_ih = new TBox(lim_min_ih, minimum, lim_max_ih, max_line_y);
+    }
   }
   
   
@@ -817,6 +804,7 @@ void plot_contours_dcp_many
     
     // Computation of confidence intervals available only for 90% or 2sigma CL
 
+    int fill_style = 3003;
     if( (draw_90CL || draw_1sigmaCL || draw_2sigmaCL || draw_3sigmaCL) && do_fc_conf_interv){
 
       if(Status_range_nh!=conv::kBadResult){
@@ -825,68 +813,44 @@ void plot_contours_dcp_many
 	min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
 	
 	min90CL_nh->Draw();
-	hatch_min90CL_nh->SetLineWidth(1);
-	hatch_min90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-	hatch_min90CL_nh->SetFillStyle(3004); // 3004 3844
-	hatch_min90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	hatch_min90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	hatch_min90CL_nh->Draw();
+	hatch_interval_nh->SetLineWidth(0);
+	hatch_interval_nh->SetFillStyle(fill_style);
+	hatch_interval_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	hatch_interval_nh->Draw();
+   if(hatch_interval2_nh)
+   {
+	   hatch_interval2_nh->SetLineWidth(0);
+	   hatch_interval2_nh->SetFillStyle(fill_style);
+	   hatch_interval2_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
+	   hatch_interval2_nh->Draw();
+   }
 	
 	max90CL_nh->SetLineWidth(2);
 	max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
 	max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
 	max90CL_nh->Draw();
-	hatch_max90CL_nh->SetLineWidth(1);
-	hatch_max90CL_nh->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-	hatch_max90CL_nh->SetFillStyle(3004); // 3004 3844
-	hatch_max90CL_nh->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	hatch_max90CL_nh->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	hatch_max90CL_nh->Draw();
-	
-	// min90CL_nh_2->SetLineWidth(2);
-	// min90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-	// min90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	// min90CL_nh_2->Draw();
-	// hatch_min90CL_nh_2->SetLineWidth(1);
-	// hatch_min90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-	// hatch_min90CL_nh_2->SetFillStyle(3004); // 3004 3844
-	// hatch_min90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	// hatch_min90CL_nh_2->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	// hatch_min90CL_nh_2->Draw();
-	
-	// // max90CL_nh_2->SetLineWidth(2);
-	// // max90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-	// // max90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	// // max90CL_nh_2->Draw();
-	// // hatch_max90CL_nh_2->SetLineWidth(1);
-	// // hatch_max90CL_nh_2->SetLineStyle(hdeltachisq1D_GlobMin[0][0]->GetLineStyle());
-	// // hatch_max90CL_nh_2->SetFillStyle(3004); // 3004 3844
-	// // hatch_max90CL_nh_2->SetLineColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	// // hatch_max90CL_nh_2->SetFillColor(hdeltachisq1D_GlobMin[0][0]->GetLineColor());
-	// // hatch_max90CL_nh_2->Draw();
       }
       if(Status_range_ih!=conv::kBadResult){
 	min90CL_ih->SetLineWidth(2);
 	min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
 	min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
 	min90CL_ih->Draw();
-	hatch_min90CL_ih->SetLineWidth(1);
-	hatch_min90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
-	hatch_min90CL_ih->SetFillStyle(3004); // 3005 3844
-	hatch_min90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-	hatch_min90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-	hatch_min90CL_ih->Draw();
-	
+	hatch_interval_ih->SetLineWidth(0);
+	hatch_interval_ih->SetFillStyle(fill_style);
+	hatch_interval_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	hatch_interval_ih->Draw();
+   if(hatch_interval2_ih)
+   {
+	   hatch_interval2_ih->SetLineWidth(0);
+	   hatch_interval2_ih->SetFillStyle(fill_style);
+	   hatch_interval2_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
+	   hatch_interval2_ih->Draw();
+   }
+
 	max90CL_ih->SetLineWidth(2);
 	max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
 	max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
 	max90CL_ih->Draw();
-	hatch_max90CL_ih->SetLineWidth(1);
-	hatch_max90CL_ih->SetLineStyle(hdeltachisq1D_GlobMin[0][1]->GetLineStyle());
-	hatch_max90CL_ih->SetFillStyle(3004); // 3005 3844
-	hatch_max90CL_ih->SetLineColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-	hatch_max90CL_ih->SetFillColor(hdeltachisq1D_GlobMin[0][1]->GetLineColor());
-	hatch_max90CL_ih->Draw();
       }
     }
     if(do_fc_critval && draw_3sigmaCL){
@@ -1545,7 +1509,15 @@ void plot_contours_dcp_many
     //
     double maxy_nh = 0;
     double maxy_ih = 0;
+    double min_pval = 1.0;
     for(int ibin=0;ibin<NbinsChisq;ibin++){
+      data_dchisq_nh = hdeltachisq1D[0][0]->GetBinContent(ibin + 1);
+      double pval_onesided = GetPvalue_rightside(vec_deltachisq_bin_nh[ibin], data_dchisq_nh);
+      if(pval_onesided < min_pval)
+      {
+         min_pval = pval_onesided;
+      }
+      cout << hdeltachisq1D[0][0]->GetXaxis()->GetBinCenter(ibin + 1) << ": " << pval_onesided << " Min: " << min_pval << endl;
       
       // Get +1,2sigma critical values of data wrt sensitivity on 1 true point of dcp
       if(!two_sided)

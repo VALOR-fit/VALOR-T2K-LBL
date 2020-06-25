@@ -23,7 +23,11 @@ using std::cerr;
 using std::endl; 
 
 void bievent_plot
-()
+(
+  const char* xml_params,
+  const char* events_file,
+  const char* nominal_file
+)
 {
    using namespace std;
    using namespace valor;
@@ -31,7 +35,7 @@ void bievent_plot
 
      // Parse the input XML configuration file
    TXMLEngine* xml = new TXMLEngine;
-   XMLDocPointer_t doc = xml->ParseFile("bieventplot_params.xml");
+   XMLDocPointer_t doc = xml->ParseFile(xml_params);
    if(!doc)
    {
       util::Die(1);
@@ -109,8 +113,16 @@ void bievent_plot
       gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
    }
 
-   TFile* file = new TFile("events.root");
-   TFile* filenom = new TFile("nominals.root");
+   TFile* file = new TFile(events_file);
+   if(!file->IsOpen()) {
+     cerr << "ERROR: Can't open file ["<<events_file<<"]";
+     util::Die(1);
+   }
+   TFile* filenom = new TFile(nominal_file);
+   if(!filenom->IsOpen()) {
+     cerr << "ERROR: Can't open file ["<<nominal_file<<"]";
+     util::Die(1);
+   }
    double Nfhc = ReadD(xml,doc,"plot_data/Nfhc");
    double Nrhc = ReadD(xml,doc,"plot_data/Nrhc");
 
@@ -296,8 +308,8 @@ void bievent_plot
    ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1]{0.50}, #color[2]{0.45}, #color[4]{0.55}","l");
 //   ldcp_all->AddEntry(&gN_events[0][0],"sin^{2} #theta_{23} = 0.45","l");
 //   ldcp_all->AddEntry(&gN_events[2][0],"sin^{2} #theta_{23} = 0.55","l");
-   ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.44#times10^{-3} eV^{2}/c^{4}","l");
-   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{13} = 2.41#times10^{-3} eV^{2}/c^{4}","l");
+   ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.45#times10^{-3} eV^{2}/c^{4}","l");
+   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{13} = 2.43#times10^{-3} eV^{2}/c^{4}","l");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][3],"#delta_{CP} = #pi","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][2],"#delta_{CP} = +#pi/2","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][1],"#delta_{CP} = 0","p");
@@ -324,19 +336,19 @@ void bievent_plot
    cEllipse_all->SaveAs(Form("%s.eps", tag.c_str()));
 
    TCanvas *c_fhc_contour = new TCanvas("c_contour","c_contour");
-   hFHCEvents[2][1][0]->Draw("cont0");
-   std::pair<double, double> interval_fhc = get_interval(hFHCEvents[2][1][0]);
-   TLine* l_low = new TLine(interval_fhc.first, 0.0, interval_fhc.first, hFHCEvents[2][1][0]->GetMaximum());
-   TLine* l_high = new TLine(interval_fhc.second, 0.0, interval_fhc.second, hFHCEvents[2][1][0]->GetMaximum());
+   hFHCEvents[a][b][c]->Draw("cont0");
+   std::pair<double, double> interval_fhc = get_interval(hFHCEvents[a][b][c]);
+   TLine* l_low = new TLine(interval_fhc.first, 0.0, interval_fhc.first, hFHCEvents[a][b][c]->GetMaximum());
+   TLine* l_high = new TLine(interval_fhc.second, 0.0, interval_fhc.second, hFHCEvents[a][b][c]->GetMaximum());
    l_low->Draw("same");
    l_high->Draw("same");
    c_fhc_contour->SaveAs("contour_fhc.pdf");
 
    TCanvas *c_rhc_contour = new TCanvas("c_contour","c_contour");
-   hRHCEvents[2][1][0]->Draw("cont0");
-   std::pair<double, double> interval_rhc = get_interval(hRHCEvents[2][1][0]);
-   TLine* l_low2 = new TLine(interval_rhc.first, 0.0, interval_rhc.first, hRHCEvents[2][1][0]->GetMaximum());
-   TLine* l_high2 = new TLine(interval_rhc.second, 0.0, interval_rhc.second, hRHCEvents[2][1][0]->GetMaximum());
+   hRHCEvents[a][b][c]->Draw("cont0");
+   std::pair<double, double> interval_rhc = get_interval(hRHCEvents[a][b][c]);
+   TLine* l_low2 = new TLine(interval_rhc.first, 0.0, interval_rhc.first, hRHCEvents[a][b][c]->GetMaximum());
+   TLine* l_high2 = new TLine(interval_rhc.second, 0.0, interval_rhc.second, hRHCEvents[a][b][c]->GetMaximum());
    l_low2->Draw("same");
    l_high2->Draw("same");
    c_rhc_contour->SaveAs("contour_rhc.pdf");

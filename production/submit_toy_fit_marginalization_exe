@@ -594,6 +594,39 @@ if((($freepar0 eq "mixing23") && ($freepar1 eq "dmsq23")) || (($freepar0 eq "dms
    }
 }
 
+# 2D fit - mixing23 v deltacp
+if((($freepar0 eq "mixing23") && ($freepar1 eq "deltacp")) || (($freepar0 eq "deltacp") && ($freepar1 eq "mixing23")))
+{
+#   $nfiles_margtoys   = 297;#231; #201           unless defined $nfiles_margtoys; # of marginalization files
+   $freepar0 = "mixing23";
+   $freepar1 = "deltacp";
+   $nfiles_margtoys   = 357    unless defined $nfiles_margtoys;
+   $npt_freepar0      = 81     unless defined $npt_freepar0;
+   $npt_freepar1      = 51     unless defined $npt_freepar1;
+
+   if($penalty_freepar0 == 1)
+   {  # Reactor constraint applied
+     $ntoys_margtoys    = 10000  unless defined $ntoys_margtoys;
+     $wqueue = "medium";
+   }
+   else
+   {  # T2K only
+     $ntoys_margtoys    = 20000  unless defined $ntoys_margtoys;
+     $wqueue = "long";
+   }
+
+   $minfreepar0       = 0.3  unless defined $minfreepar0;  # Min free param allowed value
+   $maxfreepar0       = 0.7  unless defined $maxfreepar0;  # Max free param allowed value
+   $minfreepar1       = -3.14159265358979312e+00  unless defined $minfreepar1;  # Min free param allowed value
+   $maxfreepar1       = +3.14159265358979312e+00  unless defined $maxfreepar1;  # Max free param allowed value
+   if( !defined $cput && $resource eq "cedar") {
+     $cput = "03:00:00";
+   }
+   if( !defined $mem && $resource eq "cedar") {
+     $mem = "3500M";
+   }
+}
+
 if(($freepar0 ne "") && ($freepar1 eq ""))
 {
    $tag = "${tag}_${freepar0}";
@@ -1068,14 +1101,15 @@ while($i_freepar1 < $n_freepar1) {
          {
             open(Slurm, ">$job_dir/$tag_save-$irun.slurm") or die("Can not create the Slurm batch script");
             print Slurm "#!/bin/bash \n";
-            print Slurm "#SBATCH --account=def-tanaka-ac \n";
+	    #print Slurm "#SBATCH --account=def-tanaka-ac \n";
+	    print Slurm "#SBATCH --account=rpp-tanaka-ab \n";
             print Slurm "#SBATCH --nodes=1 \n";
             print Slurm "#SBATCH --time=$cput \n";
             print Slurm "#SBATCH --mem=$mem \n";
             print Slurm "#SBATCH --job-name=$tag_save-$irun \n";
-            print Slurm "#SBATCH --output=$job_dir/$tag_save-$irun.slurm.log \n";
-            #print Slurm "#SBATCH -o $job_dir/$tag_save-$irun.slurm.out \n";
-            #print Slurm "#SBATCH -e $job_dir/$tag_save-$irun.slurm.err \n";
+	    #print Slurm "#SBATCH --output=$job_dir/$tag_save-$irun.slurm.log \n";
+            print Slurm "#SBATCH -o $job_dir/$tag_save-$irun.slurm.out \n";
+            print Slurm "#SBATCH -e $job_dir/$tag_save-$irun.slurm.err \n";
             print Slurm "cd $job_dir \n";
             print Slurm "source $softw_dir/setup/setup_at_cedar.sh $softw_dir $fmwk_dir\n";
             print Slurm "$command \n";

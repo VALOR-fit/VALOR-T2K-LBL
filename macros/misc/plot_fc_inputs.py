@@ -15,6 +15,7 @@ def plot_fc_inputs(filename, outputname):
     th12 = file.Get("hToyHisto_Mix12_nh")
     th13 = file.Get("hToyHisto_Mix13_nh")
     dm12 = file.Get("hToyHisto_Dm12_nh")
+    textsize = 0.05
 
     canvas = ROOT.TCanvas("canvas", "canvas", 10, 10, 1034, 778)
     canvas.SetLeftMargin(0.1)
@@ -26,10 +27,12 @@ def plot_fc_inputs(filename, outputname):
     dm12.GetXaxis().SetTitle("#Deltam^{2}_{12}")
     for i, histo in enumerate([th12, dm12, th13]):
         histo.Draw("")
-        histo.GetXaxis().SetTitleOffset(1.5)
+        histo.GetXaxis().SetTitleSize(textsize)
+        histo.GetYaxis().SetTitleSize(textsize)
+        histo.GetXaxis().SetTitleOffset(1.4)
         histo.GetXaxis().CenterTitle()
         histo.GetYaxis().SetTitle("#Throws")
-        histo.GetYaxis().SetTitleOffset(1.2)
+        histo.GetYaxis().SetTitleOffset(1.1)
         histo.GetYaxis().CenterTitle()
         if i == 0:
             canvas.Print(outputname + "(")

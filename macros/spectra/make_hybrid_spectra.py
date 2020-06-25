@@ -84,6 +84,7 @@ if __name__=="__main__":
     make_full_hybrid(o.outfile + "rhc1re_data.root", o.datafile, o.prefix, ["1Re","1Rmu","RHC1Rmu","MultiRe"])
     make_full_hybrid(o.outfile + "fhc1pi_data.root", o.datafile, o.prefix, ["1Re","1Rmu","RHC1Re","RHC1Rmu"])
     make_full_hybrid(o.outfile + "bestfit_asimov.root", o.datafile, o.prefix, ["1Re","1Rmu","RHC1Re","RHC1Rmu","MultiRe"])
+    make_full_hybrid(o.outfile + "disapp_1pi_data.root", o.datafile, o.prefix, ["1Re","RHC1Re"])
 
     # Mostly real data
 #    make_full_hybrid(o.outfile + "fhc1rmu_data.root", o.datafile, o.prefix, ["1Rmu"])
