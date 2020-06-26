@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# DUNE oscillation analysis code setup script for Compute Canada's cedar cluster
+# T2K oscillation analysis code setup script for Compute Canada's cedar cluster
 #
 # Input arguments: analysis code directory, framework directory
 #

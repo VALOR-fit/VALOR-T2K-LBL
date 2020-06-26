@@ -113,8 +113,8 @@ def check_all_spline_binning():
     import sys
     runs = ["r9", "r10"]
     path = {}
-    path["r9"] = "/hepstore/fbench/software/valor/VALOR-DUNE-LBL/data/official/2018/xsec/splines2018v1/"
-    path["r10"] = "/hepstore/fbench/software/valor/VALOR-DUNE-LBL/data/official/2020/xsec/splines2020v3/"
+    path["r9"] = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2018/xsec/splines2018v1/"
+    path["r10"] = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v3/"
     tag1 = {}
     tag1["r9"] = "spline2018v1"
     tag1["r10"] = "spline2019splinesfitqunPre"

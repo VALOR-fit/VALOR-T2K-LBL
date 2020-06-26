@@ -4,7 +4,7 @@
 # VALOR_EXPT oscillation analysis code setup script for for Costas' MacBookPro2
 #
 # Make sure VALOR_FMWK is setup first. This also determines the version of ROOT used in the build.
-# If GENIE is needed, make sure it setup before building the VALOR/DUNE code. 
+# If GENIE is needed, make sure it setup before building the VALOR/T2K code.
 # Make sure that GENIE and VALOR and built against the same version of ROOT
 #   1) oscillation analysis code top-level directory
 #   2) valor framework code top-level directory

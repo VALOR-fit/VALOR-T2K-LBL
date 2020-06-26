@@ -4,22 +4,22 @@
 # valor_expt-config a la ROOT's root-config
 #
 
-# VALOR/DUNE top directory path:
+# VALOR/T2K top directory path:
 topdir=$VALOR_EXPT
 
-# VALOR/DUNE libraries path:
+# VALOR/T2K libraries path:
 libdir=$topdir/lib
 
-# VALOR/DUNE src top level directory:
+# VALOR/T2K src top level directory:
 srcdir=$topdir/src
 
-# VALOR/DUNE ROOT interpreter top level directory:
+# VALOR/T2K ROOT interpreter top level directory:
 rootdir=$topdir/root
 
-# VALOR/DUNE libraries:
+# VALOR/T2K libraries:
 libs=" "
 
-#VALOR/DUNE genie-dependent libraries:
+#VALOR/T2K genie-dependent libraries:
 glibs=" "
 
 #

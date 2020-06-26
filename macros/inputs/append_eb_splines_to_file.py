@@ -11,7 +11,7 @@ except:
 ROOT.gROOT.SetBatch(1)
 
 # File naming convention
-standard_pattern = "/hepstore/fbench/software/valor/VALOR-DUNE-LBL/data/official/2020/xsec/splines2020v5/spline2019splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec[HASEB].root"
+standard_pattern = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v5/spline2019splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec[HASEB].root"
 eb_pattern       = "/hepstore/fbench/software/XSecResponse/eb_splines[NDIM]_[TYPE]_[CURRENT]_[SELECTION]selec_2020-04-01.root"
 
 def get_file_suffix(sample):

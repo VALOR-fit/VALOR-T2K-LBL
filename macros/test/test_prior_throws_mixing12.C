@@ -4,7 +4,7 @@
 // Francis Bench
 
 // These functions are direct copies of those in util::oscillation,
-// but for some reason valor_dune can't find this namespace...
+// but for some reason valor can't find this namespace...
 void SetPriorsAll(std::string file_priors_full, FitParamList& fpl);
 bool SetSinglePrior(TXMLEngine* xmleng, XMLNodePointer_t top_node, FitParamList& fpl);
 double GetRandomizedOscParam(conv::PhysParamId_t p, FitParamList& fpl);

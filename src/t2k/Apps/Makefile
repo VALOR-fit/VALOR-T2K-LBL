@@ -1,7 +1,7 @@
 #
 # Makefile for VALOR/T2K apps
 #
-# NOTE 2020-06-25: Currently nothing to make, but keeping the instructions an old DUNE app as an example
+# NOTE 2020-06-25: Currently nothing to make, but keeping the instructions of an old DUNE app as an example
 #
 # Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
 #
@@ -14,7 +14,7 @@ MAKEFILE = Makefile
 #
 include $(VALOR_EXPT)/make/Make.include
 
-DUNE_LIBRARIES = 
+T2K_LIBRARIES =
 
 TGT = #write_fd_prediction_pdf
 
