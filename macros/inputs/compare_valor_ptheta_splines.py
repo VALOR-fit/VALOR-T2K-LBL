@@ -159,7 +159,14 @@ def main(param, reac_type, Erec_GeV):
         sys.exit()
 
     banff_param_index = list(file_banff.Get("param_list")).index(param)
-    prefit_sigma = ROOT.TMath.Sqrt(file_banff.Get("prefit_cov")[banff_param_index][banff_param_index])
+    prefit_sigma  = ROOT.TMath.Sqrt(file_banff.Get("prefit_cov")[banff_param_index][banff_param_index])
+    postfit_sigma = ROOT.TMath.Sqrt(file_banff.Get("postfit_cov")[banff_param_index][banff_param_index])
+    postfit_nom   = list(file_banff.Get("postfit_params"))[banff_param_index]
+    untuned       = list(file_banff.Get("banff_untuned_central_values"))[banff_param_index]
+
+    postfit_nom_spline_x = (postfit_nom - untuned) / prefit_sigma
+    postfit_p3_spline_x  = (postfit_nom + 3*postfit_sigma - untuned) / prefit_sigma
+    postfit_m3_spline_x  = (postfit_nom - 3*postfit_sigma - untuned) / prefit_sigma
 
     xscale_ptheta = ptheta_xscales[param]
 
@@ -194,7 +201,7 @@ def main(param, reac_type, Erec_GeV):
 
         tg_p = file_p.Get(gr_title_p)
         if not tg_p:
-            print "ERROR: Could not get p-theta TGraph named", gr_title_p, "from file", ptheta_filename, ". Skipping this Etrue bin."
+            print "WARNING: Could not get p-theta TGraph named", gr_title_p, "from file", ptheta_filename, ". Skipping this Etrue bin."
             continue
         new_tg_p = rescale_and_shift_ptheta_spline(tg_p, prefit_sigma, xscale_ptheta)
 
@@ -239,11 +246,31 @@ def main(param, reac_type, Erec_GeV):
         binning_box.SetLineColor(0)
         binning_box.SetBorderSize(0)
 
-        leg = ROOT.TLegend(0.13, 0.80, 0.30, 0.95)
-        leg.AddEntry(new_tg_p, "p-theta", "lp")
-        leg.AddEntry(tg_v    , "VALOR"  , "lp")
+        # Draw a shaded box to show the postfit nom +/- 3sigma region
+        min_y = min(min(new_tg_p.GetY()), min(tg_v.GetY()))
+        max_y = max(max(new_tg_p.GetY()), max(tg_v.GetY()))
+        hatch_interval  = ROOT.TBox(postfit_m3_spline_x , min_y, postfit_p3_spline_x, max_y)
+        hatch_interval.SetLineWidth(0)
+        hatch_interval.SetFillStyle(3003)
+        hatch_interval.SetFillColor(9)
+
+        # Draw a vertical line to show the postfit nominal value
+        postfit_nom_line = ROOT.TLine(postfit_nom_spline_x, min_y, postfit_nom_spline_x, max_y)
+        postfit_nom_line.SetLineColor(8)
+        postfit_nom_line.SetLineWidth(2)
+        postfit_nom_line.SetLineStyle(2)
+
+        leg = ROOT.TLegend(0.13, 0.80, 0.28, 0.95)
+        leg.AddEntry(new_tg_p        , "p-theta"     , "lp")
+        leg.AddEntry(tg_v            , "VALOR"       , "lp")
+        leg.AddEntry(postfit_nom_line, "Postfit nom.", "l" )
+        leg.AddEntry(hatch_interval  , "+/- 3#sigma" , "f" )
+        leg.SetTextFont(132)
+        leg.SetTextSize(0.03)
 
         mg.Draw("A")
+        hatch_interval.Draw("same")
+        postfit_nom_line.Draw("same")
         title_box.Draw()
         binning_box.Draw()
         leg.Draw()
