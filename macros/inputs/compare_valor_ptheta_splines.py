@@ -163,7 +163,6 @@ def main(config_file, Erec_GeV):
     # Get a list of all spline params
     pool = valor.ParameterPool.Instance()
     filtered_params = [p for p in pool.GetParams() if p.GetType() == conv.kSystResponse]
-    print "*** test: params:", [p.GetName() for p in filtered_params]  # TODO: remove
     assert(len(filtered_params) == len(valor_params_in_ptheta_order))
 
     # Only have the p-theta bin edges for the FHC 1Rmu sample      # TODO: Generalise this
@@ -181,10 +180,7 @@ def main(config_file, Erec_GeV):
                              util.ReacModeToFinalFlavor(m) == conv.kNuMu and
                              util.ReacModeToType(m) != conv.kmtCC1pi0)
                         ]
-    print "*** test: filtered modes:", [util.ModeAsString(m) for m in filtered_modelist]    # TODO: remove
     assert(len(filtered_modelist) == len(valor_modes_in_ptheta_order))
-
-    #reac_types = list(set([util.ReacModeToType(m) for m in modelist])) # TODO: remove
 
     # TODO: Generalise
     valor_filename  = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v6/valor_format/splines_spline2019splinesfitqunPre_JPARC_FHC_1rmu.root"
@@ -235,8 +231,6 @@ def main(config_file, Erec_GeV):
         for im, m in enumerate(filtered_modelist):
             if not util.IsAppliedTo(param.GetApplyMask(), beam, sample, detector, m, conv.kntInclusive):
                 continue
-
-            print "*** test: mode", util.ModeAsString(m), "is applied to", param_name   # TODO: remove
 
             reac_type = util.ReacModeToType(m)
             reac_type_name = util.ReacTypeAsString(reac_type)
