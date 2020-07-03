@@ -130,25 +130,65 @@ valor_erec_bin_edges = [
     30.0
 ]
 
+# Overrides the nominal +/- 3sigma values for the following params
+special_case_tweak_p3 = {
+    "2p2h_shape_O"         : 1.0,
+    "2p2h_Edep_lowEnu"     : 0.75,
+    "2p2h_Edep_highEnu"    : 0.75,
+    "2p2h_Edep_lowEnubar"  : 0.75,
+    "2p2h_Edep_highEnubar" : 0.75,
+    "EB_dial_O_nu"         : 15.0,
+    "EB_dial_O_nubar"      : 15.0
+}
+special_case_tweak_m3 = {
+    "2p2h_shape_O"         : -1.0,
+    "2p2h_Edep_lowEnu"     :  0.0,
+    "2p2h_Edep_highEnu"    :  0.0,
+    "2p2h_Edep_lowEnubar"  :  0.0,
+    "2p2h_Edep_highEnubar" :  0.0,
+    "EB_dial_O_nu"         : -10.0,
+    "EB_dial_O_nubar"      : -10.0
+}
+
 
 
 #_________________________________________________________________________________
-def main(param, reac_type, Erec_GeV):
-    # fit_elements = valor.CompoundFitElements()
-    # fit_elements.Read(util.CompleteConfigPath(config_file))
-    # model = fit_elements.FitModel()
+def main(config_file, Erec_GeV):
+    save_name = "spline_comparison_valor_ptheta_JPARC_FHC_1rmu_numu_Erec=" +str(Erec_GeV)+ "GeV.pdf"
 
-    ptheta_param_enum = valor_params_in_ptheta_order.index(param) +1
-    ptheta_mode_enum = valor_modes_in_ptheta_order.index(reac_type)
+    fit_elements = valor.CompoundFitElements()
+    fit_elements.Read(util.CompleteConfigPath(config_file),"nomc nosplines")
+    model = fit_elements.FitModel()
 
-    ptheta_filename = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/t2k_run1-10/new_sk_matrix_banff_postfit_data_20200409/syst_var/other_groups/p-theta_splines/RF/numode_numu_binning/numu_ntrw" + str(ptheta_param_enum) + ".root"
+    # Get a list of all spline params
+    pool = valor.ParameterPool.Instance()
+    filtered_params = [p for p in pool.GetParams() if p.GetType() == conv.kSystResponse]
+    print "*** test: params:", [p.GetName() for p in filtered_params]  # TODO: remove
+    assert(len(filtered_params) == len(valor_params_in_ptheta_order))
+
+    # Only have the p-theta bin edges for the FHC 1Rmu sample      # TODO: Generalise this
+    submodel = model.GetSubModel(0)
+    assert(submodel.Name() == "superk__JPARC_FHC__1rmu")
+    beam = submodel.GetBeam()
+    detector = submodel.GetDetector()
+    sample = submodel.GetSample()
+
+    # Only have the p-theta bin edges for the numu->numu osc channel      # TODO: Generalise this
+    # Also, p-theta groups the CC1piC and CC1pi0 reaction types, while VALOR separates them. So just look at CC1piC
+    modelist = submodel.GetModeList().Modes()
+    filtered_modelist = [m for m in modelist
+                         if (util.ReacModeToInitFlavor(m) == conv.kNuMu and
+                             util.ReacModeToFinalFlavor(m) == conv.kNuMu and
+                             util.ReacModeToType(m) != conv.kmtCC1pi0)
+                        ]
+    print "*** test: filtered modes:", [util.ModeAsString(m) for m in filtered_modelist]    # TODO: remove
+    assert(len(filtered_modelist) == len(valor_modes_in_ptheta_order))
+
+    #reac_types = list(set([util.ReacModeToType(m) for m in modelist])) # TODO: remove
+
+    # TODO: Generalise
     valor_filename  = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v6/valor_format/splines_spline2019splinesfitqunPre_JPARC_FHC_1rmu.root"
     banff_filename  = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root"
-
-    file_p = ROOT.TFile(ptheta_filename, "read")
-    if not file_p.IsOpen():
-        print "ERROR: Could not open", ptheta_filename
-        sys.exit()
     file_v = ROOT.TFile(valor_filename , "read")
     if not file_v.IsOpen():
         print "ERROR: Could not open", valor_filename
@@ -158,128 +198,170 @@ def main(param, reac_type, Erec_GeV):
         print "ERROR: Could not open", banff_filename
         sys.exit()
 
-    banff_param_index = list(file_banff.Get("param_list")).index(param)
-    prefit_sigma  = ROOT.TMath.Sqrt(file_banff.Get("prefit_cov")[banff_param_index][banff_param_index])
-    postfit_sigma = ROOT.TMath.Sqrt(file_banff.Get("postfit_cov")[banff_param_index][banff_param_index])
-    postfit_nom   = list(file_banff.Get("postfit_params"))[banff_param_index]
-    untuned       = list(file_banff.Get("banff_untuned_central_values"))[banff_param_index]
+    # Open the PDF (this prints a blank page too, but is easier than looping over everything before the
+    # main loop to determine the first used combination of ip, im and true_bin_v
+    canv_blank = ROOT.TCanvas("blank","blank",800,600)
+    canv_blank.Print(save_name +"(")
 
-    postfit_nom_spline_x = (postfit_nom - untuned) / prefit_sigma
-    postfit_p3_spline_x  = (postfit_nom + 3*postfit_sigma - untuned) / prefit_sigma
-    postfit_m3_spline_x  = (postfit_nom - 3*postfit_sigma - untuned) / prefit_sigma
+    for ip, param in enumerate(filtered_params):
+        param_name = param.GetName()
+        ptheta_param_enum = valor_params_in_ptheta_order.index(param_name) +1
 
-    xscale_ptheta = ptheta_xscales[param]
+        banff_param_index = list(file_banff.Get("param_list")).index(param_name)
+        prefit_sigma  = ROOT.TMath.Sqrt(file_banff.Get("prefit_cov")[banff_param_index][banff_param_index])
+        postfit_sigma = ROOT.TMath.Sqrt(file_banff.Get("postfit_cov")[banff_param_index][banff_param_index])
+        postfit_nom   = list(file_banff.Get("postfit_params"))[banff_param_index]
+        untuned       = list(file_banff.Get("banff_untuned_central_values"))[banff_param_index]
 
-    # first loop over the input p-theta file to see what range of Etrue bins we have splines for (when VALOR would have a flat spline, p-theta stores no spline)
-    first_etrue_bin = -999
-    last_etrue_bin = -999
-    for true_bin_v in range(0, len(valor_etrue_bin_edges)-1):
-        true_bin_centre_v = 0.5 * (valor_etrue_bin_edges[true_bin_v] + valor_etrue_bin_edges[true_bin_v+1])
-        true_bin_p = get_bin_number(ptheta_etrue_bin_edges, true_bin_centre_v)
-        reco_bin_p = get_bin_number(ptheta_erec_bin_edges , Erec_GeV)
-        gr_title_p = "gr_rw_erec_im" + str(ptheta_mode_enum) + "_enu" +str(true_bin_p)+ "_binx" +str(reco_bin_p)
-        tg_p = file_p.Get(gr_title_p)
-        if tg_p:
-            if first_etrue_bin == -999:
-                first_etrue_bin = true_bin_v
-            last_etrue_bin = true_bin_v
+        postfit_nom_spline_x = (postfit_nom - untuned) / prefit_sigma
+        tweak_p3 =  postfit_nom + 3*postfit_sigma
+        tweak_m3 =  postfit_nom - 3*postfit_sigma
+        if param_name in special_case_tweak_p3:
+            tweak_p3 = special_case_tweak_p3[param_name]
+        if param_name in special_case_tweak_m3:
+            tweak_m3 = special_case_tweak_m3[param_name]
+        postfit_p3_spline_x  = (tweak_p3 - untuned) / prefit_sigma
+        postfit_m3_spline_x  = (tweak_m3 - untuned) / prefit_sigma
 
-    # Get splines, convert to comparable format and plot
-    for true_bin_v in range(0, len(valor_etrue_bin_edges)-1):
-        canv = ROOT.TCanvas("c+"+str(true_bin_v),"c+"+str(true_bin_v),800,600)
+        xscale_ptheta = ptheta_xscales[param_name]
 
-        true_bin_centre_v = 0.5 * (valor_etrue_bin_edges[true_bin_v] + valor_etrue_bin_edges[true_bin_v+1])
-        reco_bin_v = get_bin_number(valor_erec_bin_edges , Erec_GeV)
-        arr_title_v = "spl_numu" +reac_type+ "_" + param
-        spl_title_v = "spl_JPARC_FHC_1rmu_numu" +reac_type+ "_" +param+ "_" +str(true_bin_v)+ "_" +str(reco_bin_v)
-        print "Getting VALOR spline named", spl_title_v
-
-        true_bin_p = get_bin_number(ptheta_etrue_bin_edges, true_bin_centre_v)
-        reco_bin_p = get_bin_number(ptheta_erec_bin_edges , Erec_GeV)
-        gr_title_p = "gr_rw_erec_im" + str(ptheta_mode_enum) + "_enu" +str(true_bin_p)+ "_binx" +str(reco_bin_p)
-        print "Getting p-theta spline named", gr_title_p
-
-        tg_p = file_p.Get(gr_title_p)
-        if not tg_p:
-            print "WARNING: Could not get p-theta TGraph named", gr_title_p, "from file", ptheta_filename, ". Skipping this Etrue bin."
-            continue
-        new_tg_p = rescale_and_shift_ptheta_spline(tg_p, prefit_sigma, xscale_ptheta)
-
-        spl_v = file_v.Get(arr_title_v).FindObject(spl_title_v)
-        if not spl_v:
-            print "ERROR: Could not get VALOR TSpline3 named", spl_title_v, "from file", valor_filename
+        # TODO: Generalise
+        ptheta_filename = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/t2k_run1-10/new_sk_matrix_banff_postfit_data_20200409/syst_var/other_groups/p-theta_splines/RF/numode_numu_binning/numu_ntrw" + str(ptheta_param_enum) + ".root"
+        file_p = ROOT.TFile(ptheta_filename, "read")
+        if not file_p.IsOpen():
+            print "ERROR: Could not open", ptheta_filename
             sys.exit()
-        tg_v = convert_valor_spline_to_ptheta_graph(spl_v, prefit_sigma)
-        tg_v.SetLineColor(2)
-        tg_v.SetLineStyle(2)
 
-        new_tg_p.SetTitle("p-theta")
-        tg_v.SetTitle("valor")
+        for im, m in enumerate(filtered_modelist):
+            if not util.IsAppliedTo(param.GetApplyMask(), beam, sample, detector, m, conv.kntInclusive):
+                continue
 
-        mg = ROOT.TMultiGraph("mg_"+str(true_bin_v), "mg_"+str(true_bin_v))
-        mg.Add(deepcopy(new_tg_p),"LP")
-        mg.Add(deepcopy(tg_v),"LP")
-        if len(list(mg.GetListOfGraphs())) != 2:
-            print "ERROR: Something went wrong constructing the multigraph. p-theta graph =", new_tg_p, "; valor graph =", tg_v
-            sys.exit()
-        mg.GetXaxis().SetTitle("(param - generated) / (prefit sigma)")
-        mg.GetYaxis().SetTitle("Weight")
+            print "*** test: mode", util.ModeAsString(m), "is applied to", param_name   # TODO: remove
 
-        title_box = ROOT.TPaveText(0.3, 0.95, 0.7, 1.0, "NDC")
-        title_box.AddText(spl_title_v)
-        title_box.SetTextSize(0.05)
-        title_box.SetFillColor(0)
-        title_box.SetFillStyle(0)
-        title_box.SetLineStyle(0)
-        title_box.SetLineColor(0)
-        title_box.SetBorderSize(0)
+            reac_type = util.ReacModeToType(m)
+            reac_type_name = util.ReacTypeAsString(reac_type)
+            ptheta_mode_enum = valor_modes_in_ptheta_order.index(reac_type_name)
 
-        ptheta_bin_txt = "p-theta: Et = ["+str(ptheta_etrue_bin_edges[true_bin_p])+","+str(ptheta_etrue_bin_edges[true_bin_p+1])+"]; Er = ["+str(ptheta_erec_bin_edges[reco_bin_p])+","+str(ptheta_erec_bin_edges[reco_bin_p+1])+"]"
-        valor_bin_txt  = "VALOR:   Et = ["+str(valor_etrue_bin_edges[true_bin_v]) +","+str(valor_etrue_bin_edges[true_bin_v+1]) +"]; Er = ["+str(valor_erec_bin_edges[reco_bin_v]) +","+str(valor_erec_bin_edges[reco_bin_v+1]) +"]"
-        binning_box = ROOT.TPaveText(0.30, 0.80, 0.90, 0.95, "NDC")
-        binning_box.AddText(ptheta_bin_txt)
-        binning_box.AddText(valor_bin_txt)
-        binning_box.SetTextSize(0.05)
-        binning_box.SetFillColor(0)
-        binning_box.SetFillStyle(0)
-        binning_box.SetLineStyle(0)
-        binning_box.SetLineColor(0)
-        binning_box.SetBorderSize(0)
+            arr_title_v = "spl_numu" +reac_type_name +"_" +param_name
+            arr_v = file_v.Get(arr_title_v)
+            if not arr_v:
+                #print "WARNING: Could not get VALOR array named", arr_title_v, "from file", valor_filename
+                continue
 
-        # Draw a shaded box to show the postfit nom +/- 3sigma region
-        min_y = min(min(new_tg_p.GetY()), min(tg_v.GetY()))
-        max_y = max(max(new_tg_p.GetY()), max(tg_v.GetY()))
-        hatch_interval  = ROOT.TBox(postfit_m3_spline_x , min_y, postfit_p3_spline_x, max_y)
-        hatch_interval.SetLineWidth(0)
-        hatch_interval.SetFillStyle(3003)
-        hatch_interval.SetFillColor(9)
+            # first loop over the input p-theta file to see what range of Etrue bins we have splines for (when VALOR would have a flat spline, p-theta stores no spline)
+            first_etrue_bin = -999
+            last_etrue_bin = -999
+            for true_bin_v in range(0, len(valor_etrue_bin_edges)-1):
+                true_bin_centre_v = 0.5 * (valor_etrue_bin_edges[true_bin_v] + valor_etrue_bin_edges[true_bin_v+1])
+                true_bin_p = get_bin_number(ptheta_etrue_bin_edges, true_bin_centre_v)
+                reco_bin_p = get_bin_number(ptheta_erec_bin_edges , Erec_GeV)
+                gr_title_p = "gr_rw_erec_im" + str(ptheta_mode_enum) + "_enu" +str(true_bin_p)+ "_binx" +str(reco_bin_p)
+                tg_p = file_p.Get(gr_title_p)
+                if tg_p:
+                    if first_etrue_bin == -999:
+                        first_etrue_bin = true_bin_v
+                    last_etrue_bin = true_bin_v
 
-        # Draw a vertical line to show the postfit nominal value
-        postfit_nom_line = ROOT.TLine(postfit_nom_spline_x, min_y, postfit_nom_spline_x, max_y)
-        postfit_nom_line.SetLineColor(8)
-        postfit_nom_line.SetLineWidth(2)
-        postfit_nom_line.SetLineStyle(2)
+            # Get splines, convert to comparable format and plot
+            for true_bin_v in range(0, len(valor_etrue_bin_edges)-1):
+                canv = ROOT.TCanvas("c+"+str(true_bin_v),"c+"+str(true_bin_v),800,600)
 
-        leg = ROOT.TLegend(0.13, 0.80, 0.28, 0.95)
-        leg.AddEntry(new_tg_p        , "p-theta"     , "lp")
-        leg.AddEntry(tg_v            , "VALOR"       , "lp")
-        leg.AddEntry(postfit_nom_line, "Postfit nom.", "l" )
-        leg.AddEntry(hatch_interval  , "+/- 3#sigma" , "f" )
-        leg.SetTextFont(132)
-        leg.SetTextSize(0.03)
+                true_bin_centre_v = 0.5 * (valor_etrue_bin_edges[true_bin_v] + valor_etrue_bin_edges[true_bin_v+1])
+                reco_bin_v = get_bin_number(valor_erec_bin_edges , Erec_GeV)
+                spl_title_v = "spl_JPARC_FHC_1rmu_numu" +reac_type_name +"_" +param_name +"_" +str(true_bin_v) +"_" +str(reco_bin_v)
+                print "Getting VALOR spline named", spl_title_v
 
-        mg.Draw("A")
-        hatch_interval.Draw("same")
-        postfit_nom_line.Draw("same")
-        title_box.Draw()
-        binning_box.Draw()
-        leg.Draw()
-        save_name = "spline_comparison_valor_ptheta_JPARC_FHC_1rmu_numu" +reac_type+ "_" +param+ "_Erec=" +str(Erec_GeV)+ "GeV.pdf"
-        if true_bin_v == first_etrue_bin:
-            save_name += "("
-        if true_bin_v == last_etrue_bin:
-            save_name += ")"
-        canv.Print(save_name)
+                true_bin_p = get_bin_number(ptheta_etrue_bin_edges, true_bin_centre_v)
+                reco_bin_p = get_bin_number(ptheta_erec_bin_edges , Erec_GeV)
+                gr_title_p = "gr_rw_erec_im" + str(ptheta_mode_enum) + "_enu" +str(true_bin_p)+ "_binx" +str(reco_bin_p)
+                print "Getting p-theta spline named", gr_title_p
+
+                tg_p = file_p.Get(gr_title_p)
+                if not tg_p:
+                    #print "WARNING: Could not get p-theta TGraph named", gr_title_p, "from file", ptheta_filename, ". Skipping this Etrue bin."
+                    continue
+                new_tg_p = rescale_and_shift_ptheta_spline(tg_p, prefit_sigma, xscale_ptheta)
+
+                spl_v = arr_v.FindObject(spl_title_v)
+                if not spl_v:
+                    print "ERROR: Could not get VALOR TSpline3 named", spl_title_v, "from file", valor_filename
+                    sys.exit()
+                tg_v = convert_valor_spline_to_ptheta_graph(spl_v, prefit_sigma)
+                tg_v.SetLineColor(2)
+                tg_v.SetLineStyle(2)
+
+                new_tg_p.SetTitle("p-theta")
+                tg_v.SetTitle("valor")
+
+                mg = ROOT.TMultiGraph("mg_"+str(true_bin_v), "mg_"+str(true_bin_v))
+                mg.Add(deepcopy(new_tg_p),"LP")
+                mg.Add(deepcopy(tg_v),"LP")
+                if len(list(mg.GetListOfGraphs())) != 2:
+                    print "ERROR: Something went wrong constructing the multigraph. p-theta graph =", new_tg_p, "; valor graph =", tg_v
+                    sys.exit()
+                mg.GetXaxis().SetTitle("(param - generated) / (prefit sigma)")
+                mg.GetYaxis().SetTitle("Weight")
+
+                title_box = ROOT.TPaveText(0.3, 0.95, 0.7, 1.0, "NDC")
+                title = "spl_" +submodel.Name() +"_numu" +reac_type_name+ "_" +param_name+ "_" +str(true_bin_v)+ "_" +str(reco_bin_v)
+                title_box.AddText(title)
+                title_box.SetTextSize(0.05)
+                title_box.SetFillColor(0)
+                title_box.SetFillStyle(0)
+                title_box.SetLineStyle(0)
+                title_box.SetLineColor(0)
+                title_box.SetBorderSize(0)
+
+                ptheta_bin_txt = "p-theta: Et = ["+str(ptheta_etrue_bin_edges[true_bin_p])+","+str(ptheta_etrue_bin_edges[true_bin_p+1])+"]; Er = ["+str(ptheta_erec_bin_edges[reco_bin_p])+","+str(ptheta_erec_bin_edges[reco_bin_p+1])+"]"
+                valor_bin_txt  = "VALOR:   Et = ["+str(valor_etrue_bin_edges[true_bin_v]) +","+str(valor_etrue_bin_edges[true_bin_v+1]) +"]; Er = ["+str(valor_erec_bin_edges[reco_bin_v]) +","+str(valor_erec_bin_edges[reco_bin_v+1]) +"]"
+                binning_box = ROOT.TPaveText(0.30, 0.80, 0.90, 0.95, "NDC")
+                binning_box.AddText(ptheta_bin_txt)
+                binning_box.AddText(valor_bin_txt)
+                binning_box.SetTextSize(0.05)
+                binning_box.SetFillColor(0)
+                binning_box.SetFillStyle(0)
+                binning_box.SetLineStyle(0)
+                binning_box.SetLineColor(0)
+                binning_box.SetBorderSize(0)
+
+                # Draw a shaded box to show the postfit nom +/- 3sigma region
+                min_y = min(min(new_tg_p.GetY()), min(tg_v.GetY()))
+                max_y = max(max(new_tg_p.GetY()), max(tg_v.GetY()))
+                hatch_interval  = ROOT.TBox(postfit_m3_spline_x , min_y, postfit_p3_spline_x, max_y)
+                hatch_interval.SetLineWidth(0)
+                hatch_interval.SetFillStyle(3003)
+                hatch_interval.SetFillColor(9)
+
+                # Draw a vertical line to show the postfit nominal value
+                postfit_nom_line = ROOT.TLine(postfit_nom_spline_x, min_y, postfit_nom_spline_x, max_y)
+                postfit_nom_line.SetLineColor(8)
+                postfit_nom_line.SetLineWidth(2)
+                postfit_nom_line.SetLineStyle(2)
+
+                leg = ROOT.TLegend(0.13, 0.80, 0.28, 0.95)
+                leg.AddEntry(new_tg_p        , "p-theta"     , "lp")
+                leg.AddEntry(tg_v            , "VALOR"       , "lp")
+                leg.AddEntry(postfit_nom_line, "Postfit nom.", "l" )
+                leg.AddEntry(hatch_interval  , "+/- 3#sigma" , "f" )
+                leg.SetTextFont(132)
+                leg.SetTextSize(0.03)
+
+                mg.Draw("A")
+                hatch_interval.Draw("same")
+                postfit_nom_line.Draw("same")
+                title_box.Draw()
+                binning_box.Draw()
+                leg.Draw()
+                # save_name_use = save_name
+                # if ip == 0 and im == 0 and true_bin_v == first_etrue_bin:
+                #     save_name_use += "("
+                # if ip == len(filtered_params)-1 and im == len(filtered_modelist)-1 and true_bin_v == last_etrue_bin:
+                #     save_name_use += ")"
+                canv.Print(save_name)
+
+    # Close the PDF (this prints a blank page before closing, but is easier than looping over everything before the
+    # main loop to determine the final used combination of ip, im and true_bin_v
+    canv_blank.Print(save_name +")")
 
     print "Done!"
 
@@ -317,9 +399,8 @@ def get_bin_number(edges, value):
 if __name__=="__main__":
     import argparse
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Compare 1D Erec splines for VALOR and p-theta. Erec is fixed, Etrue is looped over. FHC 1Rmu mumu->numu only.")
-    parser.add_argument('-p', '--valor-param', dest="param"    , default='MAQE' , help="VALOR name of the parameter to compare splines for.")
-    parser.add_argument('-r', '--reac-type'  , dest="reac_type", default='CCQE' , help="VALOR name of the reaction type to compare splines for.")
+    parser.add_argument('-c', '--config'     , dest='config'   , default="analysis/t2k_analysis_configuration_oa2018_run1-10_v1_postfit.xml", help="Configuration file")
     parser.add_argument('-e', '--Erec-GeV'   , dest="Erec_GeV" , default='0.555', help="Erec in GeV")
     args = parser.parse_args()
-    main(args.param, args.reac_type, float(args.Erec_GeV))
+    main(args.config, float(args.Erec_GeV))
  
