@@ -153,7 +153,7 @@ special_case_tweak_m3 = {
 
 
 #_________________________________________________________________________________
-def main(config_file, Erec_GeV, Etrue_GeV = -999):
+def main(config_file, tag, Erec_GeV, Etrue_GeV = -999):
     fit_elements = valor.CompoundFitElements()
     fit_elements.Read(util.CompleteConfigPath(config_file),"nosplines")
     model = fit_elements.FitModel()
@@ -179,7 +179,7 @@ def main(config_file, Erec_GeV, Etrue_GeV = -999):
 
     consider_all_true_bins = (Etrue_GeV == -999)
 
-    save_name = "spline_comparison_valor_ptheta_JPARC_FHC_1rmu_numu"
+    save_name = tag
     if not consider_all_true_bins:
         save_name += "_Etrue=" +str(Etrue_GeV) +"GeV"
     save_name += "_Erec=" +str(Erec_GeV)+ "GeV.pdf"
@@ -270,7 +270,7 @@ def main(config_file, Erec_GeV, Etrue_GeV = -999):
 
                 true_bin_p = get_bin_number(ptheta_etrue_bin_edges, true_bin_centre_v)
                 reco_bin_p = get_bin_number(ptheta_erec_bin_edges , Erec_GeV)
-                gr_title_p = "gr_rw_erec_im" + str(ptheta_mode_enum) + "_enu" +str(true_bin_p)+ "_binx" +str(reco_bin_p)
+                gr_title_p = "gr_rw_erec_im" + str(ptheta_mode_enum) + "_enu" +str(true_bin_p)+ "_binx" +str(reco_bin_p+1)   # By convention, the p-theta Erec bin numbers start at 1 for the TGraph names (but their Etrue bins start at 0)
                 print "Getting p-theta spline named", gr_title_p
 
                 tg_p = file_p.Get(gr_title_p)
@@ -416,8 +416,9 @@ if __name__=="__main__":
     import argparse
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Compare 1D Erec splines for VALOR and p-theta. Erec is fixed, Etrue is looped over. FHC 1Rmu mumu->numu only.")
     parser.add_argument('-c', '--config'     , dest='config'   , default="analysis/t2k_analysis_configuration_oa2018_run1-10_v1_postfit.xml", help="Configuration file")
+    parser.add_argument(      '--tag'        , dest='tag'      , default="spline_comparison_valor_ptheta_JPARC_FHC_1rmu_numu", help="tag used to name output file")
     parser.add_argument('-r', '--Erec-GeV'   , dest="Erec_GeV" , default='0.555', help="Erec in GeV. Mandatory.")
     parser.add_argument('-t', '--Etrue-GeV'  , dest="Etrue_GeV", default='-999' , help="Etrue in GeV. Optional. If specified, just looks at one Erec bin, otherwise looks at all")
     args = parser.parse_args()
-    main(args.config, float(args.Erec_GeV), float(args.Etrue_GeV))
+    main(args.config, args.tag, float(args.Erec_GeV), float(args.Etrue_GeV))
  
