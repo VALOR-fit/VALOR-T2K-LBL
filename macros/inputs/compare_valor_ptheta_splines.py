@@ -320,10 +320,14 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999):
                 vec_reco = ROOT.vector('double')()
                 vec_true = ROOT.vector('double')()
                 vec_reco.push_back(Erec_GeV)
-                vec_true.push_back(Etrue_GeV)
+                vec_true.push_back(true_bin_centre_v)
                 valor_fit_ibin_reco = valor_fit_binning_reco.FindBin(vec_reco)
                 valor_fit_ibin_true = valor_fit_binning_true.FindBin(vec_true)
                 valor_bin_content = MCT.GetEntry(valor_fit_ibin_reco, valor_fit_ibin_true)
+
+                # There's no point in comparing splines that would be applied to empty bins, as the resulting bin content would still be 0
+                if valor_bin_content < conv.kASmallNum:
+                    continue
 
                 ptheta_bin_txt    = "p-theta: Et = ["+str(ptheta_etrue_bin_edges[true_bin_p])+","+str(ptheta_etrue_bin_edges[true_bin_p+1])+"]; Er = ["+str(ptheta_erec_bin_edges[reco_bin_p])+","+str(ptheta_erec_bin_edges[reco_bin_p+1])+"]"
                 valor_bin_txt     = "VALOR:   Et = ["+str(valor_etrue_bin_edges[true_bin_v]) +","+str(valor_etrue_bin_edges[true_bin_v+1]) +"]; Er = ["+str(valor_erec_bin_edges[reco_bin_v]) +","+str(valor_erec_bin_edges[reco_bin_v+1]) +"]"
