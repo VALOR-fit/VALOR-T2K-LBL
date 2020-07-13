@@ -155,7 +155,7 @@ special_case_tweak_m3 = {
 #_________________________________________________________________________________
 def main(config_file, Erec_GeV, Etrue_GeV = -999):
     fit_elements = valor.CompoundFitElements()
-    fit_elements.Read(util.CompleteConfigPath(config_file),"nomc nosplines")
+    fit_elements.Read(util.CompleteConfigPath(config_file),"nosplines")
     model = fit_elements.FitModel()
 
     # Get a list of all spline params
@@ -169,6 +169,13 @@ def main(config_file, Erec_GeV, Etrue_GeV = -999):
     beam = submodel.GetBeam()
     detector = submodel.GetDetector()
     sample = submodel.GetSample()
+
+    # Write the VALOR MC templates into an array so that we can later check the nominal bin content before
+    # systematic or oscillation parameters are applied
+    array_MCTs = ROOT.TObjArray()
+    array_MCTs.SetOwner(True)
+    array_tag = "valor"
+    submodel.Write(array_MCTs, array_tag, "mct_vf+SB")
 
     consider_all_true_bins = (Etrue_GeV == -999)
 
@@ -201,9 +208,10 @@ def main(config_file, Erec_GeV, Etrue_GeV = -999):
 
     # Open the PDF (this prints a blank page too, but is easier than looping over everything before the
     # main loop to determine the first used combination of ip, im and true_bin_v
-    canv_blank = ROOT.TCanvas("blank","blank",800,600)
-    canv_blank.Print(save_name +"(")
+    #canv_blank = ROOT.TCanvas("blank","blank",800,600)
+    #canv_blank.Print(save_name +"(")
 
+    first_plot = True
     for ip, param in enumerate(filtered_params):
         param_name = param.GetName()
         ptheta_param_enum = valor_params_in_ptheta_order.index(param_name) +1
@@ -300,11 +308,30 @@ def main(config_file, Erec_GeV, Etrue_GeV = -999):
                 title_box.SetLineColor(0)
                 title_box.SetBorderSize(0)
 
-                ptheta_bin_txt = "p-theta: Et = ["+str(ptheta_etrue_bin_edges[true_bin_p])+","+str(ptheta_etrue_bin_edges[true_bin_p+1])+"]; Er = ["+str(ptheta_erec_bin_edges[reco_bin_p])+","+str(ptheta_erec_bin_edges[reco_bin_p+1])+"]"
-                valor_bin_txt  = "VALOR:   Et = ["+str(valor_etrue_bin_edges[true_bin_v]) +","+str(valor_etrue_bin_edges[true_bin_v+1]) +"]; Er = ["+str(valor_erec_bin_edges[reco_bin_v]) +","+str(valor_erec_bin_edges[reco_bin_v+1]) +"]"
-                binning_box = ROOT.TPaveText(0.30, 0.80, 0.90, 0.95, "NDC")
+                # Get the VALOR nominal bin content before systematic or oscillation parameters are applied
+                MCT_name = array_tag +"_mctnom_sb_vf" +"_" +submodel.Name() +"_" +util.ModeAsString(m)
+                MCT = array_MCTs.FindObject(MCT_name)
+                if not MCT:
+                    print "ERROR: Something went wrong getting the VALOR MCT named", MCT_name
+                    sys.exit()
+                SSKB = submodel.GetBinning()
+                valor_fit_binning_reco = SSKB.RecoSmpBinning()
+                valor_fit_binning_true = SSKB.TrueSmpBinning(m)
+                vec_reco = ROOT.vector('double')()
+                vec_true = ROOT.vector('double')()
+                vec_reco.push_back(Erec_GeV)
+                vec_true.push_back(Etrue_GeV)
+                valor_fit_ibin_reco = valor_fit_binning_reco.FindBin(vec_reco)
+                valor_fit_ibin_true = valor_fit_binning_true.FindBin(vec_true)
+                valor_bin_content = MCT.GetEntry(valor_fit_ibin_reco, valor_fit_ibin_true)
+
+                ptheta_bin_txt    = "p-theta: Et = ["+str(ptheta_etrue_bin_edges[true_bin_p])+","+str(ptheta_etrue_bin_edges[true_bin_p+1])+"]; Er = ["+str(ptheta_erec_bin_edges[reco_bin_p])+","+str(ptheta_erec_bin_edges[reco_bin_p+1])+"]"
+                valor_bin_txt     = "VALOR:   Et = ["+str(valor_etrue_bin_edges[true_bin_v]) +","+str(valor_etrue_bin_edges[true_bin_v+1]) +"]; Er = ["+str(valor_erec_bin_edges[reco_bin_v]) +","+str(valor_erec_bin_edges[reco_bin_v+1]) +"]"
+                valor_content_txt = "Pre-param bin content = {:.1e}".format(valor_bin_content)
+                binning_box = ROOT.TPaveText(0.30, 0.75, 0.90, 0.95, "NDC")
                 binning_box.AddText(ptheta_bin_txt)
                 binning_box.AddText(valor_bin_txt)
+                binning_box.AddText(valor_content_txt)
                 binning_box.SetTextSize(0.05)
                 binning_box.SetFillColor(0)
                 binning_box.SetFillStyle(0)
@@ -340,10 +367,16 @@ def main(config_file, Erec_GeV, Etrue_GeV = -999):
                 title_box.Draw()
                 binning_box.Draw()
                 leg.Draw()
-                canv.Print(save_name)
+
+                save_name_use = save_name
+                if first_plot:
+                    save_name_use += "("
+                    first_plot = False
+                canv.Print(save_name_use)
 
     # Close the PDF (this prints a blank page before closing, but is easier than looping over everything before the
-    # main loop to determine the final used combination of ip, im and true_bin_v
+    # main loop to determine the final used combination of ip, im and true_bin_v)
+    canv_blank = ROOT.TCanvas("blank","blank",800,600)
     canv_blank.Print(save_name +")")
 
     print "Done!"
