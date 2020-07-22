@@ -11,8 +11,9 @@ except:
 ROOT.gROOT.SetBatch(1)
 
 # File naming convention
-standard_pattern = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v5/spline2019splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec[HASEB].root"
-eb_pattern       = "/hepstore/fbench/software/XSecResponse/eb_splines[NDIM]_[TYPE]_[CURRENT]_[SELECTION]selec_2020-04-01.root"
+output_pattern   = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v6/spline2019splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
+standard_pattern = "/hepstore/fbench/software/XSecResponse/eb_splines_with_weights/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-07-17.root"
+eb_pattern       = "/hepstore/fbench/software/XSecResponse/eb_splines_with_weights/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-07-17.root"
 
 def get_file_suffix(sample):
     if "1Rmu" in sample:
@@ -32,25 +33,28 @@ def main():
             for selection in selections:
                 fname_spline = standard_pattern
                 fname_eb     = eb_pattern
+                fname_out    = output_pattern
 
-                fname_spline_2d = ""
-                fname_eb_2d     = ""
+                fname_valor_2d        = ""
+                fname_xsecresponse_2d = ""
                 if is_selection_2d[selection]:
-                    fname_spline_2d = "erectheta"
-                    fname_eb_2d     = "_2d"
+                    fname_valor_2d        = "erectheta"
+                    fname_xsecresponse_2d = "_2d"
 
                 fname_spline = fname_spline.replace("[CURRENT]"  , beam)
                 fname_spline = fname_spline.replace("[TYPE]"     , channel)
                 fname_spline = fname_spline.replace("[SELECTION]", selection)
-                fname_spline = fname_spline.replace("[NDIM]"     , fname_spline_2d)
-
-                fname_out    = fname_spline.replace("[HASEB]", "_plus_Eb")
-                fname_spline = fname_spline.replace("[HASEB]", "")
+                fname_spline = fname_spline.replace("[NDIM]"     , fname_xsecresponse_2d)
 
                 fname_eb = fname_eb.replace("[CURRENT]"  , beam)
                 fname_eb = fname_eb.replace("[TYPE]"     , channel)
                 fname_eb = fname_eb.replace("[SELECTION]", selection)
-                fname_eb = fname_eb.replace("[NDIM]"     , fname_eb_2d)
+                fname_eb = fname_eb.replace("[NDIM]"     , fname_xsecresponse_2d)
+
+                fname_out = fname_out.replace("[CURRENT]"  , beam)
+                fname_out = fname_out.replace("[TYPE]"     , channel)
+                fname_out = fname_out.replace("[SELECTION]", selection)
+                fname_out = fname_out.replace("[NDIM]"     , fname_valor_2d)
 
                 fspline = ROOT.TFile(fname_spline, "READ")
                 feb     = ROOT.TFile(fname_eb    , "READ")

@@ -28,7 +28,7 @@ python_undefined = 2L*sys.maxint+1
 python_undefined_short =2**32 -1
 
 # File naming convention
-pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_Coulomb_plus_Eb.root"
+pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_coulomb_plus_Eb.root"
 models = dict()
 
 def get_file_suffix(sample):
