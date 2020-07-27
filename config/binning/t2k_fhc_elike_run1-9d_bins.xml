@@ -18,7 +18,7 @@
     <!-- Applies to all modes unless a mode binning scheme
          is specified explicitly below -->
     <default>
-      binning/e2e/true/t2k_e2e_Etrue.xml
+      binning/e2e/true/t2k_e2e_Etrue_run9.xml
     </default>
   </true_simple>
 
