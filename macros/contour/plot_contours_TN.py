@@ -371,7 +371,9 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
         title.Draw("same")
     
     multigraph.SetName("contours_mulitgraph")
-    output_file = ROOT.TFile(pdf_filename + "_contours.root","recreate")
+    root_filename = pdf_filename + "_contours.root"
+    output_file = ROOT.TFile(root_filename,"recreate")
+    print "ROOT file", root_filename, "has been created"
     multigraph.Write()
 
     canvas.Update()
@@ -659,7 +661,7 @@ if __name__=="__main__":
     parser.add_argument(      "--best-fit-style" , dest="best_fit_styles"  , nargs="+"              , help="Marker styles for best fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
     parser.add_argument(      "--conf-levels"    , dest="conf_levels_str"  , nargs="+"              , help="The confidence levels to plot const chisq lines/contours for. See ConfLevel::AsString() for the choices")
     parser.add_argument(      "--title-x"        , dest="title_x"                                   , help="Override default x-axis title")
-    parser.add_argument(      "--title-y"        , dest="title_y"                                   , help="Override default y-axis title")
+    parser.add_argument(      "--title-y"        , dest="title_y"          , default="-2#Deltaln(L)", help="Override default y-axis title")
     parser.add_argument(      "--line-width"     , dest="lwidth"           , type=int               , help="Contour line width")
     parser.add_argument(      "--marker-size"    , dest="msize"            , type=float             , help="Best-fit marker size")
     parser.add_argument(      "--text-size"      , dest="tsize"            , type=float             , help="Legend text size")
@@ -822,7 +824,7 @@ if __name__=="__main__":
 
     if num_var == 1:
         plot_contours_1d(dchisq_objects, labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim,
-                         args.title_x, "-2#Deltaln(L)", args.lwidth, args.tsize, conf_levels, leg_coords, args.titlesize,
+                         args.title_x, args.title_y, args.lwidth, args.tsize, conf_levels, leg_coords, args.titlesize,
                          args.fc_files, args.fc_graph_names, fc_line_styles, fc_line_colours, args.fc_draw_vals,
                          args.fc_draw_boxes, is_inverted, args.force_max_y)
     elif num_var == 2:
