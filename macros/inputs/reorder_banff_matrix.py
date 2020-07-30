@@ -135,48 +135,20 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
     n_elements = len(param_order_list)
     print "Elements in new matrix", n_elements
 
-    reordered_covs_d = dict()
-    reordered_params_d = dict()
-
-    # Reorder the parameters and the covariance
-    for fit in ["prefit","postfit"]:
-      orig_cov    = infile.Get(fit+"_cov")
-      orig_params = infile.Get(fit+"_params")
-
-      reordered_cov    = ROOT.TMatrixD(n_elements,n_elements)
-      reordered_params = ROOT.TVectorD(n_elements)
-      for i,orig_i in enumerate(param_order_list):
-        if str(output_names.At(i)) in shifted_nom_params:
-          # Special handling to account for the Q2_norm params as they're
-          # proper normalisation params in NIWG, but spline params in VALOR
-          reordered_params[i] = orig_params[orig_i] - 1
-        else:
-          reordered_params[i] = orig_params[orig_i]
-
-        for j,orig_j in enumerate(param_order_list):
-          reordered_cov[i][j] = orig_cov[orig_i][orig_j]
-
-      outfile.cd()
-      reordered_cov   .Write(fit+"_cov")
-      reordered_params.Write(fit+"_params")
-
-      reordered_covs_d  [fit] = reordered_cov
-      reordered_params_d[fit] = reordered_params
-
 
     # Produce untuned central values - all
-    vec = ROOT.TVectorD(len(ordered_param_name_dict))
+    vec_untuned_values = ROOT.TVectorD(len(ordered_param_name_dict))
 
-    for i in xrange(vec.GetNrows()):
-      vec[i] = 1.
+    for i in xrange(vec_untuned_values.GetNrows()):
+      vec_untuned_values[i] = 1.
     for name, val in abnormal_untuned_central_values.iteritems():
       try:
         ind = list(output_names).index(name)
-        vec[ind] = val
+        vec_untuned_values[ind] = val
       except ValueError:
         print "Making central values - failed to set value of ",name
 
-    vec.Write("banff_untuned_central_values")
+    vec_untuned_values.Write("banff_untuned_central_values")
 
 
     # Produce untuned central values - xsec only
@@ -198,6 +170,39 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
         print "Making central values - failed to set value of ",name
 
     xsec_vec.Write("banff_xsec_untuned_central_values")
+    
+    
+    reordered_covs_d = dict()
+    reordered_params_d = dict()
+
+    # Reorder the parameters and the covariance
+    for fit in ["prefit","postfit"]:
+      orig_cov    = infile.Get(fit+"_cov")
+      orig_params = infile.Get(fit+"_params")
+
+      reordered_cov    = ROOT.TMatrixD(n_elements,n_elements) # This is the pre/postfit covariance matrix 
+      reordered_params = ROOT.TVectorD(n_elements)            # These are the pre/postfit nominal values
+      for i,orig_i in enumerate(param_order_list):
+        if str(output_names.At(i)) in shifted_nom_params:
+          # Special handling to account for the Q2_norm params as they're
+          # proper normalisation params in NIWG, but spline params in VALOR
+          reordered_params[i] = orig_params[orig_i] - 1
+        elif vec_untuned_values[i] != 0.0:
+          # In the run 1-10 analysis, the pre/postfit nominal values are given
+          # as a fraction of the untuned values (unless the untuned value is 0).
+          reordered_params[i] = orig_params[orig_i] * vec_untuned_values[i]
+        else:
+          reordered_params[i] = orig_params[orig_i]
+
+        for j,orig_j in enumerate(param_order_list):
+          reordered_cov[i][j] = orig_cov[orig_i][orig_j]
+
+      outfile.cd()
+      reordered_cov   .Write(fit+"_cov")
+      reordered_params.Write(fit+"_params")
+
+      reordered_covs_d  [fit] = reordered_cov
+      reordered_params_d[fit] = reordered_params
 
     infile.Close()
     outfile.Close()
