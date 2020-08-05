@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<binning>
+
+   <space>
+       Log10Plep,CosZen
+   </space>
+             
+   <type> 
+      edge-to-edge 
+   </type>
+
+
+   <Log10Plep_binning>
+       <bin_size> variable </bin_size>
+       <nbins>    6       </nbins>
+       <bin_edges>
+           2.0,  2.2,  2.4,  2.6,  2.8,  3.0,  3.2
+       </bin_edges>
+   </Log10Plep_binning>
+
+   <CosZen_binning>
+       <bin_size> variable </bin_size>
+       <nbins>    10       </nbins>
+       <bin_edges>
+           -1.0,  1.0
+       </bin_edges>
+   </CosZen_binning>
+
+</binning>
+

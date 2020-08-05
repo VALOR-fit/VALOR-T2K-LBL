@@ -1,0 +1,365 @@
+<?xml version="1.0"?>
+
+<valor> 
+
+  <element_list name="t2k_run10">
+<!--
+   T2K far detector selections
+-->
+
+    <element name="sk_fhc_1rmu">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_FHC                                            </beam>
+      <sample>       1rmu                                                 </sample>
+      <observable>   Ereco                                                </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_mulike_with_extended_run9_inputs.xml                     </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_fhc_mulike_run1-9d_bins.xml              </binning>
+    </element>
+
+    <element name="sk_rhc_1rmu">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_RHC                                            </beam>
+      <sample>       1rmu                                                 </sample>
+      <observable>   Ereco                                                </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_rhc_mulike_with_extended_run9_inputs.xml                     </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_rhc_mulike_run1-9d_bins.xml              </binning>
+    </element>
+
+    <element name="sk_fhc_1re">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_FHC                                            </beam>
+      <sample>       1re                                                  </sample>
+      <observable>   Ereco,Thetareco                                      </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning>
+    </element>
+
+    <element name="sk_rhc_1re">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_RHC                                            </beam>
+      <sample>       1re                                                  </sample>
+      <observable>   Ereco,Thetareco                                      </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_rhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_rhc_elike_run1-9d_bins.xml               </binning>
+    </element>
+
+    <element name="sk_fhc_multire">
+      <detector>     superk                                               </detector>
+      <beam>         JPARC_FHC                                            </beam>
+      <sample>       multire                                              </sample>
+      <observable>   Ereco,Thetareco                                      </observable>
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning>
+    </element>
+  
+
+    <!-- SK  atm sample definition -->
+
+    <element name="sk_atm_1re0dcye">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1re0dcye                                             </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1re1dcye">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1re1dcye                                             </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1rpi0">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1rpi0                                                </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1rm0dcye">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1rm0dcye                                             </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1rm1dcye">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1rm1dcye                                             </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1rm2dcye">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1rm2dcye                                             </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_pi0">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       pi0                                                  </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1renue">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1renue                                               </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1renuebar">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1renuebar                                            </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_1rm">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       1rm                                                  </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_multirenue">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       multirenue                                           </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_multirenuebar">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       multirenuebar                                        </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_multirm">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       multirm                                              </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_multirother">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       multirother                                          </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_pcstop">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       pcstop                                               </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_pcthru">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       pcthru                                               </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_upstop">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       upstop                                               </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_upthrunonshower">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       upthrunonshower                                      </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+
+    <element name="sk_atm_upthrushower">
+      <detector>     superk                                               </detector>  <!-- Need to change?-->
+      <beam>         ATM                                                  </beam> <!-- Does it makke sense to have an "ATM beam"?-->
+      <sample>       upthrushower                                         </sample>
+      <observable>   Log10Plep,CosZen                                        </observable> <!-- Offcial observable for SK ATM binnnig-->
+      <data>                                                              </data>
+      <mc>           mc/t2k_mc_run1-10_fhc_elike_with_extended_run9_inputs.xml                      </mc> <!-- TODO -->
+      <data_class>   valor::GenericSingleSampleFitData                    </data_class>  <!-- ToDo-->
+      <model_class>  valor::GenericSingleSampleFitModel                   </model_class>  <!-- ToDo-->
+      <binning>      binning/t2k_fhc_elike_run1-9d_bins.xml               </binning> <!-- ToDo-->
+    </element>
+  
+  </element_list>
+
+  <parameter_definitions>
+    <!-- Make sure that any config file containing default values is read first! -->
+    <filename desc="default_physics_params"> params/default_physics_parameter_values.xml                      </filename>
+    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2020_run1-10_v1.xml         </filename> <!-- TODO: When we have the new BANFF matrix, re-enable all new params and delete the old ones -->
+    <filename desc="physics_params">         params/physics_parameter_specification_t2k_oa2018_run1-9d_v1.xml </filename>
+  </parameter_definitions>
+
+
+  <!-- TODO: Update all this when we have the run 10 matrices -->
+  <!-- TODO: Add a new group for SK atm only systematics and workout the common SK atm and skdetfsi systematics -->
+  <systematics name="t2k_run1-9d">
+
+    <group name="banff">
+      <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
+           The order of params in this list must be the same as the order of params in the matrix.-->
+      <format> t2k_banff_params_run1-9d_plus_run10_fsi.xml </format>
+      
+      <covariance_matrix>
+        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_fsi_valor_order_all.root </filename>
+        <objname>  postfit_cov    </objname>
+        <objtype>  TMatrixD       </objtype>
+      </covariance_matrix>
+
+      <untuned_values>
+        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_fsi_valor_order_all.root </filename>
+        <objname>  banff_untuned_central_values  </objname>
+      </untuned_values>
+
+      <initial_values>
+        <filename> official/2020/banff/prelim/DataFit_Postfit_2018_final_v1_180907_sk_plus_run10_fsi_valor_order_all.root </filename>
+        <objname>  postfit_params  </objname>
+      </initial_values>
+    </group>
+
+
+    <group name="skdetfsi">
+      <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
+           The order of params in this list must be the same as the order of params in the matrix.-->
+      <format> t2k_sk_params_run1-9d.xml </format>
+
+      <covariance_matrix>
+        <filename> official/2018/skdetfsi/SKJointErrorMatrix2018_Total_fitqun_v4_16thAug2017_VALOR_order.root </filename>
+        <objname>  skdetfsi    </objname>
+        <objtype>  TMatrixD    </objtype>
+      </covariance_matrix>
+    </group>
+   
+
+    <group name="skdetatm">
+      <!-- This is the list of param names in the input matrix. The order of params in this list must be the same as the order of params in the matrix.-->
+      <format> t2k_sk_params_run1-9d.xml </format> <!--ToDo-->
+
+      <covariance_matrix>
+        <filename> official/2018/skdetfsi/SKJointErrorMatrix2018_Total_fitqun_v4_16thAug2017_VALOR_order.root </filename> <!--ToDo-->
+        <objname>  skdetatm    </objname>
+        <objtype>  TMatrixD    </objtype> <!--ToDo-->
+      </covariance_matrix>
+    </group>
+
+ 
+  </systematics>
+
+</valor> 
