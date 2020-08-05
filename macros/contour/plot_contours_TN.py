@@ -29,8 +29,8 @@ _hatch_fill_style = 3003    # For filling in FC intervals
 #________________________________________________________________________________________________________
 def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours, styles, prelim, title_x, title_y,
                      line_width, text_size, conf_levels, leg_coords, titlesize,
-                     fc_files, fc_graph_names, fc_line_styles, fc_line_colours, fc_draw_critvals, fc_draw_boxes,
-                     is_inverted=False, force_max_y = -1):
+                     fc_files, fc_graph_pattern, fc_line_styles, fc_line_colours, fc_draw_critvals,
+                     fc_draw_boxes, force_max_y = -1):
     max_val = 0.0
     min_val = 999
     for dchisq_obj in dchisq_objects:
@@ -140,56 +140,69 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             latLine.Draw("same")
     else:
         # Draw boxes to represent the Feldman-Cousins allowed regions
-        fc_tgraphs  = []
+        fc_tgraphs        = []
         hatch_boxes = []
         for i, dchisq_obj in enumerate(dchisq_objects):
-            fc_tfile = ROOT.TFile(fc_files[i])
-            fc_critval_tgraph = fc_tfile.Get(fc_graph_names[i])
-            if not fc_critval_tgraph:
-                print "ERROR: Could not find a TGraph named \'{}\'".format(fc_graph_names[i]), \
-                      "in the file", fc_files[i]
-                sys.exit()
-            fc_tgraphs.append(fc_critval_tgraph)
+            if fc_graph_pattern[i] == "None" or fc_graph_pattern[i] == "none" or fc_graph_pattern[i] == "":
+                # Not every contour needs to have an associated FC hatch box or graph of critical values
+                continue
+            for j, conf_level in enumerate(conf_levels):
+                fc_tfile = ROOT.TFile(fc_files[i])
+                fc_graph_name = (fc_graph_pattern[i]).replace("[CL]",util.ConfLevelAsString(conf_level))
+                fc_critval_tgraph = fc_tfile.Get(fc_graph_name)
+                if not fc_critval_tgraph:
+                    # Try the legacy analysis naming convention before we give up
+                    if "pct" in fc_graph_name:
+                        fc_critval_tgraph = fc_tfile.Get(fc_graph_name.replace("pct","CL"))
+                    if not fc_critval_tgraph:
+                        print "ERROR: Could not find a TGraph named \'{}\'".format(fc_graph_name), \
+                              " or \'{}\'".format(fc_graph_name.replace("pct","CL")), \
+                              "in the file", fc_files[i]
+                        sys.exit()
 
-            if fc_draw_boxes:
-                [left_boundary, right_boundary] = calc_1d_fc_xrange(dchisq_obj, fc_critval_tgraph)
-                hist_left_edge  = dchisq_obj.GetXaxis().GetBinLowEdge(1)
-                hist_right_edge = dchisq_obj.GetXaxis().GetBinUpEdge(dchisq_obj.GetNbinsX())
-                hatch_box_max_y = 0.66 * max_val
-                if left_boundary > right_boundary:
-                    hatch_interval  = ROOT.TBox(left_boundary , 0, hist_right_edge, hatch_box_max_y)
-                    hatch_interval.SetLineWidth(0)
-                    hatch_interval.SetFillStyle(_hatch_fill_style)
-                    hatch_interval.SetFillColor(dchisq_obj.GetLineColor())
-                    hatch_boxes.append(hatch_interval)
-                    hatch_interval.Draw("same")
+                fc_critval_tgraph.SetLineStyle(fc_line_styles [i*len(dchisq_objects) +j])
+                fc_critval_tgraph.SetLineColor(fc_line_colours[i*len(dchisq_objects) +j])
+                fc_tgraph_leg_label  = labels[i] + " " + title_y + "_{crit.} " # Have to split this up so that the RooTex subscript/superscript doesn't mess up format()
+                fc_tgraph_leg_label += "({} CL)".format(util.ConfLevelAsStringRooTex(conf_level))
+                fc_critval_tgraph.SetName(fc_tgraph_leg_label)
+                fc_tgraphs.append(fc_critval_tgraph)
 
-                    hatch_interval2 = ROOT.TBox(hist_left_edge, 0, right_boundary , hatch_box_max_y)
-                    hatch_interval2.SetLineWidth(0)
-                    hatch_interval2.SetFillStyle(_hatch_fill_style)
-                    hatch_interval2.SetFillColor(dchisq_obj.GetLineColor())
-                    hatch_boxes.append(hatch_interval2)
-                    hatch_interval2.Draw("same")
-                else:
-                    hatch_interval  = ROOT.TBox(left_boundary , 0, right_boundary , hatch_box_max_y)
-                    hatch_interval.SetLineWidth(0)
-                    hatch_interval.SetFillStyle(_hatch_fill_style)
-                    hatch_interval.SetFillColor(dchisq_obj.GetLineColor())
-                    hatch_boxes.append(hatch_interval)
-                    hatch_interval.Draw("same")
+                if fc_draw_boxes:
+                    # This only gets done for a single confidence level. This condition is is enforced
+                    # when processing command line args.
+                    [left_boundary, right_boundary] = calc_1d_fc_xrange(dchisq_obj, fc_critval_tgraph)
+                    hist_left_edge  = dchisq_obj.GetXaxis().GetBinLowEdge(1)
+                    hist_right_edge = dchisq_obj.GetXaxis().GetBinUpEdge(dchisq_obj.GetNbinsX())
+                    hatch_box_max_y = 0.66 * max_val
+                    if left_boundary > right_boundary:
+                        hatch_interval  = ROOT.TBox(left_boundary , 0, hist_right_edge, hatch_box_max_y)
+                        hatch_interval.SetLineWidth(0)
+                        hatch_interval.SetFillStyle(_hatch_fill_style)
+                        hatch_interval.SetFillColor(dchisq_obj.GetLineColor())
+                        hatch_boxes.append(hatch_interval)
+                        hatch_interval.Draw("same")
+
+                        hatch_interval2 = ROOT.TBox(hist_left_edge, 0, right_boundary , hatch_box_max_y)
+                        hatch_interval2.SetLineWidth(0)
+                        hatch_interval2.SetFillStyle(_hatch_fill_style)
+                        hatch_interval2.SetFillColor(dchisq_obj.GetLineColor())
+                        hatch_boxes.append(hatch_interval2)
+                        hatch_interval2.Draw("same")
+                    else:
+                        hatch_interval  = ROOT.TBox(left_boundary , 0, right_boundary , hatch_box_max_y)
+                        hatch_interval.SetLineWidth(0)
+                        hatch_interval.SetFillStyle(_hatch_fill_style)
+                        hatch_interval.SetFillColor(dchisq_obj.GetLineColor())
+                        hatch_boxes.append(hatch_interval)
+                        hatch_interval.Draw("same")
+                fc_tfile.Close()
 
         # Draw the FC critical values in a separate loop to the FC boxes to ensure that the critical value
         # lines are always in front of the boxes.
         if fc_draw_critvals:
-            for i, dchisq_obj in enumerate(dchisq_objects):
-                fc_tgraphs[i].SetLineColor(fc_line_colours[i])
-                fc_tgraphs[i].SetLineStyle(fc_line_styles[i])
-                fc_tgraphs[i].Draw("L,same")
-
-                if i == 0:
-                    fc_tgraph_leg_label  = "-2 #Delta lnL_{crit.} " # Have to split this up so that the RooTex subscript/superscript doesn't mess up format()
-                    fc_tgraph_leg_label += "({} CL)".format(util.ConfLevelAsStringRooTex(conf_levels[0]))
-                    legend.AddEntry(fc_tgraphs[i], fc_tgraph_leg_label, "l")
+            for i, fc_tgraph in enumerate(fc_tgraphs):
+                fc_tgraph.Draw("L,same")
+                legend.AddEntry(fc_tgraph, fc_tgraph.GetName(), "l")
 
     if prelim:
         title = ROOT.TLatex(0.5, 0.91, "T2K Run 1-9 Preliminary")
@@ -653,36 +666,36 @@ def get_interpolation_x(X1, Y1, X2, Y2, Yin):
 #________________________________________________________________________________________________________
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Index splines")
-    parser.add_argument("-f", "--filename"       , dest="in_filenames"     , nargs="+"              , help="Input filename(s) for contour(s).")
-    parser.add_argument("-l", "--label"          , dest="labels"           , nargs="+"              , help="Legend label(s) for contours(s). This should have either 0 length or the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument("-c", "--colour"         , dest="colours"          , nargs="+"              , help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the colours is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
-    parser.add_argument("-s", "--style"          , dest="styles"           , nargs="+"              , help="Custom line style(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename  (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the styles is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
-    parser.add_argument(      "--best-fit-label" , dest="best_fit_labels"  , nargs="+"              , help="Labels for best-fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--best-fit-style" , dest="best_fit_styles"  , nargs="+"              , help="Marker styles for best fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--conf-levels"    , dest="conf_levels_str"  , nargs="+"              , help="The confidence levels to plot const chisq lines/contours for. See ConfLevel::AsString() for the choices")
-    parser.add_argument(      "--title-x"        , dest="title_x"                                   , help="Override default x-axis title")
-    parser.add_argument(      "--title-y"        , dest="title_y"          , default="-2#Deltaln(L)", help="Override default y-axis title")
-    parser.add_argument(      "--line-width"     , dest="lwidth"           , type=int               , help="Contour line width")
-    parser.add_argument(      "--marker-size"    , dest="msize"            , type=float             , help="Best-fit marker size")
-    parser.add_argument(      "--text-size"      , dest="tsize"            , type=float             , help="Legend text size")
-    parser.add_argument(      "--title-size"     , dest="titlesize"        , type=float,default=0.05, help="Title text size")
-    parser.add_argument("-o", "--output"         , dest="out_filename"                              , help="Output PDF filename")
-    parser.add_argument(      "--chisq-calc"     , dest="chisq_calc"                                , help="If \'global\', the min. Dchisq of each contour is set to 0. If \'local\', Dchisq is calculated relative to the min. of all contours. If \'MHpair\', the contour for the opposite MH is found and the Dchisq of each contour set is relative to the min. of pair of NH/IH contours")
-    parser.add_argument(      "--fc-files"       , dest="fc_files"         , nargs="+"              , help="ROOT files containing TGraphs of the FC critical values as a function of the parameter of interest and the mass hierarchy. For 1D fits only. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--fc-graph-names" , dest="fc_graph_names"   , nargs="+"              , help="Names of the TGraphs containing the FC critical values. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--fc-line-styles" , dest="fc_line_styles"   , nargs="+"              , help="Line styles used for plotting the FC critical values with \'--fc-draw-vals\'. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--fc-line-colours", dest="fc_line_colours"  , nargs="+"              , help="Line colours used for plotting the FC critical values with \'--fc-draw-vals\'. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
-    parser.add_argument(      "--fc-draw-vals"   , dest="fc_draw_vals"     , action="store_true"    , help="If true, draws the FC critical values on top of the Delta chisq hists")
-    parser.add_argument(      "--fc-draw-boxes"  , dest="fc_draw_boxes"    , action="store_true"    , help="If true, draws shaded boxes representing the FC allowed region on top of the Delta chisq hists")
-    parser.add_argument(      "--t2k"            , dest="is_t2k_only"      , action="store_true"    )
-    parser.add_argument(      "--prelim"         , dest="prelim"           , action="store_true"    )
-    parser.add_argument(      "--theta23"        , dest="theta23"          , type=float             , help="Input value of theta23.")
-    parser.add_argument(      "--dm23"           , dest="dm23"             , type=float             , help="Input value of dm23.")
-    parser.add_argument(      "--draw-reactor"   , dest="draw_reactor"     , action="store_true"    , help="Draw a vertical band indicating the PDG 2018 reactor constraint on sinsq(theta13) used in the T2K oscillation analysis")
-    parser.add_argument(      "--force-max-y"    , dest="force_max_y"      , type=float             , help="Set the maximum y-axis value in 1D plots to this.")
-    parser.add_argument(      "--max-ndigits-y"  , dest="max_ndigits_y"    , type=int, default=3    , help="Max number of digits on the y-axis labels.")
-    parser.add_argument(      "--leg-coords"     , dest="leg_coords_str"   , nargs="+"              , help="Legend corner coordinates [xmin, ymin, xmax, ymax].")
-    parser.add_argument(      "--bf-leg-coords"  , dest="bf_leg_coords_str", nargs="+"              , help="Best-fit marker legend corner coordinates [xmin, ymin, xmax, ymax] (for 2D plots only).")
+    parser.add_argument("-f", "--filename"        , dest="in_filenames"     , nargs="+"              , help="Input filename(s) for contour(s).")
+    parser.add_argument("-l", "--label"           , dest="labels"           , nargs="+"              , help="Legend label(s) for contours(s). This should have either 0 length or the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument("-c", "--colour"          , dest="colours"          , nargs="+"              , help="Custom line colour(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the colours is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument("-s", "--style"           , dest="styles"           , nargs="+"              , help="Custom line style(s) for contours(s) (optional). If used, this should have the same number of arguments as provided to --filename  (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the styles is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument(      "--best-fit-label"  , dest="best_fit_labels"  , nargs="+"              , help="Labels for best-fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--best-fit-style"  , dest="best_fit_styles"  , nargs="+"              , help="Marker styles for best fit point(s) for 2D contours(s) (optional). If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--conf-levels"     , dest="conf_levels_str"  , nargs="+"              , help="The confidence levels to plot const chisq lines/contours for. See ConfLevel::AsString() for the choices")
+    parser.add_argument(      "--title-x"         , dest="title_x"                                   , help="Override default x-axis title")
+    parser.add_argument(      "--title-y"         , dest="title_y"          , default="-2#Deltaln(L)", help="Override default y-axis title")
+    parser.add_argument(      "--line-width"      , dest="lwidth"           , type=int               , help="Contour line width")
+    parser.add_argument(      "--marker-size"     , dest="msize"            , type=float             , help="Best-fit marker size")
+    parser.add_argument(      "--text-size"       , dest="tsize"            , type=float             , help="Legend text size")
+    parser.add_argument(      "--title-size"      , dest="titlesize"        , type=float,default=0.05, help="Title text size")
+    parser.add_argument("-o", "--output"          , dest="out_filename"                              , help="Output PDF filename")
+    parser.add_argument(      "--chisq-calc"      , dest="chisq_calc"                                , help="If \'global\', the min. Dchisq of each contour is set to 0. If \'local\', Dchisq is calculated relative to the min. of all contours. If \'MHpair\', the contour for the opposite MH is found and the Dchisq of each contour set is relative to the min. of pair of NH/IH contours")
+    parser.add_argument(      "--fc-files"        , dest="fc_files"         , nargs="+"              , help="ROOT files containing TGraphs of the FC critical values as a function of the parameter of interest and the mass hierarchy. For 1D fits only. If used, this should have the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used, but leaving some args as \'None\' is fine if not every dchisq surface/contour file has an associated FC file.")
+    parser.add_argument(      "--fc-graph-pattern", dest="fc_graph_pattern" , nargs="+"              , help="Naming pattern of the TGraphs containing the FC critical values with the confidence level of each TGraph replaced with \'[CL]\', e.g. \'gFC_1sigma\'. If used, this should have the same number of arguments as provided to --filename.")
+    parser.add_argument(      "--fc-line-styles"  , dest="fc_line_styles"   , nargs="+"              , help="Line styles used for plotting the FC critical values with \'--fc-draw-vals\'. If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels), or double if \'--chisq-calc MHpair\' is used, the order of the styles is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument(      "--fc-line-colours" , dest="fc_line_colours"  , nargs="+"              , help="Line colours used for plotting the FC critical values with \'--fc-draw-vals\'. If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels), or double if \'--chisq-calc MHpair\' is used, the order of the colours is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument(      "--fc-draw-vals"    , dest="fc_draw_vals"     , action="store_true"    , help="If true, draws the FC critical values on top of the Delta chisq hists")
+    parser.add_argument(      "--fc-draw-boxes"   , dest="fc_draw_boxes"    , action="store_true"    , help="If true, draws shaded boxes representing the FC allowed region on top of the Delta chisq hists")
+    parser.add_argument(      "--t2k"             , dest="is_t2k_only"      , action="store_true"    )
+    parser.add_argument(      "--prelim"          , dest="prelim"           , action="store_true"    )
+    parser.add_argument(      "--theta23"         , dest="theta23"          , type=float             , help="Input value of theta23.")
+    parser.add_argument(      "--dm23"            , dest="dm23"             , type=float             , help="Input value of dm23.")
+    parser.add_argument(      "--draw-reactor"    , dest="draw_reactor"     , action="store_true"    , help="Draw a vertical band indicating the PDG 2018 reactor constraint on sinsq(theta13) used in the T2K oscillation analysis")
+    parser.add_argument(      "--force-max-y"     , dest="force_max_y"      , type=float             , help="Set the maximum y-axis value in 1D plots to this.")
+    parser.add_argument(      "--max-ndigits-y"   , dest="max_ndigits_y"    , type=int, default=3    , help="Max number of digits on the y-axis labels.")
+    parser.add_argument(      "--leg-coords"      , dest="leg_coords_str"   , nargs="+"              , help="Legend corner coordinates [xmin, ymin, xmax, ymax].")
+    parser.add_argument(      "--bf-leg-coords"   , dest="bf_leg_coords_str", nargs="+"              , help="Best-fit marker legend corner coordinates [xmin, ymin, xmax, ymax] (for 2D plots only).")
     args = parser.parse_args()
 
     # Check the validity of the input arguments
@@ -797,23 +810,23 @@ if __name__=="__main__":
             if len(args.fc_files) != 2 * len(args.in_filenames):
                 print "ERROR: The number of input FC files must be double the number of input chisq hist files."
                 sys.exit()
-        if len(args.fc_graph_names) != len(args.fc_files):
+        if len(args.fc_graph_pattern) != len(args.fc_files):
             print "ERROR: The number of input FC TGraph names must match the number of input FC files."
             sys.exit()
-        if len(args.fc_line_styles) != len(args.fc_files):
-            print "ERROR: The number of input FC line styles must match the number of input FC files."
+        if len(args.fc_line_styles) != len(args.fc_files) * len(conf_levels):
+            print "ERROR: The number of input FC line styles must match the number of input FC files * number of confidence levels."
             sys.exit()
-        if len(args.fc_line_colours) != len(args.fc_files):
-            print "ERROR: The number of input FC line colours must match the number of input FC files."
-            sys.exit()
-        if len(conf_levels) != 1:
-            print "ERROR: Tried to plot 1D Feldman-Cousins with != 1 input confidence levels. Plotting FC is only supported for a single confidence level."
+        if len(args.fc_line_colours) != len(args.fc_files) * len(conf_levels):
+            print "ERROR: The number of input FC line colours must match the number of input FC files * number of confidence levels."
             sys.exit()
         if num_var != 1:
             print "ERROR: Only 1D Feldman-Cousins is supported."
             sys.exit()
         if "cp" not in args.title_x.lower():
             print "ERROR: Currently plotting Feldman-Cousins is only supported for deltacp"
+            sys.exit()
+        if args.fc_draw_boxes and len(conf_levels) != 1:
+            print "ERROR: Drawing FC hatch boxes is not supported for != 1 confidence levels."
             sys.exit()
         fc_line_styles  = [int(i) for i in args.fc_line_styles ]
         fc_line_colours = [int(i) for i in args.fc_line_colours]
@@ -825,12 +838,13 @@ if __name__=="__main__":
     if num_var == 1:
         plot_contours_1d(dchisq_objects, labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim,
                          args.title_x, args.title_y, args.lwidth, args.tsize, conf_levels, leg_coords, args.titlesize,
-                         args.fc_files, args.fc_graph_names, fc_line_styles, fc_line_colours, args.fc_draw_vals,
-                         args.fc_draw_boxes, is_inverted, args.force_max_y)
+                         args.fc_files, args.fc_graph_pattern, fc_line_styles, fc_line_colours,
+                         args.fc_draw_vals, args.fc_draw_boxes, args.force_max_y)
     elif num_var == 2:
         plot_contours_2d(dchisq_objects, labels, args.theta23, args.dm23, args.out_filename, colours, styles,
                          best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth,
-                         args.msize, args.tsize, conf_levels, leg_coords, bf_leg_coords, args.titlesize, args.draw_reactor)
+                         args.msize, args.tsize, conf_levels, leg_coords, bf_leg_coords, args.titlesize, args.draw_reactor,
+                         is_inverted)
     else:
         print "Error: Not all contours have the same dimensionality"
         sys.exit()
