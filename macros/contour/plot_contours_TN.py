@@ -160,9 +160,9 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
                               "in the file", fc_files[i]
                         sys.exit()
 
-                fc_critval_tgraph.SetLineStyle(fc_line_styles [i*len(dchisq_objects) +j])
-                fc_critval_tgraph.SetLineColor(fc_line_colours[i*len(dchisq_objects) +j])
-                fc_tgraph_leg_label  = labels[i] + " " + title_y + "_{crit.} " # Have to split this up so that the RooTex subscript/superscript doesn't mess up format()
+                fc_critval_tgraph.SetLineStyle(fc_line_styles [i*(len(conf_levels)) +j])
+                fc_critval_tgraph.SetLineColor(fc_line_colours[i*(len(conf_levels)) +j])
+                fc_tgraph_leg_label  = "FC" + " " + title_y + "_{crit.} " # Have to split this up so that the RooTex subscript/superscript doesn't mess up format()
                 fc_tgraph_leg_label += "({} CL)".format(util.ConfLevelAsStringRooTex(conf_level))
                 fc_critval_tgraph.SetName(fc_tgraph_leg_label)
                 fc_tgraphs.append(fc_critval_tgraph)
@@ -203,6 +203,10 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             for i, fc_tgraph in enumerate(fc_tgraphs):
                 fc_tgraph.Draw("L,same")
                 legend.AddEntry(fc_tgraph, fc_tgraph.GetName(), "l")
+
+        if fc_draw_boxes:
+            box_name = "FC "+util.ConfLevelAsStringRooTex(conf_levels[0])+" conf. region"
+            legend.AddEntry(hatch_boxes[0],box_name , "f")
 
     if prelim:
         title = ROOT.TLatex(0.5, 0.91, "T2K Run 1-9 Preliminary")
