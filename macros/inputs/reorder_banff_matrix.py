@@ -2,6 +2,12 @@
 
 # Re-order the BANFF matrix supplied by the BANFF group, using an ordered list of parameters taken from an XML file.
 #
+# Note on conventions:
+#   Any param with untuned value != 0 has a nominal pre/postfit value equal to the physical parameter value divided by the physical untuned value.
+#   e.g. The physical untuned and nominal values for MAQE are 1.21GeV and 1.17GeV, respectively, so the untuned and nominal values used in VALOR will be 1.21/1.21 = 1 and 1.17/1.21 = 0.97, respectively.
+#   Any param with untuned value = 0 gets the physical values used in VALOR, so there is no division by the untuned value.
+#   This convention matches the one used to specify the values in the input BANFF file, so no conversion is done here.
+#
 # NOTE: Don't use this for the SKDetFSI matrix. This macro assumes that the non-VALOR format input file
 # contains an ordered list of parameter names, but unhelpfully, the SDKDetFSI file does not contain this.
 #
@@ -40,17 +46,7 @@ python_undefined_short = 2**32 -1
 # List strange untuned central values. Will assume 1 for all others.
 # Want to grab these from the TVector of untuned values instead
 abnormal_untuned_central_values = {
-    "MAQE"                     : 1.21,
-    "MARES"                    : 0.95,
-    "CA5"                      : 1.01,
     "2p2h_shape_O"             : 0.0,
-    "FEFQE"                    : 1.069,
-    "FEFQEH"                   : 1.824,
-    "FEFINEL"                  : 1.002,
-    "FEFABS"                   : 1.404,
-    "FEFCX"                    : 0.697,
-    "ISO_BKG"                  : 1.3,
-    "ISO_BKG_LowPPi"           : 1.3,
     "EB_dial_O_nu"             : 0.0,
     "EB_dial_O_nubar"          : 0.0,
     "CC_BY_DIS"                : 0.0,
@@ -187,10 +183,6 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
           # Special handling to account for the Q2_norm params as they're
           # proper normalisation params in NIWG, but spline params in VALOR
           reordered_params[i] = orig_params[orig_i] - 1
-        elif vec_untuned_values[i] != 0.0:
-          # In the run 1-10 analysis, the pre/postfit nominal values are given
-          # as a fraction of the untuned values (unless the untuned value is 0).
-          reordered_params[i] = orig_params[orig_i] * vec_untuned_values[i]
         else:
           reordered_params[i] = orig_params[orig_i]
 
