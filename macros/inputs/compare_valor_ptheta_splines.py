@@ -258,6 +258,12 @@ skipped_draw = {
     "no_skip"                                : 0
 }
 
+# This is to consider the difference in weights between VALOR and p-theta, for all params, modes and bins.
+# times them by the VALOR pre-param bin content and sum over bins. Then work out what the effect of the
+# differences are on the rates to see if these are indeed causing the differences I see in the actual rate tables.
+rates_valor_MCT_valor_weights  = {}
+rates_valor_MCT_ptheta_weights = {}
+
 
 
 #_________________________________________________________________________________
@@ -346,6 +352,8 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
     first_plot = True
     for ip, param in enumerate(filtered_params):
         param_name = param.GetName()
+        rates_valor_MCT_valor_weights [param_name] = {}
+        rates_valor_MCT_ptheta_weights[param_name] = {}
 
         if selected_param != "" and selected_param not in param_name:
             continue
@@ -384,6 +392,8 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
             reac_type = util.ReacModeToType(m)
             reac_type_name = util.ReacTypeAsString(reac_type)
             ptheta_mode_enum = valor_modes_in_ptheta_order.index(reac_type_name)
+            rates_valor_MCT_valor_weights [param_name][reac_type_name] = 0
+            rates_valor_MCT_ptheta_weights[param_name][reac_type_name] = 0
 
             valor_etrue_bin_edges = get_valor_etrue_bin_edges(beam, init_flav, final_flav)
 
@@ -519,6 +529,10 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                         skipped_draw["valor_MCT_bin_empty"] += 1
                         continue
 
+                    # Count the effect of differences in this spline for this param, if all other params are not applied
+                    rates_valor_MCT_valor_weights [param_name][reac_type_name] += valor_bin_content * tg_v    .Eval(postfit_nom_spline_x, 0, "S")
+                    rates_valor_MCT_ptheta_weights[param_name][reac_type_name] += valor_bin_content * new_tg_p.Eval(postfit_nom_spline_x, 0, "S")
+
                     ptheta_bin_txt = "p-theta: Et = ["+str(ptheta_etrue_bin_edges[true_bin_p])+","+str(ptheta_etrue_bin_edges[true_bin_p+1])+"]; Er = ["+str(ptheta_erec_bin_edges[reco_bin_p])+","+str(ptheta_erec_bin_edges[reco_bin_p+1])+"]"
                     valor_bin_txt  = "VALOR:   Et = ["+str(valor_etrue_bin_edges[true_bin_v]) +","+str(valor_etrue_bin_edges[true_bin_v+1]) +"]; Er = ["+str(valor_erec_bin_edges[erec_bin_v]) +","+str(valor_erec_bin_edges[erec_bin_v+1]) +"]"
                     if sample_is_2d[sample_str]:
@@ -580,6 +594,32 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
     # main loop to determine the final used combination of ip, im and true_bin_v)
     canv_blank = ROOT.TCanvas("blank","blank",800,600)
     canv_blank.Print(save_name +")")
+
+    if match_edges and consider_all_true_bins and consider_all_theta_bins:
+        # Here we only want to consider bins where the Etrue edges match. This is so that the valor MCT
+        # bin content will be ~= to that of p-theta, which would not be the case otherwise.
+        # This allows us to see what rates differences are definitely caused by spline differences.
+        print "Spline contributions to differences in", sample_str, init_flav, "-->", final_flav, \
+              " event rates (using VALOR MCT bin contents, but weights from both groups):"
+        for im, m in enumerate(filtered_modelist):
+            reac_type = util.ReacModeToType(m)
+            reac_type_name = util.ReacTypeAsString(reac_type)
+            print "\t", reac_type_name
+            for ip, param in enumerate(filtered_params):
+                if not util.IsAppliedTo(param.GetApplyMask(), beam, sample, detector, m, conv.kntInclusive):
+                    continue
+                param_name = param.GetName()
+                print "\t\t", param_name
+
+                rv = rates_valor_MCT_valor_weights [param_name][reac_type_name]
+                rp = rates_valor_MCT_ptheta_weights[param_name][reac_type_name]
+                ratiovp = (rv - rp) *100.
+                if rv != 0 and rp != 0:
+                    ratiovp = (rv/rp -1) *100.
+                print "\t\t\t valor  rate =", rv
+                print "\t\t\t ptheta rate =", rp
+                print "\t\t\t valor/ptheta -1 =", ratiovp, "%"
+
 
     print "\n\nOut of", sum(skipped_draw.values()), "attempted spline comparions", sum(skipped_draw.values()) - skipped_draw["no_skip"], \
           "were not drawn, for the following reasons:"
