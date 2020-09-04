@@ -290,7 +290,7 @@ spline_diff_warn_threshold = 1E-5
 
 #_________________________________________________________________________________
 def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_str = "FHC1Rmu",
-         init_flav = "all", final_flav = "all", selected_param = "", match_edges = False):
+         init_flav = "all", final_flav = "all", selected_param = "", match_edges = False, track_missing = False):
     fit_elements = valor.CompoundFitElements()
     fit_elements.Read(util.CompleteConfigPath(config_file),"nosplines")
     model = fit_elements.FitModel()
@@ -501,6 +501,24 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                                           +util.ModeAsString(m) +"_" +param_name +"_" +str(true_bin_v) +"_" +str(reco_bin_v)
                             #print "Getting VALOR spline named", spl_title_v
 
+                            # The title to be drawn on the plot
+                            title = sample_str +"_" +flav_str +"_" +reac_type_name+ "_" +param_name+ "_" +str(true_bin_v)+ "_" +str(reco_bin_v)
+
+                            # Get the VALOR nominal bin content before systematic or oscillation parameters are applied
+                            MCT_name = array_tag +"_mctnom_sb_vf" +"_" +submodel.Name() +"_" +util.ModeAsString(m)
+                            MCT = array_MCTs.FindObject(MCT_name)
+                            if not MCT:
+                                print "ERROR: Something went wrong getting the VALOR MCT named", MCT_name
+                                sys.exit()
+                            valor_fit_binning_reco = sskb.RecoSmpBinning()
+                            vec_reco = ROOT.vector('double')()
+                            vec_reco.push_back(Erec_GeV)
+                            if sample_is_2d[sample_str]:
+                                vec_reco.push_back(theta_deg)
+                            valor_fit_ibin_reco = valor_fit_binning_reco.FindBin(vec_reco)
+                            valor_fit_ibin_true = get_bin_number(valor_etrue_fit_bin_edges, true_bin_centre_v)
+                            valor_bin_content = MCT.GetEntry(valor_fit_ibin_reco, valor_fit_ibin_true)
+
                             # By convention, the p-theta Erec and theta bin numbers start at 1 for the TGraph names (but their Etrue bins start at 0)
                             gr_title_p = "gr_rw_erec_im" + str(ptheta_mode_enum) + "_enu" +str(true_bin_p)+ "_binx" +str(reco_bin_p+1)
                             if sample_is_2d[sample_str]:
@@ -508,34 +526,70 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                             #print "Getting p-theta spline named", gr_title_p
 
                             tg_p = file_p.Get(gr_title_p)
-                            if not tg_p:
+                            got_v_spline_but_not_p_spline = False
+                            if not tg_p or type(tg_p) == ROOT.TObject():
                                 spl_v = arr_v.FindObject(spl_title_v)
                                 if not spl_v:
                                     print "WARNING: could not get p-theta tgraph", gr_title_p, "from file", file_p.GetName(), \
                                           "\n  Couldn't get the associated VALOR spline either \n\n"
                                     skipped_draw["neither_valor_nor_ptheta_spline"] += 1
+                                    rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name] += valor_bin_content
+                                    rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name] += valor_bin_content
+                                    continue
                                 else:
+                                    got_v_spline_but_not_p_spline = True
                                     if is_spline_flat(spl_v):
                                         skipped_draw["no_ptheta_spline_but_flat_valor_spline"] += 1
+                                        rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name] += valor_bin_content
+                                        rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name] += valor_bin_content
+                                        continue
                                     else:
                                         skipped_draw["no_ptheta_spline"] += 1
                                         if match_edges:
                                             print "WARNING: could not get p-theta tgraph", gr_title_p, "from file", \
                                                   file_p.GetName(), "\n  The associated VALOR spline is NOT flat,", \
                                                   "so we should be be getting a p-theta spline \n\n"
-                                continue
-                            new_tg_p = rescale_and_shift_ptheta_spline(tg_p, prefit_sigma, xscale_ptheta)
+
+                            new_tg_p = None
+                            if not got_v_spline_but_not_p_spline:
+                                new_tg_p = rescale_and_shift_ptheta_spline(tg_p, prefit_sigma, xscale_ptheta)
+                                new_tg_p.SetTitle("p-theta")
 
                             spl_v = arr_v.FindObject(spl_title_v)
                             if not spl_v:
-                                print "ERROR: Could not get VALOR TSpline3 named", spl_title_v, "from file", valor_filename
+                                print "ERROR: Could not get VALOR TSpline3 named", spl_title_v, "from file", \
+                                      valor_filename, ", but we DO have an associated p-theta spline!"
                                 sys.exit()
                             tg_v = convert_valor_spline_to_ptheta_graph(spl_v, prefit_sigma)
                             tg_v.SetLineColor(2)
                             tg_v.SetLineStyle(2)
-
-                            new_tg_p.SetTitle("p-theta")
                             tg_v.SetTitle("valor")
+
+                            # There's no point in comparing splines that would be applied to empty bins, as the resulting bin content would still be 0
+                            if valor_bin_content < conv.kASmallNum:
+                                skipped_draw["valor_MCT_bin_empty"] += 1
+                                continue
+
+                            if not got_v_spline_but_not_p_spline:
+                                if compare_spline_knots(tg_v, new_tg_p, title):
+                                    n_different_splines += 1
+                                    print "\tPostfit nominal weights:", wght_v, wght_p
+
+                            # Count the effect of differences in this spline for this param, if all other params are not applied
+                            wght_v = tg_v.Eval(postfit_nom_spline_x, 0, "S")
+                            wght_p = 1.0
+                            if not got_v_spline_but_not_p_spline:
+                                wght_p = new_tg_p.Eval(postfit_nom_spline_x, 0, "S")
+                                rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name] += valor_bin_content * wght_v
+                                rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name] += valor_bin_content * wght_p
+                            elif track_missing:
+                                rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name] += valor_bin_content * wght_v
+                                rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name] += valor_bin_content * wght_p
+
+
+                            if got_v_spline_but_not_p_spline:
+                                # Don't draw a comparison if the p-theta spline is missing
+                                continue
 
                             mg_name = "mg_" +str(true_bin_v) +"_" +str(reco_bin_v)
                             mg = ROOT.TMultiGraph(mg_name, mg_name)
@@ -548,7 +602,6 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                             mg.GetYaxis().SetTitle("Weight")
 
                             title_box = ROOT.TPaveText(0.3, 0.95, 0.7, 1.0, "NDC")
-                            title = sample_str +"_" +flav_str +"_" +reac_type_name+ "_" +param_name+ "_" +str(true_bin_v)+ "_" +str(reco_bin_v)
                             title_box.AddText(title)
                             title_box.SetTextSize(0.05)
                             title_box.SetFillColor(0)
@@ -556,40 +609,6 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                             title_box.SetLineStyle(0)
                             title_box.SetLineColor(0)
                             title_box.SetBorderSize(0)
-
-                            # Get the VALOR nominal bin content before systematic or oscillation parameters are applied
-                            MCT_name = array_tag +"_mctnom_sb_vf" +"_" +submodel.Name() +"_" +util.ModeAsString(m)
-                            MCT = array_MCTs.FindObject(MCT_name)
-                            if not MCT:
-                                print "ERROR: Something went wrong getting the VALOR MCT named", MCT_name
-                                sys.exit()
-                            valor_fit_binning_reco = sskb.RecoSmpBinning()
-                            valor_fit_binning_true = sskb.TrueSmpBinning(m)
-                            vec_reco = ROOT.vector('double')()
-                            vec_reco.push_back(Erec_GeV)
-                            if sample_is_2d[sample_str]:
-                                vec_reco.push_back(theta_deg)
-                            valor_fit_ibin_reco = valor_fit_binning_reco.FindBin(vec_reco)
-                            # vec_true = ROOT.vector('double')()
-                            # vec_true.push_back(true_bin_centre_v)
-                            # valor_fit_ibin_true = valor_fit_binning_true.FindBin(vec_true)
-                            valor_fit_ibin_true = get_bin_number(valor_etrue_fit_bin_edges, true_bin_centre_v)
-                            valor_bin_content = MCT.GetEntry(valor_fit_ibin_reco, valor_fit_ibin_true)
-
-                            # There's no point in comparing splines that would be applied to empty bins, as the resulting bin content would still be 0
-                            if valor_bin_content < conv.kASmallNum:
-                                skipped_draw["valor_MCT_bin_empty"] += 1
-                                continue
-
-                            # Count the effect of differences in this spline for this param, if all other params are not applied
-                            wght_v = tg_v    .Eval(postfit_nom_spline_x, 0, "S")
-                            wght_p = new_tg_p.Eval(postfit_nom_spline_x, 0, "S")
-                            rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name] += valor_bin_content * wght_v
-                            rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name] += valor_bin_content * wght_p
-
-                            if compare_spline_knots(tg_v, new_tg_p, title):
-                                n_different_splines += 1
-                                print "\tPostfit nominal weights:", wght_v, wght_p
 
                             ptheta_bin_txt = "p-theta: Et = ["+str(ptheta_etrue_bin_edges[true_bin_p])+","+str(ptheta_etrue_bin_edges[true_bin_p+1])+"]; Er = ["+str(ptheta_erec_bin_edges[reco_bin_p])+","+str(ptheta_erec_bin_edges[reco_bin_p+1])+"]"
                             valor_bin_txt  = "VALOR:   Et = ["+str(valor_etrue_bin_edges[true_bin_v]) +","+str(valor_etrue_bin_edges[true_bin_v+1]) +"]; Er = ["+str(valor_erec_bin_edges[erec_bin_v]) +","+str(valor_erec_bin_edges[erec_bin_v+1]) +"]"
@@ -659,6 +678,8 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
         # This allows us to see what rates differences are definitely caused by spline differences.
         print "WARNING: The following rates comparisons will likely not be an apples-to-apples " \
               "comparison as the --match-edges option was not used"
+
+    reac_type_names_used = []
     for i_osc_channel in range(0, n_osc_channels):
         if consider_all_flavours:
             init_flav, final_flav = flav_combinations[i_osc_channel]
@@ -677,10 +698,9 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
         for im, m in enumerate(filtered_modelist):
             reac_type = util.ReacModeToType(m)
             reac_type_name = util.ReacTypeAsString(reac_type)
+            reac_type_names_used.append(reac_type_name)
             print "\t", reac_type_name
-            rv_sum_param = 0
-            rp_sum_param = 0
-            for ip, param in enumerate(filtered_params):
+            for param in filtered_params:
                 if not util.IsAppliedTo(param.GetApplyMask(), beam, sample, detector, m, conv.kntInclusive):
                     continue
                 param_name = param.GetName()
@@ -690,13 +710,37 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                 ratiovp = (rv - rp) *100.
                 if rv != 0 and rp != 0:
                     ratiovp = (rv/rp -1) *100.
-                rv_sum_param += rv
-                rp_sum_param += rp
-                print "\t\t", param_name, ":", ratiovp, "%"
-            ratiovp = (rv_sum_param - rp_sum_param) *100.
-            if rv_sum_param != 0 and rp_sum_param != 0:
-                ratiovp = (rv_sum_param/rp_sum_param -1) *100.
-            print "\t\t TOTAL :", ratiovp, "%"
+                print "\t\t", param_name, ": v = {:.3}".format(rv), ", p = {:.3}".format(rp), ", diff ={:.2}".format(ratiovp), "%"
+
+    print "\n\nTotal rates differences (using rates summed over all osc channels)"
+    reac_type_names_used = list(set(reac_type_names_used))
+    for reac_type_name in reac_type_names_used:
+        print "\t", reac_type_name
+        for param in filtered_params:
+            param_name = param.GetName()
+            rv = 0.
+            rp = 0.
+            for i_osc_channel in range(0, n_osc_channels):
+                if consider_all_flavours:
+                    init_flav, final_flav = flav_combinations[i_osc_channel]
+                flav_str = ""
+                if init_flav == final_flav:
+                    flav_str = init_flav
+                else:
+                    flav_str = init_flav +"_to_" +final_flav
+                if flav_str not in rates_valor_MCT_valor_weights.keys():
+                    continue
+                if param_name not in rates_valor_MCT_valor_weights[flav_str].keys():
+                    continue
+                if reac_type_name not in rates_valor_MCT_valor_weights[flav_str][param_name].keys():
+                    continue
+                rv += rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name]
+                rp += rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name]
+            ratiovp = (rv - rp) *100.
+            if rv != 0 and rp != 0:
+                ratiovp = (rv/rp -1) *100.
+            if not (rv == 0 and rp ==0):
+                print "\t\t", param_name, ": v = {:.3}".format(rv), ", p = {:.3}".format(rp), ", diff = {:.2}".format(ratiovp), "%"
 
     print "\n\nOut of", sum(skipped_draw.values()), "attempted spline comparions", sum(skipped_draw.values()) - skipped_draw["no_skip"], \
           "were not drawn, for the following reasons:"
@@ -876,7 +920,8 @@ if __name__=="__main__":
     parser.add_argument('-f', '--final-flav'    , dest="final_flav"    , default='all', choices=["all","NuMu","NuE","NuMuBar","NuEBar"])
     parser.add_argument('-p', '--selected-param', dest="selected_param", default='', help="Write a param name here to only look at the splines for that param. Otherwise will look at all params.")
     parser.add_argument('-m', '--match-edges'   , dest="match_edges"   , default=False, action="store_true", help="If true, will only compare splines when the VALOR and p-theta Etrue bin edges are matching.")
+    parser.add_argument(      '--track-missing' , dest="track_missing" , default=False, action="store_true", help="If true, will count the contribution to event rate differences coming from bins where either the VALOR or p-theta spline is missing.")
     args = parser.parse_args()
     main(args.config, args.tag, float(args.Erec_GeV), float(args.Etrue_GeV), float(args.theta_deg), args.sample,
-         args.init_flav, args.final_flav, args.selected_param, args.match_edges)
+         args.init_flav, args.final_flav, args.selected_param, args.match_edges, args.track_missing)
  
