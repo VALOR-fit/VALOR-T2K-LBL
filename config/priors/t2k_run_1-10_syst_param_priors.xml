@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<prior_list name="syst_parameters_priors_run_10">
+
+    <!-- Here goes systematic parameters priors. In particular 2p2h_Edep -->
+  <prior>
+    <params> 2p2h_Edep_lowEnu </params>
+    <type>   flat             </type>
+    <low>    0.0              </low>
+    <high>   1.0              </high>
+    <scheme>                  </scheme>
+  </prior>
+
+  <prior>
+    <params> 2p2h_Edep_highEnu </params>
+    <type>   flat              </type>
+    <low>    0.0               </low>
+    <high>   1.0               </high>
+    <scheme>                   </scheme>
+  </prior>
+
+  <prior>
+    <params> 2p2h_Edep_lowEnubar </params>
+    <type>   flat                </type>
+    <low>    0.0                 </low>
+    <high>   1.0                 </high>
+    <scheme>                     </scheme>
+  </prior>
+
+  <prior>
+    <params> 2p2h_Edep_highEnubar </params>
+    <type>   flat                 </type>
+    <low>    0.0                  </low>
+    <high>   1.0                  </high>
+    <scheme>                      </scheme>
+  </prior>
+  
+</prior_list>
