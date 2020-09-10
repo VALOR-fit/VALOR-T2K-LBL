@@ -290,7 +290,8 @@ spline_diff_warn_threshold = 1E-5
 
 #_________________________________________________________________________________
 def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_str = "FHC1Rmu",
-         init_flav = "all", final_flav = "all", selected_param = "", match_edges = False, track_missing = False):
+         init_flav = "all", final_flav = "all", selected_param = "", match_edges = False, track_missing = False,
+         mode_whitelist = None):
     fit_elements = valor.CompoundFitElements()
     fit_elements.Read(util.CompleteConfigPath(config_file),"nosplines")
     model = fit_elements.FitModel()
@@ -429,6 +430,9 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
 
                 reac_type = util.ReacModeToType(m)
                 reac_type_name = util.ReacTypeAsString(reac_type)
+                if mode_whitelist:
+                    if reac_type_name not in mode_whitelist:
+                        continue
                 ptheta_mode_enum = valor_modes_in_ptheta_order.index(reac_type_name)
                 rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name] = 0
                 rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name] = 0
@@ -474,26 +478,32 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
 
                         # Loop over theta bins, if needed
                         nbins_theta = 1
-                        if consider_all_theta_bins:
+                        if sample_is_2d[sample_str] and consider_all_theta_bins:
                             nbins_theta = len(valor_theta_bin_edges_elike) -1
 
                         for theta_bin_v in range(0, nbins_theta):
                             canv_name = "c_" +flav_str +"_" +param_name +"_" +reac_type_name +"_" +str(true_bin_v) +\
                                         "_" +str(erec_bin_v) +"_" +str(theta_bin_v)
                             canv = ROOT.TCanvas(canv_name, canv_name, 800, 600)
-                            if not consider_all_theta_bins:
-                                theta_bin_v = get_bin_number(valor_theta_bin_edges, theta_deg)
+                            theta_bin_p = 0
+                            if sample_is_2d[sample_str]:
+                                if not consider_all_theta_bins:
+                                    theta_bin_v = get_bin_number(valor_theta_bin_edges, theta_deg)
+                                else:
+                                    theta_deg = 0.5 * (valor_theta_bin_edges_elike[theta_bin_v] + valor_theta_bin_edges_elike[theta_bin_v+1])
+                                theta_bin_p = get_bin_number(ptheta_theta_bin_edges, theta_deg)
                             else:
-                                theta_deg = 0.5 * (valor_theta_bin_edges_elike[theta_bin_v] + valor_theta_bin_edges_elike[theta_bin_v+1])
-                            theta_bin_p = get_bin_number(ptheta_theta_bin_edges, theta_deg)
+                                theta_bin_v = 0
+                                theta_deg = 90.0
 
-                            if match_edges and (valor_theta_bin_edges[theta_bin_v]   != ptheta_theta_bin_edges[theta_bin_p] or
-                                                valor_theta_bin_edges[theta_bin_v+1] != ptheta_theta_bin_edges[theta_bin_p+1]):
-                                skipped_draw["theta_edges_dont_align"] += 1
-                                continue
+                            if sample_is_2d[sample_str]:
+                                if match_edges and (valor_theta_bin_edges[theta_bin_v]   != ptheta_theta_bin_edges[theta_bin_p] or
+                                                    valor_theta_bin_edges[theta_bin_v+1] != ptheta_theta_bin_edges[theta_bin_p+1]):
+                                    skipped_draw["theta_edges_dont_align"] += 1
+                                    continue
 
                             reco_bin_v = None
-                            if sample_is_2d:
+                            if sample_is_2d[sample_str]:
                                 reco_bin_v = get_valor_bin_number_2D(valor_erec_bin_edges, valor_theta_bin_edges, Erec_GeV, theta_deg)
                             else:
                                 reco_bin_v = get_bin_number(valor_erec_bin_edges , Erec_GeV)
@@ -566,14 +576,9 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                             tg_v.SetTitle("valor")
 
                             # There's no point in comparing splines that would be applied to empty bins, as the resulting bin content would still be 0
-                            if valor_bin_content < conv.kASmallNum:
-                                skipped_draw["valor_MCT_bin_empty"] += 1
-                                continue
-
-                            if not got_v_spline_but_not_p_spline:
-                                if compare_spline_knots(tg_v, new_tg_p, title):
-                                    n_different_splines += 1
-                                    print "\tPostfit nominal weights:", wght_v, wght_p
+                            #if valor_bin_content < conv.kASmallNum:
+                            #    skipped_draw["valor_MCT_bin_empty"] += 1
+                            #    continue
 
                             # Count the effect of differences in this spline for this param, if all other params are not applied
                             wght_v = tg_v.Eval(postfit_nom_spline_x, 0, "S")
@@ -586,8 +591,11 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
                                 rates_valor_MCT_valor_weights [flav_str][param_name][reac_type_name] += valor_bin_content * wght_v
                                 rates_valor_MCT_ptheta_weights[flav_str][param_name][reac_type_name] += valor_bin_content * wght_p
 
-
-                            if got_v_spline_but_not_p_spline:
+                            if not got_v_spline_but_not_p_spline:
+                                if compare_spline_knots(tg_v, new_tg_p, title):
+                                    n_different_splines += 1
+                                    print "\tPostfit nominal weights:", wght_v, wght_p
+                            else:
                                 # Don't draw a comparison if the p-theta spline is missing
                                 continue
 
@@ -698,6 +706,9 @@ def main(config_file, tag, Erec_GeV, Etrue_GeV = -999, theta_deg = -999, sample_
         for im, m in enumerate(filtered_modelist):
             reac_type = util.ReacModeToType(m)
             reac_type_name = util.ReacTypeAsString(reac_type)
+            if mode_whitelist:
+                if reac_type_name not in mode_whitelist:
+                    continue
             reac_type_names_used.append(reac_type_name)
             print "\t", reac_type_name
             for param in filtered_params:
@@ -921,7 +932,8 @@ if __name__=="__main__":
     parser.add_argument('-p', '--selected-param', dest="selected_param", default='', help="Write a param name here to only look at the splines for that param. Otherwise will look at all params.")
     parser.add_argument('-m', '--match-edges'   , dest="match_edges"   , default=False, action="store_true", help="If true, will only compare splines when the VALOR and p-theta Etrue bin edges are matching.")
     parser.add_argument(      '--track-missing' , dest="track_missing" , default=False, action="store_true", help="If true, will count the contribution to event rate differences coming from bins where either the VALOR or p-theta spline is missing.")
+    parser.add_argument(      '--mode-whitelist', dest="mode_whitelist", default=None, nargs="+", help="If specified, only these reac types will be considered.")
     args = parser.parse_args()
     main(args.config, args.tag, float(args.Erec_GeV), float(args.Etrue_GeV), float(args.theta_deg), args.sample,
-         args.init_flav, args.final_flav, args.selected_param, args.match_edges, args.track_missing)
+         args.init_flav, args.final_flav, args.selected_param, args.match_edges, args.track_missing, args.mode_whitelist)
  
