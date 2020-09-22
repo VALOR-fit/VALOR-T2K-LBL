@@ -138,21 +138,22 @@ ptheta_etrue_bin_edges = [0.0, 0.4, 0.5, 0.6, 0.8, 1.2, 2.0, 3.0, 5.0, 30.0]
 # Usually to get the true binning, one just should do sskb.XsecTrueBinning(m).BinEdgeArr(0),
 # but for some reason this is returning millions of junk entries onto the end of the list,
 # which really slows the program down, so I'm hardcoding the binning instead.
-valor_etrue_bin_edges_rightsign_nue = [
-    0.0,	0.5,	0.7,	0.8,	1.5,	2.5,
-    4.0,	30.0
-]
-valor_etrue_bin_edges_rightsign_numu_and_osc_nue = [
-    0.0,	0.4,	0.5,	0.6,	0.7,	1.0,
-    1.5,	2.5,	3.5,	5.0,	7.0,
-    30.0
-]
-valor_etrue_bin_edges_wrongsign_nue = [
-    0.0,	2.5,	30.0
-]
-valor_etrue_bin_edges_wrongsign_numu_and_osc_nue = [
-    0.0,	0.7,	1.0,	1.5,	2.5,	30.0
-]
+# TODO: revert these back to the VALOR binning when done testing
+valor_etrue_bin_edges_rightsign_nue = ptheta_etrue_bin_edges #[
+#     0.0,	0.5,	0.7,	0.8,	1.5,	2.5,
+#     4.0,	30.0
+# ]
+valor_etrue_bin_edges_rightsign_numu_and_osc_nue = ptheta_etrue_bin_edges #[
+#     0.0,	0.4,	0.5,	0.6,	0.7,	1.0,
+#     1.5,	2.5,	3.5,	5.0,	7.0,
+#     30.0
+# ]
+valor_etrue_bin_edges_wrongsign_nue = ptheta_etrue_bin_edges #[
+#     0.0,	2.5,	30.0
+# ]
+valor_etrue_bin_edges_wrongsign_numu_and_osc_nue = ptheta_etrue_bin_edges #[
+#     0.0,	0.7,	1.0,	1.5,	2.5,	30.0
+# ]
 
 # Erec edges for e-like samples
 ptheta_erec_bin_edges = [

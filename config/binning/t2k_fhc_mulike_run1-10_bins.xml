@@ -30,22 +30,22 @@
     <!-- Mode dependent binning -->
         <element name="sk_fhc_right_sign_e">
           <coarse_modes> unoscnueCC, nueNC                                                       </coarse_modes>
-          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_rightsign_nue_modes.xml         </binning>
+          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_ptheta.xml         </binning>
         </element>
 
         <element name="sk_fhc_wrong_sign_e">
           <coarse_modes> unoscnuebarCC, nuebarNC                                                 </coarse_modes>
-          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_wrongsign_nue_modes.xml         </binning>
+          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_ptheta.xml         </binning>
         </element>
 
         <element name="sk_fhc_right_sign_mu">
           <coarse_modes> numuCC, numuNC, oscnueCC                                                </coarse_modes>
-          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_rightsign_numu+oscnue_modes.xml </binning>
+          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_ptheta.xml </binning>
         </element>
 
         <element name="sk_fhc_wrong_sign_mu">
           <coarse_modes> numubarCC, numubarNC, oscnuebarCC                                       </coarse_modes>
-          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_wrongsign_numu+oscnue_modes.xml </binning>
+          <binning>      binning/e2e/true/t2k_xsec_binning_Etrue_ptheta.xml </binning>
         </element>
   </xsec_true>
 
