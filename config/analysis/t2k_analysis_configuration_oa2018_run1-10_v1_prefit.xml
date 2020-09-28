@@ -64,7 +64,7 @@
       <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
-      <binning>      binning/t2k_fhc_elike_run1-10_bins.xml               </binning>
+      <binning>      binning/t2k_fhc_cc1pilike_run1-10_bins.xml           </binning>
     </element>
     
   </element_list>
