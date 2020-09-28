@@ -48,6 +48,7 @@ def plot_critical_values(output_file, input_file_nh, input_file_ih, legacy, prel
   legend.SetBorderSize(0)
   legend.SetFillStyle(0)
   legend.SetFillColorAlpha(0,0)
+  legend.SetTextSize(0.04)
   g_shade = dict()
 
   for n_idx, cl in enumerate(_conf_levels):
@@ -92,13 +93,13 @@ def plot_critical_values(output_file, input_file_nh, input_file_ih, legacy, prel
       g_shade[full_name].SetFillColorAlpha(_colours[n_idx], 0.5)
       g_shade[full_name].SetFillStyle(1000)
       g_shade[full_name].SetTitle("")
-      g_shade[full_name].GetXaxis().SetTitle("#delta_{CP}")
-      g_shade[full_name].GetYaxis().SetTitle("-2#Deltaln(L)_{crit}")
+      g_shade[full_name].GetXaxis().SetTitle("#delta_{CP} (Radians)")
+      g_shade[full_name].GetYaxis().SetTitle("#Delta #chi^{2}_{crit}")
       if n_idx == 0 and m_idx == 0:
         g_shade[full_name].GetYaxis().SetRangeUser(0, _ymax)
         g_shade[full_name].GetYaxis().SetTitleOffset(0.8)
-        g_shade[full_name].GetYaxis().CenterTitle()
-        g_shade[full_name].GetXaxis().CenterTitle()
+        #g_shade[full_name].GetYaxis().CenterTitle()
+        #g_shade[full_name].GetXaxis().CenterTitle()
         g_shade[full_name].Draw("af")
       else:
         g_shade[full_name].Draw("f same")
