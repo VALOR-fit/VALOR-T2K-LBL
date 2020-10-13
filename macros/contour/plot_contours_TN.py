@@ -31,7 +31,7 @@ _hatch_fill_opacity = 0.15    # For filling in FC intervals
 def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours, styles, prelim, title_x, title_y,
                      line_width, text_size, conf_levels, leg_coords, titlesize,
                      fc_files, fc_graph_pattern, fc_line_styles, fc_line_colours, fc_draw_critvals,
-                     fc_draw_boxes, force_max_y = -1):
+                     fc_draw_boxes, force_max_y = -1, ptheta_objects = None, mach3_objects = None):
     max_val = 0.0
     min_val = 999
     for dchisq_obj in dchisq_objects:
@@ -87,10 +87,14 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         options = "same"
         line_color += 1
 
+    num_leg_entries = len(dchisq_objects)
+    if ptheta_objects: num_leg_entries += len(ptheta_objects)
+    if mach3_objects : num_leg_entries += len(mach3_objects)
+
     if not text_size:
         text_size = 0.03
     lymax = 0.86
-    lymin = lymax - (1 + len(dchisq_objects)) * text_size
+    lymin = lymax - (1 + num_leg_entries) * text_size
     lxmin = 0.15
     lxmax = 0.3
     if "mixing13" in pdf_filename:
@@ -112,6 +116,18 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     if len(labels) > 0:
         for i, dchisq_obj in enumerate(dchisq_objects):
             legend.AddEntry(dchisq_obj, labels[i], "l")
+
+    # If we have contours from other groups, format and draw them here
+    if ptheta_objects:
+        for obj in ptheta_objects:
+            obj.Draw("l,same")
+            if obj.GetTitle() != "" and obj.GetTitle() != "-":
+                legend.AddEntry(obj, obj.GetTitle(), "l")
+    if mach3_objects:
+        for obj in mach3_objects:
+            obj.Draw("hist,same")
+            if obj.GetTitle() != "" and obj.GetTitle() != "-":
+                legend.AddEntry(obj, obj.GetTitle(), "l")
 
     if not fc_files:
         # Draw constant Delta chisq critical value line
@@ -226,7 +242,9 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
 #________________________________________________________________________________________________________
 def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, styles, best_fit_styles,
                      best_fit_labels, prelim, title_x, title_y, line_width, marker_size, text_size,
-                     conf_levels, leg_coords, bf_leg_coords, titlesize, draw_reactor=False, is_inverted=False):
+                     conf_levels, leg_coords, bf_leg_coords, titlesize, draw_reactor=False,
+                     ptheta_objects = None, mach3_objects = None, is_inverted=False):
+    # TODO: Add the 2D MaCh3 and p-theta comparisons
 
     lmargin = 0.13
     rmargin = 0.08
@@ -494,6 +512,215 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
     return ndim
 
 #________________________________________________________________________________________________________
+def get_ptheta_objects(ptheta_filename, num_var, ptheta_labels, ptheta_colours, ptheta_styles, chisq_calc_type, valor_filenames, conf_levels):
+    objects = []
+
+    ptheta_potential_chisq_hist_names = ["SA_dcp", "SA_dcp_IH"]
+    ptheta_potential_contour_graph_names = "cont_like_all_conv[IS_IH]_[CL]_0"   # e.g. cont_like_all_conv_68_0, cont_like_all_conv_90_0, or cont_like_all_conv_IH_997_0
+    ptheta_bf_pt_name = "BestFit_Point_All_conv[IS_IH]" # e.g. BestFit_Point_All_conv or BestFit_Point_All_conv_IH
+
+    cl_valor_to_ptheta = {
+        conv.kCL68     : "68",
+        conv.kCL90     : "90",
+        conv.kCL95     : "95",
+        conv.kCL99     : "99",
+        conv.kCL1Sigma : "68",
+        conv.kCL2Sigma : "954",
+        conv.kCL3Sigma : "997"
+    }
+
+    # Are we exclusively plotting file files of a single mass hierarchy?
+    # We need to know which MH we're plotting for VALOR because both MHs are included in each p-theta file
+    _found_valor_nh = False
+    _found_valor_ih = False
+    for fn in valor_filenames:
+        if "normal" in fn:
+            _found_valor_nh = True
+        elif "inverted" in fn:
+            _found_valor_ih = True
+        else:
+            print "ERROR: Could not determine the true mass hierarchy from VALOR filename \'{}\'".format(fn)
+            sys.exit()
+
+    # p-theta 1D hists have deltachisq = chisq - chisq_min_NH (i.e. same as the MHpair option),
+    # so for simplicity, only allow for this option to be used when comparing to 1D p-theta hists.
+    if num_var == 1:
+        if chisq_calc_type == "MHpair":
+            _found_valor_nh = True
+            _found_valor_ih = True
+        else:
+            print "ERROR: Tried to plot a mix of NH and IH hists with a comparison to p-theta, but the chisq calculation type was not set to \'MHpair\'"
+            sys.exit()
+
+    file_ptheta = ROOT.TFile(ptheta_filename, "read")
+    if not file_ptheta or not file_ptheta.IsOpen():
+        print "ERROR: Could not open the p-theta comparison file \'{}\'".format(ptheta_filename)
+        sys.exit()
+
+    if num_var == 1:
+        # Get 1D deltachisq hists
+        for i, hname in enumerate(ptheta_potential_chisq_hist_names):
+            if file_ptheta.GetListOfKeys().Contains(hname):
+                if (_found_valor_nh and "IH" not in hname) or (_found_valor_ih and "IH" in hname):
+                    histo = file_ptheta.Get(hname)
+                    histo.SetDirectory(0)
+                    if get_ndims(histo) != 1:
+                        print "ERROR: Read p-theta hist with", get_ndims(histo), "dimensions. Expected 1."
+                        sys.exit()
+                    histo.SetTitle(ptheta_labels[i])     # We'll use this title for the legend later
+                    histo.SetLineColor(ptheta_colours[i])
+                    histo.SetLineStyle(ptheta_styles [i])
+                    objects.append(histo)
+    else:
+        # Get contour TGraphs
+        for iconf, conf_level in enumerate(conf_levels):
+            ptheta_conf_level_str = cl_valor_to_ptheta[conf_level]
+            for ih, h in enumerate(["", "_IH"]):
+                ptheta_contour_name =  ptheta_potential_contour_graph_names
+                ptheta_contour_name.replace("[CL]"   , ptheta_conf_level_str)
+                ptheta_contour_name.replace("[IS_IH]", h)
+                if file_ptheta.GetListOfKeys().Contains(ptheta_contour_name):
+                    if (_found_valor_nh and "IH" not in h) or (_found_valor_ih and "IH" in h):
+                        if not (_found_valor_nh and _found_valor_ih):
+                            ih = 0
+                        isty = len(conf_levels) * ih + iconf
+                        contour = file_ptheta.Get(ptheta_contour_name)
+                        contour.SetDirectory(0)
+                        MH_str = "NO"
+                        if "IH" in h:
+                            MH_str = "IO"
+                        label = ptheta_labels[isty]
+                        if len(conf_levels) > 1:
+                            label += " - " + util.ConfLevelAsStringRooTex(conf_levels[iconf])
+                        contour.SetTitle(label)     # We'll use this title for the legend later
+                        contour.SetLineColor(ptheta_colours[isty])
+                        contour.SetLineStyle(ptheta_styles [isty])
+                        objects.append(contour)
+
+        # Get BF point markers
+        for h in ["", "_IH"]:
+            ptheta_bf_name = ptheta_bf_pt_name
+            ptheta_bf_name.replace("[IS_IH]", h)
+            if file_ptheta.GetListOfKeys().Contains(ptheta_bf_name):
+                if (_found_valor_nh and "IH" not in h) or (_found_valor_ih and "IH" in h):
+                    bf = file_ptheta.Get(ptheta_bf_name)
+                    bf.SetDirectory(0)
+                    MH_str = "NO"
+                    if "IH" in h:
+                        MH_str = "IO"
+                    bf.SetTitle("p-theta " + MH_str)     # We'll use this title for the legend later
+                    objects.append(bf)
+
+    return objects
+
+#________________________________________________________________________________________________________
+def get_mach3_objects(mach3_filename, num_var, mach3_labels, mach3_colours, mach3_styles, chisq_calc_type):
+    objects = []
+
+    # The contours drawn in MaCh3's graphs are just the same 2D posterior probability hist drawn multiple times with different CLs
+    mach3_potential_chisq_hist_names = ["h_dcp", "h_dm32", "h_th13", "h_th23", "cl_68"]
+
+    file_mach3 = ROOT.TFile(mach3_filename, "read")
+    if not file_mach3 or not file_mach3.IsOpen():
+        print "ERROR: Could not get MaCh3 input file \'{}\'".format(mach3_filename)
+        sys.exit()
+
+    for i, hname in enumerate(mach3_potential_chisq_hist_names):
+        hist_chisq, min_chisq1 = get_single_mach3_hist(file_mach3, hname, num_var, mach3_labels[0], mach3_colours[0], mach3_styles[0])
+        if not hist_chisq:
+            continue
+
+        if chisq_calc_type == "MHpair":
+            # Get the chisq hist for the other hierarchy and convert both to Delta chisq
+            filename_other_MH = ""
+            if "nh" in mach3_filename:
+                filename_other_MH = mach3_filename.replace("nh", "ih")
+            else:
+                filename_other_MH = mach3_filename.replace("ih", "nh")
+            file_other_MH = ROOT.TFile(filename_other_MH, "READ")
+            hist_chisq_other_MH, min_chisq2 = get_single_mach3_hist(file_other_MH, hname, num_var, mach3_labels[1], mach3_colours[1], mach3_styles[1])
+            if not hist_chisq_other_MH:
+                print "ERROR: Could not get MaCh3 hist named \'{}\'".format(hname),  "from file \'{}\'".format(filename_other_MH)
+                sys.exit()
+            if min_chisq1 <= min_chisq2:
+                convert_to_delta_chisq([hist_chisq_other_MH], num_var, min_chisq1 - min_chisq2)  # negative chisq_min because we want to add it to the IH
+            else:
+                convert_to_delta_chisq([hist_chisq], num_var, min_chisq2 - min_chisq1)
+            objects.append(hist_chisq)
+            objects.append(hist_chisq_other_MH)
+        else:
+            objects.append(hist_chisq)
+        break
+
+    # Convert the chisq hists into Delta chisq hists
+    if chisq_calc_type == "global":
+        convert_to_delta_chisq(objects, num_var)
+    elif chisq_calc_type == "local":
+        chisq_min_all = get_chisq_min(dchisq_objects)
+        convert_to_delta_chisq(objects, num_var, chisq_min_all)
+
+    return objects
+
+#________________________________________________________________________________________________________
+def get_single_mach3_hist(file, hist_name, ndim, mach3_label, mach3_colour, mach3_style):
+    hist_chisq = None
+
+    mach3_potential_canvas_names = ["c1", "c"]
+    canv = None
+    for canv_name in mach3_potential_canvas_names:
+        if file.GetListOfKeys().Contains(canv_name):
+            canv = file.Get(canv_name)
+            break
+    if not canv:
+        print "ERROR: Could not get the MaCh3 canvas from file \'{}\'".format(file.GetName())
+        sys.exit()
+
+    # The MaCh3 ROOT files store the canvas of some plot, rather than storing the drawn objects individually,
+    # so we must extract the objects from the canvas
+    plot_objects = canv.GetListOfPrimitives()
+    if not plot_objects:
+        print "ERROR: Could not get the list of drawn objects from the MaCh3 canvas in file \'{}\'".format(file.GetName())
+        sys.exit()
+
+    if not plot_objects.FindObject(hist_name):
+        return None, None
+
+    # MaCh3 is Bayesian, so uses posterior probability instead of chisq.
+    # First get the posterior prob hist.
+    hist_posterior = plot_objects.FindObject(hist_name)
+    if not hist_posterior:
+        print "ERROR: Could not get the hist named file \'{}\'".format(file.GetName())
+        sys.exit()
+    hist_posterior.SetDirectory(0)
+    if get_ndims(hist_posterior) != 1:
+        print "ERROR: Read MaCh3 hist with", get_ndims(hist_posterior), "dimensions. Expected 1."
+        sys.exit()
+
+    # Convert from posterior probability to Delta chisq, with min = min of this chisq hist only
+    # (not chisq as the conversion from posterior probability to chisq results in negative chisq values)
+    maxp = hist_posterior.GetMaximum()
+    hist_chisq = ROOT.TH1D(hist_posterior)
+    hist_chisq.Reset()
+
+    for ib in range(1, hist_posterior.GetNbinsX()+1):
+        if ndim == 2:
+            for jb in range(1, hist_posterior.GetNbinsY() + 1):
+                fill = -2.0*ROOT.TMath.Log(hist_posterior.GetBinContent(ib, jb) / maxp)
+                hist_chisq.SetBinContent(ib, jb, fill)
+        else:
+            fill = -2.0*ROOT.TMath.Log(hist_posterior.GetBinContent(ib) / maxp)
+            hist_chisq.SetBinContent(ib, fill)
+
+    hist_chisq.SetTitle(mach3_label)     # We'll use this title for the legend later
+    hist_chisq.SetLineColor(mach3_colour)
+    hist_chisq.SetLineStyle(mach3_style)
+    hist_chisq.SetFillColor(0)
+    hist_chisq.SetFillStyle(0)
+    hist_chisq.SetDirectory(0)
+
+    return hist_chisq, -2.0*ROOT.TMath.Log(maxp)
+
+#________________________________________________________________________________________________________
 def get_ndims(histo):
     if type(histo) == type(ROOT.TH1D()):
         return 1
@@ -701,6 +928,16 @@ if __name__=="__main__":
     parser.add_argument(      "--max-ndigits-y"   , dest="max_ndigits_y"    , type=int, default=3    , help="Max number of digits on the y-axis labels.")
     parser.add_argument(      "--leg-coords"      , dest="leg_coords_str"   , nargs="+"              , help="Legend corner coordinates [xmin, ymin, xmax, ymax].")
     parser.add_argument(      "--bf-leg-coords"   , dest="bf_leg_coords_str", nargs="+"              , help="Best-fit marker legend corner coordinates [xmin, ymin, xmax, ymax] (for 2D plots only).")
+
+    # For comparisons to other groups
+    parser.add_argument(      "--compare-ptheta"  , dest="compare_ptheta"                            , help="Input filename for plotting comparisons to p-theta. Only file allowed (as multiple hierarchies in the same file).")
+    parser.add_argument(      "--ptheta-label"    , dest="ptheta_labels"    , nargs="+"              , help="Legend label(s) for p-theta contours(s). This should have either 0 length or the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--ptheta-colour"   , dest="ptheta_colours"   , nargs="+"              , help="Custom line colour(s) for p-theta contours(s) (optional). If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the colours is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument(      "--ptheta-style"    , dest="ptheta_styles"    , nargs="+"              , help="Custom line style(s) for p-theta contours(s) (optional). If used, this should have the same number of arguments as provided to --filename  (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the styles is taken to be: file0+CL0, file0+CL1, file1+CL0, file1+CL1, etc.")
+    parser.add_argument(      "--compare-mach3"   , dest="compare_mach3"                             , help="Input filename for plotting comparisons to MaCh3.")
+    parser.add_argument(      "--mach3-label"     , dest="mach3_labels"     , nargs="+"              , help="Legend label(s) for MaCh3 contours(s). This should have either 0 length or the same number of arguments as provided to --filename, or double if \'--chisq-calc MHpair\' is used.")
+    parser.add_argument(      "--mach3-colour"    , dest="mach3_colours"    , nargs="+"              , help="Custom line colour(s) for MaCh3 contours(s) (optional). If used, this should have the same number of arguments as provided to --filename (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the colours is taken to be: NH+CL0, NH+CL1, IH+CL0, IH+CL1, etc. (one MH used if VALOR is only using one)")
+    parser.add_argument(      "--mach3-style"     , dest="mach3_styles"     , nargs="+"              , help="Custom line style(s) for MaCh3 contours(s) (optional). If used, this should have the same number of arguments as provided to --filename  (times the number of confidence levels for 2D plots), or double if \'--chisq-calc MHpair\' is used. e.g. for 2D plots, the order of the styles is taken to be:  NH+CL0, NH+CL1, IH+CL0, IH+CL1, etc. (one MH used if VALOR is only using one)")
     args = parser.parse_args()
 
     # Check the validity of the input arguments
@@ -717,17 +954,29 @@ if __name__=="__main__":
             print "labels =", labels
             sys.exit()
 
-
-    dchisq_objects = []
-    num_var = get_dchisq_histos(args.in_filenames, args.chisq_calc, dchisq_objects)
-    print "Number of chisq hists to plot =", len(dchisq_objects)
-
     conf_levels = []
     if not args.conf_levels_str:
         conf_levels = [conv.kCL1Sigma, conv.kCL90]
         print "Setting default confidence levels to [1sigma, 90%]"
     else:
         conf_levels = [util.ConfLevelFromString(conf_str) for conf_str in args.conf_levels_str]
+
+    dchisq_objects = []
+    num_var = get_dchisq_histos(args.in_filenames, args.chisq_calc, dchisq_objects)
+    print "Number of chisq hists to plot =", len(dchisq_objects)
+
+    ptheta_objects = None
+    if args.compare_ptheta:
+        ptheta_colours = [int(c) for c in args.ptheta_colours]
+        ptheta_styles  = [int(c) for c in args.ptheta_styles]
+        ptheta_objects = get_ptheta_objects(args.compare_ptheta, num_var, args.ptheta_labels, ptheta_colours,
+                                            ptheta_styles, args.chisq_calc, args.in_filenames, conf_levels)
+    mach3_objects = None
+    if args.compare_mach3:
+        mach3_colours = [int(c) for c in args.mach3_colours]
+        mach3_styles  = [int(c) for c in args.mach3_styles]
+        mach3_objects  = get_mach3_objects(args.compare_mach3, num_var, args.mach3_labels, mach3_colours,
+                                           mach3_styles, args.chisq_calc)
 
     colours = []
     if args.colours:
@@ -844,12 +1093,12 @@ if __name__=="__main__":
         plot_contours_1d(dchisq_objects, labels, args.out_filename, args.is_t2k_only, colours, styles, args.prelim,
                          args.title_x, args.title_y, args.lwidth, args.tsize, conf_levels, leg_coords, args.titlesize,
                          args.fc_files, args.fc_graph_pattern, fc_line_styles, fc_line_colours,
-                         args.fc_draw_vals, args.fc_draw_boxes, args.force_max_y)
+                         args.fc_draw_vals, args.fc_draw_boxes, args.force_max_y, ptheta_objects, mach3_objects)
     elif num_var == 2:
         plot_contours_2d(dchisq_objects, labels, args.theta23, args.dm23, args.out_filename, colours, styles,
                          best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth,
                          args.msize, args.tsize, conf_levels, leg_coords, bf_leg_coords, args.titlesize, args.draw_reactor,
-                         is_inverted)
+                         ptheta_objects, mach3_objects, is_inverted)
     else:
         print "Error: Not all contours have the same dimensionality"
         sys.exit()
