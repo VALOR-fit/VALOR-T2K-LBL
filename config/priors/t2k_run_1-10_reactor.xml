@@ -51,11 +51,12 @@
     <sigma>  0.18E-5 </sigma>
     <!-- NOTE: No need to set a scheme for dm12sq, as the mass splitting scheme only applies to dm23sq -->
   </prior>
-    <penalty>
+
+  <penalty>
     <params> mixing13    </params>
     <type>   gaus        </type>
-    <mean>   0.0830      </mean>
-    <sigma>  0.0031      </sigma>
+    <mean>   0.0853      </mean>
+    <sigma>  0.0027      </sigma>
     <scheme> sinsq2theta </scheme>
   </penalty>
 </prior_list>
