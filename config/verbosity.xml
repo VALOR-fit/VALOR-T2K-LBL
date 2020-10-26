@@ -21,7 +21,8 @@
   <priority msgstream="NuInt">        NOTICE   </priority>
   <priority msgstream="InputMC">      NOTICE   </priority>
   <priority msgstream="HACK">         FATAL    </priority>
-  
+  <priority msgstream="Sample">         DEBUG    </priority> 
+ 
   <priority msgstream="Minuit">                         NOTICE </priority>
   <priority msgstream="Minuit2">                          INFO </priority>
   <priority msgstream="CompoundFitElements">            NOTICE </priority>
