@@ -32,7 +32,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
                      line_width, text_size, conf_levels, leg_coords, titlesize,
                      fc_files, fc_graph_pattern, fc_line_styles, fc_line_colours, fc_draw_critvals,
                      fc_draw_boxes, ptheta_objects = None, mach3_objects = None,
-                     x_range = None, y_range = None):
+                     x_range = None, y_range = None, chisq_calc = "global", hier_leg_coords = None):
     max_val = 0.0
     min_val = 999
     for dchisq_obj in dchisq_objects:
@@ -144,20 +144,39 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     legend.SetTextSize(text_size)
     if len(labels) > 0:
         for i, dchisq_obj in enumerate(dchisq_objects):
+            if chisq_calc == "MHpair" and i % 2 != 0:
+                # If we're plotting both mass hierarchies, then each input file has a pair corresponding to
+                # the other hierarchy. So only add the first file to the legend, and have a separate legend
+                # for the hierarchy
+                continue
             legend.AddEntry(dchisq_obj, labels[i], "l")
+
+    legend_hierarchy = None
+    if chisq_calc == "MHpair" and hier_leg_coords:
+        legend_hierarchy = ROOT.TLegend(hier_leg_coords[0], hier_leg_coords[1], hier_leg_coords[2], hier_leg_coords[3])
+        legend_hierarchy.SetFillStyle(0)
+        legend_hierarchy.SetBorderSize(0)
+        legend_hierarchy.SetTextFont(132)
+        legend_hierarchy.SetTextSize(text_size)
+        legend_hierarchy.AddEntry(dchisq_objects[0], "Normal"  , "l")
+        legend_hierarchy.AddEntry(dchisq_objects[1], "Inverted", "l")
 
     # If we have contours from other groups, format and draw them here
     if ptheta_objects:
-        for obj in ptheta_objects:
+        for i, obj in enumerate(ptheta_objects):
             obj.SetLineWidth(ptheta_line_width)
             obj.Draw("l,same")
             if obj.GetTitle() != "" and obj.GetTitle() != "-":
+                if chisq_calc == "MHpair" and i % 2 != 0:
+                    continue
                 legend.AddEntry(obj, obj.GetTitle(), "l")
     if mach3_objects:
-        for obj in mach3_objects:
+        for i, obj in enumerate(mach3_objects):
             obj.SetLineWidth(mach3_line_width)
             obj.Draw("l,same")
             if obj.GetTitle() != "" and obj.GetTitle() != "-":
+                if chisq_calc == "MHpair" and i % 2 != 0:
+                    continue
                 legend.AddEntry(obj, obj.GetTitle(), "l")
 
     if not fc_files:
@@ -266,6 +285,8 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         legend.AddEntry(breactors, breactors_label, "f")
 
     legend.Draw()
+    if legend_hierarchy:
+        legend_hierarchy.Draw()
 
     canvas.RedrawAxis()     # to stop objects from obscuring the axes
     canvas.Print(pdf_filename + ".pdf")
@@ -274,7 +295,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
 #________________________________________________________________________________________________________
 def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, styles, best_fit_styles,
                      best_fit_labels, prelim, title_x, title_y, line_width, marker_size, text_size,
-                     conf_levels, leg_coords, conf_leg_coords, titlesize, draw_reactor=False,
+                     conf_levels, leg_coords, leg2_coords, titlesize, draw_reactor=False,
                      ptheta_objects = None, mach3_objects = None, x_range = [], y_range = []):
 
     lmargin = 0.13
@@ -334,12 +355,12 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
     bf_lxmax = lxmin + lx_tsize_scale - 0.03
     bf_lymin = lymax - (len_bf_empty + int(draw_reactor) + 1) * text_size
     bf_lymax = lymax
-    if len(conf_leg_coords) != 0:
+    if len(leg2_coords) != 0:
         # Use user-specified legend coordinates
-        bf_lxmin = conf_leg_coords[0]
-        bf_lymin = conf_leg_coords[1]
-        bf_lxmax = conf_leg_coords[2]
-        bf_lymax = conf_leg_coords[3]
+        bf_lxmin = leg2_coords[0]
+        bf_lymin = leg2_coords[1]
+        bf_lxmax = leg2_coords[2]
+        bf_lymax = leg2_coords[3]
 
     # Legend showing the styles of each separate fit (e.g. NH/IH or VALOR/MaCh3/ptheta etc.)
     legend = ROOT.TLegend(use_lxmin, lymin, lxmax, lymax)
@@ -698,7 +719,10 @@ def get_ptheta_objects(ptheta_filename, num_var, ptheta_labels, ptheta_colours, 
                     if get_ndims(histo) != 1:
                         print "ERROR: Read p-theta hist with", get_ndims(histo), "dimensions. Expected 1."
                         sys.exit()
-                    histo.SetTitle(ptheta_labels[i])     # We'll use this title for the legend later
+                    if chisq_calc_type == "MHpair":
+                        histo.SetTitle(ptheta_labels[0])     # We'll use this title for the legend later
+                    else:
+                        histo.SetTitle(ptheta_labels[i])     # We'll use this title for the legend later
                     histo.SetLineColor(ptheta_colours[i])
                     histo.SetLineStyle(ptheta_styles [i])
                     objects.append(histo)
@@ -809,7 +833,7 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
                 hist_chisq_other_MH.SetLineColor(mach3_colours[1])
                 hist_chisq_other_MH.SetLineStyle(mach3_styles [1])
                 hist_chisq_other_MH.SetFillColorAlpha(0, 0.0)
-                hist_chisq_other_MH.SetTitle(mach3_labels[1])
+                hist_chisq_other_MH.SetTitle(mach3_labels[0])
                 min_chisq2 = hist_chisq_other_MH.GetMinimum()
 
                 if min_chisq1 <= min_chisq2:
@@ -1167,7 +1191,7 @@ if __name__=="__main__":
     parser.add_argument(      "--y-range"         , dest="y_range_str"         , nargs="+"              , help="y-axis range in user coordinates. Specify as min, max")
     parser.add_argument(      "--max-ndigits-y"   , dest="max_ndigits_y"       , type=int, default=3    , help="Max number of digits on the y-axis labels.")
     parser.add_argument(      "--leg-coords"      , dest="leg_coords_str"      , nargs="+"              , help="Legend corner coordinates [xmin, ymin, xmax, ymax]. This legend displays the styles of each fit, e.g. NH/IH or VALOR/MaCh3/p-theta.")
-    parser.add_argument(      "--conf-leg-coords" , dest="conf_leg_coords_str", nargs="+"               , help="Legend corner coordinates [xmin, ymin, xmax, ymax]. This legend displays the styles of each confidence level and of the best fit point markers (2D plots only).")
+    parser.add_argument(      "--leg2-coords"     , dest="leg2_coords_str"     , nargs="+"              , help="2nd Legend corner coordinates [xmin, ymin, xmax, ymax]. This legend displays the styles of each confidence level and of the best fit point markers (2D plots only), or the style of each MH (1D plots only)")
 
     # For comparisons to other groups
     parser.add_argument(      "--compare-ptheta"  , dest="compare_ptheta"                            , help="Input filename for plotting comparisons to p-theta. Only file allowed (as multiple hierarchies in the same file).")
@@ -1182,17 +1206,26 @@ if __name__=="__main__":
 
     # Check the validity of the input arguments
 
+    dchisq_objects = []
+    num_var = get_dchisq_histos(args.in_filenames, args.chisq_calc, dchisq_objects)
+    print "Number of chisq hists to plot =", len(dchisq_objects)
+
     labels = []
     if args.labels:
         labels = [i for i in args.labels]
-        if not len(args.in_filenames) == len(labels) and args.chisq_calc != "MHpair":
-            print "Error: The number of filenames and labels should match"
-            sys.exit()
-        elif not 2 * len(args.in_filenames) == len(labels) and args.chisq_calc == "MHpair":
-            print "Error: The number of labels should be twice the number of filenames"
-            print "filenames =", args.in_filenames
-            print "labels =", labels
-            sys.exit()
+        if num_var == 1 and len(args.leg2_coords_str) > 0:
+            if not len(args.in_filenames) == len(labels):
+                print "Error: The number of filenames and labels should match"
+                sys.exit()
+        else:
+            if not len(args.in_filenames) == len(labels) and args.chisq_calc != "MHpair":
+                print "Error: The number of filenames and labels should match"
+                sys.exit()
+            elif not 2 * len(args.in_filenames) == len(labels) and args.chisq_calc == "MHpair":
+                print "Error: The number of labels should be twice the number of filenames"
+                print "filenames =", args.in_filenames
+                print "labels =", labels
+                sys.exit()
 
     conf_levels = []
     if not args.conf_levels_str:
@@ -1200,10 +1233,6 @@ if __name__=="__main__":
         print "Setting default confidence levels to [1sigma, 90%]"
     else:
         conf_levels = [util.ConfLevelFromString(conf_str) for conf_str in args.conf_levels_str]
-
-    dchisq_objects = []
-    num_var = get_dchisq_histos(args.in_filenames, args.chisq_calc, dchisq_objects)
-    print "Number of chisq hists to plot =", len(dchisq_objects)
 
     ptheta_objects = None
     if args.compare_ptheta:
@@ -1296,11 +1325,11 @@ if __name__=="__main__":
         if len(leg_coords) != 4:
             print "ERROR: The number of legend coordinates must equal 4"
 
-    conf_leg_coords = []
-    if args.conf_leg_coords_str:
-        conf_leg_coords = [float(i) for i in args.conf_leg_coords_str]
-        if len(leg_coords) != 4:
-            print "ERROR: The number of best-fit point legend coordinates must equal 4"
+    leg2_coords = []
+    if args.leg2_coords_str:
+        leg2_coords = [float(i) for i in args.leg2_coords_str]
+        if len(leg2_coords) != 4:
+            print "ERROR: The number of coordinates for the 2nd legend must equal 4. Instead found:", leg2_coords
 
     x_range = []
     if args.x_range_str:
@@ -1351,11 +1380,11 @@ if __name__=="__main__":
                          args.title_x, args.title_y, args.lwidth, args.tsize, conf_levels, leg_coords, args.titlesize,
                          args.fc_files, args.fc_graph_pattern, fc_line_styles, fc_line_colours,
                          args.fc_draw_vals, args.fc_draw_boxes, ptheta_objects, mach3_objects,
-                         x_range, y_range)
+                         x_range, y_range, args.chisq_calc, leg2_coords)
     elif num_var == 2:
         plot_contours_2d(dchisq_objects, labels, args.theta23, args.dm23, args.out_filename, colours, styles,
                          best_fit_styles, args.best_fit_labels, args.prelim, args.title_x, args.title_y, args.lwidth,
-                         args.msize, args.tsize, conf_levels, leg_coords, conf_leg_coords, args.titlesize, args.draw_reactor,
+                         args.msize, args.tsize, conf_levels, leg_coords, leg2_coords, args.titlesize, args.draw_reactor,
                          ptheta_objects, mach3_objects, x_range, y_range)
     else:
         print "Error: Not all contours have the same dimensionality"
