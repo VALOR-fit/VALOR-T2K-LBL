@@ -208,6 +208,9 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             latLine.SetTextSize(0.05)
             critval_objects.append(latLine)
             latLine.Draw("same")
+
+        print_best_fit_and_range_1d_const_chisq(dchisq_objects, conf_levels)
+
     else:
         # Draw boxes to represent the Feldman-Cousins allowed regions
         fc_tgraphs        = []
@@ -243,28 +246,54 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
                     [left_boundary, right_boundary] = calc_1d_fc_xrange(dchisq_obj, fc_critval_tgraph)
                     hist_left_edge  = dchisq_obj.GetXaxis().GetBinLowEdge(1)
                     hist_right_edge = dchisq_obj.GetXaxis().GetBinUpEdge(dchisq_obj.GetNbinsX())
-                    hatch_box_max_y = 0.66 * max_val
-                    if left_boundary > right_boundary:
-                        hatch_interval  = ROOT.TBox(left_boundary , 0, hist_right_edge, hatch_box_max_y)
-                        hatch_interval.SetLineWidth(0)
-                        hatch_interval.SetFillStyle(_hatch_fill_style)
-                        hatch_interval.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
-                        hatch_boxes.append(hatch_interval)
-                        hatch_interval.Draw("same")
+                    if not (left_boundary == conv.kBadResult and right_boundary == conv.kBadResult):
 
-                        hatch_interval2 = ROOT.TBox(hist_left_edge, 0, right_boundary , hatch_box_max_y)
-                        hatch_interval2.SetLineWidth(0)
-                        hatch_interval2.SetFillStyle(_hatch_fill_style)
-                        hatch_interval2.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
-                        hatch_boxes.append(hatch_interval2)
-                        hatch_interval2.Draw("same")
-                    else:
-                        hatch_interval  = ROOT.TBox(left_boundary , 0, right_boundary , hatch_box_max_y)
-                        hatch_interval.SetLineWidth(0)
-                        hatch_interval.SetFillStyle(_hatch_fill_style)
-                        hatch_interval.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
-                        hatch_boxes.append(hatch_interval)
-                        hatch_interval.Draw("same")
+                        bin_bf = dchisq_obj.GetMinimumBin()
+                        val_bf = dchisq_obj.GetBinCenter(bin_bf)
+                        errneg = str(ROOT.TMath.Abs(val_bf - left_boundary))
+                        left_boundary_str = str(left_boundary)
+                        if left_boundary == conv.kBadResult:
+                            errneg = "not found"
+                            left_boundary_str = errneg
+                        errpos = str(ROOT.TMath.Abs(val_bf - right_boundary))
+                        right_boundary_str = str(right_boundary)
+                        if right_boundary == conv.kBadResult:
+                            errpos = "not found"
+                            right_boundary_str = errpos
+
+                        print "======================================="
+                        print "For the fit from file \'{}\'".format(dchisq_obj.GetTitle()), \
+                              "and the", util.ConfLevelAsString(conf_level), "CL:"
+                        print "\nDelta chisq min +/- allowed FC range =", val_bf, "+", errpos, "-", errneg
+                        print "\nThe FC confidence interval is: [", left_boundary_str, ";", right_boundary_str, "]"
+                        print "======================================="
+
+                        if left_boundary == conv.kBadResult:
+                            left_boundary = hist_left_edge
+                        if right_boundary == conv.kBadResult:
+                            right_boundary = hist_right_edge
+                        hatch_box_max_y = 0.66 * max_val
+                        if left_boundary > right_boundary:
+                            hatch_interval  = ROOT.TBox(left_boundary , 0, hist_right_edge, hatch_box_max_y)
+                            hatch_interval.SetLineWidth(0)
+                            hatch_interval.SetFillStyle(_hatch_fill_style)
+                            hatch_interval.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
+                            hatch_boxes.append(hatch_interval)
+                            hatch_interval.Draw("same")
+
+                            hatch_interval2 = ROOT.TBox(hist_left_edge, 0, right_boundary , hatch_box_max_y)
+                            hatch_interval2.SetLineWidth(0)
+                            hatch_interval2.SetFillStyle(_hatch_fill_style)
+                            hatch_interval2.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
+                            hatch_boxes.append(hatch_interval2)
+                            hatch_interval2.Draw("same")
+                        else:
+                            hatch_interval  = ROOT.TBox(left_boundary , 0, right_boundary , hatch_box_max_y)
+                            hatch_interval.SetLineWidth(0)
+                            hatch_interval.SetFillStyle(_hatch_fill_style)
+                            hatch_interval.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
+                            hatch_boxes.append(hatch_interval)
+                            hatch_interval.Draw("same")
                 fc_tfile.Close()
 
         # Draw the FC critical values in a separate loop to the FC boxes to ensure that the critical value
@@ -614,6 +643,7 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
             if file.GetListOfKeys().Contains(hname):
                 histo = file.Get(hname)
                 histo.SetDirectory(0)
+                histo.SetTitle(filename)    # So we know what fit this hist corresponds to when getting the BF point and ranges
 
                 # Check the dimensionality of the histogram
                 ndim_this_histo = get_ndims(histo)
@@ -638,6 +668,7 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
                 if file_other_MH.GetListOfKeys().Contains(hname):
                     histo_other_MH = file_other_MH.Get(hname)
                     histo_other_MH.SetDirectory(0)
+                    histo_other_MH.SetTitle(filename_other_MH)    # So we know what fit this hist corresponds to when getting the BF point and ranges
 
                     # Check the dimensionality of the histogram
                     ndim_this_histo = get_ndims(histo)
@@ -665,6 +696,44 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
         convert_to_delta_chisq(dchisq_objects, ndim, chisq_min_all)
 
     return ndim
+
+#________________________________________________________________________________________________________
+def print_best_fit_and_range_1d_const_chisq(dchisq_objects, conf_levels):
+    for hist in dchisq_objects:
+        hist_left_edge  = hist.GetXaxis().GetBinLowEdge(1)
+        hist_right_edge = hist.GetXaxis().GetBinUpEdge(hist.GetNbinsX())
+        vec_x = ROOT.vector('double')()
+        vec_x.push_back(hist_left_edge)
+        vec_x.push_back(hist_right_edge)
+        bin_bf = hist.GetMinimumBin()
+        val_bf = hist.GetBinCenter(bin_bf)
+
+        print "======================================="
+        print "For the fit from file \'{}\':".format(hist.GetTitle())
+        print "Best fit =", val_bf
+        print "Confidence regions:"
+
+        for conf_level in conf_levels:
+            critval = util.DeltaChisquare(conf_level, 1)    # The 2nd arg is the number of dimensions
+            vec_y = ROOT.vector('double')()
+            vec_y.push_back(critval)
+            vec_y.push_back(critval)
+            critval_tgraph = ROOT.TGraph(vec_x.size(), vec_x.data(), vec_y.data())
+            [left_boundary, right_boundary] = calc_1d_fc_xrange(hist, critval_tgraph)    # This function was written for FC, but works for const chisq too
+
+            left_boundary_str = str(left_boundary)
+            if left_boundary == conv.kBadResult:
+                left_boundary_str = "not found"
+            right_boundary_str = str(right_boundary)
+            if right_boundary == conv.kBadResult:
+                right_boundary_str = "not found"
+
+            print "   ", util.ConfLevelAsString(conf_level), "CR: [", left_boundary_str, ",", right_boundary_str, "]"
+            del critval_tgraph
+            del vec_y
+
+        print "======================================="
+        del vec_x
 
 #________________________________________________________________________________________________________
 def get_ptheta_objects(ptheta_filename, num_var, ptheta_labels, ptheta_colours, ptheta_styles, chisq_calc_type, valor_filenames, conf_levels):
@@ -1021,36 +1090,43 @@ def convert_to_delta_chisq(chisq_histos, ndim, chisq_min = -1):
 #________________________________________________________________________________________________________
 # Search for the boundaries of the 1D allowed FC region.
 # Returns [left boundary, right boundary].
-# NOTE: This assumes the free parameter is deltacp and that the input Delta chisq
-#       hist spans the full range of [-pi, +pi]
+# NOTE: Although this function was written with FC in mind, it can still be used for
+#       calculating const dchisq ranges, as long as a flat, two-point TGraph is input.
 def calc_1d_fc_xrange(histo, fc_critval_tgraph):
     lim_x_min = None
     lim_x_max = None
 
-    # This function assumes the free parameter is deltacp and that the input Delta chisq
-    # hist spans the full range of [-pi, +pi]. Test this assumption.
-    first_bin_centre = histo.GetBinCenter(1)
-    last_bin_centre  = histo.GetBinCenter(histo.GetNbinsX())
-    if ROOT.TMath.Abs(first_bin_centre + ROOT.TMath.Pi()) > conv.kASmallNum or \
-            ROOT.TMath.Abs(last_bin_centre  - ROOT.TMath.Pi()) > conv.kASmallNum:
-        print "ERROR: calc_1d_fc_xrange() assumes the input Delta chisq hist spans the full range of [-pi, +pi].", \
-              "This is not the case. Instead, the hist bins centres span the range [", first_bin_centre, \
-              ",", last_bin_centre, "]"
-        sys.exit()
+    # Do we have a cyclic variable such as deltacp? (where e.g. if we don't find a lower limit by searching left of
+    # the best fit point, then we can search left of the hist's right-hand edge.)
+    # If so, does the hist span the full range of this parameter?
+    cyclic_limits = False
+    if "cpv" in histo.GetTitle() or "deltacp" in histo.GetTitle():
+        first_bin_centre = histo.GetBinCenter(1)
+        last_bin_centre  = histo.GetBinCenter(histo.GetNbinsX())
+        if ROOT.TMath.Abs(first_bin_centre + ROOT.TMath.Pi()) < conv.kASmallNum and \
+                ROOT.TMath.Abs(last_bin_centre  - ROOT.TMath.Pi()) < conv.kASmallNum:
+            cyclic_limits = True
 
     # Shift the input Delta chisq hist by the critical values in each bin centre.
     # This allows us to calculate the range by comparing to a constant (shifted) critical value of 0.
     # This is equivalent to comparing to a variable critical value, but is easier to handle
     critval_shifted = 0.0
     hist_shifted = ROOT.TH1D(histo)
+    min_shifted =  999.0
+    max_shifted = -999.0
     for ibin in range(1, hist_shifted.GetNbinsX()+1):
         bincenter = histo.GetBinCenter(ibin)
         bincont = histo.GetBinContent(ibin)
         bincont_new = bincont - fc_critval_tgraph.Eval(bincenter)
         hist_shifted.SetBinContent(ibin, bincont_new)
+        min_shifted = min(min_shifted, bincont_new)
+        max_shifted = max(max_shifted, bincont_new)
+
+    # Does the allowed region exist at all for this hist? If not, return some nonsense numbers
+    if max_shifted < critval_shifted or min_shifted > critval_shifted:
+        return [conv.kBadResult, conv.kBadResult]
 
     bin_bf = hist_shifted.GetMinimumBin()
-    val_bf = hist_shifted.GetBinCenter(bin_bf)
 
     # Bins before (b) and after (a) the intersection with critical value
     bin_left_search_a  = conv.kBadResult
@@ -1059,7 +1135,7 @@ def calc_1d_fc_xrange(histo, fc_critval_tgraph):
     bin_right_search_b = conv.kBadResult
 
     # Search left of the chisq min for the boundary of the allowed FC region,
-    # wrapping around the deltacp = +/- pi boundary, as needed
+    # wrapping around, if needed and if possible
     found = False
     for ibin in range(bin_bf, 0, -1):
         bincont = hist_shifted.GetBinContent(ibin)
@@ -1069,7 +1145,7 @@ def calc_1d_fc_xrange(histo, fc_critval_tgraph):
             bin_left_search_a = bin_left_search_b+1
             found = True
             break
-    if not found:
+    if cyclic_limits and not found:
         # The interval hit the boundary, wrap around
         for ibin in range(hist_shifted.GetNbinsX(), bin_bf, -1):
             bincont = hist_shifted.GetBinContent(ibin)
@@ -1080,14 +1156,14 @@ def calc_1d_fc_xrange(histo, fc_critval_tgraph):
                 found = True
                 break
     if not found:
-        # If no bin is found it means the DeltaChisq = critical value bin is outside the physical region.
+        # If no bin is found it means the DeltaChisq = critical value bin is outside the scanned region.
         # If so, set the left extreme to 1 (first bin of the histogram)
         print "WARNING: Could not form an allowed FC range when looking left of the chisq min"
         bin_left_search_a = 1
         bin_left_search_b = 1
 
     # Search right of the chisq min for the boundary of the allowed FC region,
-    # wrapping around the deltacp = +/- pi boundary, as needed
+    # wrapping around, if needed and if possible
     found = False
     for ibin in range(bin_bf, hist_shifted.GetNbinsX()+1):
         bincont = hist_shifted.GetBinContent(ibin)
@@ -1097,7 +1173,7 @@ def calc_1d_fc_xrange(histo, fc_critval_tgraph):
             bin_right_search_b = bin_right_search_a-1
             found = True
             break
-    if not found:
+    if cyclic_limits and not found:
         # The interval hit the boundary, wrap around
         for ibin in range(1, bin_bf):
             bincont = hist_shifted.GetBinContent(ibin)
@@ -1124,8 +1200,10 @@ def calc_1d_fc_xrange(histo, fc_critval_tgraph):
         Y2 = hist_shifted.GetBinContent(bin_left_search_a)
         lim_x_min = get_interpolation_x(X1,Y1,X2,Y2,critval_shifted)
     else:
-        lim_x_min = hist_shifted.GetBinCenter(bin_left_search_a)
-    errneg = ROOT.TMath.Abs(val_bf - lim_x_min)
+        if cyclic_limits:
+            lim_x_min = hist_shifted.GetBinCenter(bin_left_search_a)
+        else:
+            lim_x_min = conv.kBadResult
 
     # Extrapolation for the right extreme.
     # Extrapolate between bins to get the x-axis value corresponding to DeltaChisq = critical value.
@@ -1137,12 +1215,10 @@ def calc_1d_fc_xrange(histo, fc_critval_tgraph):
         Y2 = hist_shifted.GetBinContent(bin_right_search_a)
         lim_x_max = get_interpolation_x(X1,Y1,X2,Y2,critval_shifted)
     else:
-        lim_x_max = hist_shifted.GetBinCenter(bin_right_search_b)
-    errpos = ROOT.TMath.Abs(val_bf - lim_x_max)
-
-    # TODO: We use this function for multiple hists, so input a name so that the following printout is clearer
-    print "\nDelta chisq min +/- allowed FC range =", val_bf, "+", errpos, "-", errneg
-    print "\nThe FC confidence interval is: [", val_bf - errneg, ";", val_bf + errpos, "]"
+        if cyclic_limits:
+            lim_x_max = hist_shifted.GetBinCenter(bin_right_search_b)
+        else:
+            lim_x_max = conv.kBadResult
 
     return [lim_x_min, lim_x_max]
 
