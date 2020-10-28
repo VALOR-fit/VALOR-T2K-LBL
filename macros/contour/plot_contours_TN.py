@@ -143,13 +143,16 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     legend.SetTextFont(132)
     legend.SetTextSize(text_size)
     if len(labels) > 0:
+        i_label = 0
         for i, dchisq_obj in enumerate(dchisq_objects):
             if chisq_calc == "MHpair" and i % 2 != 0:
                 # If we're plotting both mass hierarchies, then each input file has a pair corresponding to
                 # the other hierarchy. So only add the first file to the legend, and have a separate legend
                 # for the hierarchy
                 continue
-            legend.AddEntry(dchisq_obj, labels[i], "l")
+            if labels[i_label] != "":
+                legend.AddEntry(dchisq_obj, labels[i_label], "l")
+                i_label += 1
 
     legend_hierarchy = None
     if chisq_calc == "MHpair" and hier_leg_coords:
