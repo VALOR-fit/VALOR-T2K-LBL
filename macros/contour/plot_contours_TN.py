@@ -638,6 +638,9 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
     # Read in the chisq histos
     for filename in filenames:
         file = ROOT.TFile(filename, "READ")
+        if not file or not file.IsOpen():
+            print "ERROR: Could not open the file \'{}\'".format(filename)
+            sys.exit()
         histo = None
         for hname in potential_chisq_hist_names:
             if file.GetListOfKeys().Contains(hname):
@@ -663,6 +666,9 @@ def get_dchisq_histos(filenames, chisq_calc_type, dchisq_objects):
             else:
                 filename_other_MH = filename.replace("inverted", "normal")
             file_other_MH = ROOT.TFile(filename_other_MH, "READ")
+            if not file_other_MH or not file_other_MH.IsOpen():
+                print "ERROR: Could not open the file \'{}\'".format(filename_other_MH)
+                sys.exit()
             histo_other_MH = None
             for hname in potential_chisq_hist_names:
                 if file_other_MH.GetListOfKeys().Contains(hname):
@@ -722,13 +728,18 @@ def print_best_fit_and_range_1d_const_chisq(dchisq_objects, conf_levels):
             [left_boundary, right_boundary] = calc_1d_fc_xrange(hist, critval_tgraph)    # This function was written for FC, but works for const chisq too
 
             left_boundary_str = str(left_boundary)
+            err_low_str       = str(val_bf - left_boundary)
             if left_boundary == conv.kBadResult:
                 left_boundary_str = "not found"
+                err_low_str       = "not found"
             right_boundary_str = str(right_boundary)
+            err_high_str       = str(right_boundary - val_bf)
             if right_boundary == conv.kBadResult:
                 right_boundary_str = "not found"
+                err_high_str       = "not found"
 
-            print "   ", util.ConfLevelAsString(conf_level), "CR: [", left_boundary_str, ",", right_boundary_str, "]"
+            print "   ", util.ConfLevelAsString(conf_level), "CR: [", left_boundary_str, ",", right_boundary_str, \
+                  "]  --> ", val_bf, "+", err_high_str, "-", err_low_str
             del critval_tgraph
             del vec_y
 
