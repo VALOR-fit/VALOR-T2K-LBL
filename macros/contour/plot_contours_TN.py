@@ -308,7 +308,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             legend.AddEntry(hatch_boxes[0],box_name , "f")
 
     if prelim:
-        title = ROOT.TLatex(0.5, 0.91, "T2K Run 1-10 Preliminary")
+        title = ROOT.TLatex(0.5, 0.96, "T2K Run 1-10 Preliminary")
         title.SetTextSize(0.05)
         title.SetNDC(True)
         title.Draw("same")
