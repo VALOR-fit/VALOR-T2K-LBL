@@ -6,6 +6,7 @@ import array
 import numpy as np
 import sys
 import copy
+import math 
 from copy import deepcopy
 
 try:
@@ -94,27 +95,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     else:
         line_color = 1
 
-    for i, dchisq_obj in enumerate(dchisq_objects):
-        if not colours or not styles:
-            dchisq_obj.SetLineColor(line_color)
-        else:
-            # Custom line colours and styles have been specified
-            dchisq_obj.SetLineColor(colours[i])
-            dchisq_obj.SetLineStyle(styles[i])
-        if line_width:
-            dchisq_obj.SetLineWidth(line_width)
-        if title_x:
-            dchisq_obj.GetXaxis().SetTitle(title_x)
-            #dchisq_obj.GetXaxis().SetTitleOffset(0.84)
-            dchisq_obj.GetXaxis().SetTitleOffset(0)
-            dchisq_obj.GetXaxis().SetTitleSize(titlesize)
-        if title_y:
-            dchisq_obj.GetYaxis().SetTitle(title_y)
-            dchisq_obj.GetYaxis().SetTitleSize(titlesize)
-        dchisq_obj.GetYaxis().SetTitleOffset(0.8)
-        dchisq_obj.Draw("l" + options)
-        options = "same"
-        line_color += 1
 
     num_leg_entries = len(dchisq_objects)
     if ptheta_objects: num_leg_entries += len(ptheta_objects)
@@ -142,17 +122,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     legend.SetBorderSize(0)
     legend.SetTextFont(132)
     legend.SetTextSize(text_size)
-    if len(labels) > 0:
-        i_label = 0
-        for i, dchisq_obj in enumerate(dchisq_objects):
-            if chisq_calc == "MHpair" and i % 2 != 0:
-                # If we're plotting both mass hierarchies, then each input file has a pair corresponding to
-                # the other hierarchy. So only add the first file to the legend, and have a separate legend
-                # for the hierarchy
-                continue
-            if labels[i_label] != "":
-                legend.AddEntry(dchisq_obj, labels[i_label], "l")
-                i_label += 1
 
     legend_hierarchy = None
     if chisq_calc == "MHpair" and hier_leg_coords:
@@ -181,6 +150,43 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
                 if chisq_calc == "MHpair" and i % 2 != 0:
                     continue
                 legend.AddEntry(obj, obj.GetTitle(), "l")
+
+
+    for i, dchisq_obj in enumerate(dchisq_objects):
+        if not colours or not styles:
+            dchisq_obj.SetLineColor(line_color)
+        else:
+            # Custom line colours and styles have been specified
+            dchisq_obj.SetLineColor(colours[i])
+            dchisq_obj.SetLineStyle(styles[i])
+        if line_width:
+            dchisq_obj.SetLineWidth(line_width)
+        if title_x:
+            dchisq_obj.GetXaxis().SetTitle(title_x)
+            #dchisq_obj.GetXaxis().SetTitleOffset(0.84)
+            dchisq_obj.GetXaxis().SetTitleOffset(0)
+            dchisq_obj.GetXaxis().SetTitleSize(titlesize)
+        if title_y:
+            dchisq_obj.GetYaxis().SetTitle(title_y)
+            dchisq_obj.GetYaxis().SetTitleSize(titlesize)
+        dchisq_obj.GetYaxis().SetTitleOffset(0.8)
+        dchisq_obj.Draw("l" + options)
+        options = "same"
+        line_color += 1
+
+    if len(labels) > 0:
+        i_label = 0
+        for i, dchisq_obj in enumerate(dchisq_objects):
+            if chisq_calc == "MHpair" and i % 2 != 0:
+                # If we're plotting both mass hierarchies, then each input file has a pair corresponding to
+                # the other hierarchy. So only add the first file to the legend, and have a separate legend
+                # for the hierarchy
+                continue
+            if labels[i_label] != "":
+                legend.AddEntry(dchisq_obj, labels[i_label], "l")
+                i_label += 1
+
+
 
     if not fc_files:
         # Draw constant Delta chisq critical value line
@@ -1030,17 +1036,27 @@ def convert_posterior_prob_to_chisq(hist_posterior, ndim, filename):
     for ib in range(1, hist_posterior.GetNbinsX()+1):
         if ndim == 2:
             for jb in range(1, hist_posterior.GetNbinsY() + 1):
-                fill = -2.0*ROOT.TMath.Log(hist_posterior.GetBinContent(ib, jb))
-                if apply_penalty_to_mach3_hist:
-                    fill += get_chisq_penalty(filename, ndim, hist_posterior, ib, jb)
+                if (hist_posterior.GetBinContent(ib, jb) > 0):
+                    fill = -2.0*ROOT.TMath.Log(hist_posterior.GetBinContent(ib, jb))
+                    if apply_penalty_to_mach3_hist:
+                        fill += get_chisq_penalty(filename, ndim, hist_posterior, ib, jb)
+                else: 
+                    fill = 999.0 # as MaCh3 MaCh3 has a finite number of steps in parameter space, so where the posterior prob is really small, 
+                                 #they'll get no steps, so the input MaCh3 hists will have bins with posterior prob = 0.  ln(0) = inf.
+                                 #This give us weird plots. Here is a workaround to fix it. 
                 hist_chisq.SetBinContent(ib, jb, fill)
         else:
-            fill = -2.0*ROOT.TMath.Log(hist_posterior.GetBinContent(ib))
-            if apply_penalty_to_mach3_hist:
-                fill += get_chisq_penalty(filename, ndim, hist_posterior, ib, None)
-            hist_chisq.SetBinContent(ib, fill)
+            if (hist_posterior.GetBinContent(ib) >0 ):
+                fill = -2.0*ROOT.TMath.Log(hist_posterior.GetBinContent(ib))
+                if apply_penalty_to_mach3_hist:
+                    fill += get_chisq_penalty(filename, ndim, hist_posterior, ib, None)
+            else:
+                fill = 990.0 #Same trick as for 2D contours 
+            hist_chisq.SetBinContent(ib, fill) 
+            
 
     hist_chisq.SetDirectory(0)
+
     return hist_chisq
 
 #________________________________________________________________________________________________________
