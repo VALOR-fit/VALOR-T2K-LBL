@@ -87,8 +87,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         breactors.Draw("same")
 
     options = ""
-    if "mixing13" in pdf_filename:
-        options = "same"
     if len(dchisq_objects) == 3 and not "nova" in pdf_filename:
         line_color = 2
     else:
@@ -126,9 +124,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     lymin = lymax - (1 + num_leg_entries) * text_size
     lxmin = 0.15
     lxmax = 0.3
-    if "mixing13" in pdf_filename:
-        lxmin = 0.65
-        lxmax = 0.8
 
     if len(leg_coords) != 0:
         # The user has specified legend coordinates, so use them instead of the defaults
