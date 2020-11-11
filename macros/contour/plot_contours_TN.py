@@ -727,13 +727,31 @@ def print_best_fit_and_range_1d_const_chisq(dchisq_objects, conf_levels):
             critval_tgraph = ROOT.TGraph(vec_x.size(), vec_x.data(), vec_y.data())
             [left_boundary, right_boundary] = calc_1d_fc_xrange(hist, critval_tgraph)    # This function was written for FC, but works for const chisq too
 
+            # Do we have a cyclic variable such as deltacp? (where e.g. if we don't find a lower limit by searching left of
+            # the best fit point, then we can search left of the hist's right-hand edge.)
+            # If so, does the hist span the full range of this parameter?
+            cyclic_limits = False
+            if "cpv" in hist.GetTitle() or "deltacp" in hist.GetTitle():
+                first_bin_centre = hist.GetBinCenter(1)
+                last_bin_centre  = hist.GetBinCenter(hist.GetNbinsX())
+                if ROOT.TMath.Abs(first_bin_centre + ROOT.TMath.Pi()) < conv.kASmallNum and \
+                        ROOT.TMath.Abs(last_bin_centre  - ROOT.TMath.Pi()) < conv.kASmallNum:
+                    cyclic_limits = True
+
+            left_boundary_for_err  = left_boundary
+            right_boundary_for_err = right_boundary
+            if left_boundary > right_boundary_for_err and cyclic_limits:
+                left_boundary_for_err = left_boundary - 2.0*ROOT.TMath.Pi()
+            if right_boundary < left_boundary_for_err and cyclic_limits:
+                right_boundary_for_err = right_boundary + 2.0*ROOT.TMath.Pi()
+
             left_boundary_str = "{:.4f}".format(left_boundary)
-            err_low_str       = "{:.4f}".format(val_bf - left_boundary)
+            err_low_str       = "{:.4f}".format(val_bf - left_boundary_for_err)
             if left_boundary == conv.kBadResult:
                 left_boundary_str = "not found"
                 err_low_str       = "not found"
             right_boundary_str = "{:.4f}".format(right_boundary)
-            err_high_str       = "{:.4f}".format(right_boundary - val_bf)
+            err_high_str       = "{:.4f}".format(right_boundary_for_err - val_bf)
             if right_boundary == conv.kBadResult:
                 right_boundary_str = "not found"
                 err_high_str       = "not found"
