@@ -6,7 +6,6 @@ import array
 import numpy as np
 import sys
 import copy
-import math 
 from copy import deepcopy
 
 try:
@@ -95,6 +94,27 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     else:
         line_color = 1
 
+    for i, dchisq_obj in enumerate(dchisq_objects):
+        if not colours or not styles:
+            dchisq_obj.SetLineColor(line_color)
+        else:
+            # Custom line colours and styles have been specified
+            dchisq_obj.SetLineColor(colours[i])
+            dchisq_obj.SetLineStyle(styles[i])
+        if line_width:
+            dchisq_obj.SetLineWidth(line_width)
+        if title_x:
+            dchisq_obj.GetXaxis().SetTitle(title_x)
+            #dchisq_obj.GetXaxis().SetTitleOffset(0.84)
+            dchisq_obj.GetXaxis().SetTitleOffset(0)
+            dchisq_obj.GetXaxis().SetTitleSize(titlesize)
+        if title_y:
+            dchisq_obj.GetYaxis().SetTitle(title_y)
+            dchisq_obj.GetYaxis().SetTitleSize(titlesize)
+        dchisq_obj.GetYaxis().SetTitleOffset(0.8)
+        dchisq_obj.Draw("l" + options)
+        options = "same"
+        line_color += 1
 
     num_leg_entries = len(dchisq_objects)
     if ptheta_objects: num_leg_entries += len(ptheta_objects)
@@ -122,6 +142,17 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     legend.SetBorderSize(0)
     legend.SetTextFont(132)
     legend.SetTextSize(text_size)
+    if len(labels) > 0:
+        i_label = 0
+        for i, dchisq_obj in enumerate(dchisq_objects):
+            if chisq_calc == "MHpair" and i % 2 != 0:
+                # If we're plotting both mass hierarchies, then each input file has a pair corresponding to
+                # the other hierarchy. So only add the first file to the legend, and have a separate legend
+                # for the hierarchy
+                continue
+            if labels[i_label] != "":
+                legend.AddEntry(dchisq_obj, labels[i_label], "l")
+                i_label += 1
 
     legend_hierarchy = None
     if chisq_calc == "MHpair" and hier_leg_coords:
@@ -150,43 +181,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
                 if chisq_calc == "MHpair" and i % 2 != 0:
                     continue
                 legend.AddEntry(obj, obj.GetTitle(), "l")
-
-
-    for i, dchisq_obj in enumerate(dchisq_objects):
-        if not colours or not styles:
-            dchisq_obj.SetLineColor(line_color)
-        else:
-            # Custom line colours and styles have been specified
-            dchisq_obj.SetLineColor(colours[i])
-            dchisq_obj.SetLineStyle(styles[i])
-        if line_width:
-            dchisq_obj.SetLineWidth(line_width)
-        if title_x:
-            dchisq_obj.GetXaxis().SetTitle(title_x)
-            #dchisq_obj.GetXaxis().SetTitleOffset(0.84)
-            dchisq_obj.GetXaxis().SetTitleOffset(0)
-            dchisq_obj.GetXaxis().SetTitleSize(titlesize)
-        if title_y:
-            dchisq_obj.GetYaxis().SetTitle(title_y)
-            dchisq_obj.GetYaxis().SetTitleSize(titlesize)
-        dchisq_obj.GetYaxis().SetTitleOffset(0.8)
-        dchisq_obj.Draw("l" + options)
-        options = "same"
-        line_color += 1
-
-    if len(labels) > 0:
-        i_label = 0
-        for i, dchisq_obj in enumerate(dchisq_objects):
-            if chisq_calc == "MHpair" and i % 2 != 0:
-                # If we're plotting both mass hierarchies, then each input file has a pair corresponding to
-                # the other hierarchy. So only add the first file to the legend, and have a separate legend
-                # for the hierarchy
-                continue
-            if labels[i_label] != "":
-                legend.AddEntry(dchisq_obj, labels[i_label], "l")
-                i_label += 1
-
-
 
     if not fc_files:
         # Draw constant Delta chisq critical value line
@@ -895,11 +889,16 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
         if chisq_calc_type == "MHpair":
             # Get the posterior prob hist for the other hierarchy
             filename_other_MH = ""
-            if "nh" in mach3_filename:
+            if "nh" in mach3_filename or "NH" in mach3_filename:
                 filename_other_MH = mach3_filename.replace("nh", "ih")
+                filename_other_MH = mach3_filename.replace("NH", "IH")
             else:
                 filename_other_MH = mach3_filename.replace("ih", "nh")
+                filename_other_MH = mach3_filename.replace("IH", "NH")
             file_other_MH = ROOT.TFile(filename_other_MH, "READ")
+            if not file_other_MH or not file_other_MH.IsOpen():
+                print "ERROR: Could not get MaCh3 input file \'{}\'".format(filename_other_MH)
+                sys.exit()
 
             if num_var == 1:
                 hist_posterior = get_single_mach3_hist(file_mach3, hname, num_var)
