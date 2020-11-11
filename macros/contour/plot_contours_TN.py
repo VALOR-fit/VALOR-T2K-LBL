@@ -965,6 +965,9 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
                             contour.SetLineColor(mach3_colours[iconf])
                             contour.SetLineStyle(mach3_styles [iconf])
                             conf_regions_at_this_cl.append(contour)
+                    if len(conf_regions_at_this_cl) == 0:
+                        print "ERROR: Could not find a MaCh3 contour at the", util.ConfLevelAsString(conf_level), "CL"
+                        sys.exit()
                     objects.append(conf_regions_at_this_cl)
 
                 # Get BF point markers
