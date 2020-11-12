@@ -54,7 +54,7 @@
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_rhc_elike_run1-10_bins.xml               </binning>
     </element>
-
+    
     <element name="sk_fhc_multire">
       <detector>     superk                                               </detector>
       <beam>         JPARC_FHC                                            </beam>
@@ -66,18 +66,19 @@
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_cc1pilike_run1-10_bins.xml           </binning>
     </element>
-    
+
     <element name="sk_fhc_multirmu">
       <detector>     superk                                               </detector>
       <beam>         JPARC_FHC                                            </beam>
       <sample>       multirmu                                             </sample>
-      <observable>   Ereco,Thetareco                                      </observable>
+      <observable>   Ereco                                                </observable><!-- In perspective add Thetareco, but first tests on Ereco only  -->
       <data>                                                              </data>
       <mc>           mc/t2k_mc_run1-10_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_mulike_run1-10_bins.xml              </binning>
     </element>
+    
   </element_list>
 
   <parameter_definitions>
