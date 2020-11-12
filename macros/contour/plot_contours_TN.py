@@ -972,6 +972,12 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
                         mach3_contour_name = mach3_contour_name.replace("[ICONT]", str(icont))   # There can be multiple confidence regions at a single confidence level
                         if file_mach3.GetListOfKeys().Contains(mach3_contour_name):
                             contour = file_mach3.Get(mach3_contour_name)
+
+                            if "dm23" in file_mach3.GetName() and ("IH" in file_mach3.GetName() or "ih" in file_mach3.GetName()):
+                                # Then this is really Dm31sq, which is negative. We need this to be directly comparable to Dm23sq,
+                                # so we want to convert to |Dm31sq|
+                                contour = convert_mach3_Dm31sq_to_absDm31sq(contour)
+
                             label = mach3_labels[0]
                             contour.SetTitle(label)     # We'll use this title for the legend later
                             contour.SetLineColor(mach3_colours[iconf])
@@ -1031,7 +1037,44 @@ def get_single_mach3_hist(file, hist_name, ndim):
         print "ERROR: Read MaCh3 hist with", get_ndims(hist_posterior), "dimensions. Expected", ndim
         sys.exit()
 
+    if "dm23" in file.GetName() and ("IH" in file.GetName() or "ih" in file.GetName()):
+        # Then this is really Dm31sq, which is negative. We need this to be directly comparable to Dm23sq,
+        # so we want to convert to |Dm31sq|
+        hist_posterior = convert_mach3_Dm31sq_to_absDm31sq(hist_posterior)
+
     return hist_posterior
+
+#________________________________________________________________________________________________________
+def convert_mach3_Dm31sq_to_absDm31sq(obj_posterior):
+    dm12sq = 7.53e-5    # PDG 2019 central value, I think
+    if type(obj_posterior) == ROOT.TH1D:
+        nbins = obj_posterior.GetNbinsX()
+        low = obj_posterior.GetBinLowEdge(1)
+        high = obj_posterior.GetBinLowEdge(nbins) + obj_posterior.GetBinWidth(nbins)
+        hist_posterior_new = ROOT.TH1D(obj_posterior.GetName()+"_abs", obj_posterior.GetTitle()+"_abs", nbins, low, high)
+        for ib in range(1, nbins+1):
+            fill = obj_posterior.GetBinContent(ib)
+            cent = obj_posterior.GetBinCenter (ib)
+            if cent < 0.0:
+                hist_posterior_new.Fill(ROOT.TMath.Abs(cent)-dm12sq, fill)
+        obj_posterior = copy.deepcopy(hist_posterior_new)
+        del hist_posterior_new
+    elif type(obj_posterior) == ROOT.TGraph:
+        cont_new = ROOT.TGraph()
+        for ip in range(0, obj_posterior.GetN()):
+            x = ROOT.Double(-999)
+            y = ROOT.Double(-999)
+            obj_posterior.GetPoint(ip, x, y)
+            y_new = ROOT.TMath.Abs(y) - dm12sq
+            cont_new.SetPoint(cont_new.GetN(), x, y_new)
+        obj_posterior = copy.deepcopy(cont_new)
+        del cont_new
+    else:
+        print "ERROR: unrecognised MaCh3 object type:", type(obj_posterior)
+        sys.exit()
+
+    return obj_posterior
+    
 
 #________________________________________________________________________________________________________
 def convert_posterior_prob_to_chisq(hist_posterior, ndim, filename):
