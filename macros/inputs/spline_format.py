@@ -32,7 +32,7 @@ pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_coulomb_plus_E
 models = dict()
 
 def get_file_suffix(sample):
-    if "1Rmu" in sample:
+    if "1Rmu" or "MultiRmu" in sample:
         return ""
     else:
         return "erectheta"
@@ -110,7 +110,7 @@ def get_param_map():
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
-    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe"]:
+    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe","FHCMultiRmu"]:
         return "fhc"
     elif sample in ["RHC1Rmu","RHC1Re"]:
         return "rhc"
@@ -125,6 +125,8 @@ def get_selection_map(sample):
         return "numuselec"
     elif "MultiRe" in sample:
         return "cc1piselec"
+    elif "MultiRmu" in sample: 
+        return "cc1pi2deselec" #cc1pi1deselec TODO: check how the loop is going in order to iterate over both  types of splines, so far only manual 
     else:
         print "Error: Unknown sample ", sample
         sys.exit()
@@ -134,6 +136,8 @@ def get_sdk_selection(sample):
         return "1rmu"
     elif "1Re" in sample:
         return "1re"
+    elif "MultiRmu" in sample:
+        return "multirmu"
     else:
         return "multire"
 
@@ -173,6 +177,8 @@ def set_model_map(model):
         models["RHC1Re"] = model
     elif model.Name() == "superk__JPARC_FHC__multire":
         models["FHCMultiRe"] = model
+    elif model.Name() == "superk__JPARC_FHC__multirmu":
+        models["FHCMultiRmu"] = model
     else:
         print "Unrecognised model ", model.Name()
         sys.exit()
@@ -186,8 +192,8 @@ def get_new_binning(sample, flavour, mode, true_bin, reco_bin1, reco_bin2=0):
     # receive is the same as the format required
     binning = models[sample].GetBinning()
     reco_binning = binning.XsecRecoBinning()
-    reco_edges1 = reco_binning.BinEdgeArr(conv.kvEreco)
-    reco_edges2 = reco_binning.BinEdgeArr(conv.kvThetareco)
+    reco_edges1 = reco_binning.BinEdgeArr(0) #conv.kvEreco TODO: put some explanations  
+    reco_edges2 = reco_binning.BinEdgeArr(1) #conv.kvThetareco
     reco_centre1 = 0.5 * (reco_edges1[reco_bin1] + reco_edges1[reco_bin1 + 1])
     # Even the muon samples are 2D internally, so reco_bin2 default value works
     reco_centre2 = 0.5 * (reco_edges2[reco_bin2] + reco_edges2[reco_bin2 + 1])
@@ -355,7 +361,7 @@ def main(version, path, sample, config):
   
 if __name__=="__main__":
     import argparse
-    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe"]
+    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe", "FHCMultiRmu"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
     parser.add_argument('-p', '--prefix', default='spline2018v1', help="Spline filename prefix.")
     parser.add_argument('-i', '--input', help="Input spline directory.")
