@@ -131,7 +131,7 @@ leg_coords_args = {
             "t2k"     : {
                 "valor" : " --leg2-coords 0.15 0.80 0.45 0.90",
             },
-            "both_RC" : " --leg-coords 0.50 0.83 0.80 0.93 --leg2-coords 0.15 0.70 0.45 0.78"
+            "both_RC" : " --leg-coords 0.50 0.83 0.80 0.93 --leg2-coords 0.15 0.83 0.45 0.93"
         },
         "data"    : {
             "reactor" : {
@@ -417,6 +417,10 @@ def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg,
     if "dm23sq" in params:
         smear_arg = "_smeared"
 
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
+
     for reactor in fit_reactors:
         if params == "mixing13" and reactor == "reactor":
             continue
@@ -463,7 +467,7 @@ def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg,
                 standard_args_2d = " --best-fit-label \"Best Fit\"  --best-fit-style 22"
                 command = script +args_valor +args_ptheta +args_mach3 +standard_args + \
                           standard_args_2d +axis_title_args +axes_range_args +leg_coords + \
-                          conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg
+                          conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg +reac_band_arg
 
                 # Run plotting script
                 slide_title = "2D " +params.replace("_","-") +" " +dataset +" " +reactor +" " +mo +" " +"Group Comparison"
@@ -491,6 +495,10 @@ def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg,
     smear_arg = ""
     if "dm23sq" in params:
         smear_arg = "_smeared"
+
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
 
     mo = "normal"   # Although we specify NO here, the --chisq-calc MHpair argument we use later makes the plotting script automatically look for the IO file too.
     for reactor in fit_reactors:
@@ -537,7 +545,7 @@ def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg,
             output_name_arg = " --output " +output_name
             command = script +args_valor +args_ptheta +args_mach3 +standard_args + \
                       axis_title_args +axes_range_args +leg_coords + \
-                      conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg
+                      conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg +reac_band_arg
 
             # Run plotting script
             slide_title = "1D " +params.replace("_","-") +" " +dataset +" " +reactor +" " +"Group Comparison"
@@ -575,13 +583,13 @@ def plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
     if "dm23sq" in params:
         smear_arg = "_smeared"
 
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
+
     for reactor in fit_reactors:
         if params == "mixing13" and reactor == "reactor":
             continue
-
-        reac_band_arg = ""
-        if "mixing13" in params:
-            reac_band_arg = " --draw-reactor"
 
         filename = base_dir +"/" +params +"/" +dataset +"/" +"fit_" +dataset + "_run1-10_normal_" +params +"_" +reactor +"_0_1_result" +smear_arg +".root"
         if dchisq_calc == "global" or dchisq_calc == "local":
@@ -645,6 +653,10 @@ def plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
     if "dm23sq" in params:
         smear_arg = "_smeared"
 
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
+
     mo = "normal"   # Although we specify NO here, the --chisq-calc MHpair argument we use later makes the plotting script automatically look for the IO file too.
     for reactor in fit_reactors:
         if params == "mixing13" and reactor == "reactor":
@@ -674,7 +686,7 @@ def plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
         output_name_arg = " --output " +output_name
         command = script +args_valor +standard_args + \
                   axis_title_args +axes_range_args +leg_coords + \
-                  conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg
+                  conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg +reac_band_arg
 
         # Run plotting script
         slide_title = "1D " +params.replace("_","-") +" " +dataset +" " +reactor +" NO vs. IO"
@@ -715,10 +727,11 @@ def plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
     if "dm23sq" in params:
         smear_arg = "_smeared"
 
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
+
     for mo in fit_orderings:
-        reac_band_arg = ""
-        if "mixing13" in params:
-            reac_band_arg = " --draw-reactor"
 
         filename = base_dir +"/" +params +"/" +dataset +"/" +"fit_" +dataset + "_run1-10_" +mo +"_" +params +"_reactor_0_1_result" +smear_arg +".root"
         filename += " " +filename.replace("reactor", "t2k")
@@ -776,6 +789,10 @@ def plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
     if "dm23sq" in params:
         smear_arg = "_smeared"
 
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
+
     for mo in fit_orderings:
         if params == "mixing13":
             continue
@@ -805,7 +822,7 @@ def plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
         output_name_arg = " --output " +output_name
         command = script +args_valor +standard_args + \
                   axis_title_args +axes_range_args +leg_coords + \
-                  conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg
+                  conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg +reac_band_arg
 
         # Run plotting script
         slide_title = "1D " +params.replace("_","-") +" " +dataset +" " +reac_out_name["reactor"] +" vs " +reac_out_name["t2k"] +" " +mo_out_name[mo]
@@ -832,6 +849,10 @@ def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output
     smear_arg = ""
     if "dm23sq" in params:
         smear_arg = "_smeared"
+
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
 
     if params == "mixing13":
         return
@@ -861,7 +882,7 @@ def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output
     output_name_arg = " --output " +output_name
     command = script +args_valor +standard_args + \
               axis_title_args +axes_range_args +leg_coords + \
-              conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg
+              conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg +reac_band_arg
 
     # Run plotting script
     slide_title = "1D " +params.replace("_","-") +" " +dataset +" " +reac_out_name["reactor"] +" vs " +reac_out_name["t2k"] +" " +mo_out_name["normal"] +" vs " +mo_out_name["inverted"]
