@@ -86,7 +86,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         dchisq_objects[0].Draw("axis")
         breactors.Draw("same")
 
-    options = ""
+    options = "same"
     if len(dchisq_objects) == 3 and not "nova" in pdf_filename:
         line_color = 2
     else:
@@ -111,7 +111,6 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
             dchisq_obj.GetYaxis().SetTitleSize(titlesize)
         dchisq_obj.GetYaxis().SetTitleOffset(0.8)
         dchisq_obj.Draw("l" + options)
-        options = "same"
         line_color += 1
 
     num_leg_entries = len(dchisq_objects)
