@@ -912,6 +912,18 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
                 print "ERROR: Could not get MaCh3 input file \'{}\'".format(filename_other_MH)
                 sys.exit()
 
+            filename_both_MH = ""
+            if "nh" in mach3_filename or "NH" in mach3_filename:
+                filename_both_MH = mach3_filename  .replace("nh", "both")
+                filename_both_MH = filename_both_MH.replace("NH", "both")
+            else:
+                filename_both_MH = mach3_filename   .replace("ih", "both")
+                filename_both_MH = filename_both_MH.replace("IH", "both")
+            file_both_MH = ROOT.TFile(filename_both_MH, "READ")
+            if not file_both_MH or not file_both_MH.IsOpen():
+                print "ERROR: Could not get MaCh3 input file \'{}\'".format(filename_both_MH)
+                sys.exit()
+
             if num_var == 1:
                 hist_posterior = get_single_mach3_hist(file_mach3, hname, num_var)
                 if not hist_posterior:
@@ -921,6 +933,33 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
                 if not hist_posterior_other_MH:
                     print "ERROR: Could not get MaCh3 hist named \'{}\'".format(hname),  "from file \'{}\'".format(filename_other_MH)
                     sys.exit()
+
+                if "dm23" in mach3_filename or "th23" in mach3_filename:
+                    # The single MH posterior prob hists have been normalised by the posterior prob of each MO, so we can't
+                    # directly extract the NO-IO chisq separation from them. To get this, we need to calculate the
+                    # posterior prob of each MO from the given information (and that PNO + PIO = 1).
+                    # This can be calculated using a single bin, but the bin content must be non-zero
+                    # Try a bin in the middle of the posterior prob hist, as the middle is the least likely region to be empty
+                    hist_posterior_both_MH = get_single_mach3_hist(file_both_MH, hname, num_var)
+                    if not hist_posterior_both_MH:
+                        print "ERROR: Could not get MaCh3 hist named \'{}\'".format(hname),  "from file \'{}\'".format(filename_both_MH)
+                        sys.exit()
+
+                    test_bin = hist_posterior.GetMaximumBin()
+                    test_bin_IO = test_bin
+                    if "dm23" in mach3_filename:
+                        dm12sq = 7.53e-5
+                        IO_cent = hist_posterior.GetBinCenter(test_bin) + dm12sq
+                        test_bin_IO = hist_posterior_other_MH.FindBin(IO_cent)
+                    assert(hist_posterior         .GetBinContent(test_bin) > 0.0)
+                    assert(hist_posterior_other_MH.GetBinContent(test_bin_IO) > 0.0)
+                    assert(hist_posterior_both_MH .GetBinContent(test_bin) > 0.0)
+
+                    # TODO: I don't think this will work if hist_posterior corresponds to IO - check this
+                    assert("NH" in mach3_filename or "nh" in mach3_filename)
+                    PNO = (hist_posterior_both_MH.GetBinContent(test_bin) - hist_posterior_other_MH.GetBinContent(test_bin_IO)) / (hist_posterior.GetBinContent(test_bin) - hist_posterior_other_MH.GetBinContent(test_bin_IO))
+                    hist_posterior         .Scale(PNO)
+                    hist_posterior_other_MH.Scale(1.0 - PNO)
 
                 hist_chisq = convert_posterior_prob_to_chisq(hist_posterior, num_var, file_mach3.GetName())
                 hist_chisq.SetLineColor(mach3_colours[0])
