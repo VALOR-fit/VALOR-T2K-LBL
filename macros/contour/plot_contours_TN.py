@@ -902,11 +902,11 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
             # Get the posterior prob hist for the other hierarchy
             filename_other_MH = ""
             if "nh" in mach3_filename or "NH" in mach3_filename:
-                filename_other_MH = mach3_filename.replace("nh", "ih")
-                filename_other_MH = mach3_filename.replace("NH", "IH")
+                filename_other_MH = mach3_filename   .replace("nh", "ih")
+                filename_other_MH = filename_other_MH.replace("NH", "IH")
             else:
-                filename_other_MH = mach3_filename.replace("ih", "nh")
-                filename_other_MH = mach3_filename.replace("IH", "NH")
+                filename_other_MH = mach3_filename   .replace("ih", "nh")
+                filename_other_MH = filename_other_MH.replace("IH", "NH")
             file_other_MH = ROOT.TFile(filename_other_MH, "READ")
             if not file_other_MH or not file_other_MH.IsOpen():
                 print "ERROR: Could not get MaCh3 input file \'{}\'".format(filename_other_MH)
