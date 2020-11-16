@@ -156,10 +156,11 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       neut_mode     = event.mode
       reac_mode[0]  = NeutModeToValorMode(neut_mode, true_nu_flavour, is_oscillated)
       enu_true[0]   = event.pnu[0]  # Already in GeV/c
-      if  sample[0] == conv.ksMultiRmu:    
-        Theta_reco[0] = calc_theta_degrees(event.fqmrdir, event.fqnse, sample[0]) #for multiring samples it should be fqmrdir for others fq1rdir 
-      else:                                          
-        Theta_reco[0] = calc_theta_degrees(event.fq1rdir, event.fqnse, sample[0])     # event.fq1rdir is a 3D list that contains info on the lepton direction and is dependant on the sample
+      Theta_reco[0] = calc_theta_degrees(event, sample[0])
+      #if  sample[0] == conv.ksMultiRmu:    
+      #  Theta_reco[0] = calc_theta_degrees(event.fqmrdir, event.fqnse, sample[0]) #for multiring samples it should be fqmrdir 
+      #else:                                          
+      #  Theta_reco[0] = calc_theta_degrees(event.fq1rdir, event.fqnse, sample[0])     # event.fq1rdir is a 3D list that contains info on the lepton direction and is dependant on the sample
       temp_enu_reco, plep_reco = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])
       enu_reco[0]   = temp_enu_reco   # Already in GeV
       wght[0]       = group_misc_weights(event, neut_mode, sample[0])                          # Group all of the standard multiplicative NIWG weights into a single weight
@@ -309,14 +310,23 @@ def get_pot_weight(this_scale):
 
 #_______________________________________________________________________
 # Takes the scalar product between the beam and lepton directions
-def calc_theta_degrees(lep_dir_in, size, sample):
+def calc_theta_degrees(event, sample): # fix the direction calculations, make like ins psleines 
   # lep_dir contains info on the lepton direction and is dependant on the sample
-  lep_dir = c_to_pyroot_array_hack(lep_dir_in, size, 7, 3)
   costheta = ROOT.Double(-999.)
-  if util.SampleIsELike(sample):
-    costheta = t2k_beam_dir[0] * lep_dir[0][1][0] + t2k_beam_dir[1] * lep_dir[0][1][1] + t2k_beam_dir[2] * lep_dir[0][1][2]
-  if util.SampleIsMuLike(sample):
-    costheta = t2k_beam_dir[0] * lep_dir[0][2][0] + t2k_beam_dir[1] * lep_dir[0][2][1] + t2k_beam_dir[2] * lep_dir[0][2][2]
+  if  sample == conv.ksMultiRmu:
+    mreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
+    lep_dir = c_to_pyroot_array_hack(event.fqmrdir,200,10, 3)
+    if (mreloss[event.ipp][0] < mreloss[event.ipp][1]):
+      idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
+    else:
+      idx_mu = 0
+    costheta = t2k_beam_dir[0] * lep_dir[event.ipp][idx_mu][0] + t2k_beam_dir[1] * lep_dir[event.ipp][idx_mu][1] + t2k_beam_dir[2] * lep_dir[event.ipp][idx_mu][2]   
+  else:
+    lep_dir = c_to_pyroot_array_hack(event.fq1rdir, event.fqnse, 7, 3)
+    if util.SampleIsELike(sample):
+      costheta = t2k_beam_dir[0] * lep_dir[0][1][0] + t2k_beam_dir[1] * lep_dir[0][1][1] + t2k_beam_dir[2] * lep_dir[0][1][2]
+    if util.SampleIsMuLike(sample):
+      costheta = t2k_beam_dir[0] * lep_dir[0][2][0] + t2k_beam_dir[1] * lep_dir[0][2][1] + t2k_beam_dir[2] * lep_dir[0][2][2]
 
   if  costheta < -1.00001 or costheta > +1.00001:
     print "ERROR: costheta = " << costheta << " --> outside allowed range"
@@ -348,8 +358,6 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     mass = ROOT.Double(0)
     mom  = ROOT.Double(0)
 
-    mreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
-    mrmom = c_to_pyroot_array_hack(event.fqmrmom, 200, 6)
     if util.SampleIsELike(sample):
         # Must use reco info for consistency with how we select the Erec equation
         mass = me
@@ -357,9 +365,13 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     else:
         mass = mm
         if sample == conv.ksMultiRmu:
+          mreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
+          mrmom = c_to_pyroot_array_hack(event.fqmrmom, 200, 6)
           if (mreloss[event.ipp][0] <mreloss[event.ipp][1]):
             idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
-          mom = fqmrmom[event.ipp][idx_mu] #this should work 
+          else:
+            idx_mu = 0
+          mom = mrmom[event.ipp][idx_mu] #this should work 
         mom = event.fqmomm
 
     mom_shift_nu    = ROOT.Double(-4.3)   # MeV
