@@ -107,7 +107,7 @@ range_args = {
         "t2k"     : " --x-range 7e-3 50e-3"
     },
     "mixing23_cpv"    : None,
-    "mixing23_dm23sq" : " --x-range 0.4 0.65 --y-range 2.35e-3 2.75e-3"
+    "mixing23_dm23sq" : " --x-range 0.4 0.65 --y-range 2.25e-3 2.75e-3"
 }
 
 # Look on my Work, ye Mighty, and despair, for it is long and poorly organised...
@@ -258,16 +258,16 @@ leg_coords_args = {
             },
             "both_RC" : " --leg-coords  0.65 0.40 0.95 0.50 --leg2-coords 0.65 0.15 0.95 0.35"
         },
-        "data"    : {
+        "data" : {
             "reactor" : {
-                "valor" : " --leg-coords  0.70 0.40 0.95 0.50 --leg2-coords 0.75 0.70 0.95 0.90",
-                "group" : " --leg-coords  0.70 0.40 0.95 0.50 --leg2-coords 0.75 0.70 0.95 0.90"
+                "valor" : " --leg-coords  0.70 0.80 0.95 0.90 --leg2-coords 0.70 0.55 0.95 0.75",
+                "group" : " --leg-coords  0.70 0.80 0.95 0.90 --leg2-coords 0.70 0.60 0.95 0.75"
             },
             "t2k"     : {
-                "valor" : " --leg-coords  0.15 0.65 0.45 0.85 --leg2-coords 0.75 0.65 0.95 0.85",
-                "group" : " --leg-coords  0.15 0.65 0.45 0.85 --leg2-coords 0.75 0.65 0.95 0.85"
+                "valor" : " --leg-coords  0.15 0.80 0.45 0.90 --leg2-coords 0.15 0.55 0.45 0.75",
+                "group" : " --leg-coords  0.15 0.65 0.45 0.85 --leg2-coords 0.70 0.65 0.95 0.85"
             },
-            "both_RC" : " --leg-coords  0.15 0.65 0.45 0.85 --leg2-coords 0.75 0.65 0.95 0.85"
+            "both_RC" : " --leg-coords  0.15 0.70 0.45 0.80 --leg2-coords 0.70 0.65 0.95 0.85"
         }
     },
     "mixing23_cpv"    : {
@@ -378,6 +378,16 @@ def main(base_dir, output_tex_name, conf_levels, prelim, skip_group, tex_image_p
             # wRC vs. woRC; NO vs. IO (all on the same plot, rather than separately, as above)
             if not is_2d[params]:
                 plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path)
+
+            # Data vs. Asimov
+            if dataset == "data":
+                if is_2d[params]:
+                    # One MO and RC per plot
+                    # chisq min in true MO
+                    plot_valor_data_vs_asimov_2d(base_dir, params, dataset, "AsimovA", conf_levels, prelim_arg, tex_output, "global", tex_image_path)
+                else:
+                    # Both MOs on one plot, both separate RCs
+                    plot_valor_data_vs_asimov_1d(base_dir, params, dataset, "AsimovA", conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path)
 
     # Finally print all of the best fit points and confidence regions for all fits
     slide_title = "1D best fit points and confidence regions"
@@ -906,7 +916,7 @@ def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output
               conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg +reac_band_arg
 
     # Run plotting script
-    slide_title = "1D " +params.replace("_","-") +" " +dataset +" " +reac_out_name["reactor"] +" vs " +reac_out_name["t2k"] +" " +mo_out_name["normal"] +" vs " +mo_out_name["inverted"]
+    slide_title = "1D " +params.replace("_","-") +" " +dataset +" " +reac_out_name["reactor"] +" vs " +reac_out_name["t2k"] +", " +mo_out_name["normal"] +" vs " +mo_out_name["inverted"]
     print "================================================================================"
     print "=\t", slide_title, "\t="
     print "================================================================================"
@@ -919,6 +929,156 @@ def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output
 
     # Make a slide with the produced plot
     make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
+
+#________________________________________________________________________________________________________
+def plot_valor_data_vs_asimov_2d(base_dir, params, dataset, asimov_dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+    conf_levels_arg = " --conf-levels "
+    ncl = len(conf_levels)
+    for cl in conf_levels:
+        conf_levels_arg += cl +" "
+
+    # For the 2D plots, we want all contours from the same fit to be the same colour, and each CL corresponds to a different line style
+    # The order is fit0+CL0, fit0+CL1, ..., fit0+CLN, fit1+CL0, ..., fitN+CLN
+    # Here fit0 is NO and fit1 is IO
+    styles = ""
+    cols   = ""
+    for imo in range(0, 2):
+        for icl in range(1, ncl+1):
+            cols   += " " +str(colours[imo])
+            styles += " " +str(icl)
+
+    smear_arg = ""
+    if "dm23sq" in params:
+        smear_arg = "_smeared"
+
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
+
+    for reactor in fit_reactors:
+        if params == "mixing13" and reactor == "reactor":
+            continue
+
+        for mo in fit_orderings:
+
+
+            filename_data   = base_dir +"/" +params +"/" +dataset        +"/" +"fit_" +dataset        +"_run1-10_" +mo +"_" +params +"_" +reactor +"_0_1_result" +smear_arg +".root"
+            filename_asimov = base_dir +"/" +params +"/" +asimov_dataset +"/" +"fit_" +asimov_dataset +"_run1-10_" +mo +"_" +params +"_" +reactor +"_0_1_result" +smear_arg +".root"
+
+            args_valor  = " --filename " +filename_data +" " +filename_asimov +" --label \"Data\" \"Asimov\" --colour" +cols +" --style" +styles
+
+            # Make args
+            axis_title_args = None
+            if "dm23sq" in params:
+                axis_title_args = title_args[params][mo]
+            else:
+                axis_title_args = title_args[params]
+
+            axes_range_args = ""
+            if range_args[params]:
+                if type(range_args[params]) == type({}):
+                    axes_range_args = range_args[params][reactor]
+                else:
+                    axes_range_args = range_args[params]
+
+            leg_coords = ""
+            if leg_coords_args[params][dataset][reactor]["valor"]:
+                leg_coords = leg_coords_args[params][dataset][reactor]["valor"]
+
+            dchisq_calc_arg = " --chisq-calc " +dchisq_calc
+            dchisq_calc_desc = ""
+            if dchisq_calc == "MHpair":
+                dchisq_calc_desc = "__dchisq_min_across_MH"
+            elif dchisq_calc == "local":
+                dchisq_calc_desc = "__dchisq_min_wrt_min_of_all_inputs"
+
+            output_name = "contour_run10__" +params +"__" +dataset +"__" +reac_out_name[reactor] +"__" +mo_out_name[mo] +"__data_vs_Asimov__" +dchisq_calc_desc
+            output_name_arg = " --output " +output_name
+
+            standard_args_2d = " --best-fit-label \"Best Fit\"  --best-fit-style 22 22"     # The number of bf style numbers depends on the number of MOs or RCs plot
+
+            command = script +args_valor +standard_args + \
+                      standard_args_2d +axis_title_args +axes_range_args +leg_coords + \
+                      conf_levels_arg +dchisq_calc_arg +reac_band_arg +prelim_arg +output_name_arg
+
+            # Run plotting script
+            slide_title = "2D " +params.replace("_","-") +" " +dataset +" " +reactor + " " + mo +" data vs. Asimov " +dchisq_calc_desc.replace("_", " ")
+            print "================================================================================"
+            print "=\t", slide_title, "\t="
+            print "================================================================================"
+            print "Running:\n", command, "\n"
+            captured_output = ""
+            with suppress_stdout_stderr():
+                captured_output = os.popen(command).read()
+            print get_filtered_output(captured_output, dchisq_calc)    # Just print the output, as we don't calculate the CRs and BF points for 2D plots
+            print "\n\n\n"
+
+            # Make a slide with the produced plot
+            make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
+
+#________________________________________________________________________________________________________
+def plot_valor_data_vs_asimov_1d(base_dir, params, dataset, asimov_dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+    conf_levels_arg = " --conf-levels "
+    ncl = len(conf_levels)
+    for cl in conf_levels:
+        conf_levels_arg += cl +" "
+
+    smear_arg = ""
+    if "dm23sq" in params:
+        smear_arg = "_smeared"
+
+    reac_band_arg = ""
+    if "mixing13" in params:
+        reac_band_arg = " --draw-reactor"
+
+    mo = "normal"   # Although we specify NO here, the --chisq-calc MHpair argument we use later makes the plotting script automatically look for the IO file too.
+    for reactor in fit_reactors:
+        if params == "mixing13" and reactor == "reactor":
+            continue
+        filename_data   = base_dir +"/" +params +"/" +dataset        +"/" +"fit_" +dataset        +"_run1-10_" +mo +"_" +params +"_" +reactor +"_0_1_result" +smear_arg +".root"
+        filename_asimov = base_dir +"/" +params +"/" +asimov_dataset +"/" +"fit_" +asimov_dataset +"_run1-10_" +mo +"_" +params +"_" +reactor +"_0_1_result" +smear_arg +".root"
+        colours_valor = (" " +str(colours[0]))*2 +(" " +str(colours[1]))*2
+        args_valor  = " --filename " +filename_data +" " +filename_asimov +" --label \"Data\" \"Asimov\" --colour" +colours_valor +" --style 1 2 1 2"
+
+        axis_title_args = None
+        if "dm23sq" in params:
+            axis_title_args = title_args[params]["both"]
+        else:
+            axis_title_args = title_args[params]
+
+        axes_range_args = ""
+        if range_args[params]:
+            if type(range_args[params]) == type({}):
+                axes_range_args = range_args[params][reactor]
+            else:
+                axes_range_args = range_args[params]
+
+        leg_coords = ""
+        if leg_coords_args[params][dataset]["both_RC"]:     # Yeah, we've only got one RC per plot here, but this does the job anyway...
+            leg_coords = leg_coords_args[params][dataset]["both_RC"]
+
+        dchisq_calc_arg = " --chisq-calc " +dchisq_calc
+
+        output_name = "contour_run10__" +params +"__" +dataset +"__" +reac_out_name[reactor] +"__NO_vs_IO__data_vs_Asimov"
+        output_name_arg = " --output " +output_name
+        command = script +args_valor +standard_args + \
+                  axis_title_args +axes_range_args +leg_coords + \
+                  conf_levels_arg +dchisq_calc_arg +prelim_arg +output_name_arg +reac_band_arg
+
+        # Run plotting script
+        slide_title = "1D " +params.replace("_","-") +" " +dataset +" " +reactor +" NO vs. IO, data vs. Asimov"
+        print "================================================================================"
+        print "=\t", slide_title, "\t="
+        print "================================================================================"
+        print "Running:\n", command, "\n"
+        captured_output = ""
+        with suppress_stdout_stderr():
+            captured_output = os.popen(command).read()
+        print get_filtered_output(captured_output, dchisq_calc)
+        print "\n\n\n"
+
+        # Make a slide with the produced plot
+        make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
 def get_filtered_output(captured_tex, dchisq_calc_type):    # Might not always want to print CRs (e.g. for 2D)
