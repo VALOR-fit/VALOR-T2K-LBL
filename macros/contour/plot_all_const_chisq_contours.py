@@ -160,8 +160,8 @@ leg_coords_args = {
         },
         "data"    : {
             "t2k"     : {
-                "valor" : " --leg-coords  0.45 0.85 0.75 0.90 --leg2-coords 0.45 0.70 0.75 0.80",
-                "group" : " --leg-coords  0.45 0.75 0.75 0.90 --leg2-coords 0.45 0.60 0.75 0.70"
+                "valor" : " --leg-coords  0.45 0.80 0.75 0.90 --leg2-coords 0.45 0.65 0.75 0.75",
+                "group" : " --leg-coords  0.45 0.80 0.75 0.90 --leg2-coords 0.45 0.65 0.75 0.75"
             }
         }
     },
@@ -190,14 +190,14 @@ leg_coords_args = {
         },
         "data"    : {
             "reactor" : {
-                "valor" : " --leg2-coords 0.45 0.75 0.75 0.85",
-                "group" : " --leg-coords  0.15 0.75 0.45 0.90  --leg2-coords 0.45 0.75 0.75 0.85"
+                "valor" : " --leg2-coords 0.45 0.80 0.75 0.90",
+                "group" : " --leg-coords  0.45 0.80 0.75 0.90  --leg2-coords 0.45 0.65 0.75 0.75"
             },
             "t2k"     : {
                 "valor" : " --leg2-coords 0.45 0.80 0.75 0.90",
-                "group" : " --leg-coords  0.15 0.75 0.45 0.90  --leg2-coords 0.45 0.75 0.75 0.85"
+                "group" : " --leg-coords  0.45 0.80 0.75 0.90  --leg2-coords 0.45 0.65 0.75 0.75"
             },
-            "both_RC" : " --leg-coords  0.15 0.75 0.45 0.90  --leg2-coords 0.45 0.75 0.75 0.85"
+            "both_RC" : " --leg-coords  0.45 0.80 0.75 0.90  --leg2-coords 0.45 0.65 0.75 0.75"
         }
     },
     "dm23sq"          : {
@@ -1054,8 +1054,10 @@ def plot_valor_data_vs_asimov_1d(base_dir, params, dataset, asimov_dataset, conf
                 axes_range_args = range_args[params]
 
         leg_coords = ""
-        if leg_coords_args[params][dataset]["both_RC"]:     # Yeah, we've only got one RC per plot here, but this does the job anyway...
-            leg_coords = leg_coords_args[params][dataset]["both_RC"]
+        if params == "mixing13" and leg_coords_args[params][dataset]["t2k"]["valor"]:
+            leg_coords = leg_coords_args[params][dataset]["t2k"]["valor"]
+        elif leg_coords_args[params][dataset]["both_RC"]:     # Yeah, we've only got one RC per plot here, but this does the job anyway...
+                leg_coords = leg_coords_args[params][dataset]["both_RC"]
 
         dchisq_calc_arg = " --chisq-calc " +dchisq_calc
 
