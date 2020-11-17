@@ -352,7 +352,7 @@ def main(base_dir, output_tex_name, conf_levels, prelim, skip_group, tex_image_p
         for dataset in fit_datasets:
 
             # Group comparisons (only for Asimov A)
-            if not skip_group and dataset == "AsimovA":
+            if not skip_group and (dataset == "AsimovA" or dataset == "data"):
                 if is_2d[params]:
                     plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path, allow_stderr)
                 else:
@@ -442,15 +442,29 @@ def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg,
             args_ptheta = ""
             args_mach3  = ""
             if fit_params_ptheta[params]:
+                dataset_ptheta = dataset
+                some_mysterious_number = "01"   # What is this for???
+                if dataset == "data":
+                    dataset_ptheta = "run1to10-data"
+                    some_mysterious_number = "02"
                 # p-theta stores both NO and IO fits in the same file, so no need to include the MO in the filename
                 filename_ptheta = base_dir +"/ptheta/cont-20200511-01-02-eETh/contour_" + \
-                                  fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-01-eETh-" +dataset +".root"
+                                  fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-" +some_mysterious_number +"-eETh-" +dataset_ptheta +".root"
                 colours_ptheta = (" " +str(colours[2]))*ncl
                 args_ptheta = " --compare-ptheta " +filename_ptheta +" --ptheta-label \"p-theta (E-#theta)\" --ptheta-colour" +colours_ptheta +" --ptheta-style" +styles +" "
+                if not os.path.isfile(filename_ptheta):
+                    # If the comparison file doesn't exist, don't try to draw it
+                    print "WARNING: Could not find p-theta file \'{}\', so skipping.".format(filename_ptheta)
+                    args_ptheta = ""
             if fit_params_mach3[params]:
-                filename_mach3 = base_dir +"/mach3/contours_" +dataset +"_" +fit_params_mach3[params] +"_" +mo_mach3[mo] +reac_mach3[reactor] +".root"
+                dataset_mach3 = dataset +"_"
+                filename_mach3 = base_dir +"/mach3/contours_" +dataset_mach3 +fit_params_mach3[params] +"_" +mo_mach3[mo] +reac_mach3[reactor] +".root"
                 colours_mach3 = (" " +str(colours[1]))*ncl
                 args_mach3 = " --compare-mach3 " +filename_mach3 + " --mach3-label \"MaCh3\" --mach3-colour" +colours_mach3 +" --mach3-style" +styles +" "
+                if not os.path.isfile(filename_mach3):
+                    # If the comparison file doesn't exist, don't try to draw it
+                    print "WARNING: Could not find MaCh3 file \'{}\', so skipping.".format(filename_mach3)
+                    args_mach3 = ""
 
             if args_ptheta != "" or args_mach3 != "":
                 # Make args
@@ -528,14 +542,28 @@ def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg,
         args_mach3  = ""
         if fit_params_ptheta[params]:
             # p-theta stores both NO and IO fits in the same file, so no need to include the MO in the filename
+            dataset_ptheta = dataset
+            some_mysterious_number = "01"   # What is this for???
+            if dataset == "data":
+                dataset_ptheta = "run1to10-data"
+                some_mysterious_number = "02"
             filename_ptheta = base_dir +"/ptheta/cont-20200511-01-02-eETh/contour_" + \
-                              fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-01-eETh-" +dataset +".root"
+                              fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-" +some_mysterious_number +"-eETh-" +dataset_ptheta +".root"
             colours_ptheta = (" " +str(colours[2]))*2
             args_ptheta = " --compare-ptheta " +filename_ptheta +" --ptheta-label \"p-theta (E-#theta)\" --ptheta-colour" +colours_ptheta +" --ptheta-style 1 2 "
+            if not os.path.isfile(filename_ptheta):
+                # If the comparison file doesn't exist, don't try to draw it
+                print "WARNING: Could not find p-theta file \'{}\', so skipping.".format(filename_ptheta)
+                args_ptheta = ""
         if fit_params_mach3[params]:
-            filename_mach3 = base_dir +"/mach3/contours_" +dataset +"_" +fit_params_mach3[params] +"_" +mo_mach3[mo] +reac_mach3[reactor] +".root"
+            dataset_mach3 = dataset +"_"
+            filename_mach3 = base_dir +"/mach3/contours_" +dataset_mach3 +fit_params_mach3[params] +"_" +mo_mach3[mo] +reac_mach3[reactor] +".root"
             colours_mach3 = (" " +str(colours[1]))*2
             args_mach3 = " --compare-mach3 " +filename_mach3 + " --mach3-label \"MaCh3\" --mach3-colour" +colours_mach3 +" --mach3-style 1 2"
+            if not os.path.isfile(filename_mach3):
+                # If the comparison file doesn't exist, don't try to draw it
+                print "WARNING: Could not find MaCh3 file \'{}\', so skipping.".format(filename_mach3)
+                args_mach3 = ""
 
         if args_ptheta != "" or args_mach3 != "":
             # Make args
