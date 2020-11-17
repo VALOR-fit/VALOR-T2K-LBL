@@ -710,7 +710,7 @@ def print_best_fit_and_range_1d_const_chisq(dchisq_objects, conf_levels):
 
         print "======================================="
         print "For the fit from file \'{}\':".format(hist.GetTitle())
-        print "Best fit = {:.4f}".format(val_bf)
+        print "Best fit = {:.4}".format(val_bf)
         print "Confidence regions:"
 
         for conf_level in conf_levels:
@@ -739,19 +739,19 @@ def print_best_fit_and_range_1d_const_chisq(dchisq_objects, conf_levels):
             if right_boundary < left_boundary_for_err and cyclic_limits:
                 right_boundary_for_err = right_boundary + 2.0*ROOT.TMath.Pi()
 
-            left_boundary_str = "{:.4f}".format(left_boundary)
-            err_low_str       = "{:.4f}".format(val_bf - left_boundary_for_err)
+            left_boundary_str = "{:.4}".format(left_boundary)
+            err_low_str       = "{:.4}".format(val_bf - left_boundary_for_err)
             if left_boundary == conv.kBadResult:
                 left_boundary_str = "not found"
                 err_low_str       = "not found"
-            right_boundary_str = "{:.4f}".format(right_boundary)
-            err_high_str       = "{:.4f}".format(right_boundary_for_err - val_bf)
+            right_boundary_str = "{:.4}".format(right_boundary)
+            err_high_str       = "{:.4}".format(right_boundary_for_err - val_bf)
             if right_boundary == conv.kBadResult:
                 right_boundary_str = "not found"
                 err_high_str       = "not found"
 
             print "   ", util.ConfLevelAsString(conf_level), "CR: [", left_boundary_str, ",", right_boundary_str, \
-                  "]  -->  {:.4f}".format(val_bf), "+", err_high_str, "-", err_low_str
+                  "]  -->  {:.4}".format(val_bf), "+", err_high_str, "-", err_low_str
             del critval_tgraph
             del vec_y
 
