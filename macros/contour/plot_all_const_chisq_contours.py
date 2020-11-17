@@ -339,7 +339,7 @@ leg_coords_args = {
 _tex_slide_delimiter = "\n\n%------------------------------------------------------------\n"
 
 #________________________________________________________________________________________________________
-def main(base_dir, output_tex_name, conf_levels, prelim, skip_group, tex_image_path):
+def main(base_dir, output_tex_name, conf_levels, prelim, skip_group, tex_image_path, allow_stderr):
 
     tex_output = init_tex_slides(output_tex_name)
     
@@ -354,40 +354,40 @@ def main(base_dir, output_tex_name, conf_levels, prelim, skip_group, tex_image_p
             # Group comparisons (only for Asimov A)
             if not skip_group and dataset == "AsimovA":
                 if is_2d[params]:
-                    plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path)
+                    plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path, allow_stderr)
                 else:
-                    plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path)
+                    plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path, allow_stderr)
 
             # NO vs. IO; wRC and woRC on separate plots
             if is_2d[params]:
                 # chisq min in true MO
-                plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "global", tex_image_path)
+                plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "global", tex_image_path, allow_stderr)
 
                 # chisq min across both MO
-                plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path)
+                plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path, allow_stderr)
             else:
-                plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, print_BFPs_and_CRs, "MHpair", tex_image_path)
+                plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, print_BFPs_and_CRs, "MHpair", tex_image_path, allow_stderr)
 
             # wRC vs. woRC; NO and IO on separate plots
             if is_2d[params]:
                 # chisq min in true MO
-                plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "global", tex_image_path)
+                plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "global", tex_image_path, allow_stderr)
             else:
-                plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "global", tex_image_path)
+                plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "global", tex_image_path, allow_stderr)
 
             # wRC vs. woRC; NO vs. IO (all on the same plot, rather than separately, as above)
             if not is_2d[params]:
-                plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path)
+                plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path, allow_stderr)
 
             # Data vs. Asimov
             if dataset == "data":
                 if is_2d[params]:
                     # One MO and RC per plot
                     # chisq min in true MO
-                    plot_valor_data_vs_asimov_2d(base_dir, params, dataset, "AsimovA", conf_levels, prelim_arg, tex_output, "global", tex_image_path)
+                    plot_valor_data_vs_asimov_2d(base_dir, params, dataset, "AsimovA", conf_levels, prelim_arg, tex_output, "global", tex_image_path, allow_stderr)
                 else:
                     # Both MOs on one plot, both separate RCs
-                    plot_valor_data_vs_asimov_1d(base_dir, params, dataset, "AsimovA", conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path)
+                    plot_valor_data_vs_asimov_1d(base_dir, params, dataset, "AsimovA", conf_levels, prelim_arg, tex_output, "MHpair", tex_image_path, allow_stderr)
 
     # Finally print all of the best fit points and confidence regions for all fits
     slide_title = "1D best fit points and confidence regions"
@@ -412,7 +412,7 @@ def main(base_dir, output_tex_name, conf_levels, prelim, skip_group, tex_image_p
 
 #________________________________________________________________________________________________________
 # 2D group comparisons - each plot has a single MO and RC
-def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path):
+def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -489,8 +489,11 @@ def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg,
                 print "================================================================================"
                 print "Running:\n", command, "\n"
                 captured_output = ""
-                with suppress_stdout_stderr():
+                if allow_stderr:
                     captured_output = os.popen(command).read()
+                else:
+                    with suppress_stdout_stderr():
+                        captured_output = os.popen(command).read()
                 print get_filtered_output(captured_output, dchisq_calc)    # Just print the output, as we don't calculate the CRs and BF points for 2D plots
                 print "\n\n\n"
 
@@ -499,7 +502,7 @@ def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg,
 
 #________________________________________________________________________________________________________
 # 1D group comparisons - each plot has a single RC, but both MOs
-def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path):
+def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -570,8 +573,11 @@ def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg,
             print "================================================================================"
             print "Running:\n", command, "\n"
             captured_output = ""
-            with suppress_stdout_stderr():
+            if allow_stderr:
                 captured_output = os.popen(command).read()
+            else:
+                with suppress_stdout_stderr():
+                    captured_output = os.popen(command).read()
             print get_filtered_output(captured_output, dchisq_calc)
             print "\n\n\n"
 
@@ -579,7 +585,7 @@ def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg,
             make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
-def plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+def plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -653,8 +659,11 @@ def plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
         print "================================================================================"
         print "Running:\n", command, "\n"
         captured_output = ""
-        with suppress_stdout_stderr():
+        if allow_stderr:
             captured_output = os.popen(command).read()
+        else:
+            with suppress_stdout_stderr():
+                captured_output = os.popen(command).read()
         print get_filtered_output(captured_output, dchisq_calc)    # Just print the output, as we don't calculate the CRs and BF points for 2D plots
         print "\n\n\n"
 
@@ -662,7 +671,7 @@ def plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
         make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
-def plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, print_BFPs_and_CRs, dchisq_calc, tex_image_path):
+def plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, print_BFPs_and_CRs, dchisq_calc, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -717,8 +726,11 @@ def plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
         print "================================================================================"
         print "Running:\n", command, "\n"
         captured_output = ""
-        with suppress_stdout_stderr():
+        if allow_stderr:
             captured_output = os.popen(command).read()
+        else:
+            with suppress_stdout_stderr():
+                captured_output = os.popen(command).read()
         text_to_return = get_filtered_output(captured_output, dchisq_calc)
         print "\n\n\n"
 
@@ -729,7 +741,7 @@ def plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
         make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
-def plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+def plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -795,8 +807,11 @@ def plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
         print "================================================================================"
         print "Running:\n", command, "\n"
         captured_output = ""
-        with suppress_stdout_stderr():
+        if allow_stderr:
             captured_output = os.popen(command).read()
+        else:
+            with suppress_stdout_stderr():
+                captured_output = os.popen(command).read()
         print get_filtered_output(captured_output, dchisq_calc)    # Just print the output, as we don't calculate the CRs and BF points for 2D plots
         print "\n\n\n"
 
@@ -804,7 +819,7 @@ def plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
         make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
-def plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+def plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -859,8 +874,11 @@ def plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
         print "================================================================================"
         print "Running:\n", command, "\n"
         captured_output = ""
-        with suppress_stdout_stderr():
+        if allow_stderr:
             captured_output = os.popen(command).read()
+        else:
+            with suppress_stdout_stderr():
+                captured_output = os.popen(command).read()
         print get_filtered_output(captured_output, dchisq_calc)
         print "\n\n\n"
 
@@ -868,7 +886,7 @@ def plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
         make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
-def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -922,8 +940,11 @@ def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output
     print "================================================================================"
     print "Running:\n", command, "\n"
     captured_output = ""
-    with suppress_stdout_stderr():
+    if allow_stderr:
         captured_output = os.popen(command).read()
+    else:
+        with suppress_stdout_stderr():
+            captured_output = os.popen(command).read()
     print get_filtered_output(captured_output, dchisq_calc)
     print "\n\n\n"
 
@@ -931,7 +952,7 @@ def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output
     make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
-def plot_valor_data_vs_asimov_2d(base_dir, params, dataset, asimov_dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+def plot_valor_data_vs_asimov_2d(base_dir, params, dataset, asimov_dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -1008,8 +1029,11 @@ def plot_valor_data_vs_asimov_2d(base_dir, params, dataset, asimov_dataset, conf
             print "================================================================================"
             print "Running:\n", command, "\n"
             captured_output = ""
-            with suppress_stdout_stderr():
+            if allow_stderr:
                 captured_output = os.popen(command).read()
+            else:
+                with suppress_stdout_stderr():
+                    captured_output = os.popen(command).read()
             print get_filtered_output(captured_output, dchisq_calc)    # Just print the output, as we don't calculate the CRs and BF points for 2D plots
             print "\n\n\n"
 
@@ -1017,7 +1041,7 @@ def plot_valor_data_vs_asimov_2d(base_dir, params, dataset, asimov_dataset, conf
             make_tex_image_slide(tex_output, slide_title, output_name, tex_image_path)
 
 #________________________________________________________________________________________________________
-def plot_valor_data_vs_asimov_1d(base_dir, params, dataset, asimov_dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path):
+def plot_valor_data_vs_asimov_1d(base_dir, params, dataset, asimov_dataset, conf_levels, prelim_arg, tex_output, dchisq_calc, tex_image_path, allow_stderr):
     conf_levels_arg = " --conf-levels "
     ncl = len(conf_levels)
     for cl in conf_levels:
@@ -1074,8 +1098,11 @@ def plot_valor_data_vs_asimov_1d(base_dir, params, dataset, asimov_dataset, conf
         print "================================================================================"
         print "Running:\n", command, "\n"
         captured_output = ""
-        with suppress_stdout_stderr():
+        if allow_stderr:
             captured_output = os.popen(command).read()
+        else:
+            with suppress_stdout_stderr():
+                captured_output = os.popen(command).read()
         print get_filtered_output(captured_output, dchisq_calc)
         print "\n\n\n"
 
@@ -1187,14 +1214,15 @@ def make_tex_image_slide(tex_output, slide_title, pdf_name, tex_image_path):
 #________________________________________________________________________________________________________
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description="Index splines")
-    parser.add_argument("--base-dir"       , dest="base_dir"                                            , help="Directory containing the fit directories for each param: e.g. base_dir/cpv/AsimovA/fit.root.")
-    parser.add_argument("--output-tex"     , dest="output_tex"            , default="fits.tex"          , help="Name of output Tex file containing a slide for each plot produced.")
-    parser.add_argument("--tex-image-path" , dest="tex_image_path"        , default="images/run10_fits/", help="Where you put your images in relation to the tex file")
-    parser.add_argument("--conf-levels"    , dest="conf_levels", nargs="+", default=["90pct", "1sigma"] , help="The confidence levels to plot const chisq lines/contours for. See ConfLevel::AsString() for the choices")
-    parser.add_argument("--prelim"         , dest="prelim"     , action="store_true"                    , help="Make a box with a caveat about the plot being a preliminary result."    )
-    parser.add_argument("--skip-group-comp", dest="skip_group" , action="store_true"                    , help="If true, doesn't plot the group comparisons (useful if e.g. you want to plot at CLs which the other groups haven't made contours for)"    )
+    parser.add_argument("--base-dir"       , dest="base_dir"                                             , help="Directory containing the fit directories for each param: e.g. base_dir/cpv/AsimovA/fit.root.")
+    parser.add_argument("--output-tex"     , dest="output_tex"             , default="fits.tex"          , help="Name of output Tex file containing a slide for each plot produced.")
+    parser.add_argument("--tex-image-path" , dest="tex_image_path"         , default="images/run10_fits/", help="Where you put your images in relation to the tex file")
+    parser.add_argument("--conf-levels"    , dest="conf_levels" , nargs="+", default=["90pct", "1sigma"] , help="The confidence levels to plot const chisq lines/contours for. See ConfLevel::AsString() for the choices")
+    parser.add_argument("--prelim"         , dest="prelim"      , action="store_true"                    , help="Make a box with a caveat about the plot being a preliminary result."    )
+    parser.add_argument("--skip-group-comp", dest="skip_group"  , action="store_true"                    , help="If true, doesn't plot the group comparisons (useful if e.g. you want to plot at CLs which the other groups haven't made contours for)")
+    parser.add_argument("--allow-stderr"   , dest="allow_stderr", action="store_true"                    , help="If true, we stop suppressing the stderr output when running plot_contours_TN.py.")
 
     args = parser.parse_args()
 
-    main(args.base_dir, args.output_tex, args.conf_levels, args.prelim, args.skip_group, args.tex_image_path)
+    main(args.base_dir, args.output_tex, args.conf_levels, args.prelim, args.skip_group, args.tex_image_path, args.allow_stderr)
 
