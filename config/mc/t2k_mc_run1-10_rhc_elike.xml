@@ -103,7 +103,7 @@ Splines
 
 <splines>
     <folder>          official/2020/xsec/splines2020v6/valor_format                    </folder>
-    <pattern>         splines_spline2019splinesfitqunPreerectheta_[BEAM]_[SAMPLE].root </pattern>
+    <pattern>         splines_spline2020splinesfitqunPreerectheta_[BEAM]_[SAMPLE].root </pattern>
     <stored_as>       TObjArray                                                        </stored_as>
     <array_pattern>   spl_[MODE]_[PARAM]                                               </array_pattern>
     <method>          curr_tweak                                                       </method>           <!-- This uses weight = spline->Eval(current - untuned) -->

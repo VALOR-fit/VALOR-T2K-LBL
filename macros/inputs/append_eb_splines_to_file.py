@@ -11,22 +11,23 @@ except:
 ROOT.gROOT.SetBatch(1)
 
 # File naming convention
-output_pattern   = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v6/spline2019splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
-standard_pattern = "/hepstore/fbench/software/XSecResponse/eb_splines_with_weights/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-07-17.root"
-eb_pattern       = "/hepstore/fbench/software/XSecResponse/eb_splines_with_weights/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-07-17.root"
+output_pattern   = "/hepstore/jparlone/VALORLiverpool/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v6/spline2020splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
+standard_pattern = "/hepstore/jparlone/VALORLiverpool/XsecResponse/new_eb_splines_with_weights/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-11-28.root"
+eb_pattern       = "/hepstore/jparlone/VALORLiverpool/XsecResponse/new_eb_splines_with_weights/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-11-28.root"
 
-def get_file_suffix(sample):
-    if "1Rmu" in sample:
-        return ""
-    else:
+def get_file_suffix(sample): #Is this even needed in this?
+    if "1Rmu" or "1Re" or "MultiRe" in sample:
         return "erectheta"
+    else:
+        print("No valid sample found. Exiting.")
+        exit()
 
 
 def main():
     beams           = ["fhc", "rhc"]
     osc_channels    = ["nuebar_x_nuebar", "nue_x_nue", "numubar_x_nuebar", "numubar_x_numubar", "numu_x_nue", "numu_x_numu"]
     selections      = ["numu", "nue", "cc1pi"]
-    is_selection_2d = {"numu" : False, "nue" : True, "cc1pi" : True}
+    is_selection_2d = {"numu" : True, "nue" : True, "cc1pi" : True}
 
     for beam in beams:
         for channel in osc_channels:

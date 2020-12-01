@@ -11,7 +11,7 @@
       <detector>     superk                                               </detector>
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1rmu                                                 </sample>
-      <observable>   Ereco                                                </observable>
+      <observable>   Ereco,Thetareco                                      </observable>
       <data>         data/t2k_data_run1-10.xml                            </data>
       <mc>           mc/t2k_mc_run1-10_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
@@ -23,7 +23,7 @@
       <detector>     superk                                               </detector>
       <beam>         JPARC_RHC                                            </beam>
       <sample>       1rmu                                                 </sample>
-      <observable>   Ereco                                                </observable>
+      <observable>   Ereco,Thetareco                                      </observable>
       <data>         data/t2k_data_run1-10.xml                            </data>
       <mc>           mc/t2k_mc_run1-10_rhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>

@@ -4,12 +4,12 @@
 
   <!-- Single edge-to-edge binning scheme for reco quantities -->
   <reco_optimized>
-    binning/e2e/reco/t2k_e2e_Ereco_mulike.xml
+    binning/e2e/reco/t2k_e2e_Ereco_Thetareco_mulike.xml
   </reco_optimized>
 
   <!-- Single edge-to-edge binning scheme for reco quantities -->
   <reco_simple>
-    binning/e2e/reco/t2k_e2e_Ereco_mulike.xml
+    binning/e2e/reco/t2k_e2e_Ereco_Thetareco_mulike.xml
   </reco_simple>
 
   <!-- Single edge-to-edge binning scheme for true quantities.
