@@ -38,7 +38,7 @@ _hier_to_index = dict()
 _hier_to_index["normal"]   = 0
 _hier_to_index["inverted"] = 1
 
-_conf_levels = [conv.kCL1Sigma, conv.kCL90, conv.kCL2Sigma]
+_conf_levels = [conv.kCL1Sigma, conv.kCL90, conv.kCL2Sigma, conv.kCL99, conv.kCL3Sigma]
 
 
 #_______________________________________________________________________
