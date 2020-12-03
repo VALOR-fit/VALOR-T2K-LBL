@@ -104,7 +104,6 @@ def main(output_tag, in_tag,
       print_str += ":"
       print print_str
 
-      # TODO: copy the cpv -pi value onto the +pi value?
       for conf_level_enum in _conf_levels:
         # Calculate the critical Delta chisq
         conf_level = util.ConfLevelToFrac(conf_level_enum)
@@ -133,6 +132,44 @@ def main(output_tag, in_tag,
       input_file.Close()
       del input_file
       del dchisq_vals
+
+  # If needed, copy the cpv -pi value onto the +pi value, or vice-versa
+  # TODO: Enable this for 2D FC, if needed
+  if not fc_2d and ("cpv" in output_tag or "deltacp" in output_tag):
+    found_mpi = False
+    found_ppi = False
+    ip_copy = None
+    pi = ROOT.TMath.Pi()
+    for ip in range(0, graphs[_conf_levels[0]].GetN()):
+      x = ROOT.Double(-999)
+      y = ROOT.Double(-999)
+      graphs[_conf_levels[0]].GetPoint(ip, x, y)
+      if ROOT.TMath.Abs(x - pi) < 1e-3:
+        found_ppi = True
+        ip_copy = ip
+      elif ROOT.TMath.Abs(x + pi) < 1e-3:
+        found_mpi = True
+        ip_copy = ip
+
+    if ip_copy and not (found_ppi and found_mpi):
+      x    = ROOT.Double(-999)
+      y    = ROOT.Double(-999)
+      y_p1 = ROOT.Double(-999)
+      y_m1 = ROOT.Double(-999)
+      for conf_level_enum in _conf_levels:
+        graphs   [conf_level_enum].GetPoint(ip_copy, x, y   )
+        graphs_p1[conf_level_enum].GetPoint(ip_copy, x, y_p1)
+        graphs_m1[conf_level_enum].GetPoint(ip_copy, x, y_m1)
+        if found_ppi:
+          print "Copying the deltacp = +pi critical values onto deltacp = -pi"
+          graphs   [conf_level_enum].SetPoint( graphs   [conf_level_enum].GetN(), -pi, y    )
+          graphs_p1[conf_level_enum].SetPoint( graphs_p1[conf_level_enum].GetN(), -pi, y_p1 )
+          graphs_m1[conf_level_enum].SetPoint( graphs_m1[conf_level_enum].GetN(), -pi, y_m1 )
+        elif found_mpi:
+          print "Copying the deltacp = -pi critical values onto deltacp = +pi"
+          graphs   [conf_level_enum].SetPoint( graphs   [conf_level_enum].GetN(),  pi, y    )
+          graphs_p1[conf_level_enum].SetPoint( graphs_p1[conf_level_enum].GetN(),  pi, y_p1 )
+          graphs_m1[conf_level_enum].SetPoint( graphs_m1[conf_level_enum].GetN(),  pi, y_m1 )
 
   # Sort 1D graphs only
   for conf_level_enum in _conf_levels:
