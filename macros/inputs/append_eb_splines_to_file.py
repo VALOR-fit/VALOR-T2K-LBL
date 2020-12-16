@@ -11,9 +11,9 @@ except:
 ROOT.gROOT.SetBatch(1)
 
 # File naming convention
-output_pattern   = "/hepstore/jparlone/VALORLiverpool/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v6/spline2020splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
-standard_pattern = "/hepstore/jparlone/VALORLiverpool/XsecResponse/new_eb_splines_with_weights/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-11-28.root"
-eb_pattern       = "/hepstore/jparlone/VALORLiverpool/XsecResponse/new_eb_splines_with_weights/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-11-28.root"
+output_pattern   = "/hepstore/jparlone/VALORLiverpool/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v6/spline2020splinesfitqunPre3bins[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
+standard_pattern = "/hepstore/jparlone/VALORLiverpool/XsecResponse/new_eb_splines_with_weights/3bins/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-12-13_3bins.root"
+eb_pattern       = "/hepstore/jparlone/VALORLiverpool/XsecResponse/new_eb_splines_with_weights/3bins/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2020-12-13_3bins.root"
 
 def get_file_suffix(sample): #Is this even needed in this?
     if "1Rmu" or "1Re" or "MultiRe" in sample:
