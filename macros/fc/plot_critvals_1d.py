@@ -117,7 +117,8 @@ def plot_critical_values(output_file, input_file_nh, input_file_ih, legacy, prel
 
   legend.Draw()
 
-  title = ROOT.TLatex(0.0, 1.01 * 5.0, "T2K Run1-9 Preliminary")
+  title = ROOT.TLatex(0.50, 0.96, "T2K Run1-10 Preliminary")
+  title.SetNDC(True)
   title.SetTextSize(0.05)
   if prelim:
     title.Draw()
