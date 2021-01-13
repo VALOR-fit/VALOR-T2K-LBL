@@ -267,25 +267,28 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
                         if right_boundary == conv.kBadResult:
                             right_boundary = hist_right_edge
                         hatch_box_max_y = 0.66 * max_val
+                        hatch_box_col = dchisq_obj.GetLineColor()
+                        if fc_draw_critvals:
+                            hatch_box_col = fc_line_colours[i*(len(conf_levels)) +j]
                         if left_boundary > right_boundary:
                             hatch_interval  = ROOT.TBox(left_boundary , 0, hist_right_edge, hatch_box_max_y)
                             hatch_interval.SetLineWidth(0)
                             hatch_interval.SetFillStyle(_hatch_fill_style)
-                            hatch_interval.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
+                            hatch_interval.SetFillColorAlpha(hatch_box_col, _hatch_fill_opacity)
                             hatch_boxes.append(hatch_interval)
                             hatch_interval.Draw("same")
 
                             hatch_interval2 = ROOT.TBox(hist_left_edge, 0, right_boundary , hatch_box_max_y)
                             hatch_interval2.SetLineWidth(0)
                             hatch_interval2.SetFillStyle(_hatch_fill_style)
-                            hatch_interval2.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
+                            hatch_interval2.SetFillColorAlpha(hatch_box_col, _hatch_fill_opacity)
                             hatch_boxes.append(hatch_interval2)
                             hatch_interval2.Draw("same")
                         else:
                             hatch_interval  = ROOT.TBox(left_boundary , 0, right_boundary , hatch_box_max_y)
                             hatch_interval.SetLineWidth(0)
                             hatch_interval.SetFillStyle(_hatch_fill_style)
-                            hatch_interval.SetFillColorAlpha(dchisq_obj.GetLineColor(), _hatch_fill_opacity)
+                            hatch_interval.SetFillColorAlpha(hatch_box_col, _hatch_fill_opacity)
                             hatch_boxes.append(hatch_interval)
                             hatch_interval.Draw("same")
                 fc_tfile.Close()

@@ -42,8 +42,8 @@ _hier_to_index["inverted"] = 1
 #_______________________________________________________________________
 
 def main(output_tag, in_tag,
-         npt_fc_par1, start_pt_fc_par1, min_val_fc_par1, max_val_fc_par1,
-         npt_fc_par2, start_pt_fc_par2, min_val_fc_par2, max_val_fc_par2,
+         npt_fc_par1, start_pt_fc_par1, min_val_fc_par1, max_val_fc_par1, pts_fc_par1,
+         npt_fc_par2, start_pt_fc_par2, min_val_fc_par2, max_val_fc_par2, pts_fc_par2,
          ntoys_fc, fc_2d, fc_hier,
          npt_marg_par1, start_pt_marg_par1, min_val_marg_par1, max_val_marg_par1,
          npt_marg_par2, start_pt_marg_par2, min_val_marg_par2, max_val_marg_par2):
@@ -92,9 +92,9 @@ def main(output_tag, in_tag,
       # Now that we've filled chisq_all, calculate the FC Delta chisq for each FC toy
       Dchisq_toy = ROOT.vector('double')(ntoys_fc,-1.0)   # Use a ROOT vector instead of a python list so that we can save it to the output ROOT file
       index_hier = _hier_to_index[fc_hier]
-      index_marg_p1 = fc_pt_to_marg_pt(ifc_p1, npt_fc_par1, min_val_fc_par1, max_val_fc_par1,
+      index_marg_p1 = fc_pt_to_marg_pt(ifc_p1, npt_fc_par1, min_val_fc_par1, max_val_fc_par1, pts_fc_par1,
                                        npt_marg_par1, start_pt_marg_par1, min_val_marg_par1, max_val_marg_par1)
-      index_marg_p2 = fc_pt_to_marg_pt(ifc_p1, npt_fc_par2, min_val_fc_par2, max_val_fc_par2,
+      index_marg_p2 = fc_pt_to_marg_pt(ifc_p1, npt_fc_par2, min_val_fc_par2, max_val_fc_par2, pts_fc_par2,
                                        npt_marg_par2, start_pt_marg_par2, min_val_marg_par2, max_val_marg_par2)
       for itoy in range(0, ntoys_fc):
         chisq_fix = chisq_all[itoy][index_marg_p1][index_marg_p2][index_hier]
@@ -138,14 +138,27 @@ def get_filename(tag, fc_2d, hierarchy, ifc_p1, ifc_p2, imarg_p1, imarg_p2):
 
 #_______________________________________________________________________
 # Find out which marginalisation grid point this FC grid point lies closest to
-def fc_pt_to_marg_pt(ifc, npt_fc, min_val_fc, max_val_fc, npt_marg, start_pt_marg, min_val_marg, max_val_marg):
-  # Calculate and check step sizes
-  step_fc = 0
-  if npt_fc > 1:
-    step_fc = (max_val_fc - min_val_fc) / (npt_fc - 1)
-  if step_fc == 0 and npt_fc > 1:
-    print "ERROR: FC step size is 0 with > 1 FC grid point"
-    sys.exit()
+def fc_pt_to_marg_pt(ifc, npt_fc, min_val_fc, max_val_fc, pts_fc_str, npt_marg, start_pt_marg, min_val_marg, max_val_marg):
+
+  val_fc = None
+
+  if not pts_fc_str:
+    # Calculate and check step sizes
+    step_fc = 0
+    if npt_fc > 1:
+      step_fc = (max_val_fc - min_val_fc) / (npt_fc - 1)
+    if step_fc == 0 and npt_fc > 1:
+      print "ERROR: FC step size is 0 with > 1 FC grid point"
+      sys.exit()
+
+    # Calculate the parameter value corresponding to the FC grid point
+    val_fc = min_val_fc + step_fc * ifc
+  else:
+    pts_fc_float = [float(i) for i in pts_fc_str]
+    if ifc >= len(pts_fc_float) or ifc < 0:
+      print "ERROR: Tried to access custom FC point #\'{}\', but it was out of range. length = {}".format(ifc, len(pts_fc_float))
+      sys.exit()
+    val_fc = pts_fc_float[ifc]
 
   step_marg = 0
   if npt_marg > 1:
@@ -155,9 +168,6 @@ def fc_pt_to_marg_pt(ifc, npt_fc, min_val_fc, max_val_fc, npt_marg, start_pt_mar
     sys.exit()
   if step_marg == 0 and npt_marg == 1:
     return start_pt_marg
-
-  # Calculate the parameter value corresponding to the FC grid point
-  val_fc = min_val_fc + step_fc * ifc
 
   # Find the marginalisation grid point that this is closest to
   for imarg in range(start_pt_marg, start_pt_marg + npt_marg):
@@ -190,53 +200,52 @@ def get_chisq_min(chisq_list_toy):
 #_______________________________________________________________________
 if __name__=="__main__":
   
-  import optparse
-  parser = optparse.OptionParser(usage="%prog [options]..",description="Calculate FC Delta chisq values")
+  import argparse
+  parser = argparse.ArgumentParser(usage="%prog [options]..",description="Calculate FC Delta chisq values")
 
   # Input/Output
-  parser.add_option('-o', '--out-tag'     , dest='output_tag', default=""     , help="Tag used to name the output file(s)")
-  parser.add_option('-i', '--in-tag'      , dest='in_tag'        ,
+  parser.add_argument('-o', '--out-tag'     , dest='output_tag', default=""     , help="Tag used to name the output file(s)")
+  parser.add_argument('-i', '--in-tag'      , dest='in_tag'        ,
                     default="fit_run1-9d_NH_FC_[HIER]_cpv_reactor__FCpt_[FC]__margpt_[MARG]_result.root",
                     help="Input file tag, with the hierarchy, FC point no. and marginalisation point no. replaced with "
                          "\'[HIER]\', \'[FC]\' and \'[MARG]\', respectively")
 
   # FC grid points
-  parser.add_option('--npt-fc-par1'     , dest='npt_fc_par1'     , type=int  , default=9        , help="For param 1: The number of FC grid points to calculate Delta chisq values at")
-  parser.add_option('--start-pt-fc-par1', dest='start_pt_fc_par1', type=int  , default=0        , help="For param 1: Start at this FC point number")
-  parser.add_option('--min-val-fc-par1' , dest='min_val_fc_par1' , type=float, default=-conv.kpi, help="For param 1: The first FC grid point is at this value")
-  parser.add_option('--max-val-fc-par1' , dest='max_val_fc_par1' , type=float, default= conv.kpi, help="For param 1: The last FC grid point is at this value")
-  parser.add_option('--npt-fc-par2'     , dest='npt_fc_par2'     , type=int  , default=1        , help="For param 2: The number of FC grid points to calculate Delta chisq values at")
-  parser.add_option('--start-pt-fc-par2', dest='start_pt_fc_par2', type=int  , default=0        , help="For param 2: Start at this FC point number")
-  parser.add_option('--min-val-fc-par2' , dest='min_val_fc_par2' , type=float, default=0        , help="For param 2: The first FC point is at this value")
-  parser.add_option('--max-val-fc-par2' , dest='max_val_fc_par2' , type=float, default=0        , help="For param 2: The last FC point is at this value")
+  parser.add_argument('--npt-fc-par1'     , dest='npt_fc_par1'     , type=int  , default=9        , help="For param 1: The number of FC grid points to calculate Delta chisq values at")
+  parser.add_argument('--start-pt-fc-par1', dest='start_pt_fc_par1', type=int  , default=0        , help="For param 1: Start at this FC point number")
+  parser.add_argument('--min-val-fc-par1' , dest='min_val_fc_par1' , type=float, default=-conv.kpi, help="For param 1: The first FC grid point is at this value")
+  parser.add_argument('--max-val-fc-par1' , dest='max_val_fc_par1' , type=float, default= conv.kpi, help="For param 1: The last FC grid point is at this value")
+  parser.add_argument("--pts-fc-par1"     , dest="pts_fc_par1"     , nargs="+" , default=None     , help="For param 1: If the FC grid points aren't evenly spaced, specify them all here instead of using --min... and --max...")
+  parser.add_argument('--npt-fc-par2'     , dest='npt_fc_par2'     , type=int  , default=1        , help="For param 2: The number of FC grid points to calculate Delta chisq values at")
+  parser.add_argument('--start-pt-fc-par2', dest='start_pt_fc_par2', type=int  , default=0        , help="For param 2: Start at this FC point number")
+  parser.add_argument('--min-val-fc-par2' , dest='min_val_fc_par2' , type=float, default=0        , help="For param 2: The first FC point is at this value")
+  parser.add_argument('--max-val-fc-par2' , dest='max_val_fc_par2' , type=float, default=0        , help="For param 2: The last FC point is at this value")
+  parser.add_argument("--pts-fc-par2"     , dest="pts_fc_par2"     , nargs="+" , default=None     , help="For param 2: If the FC grid points aren't evenly spaced, specify them all here instead of using --min... and --max...")
 
   # Marginalisation grid points
-  parser.add_option('--npt-marg-par1'     , dest='npt_marg_par1'     , type=int  , default=101      , help="For param 1: The number of marginalisation grid points to calculate Delta chisq values at")
-  parser.add_option('--start-pt-marg-par1', dest='start_pt_marg_par1', type=int  , default=0        , help="For param 1: Start at this marginalisation point number")
-  parser.add_option('--min-val-marg-par1' , dest='min_val_marg_par1' , type=float, default=-conv.kpi, help="For param 1: The first marginalisation grid point is at this value")
-  parser.add_option('--max-val-marg-par1' , dest='max_val_marg_par1' , type=float, default= conv.kpi, help="For param 1: The last marginalisation grid point is at this value")
-  parser.add_option('--npt-marg-par2'     , dest='npt_marg_par2'     , type=int  , default=1        , help="For param 2: The number of marginalisation grid points to calculate Delta chisq values at")
-  parser.add_option('--start-pt-marg-par2', dest='start_pt_marg_par2', type=int  , default=0        , help="For param 2: Start at this marginalisation point number")
-  parser.add_option('--min-val-marg-par2' , dest='min_val_marg_par2' , type=float, default=0        , help="For param 2: The first marginalisation grid point is at this value")
-  parser.add_option('--max-val-marg-par2' , dest='max_val_marg_par2' , type=float, default=0        , help="For param 2: The last marginalisation grid point is at this value")
+  parser.add_argument('--npt-marg-par1'     , dest='npt_marg_par1'     , type=int  , default=101      , help="For param 1: The number of marginalisation grid points to calculate Delta chisq values at")
+  parser.add_argument('--start-pt-marg-par1', dest='start_pt_marg_par1', type=int  , default=0        , help="For param 1: Start at this marginalisation point number")
+  parser.add_argument('--min-val-marg-par1' , dest='min_val_marg_par1' , type=float, default=-conv.kpi, help="For param 1: The first marginalisation grid point is at this value")
+  parser.add_argument('--max-val-marg-par1' , dest='max_val_marg_par1' , type=float, default= conv.kpi, help="For param 1: The last marginalisation grid point is at this value")
+  parser.add_argument('--npt-marg-par2'     , dest='npt_marg_par2'     , type=int  , default=1        , help="For param 2: The number of marginalisation grid points to calculate Delta chisq values at")
+  parser.add_argument('--start-pt-marg-par2', dest='start_pt_marg_par2', type=int  , default=0        , help="For param 2: Start at this marginalisation point number")
+  parser.add_argument('--min-val-marg-par2' , dest='min_val_marg_par2' , type=float, default=0        , help="For param 2: The first marginalisation grid point is at this value")
+  parser.add_argument('--max-val-marg-par2' , dest='max_val_marg_par2' , type=float, default=0        , help="For param 2: The last marginalisation grid point is at this value")
 
   # Other
-  parser.add_option('--ntoys-fc'    , dest='ntoys_fc', type=int, default=10000, help="The number of FC toys at each grid point")
-  parser.add_option('--fc-2d'       , dest='fc_2d'   , action="store_true"    , help="Specify this flag if you are doing 2D FC")
-  parser.add_option('--fc-hierarchy', dest='fc_hier' , default="normal"       , help="The mass hierarchy that the FC toys were generated at")
+  parser.add_argument('--ntoys-fc'    , dest='ntoys_fc', type=int, default=10000, help="The number of FC toys at each grid point")
+  parser.add_argument('--fc-2d'       , dest='fc_2d'   , action="store_true"    , help="Specify this flag if you are doing 2D FC")
+  parser.add_argument('--fc-hierarchy', dest='fc_hier' , default="normal"       , help="The mass hierarchy that the FC toys were generated at")
 
-  o,other = parser.parse_args()
+  o = parser.parse_args()
 
   if not(o.fc_hier == "normal" or o.fc_hier == "inverted"):
     print "ERROR: The --fc-hierarchy option must be either \'normal\' or \'inverted\'"
     sys.exit()
 
   main(o.output_tag, o.in_tag,
-       o.npt_fc_par1, o.start_pt_fc_par1, o.min_val_fc_par1, o.max_val_fc_par1,
-       o.npt_fc_par2, o.start_pt_fc_par2, o.min_val_fc_par2, o.max_val_fc_par2,
+       o.npt_fc_par1, o.start_pt_fc_par1, o.min_val_fc_par1, o.max_val_fc_par1, o.pts_fc_par1,
+       o.npt_fc_par2, o.start_pt_fc_par2, o.min_val_fc_par2, o.max_val_fc_par2, o.pts_fc_par2,
        o.ntoys_fc, o.fc_2d, o.fc_hier,
        o.npt_marg_par1, o.start_pt_marg_par1, o.min_val_marg_par1, o.max_val_marg_par1,
        o.npt_marg_par2, o.start_pt_marg_par2, o.min_val_marg_par2, o.max_val_marg_par2)
-
-  if other:
-    print "Warning - ignored arguments: ", other
