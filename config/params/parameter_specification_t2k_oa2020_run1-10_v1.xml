@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
-<param_list name="T2K_Run1-9">
+<param_list name="T2K_Run1-10">
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  flux_numu00  </simple>
       <long>  BANFF  0; SK numu flux; 0.0 - 0.4 GeV  </long>
-      <rootex>  f_{0; t, r}^{banff}  </rootex>
-      <tex>  BANFF  0, SK numu flux, 0.0 - 0.4 GeV  </tex>
+      <rootex>  $f_{0; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.4 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 0.4  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -29,7 +29,7 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
 
     <!-- Options used to set the FitParamList -->
@@ -55,7 +55,7 @@
     <step_mode> frac </step_mode>
     <step> 0.01 </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -63,21 +63,21 @@
     <name>
       <simple>  flux_numu01  </simple>
       <long>  BANFF  1; SK numu flux; 0.4 - 0.5 GeV  </long>
-      <rootex>  f_{1; t, r}^{banff}  </rootex>
-      <tex>  BANFF  1, SK numu flux, 0.4 - 0.5 GeV  </tex>
+      <rootex>  $f_{1; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.4 - 0.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.4, 0.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -87,16 +87,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -104,21 +104,21 @@
     <name>
       <simple>  flux_numu02  </simple>
       <long>  BANFF  2; SK numu flux; 0.5 - 0.6 GeV  </long>
-      <rootex>  f_{2; t, r}^{banff}  </rootex>
-      <tex>  BANFF  2, SK numu flux, 0.5 - 0.6 GeV  </tex>
+      <rootex>  $f_{2; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.6 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.5, 0.6  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -128,16 +128,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -145,21 +145,21 @@
     <name>
       <simple>  flux_numu03  </simple>
       <long>  BANFF  3; SK numu flux; 0.6 - 0.7 GeV  </long>
-      <rootex>  f_{3; t, r}^{banff}  </rootex>
-      <tex>  BANFF  3, SK numu flux, 0.6 - 0.7 GeV  </tex>
+      <rootex>  $f_{3; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.6 - 0.7 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.6, 0.7  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -169,16 +169,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -186,21 +186,21 @@
     <name>
       <simple>  flux_numu04  </simple>
       <long>  BANFF  4; SK numu flux; 0.7 - 1.0 GeV  </long>
-      <rootex>  f_{4; t, r}^{banff}  </rootex>
-      <tex>  BANFF  4, SK numu flux, 0.7 - 1.0 GeV  </tex>
+      <rootex>  $f_{4; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.7, 1.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -210,16 +210,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -227,21 +227,21 @@
     <name>
       <simple>  flux_numu05  </simple>
       <long>  BANFF  5; SK numu flux; 1.0 - 1.5 GeV  </long>
-      <rootex>  f_{5; t, r}^{banff}  </rootex>
-      <tex>  BANFF  5, SK numu flux, 1.0 - 1.5 GeV  </tex>
+      <rootex>  $f_{5; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.0, 1.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -251,16 +251,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -268,21 +268,21 @@
     <name>
       <simple>  flux_numu06  </simple>
       <long>  BANFF  6; SK numu flux; 1.5 - 2.5 GeV  </long>
-      <rootex>  f_{6; t, r}^{banff}  </rootex>
-      <tex>  BANFF  6, SK numu flux, 1.5 - 2.5 GeV  </tex>
+      <rootex>  $f_{6; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.5, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -292,16 +292,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -309,21 +309,21 @@
     <name>
       <simple>  flux_numu07  </simple>
       <long>  BANFF  7; SK numu flux; 2.5 - 3.5 GeV  </long>
-      <rootex>  f_{7; t, r}^{banff}  </rootex>
-      <tex>  BANFF  7, SK numu flux, 2.5 - 3.5 GeV  </tex>
+      <rootex>  $f_{7; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 3.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 3.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -333,16 +333,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -350,21 +350,21 @@
     <name>
       <simple>  flux_numu08  </simple>
       <long>  BANFF  8; SK numu flux; 3.5 - 5.0 GeV  </long>
-      <rootex>  f_{8; t, r}^{banff}  </rootex>
-      <tex>  BANFF  8, SK numu flux, 3.5 - 5.0 GeV  </tex>
+      <rootex>  $f_{8; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 3.5 - 5.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  3.5, 5.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -374,16 +374,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -391,21 +391,21 @@
     <name>
       <simple>  flux_numu09  </simple>
       <long>  BANFF  9; SK numu flux; 5.0 - 7.0 GeV  </long>
-      <rootex>  f_{9; t, r}^{banff}  </rootex>
-      <tex>  BANFF  9, SK numu flux, 5.0 - 7.0 GeV  </tex>
+      <rootex>  $f_{9; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 5.0 - 7.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  5.0, 7.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -415,16 +415,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -432,21 +432,21 @@
     <name>
       <simple>  flux_numu10  </simple>
       <long>  BANFF 10; SK numu flux; 7.0 - 30.0 GeV  </long>
-      <rootex>  f_{10; t, r}^{banff}  </rootex>
-      <tex>  BANFF 10, SK numu flux, 7.0 - 30.0 GeV  </tex>
+      <rootex>  $f_{10; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 7.0 - 30.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  7.0, 30.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -456,16 +456,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -473,21 +473,21 @@
     <name>
       <simple>  flux_numubar00  </simple>
       <long>  BANFF 11; SK numubar flux; 0.0 - 0.7 GeV  </long>
-      <rootex>  f_{11; t, r}^{banff}  </rootex>
-      <tex>  BANFF 11, SK numubar flux, 0.0 - 0.7 GeV  </tex>
+      <rootex>  $f_{11; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.7 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 0.7  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -497,16 +497,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -514,21 +514,21 @@
     <name>
       <simple>  flux_numubar01  </simple>
       <long>  BANFF 12; SK numubar flux; 0.7 - 1.0 GeV  </long>
-      <rootex>  f_{12; t, r}^{banff}  </rootex>
-      <tex>  BANFF 12, SK numubar flux, 0.7 - 1.0 GeV  </tex>
+      <rootex>  $f_{12; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.7, 1.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -538,16 +538,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -555,21 +555,21 @@
     <name>
       <simple>  flux_numubar02  </simple>
       <long>  BANFF 13; SK numubar flux; 1.0 - 1.5 GeV  </long>
-      <rootex>  f_{13; t, r}^{banff}  </rootex>
-      <tex>  BANFF 13, SK numubar flux, 1.0 - 1.5 GeV  </tex>
+      <rootex>  $f_{13; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.0, 1.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -579,16 +579,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -596,21 +596,21 @@
     <name>
       <simple>  flux_numubar03  </simple>
       <long>  BANFF 14; SK numubar flux; 1.5 - 2.5 GeV  </long>
-      <rootex>  f_{14; t, r}^{banff}  </rootex>
-      <tex>  BANFF 14, SK numubar flux, 1.5 - 2.5 GeV  </tex>
+      <rootex>  $f_{14; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.5, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -620,16 +620,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -637,21 +637,21 @@
     <name>
       <simple>  flux_numubar04  </simple>
       <long>  BANFF 15; SK numubar flux; 2.5 - 30.0 GeV  </long>
-      <rootex>  f_{15; t, r}^{banff}  </rootex>
-      <tex>  BANFF 15, SK numubar flux, 2.5 - 30.0 GeV  </tex>
+      <rootex>  $f_{15; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 30.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -661,16 +661,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -678,21 +678,21 @@
     <name>
       <simple>  flux_nue00  </simple>
       <long>  BANFF 16; SK nue flux; 0.0 - 0.5 GeV  </long>
-      <rootex>  f_{16; t, r}^{banff}  </rootex>
-      <tex>  BANFF 16, SK nue flux, 0.0 - 0.5 GeV  </tex>
+      <rootex>  $f_{16; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 0.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -702,16 +702,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -719,21 +719,21 @@
     <name>
       <simple>  flux_nue01  </simple>
       <long>  BANFF 17; SK nue flux; 0.5 - 0.7 GeV  </long>
-      <rootex>  f_{17; t, r}^{banff}  </rootex>
-      <tex>  BANFF 17, SK nue flux, 0.5 - 0.7 GeV  </tex>
+      <rootex>  $f_{17; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.7 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.5, 0.7  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -743,16 +743,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -760,21 +760,21 @@
     <name>
       <simple>  flux_nue02  </simple>
       <long>  BANFF 18; SK nue flux; 0.7 - 0.8 GeV  </long>
-      <rootex>  f_{18; t, r}^{banff}  </rootex>
-      <tex>  BANFF 18, SK nue flux, 0.7 - 0.8 GeV  </tex>
+      <rootex>  $f_{18; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 0.8 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.7, 0.8  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -784,16 +784,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -801,21 +801,21 @@
     <name>
       <simple>  flux_nue03  </simple>
       <long>  BANFF 19; SK nue flux; 0.8 - 1.5 GeV  </long>
-      <rootex>  f_{19; t, r}^{banff}  </rootex>
-      <tex>  BANFF 19, SK nue flux, 0.8 - 1.5 GeV  </tex>
+      <rootex>  $f_{19; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.8 - 1.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.8, 1.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -825,16 +825,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -842,21 +842,21 @@
     <name>
       <simple>  flux_nue04  </simple>
       <long>  BANFF 20; SK nue flux; 1.5 - 2.5 GeV  </long>
-      <rootex>  f_{20; t, r}^{banff}  </rootex>
-      <tex>  BANFF 20, SK nue flux, 1.5 - 2.5 GeV  </tex>
+      <rootex>  $f_{20; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.5, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -866,16 +866,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -883,21 +883,21 @@
     <name>
       <simple>  flux_nue05  </simple>
       <long>  BANFF 21; SK nue flux; 2.5 - 4.0 GeV  </long>
-      <rootex>  f_{21; t, r}^{banff}  </rootex>
-      <tex>  BANFF 21, SK nue flux, 2.5 - 4.0 GeV  </tex>
+      <rootex>  $f_{21; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 4.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 4.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -907,16 +907,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -924,21 +924,21 @@
     <name>
       <simple>  flux_nue06  </simple>
       <long>  BANFF 22; SK nue flux; 4.0 - 30.0 GeV  </long>
-      <rootex>  f_{22; t, r}^{banff}  </rootex>
-      <tex>  BANFF 22, SK nue flux, 4.0 - 30.0 GeV  </tex>
+      <rootex>  $f_{22; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 4.0 - 30.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  4.0, 30.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -948,16 +948,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -965,21 +965,21 @@
     <name>
       <simple>  flux_nuebar00  </simple>
       <long>  BANFF 23; SK nuebar flux; 0.0 - 2.5 GeV  </long>
-      <rootex>  f_{23; t, r}^{banff}  </rootex>
-      <tex>  BANFF 23, SK nuebar flux, 0.0 - 2.5 GeV  </tex>
+      <rootex>  $f_{23; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 2.5 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -989,16 +989,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1006,21 +1006,21 @@
     <name>
       <simple>  flux_nuebar01  </simple>
       <long>  BANFF 24; SK nuebar flux; 2.5 - 30.0 GeV  </long>
-      <rootex>  f_{24; t, r}^{banff}  </rootex>
-      <tex>  BANFF 24, SK nuebar flux, 2.5 - 30.0 GeV  </tex>
+      <rootex>  $f_{24; t, r}^{\text{BANFF}}  $ </rootex>
+      <tex>  FHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV  </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 30.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -1030,16 +1030,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1047,21 +1047,21 @@
     <name>
       <simple>  flux_numu00_rhc  </simple>
       <long>  BANFF  0; SK numu flux; 0.0 - 0.7 GeV; RHC  </long>
-      <rootex>  f_{0; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  0, SK numu flux, 0.0 - 0.7 GeV; RHC  </tex>
+      <rootex>  $f_{0; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.7 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 0.7  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1071,16 +1071,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1088,21 +1088,21 @@
     <name>
       <simple>  flux_numu01_rhc  </simple>
       <long>  BANFF  1; SK numu flux; 0.7 - 1.0 GeV; RHC  </long>
-      <rootex>  f_{1; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  1, SK numu flux, 0.7 - 1.0 GeV; RHC  </tex>
+      <rootex>  $f_{1; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.7, 1.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1112,16 +1112,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1129,21 +1129,21 @@
     <name>
       <simple>  flux_numu02_rhc  </simple>
       <long>  BANFF  2; SK numu flux; 1.0 - 1.5 GeV; RHC  </long>
-      <rootex>  f_{2; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  2, SK numu flux, 1.0 - 1.5 GeV; RHC  </tex>
+      <rootex>  $f_{2; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.0, 1.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1153,16 +1153,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1170,21 +1170,21 @@
     <name>
       <simple>  flux_numu03_rhc  </simple>
       <long>  BANFF  3; SK numu flux; 1.5 - 2.5 GeV; RHC  </long>
-      <rootex>  f_{3; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  3, SK numu flux, 1.5 - 2.5 GeV; RHC  </tex>
+      <rootex>  $f_{3; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.5, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1194,16 +1194,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1211,21 +1211,21 @@
     <name>
       <simple>  flux_numu04_rhc  </simple>
       <long>  BANFF  4; SK numu flux; 2.5 - 30.0 GeV; RHC  </long>
-      <rootex>  f_{4; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  4, SK numu flux, 2.5 - 30.0 GeV; RHC  </tex>
+      <rootex>  $f_{4; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 30.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1235,16 +1235,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1252,21 +1252,21 @@
     <name>
       <simple>  flux_numubar00_rhc  </simple>
       <long>  BANFF  5; SK numubar flux; 0.0 - 0.4 GeV; RHC  </long>
-      <rootex>  f_{5; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  5, SK numubar flux, 0.0 - 0.4 GeV; RHC  </tex>
+      <rootex>  $f_{5; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.4 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 0.4  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1276,16 +1276,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1293,21 +1293,21 @@
     <name>
       <simple>  flux_numubar01_rhc  </simple>
       <long>  BANFF  6; SK numubar flux; 0.4 - 0.5 GeV; RHC  </long>
-      <rootex>  f_{6; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  6, SK numubar flux, 0.4 - 0.5 GeV; RHC  </tex>
+      <rootex>  $f_{6; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.4 - 0.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.4, 0.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1317,16 +1317,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1334,21 +1334,21 @@
     <name>
       <simple>  flux_numubar02_rhc  </simple>
       <long>  BANFF  7; SK numubar flux; 0.5 - 0.6 GeV; RHC  </long>
-      <rootex>  f_{7; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  7, SK numubar flux, 0.5 - 0.6 GeV; RHC  </tex>
+      <rootex>  $f_{7; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.6 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.5, 0.6  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1358,16 +1358,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1375,21 +1375,21 @@
     <name>
       <simple>  flux_numubar03_rhc  </simple>
       <long>  BANFF  8; SK numubar flux; 0.6 - 0.7 GeV; RHC  </long>
-      <rootex>  f_{8; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  8, SK numubar flux, 0.6 - 0.7 GeV; RHC  </tex>
+      <rootex>  $f_{8; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.6 - 0.7 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.6, 0.7  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1399,16 +1399,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1416,21 +1416,21 @@
     <name>
       <simple>  flux_numubar04_rhc  </simple>
       <long>  BANFF  9; SK numubar flux; 0.7 - 1.0 GeV; RHC  </long>
-      <rootex>  f_{9; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF  9, SK numubar flux, 0.7 - 1.0 GeV; RHC  </tex>
+      <rootex>  $f_{9; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.7, 1.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1440,16 +1440,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1457,21 +1457,21 @@
     <name>
       <simple>  flux_numubar05_rhc  </simple>
       <long>  BANFF 10; SK numubar flux; 1.0 - 1.5 GeV; RHC  </long>
-      <rootex>  f_{10; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 10, SK numubar flux, 1.0 - 1.5 GeV; RHC  </tex>
+      <rootex>  $f_{10; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.0, 1.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1481,16 +1481,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1498,21 +1498,21 @@
     <name>
       <simple>  flux_numubar06_rhc  </simple>
       <long>  BANFF 11; SK numubar flux; 1.5 - 2.5 GeV; RHC  </long>
-      <rootex>  f_{11; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 11, SK numubar flux, 1.5 - 2.5 GeV; RHC  </tex>
+      <rootex>  $f_{11; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.5, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1522,16 +1522,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1539,21 +1539,21 @@
     <name>
       <simple>  flux_numubar07_rhc  </simple>
       <long>  BANFF 12; SK numubar flux; 2.5 - 3.5 GeV; RHC  </long>
-      <rootex>  f_{12; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 12, SK numubar flux, 2.5 - 3.5 GeV; RHC  </tex>
+      <rootex>  $f_{12; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 3.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 3.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1563,16 +1563,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1580,21 +1580,21 @@
     <name>
       <simple>  flux_numubar08_rhc  </simple>
       <long>  BANFF 13; SK numubar flux; 3.5 - 5.0 GeV; RHC  </long>
-      <rootex>  f_{13; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 13, SK numubar flux, 3.5 - 5.0 GeV; RHC  </tex>
+      <rootex>  $f_{13; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 3.5 - 5.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  3.5, 5.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1604,16 +1604,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1621,21 +1621,21 @@
     <name>
       <simple>  flux_numubar09_rhc  </simple>
       <long>  BANFF 14; SK numubar flux; 5.0 - 7.0 GeV; RHC  </long>
-      <rootex>  f_{14; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 14, SK numubar flux, 5.0 - 7.0 GeV; RHC  </tex>
+      <rootex>  $f_{14; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 5.0 - 7.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  5.0, 7.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1645,16 +1645,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1662,21 +1662,21 @@
     <name>
       <simple>  flux_numubar10_rhc  </simple>
       <long>  BANFF 15; SK numubar flux; 7.0 - 30.0 GeV; RHC  </long>
-      <rootex>  f_{15; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 15, SK numubar flux, 7.0 - 30.0 GeV; RHC  </tex>
+      <rootex>  $f_{15; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 7.0 - 30.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  7.0, 30.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1686,16 +1686,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1703,21 +1703,21 @@
     <name>
       <simple>  flux_nue00_rhc  </simple>
       <long>  BANFF 16; SK nue flux; 0.0 - 2.5 GeV; RHC  </long>
-      <rootex>  f_{16; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 16, SK nue flux, 0.0 - 2.5 GeV; RHC  </tex>
+      <rootex>  $f_{16; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 2.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1727,16 +1727,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1744,21 +1744,21 @@
     <name>
       <simple>  flux_nue01_rhc  </simple>
       <long>  BANFF 17; SK nue flux; 2.5 - 30.0 GeV; RHC  </long>
-      <rootex>  f_{17; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 17, SK nue flux, 2.5 - 30.0 GeV; RHC  </tex>
+      <rootex>  $f_{17; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 30.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1768,16 +1768,16 @@
       <flav_final>  nu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1785,21 +1785,21 @@
     <name>
       <simple>  flux_nuebar00_rhc  </simple>
       <long>  BANFF 18; SK nuebar flux; 0.0 - 0.5 GeV; RHC  </long>
-      <rootex>  f_{18; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 18, SK nuebar flux, 0.0 - 0.5 GeV; RHC  </tex>
+      <rootex>  $f_{18; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.0, 0.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1809,16 +1809,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1826,21 +1826,21 @@
     <name>
       <simple>  flux_nuebar01_rhc  </simple>
       <long>  BANFF 19; SK nuebar flux; 0.5 - 0.7 GeV; RHC  </long>
-      <rootex>  f_{19; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 19, SK nuebar flux, 0.5 - 0.7 GeV; RHC  </tex>
+      <rootex>  $f_{19; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.7 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.5, 0.7  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1850,16 +1850,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1867,21 +1867,21 @@
     <name>
       <simple>  flux_nuebar02_rhc  </simple>
       <long>  BANFF 20; SK nuebar flux; 0.7 - 0.8 GeV; RHC  </long>
-      <rootex>  f_{20; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 20, SK nuebar flux, 0.7 - 0.8 GeV; RHC  </tex>
+      <rootex>  $f_{20; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 0.8 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.7, 0.8  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1891,16 +1891,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1908,21 +1908,21 @@
     <name>
       <simple>  flux_nuebar03_rhc  </simple>
       <long>  BANFF 21; SK nuebar flux; 0.8 - 1.5 GeV; RHC  </long>
-      <rootex>  f_{21; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 21, SK nuebar flux, 0.8 - 1.5 GeV; RHC  </tex>
+      <rootex>  $f_{21; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.8 - 1.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  0.8, 1.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1932,16 +1932,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1949,21 +1949,21 @@
     <name>
       <simple>  flux_nuebar04_rhc  </simple>
       <long>  BANFF 22; SK nuebar flux; 1.5 - 2.5 GeV; RHC  </long>
-      <rootex>  f_{22; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 22, SK nuebar flux, 1.5 - 2.5 GeV; RHC  </tex>
+      <rootex>  $f_{22; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  1.5, 2.5  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -1973,16 +1973,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -1990,21 +1990,21 @@
     <name>
       <simple>  flux_nuebar05_rhc  </simple>
       <long>  BANFF 23; SK nuebar flux; 2.5 - 4.0 GeV; RHC  </long>
-      <rootex>  f_{23; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 23, SK nuebar flux, 2.5 - 4.0 GeV; RHC  </tex>
+      <rootex>  $f_{23; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 4.0 GeV </tex>
     </name>
-    
+
     <apply_to_range>
       <Etrue>  2.5, 4.0  </Etrue>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  BANFF  </category>
       <category>  flux  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -2014,16 +2014,16 @@
       <flav_final>  nubar any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
@@ -2031,8 +2031,8 @@
     <name>
       <simple>  flux_nuebar06_rhc  </simple>
       <long>  BANFF 24; SK nuebar flux; 4.0 - 30.0 GeV; RHC  </long>
-      <rootex>  f_{24; t, r}^{banff} RHC  </rootex>
-      <tex>  BANFF 24, SK nuebar flux, 4.0 - 30.0 GeV; RHC  </tex>
+      <rootex>  $f_{24; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 4.0 - 30.0 GeV </tex>
     </name>
     
     <apply_to_range>
@@ -2072,7 +2072,7 @@
     <name>
       <simple>  2p2h_norm_nu  </simple>
       <long>  BANFF; Norm; 2p2h  </long>
-      <rootex>  f_{Norm_{2p2h}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{2p2h}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm; 2p2h  </tex>
     </name>
     
@@ -2113,7 +2113,7 @@
     <name>
       <simple>  CA5  </simple>
       <long>  BANFF; CA5 RES  </long>
-      <rootex>  f_{C^{A}_{5}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{C^{A}_{5}}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; CA5 RES  </tex>
     </name>
     
@@ -2154,7 +2154,7 @@
     <name>
       <simple>  ISO_BKG  </simple>
       <long>  BANFF; BgRES Isospin 1/2  </long>
-      <rootex>  f_{Bg_{RES}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Bg_{RES}}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm; BgRES Isospin 1/2  </tex>
     </name>
     
@@ -2195,7 +2195,7 @@
     <name>
       <simple>  ISO_BKG_LowPPi                                 </simple>
       <long>    BANFF; Shape; BgRES Isospin 1/2 low Ppi        </long>
-      <rootex>  f_{Shape_{BgRES Isospin 1/2 low Ppi}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{BgRES low Ppi}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; BgRES Isospin 1/2 low Ppi        </tex>
     </name>
 
@@ -2238,7 +2238,7 @@
     <name>
       <simple>  MAQE  </simple>
       <long>  BANFF; Ma QE  </long>
-      <rootex>  f_{M_A^{QE}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{M_A^{QE}}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF, Ma QE  </tex>
     </name>
     
@@ -2279,7 +2279,7 @@
     <name>
       <simple>  MARES  </simple>
       <long>  BANFF; Ma RES  </long>
-      <rootex>  f_{M_A^{RES}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{M_A^{RES}}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF, Ma RES  </tex>
     </name>
     
@@ -2320,7 +2320,7 @@
     <name>
       <simple>  NC_Coh  </simple>
       <long>  BANFF; Norm; NC Coh  </long>
-      <rootex>  f_{Norm_{NCcoh}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{NCcoh}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm, NC Coh  </tex>
     </name>
     
@@ -2361,7 +2361,7 @@
     <name>
       <simple>  nue_numu  </simple>
       <long>  BANFF; Norm; NuE To NuMu  </long>
-      <rootex>  f_{Norm_{#nu_e #rightarrow #nu_#mu}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{#nu_e #rightarrow #nu_#mu}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm, $\nu_{e}$ To $\nu_{\mu}$  </tex>
     </name>
     
@@ -2402,7 +2402,7 @@
     <name>
       <simple>  NC_1gamma  </simple>
       <long>  BANFF; Norm; NC 1 Gamma  </long>
-      <rootex>  f_{Norm_{NC1#gamma}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{NC1#gamma}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm; NC 1 $\gamma$  </tex>
     </name>
     
@@ -2443,7 +2443,7 @@
     <name>
       <simple>  nuebar_numubar  </simple>
       <long>  BANFF; Norm; NuEBar To NuMuBar  </long>
-      <rootex>  f_{Norm_{#bar{#nu}_e #rightarrow #bar{#nu}_{#mu}}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{#bar{#nu}_e #rightarrow #bar{#nu}_{#mu}}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm, $\bar{\nu}_{e}$ To $\bar{\nu}_{\mu}$  </tex>
     </name>
     
@@ -2484,7 +2484,7 @@
     <name>
       <simple>  2p2h_norm_nubar  </simple>
       <long>  BANFF; Norm; 2p2hBar  </long>
-      <rootex>  f_{Norm_{2p2hBar}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{2p2hBar}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm; 2p2hBar  </tex>
     </name>
     
@@ -2525,7 +2525,7 @@
     <name>
       <simple>  2p2h_shape_O  </simple>
       <long>  BANFF; Shape; 2p2h nu  </long>
-      <rootex>  f_{Shape_{2p2h#nu}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{2p2h#nu}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Shape; 2p2h  </tex>
     </name>
     
@@ -2566,7 +2566,7 @@
     <name>
       <simple>  2p2h_normCtoO  </simple>
       <long>  BANFF; Norm;  2p2h C to O  </long>
-      <rootex>  f_{Norm_{2p2h C to O}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{2p2h C to O}}^{\text{BANFF}}  $ </rootex>
       <tex>  BANFF; Norm; 2p2h C to O  </tex>
     </name>
     
@@ -2607,7 +2607,7 @@
     <name>
       <simple>  2p2h_Edep_lowEnu                   </simple>
       <long>    BANFF; Shape;  2p2h low E nu       </long>
-      <rootex>  f_{Shape_{2p2h low E nu}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{2p2h low E nu}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; 2p2h low E nu        </tex>
     </name>
 
@@ -2650,7 +2650,7 @@
     <name>
       <simple>  2p2h_Edep_highEnu                   </simple>
       <long>    BANFF; Shape;  2p2h high E nu       </long>
-      <rootex>  f_{Shape_{2p2h high E nu}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{2p2h high E nu}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; 2p2h high E nu        </tex>
     </name>
 
@@ -2693,7 +2693,7 @@
     <name>
       <simple>  2p2h_Edep_lowEnubar                   </simple>
       <long>    BANFF; Shape;  2p2h low E nubar       </long>
-      <rootex>  f_{Shape_{2p2h low E nubar}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{2p2h low E nubar}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; 2p2h low E nubar        </tex>
     </name>
 
@@ -2737,7 +2737,7 @@
     <name>
       <simple>  2p2h_Edep_highEnubar                   </simple>
       <long>    BANFF; Shape;  2p2h high E nubar       </long>
-      <rootex>  f_{Shape_{2p2h high E nubar}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{2p2h high E nubar}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; 2p2h high E nubar        </tex>
     </name>
 
@@ -2784,7 +2784,7 @@
     <name>
       <simple>  Q2_norm_0                 </simple>
       <long>    BANFF; Shape; Q2 0        </long>
-      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 0}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 0 nubar  </tex>
     </name>
 
@@ -2827,7 +2827,7 @@
     <name>
       <simple>  Q2_norm_1                 </simple>
       <long>    BANFF; Shape; Q2 1        </long>
-      <rootex>  f_{Shape_{Q2 1}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 1}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 1 nubar  </tex>
     </name>
 
@@ -2870,7 +2870,7 @@
     <name>
       <simple>  Q2_norm_2                 </simple>
       <long>    BANFF; Shape; Q2 2        </long>
-      <rootex>  f_{Shape_{Q2 2}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 2}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 2 nubar  </tex>
     </name>
 
@@ -2914,7 +2914,7 @@
     <name>
       <simple>  Q2_norm_3                 </simple>
       <long>    BANFF; Shape; Q2 3        </long>
-      <rootex>  f_{Shape_{Q2 3}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 3}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 3 nubar  </tex>
     </name>
 
@@ -2957,7 +2957,7 @@
     <name>
       <simple>  Q2_norm_4                 </simple>
       <long>    BANFF; Shape; Q2 4        </long>
-      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 4}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 4 nubar  </tex>
     </name>
 
@@ -2998,7 +2998,7 @@
     <name>
       <simple>  Q2_norm_5                 </simple>
       <long>    BANFF; Shape; Q2 5        </long>
-      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 5}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 5 nubar  </tex>
     </name>
 
@@ -3038,7 +3038,7 @@
     <name>
       <simple>  Q2_norm_6                 </simple>
       <long>    BANFF; Shape; Q2 6        </long>
-      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 6}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 6 nubar  </tex>
     </name>
 
@@ -3078,7 +3078,7 @@
     <name>
       <simple>  Q2_norm_7                 </simple>
       <long>    BANFF; Shape; Q2 7        </long>
-      <rootex>  f_{Shape_{Q2 0}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{Q^2 7}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; Q2 7 nubar  </tex>
     </name>
 
@@ -3121,8 +3121,8 @@
     <name>
       <simple>  EB_dial_O_nu                  </simple>
       <long>    BANFF; Eb O nu                </long>
-      <rootex>  f_{Shape_{Eb O #nu}}^{banff}  </rootex>
-      <tex>     BANFF; Shape; Eb O \nu        </tex>
+      <rootex>  $f_{Shape_{Eb O #nu}}^{\text{BANFF}}  $ </rootex>
+      <tex>     BANFF; Shape; Eb O $\nu$        </tex>
     </name>
 
     <apply_to_range>
@@ -3164,8 +3164,8 @@
     <name>
       <simple>  EB_dial_O_nubar                     </simple>
       <long>    BANFF; Eb O nubar                   </long>
-      <rootex>  f_{Shape_{Eb O #bar{#nu}}}^{banff}  </rootex>
-      <tex>     BANFF; Shape; Eb O \bar{\nu}        </tex>
+      <rootex>  $f_{Shape_{Eb O #bar{#nu}}}^{\text{BANFF}}  $ </rootex>
+      <tex>     BANFF; Shape; Eb O $\bar{\nu}$        </tex>
     </name>
 
     <apply_to_range>
@@ -3207,7 +3207,7 @@
     <name>
       <simple>  CC_norm_nu                </simple>
       <long>    BANFF; Norm; CC nu        </long>
-      <rootex>  f_{Norm_{CC nu}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{CC nu}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Norm; CC nu        </tex>
     </name>
 
@@ -3250,7 +3250,7 @@
     <name>
       <simple>  CC_norm_nubar                </simple>
       <long>    BANFF; Norm; CC nubar        </long>
-      <rootex>  f_{Norm_{CC nubar}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{CC nubar}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Norm; CC nubar        </tex>
     </name>
 
@@ -3293,7 +3293,7 @@
     <name>
       <simple>  CC_BY_DIS                              </simple>
       <long>    BANFF; Shape; CC Bodek-Yang DIS        </long>
-      <rootex>  f_{Shape_{CC Bodek-Yang DIS}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{CC BY DIS}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; CC Bodek-Yang DIS        </tex>
     </name>
 
@@ -3336,7 +3336,7 @@
     <name>
       <simple>  CC_BY_MPi                              </simple>
       <long>    BANFF; Shape; CC Bodek-Yang MPi        </long>
-      <rootex>  f_{Shape_{CC Bodek-Yang MPi}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{CC BY MPi}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; CC Bodek-Yang MPi        </tex>
     </name>
 
@@ -3379,7 +3379,7 @@
     <name>
       <simple>  CC_AGKY_Mult                     </simple>
       <long>    BANFF; Shape; CC AGKY MPi        </long>
-      <rootex>  f_{Shape_{CC AGKY MPi}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{CC AGKY MPi}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; CC AGKY MPi        </tex>
     </name>
 
@@ -3422,7 +3422,7 @@
     <name>
       <simple>  CC_Misc                     </simple>
       <long>    BANFF; Norm; CC Misc        </long>
-      <rootex>  f_{Norm_{CC Misc}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{CC Misc}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Norm; CC Misc        </tex>
     </name>
 
@@ -3465,7 +3465,7 @@
     <name>
       <simple>  CC_DIS_MultPi_Norm_Nu             </simple>
       <long>    BANFF; Norm; CC DIS MPi nu        </long>
-      <rootex>  f_{Norm_{CC DIS MPi nu}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{CC DIS MPi nu}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Norm; CC DIS MPi nu        </tex>
     </name>
 
@@ -3508,7 +3508,7 @@
     <name>
       <simple>  CC_DIS_MultPi_Norm_Nubar             </simple>
       <long>    BANFF; Norm; CC DIS MPi nubar        </long>
-      <rootex>  f_{Norm_{CC DIS MPi nubar}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{CC DIS MPi nubar}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Norm; CC DIS MPi nubar        </tex>
     </name>
 
@@ -3551,7 +3551,7 @@
     <name>
       <simple>  CC_Coh_O                     </simple>
       <long>    BANFF; Norm; CC Coh O        </long>
-      <rootex>  f_{Norm_{CC Coh O}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{CC Coh O}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Norm; CC Coh O        </tex>
     </name>
 
@@ -3594,7 +3594,7 @@
     <name>
       <simple>  NC_other_far                   </simple>
       <long>    BANFF; Norm; NC Oth far        </long>
-      <rootex>  f_{Norm_{NC Oth far}}^{banff}  </rootex>
+      <rootex>  $f_{Norm_{NC Oth far}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Norm; NC Oth far        </tex>
     </name>
 
@@ -3638,7 +3638,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIINELLO -->
       <simple>  FEFQE                               </simple>
       <long>    BANFF; Shape; FSI QE low P scatter  </long>
-      <rootex>  f_{Shape_{FSI QE low P}}^{banff}    </rootex>
+      <rootex>  $f_{Shape_{FSI QE low P}}^{\text{BANFF}}    $ </rootex>
       <tex>     BANFF; Shape; FSI QE low P          </tex>
     </name>
 
@@ -3682,7 +3682,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIINELHI -->
       <simple>  FEFQEH                               </simple>
       <long>    BANFF; Shape; FSI QE high P scatter  </long>
-      <rootex>  f_{Shape_{FSI QE high P}}^{banff}    </rootex>
+      <rootex>  $f_{Shape_{FSI QE high P}}^{\text{BANFF}}    $ </rootex>
       <tex>     BANFF; Shape; FSI QE high P          </tex>
     </name>
 
@@ -3726,7 +3726,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIPIPROD -->
       <simple>  FEFINEL                                  </simple>
       <long>    BANFF; Shape; FSI Inelastic Hadron prod  </long>
-      <rootex>  f_{Shape_{FSI Inelastic}}^{banff}        </rootex>
+      <rootex>  $f_{Shape_{FSI Inelastic}}^{\text{BANFF}}        $ </rootex>
       <tex>     BANFF; Shape; FSI Inelastic              </tex>
     </name>
 
@@ -3770,7 +3770,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIPIABS -->
       <simple>  FEFABS                              </simple>
       <long>    BANFF; Shape; FSI pion absorption   </long>
-      <rootex>  f_{Shape_{FSI Absorption}}^{banff}  </rootex>
+      <rootex>  $f_{Shape_{FSI Absorption}}^{\text{BANFF}}  $ </rootex>
       <tex>     BANFF; Shape; FSI Absorption        </tex>
     </name>
 
@@ -3814,7 +3814,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSICEXLO -->
       <simple>  FEFCX                                     </simple>
       <long>    BANFF; Shape; FSI single charge exchange  </long>
-      <rootex>  f_{Shape_{FSI charge exchange}}^{banff}   </rootex>
+      <rootex>  $f_{Shape_{FSI charge exchange}}^{\text{BANFF}}   $ </rootex>
       <tex>     BANFF; Shape; FSI charge exchange         </tex>
     </name>
 
@@ -3856,9 +3856,9 @@
   <param>
     <name>
       <simple>  skdetfsi000  </simple>
-      <long>  SKDet + FSI/SI  0; Ereco range 0.00 - 0.40 GeV; numu/numubar CCQE (1Rmu)  </long>
-      <rootex>  f_{0; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  0; $E_{reco}$( 0.00 - 0.40 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$)  </tex>
+      <long>  SKDet+SI+PN  0; Ereco range 0.00 - 0.40 GeV; numu/numubar CCQE (1Rmu)  </long>
+      <rootex>  $f_{0; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  0; $E_{\text{rec}} =$ 0.00 - 0.40  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE; FHC 1R$_{\mu}$  </tex>
     </name>
     
     <apply_to_range>
@@ -3896,9 +3896,9 @@
   <param>
     <name>
       <simple>  skdetfsi001  </simple>
-      <long>  SKDet + FSI/SI  1; Ereco range 0.40 - 1.10 GeV; numu/numubar CCQE (1Rmu)  </long>
-      <rootex>  f_{1; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  1; $E_{reco}$( 0.40 - 1.10 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$)  </tex>
+      <long>  SKDet+SI+PN  1; Ereco range 0.40 - 1.10 GeV; numu/numubar CCQE (1Rmu)  </long>
+      <rootex>  $f_{1; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  1; $E_{\text{rec}} =$ 0.40 - 1.10  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE; FHC 1R$_{\mu}$  </tex>
     </name>
     
     <apply_to_range>
@@ -3936,9 +3936,9 @@
   <param>
     <name>
       <simple>  skdetfsi002  </simple>
-      <long>  SKDet + FSI/SI  2; Ereco range 1.10 - 30.00 GeV; numu/numubar CCQE (1Rmu)  </long>
-      <rootex>  f_{2; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  2; $E_{reco}$( 1.10 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$)  </tex>
+      <long>  SKDet+SI+PN  2; Ereco range 1.10 - 30.00 GeV; numu/numubar CCQE (1Rmu)  </long>
+      <rootex>  $f_{2; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  2; $E_{\text{rec}} =$ 1.10 - 30.00  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE; FHC 1R$_{\mu}$  </tex>
     </name>
     
     <apply_to_range>
@@ -3976,9 +3976,9 @@
   <param>
     <name>
       <simple>  skdetfsi003  </simple>
-      <long>  SKDet + FSI/SI  3; Ereco range 0.00 - 30.00 GeV; numu/numubar CCnQE (1Rmu)  </long>
-      <rootex>  f_{3; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  3; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCnQE ($1R_{\mu}$)  </tex>
+      <long>  SKDet+SI+PN  3; Ereco range 0.00 - 30.00 GeV; numu/numubar CCnQE (1Rmu)  </long>
+      <rootex>  $f_{3; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  3; $E_{\text{rec}} =$ 0.00 - 30.00  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCnQE; FHC 1R$_{\mu}$  </tex>
     </name>
     
     <apply_to_range>
@@ -4016,9 +4016,9 @@
   <param>
     <name>
       <simple>  skdetfsi004  </simple>
-      <long>  SKDet + FSI/SI  4; Ereco range 0.00 - 30.00 GeV; nue/nuebar/signue CC (1Rmu)  </long>
-      <rootex>  f_{4; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  4; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$/sig$\nu_{e}$ CC ($1R_{\mu}$)  </tex>
+      <long>  SKDet+SI+PN  4; Ereco range 0.00 - 30.00 GeV; nue/nuebar/signue CC (1Rmu)  </long>
+      <rootex>  $f_{4; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  4; $E_{\text{rec}} =$ 0.00 - 30.00  GeV; $\nu_{e}$/$\bar{\nu}_{e}$/sig$\nu_{e}$ CC; FHC 1R$_{\mu}$  </tex>
     </name>
     
     <apply_to_range>
@@ -4056,9 +4056,9 @@
   <param>
     <name>
       <simple>  skdetfsi005  </simple>
-      <long>  SKDet + FSI/SI  5; Ereco range 0.00 - 30.00 GeV; all NC (1Rmu)  </long>
-      <rootex>  f_{5; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  5; $E_{reco}$( 0.00 - 30.00 )GeV; all NC ($1R_{\mu}$)  </tex>
+      <long>  SKDet+SI+PN  5; Ereco range 0.00 - 30.00 GeV; all NC (1Rmu)  </long>
+      <rootex>  $f_{5; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  5; $E_{\text{rec}} =$ 0.00 - 30.00  GeV; all NC; FHC 1R$_{\mu}$  </tex>
     </name>
     
     <apply_to_range>
@@ -4096,21 +4096,21 @@
   <param>
     <name>
       <simple>  skdetfsi006  </simple>
-      <long>  SKDet + FSI/SI  6; Ereco range 0.00 - 0.35 GeV; oscillated nue CC (1Re)  </long>
-      <rootex>  f_{6; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  6; $E_{reco}$( 0.00 - 0.35 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN  6; Ereco range 0.00 - 0.35 GeV; oscillated nue CC (1Re)  </long>
+      <rootex>  $f_{6; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  6; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; Osc. $\nu_{e}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.0, 0.35  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4120,37 +4120,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi007  </simple>
-      <long>  SKDet + FSI/SI  7; Ereco range 0.35 - 0.80 GeV; oscillated nue CC (1Re)  </long>
-      <rootex>  f_{7; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  7; $E_{reco}$( 0.35 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN  7; Ereco range 0.35 - 0.80 GeV; oscillated nue CC (1Re)  </long>
+      <rootex>  $f_{7; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  7; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; Osc. $\nu_{e}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4160,37 +4160,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi008  </simple>
-      <long>  SKDet + FSI/SI  8; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (1Re)  </long>
-      <rootex>  f_{8; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  8; $E_{reco}$( 0.80 - 1.25 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN  8; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (1Re)  </long>
+      <rootex>  $f_{8; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  8; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; Osc. $\nu_{e}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.8, 1.25  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4200,37 +4200,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi009  </simple>
-      <long>  SKDet + FSI/SI  9; Ereco range 0.00 - 0.35 GeV; numu/numubar CC (1Re)  </long>
-      <rootex>  f_{9; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI  9; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN  9; Ereco range 0.00 - 0.35 GeV; numu/numubar CC (1Re)  </long>
+      <rootex>  $f_{9; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN  9; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.0, 0.35  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4240,37 +4240,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi010  </simple>
-      <long>  SKDet + FSI/SI 10; Ereco range 0.35 - 0.80 GeV; numu/numubar CC (1Re)  </long>
-      <rootex>  f_{10; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 10; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 10; Ereco range 0.35 - 0.80 GeV; numu/numubar CC (1Re)  </long>
+      <rootex>  $f_{10; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 10; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4280,37 +4280,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi011  </simple>
-      <long>  SKDet + FSI/SI 11; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (1Re)  </long>
-      <rootex>  f_{11; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 11; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 11; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (1Re)  </long>
+      <rootex>  $f_{11; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 11; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.8, 1.25  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4320,37 +4320,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi012  </simple>
-      <long>  SKDet + FSI/SI 12; Ereco range 0.00 - 0.35 GeV; nue/nuebar CC (1Re)  </long>
-      <rootex>  f_{12; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 12; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 12; Ereco range 0.00 - 0.35 GeV; nue/nuebar CC (1Re)  </long>
+      <rootex>  $f_{12; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 12; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.0, 0.35  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4360,37 +4360,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi013  </simple>
-      <long>  SKDet + FSI/SI 13; Ereco range 0.35 - 0.80 GeV; nue/nuebar CC (1Re)  </long>
-      <rootex>  f_{13; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 13; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 13; Ereco range 0.35 - 0.80 GeV; nue/nuebar CC (1Re)  </long>
+      <rootex>  $f_{13; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 13; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4400,37 +4400,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi014  </simple>
-      <long>  SKDet + FSI/SI 14; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (1Re)  </long>
-      <rootex>  f_{14; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 14; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 14; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (1Re)  </long>
+      <rootex>  $f_{14; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 14; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.8, 1.25  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4440,37 +4440,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi015  </simple>
-      <long>  SKDet + FSI/SI 15; Ereco range 0.00 - 0.35 GeV; all NC (1Re)  </long>
-      <rootex>  f_{15; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 15; $E_{reco}$( 0.00 - 0.35 )GeV; all NC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 15; Ereco range 0.00 - 0.35 GeV; all NC (1Re)  </long>
+      <rootex>  $f_{15; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 15; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; all NC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.0, 0.35  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4480,37 +4480,37 @@
       <flav_final>  all  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi016  </simple>
-      <long>  SKDet + FSI/SI 16; Ereco range 0.35 - 0.80 GeV; all NC (1Re)  </long>
-      <rootex>  f_{16; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 16; $E_{reco}$( 0.35 - 0.80 )GeV; all NC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 16; Ereco range 0.35 - 0.80 GeV; all NC (1Re)  </long>
+      <rootex>  $f_{16; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 16; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; all NC; FHC 1R$_e$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -4520,25 +4520,25 @@
       <flav_final>  all  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi017  </simple>
-      <long>  SKDet + FSI/SI 17; Ereco range 0.80 - 1.25 GeV; all NC (1Re)  </long>
-      <rootex>  f_{17; t, r}^{SK+FSI}  </rootex>
-      <tex>  SKDet + FSI/SI 17; $E_{reco}$( 0.80 - 1.25 )GeV; all NC ($1R_{e}$)  </tex>
+      <long>  SKDet+SI+PN 17; Ereco range 0.80 - 1.25 GeV; all NC (1Re)  </long>
+      <rootex>  $f_{17; t, r}^{SK}  $ </rootex>
+      <tex>  SKDet+SI+PN 17; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; all NC; FHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -4576,21 +4576,21 @@
   <param>
     <name>
       <simple>  skdetfsi000_rhc  </simple>
-      <long>  SKDet + FSI/SI  0; Ereco range 0.00 - 0.40 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
-      <rootex>  f_{0; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  0; $E_{reco}$( 0.00 - 0.40 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$); RHC  </tex>
+      <long>  SKDet+SI+PN  0; Ereco range 0.00 - 0.40 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
+      <rootex>  $f_{0; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  0; $E_{\text{rec}} =$ 0.00 - 0.40  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE; RHC 1R$_{\mu}$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.0, 0.4  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -4600,37 +4600,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi001_rhc  </simple>
-      <long>  SKDet + FSI/SI  1; Ereco range 0.40 - 1.10 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
-      <rootex>  f_{1; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  1; $E_{reco}$( 0.40 - 1.10 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$); RHC  </tex>
+      <long>  SKDet+SI+PN  1; Ereco range 0.40 - 1.10 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
+      <rootex>  $f_{1; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  1; $E_{\text{rec}} =$ 0.40 - 1.10  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE; RHC 1R$_{\mu}$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.4, 1.1  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -4640,37 +4640,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi002_rhc  </simple>
-      <long>  SKDet + FSI/SI  2; Ereco range 1.10 - 30.00 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
-      <rootex>  f_{2; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  2; $E_{reco}$( 1.10 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($1R_{\mu}$); RHC  </tex>
+      <long>  SKDet+SI+PN  2; Ereco range 1.10 - 30.00 GeV; numu/numubar CCQE (1Rmu); RHC  </long>
+      <rootex>  $f_{2; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  2; $E_{\text{rec}} =$ 1.10 - 30.00  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE; RHC 1R$_{\mu}$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  1.1, 30.0  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -4680,37 +4680,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi003_rhc  </simple>
-      <long>  SKDet + FSI/SI  3; Ereco range 0.00 - 30.00 GeV; numu/numubar CCnQE (1Rmu); RHC  </long>
-      <rootex>  f_{3; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  3; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCnQE ($1R_{\mu}$); RHC  </tex>
+      <long>  SKDet+SI+PN  3; Ereco range 0.00 - 30.00 GeV; numu/numubar CCnQE (1Rmu); RHC  </long>
+      <rootex>  $f_{3; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  3; $E_{\text{rec}} =$ 0.00 - 30.00  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCnQE; RHC 1R$_{\mu}$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.0, 30.0  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -4720,37 +4720,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi004_rhc  </simple>
-      <long>  SKDet + FSI/SI  4; Ereco range 0.00 - 30.00 GeV; nue/nuebar/signue CC (1Rmu); RHC  </long>
-      <rootex>  f_{4; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  4; $E_{reco}$( 0.00 - 30.00 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$/sig$\nu_{e}$ CC ($1R_{\mu}$); RHC  </tex>
+      <long>  SKDet+SI+PN  4; Ereco range 0.00 - 30.00 GeV; nue/nuebar/signue CC (1Rmu); RHC  </long>
+      <rootex>  $f_{4; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  4; $E_{\text{rec}} =$ 0.00 - 30.00  GeV; $\nu_{e}$/$\bar{\nu}_{e}$/sig$\nu_{e}$ CC; RHC 1R$_{\mu}$  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.0, 30.0  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  RHC  </beam>
@@ -4760,25 +4760,25 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi005_rhc  </simple>
-      <long>  SKDet + FSI/SI  5; Ereco range 0.00 - 30.00 GeV; all NC (1Rmu); RHC  </long>
-      <rootex>  f_{5; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  5; $E_{reco}$( 0.00 - 30.00 )GeV; all NC ($1R_{\mu}$); RHC  </tex>
+      <long>  SKDet+SI+PN  5; Ereco range 0.00 - 30.00 GeV; all NC (1Rmu); RHC  </long>
+      <rootex>  $f_{5; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  5; $E_{\text{rec}} =$ 0.00 - 30.00  GeV; all NC; RHC 1R$_{\mu}$  </tex>
     </name>
     
     <apply_to_range>
@@ -4816,9 +4816,9 @@
   <param>
     <name>
       <simple>  skdetfsi006_rhc  </simple>
-      <long>  SKDet + FSI/SI  6; Ereco range 0.00 - 0.35 GeV; oscillated nue CC (1Re); RHC  </long>
-      <rootex>  f_{6; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  6; $E_{reco}$( 0.00 - 0.35 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN  6; Ereco range 0.00 - 0.35 GeV; oscillated nue CC (1Re); RHC  </long>
+      <rootex>  $f_{6; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  6; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; Osc. $\nu_{e}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -4856,9 +4856,9 @@
   <param>
     <name>
       <simple>  skdetfsi007_rhc  </simple>
-      <long>  SKDet + FSI/SI  7; Ereco range 0.35 - 0.80 GeV; oscillated nue CC (1Re); RHC  </long>
-      <rootex>  f_{7; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  7; $E_{reco}$( 0.35 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN  7; Ereco range 0.35 - 0.80 GeV; oscillated nue CC (1Re); RHC  </long>
+      <rootex>  $f_{7; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  7; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; Osc. $\nu_{e}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -4896,9 +4896,9 @@
   <param>
     <name>
       <simple>  skdetfsi008_rhc  </simple>
-      <long>  SKDet + FSI/SI  8; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (1Re); RHC  </long>
-      <rootex>  f_{8; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  8; $E_{reco}$( 0.80 - 1.25 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN  8; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (1Re); RHC  </long>
+      <rootex>  $f_{8; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  8; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; Osc. $\nu_{e}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -4936,9 +4936,9 @@
   <param>
     <name>
       <simple>  skdetfsi009_rhc  </simple>
-      <long>  SKDet + FSI/SI  9; Ereco range 0.00 - 0.35 GeV; numu/numubar CC (1Re); RHC  </long>
-      <rootex>  f_{9; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI  9; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN  9; Ereco range 0.00 - 0.35 GeV; numu/numubar CC (1Re); RHC  </long>
+      <rootex>  $f_{9; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN  9; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -4976,9 +4976,9 @@
   <param>
     <name>
       <simple>  skdetfsi010_rhc  </simple>
-      <long>  SKDet + FSI/SI 10; Ereco range 0.35 - 0.80 GeV; numu/numubar CC (1Re); RHC  </long>
-      <rootex>  f_{10; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 10; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 10; Ereco range 0.35 - 0.80 GeV; numu/numubar CC (1Re); RHC  </long>
+      <rootex>  $f_{10; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 10; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5016,9 +5016,9 @@
   <param>
     <name>
       <simple>  skdetfsi011_rhc  </simple>
-      <long>  SKDet + FSI/SI 11; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (1Re); RHC  </long>
-      <rootex>  f_{11; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 11; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 11; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (1Re); RHC  </long>
+      <rootex>  $f_{11; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 11; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5056,9 +5056,9 @@
   <param>
     <name>
       <simple>  skdetfsi012_rhc  </simple>
-      <long>  SKDet + FSI/SI 12; Ereco range 0.00 - 0.35 GeV; nue/nuebar CC (1Re); RHC  </long>
-      <rootex>  f_{12; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 12; $E_{reco}$( 0.00 - 0.35 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 12; Ereco range 0.00 - 0.35 GeV; nue/nuebar CC (1Re); RHC  </long>
+      <rootex>  $f_{12; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 12; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5096,9 +5096,9 @@
   <param>
     <name>
       <simple>  skdetfsi013_rhc  </simple>
-      <long>  SKDet + FSI/SI 13; Ereco range 0.35 - 0.80 GeV; nue/nuebar CC (1Re); RHC  </long>
-      <rootex>  f_{13; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 13; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 13; Ereco range 0.35 - 0.80 GeV; nue/nuebar CC (1Re); RHC  </long>
+      <rootex>  $f_{13; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 13; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5136,9 +5136,9 @@
   <param>
     <name>
       <simple>  skdetfsi014_rhc  </simple>
-      <long>  SKDet + FSI/SI 14; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (1Re); RHC  </long>
-      <rootex>  f_{14; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 14; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 14; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (1Re); RHC  </long>
+      <rootex>  $f_{14; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 14; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5176,9 +5176,9 @@
   <param>
     <name>
       <simple>  skdetfsi015_rhc  </simple>
-      <long>  SKDet + FSI/SI 15; Ereco range 0.00 - 0.35 GeV; all NC (1Re); RHC  </long>
-      <rootex>  f_{15; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 15; $E_{reco}$( 0.00 - 0.35 )GeV; all NC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 15; Ereco range 0.00 - 0.35 GeV; all NC (1Re); RHC  </long>
+      <rootex>  $f_{15; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 15; $E_{\text{rec}} =$ 0.00 - 0.35  GeV; all NC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5216,9 +5216,9 @@
   <param>
     <name>
       <simple>  skdetfsi016_rhc  </simple>
-      <long>  SKDet + FSI/SI 16; Ereco range 0.35 - 0.80 GeV; all NC (1Re); RHC  </long>
-      <rootex>  f_{16; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 16; $E_{reco}$( 0.35 - 0.80 )GeV; all NC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 16; Ereco range 0.35 - 0.80 GeV; all NC (1Re); RHC  </long>
+      <rootex>  $f_{16; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 16; $E_{\text{rec}} =$ 0.35 - 0.80  GeV; all NC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5256,9 +5256,9 @@
   <param>
     <name>
       <simple>  skdetfsi017_rhc  </simple>
-      <long>  SKDet + FSI/SI 17; Ereco range 0.80 - 1.25 GeV; all NC (1Re); RHC  </long>
-      <rootex>  f_{17; t, r}^{SK+FSI}RHC  </rootex>
-      <tex>  SKDet + FSI/SI 17; $E_{reco}$( 0.80 - 1.25 )GeV; all NC ($1R_{e}$); RHC  </tex>
+      <long>  SKDet+SI+PN 17; Ereco range 0.80 - 1.25 GeV; all NC (1Re); RHC  </long>
+      <rootex>  $f_{17; t, r}^{SK}RHC  $ </rootex>
+      <tex>  SKDet+SI+PN 17; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; all NC; RHC 1R$_e$  </tex>
     </name>
     
     <apply_to_range>
@@ -5296,21 +5296,21 @@
   <param>
     <name>
       <simple>  skdetfsi007_multiring  </simple>
-      <long>  SKDet + FSI/SI  0; Ereco range 0.30 - 0.80 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
-      <rootex>  f_{0; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  0; $E_{reco}$( 0.30 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  0; Ereco range 0.30 - 0.80 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{0; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  0; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; Osc. $\nu_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.3, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -5320,37 +5320,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi008_multiring  </simple>
-      <long>  SKDet + FSI/SI  1; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
-      <rootex>  f_{1; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  1; $E_{reco}$( 0.80 - 1.25 )GeV; Osc. $\nu_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  1; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{1; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  1; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; Osc. $\nu_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.8, 1.25  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -5360,37 +5360,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi010_multiring  </simple>
-      <long>  SKDet + FSI/SI  2; Ereco range 0.30 - 0.80 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
-      <rootex>  f_{2; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  2; $E_{reco}$( 0.30 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  2; Ereco range 0.30 - 0.80 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{2; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  2; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.3, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -5400,37 +5400,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi011_multiring  </simple>
-      <long>  SKDet + FSI/SI  3; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
-      <rootex>  f_{3; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  3; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  3; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{3; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  3; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.8, 1.25  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -5440,37 +5440,37 @@
       <flav_final>  numu any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi013_multiring  </simple>
-      <long>  SKDet + FSI/SI  4; Ereco range 0.30 - 0.80 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
-      <rootex>  f_{4; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  4; $E_{reco}$( 0.30 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  4; Ereco range 0.30 - 0.80 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{4; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  4; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.3, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -5480,37 +5480,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi014_multiring  </simple>
-      <long>  SKDet + FSI/SI  5; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
-      <rootex>  f_{5; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  5; $E_{reco}$( 0.80 - 1.25 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  5; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{5; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  5; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.8, 1.25  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -5520,37 +5520,37 @@
       <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi016_multiring  </simple>
-      <long>  SKDet + FSI/SI  6; Ereco range 0.30 - 0.80 GeV; all NC (MultiRe); MultiRing  </long>
-      <rootex>  f_{6; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  6; $E_{reco}$( 0.30 - 0.80 )GeV; all NC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  6; Ereco range 0.30 - 0.80 GeV; all NC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{6; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  6; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; all NC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0.3, 0.8  </Ereco>
     </apply_to_range>
-    
+
     <type>  normalisation  </type>
-    
+
     <categories>
       <category>  SKDetFSI  </category>
     </categories>
-    
+
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
@@ -5560,25 +5560,25 @@
       <flav_final>  all  </flav_final>
       <target>  all  </target>
     </apply_to>
-    
+
     <limits>  0.0, inf  </limits>
-    
+
     <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
     <step>                   0.01  </step>
   </param>
-  
+
 
 
   <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  skdetfsi017_multiring  </simple>
-      <long>  SKDet + FSI/SI  7; Ereco range 0.80 - 1.25 GeV; all NC (MultiRe); MultiRing  </long>
-      <rootex>  f_{7; t, r}^{SK+FSI}MultiRing  </rootex>
-      <tex>  SKDet + FSI/SI  7; $E_{reco}$( 0.80 - 1.25 )GeV; all NC ($MultiR_{e}$); MultiRing  </tex>
+      <long>  SKDet+SI+PN  7; Ereco range 0.80 - 1.25 GeV; all NC (MultiRe); MultiRing  </long>
+      <rootex>  $f_{7; t, r}^{SK}MultiRing  $ </rootex>
+      <tex>  SKDet+SI+PN  7; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; all NC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
     
     <apply_to_range>
@@ -5617,7 +5617,7 @@
     <name>
       <simple>  sk_e_scale  </simple>
       <long>  SK energy scale  </long>
-      <rootex>  f_{E; r}^{SK}  </rootex>
+      <rootex>  $f_{E; r}^{SK}  $ </rootex>
       <tex>  SK energy scale  </tex>
     </name>
     
