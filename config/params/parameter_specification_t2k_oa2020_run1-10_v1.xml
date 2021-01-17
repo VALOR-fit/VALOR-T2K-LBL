@@ -5,7 +5,7 @@
     <name>
       <simple>  flux_numu00  </simple>
       <long>  BANFF  0; SK numu flux; 0.0 - 0.4 GeV  </long>
-      <rootex>  $f_{0; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{0; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.4 GeV  </tex>
     </name>
 
@@ -63,7 +63,7 @@
     <name>
       <simple>  flux_numu01  </simple>
       <long>  BANFF  1; SK numu flux; 0.4 - 0.5 GeV  </long>
-      <rootex>  $f_{1; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{1; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.4 - 0.5 GeV  </tex>
     </name>
 
@@ -104,7 +104,7 @@
     <name>
       <simple>  flux_numu02  </simple>
       <long>  BANFF  2; SK numu flux; 0.5 - 0.6 GeV  </long>
-      <rootex>  $f_{2; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{2; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.6 GeV  </tex>
     </name>
 
@@ -145,7 +145,7 @@
     <name>
       <simple>  flux_numu03  </simple>
       <long>  BANFF  3; SK numu flux; 0.6 - 0.7 GeV  </long>
-      <rootex>  $f_{3; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{3; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.6 - 0.7 GeV  </tex>
     </name>
 
@@ -186,7 +186,7 @@
     <name>
       <simple>  flux_numu04  </simple>
       <long>  BANFF  4; SK numu flux; 0.7 - 1.0 GeV  </long>
-      <rootex>  $f_{4; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{4; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV  </tex>
     </name>
 
@@ -227,7 +227,7 @@
     <name>
       <simple>  flux_numu05  </simple>
       <long>  BANFF  5; SK numu flux; 1.0 - 1.5 GeV  </long>
-      <rootex>  $f_{5; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{5; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV  </tex>
     </name>
 
@@ -268,7 +268,7 @@
     <name>
       <simple>  flux_numu06  </simple>
       <long>  BANFF  6; SK numu flux; 1.5 - 2.5 GeV  </long>
-      <rootex>  $f_{6; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{6; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV  </tex>
     </name>
 
@@ -309,7 +309,7 @@
     <name>
       <simple>  flux_numu07  </simple>
       <long>  BANFF  7; SK numu flux; 2.5 - 3.5 GeV  </long>
-      <rootex>  $f_{7; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{7; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 3.5 GeV  </tex>
     </name>
 
@@ -350,7 +350,7 @@
     <name>
       <simple>  flux_numu08  </simple>
       <long>  BANFF  8; SK numu flux; 3.5 - 5.0 GeV  </long>
-      <rootex>  $f_{8; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{8; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 3.5 - 5.0 GeV  </tex>
     </name>
 
@@ -391,7 +391,7 @@
     <name>
       <simple>  flux_numu09  </simple>
       <long>  BANFF  9; SK numu flux; 5.0 - 7.0 GeV  </long>
-      <rootex>  $f_{9; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{9; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 5.0 - 7.0 GeV  </tex>
     </name>
 
@@ -432,7 +432,7 @@
     <name>
       <simple>  flux_numu10  </simple>
       <long>  BANFF 10; SK numu flux; 7.0 - 30.0 GeV  </long>
-      <rootex>  $f_{10; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{10; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 7.0 - 30.0 GeV  </tex>
     </name>
 
@@ -473,7 +473,7 @@
     <name>
       <simple>  flux_numubar00  </simple>
       <long>  BANFF 11; SK numubar flux; 0.0 - 0.7 GeV  </long>
-      <rootex>  $f_{11; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{11; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.7 GeV  </tex>
     </name>
 
@@ -514,7 +514,7 @@
     <name>
       <simple>  flux_numubar01  </simple>
       <long>  BANFF 12; SK numubar flux; 0.7 - 1.0 GeV  </long>
-      <rootex>  $f_{12; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{12; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV  </tex>
     </name>
 
@@ -555,7 +555,7 @@
     <name>
       <simple>  flux_numubar02  </simple>
       <long>  BANFF 13; SK numubar flux; 1.0 - 1.5 GeV  </long>
-      <rootex>  $f_{13; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{13; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV  </tex>
     </name>
 
@@ -596,7 +596,7 @@
     <name>
       <simple>  flux_numubar03  </simple>
       <long>  BANFF 14; SK numubar flux; 1.5 - 2.5 GeV  </long>
-      <rootex>  $f_{14; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{14; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV  </tex>
     </name>
 
@@ -637,7 +637,7 @@
     <name>
       <simple>  flux_numubar04  </simple>
       <long>  BANFF 15; SK numubar flux; 2.5 - 30.0 GeV  </long>
-      <rootex>  $f_{15; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{15; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV  </tex>
     </name>
 
@@ -678,7 +678,7 @@
     <name>
       <simple>  flux_nue00  </simple>
       <long>  BANFF 16; SK nue flux; 0.0 - 0.5 GeV  </long>
-      <rootex>  $f_{16; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{16; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.5 GeV  </tex>
     </name>
 
@@ -719,7 +719,7 @@
     <name>
       <simple>  flux_nue01  </simple>
       <long>  BANFF 17; SK nue flux; 0.5 - 0.7 GeV  </long>
-      <rootex>  $f_{17; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{17; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.7 GeV  </tex>
     </name>
 
@@ -760,7 +760,7 @@
     <name>
       <simple>  flux_nue02  </simple>
       <long>  BANFF 18; SK nue flux; 0.7 - 0.8 GeV  </long>
-      <rootex>  $f_{18; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{18; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 0.8 GeV  </tex>
     </name>
 
@@ -801,7 +801,7 @@
     <name>
       <simple>  flux_nue03  </simple>
       <long>  BANFF 19; SK nue flux; 0.8 - 1.5 GeV  </long>
-      <rootex>  $f_{19; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{19; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.8 - 1.5 GeV  </tex>
     </name>
 
@@ -842,7 +842,7 @@
     <name>
       <simple>  flux_nue04  </simple>
       <long>  BANFF 20; SK nue flux; 1.5 - 2.5 GeV  </long>
-      <rootex>  $f_{20; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{20; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV  </tex>
     </name>
 
@@ -883,7 +883,7 @@
     <name>
       <simple>  flux_nue05  </simple>
       <long>  BANFF 21; SK nue flux; 2.5 - 4.0 GeV  </long>
-      <rootex>  $f_{21; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{21; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 4.0 GeV  </tex>
     </name>
 
@@ -924,7 +924,7 @@
     <name>
       <simple>  flux_nue06  </simple>
       <long>  BANFF 22; SK nue flux; 4.0 - 30.0 GeV  </long>
-      <rootex>  $f_{22; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{22; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 4.0 - 30.0 GeV  </tex>
     </name>
 
@@ -965,7 +965,7 @@
     <name>
       <simple>  flux_nuebar00  </simple>
       <long>  BANFF 23; SK nuebar flux; 0.0 - 2.5 GeV  </long>
-      <rootex>  $f_{23; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{23; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 2.5 GeV  </tex>
     </name>
 
@@ -1006,7 +1006,7 @@
     <name>
       <simple>  flux_nuebar01  </simple>
       <long>  BANFF 24; SK nuebar flux; 2.5 - 30.0 GeV  </long>
-      <rootex>  $f_{24; t, r}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{24; t, r}^{#text{BANFF}}$ </rootex>
       <tex>  FHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV  </tex>
     </name>
 
@@ -1047,7 +1047,7 @@
     <name>
       <simple>  flux_numu00_rhc  </simple>
       <long>  BANFF  0; SK numu flux; 0.0 - 0.7 GeV; RHC  </long>
-      <rootex>  $f_{0; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{0; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.7 GeV </tex>
     </name>
 
@@ -1088,7 +1088,7 @@
     <name>
       <simple>  flux_numu01_rhc  </simple>
       <long>  BANFF  1; SK numu flux; 0.7 - 1.0 GeV; RHC  </long>
-      <rootex>  $f_{1; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{1; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV </tex>
     </name>
 
@@ -1129,7 +1129,7 @@
     <name>
       <simple>  flux_numu02_rhc  </simple>
       <long>  BANFF  2; SK numu flux; 1.0 - 1.5 GeV; RHC  </long>
-      <rootex>  $f_{2; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{2; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV </tex>
     </name>
 
@@ -1170,7 +1170,7 @@
     <name>
       <simple>  flux_numu03_rhc  </simple>
       <long>  BANFF  3; SK numu flux; 1.5 - 2.5 GeV; RHC  </long>
-      <rootex>  $f_{3; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{3; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV </tex>
     </name>
 
@@ -1211,7 +1211,7 @@
     <name>
       <simple>  flux_numu04_rhc  </simple>
       <long>  BANFF  4; SK numu flux; 2.5 - 30.0 GeV; RHC  </long>
-      <rootex>  $f_{4; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{4; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\nu_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV </tex>
     </name>
 
@@ -1252,7 +1252,7 @@
     <name>
       <simple>  flux_numubar00_rhc  </simple>
       <long>  BANFF  5; SK numubar flux; 0.0 - 0.4 GeV; RHC  </long>
-      <rootex>  $f_{5; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{5; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.4 GeV </tex>
     </name>
 
@@ -1293,7 +1293,7 @@
     <name>
       <simple>  flux_numubar01_rhc  </simple>
       <long>  BANFF  6; SK numubar flux; 0.4 - 0.5 GeV; RHC  </long>
-      <rootex>  $f_{6; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{6; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.4 - 0.5 GeV </tex>
     </name>
 
@@ -1334,7 +1334,7 @@
     <name>
       <simple>  flux_numubar02_rhc  </simple>
       <long>  BANFF  7; SK numubar flux; 0.5 - 0.6 GeV; RHC  </long>
-      <rootex>  $f_{7; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{7; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.6 GeV </tex>
     </name>
 
@@ -1375,7 +1375,7 @@
     <name>
       <simple>  flux_numubar03_rhc  </simple>
       <long>  BANFF  8; SK numubar flux; 0.6 - 0.7 GeV; RHC  </long>
-      <rootex>  $f_{8; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{8; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.6 - 0.7 GeV </tex>
     </name>
 
@@ -1416,7 +1416,7 @@
     <name>
       <simple>  flux_numubar04_rhc  </simple>
       <long>  BANFF  9; SK numubar flux; 0.7 - 1.0 GeV; RHC  </long>
-      <rootex>  $f_{9; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{9; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 1.0 GeV </tex>
     </name>
 
@@ -1457,7 +1457,7 @@
     <name>
       <simple>  flux_numubar05_rhc  </simple>
       <long>  BANFF 10; SK numubar flux; 1.0 - 1.5 GeV; RHC  </long>
-      <rootex>  $f_{10; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{10; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.0 - 1.5 GeV </tex>
     </name>
 
@@ -1498,7 +1498,7 @@
     <name>
       <simple>  flux_numubar06_rhc  </simple>
       <long>  BANFF 11; SK numubar flux; 1.5 - 2.5 GeV; RHC  </long>
-      <rootex>  $f_{11; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{11; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV </tex>
     </name>
 
@@ -1539,7 +1539,7 @@
     <name>
       <simple>  flux_numubar07_rhc  </simple>
       <long>  BANFF 12; SK numubar flux; 2.5 - 3.5 GeV; RHC  </long>
-      <rootex>  $f_{12; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{12; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 3.5 GeV </tex>
     </name>
 
@@ -1580,7 +1580,7 @@
     <name>
       <simple>  flux_numubar08_rhc  </simple>
       <long>  BANFF 13; SK numubar flux; 3.5 - 5.0 GeV; RHC  </long>
-      <rootex>  $f_{13; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{13; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 3.5 - 5.0 GeV </tex>
     </name>
 
@@ -1621,7 +1621,7 @@
     <name>
       <simple>  flux_numubar09_rhc  </simple>
       <long>  BANFF 14; SK numubar flux; 5.0 - 7.0 GeV; RHC  </long>
-      <rootex>  $f_{14; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{14; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 5.0 - 7.0 GeV </tex>
     </name>
 
@@ -1662,7 +1662,7 @@
     <name>
       <simple>  flux_numubar10_rhc  </simple>
       <long>  BANFF 15; SK numubar flux; 7.0 - 30.0 GeV; RHC  </long>
-      <rootex>  $f_{15; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{15; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{\mu}$ flux normalisation, $E_{\text{true}} =$ 7.0 - 30.0 GeV </tex>
     </name>
 
@@ -1703,7 +1703,7 @@
     <name>
       <simple>  flux_nue00_rhc  </simple>
       <long>  BANFF 16; SK nue flux; 0.0 - 2.5 GeV; RHC  </long>
-      <rootex>  $f_{16; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{16; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 2.5 GeV </tex>
     </name>
 
@@ -1744,7 +1744,7 @@
     <name>
       <simple>  flux_nue01_rhc  </simple>
       <long>  BANFF 17; SK nue flux; 2.5 - 30.0 GeV; RHC  </long>
-      <rootex>  $f_{17; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{17; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\nu_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 30.0 GeV </tex>
     </name>
 
@@ -1785,7 +1785,7 @@
     <name>
       <simple>  flux_nuebar00_rhc  </simple>
       <long>  BANFF 18; SK nuebar flux; 0.0 - 0.5 GeV; RHC  </long>
-      <rootex>  $f_{18; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{18; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.0 - 0.5 GeV </tex>
     </name>
 
@@ -1826,7 +1826,7 @@
     <name>
       <simple>  flux_nuebar01_rhc  </simple>
       <long>  BANFF 19; SK nuebar flux; 0.5 - 0.7 GeV; RHC  </long>
-      <rootex>  $f_{19; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{19; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.5 - 0.7 GeV </tex>
     </name>
 
@@ -1867,7 +1867,7 @@
     <name>
       <simple>  flux_nuebar02_rhc  </simple>
       <long>  BANFF 20; SK nuebar flux; 0.7 - 0.8 GeV; RHC  </long>
-      <rootex>  $f_{20; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{20; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.7 - 0.8 GeV </tex>
     </name>
 
@@ -1908,7 +1908,7 @@
     <name>
       <simple>  flux_nuebar03_rhc  </simple>
       <long>  BANFF 21; SK nuebar flux; 0.8 - 1.5 GeV; RHC  </long>
-      <rootex>  $f_{21; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{21; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 0.8 - 1.5 GeV </tex>
     </name>
 
@@ -1949,7 +1949,7 @@
     <name>
       <simple>  flux_nuebar04_rhc  </simple>
       <long>  BANFF 22; SK nuebar flux; 1.5 - 2.5 GeV; RHC  </long>
-      <rootex>  $f_{22; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{22; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 1.5 - 2.5 GeV </tex>
     </name>
 
@@ -1990,7 +1990,7 @@
     <name>
       <simple>  flux_nuebar05_rhc  </simple>
       <long>  BANFF 23; SK nuebar flux; 2.5 - 4.0 GeV; RHC  </long>
-      <rootex>  $f_{23; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{23; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 2.5 - 4.0 GeV </tex>
     </name>
 
@@ -2031,7 +2031,7 @@
     <name>
       <simple>  flux_nuebar06_rhc  </simple>
       <long>  BANFF 24; SK nuebar flux; 4.0 - 30.0 GeV; RHC  </long>
-      <rootex>  $f_{24; t, r}^{\text{BANFF}} RHC  $ </rootex>
+      <rootex>  $f_{24; t, r}^{#text{BANFF}} RHC$ </rootex>
       <tex>  RHC $\bar{\nu}_{e}$ flux normalisation, $E_{\text{true}} =$ 4.0 - 30.0 GeV </tex>
     </name>
     
@@ -2072,7 +2072,7 @@
     <name>
       <simple>  2p2h_norm_nu  </simple>
       <long>  BANFF; Norm; 2p2h  </long>
-      <rootex>  $f_{Norm_{2p2h}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{2p2h #nu}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm; 2p2h  </tex>
     </name>
     
@@ -2113,7 +2113,7 @@
     <name>
       <simple>  CA5  </simple>
       <long>  BANFF; CA5 RES  </long>
-      <rootex>  $f_{Shape_{C^{A}_{5}}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{C^{A}_{5}}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; CA5 RES  </tex>
     </name>
     
@@ -2154,7 +2154,7 @@
     <name>
       <simple>  ISO_BKG  </simple>
       <long>  BANFF; BgRES Isospin 1/2  </long>
-      <rootex>  $f_{Shape_{Bg_{RES}}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Bg_{RES}}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm; BgRES Isospin 1/2  </tex>
     </name>
     
@@ -2195,7 +2195,7 @@
     <name>
       <simple>  ISO_BKG_LowPPi                                 </simple>
       <long>    BANFF; Shape; BgRES Isospin 1/2 low Ppi        </long>
-      <rootex>  $f_{Shape_{BgRES low Ppi}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{BgRES low Ppi}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; BgRES Isospin 1/2 low Ppi        </tex>
     </name>
 
@@ -2238,7 +2238,7 @@
     <name>
       <simple>  MAQE  </simple>
       <long>  BANFF; Ma QE  </long>
-      <rootex>  $f_{Shape_{M_A^{QE}}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{M_A^{QE}}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF, Ma QE  </tex>
     </name>
     
@@ -2279,7 +2279,7 @@
     <name>
       <simple>  MARES  </simple>
       <long>  BANFF; Ma RES  </long>
-      <rootex>  $f_{Shape_{M_A^{RES}}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{M_A^{RES}}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF, Ma RES  </tex>
     </name>
     
@@ -2320,7 +2320,7 @@
     <name>
       <simple>  NC_Coh  </simple>
       <long>  BANFF; Norm; NC Coh  </long>
-      <rootex>  $f_{Norm_{NCcoh}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{NCcoh}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm, NC Coh  </tex>
     </name>
     
@@ -2361,7 +2361,7 @@
     <name>
       <simple>  nue_numu  </simple>
       <long>  BANFF; Norm; NuE To NuMu  </long>
-      <rootex>  $f_{Norm_{#nu_e #rightarrow #nu_#mu}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{#nu_e #rightarrow #nu_#mu}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm, $\nu_{e}$ To $\nu_{\mu}$  </tex>
     </name>
     
@@ -2402,7 +2402,7 @@
     <name>
       <simple>  NC_1gamma  </simple>
       <long>  BANFF; Norm; NC 1 Gamma  </long>
-      <rootex>  $f_{Norm_{NC1#gamma}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{NC1#gamma}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm; NC 1 $\gamma$  </tex>
     </name>
     
@@ -2443,7 +2443,7 @@
     <name>
       <simple>  nuebar_numubar  </simple>
       <long>  BANFF; Norm; NuEBar To NuMuBar  </long>
-      <rootex>  $f_{Norm_{#bar{#nu}_e #rightarrow #bar{#nu}_{#mu}}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{#bar{#nu}_e #rightarrow #bar{#nu}_{#mu}}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm, $\bar{\nu}_{e}$ To $\bar{\nu}_{\mu}$  </tex>
     </name>
     
@@ -2484,7 +2484,7 @@
     <name>
       <simple>  2p2h_norm_nubar  </simple>
       <long>  BANFF; Norm; 2p2hBar  </long>
-      <rootex>  $f_{Norm_{2p2hBar}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{2p2h #bar{#nu}}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm; 2p2hBar  </tex>
     </name>
     
@@ -2525,7 +2525,7 @@
     <name>
       <simple>  2p2h_shape_O  </simple>
       <long>  BANFF; Shape; 2p2h nu  </long>
-      <rootex>  $f_{Shape_{2p2h#nu}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{2p2h#nu}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Shape; 2p2h  </tex>
     </name>
     
@@ -2566,7 +2566,7 @@
     <name>
       <simple>  2p2h_normCtoO  </simple>
       <long>  BANFF; Norm;  2p2h C to O  </long>
-      <rootex>  $f_{Norm_{2p2h C to O}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{2p2h C to O}}^{#text{BANFF}}$ </rootex>
       <tex>  BANFF; Norm; 2p2h C to O  </tex>
     </name>
     
@@ -2607,7 +2607,7 @@
     <name>
       <simple>  2p2h_Edep_lowEnu                   </simple>
       <long>    BANFF; Shape;  2p2h low E nu       </long>
-      <rootex>  $f_{Shape_{2p2h low E nu}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{2p2h Edep Low E #nu}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; 2p2h low E nu        </tex>
     </name>
 
@@ -2650,7 +2650,7 @@
     <name>
       <simple>  2p2h_Edep_highEnu                   </simple>
       <long>    BANFF; Shape;  2p2h high E nu       </long>
-      <rootex>  $f_{Shape_{2p2h high E nu}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{2p2h Edep High E #nu}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; 2p2h high E nu        </tex>
     </name>
 
@@ -2693,7 +2693,7 @@
     <name>
       <simple>  2p2h_Edep_lowEnubar                   </simple>
       <long>    BANFF; Shape;  2p2h low E nubar       </long>
-      <rootex>  $f_{Shape_{2p2h low E nubar}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{2p2h Edep Low E #bar{#nu}}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; 2p2h low E nubar        </tex>
     </name>
 
@@ -2737,7 +2737,7 @@
     <name>
       <simple>  2p2h_Edep_highEnubar                   </simple>
       <long>    BANFF; Shape;  2p2h high E nubar       </long>
-      <rootex>  $f_{Shape_{2p2h high E nubar}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{2p2h Edep High E #bar{#nu}}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; 2p2h high E nubar        </tex>
     </name>
 
@@ -2784,7 +2784,7 @@
     <name>
       <simple>  Q2_norm_0                 </simple>
       <long>    BANFF; Shape; Q2 0        </long>
-      <rootex>  $f_{Shape_{Q^2 0}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 0}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 0 nubar  </tex>
     </name>
 
@@ -2827,7 +2827,7 @@
     <name>
       <simple>  Q2_norm_1                 </simple>
       <long>    BANFF; Shape; Q2 1        </long>
-      <rootex>  $f_{Shape_{Q^2 1}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 1}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 1 nubar  </tex>
     </name>
 
@@ -2870,7 +2870,7 @@
     <name>
       <simple>  Q2_norm_2                 </simple>
       <long>    BANFF; Shape; Q2 2        </long>
-      <rootex>  $f_{Shape_{Q^2 2}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 2}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 2 nubar  </tex>
     </name>
 
@@ -2914,7 +2914,7 @@
     <name>
       <simple>  Q2_norm_3                 </simple>
       <long>    BANFF; Shape; Q2 3        </long>
-      <rootex>  $f_{Shape_{Q^2 3}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 3}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 3 nubar  </tex>
     </name>
 
@@ -2957,7 +2957,7 @@
     <name>
       <simple>  Q2_norm_4                 </simple>
       <long>    BANFF; Shape; Q2 4        </long>
-      <rootex>  $f_{Shape_{Q^2 4}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 4}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 4 nubar  </tex>
     </name>
 
@@ -2998,7 +2998,7 @@
     <name>
       <simple>  Q2_norm_5                 </simple>
       <long>    BANFF; Shape; Q2 5        </long>
-      <rootex>  $f_{Shape_{Q^2 5}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 5}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 5 nubar  </tex>
     </name>
 
@@ -3038,7 +3038,7 @@
     <name>
       <simple>  Q2_norm_6                 </simple>
       <long>    BANFF; Shape; Q2 6        </long>
-      <rootex>  $f_{Shape_{Q^2 6}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 6}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 6 nubar  </tex>
     </name>
 
@@ -3078,7 +3078,7 @@
     <name>
       <simple>  Q2_norm_7                 </simple>
       <long>    BANFF; Shape; Q2 7        </long>
-      <rootex>  $f_{Shape_{Q^2 7}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Q^2 7}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Q2 7 nubar  </tex>
     </name>
 
@@ -3121,7 +3121,7 @@
     <name>
       <simple>  EB_dial_O_nu                  </simple>
       <long>    BANFF; Eb O nu                </long>
-      <rootex>  $f_{Shape_{Eb O #nu}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Eb O #nu}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Eb O $\nu$        </tex>
     </name>
 
@@ -3164,7 +3164,7 @@
     <name>
       <simple>  EB_dial_O_nubar                     </simple>
       <long>    BANFF; Eb O nubar                   </long>
-      <rootex>  $f_{Shape_{Eb O #bar{#nu}}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{Eb O #bar{#nu}}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; Eb O $\bar{\nu}$        </tex>
     </name>
 
@@ -3207,7 +3207,7 @@
     <name>
       <simple>  CC_norm_nu                </simple>
       <long>    BANFF; Norm; CC nu        </long>
-      <rootex>  $f_{Norm_{CC nu}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{CC #nu}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Norm; CC nu        </tex>
     </name>
 
@@ -3250,7 +3250,7 @@
     <name>
       <simple>  CC_norm_nubar                </simple>
       <long>    BANFF; Norm; CC nubar        </long>
-      <rootex>  $f_{Norm_{CC nubar}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{CC #bar{#nu}}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Norm; CC nubar        </tex>
     </name>
 
@@ -3293,7 +3293,7 @@
     <name>
       <simple>  CC_BY_DIS                              </simple>
       <long>    BANFF; Shape; CC Bodek-Yang DIS        </long>
-      <rootex>  $f_{Shape_{CC BY DIS}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{CC BY DIS}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; CC Bodek-Yang DIS        </tex>
     </name>
 
@@ -3336,7 +3336,7 @@
     <name>
       <simple>  CC_BY_MPi                              </simple>
       <long>    BANFF; Shape; CC Bodek-Yang MPi        </long>
-      <rootex>  $f_{Shape_{CC BY MPi}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{CC BY MPi}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; CC Bodek-Yang MPi        </tex>
     </name>
 
@@ -3379,7 +3379,7 @@
     <name>
       <simple>  CC_AGKY_Mult                     </simple>
       <long>    BANFF; Shape; CC AGKY MPi        </long>
-      <rootex>  $f_{Shape_{CC AGKY MPi}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{CC AGKY MPi}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; CC AGKY MPi        </tex>
     </name>
 
@@ -3422,7 +3422,7 @@
     <name>
       <simple>  CC_Misc                     </simple>
       <long>    BANFF; Norm; CC Misc        </long>
-      <rootex>  $f_{Norm_{CC Misc}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{CC Misc}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Norm; CC Misc        </tex>
     </name>
 
@@ -3465,7 +3465,7 @@
     <name>
       <simple>  CC_DIS_MultPi_Norm_Nu             </simple>
       <long>    BANFF; Norm; CC DIS MPi nu        </long>
-      <rootex>  $f_{Norm_{CC DIS MPi nu}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{CC DIS MPi #nu}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Norm; CC DIS MPi nu        </tex>
     </name>
 
@@ -3508,7 +3508,7 @@
     <name>
       <simple>  CC_DIS_MultPi_Norm_Nubar             </simple>
       <long>    BANFF; Norm; CC DIS MPi nubar        </long>
-      <rootex>  $f_{Norm_{CC DIS MPi nubar}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{CC DIS MPi #bar{#nu}}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Norm; CC DIS MPi nubar        </tex>
     </name>
 
@@ -3551,7 +3551,7 @@
     <name>
       <simple>  CC_Coh_O                     </simple>
       <long>    BANFF; Norm; CC Coh O        </long>
-      <rootex>  $f_{Norm_{CC Coh O}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{CC Coh O}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Norm; CC Coh O        </tex>
     </name>
 
@@ -3594,7 +3594,7 @@
     <name>
       <simple>  NC_other_far                   </simple>
       <long>    BANFF; Norm; NC Oth far        </long>
-      <rootex>  $f_{Norm_{NC Oth far}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Norm_{NC Oth Far}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Norm; NC Oth far        </tex>
     </name>
 
@@ -3638,7 +3638,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIINELLO -->
       <simple>  FEFQE                               </simple>
       <long>    BANFF; Shape; FSI QE low P scatter  </long>
-      <rootex>  $f_{Shape_{FSI QE low P}}^{\text{BANFF}}    $ </rootex>
+      <rootex>  $f_{Shape_{FSI QE low P}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; FSI QE low P          </tex>
     </name>
 
@@ -3682,7 +3682,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIINELHI -->
       <simple>  FEFQEH                               </simple>
       <long>    BANFF; Shape; FSI QE high P scatter  </long>
-      <rootex>  $f_{Shape_{FSI QE high P}}^{\text{BANFF}}    $ </rootex>
+      <rootex>  $f_{Shape_{FSI QE high P}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; FSI QE high P          </tex>
     </name>
 
@@ -3726,7 +3726,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIPIPROD -->
       <simple>  FEFINEL                                  </simple>
       <long>    BANFF; Shape; FSI Inelastic Hadron prod  </long>
-      <rootex>  $f_{Shape_{FSI Inelastic}}^{\text{BANFF}}        $ </rootex>
+      <rootex>  $f_{Shape_{FSI Inelastic}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; FSI Inelastic              </tex>
     </name>
 
@@ -3770,7 +3770,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSIPIABS -->
       <simple>  FEFABS                              </simple>
       <long>    BANFF; Shape; FSI pion absorption   </long>
-      <rootex>  $f_{Shape_{FSI Absorption}}^{\text{BANFF}}  $ </rootex>
+      <rootex>  $f_{Shape_{FSI Absorption}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; FSI Absorption        </tex>
     </name>
 
@@ -3814,7 +3814,7 @@
       <!-- NOTE (2020-01-03, run 10): In T2KReweight and the ND fit, this param is called FSICEXLO -->
       <simple>  FEFCX                                     </simple>
       <long>    BANFF; Shape; FSI single charge exchange  </long>
-      <rootex>  $f_{Shape_{FSI charge exchange}}^{\text{BANFF}}   $ </rootex>
+      <rootex>  $f_{Shape_{FSI charge exchange}}^{#text{BANFF}}$ </rootex>
       <tex>     BANFF; Shape; FSI charge exchange         </tex>
     </name>
 
