@@ -39,6 +39,7 @@ std::string _binning         = "";
 std::string _data_filename   = "";
 std::string _data_tag        = "";
 std::string _tag             = "";
+bool        _thesis_format   = false;
 
 //______________________________________________________________________________________________________________________
 // Prototypes
@@ -54,8 +55,8 @@ void                 save_to_file                 (TCanvas* canv, std::string bo
 TLatex*              make_caveat                  (TH1* hist_to_draw, double y_max);
 TLatex*              make_title                   (TString title_text, double ymax);
 std::string          make_title_text              (conv::BeamConf_t b, conv::Sample_t s, conv::ReacMode_t m = conv::kmUndefined, bool no_tex = false, bool no_spaces = false);
-std::string          get_beam_current_name_simple (conv::BeamConf_t b);                    // TODO: move to BeamConf.h
-std::string          get_sample_name_simple       (conv::Sample_t s, bool no_tex = false); // TODO: move to Sample.h
+std::string          get_beam_current_name_simple (conv::BeamConf_t b);
+std::string          get_sample_name_simple       (conv::Sample_t s, conv::BeamConf_t b, bool no_tex = false);
 void                 rebin                        (TH1D* hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv);
 double               get_max_in_xrange_by_mode    (double xmax, std::vector<TH1D*> hists_by_mode, const int NReacModes);
 double               get_max_in_xrange            (double xmax, TH1D* hist, bool with_error);
@@ -78,7 +79,8 @@ void plot_pdf_simple(
   int          canv_size_y        = 700,
   bool         draw_caveat        = true,    // Draws a text box in the top right containing the contents of _caveat_text_str
   bool         rebin_mulike       = true,    // rebin the mu-like sample 1D plots with coarser binning, for cosmetic reasons
-  bool         mark_empty_bins_2d = false    // Draws a cross in each empty 2D PDF bin
+  bool         mark_empty_bins_2d = false,   // Draws a cross in each empty 2D PDF bin
+  bool         thesis_format      = false
 )
 {
   if(!vutil::plotting::SetupCustomPalette("valor_inverted_dark_body_radiator")) {
@@ -98,6 +100,7 @@ void plot_pdf_simple(
   _tag                = in_tag;
   _mark_empty_bins_2d = mark_empty_bins_2d;
   _rebin_mulike       = rebin_mulike;
+  _thesis_format      = thesis_format;
 
   // First build a FitElements to tell us which samples we're plotting
   std::string config_path = vutil::CompleteConfigPath(config_file);
@@ -586,7 +589,14 @@ void draw_single_PDF_contrib_1D(GenericSingleSampleFitModel& submodel, GenericSi
     pdf_contrib_coarse[imodec]->SetFillColor(ml->GetCoarseModeFillCol(mc));
     pdf_contrib_coarse[imodec]->SetFillStyle(ml->GetCoarseModeFillSty(mc));
     contrib_stack->Add(pdf_contrib_coarse[imodec]);
-    contrib_legend->AddEntry(pdf_contrib_coarse[imodec],Form("%s",vutil::AsStringTex(mc,true).c_str()), "F");
+
+    std::string coarse_name = vutil::AsStringTex(mc, true);
+    if(_thesis_format) {
+      if     (mc == conv::kmcOscNuECC)    { coarse_name  =  "#nu_{#mu} #rightarrow #nu_{e} CC"; }
+      else if(mc == conv::kmcOscNuEBarCC) { coarse_name  =  "#bar{#nu}_{#mu} #rightarrow #bar{#nu}_{e} CC"; }
+    }
+
+    contrib_legend->AddEntry(pdf_contrib_coarse[imodec],Form("%s",coarse_name.c_str()), "F");
   }//imodec
   if(data_graph) { contrib_legend->AddEntry(data_graph, _data_label.c_str(), "LP"); }
 
@@ -709,10 +719,11 @@ TLatex* make_title(TString title_text, double ymax)
 //______________________________________________________________________________________________________________________
 std::string make_title_text(conv::BeamConf_t b, conv::Sample_t s, conv::ReacMode_t m, bool no_tex, bool no_spaces)
 {
-  std::string title_text = get_beam_current_name_simple(b) + " " + get_sample_name_simple(s, no_tex);
+  std::string title_text = get_beam_current_name_simple(b) + " " + get_sample_name_simple(s, b, no_tex);
   if(m != conv::kmUndefined) {
-    if(no_tex) { title_text += " " + vutil::AsString   (m); }
-    else       { title_text += " " + vutil::AsStringTeX(m); }
+    std::string padding = (_thesis_format) ? "; " : " ";
+    if(no_tex) { title_text += padding + vutil::AsString   (m); }
+    else       { title_text += padding + vutil::AsStringTeX(m); }
   }
   if(no_spaces) {
     std::replace( title_text.begin(), title_text.end(), ' ', '_');
@@ -724,8 +735,8 @@ std::string make_title_text(conv::BeamConf_t b, conv::Sample_t s, conv::ReacMode
 std::string get_beam_current_name_simple(conv::BeamConf_t b)
 {
   std::string beam_str = "";
-  if     (b == conv::kbJPARC_FHC) { beam_str = "FHC"; }
-  else if(b == conv::kbJPARC_RHC) { beam_str = "RHC"; }
+  if     (b == conv::kbJPARC_FHC) { beam_str = (_thesis_format) ? "#nu-mode"       : "FHC"; }
+  else if(b == conv::kbJPARC_RHC) { beam_str = (_thesis_format) ? "#bar{#nu}-mode" : "RHC"; }
   else {
     std::cerr << "ERROR: Unrecogised beam \'" << vutil::AsString(b) << "\'" << std::endl;
     vutil::Die(1);
@@ -734,15 +745,27 @@ std::string get_beam_current_name_simple(conv::BeamConf_t b)
 }
 
 //______________________________________________________________________________________________________________________
-std::string get_sample_name_simple(conv::Sample_t s, bool no_tex)
+std::string get_sample_name_simple(conv::Sample_t s, conv::BeamConf_t b, bool no_tex)
 {
   std::string sample_str = "";
-  if     (s == conv::ks1Rmu   ) { sample_str = "1R#mu";     }
-  else if(s == conv::ks1Re    ) { sample_str = "1Re";       }
-  else if(s == conv::ksMultiRe) { sample_str = "1Re 1d.e."; }
+  if(!_thesis_format) {
+    if     (s == conv::ks1Rmu   ) { sample_str = "1R#mu";     }
+    else if(s == conv::ks1Re    ) { sample_str = "1Re";       }
+    else if(s == conv::ksMultiRe) { sample_str = "1Re 1d.e."; }
+    else {
+      std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
+      vutil::Die(1);
+    }
+  }
   else {
-    std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
-    vutil::Die(1);
+    bool rhc = (b == conv::kbJPARC_RHC);
+    if     (s == conv::ks1Rmu   ) { sample_str = (rhc) ? "#bar{#nu}_{#mu}CCQE-like" : "#nu_{#mu}CCQE-like"; }
+    else if(s == conv::ks1Re    ) { sample_str = (rhc) ? "#bar{#nu}_{e}CCQE-like"   : "#nu_{e}CCQE-like";   }
+    else if(s == conv::ksMultiRe) { sample_str = "#nu_{e}CC1#pi^{+}-like"; }
+    else {
+      std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
+      vutil::Die(1);
+    }
   }
 
   if(no_tex) {
