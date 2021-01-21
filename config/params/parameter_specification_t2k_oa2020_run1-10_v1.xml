@@ -3318,7 +3318,7 @@
       <target>      all        </target>
     </apply_to>
 
-    <limits>  0, inf  </limits>
+    <limits>  -inf, inf  </limits>
 
     <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
@@ -3361,7 +3361,7 @@
       <target>      all        </target>
     </apply_to>
 
-    <limits>  0, inf  </limits>
+    <limits>  -inf, inf  </limits>
 
     <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
@@ -3404,7 +3404,7 @@
       <target>      all        </target>
     </apply_to>
 
-    <limits>  0, inf  </limits>
+    <limits>  -inf, inf  </limits>
 
     <update_from_cov_matrix> true  </update_from_cov_matrix>
     <range_mode>             sigma </range_mode>
