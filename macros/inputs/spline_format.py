@@ -32,7 +32,7 @@ pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_coulomb_plus_E
 models = dict()
 
 def get_file_suffix(sample):
-    if "1Rmu" or "MultiRmu" in sample:
+    if "mu"  in sample:
         return ""
     else:
         return "erectheta"
@@ -110,7 +110,7 @@ def get_param_map():
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
-    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe","FHCMultiRmu"]:
+    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe","FHCMultiRmu1de", "FHCMultiRmu2de"]:
         return "fhc"
     elif sample in ["RHC1Rmu","RHC1Re"]:
         return "rhc"
@@ -125,8 +125,10 @@ def get_selection_map(sample):
         return "numuselec"
     elif "MultiRe" in sample:
         return "cc1piselec"
-    elif "MultiRmu" in sample: 
-        return "cc1pi2deselec" #cc1pi1deselec TODO: check how the loop is going in order to iterate over both  types of splines, so far only manual 
+    elif "MultiRmu1de" in sample: 
+        return "numucc1pi1deselec"        
+    elif "MultiRmu2de" in sample: 
+        return "numucc1pi2deselec"
     else:
         print "Error: Unknown sample ", sample
         sys.exit()
@@ -136,8 +138,10 @@ def get_sdk_selection(sample):
         return "1rmu"
     elif "1Re" in sample:
         return "1re"
-    elif "MultiRmu" in sample:
-        return "multirmu"
+    elif "MultiRmu1de" in sample:
+        return "multirmu1de"
+    elif "MultiRmu2de" in sample:
+        return "multirmu2de"
     else:
         return "multire"
 
@@ -177,8 +181,10 @@ def set_model_map(model):
         models["RHC1Re"] = model
     elif model.Name() == "superk__JPARC_FHC__multire":
         models["FHCMultiRe"] = model
-    elif model.Name() == "superk__JPARC_FHC__multirmu":
-        models["FHCMultiRmu"] = model
+    elif model.Name() == "superk__JPARC_FHC__multirmu1de":
+        models["FHCMultiRmu1de"] = model
+    elif model.Name() == "superk__JPARC_FHC__multirmu2de":
+        models["FHCMultiRmu2de"] = model
     else:
         print "Unrecognised model ", model.Name()
         sys.exit()
@@ -213,6 +219,7 @@ def get_new_binning_nbins(sample, flavour, mode):
     if m == conv.kmUndefined or m == python_undefined or m == python_undefined_short:
         print "ERROR: could not convert input mode [", mode, "] into a VALOR mode"
         util.Die(-1)
+    print " sample ", sample
     binning = models[sample].GetBinning()
     reco_binning = binning.XsecRecoBinning()
     true_binning = binning.XsecTrueBinning(m)
@@ -361,7 +368,7 @@ def main(version, path, sample, config):
   
 if __name__=="__main__":
     import argparse
-    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe", "FHCMultiRmu"]
+    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe", "FHCMultiRmu1de", "FHCMultiRmu2de"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
     parser.add_argument('-p', '--prefix', default='spline2018v1', help="Spline filename prefix.")
     parser.add_argument('-i', '--input', help="Input spline directory.")

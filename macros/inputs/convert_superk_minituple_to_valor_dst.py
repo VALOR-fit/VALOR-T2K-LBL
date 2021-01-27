@@ -38,7 +38,7 @@ python_undefined = 2L*sys.maxint+1
 # At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
 beams = [conv.kbJPARC_FHC, conv.kbJPARC_RHC]
 samples = collections.OrderedDict()
-samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe, conv.ksMultiRmu]
+samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe, conv.ksMultiRmu1de, conv.ksMultiRmu2de]
 samples[conv.kbJPARC_RHC] = [conv.ks1Rmu, conv.ks1Re]
 
 types = ["nuebar_x_nuebar"  ,  # The naming conventions used by the input SK MC files
@@ -157,10 +157,6 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       reac_mode[0]  = NeutModeToValorMode(neut_mode, true_nu_flavour, is_oscillated)
       enu_true[0]   = event.pnu[0]  # Already in GeV/c
       Theta_reco[0] = calc_theta_degrees(event, sample[0])
-      #if  sample[0] == conv.ksMultiRmu:    
-      #  Theta_reco[0] = calc_theta_degrees(event.fqmrdir, event.fqnse, sample[0]) #for multiring samples it should be fqmrdir 
-      #else:                                          
-      #  Theta_reco[0] = calc_theta_degrees(event.fq1rdir, event.fqnse, sample[0])     # event.fq1rdir is a 3D list that contains info on the lepton direction and is dependant on the sample
       temp_enu_reco, plep_reco = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])
       enu_reco[0]   = temp_enu_reco   # Already in GeV
       wght[0]       = group_misc_weights(event, neut_mode, sample[0])                          # Group all of the standard multiplicative NIWG weights into a single weight
@@ -261,8 +257,10 @@ def get_selection(file_in_name):
     selection = conv.ks1Re
   elif "numuselec" in file_in_name:
     selection = conv.ks1Rmu 
-  elif "numucc1pi2deselec"  in file_in_name:  #"numucc1pi1deselec" TODO: for tests should create two separate MC files for these selections 
-    selection = conv.ksMultiRmu
+  elif "numucc1pi1deselec"  in file_in_name:  
+    selection = conv.ksMultiRmu1de  
+  elif "numucc1pi2deselec"  in file_in_name:  
+    selection = conv.ksMultiRmu2de
   else:
     print "FATAL: Could not determine the selection for input file", file_in_name
     util.Die(-1)
@@ -310,13 +308,13 @@ def get_pot_weight(this_scale):
 
 #_______________________________________________________________________
 # Takes the scalar product between the beam and lepton directions
-def calc_theta_degrees(event, sample): # fix the direction calculations, make like ins psleines 
+def calc_theta_degrees(event, sample):
   # lep_dir contains info on the lepton direction and is dependant on the sample
   costheta = ROOT.Double(-999.)
-  if  sample == conv.ksMultiRmu:
-    mreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
-    lep_dir = c_to_pyroot_array_hack(event.fqmrdir,200,10, 3)
-    if (mreloss[event.ipp][0] < mreloss[event.ipp][1]):
+  if  (sample == conv.ksMultiRmu1de) or  (sample == conv.ksMultiRmu2de) :
+    fqmrmom = c_to_pyroot_array_hack(event.fqmrmom,200,6)
+    lep_dir = c_to_pyroot_array_hack(event.fqmrdir,200,6, 3)
+    if (fqmrmom[event.ipp][0] < fqmrmom[event.ipp][1]):
       idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
     else:
       idx_mu = 0
@@ -346,80 +344,76 @@ def calc_theta_degrees(event, sample): # fix the direction calculations, make li
 # See https://www.t2k.org/asg/oagroup/meeting/2018/2018-02-22/coulombcorrections for details.
 # The Erec calculation uses the QE approximation, see e.g. TN315v5 p31.
 def calc_enu_reco(event, sample, reac_mode, Theta_reco):
-    ereco_MeV = ROOT.Double(-999)
+  ereco_MeV = ROOT.Double(-999)
+  Vnuc = ROOT.Double(27.0)                          # Nominal binding energy, MeV
+  mn   = ROOT.Double(conv.kNeutronMassGeV  * 1000.) # MeV
+  mp   = ROOT.Double(conv.kProtonMassGeV   * 1000.) # MeV
+  me   = ROOT.Double(conv.kElectronMassGeV * 1000.) # MeV
+  mm   = ROOT.Double(conv.kMuonMassGeV     * 1000.) # MeV
+  md   = ROOT.Double(conv.kDeltaMassGeV    * 1000.) # MeV
+  mpi  = ROOT.Double(139.57) #MeV
 
-    Vnuc = ROOT.Double(27.0)                          # Nominal binding energy, MeV
-    mn   = ROOT.Double(conv.kNeutronMassGeV  * 1000.) # MeV
-    mp   = ROOT.Double(conv.kProtonMassGeV   * 1000.) # MeV
-    me   = ROOT.Double(conv.kElectronMassGeV * 1000.) # MeV
-    mm   = ROOT.Double(conv.kMuonMassGeV     * 1000.) # MeV
-    md   = ROOT.Double(conv.kDeltaMassGeV    * 1000.) # MeV
+  mass = ROOT.Double(0)
+  mom  = ROOT.Double(0)
 
-    mass = ROOT.Double(0)
-    mom  = ROOT.Double(0)
-
-    if util.SampleIsELike(sample):
-        # Must use reco info for consistency with how we select the Erec equation
-        mass = me
-        mom = event.fqmome
+  if util.SampleIsELike(sample):
+    # Must use reco info for consistency with how we select the Erec equation
+    mass = me
+    mom = event.fqmome
+  elif (sample == conv.ksMultiRmu1de) or (sample == conv.ksMultiRmu2de):
+    mass = mpi #Muon momentum taken from a 2Ring PiPi fit so use pion mass to take this into account
+    mrmom = c_to_pyroot_array_hack(event.fqmrmom, 200, 6)
+    if (mrmom[event.ipp][0] <mrmom[event.ipp][1]):
+    	idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
     else:
-        mass = mm
-        if sample == conv.ksMultiRmu:
-          mreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
-          mrmom = c_to_pyroot_array_hack(event.fqmrmom, 200, 6)
-          if (mreloss[event.ipp][0] <mreloss[event.ipp][1]):
-            idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
-          else:
-            idx_mu = 0
-          mom = mrmom[event.ipp][idx_mu] #this should work 
-        mom = event.fqmomm
+    	idx_mu = 0
+    mom = mrmom[event.ipp][idx_mu] 
 
-    mom_shift_nu    = ROOT.Double(-4.3)   # MeV
-    mom_shift_nubar = ROOT.Double( 3.3)   # MeV
-    mom_shift = ROOT.Double(0)
-    final_nu_flavour = util.ReacModeToFinalFlavor(reac_mode)
-    if final_nu_flavour == conv.kNuMuBar or final_nu_flavour == conv.kNuEBar or final_nu_flavour == conv.kNuTauBar:
-        # The momentum shift must be chosen using true info
-        mom_shift = mom_shift_nubar
+  else:
+    mass = mm
+    mom = event.fqmomm
+
+
+  mom_shift_nu    = ROOT.Double(-4.3)   # MeV
+  mom_shift_nubar = ROOT.Double( 3.3)   # MeV
+  mom_shift = ROOT.Double(0)
+
+  final_nu_flavour = util.ReacModeToFinalFlavor(reac_mode)
+
+
+  if final_nu_flavour == conv.kNuMuBar or final_nu_flavour == conv.kNuEBar or final_nu_flavour == conv.kNuTauBar:
+    # The momentum shift must be chosen using true info
+    mom_shift = mom_shift_nubar
+  else:
+    mom_shift = mom_shift_nu
+
+  shifted_mom = ROOT.Double(mom + mom_shift)
+  elep = ROOT.Double(ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom))
+  theta_reco_rads = ROOT.Double(Theta_reco * (ROOT.TMath.Pi() / 180.0))   # Theta_reco is input in degrees, so convert to radians here
+
+  if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
+    # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
+    ereco_MeV = event.erec
+  else:
+    if sample != conv.ksMultiRe:
+      ereco_MeV  = (mn - Vnuc)*elep - mass*mass/2.
+      ereco_MeV += mn*Vnuc - Vnuc*Vnuc/2.
+      ereco_MeV += (mp*mp - mn*mn)/2.
+      ereco_MeV /= (mn - Vnuc - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
     else:
-        mom_shift = mom_shift_nu
-    shifted_mom = ROOT.Double(mom + mom_shift)
+      ereco_MeV  = (mp*elep-mass*mass/2.)
+      ereco_MeV += (md*md - mp*mp)/2.
+      ereco_MeV /= (mp - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
 
-    elep = ROOT.Double(ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom))
-    theta_reco_rads = ROOT.Double(Theta_reco * (ROOT.TMath.Pi() / 180.0))   # Theta_reco is input in degrees, so convert to radians here
-
-    if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
-        # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
-        ereco_MeV = event.erec
-    else:
-        if sample == conv.ksMultiRe:
-
-            ereco_MeV  = (mp*elep-mass*mass/2.)
-            ereco_MeV += (md*md - mp*mp)/2.
-            ereco_MeV /= (mp - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
-        elif sample == conv.ksMultiRmu:
-
-            ereco = elep*mp;
-            ereco += (md*md - mp*mp -mm*mm)/2;
-            ereco /= (mp - elep + abs(shifted_mom) * ROOT.TMath.Cos(theta_reco_rads));
-        else:
-            ereco_MeV  = (mn - Vnuc)*elep - mass*mass/2.
-            ereco_MeV += mn*Vnuc - Vnuc*Vnuc/2.
-            ereco_MeV += (mp*mp - mn*mn)/2.
-            ereco_MeV /= (mn - Vnuc - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
-
-    # Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
-    return [ROOT.Double(ROOT.TMath.Min(ereco_MeV / 1000., 29.9)), shifted_mom / 1000.]
+  # Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
+  return [ROOT.Double(ROOT.TMath.Min(ereco_MeV / 1000., 29.9)), shifted_mom / 1000.]
 
 #_______________________________________________________________________
 # Group all of the standard multiplicative NIWG and flux weights etc. into a single weight
 def group_misc_weights(event, neut_mode, sample):
   weight_NC1Gamma = 1.
   weight_flux_tuning = event.wgtflx    # NOTE (2020-02-19): Before run 10, we would calculate & apply the flux tuning weights at runtime using tuning histograms; however, these weights are now in the mtuple
-  if sample == conv.ksMultiRmu:
-    weight_maqe_H = 1                 #NOTE(20220-11-09): 
-  else:
-    weight_maqe_H = event.wgts_maqeh     # NOTE (2020-02-20): In NEUT, MaQE was set to 1.21Gev, instead of 1.03GeV as decided by the NIWG. So In T2KReWeight, this weight was produced to fix this.
+  weight_maqe_H = event.wgts_maqeh     # NOTE (2020-02-20): In NEUT, MaQE was set to 1.21Gev, instead of 1.03GeV as decided by the NIWG. So In T2KReWeight, this weight was produced to fix this.
 
   # The NC1gamma production cross-section in NEUT is off by factor 2
   # NOTE (2020-02-19): This is still true as of NEUT 5.4.0, so will be used in the run 10 analysis
