@@ -54,12 +54,12 @@ Input MC templates
 
   <dst>
     <jparc_fhc>
-       <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5.root </filename>
+       <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_26_01.root </filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5.root </filename>
+        <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_26_01.root</filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>

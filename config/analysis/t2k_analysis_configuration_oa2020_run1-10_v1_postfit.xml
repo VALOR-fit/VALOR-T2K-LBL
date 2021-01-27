@@ -54,7 +54,7 @@
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_rhc_elike_run1-10_bins.xml               </binning>
     </element>
-    
+
     <element name="sk_fhc_multire">
       <detector>     superk                                               </detector>
       <beam>         JPARC_FHC                                            </beam>
