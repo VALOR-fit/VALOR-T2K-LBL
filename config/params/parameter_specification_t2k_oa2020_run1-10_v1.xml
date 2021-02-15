@@ -12,8 +12,9 @@
     <apply_to_range>
       <Etrue>  0.0, 0.4  </Etrue>
     </apply_to_range>
-
-    <type>  normalisation  </type>
+    
+<!-- possible types are: normalization, lateral, lateral_post_osc, response( this is the one for splines), special or disabled(ignore this parameters) -->
+    <type>  normalisation  </type> 
 
     <categories>
       <category>  BANFF  </category>
