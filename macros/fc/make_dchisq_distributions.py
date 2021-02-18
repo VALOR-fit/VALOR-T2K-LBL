@@ -115,8 +115,8 @@ def main(output_tag, in_tag,
 
       if do_brazilian:
         # Define Delta chisq Brazillian histograms for both MH:
-        Dchisq_brazilian_hist_nh = ROOT.TH1D("hDchisq_brazilian_hist_nh", "hDchisq_brazilian_hist_nh", 100, 0, math.ceil(max(Dchisq_toy)))
-        Dchisq_brazilian_hist_ih = ROOT.TH1D("hDchisq_brazilian_hist_ih", "hDchisq_brazilian_hist_ih", 100, 0, math.ceil(max(Dchisq_toy)))
+        Dchisq_brazilian_hist_nh = ROOT.TH1D("hDchisq_brazilian_hist_nh", "hDchisq_brazilian_hist_nh", 150, 0, 100)#math.ceil(max(Dchisq_toy)))
+        Dchisq_brazilian_hist_ih = ROOT.TH1D("hDchisq_brazilian_hist_ih", "hDchisq_brazilian_hist_ih", 150, 0, 100)#math.ceil(max(Dchisq_toy)))
 
       # For testing, fill a Delta chisq FC hist
       Dchisq_hist = ROOT.TH1D("hDchisq", "hDchisq", 100, 0, math.ceil(max(Dchisq_toy)))
