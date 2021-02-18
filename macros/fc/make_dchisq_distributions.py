@@ -44,7 +44,7 @@ _hier_to_index["inverted"] = 1
 def main(output_tag, in_tag,
          npt_fc_par1, start_pt_fc_par1, min_val_fc_par1, max_val_fc_par1, pts_fc_par1,
          npt_fc_par2, start_pt_fc_par2, min_val_fc_par2, max_val_fc_par2, pts_fc_par2,
-         ntoys_fc, fc_2d, fc_hier,
+         ntoys_fc, fc_2d, fc_hier, do_brazilian,
          npt_marg_par1, start_pt_marg_par1, min_val_marg_par1, max_val_marg_par1,
          npt_marg_par2, start_pt_marg_par2, min_val_marg_par2, max_val_marg_par2):
 
@@ -91,6 +91,11 @@ def main(output_tag, in_tag,
 
       # Now that we've filled chisq_all, calculate the FC Delta chisq for each FC toy
       Dchisq_toy = ROOT.vector('double')(ntoys_fc,-1.0)   # Use a ROOT vector instead of a python list so that we can save it to the output ROOT file
+       
+      if do_brazilian:
+        #A vector to store brazilian dchisq
+        Dchisq_BR_toy = [[[[-1.0]*_n_hier for i in range(npt_marg_par2)] for j in range(npt_marg_par1)] for k in range(ntoys_fc)]
+
       index_hier = _hier_to_index[fc_hier]
       index_marg_p1 = fc_pt_to_marg_pt(ifc_p1, npt_fc_par1, min_val_fc_par1, max_val_fc_par1, pts_fc_par1,
                                        npt_marg_par1, start_pt_marg_par1, min_val_marg_par1, max_val_marg_par1)
@@ -100,11 +105,34 @@ def main(output_tag, in_tag,
         chisq_fix = chisq_all[itoy][index_marg_p1][index_marg_p2][index_hier]
         chisq_bf  = get_chisq_min(chisq_all[itoy])
         Dchisq_toy[itoy] = chisq_fix - chisq_bf
+        if do_brazilian:
+        #loop over MH, fc toys and marginalization points to calculate dchisq[toy][marg_point][MH] for Brazilian plots
+          for hierarchy in ["normal", "inverted"]:
+            index_hier = _hier_to_index[hierarchy]
+            for imarg_p2 in range(start_pt_marg_par2, start_pt_marg_par2 + npt_marg_par2):
+              for imarg_p1 in range(start_pt_marg_par1, start_pt_marg_par1 + npt_marg_par1):
+                Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier] = chisq_all[itoy][imarg_p1][imarg_p2][index_hier] - chisq_bf
+
+      if do_brazilian:
+        # Define Delta chisq Brazillian histograms for both MH:
+        Dchisq_brazilian_hist_nh = ROOT.TH1D("hDchisq_brazilian_hist_nh", "hDchisq_brazilian_hist_nh", 100, 0, math.ceil(max(Dchisq_toy)))
+        Dchisq_brazilian_hist_ih = ROOT.TH1D("hDchisq_brazilian_hist_ih", "hDchisq_brazilian_hist_ih", 100, 0, math.ceil(max(Dchisq_toy)))
 
       # For testing, fill a Delta chisq FC hist
       Dchisq_hist = ROOT.TH1D("hDchisq", "hDchisq", 100, 0, math.ceil(max(Dchisq_toy)))
       for itoy in range(0, ntoys_fc):
         Dchisq_hist.Fill(Dchisq_toy[itoy])
+        if do_brazilian:
+          #Fill Brazillian dchisq distributions for both MH 
+          for hierarchy in ["normal", "inverted"]:
+            index_hier = _hier_to_index[hierarchy]
+            for imarg_p2 in range(start_pt_marg_par2, start_pt_marg_par2 + npt_marg_par2):
+              for imarg_p1 in range(start_pt_marg_par1, start_pt_marg_par1 + npt_marg_par1):
+                if index_hier==0:
+                  Dchisq_brazilian_hist_nh.Fill(Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier])
+                else:
+                  Dchisq_brazilian_hist_ih.Fill(Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier])
+
 
       # Save to an output file
       output_file_name = output_tag + "__FCpt_" + str(ifc_p1)
@@ -115,6 +143,9 @@ def main(output_tag, in_tag,
       output_file = ROOT.TFile(output_file_name, "recreate")
       output_file.WriteObject(Dchisq_toy , "Dchi2_toy_vec")
       output_file.WriteObject(Dchisq_hist, "Dchi2_hist")
+      if do_brazilian:
+        output_file.WriteObject(Dchisq_brazilian_hist_nh,"Brazilian_dchi2_NH")
+        output_file.WriteObject(Dchisq_brazilian_hist_ih,"Brazilian_dchi2_IH")
 
       output_file.Close()
       del output_file
@@ -233,10 +264,12 @@ if __name__=="__main__":
   parser.add_argument('--max-val-marg-par2' , dest='max_val_marg_par2' , type=float, default=0        , help="For param 2: The last marginalisation grid point is at this value")
 
   # Other
-  parser.add_argument('--ntoys-fc'    , dest='ntoys_fc', type=int, default=10000, help="The number of FC toys at each grid point")
-  parser.add_argument('--fc-2d'       , dest='fc_2d'   , action="store_true"    , help="Specify this flag if you are doing 2D FC")
-  parser.add_argument('--fc-hierarchy', dest='fc_hier' , default="normal"       , help="The mass hierarchy that the FC toys were generated at")
-
+  parser.add_argument('--do-brazilian', dest='do_brazilian'   , default=False          , action="store_true"    , help="Specify this flag if you want to calculate dcisq for brazilian plot")
+  parser.add_argument('--ntoys-fc'    , dest='ntoys_fc'       , type=int, default=10000, help="The number of FC toys at each grid point")
+  parser.add_argument('--fc-2d'       , dest='fc_2d'          , action="store_true"    , help="Specify this flag if you are doing 2D FC")
+  parser.add_argument('--fc-hierarchy', dest='fc_hier'        , default="normal"       , help="The mass hierarchy that the FC toys were generated at")
+  
+ 
   o = parser.parse_args()
 
   if not(o.fc_hier == "normal" or o.fc_hier == "inverted"):
@@ -246,6 +279,6 @@ if __name__=="__main__":
   main(o.output_tag, o.in_tag,
        o.npt_fc_par1, o.start_pt_fc_par1, o.min_val_fc_par1, o.max_val_fc_par1, o.pts_fc_par1,
        o.npt_fc_par2, o.start_pt_fc_par2, o.min_val_fc_par2, o.max_val_fc_par2, o.pts_fc_par2,
-       o.ntoys_fc, o.fc_2d, o.fc_hier,
+       o.ntoys_fc, o.fc_2d, o.fc_hier, o.do_brazilian,
        o.npt_marg_par1, o.start_pt_marg_par1, o.min_val_marg_par1, o.max_val_marg_par1,
        o.npt_marg_par2, o.start_pt_marg_par2, o.min_val_marg_par2, o.max_val_marg_par2)
