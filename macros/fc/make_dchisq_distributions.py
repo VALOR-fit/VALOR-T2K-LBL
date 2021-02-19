@@ -91,10 +91,13 @@ def main(output_tag, in_tag,
 
       # Now that we've filled chisq_all, calculate the FC Delta chisq for each FC toy
       Dchisq_toy = ROOT.vector('double')(ntoys_fc,-1.0)   # Use a ROOT vector instead of a python list so that we can save it to the output ROOT file
-       
+      
       if do_brazilian:
         #A vector to store brazilian dchisq
         Dchisq_BR_toy = [[[[-1.0]*_n_hier for i in range(npt_marg_par2)] for j in range(npt_marg_par1)] for k in range(ntoys_fc)]
+        #Arrays to store dchi[toy] vectors fro each MH 
+        Dchisq_BR_vs_dcp_bin_vs_toy_nh = ROOT.TObjArray()
+        Dchisq_BR_vs_dcp_bin_vs_toy_ih = ROOT.TObjArray()
 
       index_hier = _hier_to_index[fc_hier]
       index_marg_p1 = fc_pt_to_marg_pt(ifc_p1, npt_fc_par1, min_val_fc_par1, max_val_fc_par1, pts_fc_par1,
@@ -114,6 +117,7 @@ def main(output_tag, in_tag,
                 Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier] = chisq_all[itoy][imarg_p1][imarg_p2][index_hier] - chisq_bf
 
       if do_brazilian:
+        #TODO: think if we really need to keep histograms 
         # Define Delta chisq Brazillian histograms for both MH:
         Dchisq_brazilian_hist_nh = ROOT.TH1D("hDchisq_brazilian_hist_nh", "hDchisq_brazilian_hist_nh", 150, 0, 100)#math.ceil(max(Dchisq_toy)))
         Dchisq_brazilian_hist_ih = ROOT.TH1D("hDchisq_brazilian_hist_ih", "hDchisq_brazilian_hist_ih", 150, 0, 100)#math.ceil(max(Dchisq_toy)))
@@ -133,6 +137,22 @@ def main(output_tag, in_tag,
                 else:
                   Dchisq_brazilian_hist_ih.Fill(Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier])
 
+      #Filling dchi barzilian arrays 
+      if do_brazilian:
+        for hierarchy in ["normal", "inverted"]:
+          ndex_hier = _hier_to_index[hierarchy]
+          for imarg_p2 in range(start_pt_marg_par2, start_pt_marg_par2 + npt_marg_par2):
+            for imarg_p1 in range(start_pt_marg_par1, start_pt_marg_par1 + npt_marg_par1):
+              vec_Dchi_bin = ROOT.TVectorD(ntoys_fc)
+              for itoy in range(0, ntoys_fc): 
+                   vec_Dchi_bin[itoy] = Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier]
+          
+              if index_hier==0:
+                Dchisq_BR_vs_dcp_bin_vs_toy_nh.Add(vec_Dchi_bin)
+              else:
+                 Dchisq_BR_vs_dcp_bin_vs_toy_ih.Add(vec_Dchi_bin)  
+              del vec_Dchi_bin
+
 
       # Save to an output file
       output_file_name = output_tag + "__FCpt_" + str(ifc_p1)
@@ -146,7 +166,8 @@ def main(output_tag, in_tag,
       if do_brazilian:
         output_file.WriteObject(Dchisq_brazilian_hist_nh,"Brazilian_dchi2_NH")
         output_file.WriteObject(Dchisq_brazilian_hist_ih,"Brazilian_dchi2_IH")
-
+        output_file.WriteObject(Dchisq_BR_vs_dcp_bin_vs_toy_nh,"Brazilian_dchi2_dcp_bin_vs_toy_vec_nh")
+        output_file.WriteObject(Dchisq_BR_vs_dcp_bin_vs_toy_ih,"Brazilian_dchi2_dcp_bin_vs_toy_vec_ih")
       output_file.Close()
       del output_file
       del Dchisq_toy
