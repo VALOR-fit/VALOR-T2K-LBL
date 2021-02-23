@@ -6,6 +6,7 @@ import array
 import numpy as np
 import sys
 import copy
+import ctypes
 from copy import deepcopy
 
 try:
@@ -227,8 +228,9 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
                               "in the file", fc_files[i]
                         sys.exit()
 
-                fc_critval_tgraph.SetLineStyle(fc_line_styles [i*(len(conf_levels)) +j])
-                fc_critval_tgraph.SetLineColor(fc_line_colours[i*(len(conf_levels)) +j])
+                if fc_line_styles and fc_line_colours:
+                    fc_critval_tgraph.SetLineStyle(fc_line_styles [i*(len(conf_levels)) +j])
+                    fc_critval_tgraph.SetLineColor(fc_line_colours[i*(len(conf_levels)) +j])
                 fc_tgraph_leg_label  = "FC" + " " + title_y + "_{crit.} " # Have to split this up so that the RooTex subscript/superscript doesn't mess up format()
                 fc_tgraph_leg_label += "({} CL)".format(util.ConfLevelAsStringRooTex(conf_level))
                 fc_critval_tgraph.SetName(fc_tgraph_leg_label)
@@ -492,7 +494,18 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
     output_file.Close()
     del output_file
 
+    get_2D_BF_points(dchisq_objects)
 
+#________________________________________________________________________________________________________
+def get_2D_BF_points(dchisq_objects):
+    for h in dchisq_objects:
+        if type(h) != ROOT.TH2D:
+            continue
+        x = ctypes.c_int(-999)
+        y = ctypes.c_int(-999)
+        z = ctypes.c_int(-999)
+        h.GetBinXYZ(h.GetMinimumBin(), x,y,z)
+        print "For hist named", h.GetName(), ", BF point = (", h.GetXaxis().GetBinCenter(x.value), ",", h.GetYaxis().GetBinCenter(y.value), ")"
 
 #________________________________________________________________________________________________________
 def add_2d_contours(multigraph, legend, conf_legend, dchisq_objs, critvals, leg_labels, conf_levels, colours, styles, line_width, line_color):

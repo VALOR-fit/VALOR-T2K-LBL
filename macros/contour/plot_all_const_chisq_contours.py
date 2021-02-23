@@ -84,15 +84,15 @@ title_args = {
     "mixing13"        : " --title-x \"sin^{2} #theta_{13}\" --title-y \"#Delta #chi^{2}\"",
     "mixing23"        : " --title-x \"sin^{2} #theta_{23}\" --title-y \"#Delta #chi^{2}\"",
     "dm23sq"          : {
-        "both"     : " --title-x \"#Delta m^{2}_{23} (NO) / |#Delta m^{2}_{31}| (IO) (eV^{2} / c^{4})\" --title-y \"#Delta #chi^{2}\"",
-        "normal"   : " --title-x \"#Delta m^{2}_{23} (eV^{2} / c^{4})\" --title-y \"#Delta #chi^{2}\"",
+        "both"     : " --title-x \"#Delta m^{2}_{32} (NO) / |#Delta m^{2}_{31}| (IO) (eV^{2} / c^{4})\" --title-y \"#Delta #chi^{2}\"",
+        "normal"   : " --title-x \"#Delta m^{2}_{32} (eV^{2} / c^{4})\" --title-y \"#Delta #chi^{2}\"",
         "inverted" : " --title-x \"|#Delta m^{2}_{31}| (eV^{2} / c^{4})\" --title-y \"#Delta #chi^{2}\""
     },
     "mixing13_cpv"    : " --title-x \"sin^{2} #theta_{13}\" --title-y \"#delta_{CP} (Radians)\"",
     "mixing23_cpv"    : " --title-x \"sin^{2} #theta_{23}\" --title-y \"#delta_{CP} (Radians)\"",
     "mixing23_dm23sq" : {
-        "both"     : " --title-x \"sin^{2} #theta_{23}\" --title-y \"#Delta m^{2}_{23} (NO) / |#Delta m^{2}_{31}| (IO) (eV^{2} / c^{4})\"",
-        "normal"   : " --title-x \"sin^{2} #theta_{23}\" --title-y \"#Delta m^{2}_{23} (eV^{2} / c^{4})\"",
+        "both"     : " --title-x \"sin^{2} #theta_{23}\" --title-y \"#Delta m^{2}_{32} (NO) / |#Delta m^{2}_{31}| (IO) (eV^{2} / c^{4})\"",
+        "normal"   : " --title-x \"sin^{2} #theta_{23}\" --title-y \"#Delta m^{2}_{32} (eV^{2} / c^{4})\"",
         "inverted" : " --title-x \"sin^{2} #theta_{23}\" --title-y \"|#Delta m^{2}_{31}| (eV^{2} / c^{4})\""
     }
 }
@@ -107,7 +107,7 @@ range_args = {
         "t2k"     : " --x-range 7e-3 50e-3"
     },
     "mixing23_cpv"    : None,
-    "mixing23_dm23sq" : " --x-range 0.4 0.65 --y-range 2.25e-3 2.75e-3"
+    "mixing23_dm23sq" : " --x-range 0.3 0.7 --y-range 2.20e-3 2.80e-3"
 }
 
 # Look on my Work, ye Mighty, and despair, for it is long and poorly organised...

@@ -1,8 +1,8 @@
 
 //___________________________________________________________________________
 void make_hybrid_data_asimov_toys(
- const char * config_file      = "analysis/t2k_analysis_configuration_oa2018_run1-9d_v1_postfit.xml",
- const char * tag              = "run1-9d_hybrid_4s_data_1s_AsimovA",
+ const char * config_file      = "analysis/t2k_analysis_configuration_oa2020_run1-10_v1_postfit.xml",
+ const char * tag              = "run1-10_hybrid_4s_data_1s_AsimovBFNO",
  const bool use_simple_binning = false
  )
 {
@@ -26,14 +26,14 @@ void make_hybrid_data_asimov_toys(
   }
   std::cout << "Pure data PDF integrals:\n" << cd->GetPDFIntegralAsString(opt_binning) << std::endl;
 
-  // Generate the Asimov A toy according to hardcoded osc param values
+  // Generate the Asimov BF NO toy according to hardcoded osc param values
   FitParamList * fp = util::GetFitParameterList("3f_osc");
-  if (fp->Exists(conv::kPhypMixing12)) { fp->Update(conv::kPhypMixing12, 0.304   ); }
-  if (fp->Exists(conv::kPhypMixing13)) { fp->Update(conv::kPhypMixing13, 0.0212  ); }
-  if (fp->Exists(conv::kPhypMixing23)) { fp->Update(conv::kPhypMixing23, 0.528   ); }
+  if (fp->Exists(conv::kPhypMixing12)) { fp->Update(conv::kPhypMixing12, 0.307   ); }
+  if (fp->Exists(conv::kPhypMixing13)) { fp->Update(conv::kPhypMixing13, 0.021825); }
+  if (fp->Exists(conv::kPhypMixing23)) { fp->Update(conv::kPhypMixing23, 0.555   ); }
   if (fp->Exists(conv::kPhypDm12sq  )) { fp->Update(conv::kPhypDm12sq  , 7.53E-5 ); }
-  if (fp->Exists(conv::kPhypDm23sq  )) { fp->Update(conv::kPhypDm23sq  , 2.509E-3); }
-  if (fp->Exists(conv::kPhypCPV     )) { fp->Update(conv::kPhypCPV     , -1.601  ); }
+  if (fp->Exists(conv::kPhypDm23sq  )) { fp->Update(conv::kPhypDm23sq  , 2.488E-3); }
+  if (fp->Exists(conv::kPhypCPV     )) { fp->Update(conv::kPhypCPV     , -2.0106 ); }
   cm->Generate(*fp, opt_binning);
   std::cout << "Pure Asimov PDF integrals:\n" << cm->GetPDFIntegralAsString(opt_binning) << std::endl;
 
