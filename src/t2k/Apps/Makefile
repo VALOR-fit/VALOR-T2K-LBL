@@ -1,8 +1,6 @@
 #
 # Makefile for VALOR/T2K apps
 #
-# NOTE 2020-06-25: Currently nothing to make, but keeping the instructions of an old DUNE app as an example
-#
 # Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
 #
 
@@ -16,15 +14,15 @@ include $(VALOR_EXPT)/make/Make.include
 
 T2K_LIBRARIES =
 
-TGT = #write_fd_prediction_pdf
+TGT = make_table_systematic_effects_t2k
 
 all: $(TGT)
 
-# Write out fd prediction pdf
+# Throw a user-specified parameter set N times and output a table containing the mean, RMS and RMS/mean for all samples, with T2K-specific calculations.
 #
-#write_fd_prediction_pdf: FORCE
-#	$(CXX) $(CXXFLAGS) -c write_fd_prediction_pdf.cxx $(INCLUDES)
-#	$(LD) $(LDFLAGS) write_fd_prediction_pdf.o $(LIBRARIES) -o $(VALOR_EXPT)/bin/valor_dune-write_fd_prediction_pdf
+make_table_systematic_effects_t2k: FORCE
+	$(CXX) $(CXXFLAGS) -c make_table_systematic_effects_t2k.cxx $(INCLUDES)
+	$(LD) $(LDFLAGS) make_table_systematic_effects_t2k.o $(LIBRARIES) -o $(VALOR_EXPT)/bin/valor_t2k-make_table_systematic_effects_t2k
 	
 #################### CLEANING
 
@@ -33,10 +31,10 @@ purge: FORCE
 
 clean: FORCE
 	$(RM) *.o *~ core
-	#$(RM) $(VALOR_EXPT)/bin/valor_dune-write_fd_prediction_pdf
+	$(RM) $(VALOR_EXPT)/bin/valor_t2k-make_table_systematic_effects_t2k
 
 distclean: FORCE
-	#$(RM) $(VALOR_EXPT_INSTALLATION_PATH)/bin/write_fd_prediction_pdf
+	$(RM) $(VALOR_EXPT_INSTALLATION_PATH)/bin/valor_t2k-make_table_systematic_effects_t2k
 
 FORCE:
 	
