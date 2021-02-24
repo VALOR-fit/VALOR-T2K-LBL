@@ -116,31 +116,14 @@ def main(output_tag, in_tag,
               for imarg_p1 in range(start_pt_marg_par1, start_pt_marg_par1 + npt_marg_par1):
                 Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier] = chisq_all[itoy][imarg_p1][imarg_p2][index_hier] - chisq_bf
 
-      if do_brazilian:
-        #TODO: think if we really need to keep histograms 
-        # Define Delta chisq Brazillian histograms for both MH:
-        Dchisq_brazilian_hist_nh = ROOT.TH1D("hDchisq_brazilian_hist_nh", "hDchisq_brazilian_hist_nh", 150, 0, 100)#math.ceil(max(Dchisq_toy)))
-        Dchisq_brazilian_hist_ih = ROOT.TH1D("hDchisq_brazilian_hist_ih", "hDchisq_brazilian_hist_ih", 150, 0, 100)#math.ceil(max(Dchisq_toy)))
-
       # For testing, fill a Delta chisq FC hist
       Dchisq_hist = ROOT.TH1D("hDchisq", "hDchisq", 100, 0, math.ceil(max(Dchisq_toy)))
       for itoy in range(0, ntoys_fc):
         Dchisq_hist.Fill(Dchisq_toy[itoy])
-        if do_brazilian:
-          #Fill Brazillian dchisq distributions for both MH 
-          for hierarchy in ["normal", "inverted"]:
-            index_hier = _hier_to_index[hierarchy]
-            for imarg_p2 in range(start_pt_marg_par2, start_pt_marg_par2 + npt_marg_par2):
-              for imarg_p1 in range(start_pt_marg_par1, start_pt_marg_par1 + npt_marg_par1):
-                if index_hier==0:
-                  Dchisq_brazilian_hist_nh.Fill(Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier])
-                else:
-                  Dchisq_brazilian_hist_ih.Fill(Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier])
-
       #Filling dchi barzilian arrays 
       if do_brazilian:
         for hierarchy in ["normal", "inverted"]:
-          ndex_hier = _hier_to_index[hierarchy]
+          index_hier = _hier_to_index[hierarchy]
           for imarg_p2 in range(start_pt_marg_par2, start_pt_marg_par2 + npt_marg_par2):
             for imarg_p1 in range(start_pt_marg_par1, start_pt_marg_par1 + npt_marg_par1):
               vec_Dchi_bin = ROOT.TVectorD(ntoys_fc)
@@ -164,8 +147,6 @@ def main(output_tag, in_tag,
       output_file.WriteObject(Dchisq_toy , "Dchi2_toy_vec")
       output_file.WriteObject(Dchisq_hist, "Dchi2_hist")
       if do_brazilian:
-        output_file.WriteObject(Dchisq_brazilian_hist_nh,"Brazilian_dchi2_NH")
-        output_file.WriteObject(Dchisq_brazilian_hist_ih,"Brazilian_dchi2_IH")
         output_file.WriteObject(Dchisq_BR_vs_dcp_bin_vs_toy_nh,"Brazilian_dchi2_dcp_bin_vs_toy_vec_nh")
         output_file.WriteObject(Dchisq_BR_vs_dcp_bin_vs_toy_ih,"Brazilian_dchi2_dcp_bin_vs_toy_vec_ih")
       output_file.Close()
