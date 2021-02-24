@@ -33,7 +33,8 @@ python_undefined_short = 2**32 -1
 
 _vec_name  = "Dchi2_toy_vec"
 _hist_name = "Dchi2_hist"
-
+_vec_br_nh_name="Brazilian_dchi2_dcp_bin_vs_toy_vec_nh"
+_vec_br_ih_name="Brazilian_dchi2_dcp_bin_vs_toy_vec_ih"
 #_______________________________________________________________________
 
 def main(in_filenames, out_filename):
@@ -45,31 +46,49 @@ def main(in_filenames, out_filename):
   for filename in in_filenames:
     in_file = ROOT.TFile(filename, "read")
     hist = in_file.Get(_hist_name)
-    lim_low  = min(lim_low , hist.GetXaxis().GetBinLowEdge(1))
-    lim_high = max(lim_high, hist.GetXaxis().GetBinLowEdge(hist.GetNbinsX()) + hist.GetXaxis().GetBinWidth(1))
+    lim_low     = min(lim_low , hist.GetXaxis().GetBinLowEdge(1))
+    lim_high    = max(lim_high, hist.GetXaxis().GetBinLowEdge(hist.GetNbinsX()) + hist.GetXaxis().GetBinWidth(1))
     nbins    = max(nbins, hist.GetNbinsX())
-    in_file.Close()
+    in_file.Close() 
     del in_file
 
   vec_combined = ROOT.vector('double')()
   hist_combined = ROOT.TH1D("hist_combined", "hist_combined", nbins, lim_low, lim_high)
-
+  
+  file_idx = 0 #need this for brazilian arrays reading 
   for filename in in_filenames:
     print "Reading from file", filename
-    in_file = ROOT.TFile(filename, "read")
+    in_file = ROOT.TFile(filename, "read")  
+
 
     dchisq_vals = list(in_file.Get(_vec_name))
     for dchisq_val in dchisq_vals:
       vec_combined.push_back(dchisq_val)
       hist_combined.Fill(dchisq_val)
 
+    #addining together info for each batch of 1000 toys for  each dcp bin 
+    br_nh_arr_tmp = in_file.Get(_vec_br_nh_name)
+    br_ih_arr_tmp = in_file.Get(_vec_br_ih_name)
+    if file_idx!=0: # for all next files add vectors for each bin 
+      for ibin in range (0, br_nh_arr_tmp.GetEntries()):
+        br_nh_arr[ibin].Add(br_nh_arr_tmp[ibin])
+
+      for ibin in range (0, br_ih_arr_tmp.GetEntries()):
+        br_ih_arr[ibin].Add(br_ih_arr_tmp[ibin])
+    else: #for the first file just read and save the array 
+      br_nh_arr = br_nh_arr_tmp.Clone()
+      br_ih_arr = br_ih_arr_tmp.Clone()
     in_file.Close()
     del in_file
+    file_idx=1 # incrementing counter after reading the first file 
+
 
   print "Saving to file", out_filename
   outfile = ROOT.TFile(out_filename, "recreate")
   outfile.WriteObject(vec_combined , _vec_name)
   outfile.WriteObject(hist_combined, _hist_name)
+  outfile.WriteObject(br_nh_arr, _vec_br_nh_name)
+  outfile.WriteObject(br_ih_arr, _vec_br_ih_name)
   outfile.Close()
   del outfile
 
