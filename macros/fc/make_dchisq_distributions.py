@@ -124,6 +124,7 @@ def main(output_tag, in_tag,
       if do_brazilian:
         for hierarchy in ["normal", "inverted"]:
           index_hier = _hier_to_index[hierarchy]
+          print "this is index hier now ", index_hier
           for imarg_p2 in range(start_pt_marg_par2, start_pt_marg_par2 + npt_marg_par2):
             for imarg_p1 in range(start_pt_marg_par1, start_pt_marg_par1 + npt_marg_par1):
               vec_Dchi_bin = ROOT.TVectorD(ntoys_fc)
@@ -131,9 +132,10 @@ def main(output_tag, in_tag,
                    vec_Dchi_bin[itoy] = Dchisq_BR_toy[itoy][imarg_p1][imarg_p2][index_hier]
           
               if index_hier==0:
-                Dchisq_BR_vs_dcp_bin_vs_toy_nh.Add(vec_Dchi_bin)
+                print"Addding NH vector to array"
+                Dchisq_BR_vs_dcp_bin_vs_toy_nh.AddLast(vec_Dchi_bin) #Used TObjectArray::AddLast, it is an analog of "append". TObjectArray::Add doesn't expanding array therefore nothing is being written if an array was created empty
               else:
-                 Dchisq_BR_vs_dcp_bin_vs_toy_ih.Add(vec_Dchi_bin)  
+                 Dchisq_BR_vs_dcp_bin_vs_toy_ih.AddLast(vec_Dchi_bin)  
               del vec_Dchi_bin
 
 
