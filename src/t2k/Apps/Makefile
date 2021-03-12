@@ -1,6 +1,8 @@
 #
 # Makefile for VALOR/T2K apps
 #
+# NOTE 2020-06-25: Currently nothing to make, but keeping the instructions of an old DUNE app as an example
+#
 # Costas Andreopoulos <costas.andreopoulos \at stfc.ac.uk>
 #
 
@@ -14,16 +16,27 @@ include $(VALOR_EXPT)/make/Make.include
 
 T2K_LIBRARIES =
 
-TGT = make_table_systematic_effects_t2k
+TGT = bievent_build \
+      bievent_plot
+#write_fd_prediction_pdf
 
 all: $(TGT)
 
-# Throw a user-specified parameter set N times and output a table containing the mean, RMS and RMS/mean for all samples, with T2K-specific calculations.
+# Write out fd prediction pdf
 #
-make_table_systematic_effects_t2k: FORCE
-	$(CXX) $(CXXFLAGS) -c make_table_systematic_effects_t2k.cxx $(INCLUDES)
-	$(LD) $(LDFLAGS) make_table_systematic_effects_t2k.o $(LIBRARIES) -o $(VALOR_EXPT)/bin/valor_t2k-make_table_systematic_effects_t2k
+#write_fd_prediction_pdf: FORCE
+#	$(CXX) $(CXXFLAGS) -c write_fd_prediction_pdf.cxx $(INCLUDES)
+#	$(LD) $(LDFLAGS) write_fd_prediction_pdf.o $(LIBRARIES) -o $(VALOR_EXPT)/bin/valor_dune-write_fd_prediction_pdf
 	
+bievent_build: FORCE
+	$(CXX) $(CXXFLAGS) -c bievent_build.cxx $(INCLUDES)
+	$(LD) $(LDFLAGS) bievent_build.o $(LIBRARIES) -o $(VALOR_EXPT)/bin/valor-bievent_build
+
+bievent_plot: FORCE
+	$(CXX) $(CXXFLAGS) -c bievent_plot.cxx $(INCLUDES)
+	$(LD) $(LDFLAGS) bievent_plot.o $(LIBRARIES) -o $(VALOR_EXPT)/bin/valor-bievent_plot
+
+
 #################### CLEANING
 
 purge: FORCE
@@ -31,10 +44,14 @@ purge: FORCE
 
 clean: FORCE
 	$(RM) *.o *~ core
-	$(RM) $(VALOR_EXPT)/bin/valor_t2k-make_table_systematic_effects_t2k
+	$(RM) $(VALOR_EXPT)/bin/valor-bievent_build
+	$(RM) $(VALOR_EXPT)/bin/valor-bievent_plot
+	#$(RM) $(VALOR_EXPT)/bin/valor_dune-write_fd_prediction_pdf
 
 distclean: FORCE
-	$(RM) $(VALOR_EXPT_INSTALLATION_PATH)/bin/valor_t2k-make_table_systematic_effects_t2k
+	$(RM) $(VALOR_EXPT_INSTALLATION_PATH)/bin/valor-bievent_build
+	$(RM) $(VALOR_EXPT_INSTALLATION_PATH)/bin/valor-bievent_plot
+	#$(RM) $(VALOR_EXPT_INSTALLATION_PATH)/bin/write_fd_prediction_pdf
 
 FORCE:
 	
