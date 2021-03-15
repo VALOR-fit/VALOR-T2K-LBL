@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 #	 Brazilian plot  macro 
-# 	
-# 	Takes dchi2 brazilian ( different from FC)
-# 	Calculates one or two sided 1&2 sigma regions and plots it 
+# 	Calculates brazilian dchi2 value at each marginalization point for each pseudo experiment (toy) i.e. dchi2[mpt][toy]
+# 	Calculates one and two sigma intervals either for all toys ( one sided plot) 
+# 	Or with respect to a median toy ( two-sided plot)
+#		Usually we create it in T2K data BF point for normal or inverted mh
+# 	But can also be created at any other point for a cross-check 
 #	
 # 	Maria Antonova <maria.antonova \at ific.uv.es>
 # 	February 2021
@@ -12,7 +14,6 @@ import ROOT
 import sys
 import os
 import math
-import numpy as np
 from ROOT import gPad
 sys.path.append(os.path.abspath(os.environ["VALOR_FMWK"] + "/src/valor/Utilities/"))
 
@@ -27,35 +28,37 @@ valor = ROOT.valor
 conv =  valor.conv
 util =  valor.util
 
-#creating a fancy golden yellow color 
+#dchi2  data fit histogram name 
+_dchi2_dhname="chi2_1d_fit"
+#creating a fancy golden yellow and green colours  
 golden = ROOT.TColor.GetFreeColorIndex()
 cg=ROOT.TColor(golden, 1,0.87,0)
 bgreen = ROOT.TColor.GetFreeColorIndex()
 cgr=ROOT.TColor(bgreen, 0,0.61,0.23)
 
-_hist_name = "Dchi2_hist" # NOTE: dchi2 FC histogram, will be used only to set histograms
-_dchi2_arr_nh_name="Brazilian_dchi2_dcp_bin_vs_toy_vec_nh" #Arrays to store dchi[toy] vectors for each marginalization point of dcp
-_dchi2_arr_ih_name="Brazilian_dchi2_dcp_bin_vs_toy_vec_ih" #Arrays to store dchi[toy] vectors for each marginalization point of dcp 
+_dchi2_arr_nh_name="Brazilian_dchi2_dcp_bin_vs_toy_vec_nh" #TObjArray storing chi[toy] vectors for each marginalization point of dcp 
+_dchi2_arr_ih_name="Brazilian_dchi2_dcp_bin_vs_toy_vec_ih" #TObjArray storing chi[toy] vectors for each marginalization point of dcp 
 #_______________________________________________________________________
 def draw_one_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
 	print "Ready to generate one-sided plot? Off we go!"
 
+	#combine all batches of marg toys in one
 	nh_dchi_list, ih_dchi_list = combine(in_filenames)
 	
 	#Get data dchi distribution 
 	fdatan = ROOT.TFile(data_fit_nh)
-	hdata_nh = fdatan.Get("chi2_1d_fit")
+	hdata_nh = fdatan.Get(_dchi2_dhname)
 	fdatai = ROOT.TFile(data_fit_ih)
-	hdata_ih = fdatai.Get("chi2_1d_fit")
+	hdata_ih = fdatai.Get(_dchi2_dhname)
 
-	#set histograms 
+	#set +- 1/2 sigma histograms 
 	dchi2_nh_p1sigma=hdata_nh.Clone("hdchi2_nh_p1sigma") 
 	dchi2_ih_p1sigma=hdata_nh.Clone("hdchi2_ih_p1sigma") 
 
 	dchi2_nh_p2sigma=hdata_nh.Clone("hdchi2_nh_p2sigma") 
 	dchi2_ih_p2sigma=hdata_nh.Clone("hdchi2_ih_p2sigma") 
 
-	#fill 1/2 sigma  histograms 
+	#fill +- 1/2 sigma  histograms 
 	print "Filling 1&2 sigma  histogram for each point"
 	for ibin in range (0, len(nh_dchi_list)): 
 		dchi2_nh_p1sigma.SetBinContent(ibin+1, calc_critical(nh_dchi_list[ibin], conv.kCL1Sigma))
@@ -69,7 +72,7 @@ def draw_one_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
 	#Plotting settings 
 	fout_name = out_filename+".root"
 	fout = ROOT.TFile(fout_name, "recreate")
-	
+	#NH
 	dchi2_nh_p2sigma.GetYaxis().SetRangeUser(0, 25)
 	dchi2_nh_p1sigma.GetYaxis().SetRangeUser(0, 25)
 	dchi2_nh_p2sigma.SetLabelFont(42)
@@ -81,6 +84,7 @@ def draw_one_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
 	dchi2_nh_p2sigma.GetXaxis().SetTitleSize(0.05)
 	dchi2_nh_p2sigma.GetYaxis().SetTitleSize(0.05)
 	dchi2_nh_p2sigma.GetYaxis().SetLabelSize(0.05)
+	
 	#IH
 	dchi2_ih_p2sigma.GetYaxis().SetRangeUser(0, 40)
 	dchi2_ih_p1sigma.GetYaxis().SetRangeUser(0, 40)
@@ -103,7 +107,6 @@ def draw_one_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
  	lBrazilianPlot_nh.SetTextSize(0.045)
 	lBrazilianPlot_nh.AddEntry(dchi2_nh_p1sigma,"68.27% of  pseudo-experiments","f")
 	lBrazilianPlot_nh.AddEntry(dchi2_nh_p2sigma,"95.45% of  pseudo-experiments","f")
-	#lBrazilianPlot_nh.AddEntry(median_nh,"Median pseudo-experiment","l")
 	lBrazilianPlot_nh.AddEntry(hdata_nh,"Data","l")
 
 	#Set up a legend 
@@ -114,7 +117,6 @@ def draw_one_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
  	lBrazilianPlot_ih.SetTextSize(0.045)
 	lBrazilianPlot_ih.AddEntry(dchi2_ih_p1sigma,"68.27% of  pseudo-experiments","f")
 	lBrazilianPlot_ih.AddEntry(dchi2_ih_p2sigma,"95.45% of  pseudo-experiments","f")
-	#lBrazilianPlot_ih.AddEntry(median_ih,"Median pseudo-experiment","l")
 	lBrazilianPlot_ih.AddEntry(hdata_ih,"Data","l")
 	
 	#p2, yellow 
@@ -128,6 +130,7 @@ def draw_one_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
 	dchi2_nh_p1sigma.SetLineColor(bgreen)
 	dchi2_ih_p1sigma.SetLineColor(bgreen)
 
+ 	hdata_nh.SetLineStyle(1)
  	hdata_nh.SetLineColor(1)
  	hdata_nh.SetLineWidth(2)
 
@@ -168,14 +171,15 @@ def draw_one_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
 def draw_two_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
 	print "Ready to generate two-sided plot? Off we go!"
 	
+	#combine all batches of marg toys in one
 	nh_dchi_list, ih_dchi_list = combine(in_filenames)	
 	
 	#Get data dchi distribution 
 	fdatan = ROOT.TFile(data_fit_nh)
-	hdata_nh = fdatan.Get("chi2_1d_fit")
+	hdata_nh = fdatan.Get(_dchi2_dhname)
 
 	fdatai = ROOT.TFile(data_fit_ih)
-	hdata_ih = fdatai.Get("chi2_1d_fit")
+	hdata_ih = fdatai.Get(_dchi2_dhname)
 
 	#set histograms for 
 	#p1 sigma
@@ -253,27 +257,27 @@ def draw_two_sided(in_filenames, out_filename, data_fit_nh, data_fit_ih):
 	dchi2_ih_p2sigma.GetYaxis().SetTitleSize(0.05)
 	dchi2_ih_p2sigma.GetYaxis().SetLabelSize(0.05)
 
-	#first the most transparent layer,p2. Should be yellow to make a "band effect"
+	#p2 yellow 
 	dchi2_nh_p2sigma.SetFillColor(golden)
 	dchi2_ih_p2sigma.SetFillColor(golden) 
 	dchi2_nh_p2sigma.SetLineColor(golden)
 	dchi2_ih_p2sigma.SetLineColor(golden) 
 
-	#next p1, green and a bit less transparent
+	#p1, green 
 	dchi2_nh_p1sigma.SetFillColor(bgreen)
 	dchi2_ih_p1sigma.SetFillColor(bgreen)
 	dchi2_nh_p1sigma.SetLineColor(bgreen)
 	dchi2_ih_p1sigma.SetLineColor(bgreen)
 
-	#m1 yellow 
+	#m1 Should be yellow to make a "band effect"
 	dchi2_nh_m1sigma.SetFillColor(golden)
 	dchi2_ih_m1sigma.SetFillColor(golden)
 	dchi2_nh_m1sigma.SetLineColor(golden)
 	dchi2_ih_m1sigma.SetLineColor(golden)
 
-	#m2, white as it will be kinda cutting out this region from the band 
-	dchi2_nh_m2sigma.SetFillColor(19)
-	dchi2_ih_m2sigma.SetFillColor(19)
+	#m2, white as it will be cutting out this region from the band 
+	dchi2_nh_m2sigma.SetFillColor(0)
+	dchi2_ih_m2sigma.SetFillColor(0)
 	dchi2_nh_m2sigma.SetLineColor(golden)
 	dchi2_ih_m2sigma.SetLineColor(golden)
 
@@ -363,11 +367,11 @@ def combine(in_filenames):
 	_ih_dchi_list = []
 
 	print "Combining dchi2 values for each marg point form all batch of toys. Can take some time. Be patient"
-	file_idx = 0 #need this for brazilian arrays reading 
+	file_idx = 0 #need this for brazilian arrays reading, to copy first array and append all next 
 	for filename in in_filenames:
 		print "Reading from file", filename
 		in_file = ROOT.TFile(filename, "read")  
-		#addining together info for each batch of 1000 toys for  each dcp bin 
+		#addining together info for each batch of 1000 toys for each dcp bin 
 		br_nh_arr_tmp = in_file.Get(_dchi2_arr_nh_name)
 		br_ih_arr_tmp = in_file.Get(_dchi2_arr_ih_name)
 		if file_idx==0: # clone first array 
@@ -385,7 +389,7 @@ def combine(in_filenames):
 		file_idx+=1 # incrementing counter after reading the first file 
 	return [_nh_dchi_list,_ih_dchi_list]
 #_______________________________________________________________________
-def as_list(in_array): #converts an TObjArray of TVectorTs in to list of lists, as it is better to append lists in a loop and then convert these to np arrays 
+def as_list(in_array): #converts an TObjArray of TVectorTs in to list of lists, as it is way better to work with lists in python 
 	dchi_mpt_list = []
 
 	if in_array.GetEntries() ==0:
@@ -456,11 +460,11 @@ if __name__=="__main__":
  	import argparse
 
  	parser = argparse.ArgumentParser(description="Generate Brazilian plot")
- 	parser.add_argument("-f", "--filenames", dest="in_filenames", nargs="+", help="Input ROOT filenames containing dchisq arrays.")
- 	parser.add_argument("-o", "--output"   , dest="out_filename"           , help="Output ROOT filename")
- 	parser.add_argument("-d", "--data-fit-nh"   , dest="data_fit_nh"    , help="File containing dchi2 data fit for NH")
- 	parser.add_argument("-i", "--data-fit-ih"   , dest="data_fit_ih"    , help="File containing dchi2 data fit for IH")
-	parser.add_argument('--two-sided', dest='two_sided'   , default=False          , action="store_true"    , help="Set this flag if you want to plot two side band ")
+ 	parser.add_argument("-f", "--filenames"			, dest="in_filenames", nargs="+"													, help="Input ROOT filenames containing chi2 arrays.")
+ 	parser.add_argument("-o", "--output"   			, dest="out_filename"           													, help="Output ROOT filename")
+ 	parser.add_argument("-d", "--data-fit-nh"   , dest="data_fit_nh"    																	, help="File containing dchi2 data fit for NH")
+ 	parser.add_argument("-i", "--data-fit-ih"   , dest="data_fit_ih"    																	, help="File containing dchi2 data fit for IH")
+	parser.add_argument('--two-sided'						, dest='two_sided'   , default=False, action="store_true"	, help="Set this flag if you want to plot two side band ")
 	args = parser.parse_args()
 	if args.two_sided:
 		draw_two_sided(args.in_filenames, args.out_filename, args.data_fit_nh, args.data_fit_ih)
