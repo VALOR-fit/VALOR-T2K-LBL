@@ -3,7 +3,6 @@
 ntoys                                |   integer      |  mandatory  |   1
 tag                                  |   string       |  optional   |   ellipse_Run1_10
 config                               |   string       |  mandatory  |   -
-prior-file                           |   string       |  mandatory  |   priors/t2k_run_1-9d_reactor.xml
 physics-hypothesis                   |   string       |  optional   |   3f_osc
 fit-param-opt                        |   string       |  optional   |   NONE
 param-values-option                  |   string       |  optional   |   randomize-all;prefit-errors
@@ -27,5 +26,7 @@ ss12                                 |   doublevec    |  mandatory  |   0.304,0.
 ss13                                 |   doublevec    |  mandatory  |   0.02235,0.0226125     
 ss23                                 |   doublevec    |  mandatory  |   0.450,0.500,0.550     
 dm12                                 |   doublevec    |  mandatory  |   7.53E-5,7.53E-5     
-dm23                                 |   doublevec    |  mandatory  |   2.49E-3,2.46E-3     
+dm23                                 |   doublevec    |  mandatory  |   2.49E-3,-2.46E-3     
 zdmsq12abs23,foglilisi               |   boolean_list |  optional   |   dmsq12abs23
+syst-prior-file                      |   string       |  mandatory  |   priors/t2k_run_1-10_syst_param_priors.xml
+osc-prior-file                       |   string       |  mandatory  |   priors/t2k_run_1-9d_reactor.xml
