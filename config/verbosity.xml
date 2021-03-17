@@ -37,11 +37,12 @@
 
   <priority msgstream="fitnt_conv">                     NOTICE </priority>
   
+  <priority msgstream="bievent">                        NOTICE </priority>
   <priority msgstream="make_minidst">                   NOTICE </priority>
   <priority msgstream="make_fd_minidst">                NOTICE </priority>
   <priority msgstream="make_fastmc_minidst">            NOTICE </priority>
   <priority msgstream="make_response_func">             NOTICE </priority>
-  <priority msgstream="RFL">                            NOTICE </priority>
+  <priority msgstream="RFL">                            ERROR  </priority>
   <priority msgstream="KBCubHcmbMondrian">              ERROR  </priority>
   <priority msgstream="Binning">                        ERROR  </priority>
   <priority msgstream="SingleSampleKineBinning">        ERROR  </priority>
@@ -50,7 +51,7 @@
   <priority msgstream="make_sbncode_minidst">           NOTICE  </priority>
   <priority msgstream="Marginalisation">                NOTICE </priority>
   <priority msgstream="UtlOscillation">                 NOTICE </priority>
-  <priority msgstream="Interpolator">                   WARN   </priority>
+  <priority msgstream="Interpolator">                   ERROR  </priority>
   <priority msgstream="ToyStream">                      NOTICE </priority>
   <priority msgstream="ToyBuilder">                     NOTICE </priority>
 
