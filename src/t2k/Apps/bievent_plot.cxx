@@ -22,6 +22,7 @@
 #include "TLatex.h"
 #include "TMarker.h"
 #include "TMath.h"
+#include <TStyle.h> 
 //valor 
 #include "valor/FitCore/CompoundFitElements.h"
 #include "valor/FitCore/FitModelABC.h"
@@ -62,6 +63,8 @@ int main(int argc, char** argv)
 void bievent_plot
 (CmdLnArgList& arg)
 {
+   gStyle->SetOptStat(0);
+   gStyle->SetOptTitle(0);
    Messenger::Instance()->Configure(util::CompleteConfigPath(arg.GetString("mesg-thresholds")));
 // get data, events and nominal files 
    string events_file   = arg.GetString("events-file");
@@ -101,13 +104,16 @@ void bievent_plot
          }
       }
    }
+   //NOTE: the idea is to plot a contour, containing 68% of toys at  data BF point 
+
    if (arg.Exists("display-errors")){
-      LOG("valor_dune", pINFO) << "Will display systematics at  point dcp" << a << " theta23 " << b << "and for mass hierarchy  "<< c;
+      
       //add conversion abc to normal points  
       a = arg.GetInt("syst-dcp"); // UTB: first_param
       b = arg.GetInt("syst-theta23");// UTB: second_param
       c = arg.GetInt("syst-mh");// UTB third_param
-      display_errors[a][b][c] = true;// Systematics at dcp = -pi/2, ss23 = 0.5, NH
+      LOG("valor_dune", pINFO) << "Will display systematics at  point dcp " << a << " theta23 " << b << " and for mass hierarchy  "<< c;
+      display_errors[a][b][c] = true;// Systematics at dcp = -pi/2, ss23 = 0.5, NH for that  a == 2, b == 1, c ==0
    }
    double deltaCP_first = -TMath::Pi();
    double deltaCP_last = +TMath::Pi();
@@ -131,10 +137,10 @@ void bievent_plot
    TH1D* hFHCEvents[dcp_npt][N23][NMH];
    TH1D* hRHCEvents[dcp_npt][N23][NMH];
 
-   CompoundFitElements* elements = new CompoundFitElements();
-   elements->Read(util::CompleteConfigPath(arg.GetString("config")));
-   FitModelABC* model = elements->FitModel();
-   FitDataABC* data = elements->FitData();
+   //CompoundFitElements* elements = new CompoundFitElements();
+   //elements->Read(util::CompleteConfigPath(arg.GetString("config")));
+   //FitModelABC* model = elements->FitModel();
+   //FitDataABC* data = elements->FitData();
 
 
    //SuperkObservation * skobs_fakedata = new SuperkObservation;// FitABC data 
@@ -231,7 +237,7 @@ void bievent_plot
    // Init histogram
   
    TH2D *hInit = new TH2D("hInit", "hInit", 150, 0, 150, 25, 0, 25);
-   double xmax = 100.0;
+   double xmax = 130.0;
    double xmin = 25.0;
    double ymin = 4.0;
    double ymax = 25.0;
@@ -307,6 +313,7 @@ void bievent_plot
                hEventsSyst[idcp][iss23][imh]->SetLineColor(kBlue);
                hEventsSyst[idcp][iss23][imh]->SetLineStyle(3);
                hEventsSyst[idcp][iss23][imh]->Draw("cont3 same");
+              
 /*
                TEllipse eventsEllipse(hEvents[idcp][iss23][imh]->GetMean(1),
                      hEvents[idcp][iss23][imh]->GetMean(2),
@@ -337,7 +344,7 @@ void bievent_plot
    gN_events_data->SetMarkerStyle(23);
    gN_events_data->Draw("p");
 
-   TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-9 Preliminary");
+   TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-10 Preliminary");
    title->SetTextSize(0.05);
    title->Draw();
    TLatex* caveat = new TLatex(ctx, 1.01 * ty, "Final systematics pending");
@@ -352,8 +359,8 @@ void bievent_plot
    ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1]{0.50}, #color[2]{0.45}, #color[4]{0.55}","l");
 //   ldcp_all->AddEntry(&gN_events[0][0],"sin^{2} #theta_{23} = 0.45","l");
 //   ldcp_all->AddEntry(&gN_events[2][0],"sin^{2} #theta_{23} = 0.55","l");
-   ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.44#times10^{-3} eV^{2}/c^{4}","l");
-   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{13} = 2.41#times10^{-3} eV^{2}/c^{4}","l");
+   ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.49#times10^{-3} eV^{2}/c^{4}","l");
+   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{13} = -2.46#times10^{-3} eV^{2}/c^{4}","l");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][3],"#delta_{CP} = #pi","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][2],"#delta_{CP} = +#pi/2","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][1],"#delta_{CP} = 0","p");
