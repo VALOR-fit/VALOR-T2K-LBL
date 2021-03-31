@@ -38,7 +38,7 @@ python_undefined = 2L*sys.maxint+1
 # At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
 beams = [conv.kbJPARC_FHC, conv.kbJPARC_RHC]
 samples = collections.OrderedDict()
-samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe, conv.ksMultiRmu1de, conv.ksMultiRmu2de]
+samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe, conv.ksMultiRmu]
 samples[conv.kbJPARC_RHC] = [conv.ks1Rmu, conv.ks1Re]
 
 types = ["nuebar_x_nuebar"  ,  # The naming conventions used by the input SK MC files
@@ -159,7 +159,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       Theta_reco[0] = calc_theta_degrees(event, sample[0])
       temp_enu_reco, plep_reco = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])
       enu_reco[0]   = temp_enu_reco   # Already in GeV
-      wght[0]       = group_misc_weights(event, neut_mode, sample[0])                          # Group all of the standard multiplicative NIWG weights into a single weight
+      wght[0]       = group_misc_weights(event, neut_mode, sample[0])# Group all of the standard multiplicative NIWG weights into a single weight
 
       if plep_reco < 0. or enu_reco[0] < 0. \
          or (is_oscillated and not util.ModeIsCC(reac_mode[0])):
@@ -251,16 +251,14 @@ def get_scale(file_in):
 # Get the selection corresponding to the input file
 def get_selection(file_in_name):
   selection = conv.ksUndefined
-  if "cc1piselec" in file_in_name:
+  if "_cc1piselec" in file_in_name:
     selection = conv.ksMultiRe
   elif "nueselec" in file_in_name:
     selection = conv.ks1Re
   elif "numuselec" in file_in_name:
     selection = conv.ks1Rmu 
-  elif "numucc1pi1deselec"  in file_in_name:  
-    selection = conv.ksMultiRmu1de  
-  elif "numucc1pi2deselec"  in file_in_name:  
-    selection = conv.ksMultiRmu2de
+  elif "numucc1piselec"  in file_in_name:  
+    selection = conv.ksMultiRmu
   else:
     print "FATAL: Could not determine the selection for input file", file_in_name
     util.Die(-1)
@@ -311,7 +309,7 @@ def get_pot_weight(this_scale):
 def calc_theta_degrees(event, sample):
   # lep_dir contains info on the lepton direction and is dependant on the sample
   costheta = ROOT.Double(-999.)
-  if  (sample == conv.ksMultiRmu1de) or  (sample == conv.ksMultiRmu2de) :
+  if  (sample == conv.ksMultiRmu):
     fqmrmom = c_to_pyroot_array_hack(event.fqmrmom,200,6)
     lep_dir = c_to_pyroot_array_hack(event.fqmrdir,200,6, 3)
     if (fqmrmom[event.ipp][0] < fqmrmom[event.ipp][1]):
@@ -360,7 +358,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     # Must use reco info for consistency with how we select the Erec equation
     mass = me
     mom = event.fqmome
-  elif (sample == conv.ksMultiRmu1de) or (sample == conv.ksMultiRmu2de):
+  elif (sample == conv.ksMultiRmu):
     mass = mpi #Muon momentum taken from a 2Ring PiPi fit so use pion mass to take this into account
     mrmom = c_to_pyroot_array_hack(event.fqmrmom, 200, 6)
     if (mrmom[event.ipp][0] <mrmom[event.ipp][1]):
@@ -395,7 +393,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
     ereco_MeV = event.erec
   else:
-    if sample != conv.ksMultiRe:
+    if sample != conv.ksMultiRe and sample!=conv.ksMultiRmu:
       ereco_MeV  = (mn - Vnuc)*elep - mass*mass/2.
       ereco_MeV += mn*Vnuc - Vnuc*Vnuc/2.
       ereco_MeV += (mp*mp - mn*mn)/2.

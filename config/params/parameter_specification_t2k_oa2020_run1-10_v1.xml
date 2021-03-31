@@ -3172,7 +3172,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <type> response </type>
 
     <categories>
       <category>  BANFF  </category>
