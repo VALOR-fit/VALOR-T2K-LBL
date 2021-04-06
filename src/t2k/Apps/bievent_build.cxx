@@ -1,6 +1,11 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot contributions from various event modes in the predicted SuperK 1Re or 1Rmu spectrum.
+// Generate input for the plot of  contributions from various event modes in the predicted SuperK 
+// 1) e-like neutrino and antineutrino spectra  (--compare-by-nu-antinu)
+// 2) e-like neutrino events with Erec below or above 500MeV (--compare-by-ereco)
+//
+// April 2021 
+// Maria Antonova  <maria.antonova \at ific.uv.es>
 //
 // Costas Andreopoulos
 // ------------------------------------------------------------------------------------------------
@@ -15,8 +20,8 @@
 #include "TFile.h"
 #include "TSystem.h"
 #include "TMarker.h"
-// ToDo:check all includes
-// fmwk
+// TODO:check all includes
+
 #include "valor/Conventions/Opt.h"
 #include "valor/CmdLine/CmdLnArgList.h"
 #include "valor/Utilities/Rnd.h"
@@ -97,13 +102,13 @@ void Bievent_build(CmdLnArgList& arg)
   
    string hypothesis       = arg.GetString("physics-hypothesis");
    string fplopt           = arg.GetString("fit-param-opt");
-   bool disable_banff_tuning = false; //UWAGA: !!!!!!!! this is not meant to be this way. It is just to make sure systematics is actually applied 
-   //if(arg.Exists("force-untuned"))
-   //{
-   //   disable_banff_tuning = true;
-   //   LOG("bievent", pNOTICE) << "Forcing paramters to their untuned values";
-   //};
-
+   bool disable_banff_tuning = false; 
+   /*if(arg.Exists("force-untuned"))
+   {
+      disable_banff_tuning = true;
+      LOG("bievent", pNOTICE) << "Forcing paramters to their untuned values";
+   };
+*/
    double deltaCP_first = -TMath::Pi();
    double deltaCP_last = +TMath::Pi();
    const int dcp_npt = arg.GetInt("dcp-npt"); 
@@ -121,22 +126,21 @@ void Bievent_build(CmdLnArgList& arg)
    double betabar  = arg.GetDouble("input-betabar");
 
 
+   //Data BF point to generate systematic contour 
+   double bf_dm23sq   = arg.GetDouble("bf-dm23sq");
+   double bf_deltacp  = arg.GetDouble("bf-deltacp");
+   double bf_mixing23 = arg.GetDouble("bf-mixing23");
+   string bf_hier     = arg.GetString("bf-hier");
+
  // PDG 2016 best fits
    vector<double> ss12 =arg.GetDoubleVec("ss12");
    vector<double> dm12 =arg.GetDoubleVec("dm12");
-   // 2018 best fit values from 2D fits (including IH shift for dmsq23)
    vector<double> ss13 = arg.GetDoubleVec("ss13");
    vector<double> dm23 = arg.GetDoubleVec("dm23");
-   //dm23[1] = -0.00246;
-   cout<<"dm23 for NH is "<< dm23[0]<< " and for IH "<< dm23[1];
-      //dm23[2] = dm23[2] - dm12[2]; //IH shift for dmsq23 // not shure if we stil need this. Do we? 
-
-   // Alternative values to use for sinsqtheta23
    vector<double> ss23 = arg.GetDoubleVec("ss23");
 
 
    //Setting global options 
-   //Opt::Instance()->gMassHierarchyAssumed = ( (arg.GetBool("inverted"))     ? conv::kNmhInverted      : conv::kNmhNormal);
    Opt::Instance()->gOscMixingParamChoice = ( (arg.GetBool("sinsq2theta"))  ? conv::kNuMixSinsq2Theta : conv::kNuMixSinsqTheta);
    Opt::Instance()->gOscOctantChoice      = ( (arg.GetBool("second-octant"))? conv::kNuOctantTwo      : conv::kNuOctantOne);
    conv::NuOscDmsqScheme_t dmsq_scheme = util::DmsqSchemeFromString(arg.GetString("dmsq-scheme"));
@@ -166,27 +170,8 @@ void Bievent_build(CmdLnArgList& arg)
    elements->Read(config_path.c_str());
    FitModelABC * model = elements->FitModel();
 
-   // Set and update fpl 
-   //const CorrelatedSystematics * syst = cm->GetSystematics(); //  probably we need this line 
    FitParamList * fp = util::GetFitParameterList(hypothesis.c_str(), fplopt.c_str());
-   LOG("bievent", pDEBUG) << "is phys before updtae " << util::AllWithinLimits(*fp);
-   ////DBUG CODE -----------
-   //for (int iparam = 0 ; iparam < fp->Size(); iparam++) {
-   // PhysParamId_t p = fp->WhichParam(iparam);
-   // if(!ParameterPool::Instance()->IsParamInPool(p)) {
-   //   LOG("bievent", pFATAL) << "The parameter \'" << util::NameRegistry::Instance()->ParamAsString(p)
-   //                            << "\' was in the FPL but not the ParameterPool";
-   //   util::Die(-1);
-   // }
-   // const Parameter & param = ParameterPool::Instance()->GetParam(p);
-//
-   // double value = fp->CurrValueByIndex(iparam);
-   // if (not param.IsWithinLimits(value)) {
-   //   LOG("bievent", pDEBUG) << "prameter  " << util::NameRegistry::Instance()->ParamAsString(p) << " is not within PL with value " << value;
-   //       }
-   //}
 
-   //DBUG CODE -----------
 
    //Update fpl
    if (fp->Exists(conv::kPhypMixing12)) { fp->Update(conv::kPhypMixing12,mixing12); }// set  of the parameters for 3flav osc 
@@ -205,24 +190,7 @@ void Bievent_build(CmdLnArgList& arg)
 
    if (fp->Exists(conv::kPhypBetaBar    )) { fp->Update(conv::kPhypBetaBar    ,betabar); }  
    
-   //DBUG CODE -----------
-   LOG("bievent", pDEBUG) << "is phys after updtae " << util::AllWithinLimits(*fp);
 
-   for (int iparam = 0 ; iparam < fp->Size(); iparam++) {
-    PhysParamId_t p = fp->WhichParam(iparam);
-    if(!ParameterPool::Instance()->IsParamInPool(p)) {
-      LOG("bievent", pFATAL) << "The parameter \'" << util::NameRegistry::Instance()->ParamAsString(p)
-                               << "\' was in the FPL but not the ParameterPool";
-      util::Die(-1);
-    }
-    const Parameter & param = ParameterPool::Instance()->GetParam(p);
-
-    double value = fp->CurrValueByIndex(iparam);
-    if (not param.IsWithinLimits(value)) {
-      LOG("bievent", pDEBUG) << "prameter  " << util::NameRegistry::Instance()->ParamAsString(p) << " is not within PL with value " << value;
-          }
-  }
-   //DBUG CODE -----------
    // set priors so we can read mean and sigma for osc param randomization 
    util::oscillation::SetParameterPriors(arg, *fp); 
 
@@ -234,143 +202,132 @@ void Bievent_build(CmdLnArgList& arg)
    // 
 
 
-   TH2D* hEventsSyst[dcp_npt][N23][NMH];
-   TH2D* hEvents[dcp_npt][N23][NMH];
+   TH2D* hEventsSyst = new TH2D("hEventsSyst", "hEventsSyst", 600, 0, 150, 100, 0, 25);
+   TH2D* hEvents = new TH2D("hEvents", "hEvents", 600, 0, 150, 100, 0, 25);
    TObjArray* nominals = new TObjArray(0);
-   TH1D* hFHCEvents[dcp_npt][N23][NMH];
-   TH1D* hRHCEvents[dcp_npt][N23][NMH];
-   for(int idcp=0; idcp < dcp_npt; idcp++)
-   {
-      for(int iss23 = 0; iss23 < N23; ++iss23)
-      {
-         for(int imh = 0; imh < NMH; ++imh)
-         {
-            const char* name_syst = Form("hEventsSyst_%d_%d_%d", idcp, iss23, imh);
-            hEventsSyst[idcp][iss23][imh] = new TH2D(name_syst, name_syst, 600, 0, 150, 100, 0, 25);
-            const char* name = Form("hEvents_%d_%d_%d", idcp, iss23, imh);
-            hEvents[idcp][iss23][imh] = new TH2D(name, name, 150, 0, 150, 25, 0, 25);
-            const char* fhcname = Form("hEvents_fhc_%d_%d_%d", idcp, iss23, imh);
-            hFHCEvents[idcp][iss23][imh] = new TH1D(fhcname, fhcname, 150, 0, 150);
-            const char* rhcname = Form("hEvents_rhc_%d_%d_%d", idcp, iss23, imh);
-            hRHCEvents[idcp][iss23][imh] = new TH1D(rhcname, rhcname, 25, 0, 25);
-         }
-      }
-   }
+   TH1D* hFHCEvents = new TH1D("hEvents_fhc", "hEvents_fhc", 150, 0, 150);
+   TH1D* hRHCEvents = new TH1D("hEvents_rhc", "hEvents_rhc", 150, 0, 150);
+   
+
+
+   Rnd::Instance()->SetSeeds(arg);
+
    for(int e = 0; e < ntoys; ++e)
    {
 
       if(e % 100 == 0)
       {
-         cout << "Throwing toy " << e << endl;
+         LOG("bievent", pINFO) <<"Throwing toy " << e;
       } 
-      LOG("bievent", pDEBUG) << "rnd seeds ";
-      Rnd::Instance()->SetSeeds(arg);
-      LOG("bievent", pDEBUG) << "rset is isPhysical ";
       bool isPhysical = false;
       while(!isPhysical)
       {
-         LOG("bievent", pDEBUG) << "enter loop and reset syst";
-         LOG("bievent", pDEBUG) << "is phys " << util::AllWithinLimits(*fp);
-        if(disable_banff_tuning) // force untuned from sigma var. Maybe rename ? 
+        if(disable_banff_tuning) 
          {
-            cout << "- Performing special systematic parameter variation which cancels the effect of BANFF tuning..." << endl;
             model->ForceSystematicsToUntuned(*fp);
          }
-         else
-         {
-            model->ResetSystematics(*fp, "all");  // this causes parameters be outside the limits 
-         }        
-         if(e > 0)
-         {  // Generate one nominal set and use random throws for the rest
-             LOG("bievent", pDEBUG) << "Generate one nominal set and use random throws for the rest";
-            model->RandomizeSystematics(*fp); 
-            LOG("bievent", pDEBUG) << "RandomizeOsc";
-            RandomizeOsc(fp);
-         }
-         LOG("bievent", pDEBUG) << "is phys " << util::AllWithinLimits(*fp);
-         LOG("bievent", pDEBUG) << "tweak fpl";
+         
+         model->ResetSystematics(*fp, "all"); 
+         model->RandomizeSystematics(*fp); 
+         
+         RandomizeOsc(fp);
+
          fp->FromPhysParamList(model->Tweaks(), "current silent");
-         LOG("bievent", pDEBUG) << "is phys " << util::AllWithinLimits(*fp);
-        
-         isPhysical = true;//util::AllWithinLimits(*fp); // think on how to fix this check 
+         if (util::AllWithinLimits(*fp)) isPhysical = true;
       }
-
-      for(int idcp=0; idcp < dcp_npt; idcp++)
-      {
-         for(int iss23 = 0; iss23 < N23; ++iss23)
+      //NOTE: write nominal for fixed points 
+      if(e == 0) 
+      { 
+         for(int idcp=0; idcp < dcp_npt; idcp++)
          {
-            for(int imh = 0; imh < NMH; ++imh)
-            {
-               double Nfhc = -999;
-               double Nrhc = -999;
-               double Ncc1pi = -999;
-    
-               double dcp = deltaCP_first + idcp * deltaCP_width;
-       
-               if(imh == 0)
-               {
-                  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
-                  Set_MH(model); 
-               }
-               else
-               {
-                  Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
-                  Set_MH(model);
-               }
+           for(int iss23 = 0; iss23 < N23; ++iss23)
+           {
+              for(int imh = 0; imh < NMH; ++imh)
+              {
+                 double Nfhc = -999;
+                 double Nrhc = -999;
+      
+                 double dcp = deltaCP_first + idcp * deltaCP_width;
+         
+                 if(imh == 0)
+                 {
+                    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("normal");
+                    Set_MH(model); 
+                 }
+                 else
+                 {
+                    Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString("inverted");
+                    Set_MH(model);
+                 }
 
-               fp->SetCurrentValue(conv::kPhypDm23sq, dm23[imh]);
-               fp->SetCurrentValue(conv::kPhypCPV, dcp);
-               fp->SetCurrentValue(conv::kPhypMixing23, ss23[iss23]);
+                 fp->SetCurrentValue(conv::kPhypDm23sq, dm23[imh]);
+                 fp->SetCurrentValue(conv::kPhypCPV, dcp);
+                 fp->SetCurrentValue(conv::kPhypMixing23, ss23[iss23]);
    
-               LOG("bievent", pDEBUG) << "about to getnerate PDF";
-               // Generate predictions 
-               model->Generate(*fp,"+SB");
 
-               // Array to store results
-               TObjArray *array = new TObjArray();
-               array->SetOwner(true);
-               LOG("bievent", pDEBUG) << "writting";
-               // Write stuff out
-                model->Write(array,"curr","pdft_rf +SB");
+                 model->Generate(*fp,"+SB");
+
+                 // Array to store results
+                 TObjArray *array = new TObjArray();
+                 array->SetOwner(true);
+                 LOG("bievent", pDEBUG) << "writting";
+                 // Write stuff out
+                  model->Write(array,"curr","pdft_rf +SB");
     
-                       
-               Get_events(array,model,Nfhc,Nrhc);
+                         
+                 Get_events(array,model,Nfhc,Nrhc);
 
-               hEventsSyst[idcp][iss23][imh]->Fill(Nfhc, Nrhc); //UWAGA: not quite sure why we are creating syst contour without applyig stat fluctuations. 
-
-               LOG("bievent", pDEBUG) << "chose dmsq value "<< dm23[imh]<< "cpv = "<< dcp<<" theta23 = "<<ss23[iss23];
-              
-               if(e == 0) 
-               {  
-                 nominals->Add(new TMarker(Nfhc, Nrhc, 20)); // NOTE: saving nominal values for points at the plot
+                 LOG("bievent", pDEBUG) << "chose dmsq value "<< dm23[imh]<< "cpv = "<< dcp<<" theta23 = "<<ss23[iss23];
+                
+ 
+                 nominals->Add(new TMarker(Nfhc, Nrhc, 20)); 
+                 
                }
-
-                 // Apply statistical fluctuations 
-               Nfhc = Rnd::Instance()->RndToyMCstat().Poisson(Nfhc);
-               Nrhc = Rnd::Instance()->RndToyMCstat().Poisson(Nrhc);
-               hEvents[idcp][iss23][imh]->Fill(Nfhc, Nrhc);
-
-               hFHCEvents[idcp][iss23][imh]->Fill(Nfhc);
-               hRHCEvents[idcp][iss23][imh]->Fill(Nrhc);
             }
          }
+      }//end of the loop over all params to fill nominal vals 
+
+
+      // throwing toys at data bf to generate syst err contour 
+
+      //set osc params to bf
+      fp->SetCurrentValue(conv::kPhypDm23sq, bf_dm23sq);
+      fp->SetCurrentValue(conv::kPhypCPV, bf_deltacp);
+      fp->SetCurrentValue(conv::kPhypMixing23, bf_mixing23);
+      Opt::Instance()->gMassHierarchyAssumed = util::HierarchyFromString(bf_hier);
+      Set_MH(model); 
+
+      //Generate model
+      model->Generate(*fp,"+SB");
+       // Array to store results
+      TObjArray *array = new TObjArray();
+      array->SetOwner(true);
+      LOG("bievent", pDEBUG) << "writting";
+      // Write stuff out
+      double Nfhc = -999;
+      double Nrhc = -999;
+      model->Write(array,"curr","pdft_rf +SB");                   
+      Get_events(array,model,Nfhc,Nrhc);
+      if (e==0){
+         nominals->Add(new TMarker(Nfhc, Nrhc, 20)); // NOTE: saving nominal for bf point
       }
+      hEventsSyst->Fill(Nfhc, Nrhc); //NOTE: fill histo with data at every toy 
+      //
+
+      // Apply statistical fluctuations 
+      Nfhc = Rnd::Instance()->RndToyMCstat().Poisson(Nfhc);
+      Nrhc = Rnd::Instance()->RndToyMCstat().Poisson(Nrhc);
+      hEvents->Fill(Nfhc, Nrhc);
+      hFHCEvents->Fill(Nfhc);
+      hRHCEvents->Fill(Nrhc);
    }
 
    TFile file(Form("%s.root", tag.c_str()), "RECREATE");
-   for(int idcp=0; idcp < dcp_npt; ++idcp)
-   {
-      for(int iss23 = 0; iss23 < N23; ++iss23)
-      {
-         for(int imh = 0; imh < NMH; ++imh)
-         {
-            hEvents[idcp][iss23][imh]->Write();
-            hEventsSyst[idcp][iss23][imh]->Write();
-            hFHCEvents[idcp][iss23][imh]->Write();
-            hRHCEvents[idcp][iss23][imh]->Write();
-         }
-      }
-   }
+   hEvents->Write();
+   hEventsSyst->Write();
+   hFHCEvents->Write();
+   hRHCEvents->Write();
+
    TFile filenom(Form("%snominal.root", tag.c_str()), "RECREATE");
    nominals->Write("Nominals", TObject::kSingleKey);
    filenom.Close();
@@ -421,7 +378,6 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
          {
            Nfhc = curr_pdf->Integral(); 
          }
-         LOG("bievent", pDEBUG) << "Nfhc  " << Nfhc;
       }
 
       if ((b == util::BeamConfFromString("JPARC_RHC")) && (s == util::SampleFromString("1Re")))
@@ -434,7 +390,6 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
                util::Die(-1);
          }
            Nrhc = curr_pdf->Integral();
-           LOG("bievent", pDEBUG) << "Nrhc  " << Nrhc;
       }
    }// loop models 
    // TODO: add checks  if n events is not -999
@@ -497,7 +452,6 @@ void RandomizeOsc(valor::FitParamList *fp)
       fp->Update(nr->PhysParamFromString("mixing13"),mix13val);
       fp->Update(nr->PhysParamFromString("dm12sq"),dm12val);
 
-      LOG("bievent", pDEBUG) << "randomizing osc";
 
       // check if all parameters are within the  physics limits 
       if(OscParamsPhysical(mix12val, mix13val, dm12val))

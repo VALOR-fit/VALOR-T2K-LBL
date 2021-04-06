@@ -51,6 +51,9 @@
 # --input_dm23sq
 # --input_betabar
 
+#--bf-dm23sq  
+#--bf-deltacp 
+#--bf-mixing23
 #data 
 #rootfile -> this can be taken from config file actually 
 #
@@ -82,6 +85,8 @@ foreach (@ARGV) {
 # config and  prior
   elsif($_ eq '--config'               ) { $config                = $ARGV[$iarg+1]; }
   elsif($_ eq '--prior-file'           ) { $prior_file            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--osc-prior-file'       ) { $osc_prior_file        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--syst-prior-file'      ) { $syst_prior_file       = $ARGV[$iarg+1]; }
 # FPL and other global options 
   elsif($_ eq '--physics-hypothesis'   ) { $fit_param_list        = $ARGV[$iarg+1]; }
   elsif($_ eq '--fit-param-opt'        ) { $fit_param_opt         = $ARGV[$iarg+1]; }
@@ -115,6 +120,10 @@ foreach (@ARGV) {
   elsif($_ eq '--input-dm12sq'         ) { $input_dm12sq          = $ARGV[$iarg+1]; }   
   elsif($_ eq '--input-dm23sq'         ) { $input_dm23sq          = $ARGV[$iarg+1]; }   
   elsif($_ eq '--input-betabar'        ) { $input_betabar         = $ARGV[$iarg+1]; } 
+  elsif($_ eq '--bf-dm23sq'            ) { $bf_dm23sq             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--bf-deltacp'           ) { $bf_deltacp            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--bf-mixing23'          ) { $bf_mixing23           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--bf-hier'              ) { $bf_hier               = $ARGV[$iarg+1]; }
 
 
   else {
@@ -127,19 +136,20 @@ foreach (@ARGV) {
 # Set unspecfied arguments to their default values
 #
 
-$resource              = "interactive"                                                       unless defined $resource;
-$cput                  = "01:00:00"                                                           unless defined $cput;
-$mem                   = "1000M"                                                             unless defined $mem ;
+$resource              = "IFIC"                                                             unless defined $resource;
+$cput                  = "24:00:00"                                                          unless defined $cput;
+$mem                   = "5200M"                                                             unless defined $mem ;
 $job_dir               = $ENV{'PWD'}                                                         unless defined $job_dir;
 $softw_dir             = $ENV{'VALOR_EXPT'}                                                  unless defined $softw_dir;
 $fmwk_dir              = $ENV{'VALOR_FMWK'}                                                  unless defined $fmwk_dir;
 $time_command          = 0                                                                   unless defined $time_command;
 
-$ntoys                 = 5                                                                  unless defined $ntoys;
+$ntoys                 = 40000                                                                   unless defined $ntoys;
 $tag                   = "bievent_build"                                                     unless defined $tag;
 #config and prior files 
 $config                = "analysis/t2k_analysis_configuration_oa2020_run1-10_v1_postfit.xml" unless defined $config;
-$prior_file            = ""                                                                  unless defined $prior_file;
+$osc_prior_file        = "priors/t2k_run_1-9d_reactor.xml"                                   unless defined $osc_prior_file;
+$syst_prior_file       = "priors/t2k_run_1-10_syst_param_priors.xml"                         unless defined $syst_prior_file;
 #FPL and other global options 
 $fit_param_list        = "3f_osc"                                                            unless defined $fit_param_list;
 $fit_param_opt         = ""                                                                  unless defined $fit_param_opt;
@@ -149,7 +159,7 @@ $dmsq_scheme           = "auto"                                                 
 $hierarchy             = "normal"                                                            unless defined $hierarchy;
 $mix_param_choice      = "sinsqtheta"                                                        unless defined $mix_param_choice;
 $mix_param_octant      = "two"                                                               unless defined $mix_param_octant;
-$force_untuned         = 0                                                                   unless defined $force_untuned;
+#$force_untuned         = 0                                                                   unless defined $force_untuned;
 #Seeds
 $seed_syst             = 10                                                                  unless defined $seed_syst;
 $seed_osc              = 20                                                                  unless defined $seed_osc;
@@ -157,23 +167,27 @@ $seed_stat             = 0                                                      
 $seed_other            = 30                                                                  unless defined $seed_other;
 #N points 
 $dcp_npt               = 9                                                                   unless defined $dcp_npt;                                                                   
-$N23                   = 3                                                                   unless defined $N23;
+$N23                   = 4                                                                   unless defined $N23;
 $NMH                   = 2                                                                   unless defined $NMH;
 #vectors 
-$ss12                  = "0.304,0.304"                                                        unless defined $ss12; 
-$ss13                  = "0.02235,0.0226125"                                                  unless defined $ss13; 
-$ss23                  = "0.450,0.500,0.550"                                                  unless defined $ss23;
-$dm12                  = "7.53E-5,7.53E-5"                                                    unless defined $dm12; 
-$dm23                  = "2.49E-3,2.46E-3"                                                  unless defined $dm23; 
+$ss12                  = "0.307,0.307"                                                       unless defined $ss12; 
+$ss13                  = "0.02235,0.0226125"                                                 unless defined $ss13; 
+$ss23                  = "0.450,0.500,0.550,0.600"                                           unless defined $ss23;
+$dm12                  = "7.53E-5,7.53E-5"                                                   unless defined $dm12; 
+$dm23                  = "2.49E-3,2.46E-3"                                                   unless defined $dm23; 
 #input values  (default AsimovA ) not sure though. Originall values were from PDG
-$input_mixing12        = 0.304                                                               unless defined $input_mixing12; 
-$input_mixing13        = 0.0212                                                              unless defined $input_mixing13;
+$input_mixing12        = 0.307                                                               unless defined $input_mixing12; 
+$input_mixing13        = 0.0218                                                              unless defined $input_mixing13;
 $input_mixing23        = 0.528                                                               unless defined $input_mixing23; 
 $input_deltacp         = -1.601                                                              unless defined $input_deltacp;  
 $input_dm12sq          = 7.53E-5                                                             unless defined $input_dm12sq; 
-$input_dm23sq          = 2.49E-3                                                            unless defined $input_dm23sq;  
+$input_dm23sq          = 2.49E-3                                                             unless defined $input_dm23sq;  
 $input_betabar         = -99.                                                                unless defined $input_betabar;  
-
+$bf_dm23sq             = 0.002488                                                            unless defined $bf_dm23sq;   
+$bf_deltacp            = -2.106                                                              unless defined $bf_deltacp;  
+$bf_mixing23           =  0.555                                                              unless defined $bf_mixing23; 
+$bf_hier               = "normal"                                                            unless defined $bf_hier;
+  # body...
 
 #vectors 
 #@ss12                  = (0.304,0.304);       
@@ -196,7 +210,7 @@ die("$job_dir doesn't exist") unless -d $job_dir;
 #
 $program = "valor-bievent_build";
 
-$arguments = "--ntoys $ntoys --tag $tag --prior-file $prior_file --config $config " .
+$arguments = "--ntoys $ntoys --tag $tag --osc-prior-file $osc_prior_file --syst-prior-file $syst_prior_file --config $config " .
                  "--physics-hypothesis $fit_param_list --fit-param-opt $fit_param_opt " .
 		             " --param-values-option $param_values_option --mesg-thresholds $mesg_thresholds " .
 		             " --dmsq-scheme $dmsq_scheme --$hierarchy --$mix_param_choice "  .
@@ -204,7 +218,8 @@ $arguments = "--ntoys $ntoys --tag $tag --prior-file $prior_file --config $confi
 		             " --dcp-npt $dcp_npt --N23 $N23 --NMH $NMH " . 
                  " --ss12 $ss12 --ss13 $ss13 --ss23 $ss23 --dm12 $dm12 --dm23 $dm23 " .
                  " --input-mixing12 $input_mixing12 --input-mixing13 $input_mixing13 --input-mixing23 $input_mixing23 " .
-                 " --input-dm12sq $input_dm12sq --input-dm23sq $input_dm23sq --input-deltacp $input_deltacp --input-betabar $input_betabar";
+                 " --input-dm12sq $input_dm12sq --input-dm23sq $input_dm23sq --input-deltacp $input_deltacp " .
+                 " --bf-dm23sq $bf_dm23sq --bf-deltacp $bf_deltacp --bf-mixing23 $bf_mixing23 --bf-hier $bf_hier --input-betabar $input_betabar";
 
 if($mix_param_octant   eq "two")   { $arguments = "$arguments --second-octant"      } else { $arguments = "$arguments --first-octant"       }
 if($force_untuned) {$arguments  = "$arguments --force-untuned"}
@@ -324,7 +339,7 @@ if($resource eq "IFIC") {
   print PBS "#!/bin/bash \n";
   print PBS "#PBS -N $tag \n";
   print PBS "#PBS -l mem=$mem \n";
-  print PBS "#PBS -q short \n"; # Max walltime of for long - 24h, in case of 2D fit use long4
+  print PBS "#PBS -q long \n"; # Max walltime of for long - 24h, in case of 2D fit use long4
   print PBS "#PBS -l nodes=1:ppn=1 \n"; #use only ppn=1 
   print PBS "#PBS -o $job_dir/$tag.pbs.out \n";
   print PBS "#PBS -e $job_dir/$tag.pbs.err \n";
