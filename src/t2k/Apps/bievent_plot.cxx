@@ -1,8 +1,14 @@
 //
 // ------------------------------------------------------------------------------------------------
-// Plot contributions from various event modes in the predicted SuperK 1Re or 1Rmu spectrum.
+// Plot contributions from various event modes in the predicted SuperK 
+// 1) e-like neutrino and antineutrino spectra  (--compare-by-nu-antinu)
+// 2) e-like neutrino events with Erec below or above 500MeV (--compare-by-ereco)
 //
+// April 2021 
+// Maria Antonova < maria.antonova \at ific.uv.es>
 // Costas Andreopoulos
+//  
+
 // ------------------------------------------------------------------------------------------------
 //
 
@@ -22,7 +28,10 @@
 #include "TLatex.h"
 #include "TMarker.h"
 #include "TMath.h"
-#include <TStyle.h> 
+#include "Math/QuantFuncMathCore.h"
+#include "TGraphAsymmErrors.h"
+#include "TStyle.h" 
+
 //valor 
 #include "valor/FitCore/CompoundFitElements.h"
 #include "valor/FitCore/FitModelABC.h"
@@ -63,118 +72,120 @@ int main(int argc, char** argv)
 void bievent_plot
 (CmdLnArgList& arg)
 {
+   // creating new colours 
+   int blue = TColor::GetFreeColorIndex();
+   TColor *bi= new TColor(blue, 0.2,0.64,0.80);
+   int green = TColor::GetFreeColorIndex();
+   TColor *gi= new TColor(green, 0,0.61,0.23);
+   int red = TColor::GetFreeColorIndex();
+   TColor *ri= new TColor(red, 0.87,0.12,0.18);
+   int yellow = TColor::GetFreeColorIndex();
+   TColor *yi= new TColor(yellow, 0.98,0.51,0.15);
+   //ROOT setup
    gStyle->SetOptStat(0);
    gStyle->SetOptTitle(0);
+
+
    Messenger::Instance()->Configure(util::CompleteConfigPath(arg.GetString("mesg-thresholds")));
-// get data, events and nominal files 
+   // get data, events and nominal files 
    string events_file   = arg.GetString("events-file");
    string nominal_file  = arg.GetString("nominal-file");
-
    string tag      = arg.GetString("tag");
-   int iexperiment = arg.GetInt("iexperiment");// iexperiment from which this file starts (??)
    bool use_simple_binning = arg.GetBool("use-simple-binning");
+   //Reading histograms
+   TFile* file = new TFile(events_file.c_str(),"read");
+   TFile* filenom = new TFile(nominal_file.c_str(),"read");  
+   
 
+   //Read data? 
+   const char* read_opt_data = "";
    bool draw_data  = false;
+   double bf_dm23sq;  
+   double bf_deltacp; 
+   double bf_mixing23;
+   string bf_hier;    
    if (arg.Exists("draw-data")){
-      LOG("valor_dune", pINFO) << "Will draw data ";
+      std::cout<<"draw-data"<<std::endl;
+      LOG("bievent", pINFO) << "Will draw data ";
       draw_data = true;
-      const char* read_opt_data = "";
       if (use_simple_binning) {
          read_opt_data = "+SB";
       }
+
    }
+   //Number of the fixed points 
    const int dcp_npt = arg.GetInt("dcp-npt");
    const int N23     = arg.GetInt("N23");
    const int NMH     = arg.GetInt("NMH");
    const int NDCP    = arg.GetInt("NDCP");
 
-   // set the point for which we display the systematics 
-   bool display_errors[dcp_npt][N23][NMH];
-   int a;
-   int b;
-   int c;
 
-   for(int idcp = 0; idcp < dcp_npt; ++idcp)
-   {
-      for(int iss23 = 0; iss23 < N23; ++iss23)
-      {
-         for(int imh = 0; imh < NMH; ++imh)
-         {
-            display_errors[idcp][iss23][imh] = false;
-         }
-      }
-   }
-   //NOTE: the idea is to plot a contour, containing 68% of toys at  data BF point 
-
+   //If plotting stytematic errors contour at BF
+   bool display_errors = false;
    if (arg.Exists("display-errors")){
-      
-      //add conversion abc to normal points  
-      a = arg.GetInt("syst-dcp"); // UTB: first_param
-      b = arg.GetInt("syst-theta23");// UTB: second_param
-      c = arg.GetInt("syst-mh");// UTB third_param
-      LOG("valor_dune", pINFO) << "Will display systematics at  point dcp " << a << " theta23 " << b << " and for mass hierarchy  "<< c;
-      display_errors[a][b][c] = true;// Systematics at dcp = -pi/2, ss23 = 0.5, NH for that  a == 2, b == 1, c ==0
+      display_errors = true;
    }
    double deltaCP_first = -TMath::Pi();
    double deltaCP_last = +TMath::Pi();
    double deltaCP_width = (deltaCP_last - deltaCP_first) / (dcp_npt - 1);
-// Unused vectors 
-/* // PDG 2016 best fits
-   vector<double> ss12 = ReadDA(xml,doc,"vectors/ss12");
-   vector<double> dm12 = ReadDA(xml,doc,"vectors/dm12");
-// 2018 best fit values from 2D fits (including IH shift for dmsq23)
-   vector<double> ss13 = ReadDA(xml,doc,"vectors/ss13");
-   vector<double> dm23 = ReadDA(xml,doc,"vectors/dm23");
-   dm23[2] = dm23[2] - dm12[2]; //IH shift for dmsq23
-// Alternative values to use for sinsqtheta23
-   vector<double> ss23 = ReadDA(xml,doc,"vectors/ss23");
-*/
-//Define graphs and histos 
+
+   //Define&get graphs and histos 
    TGraph gN_events[N23][NMH];
    TGraph gN_events_1pt[N23][NMH][NDCP];
-   TH2D* hEvents[dcp_npt][N23][NMH];
-   TH2D* hEventsSyst[dcp_npt][N23][NMH];
-   TH1D* hFHCEvents[dcp_npt][N23][NMH];
-   TH1D* hRHCEvents[dcp_npt][N23][NMH];
+   TH2D* hEvents;
+   TH2D* hEventsSyst;
+   TH1D* hFHCEvents;
+   TH1D* hRHCEvents;
+   double Nfhc = -999.;
+   double Nrhc = -999.;
+   hEvents = static_cast<TH2D*>(file->Get("hEvents"));
+   hEventsSyst = static_cast<TH2D*>(file->Get(Form("hEventsSyst")));
+   hFHCEvents = static_cast<TH1D*>(file->Get(Form("hEvents_fhc")));
+   hRHCEvents = static_cast<TH1D*>(file->Get(Form("hEvents_rhc")));
 
-   //CompoundFitElements* elements = new CompoundFitElements();
-   //elements->Read(util::CompleteConfigPath(arg.GetString("config")));
-   //FitModelABC* model = elements->FitModel();
-   //FitDataABC* data = elements->FitData();
 
-
-   //SuperkObservation * skobs_fakedata = new SuperkObservation;// FitABC data 
-
-   TGraph *gN_events_data = new TGraph();
-   /*if(draw_data)
+   //Draw data? 
+   string data_file  = arg.GetString("data-file");
+   TGraphAsymmErrors *gN_events_data = new TGraphAsymmErrors();
+   if(draw_data && data_file!="-")
    {    
 
-      if(!data->DataExists(read_opt_data)) {
-         LOG("valor_dune", pFATAL) << "Tried to fit to fake/real data specified in the analysis configuration file, "
-                                   << "but the data arrays for one or more samples were empty";
-         util::Die(-1);
-      }  
-      // this from bievent_build 
-      // 1Re # of events 
-      conv::SuperkSample_t s = util::SKSampleFromString("1Re");
-      int is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-      double nfhc = skobs_fakedata->TwoDSpectrum(s)->Integral();
-      s = util::SKSampleFromString("MultiRe");
-      is = util::ArrIdx::Instance()->SuperkSampleIdx(s);
-      nfhc += skobs_fakedata->TwoDSpectrum(s)->Integral();
+      TFile* dfile = new TFile(data_file.c_str(),"read");
+
+      // FHC # of events 
+      double nfhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"))->GetN();
+      nfhc += static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"))->GetN();
 
       // RHC1Re # of events 
-      s = util::SKSampleFromString("RHC1Re"); // requested sample
-      is = util::ArrIdx::Instance()->SuperkSampleIdx(s); // index of specified sample
-      double nrhc = skobs_fakedata->TwoDSpectrum(s)->Integral();
+
+      double nrhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"))->GetN();
     
       gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
+
+      // Setting sqrt(N) as the statistical error on a data point is wrong, as the data has no stat error.
+      // Instead calculate an error band showing how far away the prediction can be while still keeping
+      // the data point within its Poisson stat errors.
+      
+      const double alpha = 1 - 0.6827;
+      double N = nrhc;
+      double L =  (N==0) ? 0  : (ROOT::Math::gamma_quantile(alpha/2,N,1.));
+      double U =  ROOT::Math::gamma_quantile_c(alpha/2,N+1,1) ;
+      gN_events_data->SetPointEYlow(gN_events_data->GetN()-1, N-L);
+      gN_events_data->SetPointEYhigh(gN_events_data->GetN()-1, U-N);
+
+      N=nfhc;
+      L =  (N==0) ? 0  : (ROOT::Math::gamma_quantile(alpha/2,N,1.));
+      U =  ROOT::Math::gamma_quantile_c(alpha/2,N+1,1) ;
+      gN_events_data->SetPointEXlow(gN_events_data->GetN()-1, N-L);
+      gN_events_data->SetPointEXhigh(gN_events_data->GetN()-1, U-N);
    }
- */
-   TFile* file = new TFile(events_file.c_str(),"read"); //why harcoded???
-   TFile* filenom = new TFile(nominal_file.c_str(),"read");  // this too TODO: move both to the parameters 
-   double Nfhc = -999.;// arg.GetDouble("Nfhc"); // do we need to  have this as an input ? 
-   double Nrhc = -999.;//arg.GetDouble("Nrhc");
+
+   else if (draw_data && data_file=="-")
+   {
+      LOG("bievent", pFATAL) << "You want to plot data, but there is no data file...";
+       util::Die(-1);
+   }
+
 
    for(int idcp = 0; idcp < dcp_npt; ++idcp)
    {
@@ -183,27 +194,11 @@ void bievent_plot
          for(int imh = 0; imh < NMH; ++imh)
          {
             double dcp = deltaCP_first + idcp * deltaCP_width;
-
-            hEvents[idcp][iss23][imh] = static_cast<TH2D*>(file->Get(Form("hEvents_%d_%d_%d", idcp, iss23, imh)));
-            hEventsSyst[idcp][iss23][imh] = static_cast<TH2D*>(file->Get(Form("hEventsSyst_%d_%d_%d", idcp, iss23, imh)));
-            hFHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_fhc_%d_%d_%d", idcp, iss23, imh)));
-            hRHCEvents[idcp][iss23][imh] = static_cast<TH1D*>(file->Get(Form("hEvents_rhc_%d_%d_%d", idcp, iss23, imh)));
-
             // Consider median instead of mean
             TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(idcp * N23 * NMH + iss23 * NMH + imh);
             Nfhc = nom->GetX();
             Nrhc = nom->GetY();
-//            Nfhc = hEventsSyst[idcp][iss23][imh]->GetMean(1);
-//            Nrhc = hEventsSyst[idcp][iss23][imh]->GetMean(2);
-/*            cout << "Syst" << endl;
-            cout << idcp << " " << iss23 << " " << imh << " => " <<
-               Nfhc << "(" << hEventsSyst[idcp][iss23][imh]->GetRMS(1) << ") " <<
-               Nrhc << "(" << hEventsSyst[idcp][iss23][imh]->GetRMS(2) << ") " << endl;
-            cout << "Stat+Syst" << endl;
-            cout << idcp << " " << iss23 << " " << imh << " => " <<
-               hEvents[idcp][iss23][imh]->GetMean(1) << "(" << hEvents[idcp][iss23][imh]->GetRMS(1) << ") " <<
-               hEvents[idcp][iss23][imh]->GetMean(2) << "(" << hEvents[idcp][iss23][imh]->GetRMS(2) << ") " << endl;
-*/
+
             gN_events[iss23][imh].SetPoint(gN_events[iss23][imh].GetN(), Nfhc, Nrhc);
             // groupinng events to 4 dcp points 
             if(fabs(dcp - (-TMath::Pi() / 2.)) < 1.E-4 ) 
@@ -222,18 +217,18 @@ void bievent_plot
             {  // +pi
                gN_events_1pt[iss23][imh][3].SetPoint(gN_events_1pt[iss23][imh][3].GetN(), Nfhc, Nrhc);
             }
-            // create error contours 
-            if(display_errors[idcp][iss23][imh])
-            {
-               double contours[1] = {get_contour_level(hEvents[idcp][iss23][imh])};
-               hEvents[idcp][iss23][imh]->SetContour(1, contours);
-               double syst_contours[1] = {get_contour_level(hEventsSyst[idcp][iss23][imh])};
-               hEventsSyst[idcp][iss23][imh]->SetContour(1, syst_contours);
-            }
+            
          }
       }
    }
-
+   // create error contours 
+   if(display_errors)
+   {
+      double contours[1] = {get_contour_level(hEvents)};
+      hEvents->SetContour(1, contours);
+      double syst_contours[1] = {get_contour_level(hEventsSyst)};
+      hEventsSyst->SetContour(1, syst_contours);
+   }
    // Init histogram
   
    TH2D *hInit = new TH2D("hInit", "hInit", 150, 0, 150, 25, 0, 25);
@@ -246,8 +241,18 @@ void bievent_plot
    double ttx = (xmax + xmin) * 0.5;
    double ctx = xmin + (xmax + xmin) * 0.1;
    double ty = ymax;
-   hInit->GetXaxis()->SetTitle("Neutrino mode 1Re candidates");
-   hInit->GetYaxis()->SetTitle("Antineutrino mode 1Re candidates");
+   hInit->SetLabelFont(132);
+   hInit->SetLabelSize(0.04);
+   hInit->GetYaxis()->SetLabelSize(0.04);
+   hInit->GetYaxis()->SetLabelFont(132);
+
+   hInit->GetXaxis()->SetTitleFont(132);
+   hInit->GetYaxis()->SetTitleFont(132);
+   hInit->GetXaxis()->SetTitleSize(0.04);
+   hInit->GetYaxis()->SetTitleSize(0.04);
+    
+   hInit->GetXaxis()->SetTitle("Neutrino mode e-like candidates");
+   hInit->GetYaxis()->SetTitle("Antineutrino mode e-like candidates");
 
    // Draw 
    TCanvas *cEllipse_all = new TCanvas("cEllipse_all","cEllipse_all");
@@ -263,10 +268,15 @@ void bievent_plot
             gN_events[it][im].SetLineColor(kBlack);
             gN_events[it][im].SetMarkerColor(kBlack);
          }
+         else if (it == 2)
+            {
+               gN_events[it][im].SetLineColor(blue);
+               gN_events[it][im].SetMarkerColor(blue);
+            }
          else
          {
-            gN_events[it][im].SetLineColor(it == 2 ? kBlue : kRed);
-            gN_events[it][im].SetMarkerColor(it == 2 ? kBlue : kRed);
+            gN_events[it][im].SetLineColor(it == 3 ? green : red);
+            gN_events[it][im].SetMarkerColor(it == 3 ? green : red);
          }
          gN_events[it][im].SetLineStyle(im == 0 ? 1 : 2);
          for(int id = 0; id < NDCP; ++id)
@@ -276,10 +286,14 @@ void bievent_plot
             {
                gN_events_1pt[it][im][id].SetMarkerColor(kBlack);
             }
-            else
+            else if (it == 2)
             {
-               gN_events_1pt[it][im][id].SetMarkerColor(it == 2 ? kBlue : kRed);
+               gN_events_1pt[it][im][id].SetMarkerColor(blue);
             }
+            else{
+               gN_events_1pt[it][im][id].SetMarkerColor(it == 3 ? green : red);
+            }
+             
          }
       }
    }
@@ -288,75 +302,65 @@ void bievent_plot
    {
       for(int im = 0; im < NMH; ++im)
       {
-         gN_events[it][im].Draw("l");
+        gN_events[it][im].Draw("l");
          
          for(int id = 0; id < NDCP; ++id)
          {
-            gN_events_1pt[it][im][id].Draw("p");
+           gN_events_1pt[it][im][id].Draw("p");
          }
       }
    }
 
-   for(int idcp = 0; idcp < dcp_npt; ++idcp)
+
+   TGraph *gN_events_bf = new TGraph();
+
+   if(display_errors)
    {
-      for(int iss23 = 0; iss23 < N23; ++iss23)
-      {
-         for(int imh = 0; imh < NMH; ++imh)
-         {
-            if(display_errors[idcp][iss23][imh])
-            {
-//               hEvents[idcp][iss23][imh]->SetFillColorAlpha(kRed, 0.5);
-               hEvents[idcp][iss23][imh]->SetLineColor(kRed);
-               hEvents[idcp][iss23][imh]->SetLineStyle(3);
-               hEvents[idcp][iss23][imh]->Draw("cont3 same");
-//               hEventsSyst[idcp][iss23][imh]->SetFillColorAlpha(kBlue, 0.5);
-               hEventsSyst[idcp][iss23][imh]->SetLineColor(kBlue);
-               hEventsSyst[idcp][iss23][imh]->SetLineStyle(3);
-               hEventsSyst[idcp][iss23][imh]->Draw("cont3 same");
-              
-/*
-               TEllipse eventsEllipse(hEvents[idcp][iss23][imh]->GetMean(1),
-                     hEvents[idcp][iss23][imh]->GetMean(2),
-                     hEvents[idcp][iss23][imh]->GetRMS(1),
-                     hEvents[idcp][iss23][imh]->GetRMS(2));
-               eventsEllipse.SetLineStyle(2);
-               eventsEllipse.SetLineColor(kRed);
-               eventsEllipse.SetFillStyle(0);
-               eventsEllipse.Draw("same");
-
-               TEllipse eventsSystEllipse(hEventsSyst[idcp][iss23][imh]->GetMean(1),
-                     hEventsSyst[idcp][iss23][imh]->GetMean(2),
-                     hEventsSyst[idcp][iss23][imh]->GetRMS(1),
-                     hEventsSyst[idcp][iss23][imh]->GetRMS(2));
-               eventsSystEllipse.SetLineStyle(2);
-               eventsSystEllipse.SetLineColor(kBlue);
-               eventsSystEllipse.SetFillStyle(0);
-               eventsSystEllipse.Draw("same");
-*/
-//               hEventsSyst[idcp][iss23][imh]->Draw("TEXT same");
-            }
-         }
-      }
+      // It is possible to plot stat error on MC but for consistency with other simillar plots it was decided to stick to stat error on data
+      /*hEvents->SetLineColor(red);
+      hEvents->SetLineStyle(3);
+      hEvents->Draw("cont3 same");
+      */
+      //Display syst errors
+      hEventsSyst->SetFillColorAlpha(yellow, 0.15);
+      hEventsSyst->SetLineColor(yellow);
+      hEventsSyst->SetLineStyle(1);
+      hEventsSyst->Draw("cont same");
+      hEventsSyst->Draw("cont3 same");
+      //draw bf 
+      int bf_point = ((TObjArray*)filenom->Get("Nominals"))->GetLast();
+      TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(bf_point);
+      Nfhc = nom->GetX();
+      Nrhc = nom->GetY();
+      gN_events_bf->SetPoint(gN_events_bf->GetN(), Nfhc, Nrhc);
+      gN_events_bf->SetMarkerColor(yellow);
+      gN_events_bf->SetMarkerSize(1);
+      gN_events_bf->SetMarkerStyle(22);
+      gN_events_bf->Draw("p");
    }
-
-   gN_events_data->SetMarkerColor(kBlack);
-   gN_events_data->SetMarkerSize(1);
-   gN_events_data->SetMarkerStyle(23);
-   gN_events_data->Draw("p");
+   if (draw_data)
+   {
+      gN_events_data->SetMarkerColor(kBlack);
+      gN_events_data->SetMarkerSize(1);
+      gN_events_data->SetMarkerStyle(23);
+      gN_events_data->Draw("p");
+   }
+   
 
    TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-10 Preliminary");
    title->SetTextSize(0.05);
+   title->SetTextFont(132);
    title->Draw();
    TLatex* caveat = new TLatex(ctx, 1.01 * ty, "Final systematics pending");
    caveat->SetTextSize(0.025);
 //   caveat->Draw();
 
-   TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.58);
+   TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.48);
    ldcp_all->SetFillColor(0);
    ldcp_all->SetLineColor(0);
    ldcp_all->SetTextFont(132);
-   ldcp_all->SetTextSize(0.035);
-   ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1]{0.50}, #color[2]{0.45}, #color[4]{0.55}","l");
+   ldcp_all->SetTextSize(0.037);
+   ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1181]{0.45}, #color[1]{0.50}, #color[1179]{0.55}, #color[1180]{0.60}","l");
 //   ldcp_all->AddEntry(&gN_events[0][0],"sin^{2} #theta_{23} = 0.45","l");
 //   ldcp_all->AddEntry(&gN_events[2][0],"sin^{2} #theta_{23} = 0.55","l");
    ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.49#times10^{-3} eV^{2}/c^{4}","l");
@@ -365,21 +369,24 @@ void bievent_plot
    ldcp_all->AddEntry(&gN_events_1pt[1][0][2],"#delta_{CP} = +#pi/2","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][1],"#delta_{CP} = 0","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][0],"#delta_{CP} = -#pi/2","p");
-   for(int idcp = 0; idcp < dcp_npt; ++idcp)
+
+   TLegend *ldcp_pts = new TLegend(0.37,0.19,0.57,0.36);
+   ldcp_pts->SetFillColor(0);
+   ldcp_pts->SetLineColor(0);
+   ldcp_pts->SetTextFont(132);
+   ldcp_pts->SetTextSize(0.037);
+
+   if(display_errors)
    {
-      for(int iss23 = 0; iss23 < N23; ++iss23)
-      {
-         for(int imh = 0; imh < NMH; ++imh)
-         {
-            if(display_errors[idcp][iss23][imh])
-            {
-               ldcp_all->AddEntry(hEventsSyst[idcp][iss23][imh], "syst err","f");
-               ldcp_all->AddEntry(hEvents[idcp][iss23][imh], "stat + syst err","f");
-            }
-         }
-      }
+      ldcp_pts->AddEntry(hEventsSyst, "68% syst. err. at best fit","f");
+      //ldcp_pts->AddEntry(hEvents, "stat + syst err","f");
+      ldcp_pts->AddEntry(gN_events_bf,"Best fit","p");
    }
-   //ldcp_all->AddEntry(gN_events_data,"Data","p");
+   if (draw_data){
+    ldcp_pts->AddEntry(gN_events_data,"Data (68% stat. err.)","p");  
+   }
+   
+   ldcp_pts->Draw();
    ldcp_all->Draw();
 
    cEllipse_all->SaveAs(Form("%s.pdf", tag.c_str()));
@@ -387,19 +394,19 @@ void bievent_plot
    cEllipse_all->SaveAs(Form("%s.eps", tag.c_str()));
 
    TCanvas *c_fhc_contour = new TCanvas("c_contour","c_contour");
-   hFHCEvents[2][1][0]->Draw("cont0");
-   std::pair<double, double> interval_fhc = get_interval(hFHCEvents[2][1][0]);
-   TLine* l_low = new TLine(interval_fhc.first, 0.0, interval_fhc.first, hFHCEvents[2][1][0]->GetMaximum());
-   TLine* l_high = new TLine(interval_fhc.second, 0.0, interval_fhc.second, hFHCEvents[2][1][0]->GetMaximum());
+   hFHCEvents->Draw("cont0");
+   std::pair<double, double> interval_fhc = get_interval(hFHCEvents);
+   TLine* l_low = new TLine(interval_fhc.first, 0.0, interval_fhc.first, hFHCEvents->GetMaximum());
+   TLine* l_high = new TLine(interval_fhc.second, 0.0, interval_fhc.second, hFHCEvents->GetMaximum());
    l_low->Draw("same");
    l_high->Draw("same");
    c_fhc_contour->SaveAs("contour_fhc.pdf");
 
    TCanvas *c_rhc_contour = new TCanvas("c_contour","c_contour");
-   hRHCEvents[2][1][0]->Draw("cont0");
-   std::pair<double, double> interval_rhc = get_interval(hRHCEvents[2][1][0]);
-   TLine* l_low2 = new TLine(interval_rhc.first, 0.0, interval_rhc.first, hRHCEvents[2][1][0]->GetMaximum());
-   TLine* l_high2 = new TLine(interval_rhc.second, 0.0, interval_rhc.second, hRHCEvents[2][1][0]->GetMaximum());
+   hRHCEvents->Draw("cont0");
+   std::pair<double, double> interval_rhc = get_interval(hRHCEvents);
+   TLine* l_low2 = new TLine(interval_rhc.first, 0.0, interval_rhc.first, hRHCEvents->GetMaximum());
+   TLine* l_high2 = new TLine(interval_rhc.second, 0.0, interval_rhc.second, hRHCEvents->GetMaximum());
    l_low2->Draw("same");
    l_high2->Draw("same");
    c_rhc_contour->SaveAs("contour_rhc.pdf");
