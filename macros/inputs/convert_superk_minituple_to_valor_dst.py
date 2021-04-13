@@ -38,7 +38,7 @@ python_undefined = 2L*sys.maxint+1
 # At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
 beams = [conv.kbJPARC_FHC, conv.kbJPARC_RHC]
 samples = collections.OrderedDict()
-samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe, conv.ksMultiRmu]
+samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe, conv.ksMultiRmu ]
 samples[conv.kbJPARC_RHC] = [conv.ks1Rmu, conv.ks1Re]
 
 types = ["nuebar_x_nuebar"  ,  # The naming conventions used by the input SK MC files
@@ -133,6 +133,8 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   # Loop over the input files and fill the output tree
   iev = 0
   nev_input = [0 for i in appropriate_files]
+  nev_rej_erec_neg = [0 for i in appropriate_files] # this will count # of  rejkected events below energy cut 
+  nev_rej_erec_big = [0 for i in appropriate_files] # and this one for above the cut 
   entries_per_beam_sample_mode = [[[0 for i in range(0, conv.kmOther)] for j in range(0, conv.kMaxNSamples)] for k in range(0, conv.kNBeamsDefined)]
   files_found_selected_mode_in = dict()
   for ifile in range(0, len(appropriate_files)):
@@ -140,6 +142,8 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
     file_in = ROOT.TFile(file_in_name, "read")
     in_tree = file_in.Get(orig_treename)
     nev_input[ifile] += in_tree.GetEntries()
+    nev_rej_erec_neg[ifile] = 0
+    nev_rej_erec_big[ifile] = 0
 
     sample[0]       = get_selection(file_in_name)
     detector[0]     = conv.kdSuperK
@@ -159,31 +163,37 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       Theta_reco[0] = calc_theta_degrees(event, sample[0])
       temp_enu_reco, plep_reco = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])
       enu_reco[0]   = temp_enu_reco   # Already in GeV
-      wght[0]       = group_misc_weights(event, neut_mode, sample[0])# Group all of the standard multiplicative NIWG weights into a single weight
+      wght[0]       = group_misc_weights(event, neut_mode, sample[0]) # Group all of the standard multiplicative NIWG weights into a single weight
 
-      if plep_reco < 0. or enu_reco[0] < 0. \
+      if plep_reco < 0. or enu_reco[0] < 0. or enu_reco[0]>30 \
          or (is_oscillated and not util.ModeIsCC(reac_mode[0])):
         # Skip oscillated NC events, because NC is always just the sum of events in numu, nue, nutau. So the oscillation
         # is already accounted for.
+        # MA:Also plep_reco<0 cut is crucial from OA2021, as from now on mtuples are without momentum cut 
         nev_input[ifile] -= 1
+        if enu_reco[0] < 0.:
+          nev_rej_erec_neg[ifile] += 1
+        if enu_reco[0]>30.:
+          nev_rej_erec_big[ifile] += 1
         continue
-
-      # Debug selected events
-      # if sample[0] == conv.ks1Rmu and beam[0] == conv.kbJPARC_FHC:
-      #   if reac_mode[0] == conv.kmNuENC1piC           :
+      #Debug selected events
+      #f sample[0] == conv.ksMultiRmu and beam[0] == conv.kbJPARC_FHC:
+      # if reac_mode[0] == (conv.kmNuMuNC1piC or conv.kmNuMuBarNC1piC or kmNuENC1piC or kmNuEBarNC1piC):
+      #   if plep_reco<0 or plep_reco==0:
       #     if file_in_name in files_found_selected_mode_in:
-      #         files_found_selected_mode_in[file_in_name] += 1
+      #       files_found_selected_mode_in[file_in_name] += 1
       #     else:
-      #         files_found_selected_mode_in[file_in_name] = 1
-          # print "Inserting to MC tree --> MC event #" + str(iev) + \
-          #       "\n sample       =", str(sample[0]      ) , "(" + util.SampleAsString(sample[0])  + ")" + \
-          #       "\n beam         =", str(beam[0]        ) , "(" + util.BeamConfAsString(beam[0])  + ")" + \
-          #       "\n imode        =", str(reac_mode[0]   ) , "(" + util.ModeAsString(reac_mode[0]) + ")" + \
-          #       "\n wght         =", str(wght[0]        ) + \
-          #       "\n is NC 1gamma?" , str(NeutIsNC1Gamma(neut_mode)) + \
-          #       "\n is 2p2h?"      , str(NeutIs2p2h(neut_mode)) + \
-          #       "\n  True:", str(enu_true[0]) + \
-          #       "\n  Reco:", str(enu_reco[0]), ",", str(Theta_reco[0]), "\n\n"
+      #       files_found_selected_mode_in[file_in_name] = 1
+      #     print "Inserting to MC tree --> MC event #" + str(iev) + \
+      #     "\n sample       =", str(sample[0]      ) , "(" + util.SampleAsString(sample[0])  + ")" + \
+      #     "\n beam         =", str(beam[0]        ) , "(" + util.BeamConfAsString(beam[0])  + ")" + \
+      #     "\n imode        =", str(reac_mode[0]   ) , "(" + util.ModeAsString(reac_mode[0]) + ")" + \
+      #     "\n wght         =", str(wght[0]        ) + \
+      #     "\n is NC 1gamma?" , str(NeutIsNC1Gamma(neut_mode)) + \
+      #     "\n is 2p2h?"      , str(NeutIs2p2h(neut_mode)) + \
+      #     "\n  True:", str(enu_true[0]) + \
+      #     "\n  Reco:", str(enu_reco[0]), ",", str(Theta_reco[0]) +\
+      #     "\n  Mom: ", str(plep_reco), "\n\n" 
 
       entries_per_beam_sample_mode[beam[0]][sample[0]][reac_mode[0]] += 1
       iev += 1
@@ -214,11 +224,19 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
 
   print "The number of events in each input file are (minus any events with Erec < 0):"
   nev_input_tot = 0
+  nev_rej_erec_neg_tot = 0
+  nev_rej_erec_big_tot = 0
   for ifile in range(0, len(appropriate_files)):
     nev_input_tot += nev_input[ifile]
     print " ", appropriate_files[ifile], ":", nev_input[ifile]
+    nev_rej_erec_neg_tot+=nev_rej_erec_neg[ifile]
+    nev_rej_erec_big_tot+=nev_rej_erec_big[ifile]
+    print " rejected Ereco<0: ", nev_rej_erec_neg[ifile] 
+    print " rejected Ereco>30: ", nev_rej_erec_big[ifile] 
   print "The total number of events across all input files is = ", nev_input_tot
   print "The total number of events in the output DST = ", nev_output_tot
+  print "The total number of rejected events Erec<0 =", nev_rej_erec_neg_tot
+  print "The total number of rejected events Erec>30 =", nev_rej_erec_big_tot
 
   if len(files_found_selected_mode_in) > 0:
     print "The selected mode/sample/beam combination was found in events from the following files:\n", files_found_selected_mode_in
@@ -251,14 +269,14 @@ def get_scale(file_in):
 # Get the selection corresponding to the input file
 def get_selection(file_in_name):
   selection = conv.ksUndefined
-  if "_cc1piselec" in file_in_name:
+  if "numucc1piselec"  in file_in_name:  
+    selection = conv.ksMultiRmu 
+  elif "cc1piselec" in file_in_name: 
     selection = conv.ksMultiRe
   elif "nueselec" in file_in_name:
     selection = conv.ks1Re
   elif "numuselec" in file_in_name:
     selection = conv.ks1Rmu 
-  elif "numucc1piselec"  in file_in_name:  
-    selection = conv.ksMultiRmu
   else:
     print "FATAL: Could not determine the selection for input file", file_in_name
     util.Die(-1)
@@ -309,9 +327,9 @@ def get_pot_weight(this_scale):
 def calc_theta_degrees(event, sample):
   # lep_dir contains info on the lepton direction and is dependant on the sample
   costheta = ROOT.Double(-999.)
-  if  (sample == conv.ksMultiRmu):
+  if  (sample == conv.ksMultiRmu) :
     fqmrmom = c_to_pyroot_array_hack(event.fqmrmom,200,6)
-    lep_dir = c_to_pyroot_array_hack(event.fqmrdir,200,6, 3)
+    lep_dir = c_to_pyroot_array_hack(event.fqmrdir,200,6,3)
     if (fqmrmom[event.ipp][0] < fqmrmom[event.ipp][1]):
       idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
     else:
@@ -359,6 +377,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     mass = me
     mom = event.fqmome
   elif (sample == conv.ksMultiRmu):
+    #print "multirmu mom"
     mass = mpi #Muon momentum taken from a 2Ring PiPi fit so use pion mass to take this into account
     mrmom = c_to_pyroot_array_hack(event.fqmrmom, 200, 6)
     if (mrmom[event.ipp][0] <mrmom[event.ipp][1]):
@@ -388,9 +407,9 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
   shifted_mom = ROOT.Double(mom + mom_shift)
   elep = ROOT.Double(ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom))
   theta_reco_rads = ROOT.Double(Theta_reco * (ROOT.TMath.Pi() / 180.0))   # Theta_reco is input in degrees, so convert to radians here
-
+  
   if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
-    # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
+   # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
     ereco_MeV = event.erec
   else:
     if sample != conv.ksMultiRe and sample!=conv.ksMultiRmu:
@@ -403,8 +422,14 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
       ereco_MeV += (md*md - mp*mp)/2.
       ereco_MeV /= (mp - elep + shifted_mom * ROOT.TMath.Cos(theta_reco_rads))
 
-  # Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
-  return [ROOT.Double(ROOT.TMath.Min(ereco_MeV / 1000., 29.9)), shifted_mom / 1000.]
+  # NOTE: before OA 2021 we were adding up events form aboe the kinematic cut to the last bin. 
+  #       This has a negligible effect on 1 rung or nueCC1pi sample, while in case of numuCC1pi it introduce a visible difference, 
+  #       as this sampl ehas more events at higher energies. 
+  #OLD: Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
+  #OLD: return [ROOT.Double(ROOT.TMath.Min(ereco_MeV / 1000., 29.9)), shifted_mom / 1000.]
+
+  return [ROOT.Double(ereco_MeV/1000.), shifted_mom/1000.]
+  
 
 #_______________________________________________________________________
 # Group all of the standard multiplicative NIWG and flux weights etc. into a single weight
