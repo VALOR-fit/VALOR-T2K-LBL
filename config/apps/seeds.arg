@@ -1,0 +1,8 @@
+# argument             |   type                     |  require?   |   default
+#                        (turn to unsigned_integer)
+# .....................................................................................................
+seed-toys-stat         |   integer                  |  optional   |   0
+seed-toys-syst         |   integer                  |  optional   |   0
+seed-toys-osc          |   integer                  |  optional   |   0
+seed-fitter            |   integer                  |  optional   |   0
+seed-other             |   integer                  |  optional   |   0
