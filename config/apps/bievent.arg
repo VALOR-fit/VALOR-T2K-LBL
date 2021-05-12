@@ -11,7 +11,7 @@ dmsq-scheme                          |   string       |  optional   |   auto
 normal,inverted                      |   boolean_list |  optional   |   normal
 sinsqtheta, sinsq2theta              |   boolean_list |  optional   |   sinsqtheta
 first-octant,second-octant           |   boolean_list |  optional   |   first-octant
-force-untuned                        |   boolean      |  optional   |   -
+force-untuned                        |   string       |  optional   |   -
 dcp-npt                              |   integer      |  mandatory  |   9
 N23                                  |   integer      |  mandatory  |   4
 NMH                                  |   integer      |  mandatory  |   2
@@ -22,16 +22,17 @@ input-deltacp                        |   double       |  mandatory  |   -1.601
 input-dm12sq                         |   double       |  mandatory  |   7.53E-5
 input-dm23sq                         |   double       |  mandatory  |   2.509E-3
 input-betabar                        |   double       |  mandatory  |   -99.
-ss12                                 |   doublevec    |  mandatory  |   0.304,0.304 
-ss13                                 |   doublevec    |  mandatory  |   0.02235,0.0226125     
+ss12                                 |   doublevec    |  mandatory  |   0.307,0.307     
 ss23                                 |   doublevec    |  mandatory  |   0.450,0.500,0.550,0.600     
 dm12                                 |   doublevec    |  mandatory  |   7.53E-5,7.53E-5     
 dm23                                 |   doublevec    |  mandatory  |   2.49E-3,-2.46E-3     
 zdmsq12abs23,foglilisi               |   boolean_list |  optional   |   dmsq12abs23
 syst-prior-file                      |   string       |  mandatory  |   priors/t2k_run_1-10_syst_param_priors.xml
 osc-prior-file                       |   string       |  mandatory  |   priors/t2k_run_1-9d_reactor.xml
-bf-dm23sq                            |   double       |  mandatory  |   0.002488
-bf-deltacp                           |   double       |  mandatory  |   -2.106
-bf-mixing23                          |   double       |  mandatory  | 	0.555
-bf-hier                              |   string       |  mandatory  | 	normal
+bf-dm23sq                            |   double       |  optional   |   0.002485
+bf-deltacp                           |   double       |  optional   |   -2.0106
+bf-mixing23                          |   double       |  optional   | 	0.5528
+bf-hier                              |   string       |  optional   | 	normal
+nu-antinu, ereco                     |   boolean_list |  optional   |   nu-antinu
+
 
