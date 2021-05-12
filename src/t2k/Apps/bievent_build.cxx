@@ -2,7 +2,7 @@
 // ------------------------------------------------------------------------------------------------
 // Generate input for the plot of  contributions from various event modes in the predicted SuperK 
 // 1) e-like neutrino and antineutrino spectra  (--compare-by-nu-antinu)
-// 2) e-like neutrino events with Erec below or above 500MeV (--compare-by-ereco)
+// 2) e-like neutrino +antineutrino  events with Erec below or above 500MeV (--compare-by-ereco)
 //
 // April 2021 
 // Maria Antonova  <maria.antonova \at ific.uv.es>
@@ -71,7 +71,7 @@ __asm__(".symver memcpy,memcpy@GLIBC_2.2.5");
 void Bievent_build(CmdLnArgList& arg);
 
 void Set_MH(valor::FitModelABC* model);
-void Get_events( TObjArray *array, valor::FitModelABC* model, double& Nfhc, double& Nrhc);
+void Get_events( TObjArray *array, valor::FitModelABC* model, double& Nfhc, double& Nrhc, bool compare_by_nu_antinu, bool compare_by_ereco);
 void RandomizeOsc(valor::FitParamList *fp);
 bool OscParamsPhysical(double mix12val, double mix13val, double dm12val);
 
@@ -103,12 +103,26 @@ void Bievent_build(CmdLnArgList& arg)
    string hypothesis       = arg.GetString("physics-hypothesis");
    string fplopt           = arg.GetString("fit-param-opt");
    bool disable_banff_tuning = false; 
-   /*if(arg.Exists("force-untuned"))
+   /*if(arg.Exists("force-untuned") && arg.GetString("force_untuned") != "-") )
    {
       disable_banff_tuning = true;
       LOG("bievent", pNOTICE) << "Forcing paramters to their untuned values";
    };
 */
+   // choose the mode we are running in i.e. fhc vs rhc or Erec<500 MeV vs Erec>MeV
+   bool compare_by_nu_antinu = false;//
+   bool compare_by_ereco  = false;//
+   if (arg.GetBool("nu-antinu"))
+   {
+      LOG("bievent", pINFO) << "Will generate bievent plot  in numu vs antinumu comparison mode";
+      compare_by_nu_antinu = true;
+   }
+   else 
+   {
+      LOG("bievent", pINFO) << "Will generate bievent plot  in Ereco cut comparison mode";
+      compare_by_ereco = true;
+   }
+
    double deltaCP_first = -TMath::Pi();
    double deltaCP_last = +TMath::Pi();
    const int dcp_npt = arg.GetInt("dcp-npt"); 
@@ -135,7 +149,6 @@ void Bievent_build(CmdLnArgList& arg)
  // PDG 2016 best fits
    vector<double> ss12 =arg.GetDoubleVec("ss12");
    vector<double> dm12 =arg.GetDoubleVec("dm12");
-   vector<double> ss13 = arg.GetDoubleVec("ss13");
    vector<double> dm23 = arg.GetDoubleVec("dm23");
    vector<double> ss23 = arg.GetDoubleVec("ss23");
 
@@ -236,6 +249,7 @@ void Bievent_build(CmdLnArgList& arg)
          if (util::AllWithinLimits(*fp)) isPhysical = true;
       }
       //NOTE: write nominal for fixed points 
+      
       if(e == 0) 
       { 
          for(int idcp=0; idcp < dcp_npt; idcp++)
@@ -275,7 +289,7 @@ void Bievent_build(CmdLnArgList& arg)
                   model->Write(array,"curr","pdft_rf +SB");
     
                          
-                 Get_events(array,model,Nfhc,Nrhc);
+                 Get_events(array,model,Nfhc,Nrhc,compare_by_nu_antinu,compare_by_ereco);
 
                  LOG("bievent", pDEBUG) << "chose dmsq value "<< dm23[imh]<< "cpv = "<< dcp<<" theta23 = "<<ss23[iss23];
                 
@@ -304,10 +318,10 @@ void Bievent_build(CmdLnArgList& arg)
       array->SetOwner(true);
       LOG("bievent", pDEBUG) << "writting";
       // Write stuff out
-      double Nfhc = -999;
+      double Nfhc = -999;// UWAGA: so far naming stays the same as for standard bi-event plot, just for the sake of time saving. I#ll rename when it will finally work 
       double Nrhc = -999;
       model->Write(array,"curr","pdft_rf +SB");                   
-      Get_events(array,model,Nfhc,Nrhc);
+      Get_events(array,model,Nfhc,Nrhc,compare_by_nu_antinu,compare_by_ereco);
       if (e==0){
          nominals->Add(new TMarker(Nfhc, Nrhc, 20)); // NOTE: saving nominal for bf point
       }
@@ -348,7 +362,7 @@ void Set_MH(valor::FitModelABC* model)
    }
 }
 //________________________________________________________________________________________
-void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, double& Nrhc)
+void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, double& Nrhc, bool compare_by_nu_antinu,bool compare_by_ereco)
 {
    CompoundFitModel * cm = dynamic_cast<CompoundFitModel*>(model);
    assert(cm); 
@@ -361,35 +375,76 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
       const VALORBinning & reco_smp = *(binning.RecoSmpBinning());
       const std::vector<KineVar_t>  & reco_vars = reco_smp.KineVars();
       conv::KineSpace_t ks = util::KineSpaceFromKineVars(reco_vars); 
-      if ((b == util::BeamConfFromString("JPARC_FHC")) && (s == util::SampleFromString("1Re") || s == util::SampleFromString("MultiRe")))
+      if (compare_by_nu_antinu)
       {
-         TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());
-         TH1 * curr_pdf = (TH1*) array->FindObject(name.Data());
-         if (!curr_pdf) 
+         if ((b == util::BeamConfFromString("JPARC_FHC")) && (s == util::SampleFromString("1Re") || s == util::SampleFromString("MultiRe")))
          {
-            LOG("bievent", pERROR) << "Couldn't find pdf histogram: " << name;
-               util::Die(-1);
+            TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());
+            TH1 * curr_pdf = (TH1*) array->FindObject(name.Data());
+            if (!curr_pdf) 
+            {
+               LOG("bievent", pERROR) << "Couldn't find pdf histogram: " << name;
+                  util::Die(-1);
+            }
+            if (Nfhc != -999)
+            {
+               Nfhc = Nfhc + curr_pdf->Integral();
+            }
+            else 
+            {
+              Nfhc = curr_pdf->Integral(); 
+            }
          }
-         if (Nfhc != -999)
+   
+         if ((b == util::BeamConfFromString("JPARC_RHC")) && (s == util::SampleFromString("1Re")))
          {
-            Nfhc = Nfhc + curr_pdf->Integral();
-         }
-         else 
-         {
-           Nfhc = curr_pdf->Integral(); 
+            TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());
+            TH1 * curr_pdf = (TH1*) array->FindObject(name.Data());
+            if (!curr_pdf) 
+            {
+               LOG("bievent", pERROR) << "Couldn't find pdf histogram: " << name;
+                  util::Die(-1);
+            }
+              Nrhc = curr_pdf->Integral();
          }
       }
-
-      if ((b == util::BeamConfFromString("JPARC_RHC")) && (s == util::SampleFromString("1Re")))
-      {
-         TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());
-         TH1 * curr_pdf = (TH1*) array->FindObject(name.Data());
-         if (!curr_pdf) 
+      else if (compare_by_ereco){
+         if ( s == util::SampleFromString("1Re") || s == util::SampleFromString("MultiRe"))
          {
-            LOG("bievent", pERROR) << "Couldn't find pdf histogram: " << name;
-               util::Die(-1);
+            // Nfhc -> ereco>500, Nrhc Ereco<500
+            TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());
+            TH1 * curr_pdf = (TH1*) array->FindObject(name.Data());
+            if (!curr_pdf) 
+            {
+               LOG("bievent", pERROR) << "Couldn't find pdf histogram: " << name;
+                  util::Die(-1);
+            }
+            int cut_bin  = curr_pdf->GetXaxis()->FindBin(0.540);
+            LOG("bievent", pDEBUG) <<"cut bin!!!!!!!!!  "<< cut_bin<<" out of all bins "<<curr_pdf->GetNbinsX();
+            LOG("bievent", pDEBUG) <<"x min "<<curr_pdf->GetXaxis()->GetBinCenter(1)<< " x max "<<curr_pdf->GetXaxis()->GetBinCenter(24);
+
+            if (Nfhc != -999 && Nrhc!=-999)
+            {
+               Nfhc = Nfhc + curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX());
+               Nrhc = Nrhc + curr_pdf->Integral(0, cut_bin-1);
+               LOG("bievent", pDEBUG) << " N evts Ereco< 500 (adding up)"<<Nrhc;
+               LOG("bievent", pDEBUG) << " N evts Ereco> 500 (adding up)"<<Nfhc;
+               LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
+            }
+
+            else 
+            {
+              Nfhc = curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX()); 
+              Nrhc = curr_pdf->Integral(0, cut_bin-1); 
+              LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco< 500 "<<Nrhc;
+              LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco> 500 "<<Nfhc;
+              LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
+            }
          }
-           Nrhc = curr_pdf->Integral();
+      }
+      else{
+           LOG("bievent", pERROR) << "No plot generation mode was selected. Nothing to be done here.";
+            util::Die(-1);
       }
    }// loop models 
    // TODO: add checks  if n events is not -999
