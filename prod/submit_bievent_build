@@ -26,6 +26,8 @@
 #  --mix-param-choice       : sinsq2theta or sinsqtheta
 #  --mix-param-octant       : one or two
 #  --force-untuned          : Force syst parameters at their generated values 
+#  --compare-by-nu-antinu   : Compare by nu/antinu events 
+#  --compare-by-ereco       : Compare by Ereco cut (i.e. Ereco<>500 MeV)
 # Seeds
 #  --seed-syst              : Seed used for randomising systematic parameters
 #  --seed-osc               : Seed used for randomising oscillation parameters
@@ -97,6 +99,7 @@ foreach (@ARGV) {
   elsif($_ eq '--mix-param-choice'     ) { $mix_param_choice      = $ARGV[$iarg+1]; }
   elsif($_ eq '--mix-param-octant'     ) { $mix_param_octant      = $ARGV[$iarg+1]; }
   elsif($_ eq '--force-untuned'        ) { $force_untuned         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--compare-by'           ) { $compare_by            = $ARGV[$iarg+1]; }
 # Seeds 
   elsif($_ eq '--seed-syst'            ) { $seed_syst             = $ARGV[$iarg+1]; }
   elsif($_ eq '--seed-osc'             ) { $seed_osc              = $ARGV[$iarg+1]; }
@@ -108,7 +111,6 @@ foreach (@ARGV) {
   elsif($_ eq '--NMH'                  ) { $NMH                   = $ARGV[$iarg+1]; }
 #Parameters vectors 
   elsif($_ eq '--ss12'                 ) { $ss12                  = $ARGV[$iarg+1]; } # make these be var by var and then converted to an array 
-  elsif($_ eq '--ss13'                 ) { $ss13                  = $ARGV[$iarg+1]; }
   elsif($_ eq '--ss23'                 ) { $ss23                  = $ARGV[$iarg+1]; }
   elsif($_ eq '--dm12'                 ) { $dm12                  = $ARGV[$iarg+1]; }
   elsif($_ eq '--dm23'                 ) { $dm23                  = $ARGV[$iarg+1]; }
@@ -136,7 +138,7 @@ foreach (@ARGV) {
 # Set unspecfied arguments to their default values
 #
 
-$resource              = "IFIC"                                                             unless defined $resource;
+$resource              = "interactive"                                                             unless defined $resource;
 $cput                  = "24:00:00"                                                          unless defined $cput;
 $mem                   = "5200M"                                                             unless defined $mem ;
 $job_dir               = $ENV{'PWD'}                                                         unless defined $job_dir;
@@ -144,7 +146,7 @@ $softw_dir             = $ENV{'VALOR_EXPT'}                                     
 $fmwk_dir              = $ENV{'VALOR_FMWK'}                                                  unless defined $fmwk_dir;
 $time_command          = 0                                                                   unless defined $time_command;
 
-$ntoys                 = 40000                                                                   unless defined $ntoys;
+$ntoys                 = 1                                                                  unless defined $ntoys;
 $tag                   = "bievent_build"                                                     unless defined $tag;
 #config and prior files 
 $config                = "analysis/t2k_analysis_configuration_oa2020_run1-10_v1_postfit.xml" unless defined $config;
@@ -159,7 +161,9 @@ $dmsq_scheme           = "auto"                                                 
 $hierarchy             = "normal"                                                            unless defined $hierarchy;
 $mix_param_choice      = "sinsqtheta"                                                        unless defined $mix_param_choice;
 $mix_param_octant      = "two"                                                               unless defined $mix_param_octant;
-#$force_untuned         = 0                                                                   unless defined $force_untuned;
+#$force_untuned         = "-"                                                                 unless defined $force_untuned;
+$compare_by            ="ereco"                                                              unless defined $compare_by;
+
 #Seeds
 $seed_syst             = 10                                                                  unless defined $seed_syst;
 $seed_osc              = 20                                                                  unless defined $seed_osc;
@@ -171,7 +175,6 @@ $N23                   = 4                                                      
 $NMH                   = 2                                                                   unless defined $NMH;
 #vectors 
 $ss12                  = "0.307,0.307"                                                       unless defined $ss12; 
-$ss13                  = "0.02235,0.0226125"                                                 unless defined $ss13; 
 $ss23                  = "0.450,0.500,0.550,0.600"                                           unless defined $ss23;
 $dm12                  = "7.53E-5,7.53E-5"                                                   unless defined $dm12; 
 $dm23                  = "2.49E-3,2.46E-3"                                                   unless defined $dm23; 
@@ -216,7 +219,7 @@ $arguments = "--ntoys $ntoys --tag $tag --osc-prior-file $osc_prior_file --syst-
 		             " --dmsq-scheme $dmsq_scheme --$hierarchy --$mix_param_choice "  .
 		             " --seed-toys-syst $seed_syst --seed-toys-osc $seed_osc --seed-toys-stat $seed_stat --seed-other $seed_other " .
 		             " --dcp-npt $dcp_npt --N23 $N23 --NMH $NMH " . 
-                 " --ss12 $ss12 --ss13 $ss13 --ss23 $ss23 --dm12 $dm12 --dm23 $dm23 " .
+                 " --ss12 $ss12  --ss23 $ss23 --dm12 $dm12 --dm23 $dm23  --$compare_by " .
                  " --input-mixing12 $input_mixing12 --input-mixing13 $input_mixing13 --input-mixing23 $input_mixing23 " .
                  " --input-dm12sq $input_dm12sq --input-dm23sq $input_dm23sq --input-deltacp $input_deltacp " .
                  " --bf-dm23sq $bf_dm23sq --bf-deltacp $bf_deltacp --bf-mixing23 $bf_mixing23 --bf-hier $bf_hier --input-betabar $input_betabar";

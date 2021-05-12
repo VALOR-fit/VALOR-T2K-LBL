@@ -37,7 +37,7 @@
 
   <priority msgstream="fitnt_conv">                     NOTICE </priority>
   
-  <priority msgstream="bievent">                        NOTICE </priority>
+  <priority msgstream="bievent">                        ERROR  </priority>
   <priority msgstream="make_minidst">                   NOTICE </priority>
   <priority msgstream="make_fd_minidst">                NOTICE </priority>
   <priority msgstream="make_fastmc_minidst">            NOTICE </priority>
