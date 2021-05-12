@@ -231,11 +231,11 @@ void bievent_plot
    }
    // Init histogram
   
-   TH2D *hInit = new TH2D("hInit", "hInit", 150, 0, 150, 25, 0, 25);
-   double xmax = 130.0;
+   TH2D *hInit = new TH2D("hInit", "hInit", 90, 0, 80, 70, 0, 70);
+   double xmax = 80.0;//130.0;
    double xmin = 25.0;
-   double ymin = 4.0;
-   double ymax = 25.0;
+   double ymin = 20.0;//4.0;
+   double ymax = 70.0;//25.0;
    hInit->GetXaxis()->SetRangeUser(xmin,xmax);
    hInit->GetYaxis()->SetRangeUser(ymin,ymax);
    double ttx = (xmax + xmin) * 0.5;
@@ -300,14 +300,17 @@ void bievent_plot
 
    for(int it = 0; it < N23; ++it)
    {
+      if (it ==0 || it ==2){
       for(int im = 0; im < NMH; ++im)
       {
+      
         gN_events[it][im].Draw("l");
          
          for(int id = 0; id < NDCP; ++id)
          {
            gN_events_1pt[it][im][id].Draw("p");
          }
+      }
       }
    }
 
@@ -326,7 +329,7 @@ void bievent_plot
       hEventsSyst->SetLineColor(yellow);
       hEventsSyst->SetLineStyle(1);
       hEventsSyst->Draw("cont same");
-      hEventsSyst->Draw("cont3 same");
+      //hEventsSyst->Draw("cont3 same");
       //draw bf 
       int bf_point = ((TObjArray*)filenom->Get("Nominals"))->GetLast();
       TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(bf_point);
@@ -336,14 +339,14 @@ void bievent_plot
       gN_events_bf->SetMarkerColor(yellow);
       gN_events_bf->SetMarkerSize(1);
       gN_events_bf->SetMarkerStyle(22);
-      gN_events_bf->Draw("p");
+     // gN_events_bf->Draw("p");
    }
    if (draw_data)
    {
       gN_events_data->SetMarkerColor(kBlack);
       gN_events_data->SetMarkerSize(1);
       gN_events_data->SetMarkerStyle(23);
-      gN_events_data->Draw("p");
+      //gN_events_data->Draw("p");
    }
    
 
@@ -386,8 +389,8 @@ void bievent_plot
     ldcp_pts->AddEntry(gN_events_data,"Data (68% stat. err.)","p");  
    }
    
-   ldcp_pts->Draw();
-   ldcp_all->Draw();
+   //ldcp_pts->Draw();
+   //ldcp_all->Draw();
 
    cEllipse_all->SaveAs(Form("%s.pdf", tag.c_str()));
    cEllipse_all->SaveAs(Form("%s.png", tag.c_str()));
