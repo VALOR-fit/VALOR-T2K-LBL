@@ -231,11 +231,11 @@ void bievent_plot
    }
    // Init histogram
   
-   TH2D *hInit = new TH2D("hInit", "hInit", 150, 0, 150, 25, 0, 25);
-   double xmax = 130.0;
+   TH2D *hInit = new TH2D("hInit", "hInit", 90, 0, 80, 70, 0, 70);
+   double xmax = 80.0;//130.0;
    double xmin = 25.0;
-   double ymin = 4.0;
-   double ymax = 25.0;
+   double ymin = 20.0;//4.0;
+   double ymax = 70.0;//25.0;
    hInit->GetXaxis()->SetRangeUser(xmin,xmax);
    hInit->GetYaxis()->SetRangeUser(ymin,ymax);
    double ttx = (xmax + xmin) * 0.5;
@@ -251,8 +251,8 @@ void bievent_plot
    hInit->GetXaxis()->SetTitleSize(0.04);
    hInit->GetYaxis()->SetTitleSize(0.04);
     
-   hInit->GetXaxis()->SetTitle("Neutrino mode e-like candidates");
-   hInit->GetYaxis()->SetTitle("Antineutrino mode e-like candidates");
+   hInit->GetXaxis()->SetTitle("e-like candidates with E_{rec} > 550 MeV");
+   hInit->GetYaxis()->SetTitle("e-like candidates with E_{rec} < 550 MeV");
 
    // Draw 
    TCanvas *cEllipse_all = new TCanvas("cEllipse_all","cEllipse_all");
@@ -300,14 +300,17 @@ void bievent_plot
 
    for(int it = 0; it < N23; ++it)
    {
+      if (it ==0 || it ==2){
       for(int im = 0; im < NMH; ++im)
       {
+      
         gN_events[it][im].Draw("l");
          
          for(int id = 0; id < NDCP; ++id)
          {
            gN_events_1pt[it][im][id].Draw("p");
          }
+      }
       }
    }
 
@@ -326,7 +329,7 @@ void bievent_plot
       hEventsSyst->SetLineColor(yellow);
       hEventsSyst->SetLineStyle(1);
       hEventsSyst->Draw("cont same");
-      hEventsSyst->Draw("cont3 same");
+      //hEventsSyst->Draw("cont3 same");
       //draw bf 
       int bf_point = ((TObjArray*)filenom->Get("Nominals"))->GetLast();
       TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(bf_point);
@@ -336,14 +339,14 @@ void bievent_plot
       gN_events_bf->SetMarkerColor(yellow);
       gN_events_bf->SetMarkerSize(1);
       gN_events_bf->SetMarkerStyle(22);
-      gN_events_bf->Draw("p");
+     // gN_events_bf->Draw("p");
    }
    if (draw_data)
    {
       gN_events_data->SetMarkerColor(kBlack);
       gN_events_data->SetMarkerSize(1);
       gN_events_data->SetMarkerStyle(23);
-      gN_events_data->Draw("p");
+      //gN_events_data->Draw("p");
    }
    
 
@@ -355,12 +358,12 @@ void bievent_plot
    caveat->SetTextSize(0.025);
 //   caveat->Draw();
 
-   TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.48);
+   TLegend *ldcp_all = new TLegend(0.15,0.48,0.35,0.78);// nu-antinu (0.15,0.19,0.35,0.48);
    ldcp_all->SetFillColor(0);
    ldcp_all->SetLineColor(0);
    ldcp_all->SetTextFont(132);
    ldcp_all->SetTextSize(0.037);
-   ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1181]{0.45}, #color[1]{0.50}, #color[1179]{0.55}, #color[1180]{0.60}","l");
+   ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1181]{0.45}, #color[1179]{0.55}","l"); // #color[1]{0.50}, , #color[1180]{0.60}
 //   ldcp_all->AddEntry(&gN_events[0][0],"sin^{2} #theta_{23} = 0.45","l");
 //   ldcp_all->AddEntry(&gN_events[2][0],"sin^{2} #theta_{23} = 0.55","l");
    ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.49#times10^{-3} eV^{2}/c^{4}","l");
@@ -386,8 +389,8 @@ void bievent_plot
     ldcp_pts->AddEntry(gN_events_data,"Data (68% stat. err.)","p");  
    }
    
-   ldcp_pts->Draw();
-   ldcp_all->Draw();
+   //ldcp_pts->Draw(); // legend for data and syst error
+   ldcp_all->Draw(); // N.B: Legend for elipses
 
    cEllipse_all->SaveAs(Form("%s.pdf", tag.c_str()));
    cEllipse_all->SaveAs(Form("%s.png", tag.c_str()));

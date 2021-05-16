@@ -425,8 +425,8 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
 
             if (Nfhc != -999 && Nrhc!=-999)
             {
-               Nfhc = Nfhc + curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX());
-               Nrhc = Nrhc + curr_pdf->Integral(0, cut_bin-1);
+               Nfhc = Nfhc + curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX()); // NB: Maybe +1
+               Nrhc = Nrhc + curr_pdf->Integral(0, cut_bin);
                LOG("bievent", pDEBUG) << " N evts Ereco< 500 (adding up)"<<Nrhc;
                LOG("bievent", pDEBUG) << " N evts Ereco> 500 (adding up)"<<Nfhc;
                LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
@@ -435,7 +435,7 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
             else 
             {
               Nfhc = curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX()); 
-              Nrhc = curr_pdf->Integral(0, cut_bin-1); 
+              Nrhc = curr_pdf->Integral(0, cut_bin);
               LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco< 500 "<<Nrhc;
               LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco> 500 "<<Nfhc;
               LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
