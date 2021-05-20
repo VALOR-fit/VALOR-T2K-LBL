@@ -55,6 +55,7 @@ double get_contour_level(TH2D* histo);
 double get_contour_level(TH1D* histo);
 std::pair<double, double> get_interval(TH1D* histo);
 
+
 int main(int argc, char** argv)
 {
    gROOT->SetBatch(1);
@@ -72,7 +73,7 @@ int main(int argc, char** argv)
 void bievent_plot
 (CmdLnArgList& arg)
 {
-   // creating new colours 
+    // creating new colours 
    int blue = TColor::GetFreeColorIndex();
    TColor *bi= new TColor(blue, 0.2,0.64,0.80);
    int green = TColor::GetFreeColorIndex();
@@ -84,7 +85,8 @@ void bievent_plot
    //ROOT setup
    gStyle->SetOptStat(0);
    gStyle->SetOptTitle(0);
-
+   gStyle->SetPadTickX(1);
+   gStyle->SetPadTickY(1);
 
    Messenger::Instance()->Configure(util::CompleteConfigPath(arg.GetString("mesg-thresholds")));
    // get data, events and nominal files 
@@ -92,11 +94,23 @@ void bievent_plot
    string nominal_file  = arg.GetString("nominal-file");
    string tag      = arg.GetString("tag");
    bool use_simple_binning = arg.GetBool("use-simple-binning");
+   //set up comparison mode 
+   bool compare_by_nu_antinu = false;//
+   bool compare_by_ereco  = false;//
+   if (arg.GetBool("nu-antinu"))
+   {
+      LOG("bievent", pINFO) << "Will print bievent plot  in numu vs antinumu comparison mode";
+      compare_by_nu_antinu = true;
+   }
+   else 
+   {
+      LOG("bievent", pINFO) << "Will print bievent plot  in Ereco cut comparison mode";
+      compare_by_ereco = true;
+   }
    //Reading histograms
    TFile* file = new TFile(events_file.c_str(),"read");
    TFile* filenom = new TFile(nominal_file.c_str(),"read");  
    
-
    //Read data? 
    const char* read_opt_data = "";
    bool draw_data  = false;
@@ -230,12 +244,23 @@ void bievent_plot
       hEventsSyst->SetContour(1, syst_contours);
    }
    // Init histogram
-  
-   TH2D *hInit = new TH2D("hInit", "hInit", 90, 0, 80, 70, 0, 70);
-   double xmax = 80.0;//130.0;
-   double xmin = 25.0;
-   double ymin = 20.0;//4.0;
-   double ymax = 70.0;//25.0;
+   double xmax, xmin, ymax, ymin;
+   if (compare_by_ereco){
+      //Set up histo params
+       xmax = 85;
+       xmin = 30;
+       ymin = 15;
+       ymax = 70;
+   }
+   else if (compare_by_nu_antinu)
+   {
+      xmax = 130.0;
+      xmin = 25.0;
+      ymin = 4.0;
+      ymax = 25.0;
+   } 
+      // UWAGA: print here some note on how it is important to set at least one of the options
+   TH2D *hInit = new TH2D("hInit", "hInit", 90, xmin, xmax, 70, ymin, ymax); 
    hInit->GetXaxis()->SetRangeUser(xmin,xmax);
    hInit->GetYaxis()->SetRangeUser(ymin,ymax);
    double ttx = (xmax + xmin) * 0.5;
@@ -250,13 +275,19 @@ void bievent_plot
    hInit->GetYaxis()->SetTitleFont(132);
    hInit->GetXaxis()->SetTitleSize(0.04);
    hInit->GetYaxis()->SetTitleSize(0.04);
-    
-   hInit->GetXaxis()->SetTitle("Neutrino mode e-like candidates");
-   hInit->GetYaxis()->SetTitle("Antineutrino mode e-like candidates");
+   if(compare_by_ereco){
+      hInit->GetXaxis()->SetTitle("e-like candidates with E_{rec} > 550 MeV");
+      hInit->GetYaxis()->SetTitle("e-like candidates with E_{rec} < 550 MeV");
+   }
+   else if (compare_by_nu_antinu){
+      hInit->GetXaxis()->SetTitle("Neutrino mode e-like candidates");
+      hInit->GetYaxis()->SetTitle("Antineutrino mode e-like candidates");
+   }
 
    // Draw 
    TCanvas *cEllipse_all = new TCanvas("cEllipse_all","cEllipse_all");
    hInit->Draw();
+
 
    int marker_styles[NDCP] = {20, 25, 21, 24};
    for(int it = 0; it < N23; ++it)
@@ -300,17 +331,30 @@ void bievent_plot
 
    for(int it = 0; it < N23; ++it)
    {
-      if (it ==0 || it ==2){
-      for(int im = 0; im < NMH; ++im)
-      {
+      if (compare_by_ereco) {
+         if (it ==0 || it ==2){
+            for(int im = 0; im < NMH; ++im)
+            {
       
-        gN_events[it][im].Draw("l");
+               gN_events[it][im].Draw("c");
          
-         for(int id = 0; id < NDCP; ++id)
-         {
-           gN_events_1pt[it][im][id].Draw("p");
+               for(int id = 0; id < NDCP; ++id)
+               {
+                  gN_events_1pt[it][im][id].Draw("p");
+               }
+            }
          }
       }
+      else{
+         for(int im = 0; im < NMH; ++im)
+         {
+           gN_events[it][im].Draw("c");
+         
+           for(int id = 0; id < NDCP; ++id)
+            {
+               gN_events_1pt[it][im][id].Draw("p");
+            }
+         }
       }
    }
 
@@ -339,14 +383,14 @@ void bievent_plot
       gN_events_bf->SetMarkerColor(yellow);
       gN_events_bf->SetMarkerSize(1);
       gN_events_bf->SetMarkerStyle(22);
-     // gN_events_bf->Draw("p");
+      //gN_events_bf->Draw("p");
    }
    if (draw_data)
    {
       gN_events_data->SetMarkerColor(kBlack);
       gN_events_data->SetMarkerSize(1);
       gN_events_data->SetMarkerStyle(23);
-      //gN_events_data->Draw("p");
+      gN_events_data->Draw("p");
    }
    
 
@@ -358,16 +402,31 @@ void bievent_plot
    caveat->SetTextSize(0.025);
 //   caveat->Draw();
 
-   TLegend *ldcp_all = new TLegend(0.15,0.19,0.35,0.48);
+   double lxmin, lxmax, lymin, lymax;
+   if (compare_by_nu_antinu){
+      lxmin = 0.15;
+      lxmax = 0.35;
+      lymin = 0.19;
+      lymax = 0.48;
+
+   }
+   else if (compare_by_ereco){
+      lxmin = 0.15;
+      lxmax = 0.35;
+      lymin = 0.57;
+      lymax = 0.87;
+   }
+   
+   TLegend *ldcp_all = new TLegend(lxmin, lymin, lxmax, lymax);
+
+   if (compare_by_nu_antinu) ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1181]{0.45}, #color[1]{0.50}, #color[1179]{0.55}, #color[1180]{0.60}","l");
+   else if (compare_by_ereco) ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1181]{0.45}, #color[1179]{0.55}","l");
    ldcp_all->SetFillColor(0);
    ldcp_all->SetLineColor(0);
    ldcp_all->SetTextFont(132);
    ldcp_all->SetTextSize(0.037);
-   ldcp_all->AddEntry(&gN_events[1][0],"sin^{2} #theta_{23} = #color[1181]{0.45}, #color[1]{0.50}, #color[1179]{0.55}, #color[1180]{0.60}","l");
-//   ldcp_all->AddEntry(&gN_events[0][0],"sin^{2} #theta_{23} = 0.45","l");
-//   ldcp_all->AddEntry(&gN_events[2][0],"sin^{2} #theta_{23} = 0.55","l");
    ldcp_all->AddEntry(&gN_events[1][0],"#Deltam^{2}_{32} = 2.49#times10^{-3} eV^{2}/c^{4}","l");
-   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{13} = -2.46#times10^{-3} eV^{2}/c^{4}","l");
+   ldcp_all->AddEntry(&gN_events[1][1],"#Deltam^{2}_{31} = -2.46#times10^{-3} eV^{2}/c^{4}","l");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][3],"#delta_{CP} = #pi","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][2],"#delta_{CP} = +#pi/2","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][1],"#delta_{CP} = 0","p");
@@ -390,7 +449,7 @@ void bievent_plot
    }
    
    //ldcp_pts->Draw();
-   //ldcp_all->Draw();
+   ldcp_all->Draw();
 
    cEllipse_all->SaveAs(Form("%s.pdf", tag.c_str()));
    cEllipse_all->SaveAs(Form("%s.png", tag.c_str()));
@@ -514,3 +573,5 @@ std::pair<double, double> get_interval(TH1D* histo)
 
    return std::make_pair(low, high);
 }
+
+

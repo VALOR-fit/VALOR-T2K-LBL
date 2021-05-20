@@ -4,7 +4,7 @@ tag                                  |   string       |  optional   |   ellipse_
 config                               |   string       |  mandatory  |   -
 events-file                          |   string       |  mandatory  |   -
 nominal-file                         |   string       |  mandatory  |   -
-dcp-npt                              |   integer      |  mandatory  |   9
+dcp-npt                              |   integer      |  mandatory  |   37
 N23                                  |   integer      |  mandatory  |   4
 NMH                                  |   integer      |  mandatory  |   2
 NDCP                                 |   integer      |  mandatory  |   4
@@ -16,3 +16,4 @@ syst-theta23                         |   integer      |  optional   |   1
 syst-mh                              |   integer      |  optional   |   0
 no-simple-binning,use-simple-binning |   boolean_list |  optional   |   no-simple-binning
 mesg-thresholds                      |   string       |  optional   |   verbosity.xml
+nu-antinu, ereco                     |   boolean_list |  optional   |   nu-antinu
