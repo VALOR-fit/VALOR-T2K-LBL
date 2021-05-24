@@ -150,7 +150,7 @@ void bievent_plot
    TH2D* hEventsSyst;
    TH1D* hFHCEvents;
    TH1D* hRHCEvents;
-   double Nfhc = -999.;
+   double Nfhc = -999.; //UWAGA:  re-name. as now there are two plotting options 
    double Nrhc = -999.;
    hEvents = static_cast<TH2D*>(file->Get("hEvents"));
    hEventsSyst = static_cast<TH2D*>(file->Get(Form("hEventsSyst")));
@@ -185,7 +185,7 @@ void bievent_plot
          TGraph* tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"));
          for (int evt = 0; evt< tmp->GetN(); evt++){
             tmp->GetPoint(evt, x,y);
-            if (x>0.560) nfhc++;
+            if (x>0.550) nfhc++;
                else nrhc++;
 
          }  
@@ -195,7 +195,7 @@ void bievent_plot
          tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"));
          for (int evt = 0; evt< tmp->GetN(); evt++){
             tmp->GetPoint(evt, x,y);
-            if (x>0.560) nfhc++;
+            if (x>0.550) nfhc++;
                else nrhc++;
          }  
          delete tmp;
@@ -203,7 +203,7 @@ void bievent_plot
          tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"));
          for (int evt = 0; evt< tmp->GetN(); evt++){
             tmp->GetPoint(evt, x,y);
-            if(x>0.560) nfhc++;
+            if(x>0.550) nfhc++;
                else nrhc++;
          }  
          delete tmp; 
@@ -277,6 +277,7 @@ void bievent_plot
       double syst_contours[1] = {get_contour_level(hEventsSyst)};
       hEventsSyst->SetContour(1, syst_contours);
    }
+
    // Init histogram
    double xmax, xmin, ymax, ymin;
    if (compare_by_ereco){
