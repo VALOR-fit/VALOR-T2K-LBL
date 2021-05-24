@@ -163,23 +163,57 @@ void bievent_plot
    TGraphAsymmErrors *gN_events_data = new TGraphAsymmErrors();
    if(draw_data && data_file!="-")
    {    
-
+      double nfhc = 0.0;
+      double nrhc = 0.0;
       TFile* dfile = new TFile(data_file.c_str(),"read");
+      if (compare_by_nu_antinu){
+         // FHC # of events 
+         nfhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"))->GetN();
+         nfhc += static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"))->GetN();
 
-      // FHC # of events 
-      double nfhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"))->GetN();
-      nfhc += static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"))->GetN();
-
-      // RHC1Re # of events 
-
-      double nrhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"))->GetN();
+         // RHC1Re # of events 
+         nrhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"))->GetN();
     
-      gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
+         gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
 
+         // Setting sqrt(N) as the statistical error on a data point is wrong, as the data has no stat error.
+         // Instead calculate an error band showing how far away the prediction can be while still keeping
+         // the data point within its Poisson stat errors.
+      }
+      else if (compare_by_ereco){
+         double x, y = 0;
+         TGraph* tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"));
+         for (int evt = 0; evt< tmp->GetN(); evt++){
+            tmp->GetPoint(evt, x,y);
+            if (x>0.560) nfhc++;
+               else nrhc++;
+
+         }  
+         delete tmp; 
+
+
+         tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"));
+         for (int evt = 0; evt< tmp->GetN(); evt++){
+            tmp->GetPoint(evt, x,y);
+            if (x>0.560) nfhc++;
+               else nrhc++;
+         }  
+         delete tmp;
+
+         tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"));
+         for (int evt = 0; evt< tmp->GetN(); evt++){
+            tmp->GetPoint(evt, x,y);
+            if(x>0.560) nfhc++;
+               else nrhc++;
+         }  
+         delete tmp; 
+
+
+         gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
+      }
       // Setting sqrt(N) as the statistical error on a data point is wrong, as the data has no stat error.
       // Instead calculate an error band showing how far away the prediction can be while still keeping
       // the data point within its Poisson stat errors.
-      
       const double alpha = 1 - 0.6827;
       double N = nrhc;
       double L =  (N==0) ? 0  : (ROOT::Math::gamma_quantile(alpha/2,N,1.));
@@ -372,8 +406,8 @@ void bievent_plot
       hEventsSyst->SetFillColorAlpha(yellow, 0.15);
       hEventsSyst->SetLineColor(yellow);
       hEventsSyst->SetLineStyle(1);
-      hEventsSyst->Draw("cont same");
-      //hEventsSyst->Draw("cont3 same");
+      //hEventsSyst->Draw("cont same");
+      hEventsSyst->Draw("cont3 same");
       //draw bf 
       int bf_point = ((TObjArray*)filenom->Get("Nominals"))->GetLast();
       TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(bf_point);
@@ -383,15 +417,15 @@ void bievent_plot
       gN_events_bf->SetMarkerColor(yellow);
       gN_events_bf->SetMarkerSize(1);
       gN_events_bf->SetMarkerStyle(22);
-      //gN_events_bf->Draw("p");
+      gN_events_bf->Draw("p");
    }
    if (draw_data)
    {
       gN_events_data->SetMarkerColor(kBlack);
       gN_events_data->SetMarkerSize(1);
       gN_events_data->SetMarkerStyle(23);
-      gN_events_data->Draw("p");
-   }
+      gN_events_data->Draw("p same ");
+    }
    
 
    TLatex* title = new TLatex(ttx, 1.01 * ty, "T2K Run1-10 Preliminary");
@@ -448,7 +482,7 @@ void bievent_plot
     ldcp_pts->AddEntry(gN_events_data,"Data (68% stat. err.)","p");  
    }
    
-   //ldcp_pts->Draw();
+   ldcp_pts->Draw();
    ldcp_all->Draw();
 
    cEllipse_all->SaveAs(Form("%s.pdf", tag.c_str()));
