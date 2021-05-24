@@ -291,9 +291,12 @@ void Bievent_build(CmdLnArgList& arg)
 
       bool isPhysical = false;
       while(!isPhysical)
-      {  
+      { 
         model->ResetSystematics(*fp, "all"); 
-        model->RandomizeSystematics(*fp);
+        
+        if(e!=0) {
+          model->RandomizeSystematics(*fp);
+        }
 
         fp->FromPhysParamList(model->Tweaks(), "current silent");
         if (util::AllWithinLimits(*fp)) isPhysical = true;
@@ -417,15 +420,12 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
                   util::Die(-1);
             }
             int cut_bin  = curr_pdf->GetXaxis()->FindBin(0.540);
-            LOG("bievent", pDEBUG) <<"cut bin!!!!!!!!!  "<< cut_bin<<" out of all bins "<<curr_pdf->GetNbinsX();
             LOG("bievent", pDEBUG) <<"x min "<<curr_pdf->GetXaxis()->GetBinCenter(1)<< " x max "<<curr_pdf->GetXaxis()->GetBinCenter(24);
 
             if (Nfhc != -999 && Nrhc!=-999)
             {
                Nfhc = Nfhc + curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX());
                Nrhc = Nrhc + curr_pdf->Integral(0, cut_bin);
-               LOG("bievent", pDEBUG) << " N evts Ereco< 500 (adding up)"<<Nrhc;
-               LOG("bievent", pDEBUG) << " N evts Ereco> 500 (adding up)"<<Nfhc;
                LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
             }
 
@@ -433,8 +433,6 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
             {
               Nfhc = curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX()); 
               Nrhc = curr_pdf->Integral(0, cut_bin); 
-              LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco< 500 "<<Nrhc;
-              LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco> 500 "<<Nfhc;
               LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
             }
          }
