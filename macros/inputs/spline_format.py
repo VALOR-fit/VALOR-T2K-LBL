@@ -110,7 +110,7 @@ def get_param_map():
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
-    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe","FHCMultiRmu"]:
+    if sample in ["FHC1Rmu","FHC1Re","FHC1Re1dcy","FHCMultiRmu"]:
         return "fhc"
     elif sample in ["RHC1Rmu","RHC1Re"]:
         return "rhc"
@@ -123,7 +123,7 @@ def get_selection_map(sample):
         return "nueselec"
     elif "1Rmu" in sample:
         return "numuselec"
-    elif "MultiRe" in sample:
+    elif "1Re1dcy" in sample:
         return "cc1piselec"
     elif "MultiRmu" in sample: 
         return "numucc1piselec"        
@@ -176,7 +176,7 @@ def set_model_map(model):
     elif model.Name() == "superk__JPARC_RHC__1re":
         models["RHC1Re"] = model
     elif model.Name() == "superk__JPARC_FHC__multire":
-        models["FHCMultiRe"] = model
+        models["FHC1Re1dcy"] = model
     elif model.Name() == "superk__JPARC_FHC__multirmu":
         models["FHCMultiRmu"] = model
     else:
@@ -362,7 +362,7 @@ def main(version, path, sample, config):
   
 if __name__=="__main__":
     import argparse
-    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe", "FHCMultiRmu"]
+    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHC1Re1dcy", "FHCMultiRmu"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
     parser.add_argument('-p', '--prefix', default='spline2019v1', help="Spline filename prefix.")
     parser.add_argument('-i', '--input', help="Input spline directory.")

@@ -739,7 +739,7 @@ std::string get_sample_name_simple(conv::Sample_t s, bool no_tex)
   std::string sample_str = "";
   if     (s == conv::ks1Rmu   ) { sample_str = "1R#mu";     }
   else if(s == conv::ks1Re    ) { sample_str = "1Re";       }
-  else if(s == conv::ksMultiRe) { sample_str = "1Re 1d.e."; }
+  else if(s == conv::ks1Re1dcy) { sample_str = "1Re 1d.e."; }
   else {
     std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
     vutil::Die(1);

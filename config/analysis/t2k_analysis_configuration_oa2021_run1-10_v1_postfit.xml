@@ -55,10 +55,10 @@
       <binning>      binning/t2k_rhc_elike_run1-10_bins.xml               </binning>
     </element>
     
-    <element name="sk_fhc_multire">
+    <element name="sk_fhc_1re1dcy">
       <detector>     superk                                               </detector>
       <beam>         JPARC_FHC                                            </beam>
-      <sample>       multire                                              </sample>
+      <sample>       1re1dcy                                              </sample>
       <observable>   Ereco,Thetareco                                      </observable>
       <data>                                                              </data>
       <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>

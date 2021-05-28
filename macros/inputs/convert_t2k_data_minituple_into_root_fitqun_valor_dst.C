@@ -31,7 +31,7 @@ bool print_low_level_info = false;
 std::vector<conv::BeamConf_t> beams = {conv::kbJPARC_FHC, conv::kbJPARC_RHC};
 
 std::map<conv::BeamConf_t, std::vector<conv::Sample_t>> samples;
-std::vector<Sample_t> vs = {conv::ks1Rmu, conv::ks1Re, conv::ksMultiRe};
+std::vector<Sample_t> vs = {conv::ks1Rmu, conv::ks1Re, conv::ks1Re1dcy};
 samples.insert(std::make_pair(conv::kbJPARC_FHC, vs));
 vs = {conv::ks1Rmu, conv::ks1Re};
 samples.insert(std::make_pair(conv::kbJPARC_RHC, vs));
@@ -63,7 +63,7 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
 
   // Set up the input tree branches
   double erec;          // Neutrino reconstructed energy
-  int    iclass;        // SK selection code. 11 is single-ring e-like, 13 is single-ring mu-like, 14 is MultiRe (i.e. e CC1pi-like)
+  int    iclass;        // SK selection code. 11 is single-ring e-like, 13 is single-ring mu-like, 14 is 1Re1dcy (i.e. e CC1pi-like)
   float  dir[2][7][3];  // Array containing the direction of the outgoing lepton
   double horn_current;  // FHC (>0) or RHC (<0)
   tree->SetBranchAddress("erec"        , &erec);
@@ -132,10 +132,10 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
       else                        { n_rhc_e++; }
     }
     else if(iclass == sk_code_multire) {
-      selection = (int) conv::ksMultiRe;
+      selection = (int) conv::ks1Re1dcy;
       if(EventIsFHC(horn_current)){ n_multie++; }
       else {
-        std::cerr << "ERROR: An RHC MultiRe event. This shouldn't happen!" << std::endl;
+        std::cerr << "ERROR: An RHC 1Re1dcy event. This shouldn't happen!" << std::endl;
         exit(1);
       }
     }
@@ -189,7 +189,7 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
   std::cout << " FHC 1Re:  " << n_fhc_e  << std::endl;
   std::cout << " RHC 1Rmu: " << n_rhc_mu << std::endl;
   std::cout << " RHC 1Re:  " << n_rhc_e  << std::endl;
-  std::cout << " MultiRe:  " << n_multie << std::endl;
+  std::cout << " 1Re1dcy:  " << n_multie << std::endl;
   
   fin->Close();
   
