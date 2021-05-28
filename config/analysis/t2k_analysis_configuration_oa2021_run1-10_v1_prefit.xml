@@ -85,7 +85,7 @@
   <parameter_definitions>
     <!-- Make sure that any config file containing default values is read first! -->
     <filename desc="default_physics_params"> params/default_physics_parameter_values.xml                      </filename>
-    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2020_run1-10_v1.xml         </filename>
+    <filename desc="systematic_params">      params/parameter_specification_t2k_oa2021_run1-10_v1.xml         </filename>
     <filename desc="physics_params">         params/physics_parameter_specification_t2k_oa2018_run1-9d_v1.xml </filename>
   </parameter_definitions>
 
