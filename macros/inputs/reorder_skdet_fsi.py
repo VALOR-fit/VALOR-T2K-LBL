@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Re-order the input SKDetFSI matrix, using a hard-coded order.
+# Re-order the input SKDetFSI (oa2020) or SKDetSIPN (oa2021) matrix, using a hard-coded order.
 #
 # Andy Chappell
 # Francis Bench
@@ -31,9 +31,10 @@ def main(skdet_file, output_file="skdetsipn.root", analysis_version= "oa2020"):
     reordered_range = range(12,18)+range(0,12)+range(30,36)+range(18,30)+range(36,44)+range(44,57)+range(57,58) # FHC 1Rmu, FHC 1Re, RHC 1Rmu, RHC 1Re, FHC 1Re1dcy, FHC 2Rmu, SK P-scale
 
   sk_reordered = reorder_tmatrix(sk_matrix, reordered_range)
-
-  sk_reordered.Write("skdetsipn")
-  
+  if analysis_version == "oa2020":
+    sk_reordered.Write("skdetfsi")
+  elif analysis_version == "oa2021":
+    sk_reordered.Write("skdetsipn")
 
   print "reordered matrix"
   for i in range(0,n):

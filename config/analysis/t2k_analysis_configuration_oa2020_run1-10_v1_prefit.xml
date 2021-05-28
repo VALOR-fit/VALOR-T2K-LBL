@@ -120,8 +120,8 @@
       <format> t2k_sk_params_run1-9d.xml </format>
 
       <covariance_matrix>
-        <filename> official/2020/skdetsipn/SKJointErrorMatrix_Mock_20210514_valor.root </filename>
-        <objname>  skdetsipn    </objname>
+        <filename> official/2020/skdetsipn/SKJointErrorMatrix2020_Total_fitqun_v4_16062020_valor_format.root </filename>
+        <objname>  skdetfsi    </objname>
         <objtype>  TMatrixD    </objtype>
       </covariance_matrix>
     </group>

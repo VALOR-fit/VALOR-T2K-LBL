@@ -75,7 +75,7 @@ $std_args =  "--config analysis/t2k_analysis_configuration_oa2018_run1-9d_v1_pos
 #		1) the name(s) of the param set(s) to vary;
 #   2) the name(s) any params to exclude from 1)
 my @param_sets = (
-                  ["SKDetFSI"               , "NONE"],
+                  ["SKDetSIPN"               , "NONE"],
                   ["BANFF"                  , "nue_numu,nuebar_numubar,NC_1gamma,NC_other_far,ebo"],		# Include run 9 BANFF constrained params only
                   ["ebo"                    , "NONE"],
                   ["nue_numu,nuebar_numubar", "NONE"],
