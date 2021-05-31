@@ -134,7 +134,7 @@ def get_selection_map(sample):
 def get_sdk_selection(sample):
     if "1Rmu" in sample:
         return "1rmu"
-    elif "1Re" in sample:
+    elif "1Re" in sample: #TODO: Change to elif "1Re1dcy" in sample and then elif "1Re" in sample
         return "1re"
     elif "MultiRmu" in sample:
         return "multirmu"
