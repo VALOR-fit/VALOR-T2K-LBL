@@ -112,7 +112,7 @@ valor_sample_full_names = {
     "RHC1Rmu"    : "superk__JPARC_RHC__1rmu",
     "FHC1Re"     : "superk__JPARC_FHC__1re",
     "RHC1Re"     : "superk__JPARC_RHC__1re",
-    "FHCMultiRe" : "superk__JPARC_FHC__multire",
+    "FHC1Re1dcy" : "superk__JPARC_FHC__1re1dcy",
     "FHCMultiRmu1de" : "superk__JPARC_FHC__multirmu1de",
     "FHCMultiRmu2de" : "superk__JPARC_FHC__multirmu2de"
 }
@@ -122,7 +122,7 @@ sample_is_2d = {
     "RHC1Rmu"    : False,
     "FHC1Re"     : True,
     "RHC1Re"     : True,
-    "FHCMultiRe" : True,
+    "FHC1Re1dcy" : True,
     "FHCMultiRmu1de" : False,
     "FHCMultiRmu2de" : False
 }
@@ -132,7 +132,7 @@ valor_sample_to_ptheta_sample = {
     "RHC1Rmu"    : "antinu_numu",
     "FHC1Re"     : "numode_nue",
     "RHC1Re"     : "antinu_nue",
-    "FHCMultiRe" : "numode_cc1pi"
+    "FHC1Re1dcy" : "numode_cc1pi"
 }
 
 
@@ -930,7 +930,7 @@ if __name__=="__main__":
     parser.add_argument('-r', '--Erec-GeV'      , dest="Erec_GeV"      , default='-999', help="Erec in GeV. If specified, just looks at one Erec bin, otherwise looks at all.")
     parser.add_argument('-a', '--theta-deg'     , dest="theta_deg"     , default='-999', help="theta rec in degrees. If specified, just looks at one theta bin, otherwise looks at all.")
     parser.add_argument('-t', '--Etrue-GeV'     , dest="Etrue_GeV"     , default='-999' , help="Etrue in GeV. Optional. If specified, just looks at one Erec bin, otherwise looks at all.")
-    parser.add_argument('-s', '--sample'        , dest="sample"        , default='FHC1Rmu', choices=["FHC1Rmu","RHC1Rmu","FHC1Re","RHC1Re","FHCMultiRe","FHCMultiRmu1de","FHCMultiRmu2de"])
+    parser.add_argument('-s', '--sample'        , dest="sample"        , default='FHC1Rmu', choices=["FHC1Rmu","RHC1Rmu","FHC1Re","RHC1Re","FHC1Re1dcy","FHCMultiRmu1de","FHCMultiRmu2de"])
     parser.add_argument('-i', '--init-flav'     , dest="init_flav"     , default='all', choices=["all","NuMu","NuE","NuMuBar","NuEBar"])
     parser.add_argument('-f', '--final-flav'    , dest="final_flav"    , default='all', choices=["all","NuMu","NuE","NuMuBar","NuEBar"])
     parser.add_argument('-p', '--selected-param', dest="selected_param", default='', help="Write a param name here to only look at the splines for that param. Otherwise will look at all params.")

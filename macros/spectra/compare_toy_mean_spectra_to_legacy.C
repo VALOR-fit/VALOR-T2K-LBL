@@ -24,7 +24,7 @@ vector<std::string> legacy_sample_names = {
   "RHC1Rmu",
   "1Re",
   "RHC1Re",
-  "MultiRe"
+  "1Re1dcy"
 };
 
 vector<std::string> sdk_sample_names = {
@@ -32,7 +32,7 @@ vector<std::string> sdk_sample_names = {
   "superk__JPARC_RHC__1rmu",
   "superk__JPARC_FHC__1re",
   "superk__JPARC_RHC__1re",
-  "superk__JPARC_FHC__multire"
+  "superk__JPARC_FHC__1re1dcy"
 };
 
 //___________________________________________________________________________

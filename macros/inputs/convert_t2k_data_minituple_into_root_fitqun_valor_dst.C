@@ -21,7 +21,7 @@ double dir_nu[3] = {0.669764, -0.742179, 0.024223};
 // SK selection codes
 int sk_code_1re     = 11;
 int sk_code_1rmu    = 13;
-int sk_code_multire = 14;
+int sk_code_1re1dcy = 14;
 
 const char* valor_minidst_name = "valor_t2k_data_mini_dst";
 
@@ -131,7 +131,7 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
       if(EventIsFHC(horn_current)){ n_fhc_e++; }
       else                        { n_rhc_e++; }
     }
-    else if(iclass == sk_code_multire) {
+    else if(iclass == sk_code_1re1dcy) {
       selection = (int) conv::ks1Re1dcy;
       if(EventIsFHC(horn_current)){ n_multie++; }
       else {
@@ -236,7 +236,7 @@ bool EventIsMuLike(int iclass)
 //___________________________________________________________________________
 bool EventIsELike(int iclass)
 {
-  return (iclass == sk_code_1re || iclass == sk_code_multire);
+  return (iclass == sk_code_1re || iclass == sk_code_1re1dcy);
 }
 //___________________________________________________________________________
 bool EventIsFHC(int horn_current)

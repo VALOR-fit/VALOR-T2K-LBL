@@ -134,12 +134,16 @@ def get_selection_map(sample):
 def get_sdk_selection(sample):
     if "1Rmu" in sample:
         return "1rmu"
-    elif "1Re" in sample: #TODO: Change to elif "1Re1dcy" in sample and then elif "1Re" in sample
+    elif "1Re1dcy" in sample:
+        return "1re1dcy"
+    elif "1Re" in sample:
         return "1re"
     elif "MultiRmu" in sample:
         return "multirmu"
     else:
-        return "multire"
+        print "Error: Unknown sample ", sample
+        sys.exit()
+
 
 def get_sdk_beam(sample):
     if "RHC" in sample:
@@ -175,7 +179,7 @@ def set_model_map(model):
         models["FHC1Re"] = model
     elif model.Name() == "superk__JPARC_RHC__1re":
         models["RHC1Re"] = model
-    elif model.Name() == "superk__JPARC_FHC__multire":
+    elif model.Name() == "superk__JPARC_FHC__1re1dcy":
         models["FHC1Re1dcy"] = model
     elif model.Name() == "superk__JPARC_FHC__multirmu":
         models["FHCMultiRmu"] = model
