@@ -5610,9 +5610,516 @@
     <step>                   0.01  </step>
   </param>
 
+  <!-- ==================================================================================== -->
+  <param>
+    <name>
+      <simple>  skdetsipn000_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  0; Ereco range 0.0, 0.80 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{0; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  0; $E_{reco}$( 0.0, 0.80 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
 
+    <apply_to_range>
+      <Ereco>  0.0, 0.8 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
 
   <!-- ==================================================================================== -->
+
+  <param>
+    <name>
+      <simple>  skdetsipn001_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  1; Ereco range 0.80, 2.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{1; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  1; $E_{reco}$( 0.80, 2.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  0.8, 2.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== 1.1, 30.0-->
+
+  <param>
+    <name>
+      <simple>  skdetsipn002_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  2; Ereco range 2.0, 30.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{2; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  2; $E_{reco}$( 2.0, 30.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  2.0, 30.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+  <param>
+    <name>
+      <simple>  skdetsipn003_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  3; Ereco range 0.0, 0.80 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{3; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  3; $E_{reco}$( 0.0, 0.80 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  0.0, 0.8 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+  <param>
+    <name>
+      <simple>  skdetsipn004_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  4; Ereco range 0.80, 2.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{4; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  4; $E_{reco}$( 0.80, 2.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  0.8, 2.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== 1.1, 30.0-->
+
+  <param>
+    <name>
+      <simple>  skdetsipn005_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  5; Ereco range 2.0, 30.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{5; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  5; $E_{reco}$( 2.0, 30.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  2.0, 30.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+  <param>
+    <name>
+      <simple>  skdetsipn006_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  6; Ereco range 0.0, 0.80 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{6; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  6; $E_{reco}$( 0.0, 0.80 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  0.0, 0.8 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+  <param>
+    <name>
+      <simple>  skdetsipn007_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  7; Ereco range 0.80, 2.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{7; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  7; $E_{reco}$( 0.80, 2.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  0.8, 2.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== 1.1, 30.0-->
+
+  <param>
+    <name>
+      <simple>  skdetsipn008_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  8; Ereco range 2.0, 30.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{8; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  8; $E_{reco}$( 2.0, 30.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  2.0, 30.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+
+  <param>
+    <name>
+      <simple>  skdetsipn009_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  9; Ereco range 0.0, 1.50 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{9; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  9; $E_{reco}$( 0.0, 1.50 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  0.0, 1.50 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+  <param>
+    <name>
+      <simple>  skdetsipn010_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  10; Ereco range 1.50, 2.50 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{10; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  10; $E_{reco}$( 1.50, 2.50 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  1.50, 2.50 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== 1.1, 30.0-->
+
+  <param>
+    <name>
+      <simple>  skdetsipn011_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  11; Ereco range 2.50, 30.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{11; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  11; $E_{reco}$( 2.50, 30.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  2.50, 30.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+  <param>
+    <name>
+      <simple>  skdetsipn012_MultiRmu  </simple>
+      <long>  SKDet + SI/PN  12; Ereco range 0.0, 30.0 GeV; nue CC (MultiRmu); MultiRmu  </long>
+      <rootex>  f_{12; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
+      <tex>  SKDet + SI/PN  12; $E_{reco}$( 0.0, 30.0 )GeV; nue CC ($MultiR_{\mu}$); MultiRmu  </tex>
+    </name>
+
+    <apply_to_range>
+      <Ereco>  0.0, 30.0 </Ereco>
+    </apply_to_range>
+
+    <type>  normalisation  </type>
+
+    <categories>
+      <category>  SKDetSIPN  </category>
+    </categories>
+
+    <apply_to>
+      <detector>  SuperK  </detector>
+      <beam>  FHC  </beam>
+      <selection>  MultiRmu  </selection>
+      <reac_type>  all NC  </reac_type>
+      <flav_init>  all  </flav_init>
+      <flav_final>  all  </flav_final>
+      <target>  all  </target>
+    </apply_to>
+
+    <limits>  0.0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+  </param>
+
+  <!-- ==================================================================================== -->
+
+
   <param>
     <name>
       <simple>  sk_e_scale  </simple>
@@ -5653,4 +6160,49 @@
   
 
 
-</param_list>
+
+
+
+        <!-- ==================================================================================== -->
+
+
+  <param>
+  <name>
+    <simple>  sk_p_scale  </simple>
+    <long>  SK momentum scale  </long>
+    <rootex>  f_{p; r}^{SK}  </rootex>
+    <tex>  SK momentum scale  </tex>
+  </name>
+
+  <apply_to_range>
+    <Ereco>  0, inf  </Ereco>
+  </apply_to_range>
+
+  <!--<type>  lateral_post_osc  </type>-->
+  <type>  disabled  </type>
+
+  <categories>
+    <category>  SKDetSIPN  </category>
+  </categories>
+
+  <apply_to>
+    <detector>  SuperK  </detector>
+    <beam>  all  </beam>
+    <selection>  all  </selection>
+    <reac_type>  all  </reac_type>
+    <flav_init>  all  </flav_init>
+    <flav_final>  all  </flav_final>
+    <target>  all  </target>
+  </apply_to>
+
+  <limits>  -inf, inf  </limits>
+
+  <update_from_cov_matrix> true  </update_from_cov_matrix>
+  <range_mode>             sigma </range_mode>
+  <range>                  -5, 5 </range>
+  <step_mode>              frac  </step_mode>
+  <step>                   0.01  </step>
+  </param>
+
+
+  </param_list>

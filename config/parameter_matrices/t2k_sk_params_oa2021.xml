@@ -44,5 +44,18 @@
   <parameter>	skdetsipn014_1Re1dcy   </parameter>
   <parameter>	skdetsipn016_1Re1dcy   </parameter>
   <parameter>	skdetsipn017_1Re1dcy   </parameter>
-  <parameter>	sk_e_scale              </parameter>
+  <parameter>	skdetsipn000_MultiRmu   </parameter>
+  <parameter>	skdetsipn001_MultiRmu   </parameter>
+  <parameter>	skdetsipn002_MultiRmu   </parameter>
+  <parameter>	skdetsipn003_MultiRmu   </parameter>
+  <parameter>	skdetsipn004_MultiRmu   </parameter>
+  <parameter>	skdetsipn005_MultiRmu   </parameter>
+  <parameter>	skdetsipn006_MultiRmu   </parameter>
+  <parameter>	skdetsipn007_MultiRmu   </parameter>
+  <parameter>	skdetsipn008_MultiRmu   </parameter>
+  <parameter>	skdetsipn009_MultiRmu   </parameter>
+  <parameter>	skdetsipn010_MultiRmu   </parameter>
+  <parameter>	skdetsipn011_MultiRmu   </parameter>
+  <parameter>	skdetsipn012_MultiRmu   </parameter>
+  <parameter>	sk_p_scale              </parameter>
 </systematic_list>
