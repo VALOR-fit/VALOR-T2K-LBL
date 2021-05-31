@@ -13,7 +13,7 @@
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
       <data>                                                              </data>
-      <mc>           mc/t2k_mc_run1-10_fhc_mulike.xml                     </mc>
+      <mc>           mc/t2k_mc_oa2021_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_mulike_run1-10_bins.xml              </binning>
@@ -25,7 +25,7 @@
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
       <data>                                                              </data>
-      <mc>           mc/t2k_mc_run1-10_rhc_mulike.xml                     </mc>
+      <mc>           mc/t2k_mc_oa2021_rhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_rhc_mulike_run1-10_bins.xml              </binning>
@@ -37,7 +37,7 @@
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
       <data>                                                              </data>
-      <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>
+      <mc>           mc/t2k_mc_oa2021_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_elike_run1-10_bins.xml               </binning>
@@ -49,7 +49,7 @@
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
       <data>                                                              </data>
-      <mc>           mc/t2k_mc_run1-10_rhc_elike.xml                      </mc>
+      <mc>           mc/t2k_mc_oa2021_rhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_rhc_elike_run1-10_bins.xml               </binning>
@@ -61,7 +61,7 @@
       <sample>       1re1dcy                                              </sample>
       <observable>   Ereco,Thetareco                                      </observable>
       <data>                                                              </data>
-      <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>
+      <mc>           mc/t2k_mc_oa2021_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_cc1pilike_run1-10_bins.xml           </binning>
@@ -73,7 +73,7 @@
       <sample>       multirmu                                             </sample>
       <observable>   Ereco                                                </observable><!-- In perspective add Thetareco, but first tests on Ereco only  -->
       <data>                                                              </data>
-      <mc>           mc/t2k_mc_run1-10_fhc_mulike.xml                     </mc>
+      <mc>           mc/t2k_mc_oa2021_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_mulike_run1-10_bins.xml              </binning>
