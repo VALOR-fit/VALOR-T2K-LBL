@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<param_list name="T2K_Run1-9">
+<param_list name="OA 2021">
   <!-- ==================================================================================== -->
   <param>
     <name>
@@ -5614,9 +5614,9 @@
   <param>
     <name>
       <simple>  skdetsipn000_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  0; Ereco range 0.0, 0.80 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  0; Ereco range 0.0, 0.80 GeV; numu/numubar CC1piC (MultiRmu); MultiRmu  </long>
       <rootex>  f_{0; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  0; $E_{reco}$( 0.0, 0.80 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  0; $E_{reco}$( 0.0, 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC$1\pi$C ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5633,7 +5633,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  CC 1piC  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5653,9 +5653,9 @@
   <param>
     <name>
       <simple>  skdetsipn001_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  1; Ereco range 0.80, 2.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  1; Ereco range 0.80, 2.0 GeV; numu/numubar CC1piC (MultiRmu); MultiRmu  </long>
       <rootex>  f_{1; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  1; $E_{reco}$( 0.80, 2.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  1; $E_{reco}$( 0.80, 2.0 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC$1\pi$C ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5672,7 +5672,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  CC 1piC  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5692,9 +5692,9 @@
   <param>
     <name>
       <simple>  skdetsipn002_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  2; Ereco range 2.0, 30.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  2; Ereco range 2.0, 30.0 GeV; numu/numubar CC1piC (MultiRmu); MultiRmu  </long>
       <rootex>  f_{2; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  2; $E_{reco}$( 2.0, 30.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  2; $E_{reco}$( 2.0, 30.0 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC$1\pi$C ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5711,7 +5711,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  CC 1piC  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5731,9 +5731,9 @@
   <param>
     <name>
       <simple>  skdetsipn003_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  3; Ereco range 0.0, 0.80 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  3; Ereco range 0.0, 0.80 GeV; numu/numubar CCQE (MultiRmu); MultiRmu  </long>
       <rootex>  f_{3; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  3; $E_{reco}$( 0.0, 0.80 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  3; $E_{reco}$( 0.0, 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5750,7 +5750,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  CC QE like  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5770,9 +5770,9 @@
   <param>
     <name>
       <simple>  skdetsipn004_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  4; Ereco range 0.80, 2.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  4; Ereco range 0.80, 2.0 GeV; numu/numubar CCQE (MultiRmu); MultiRmu  </long>
       <rootex>  f_{4; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  4; $E_{reco}$( 0.80, 2.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  4; $E_{reco}$( 0.80, 2.0 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5789,7 +5789,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  CC QE like  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5809,9 +5809,9 @@
   <param>
     <name>
       <simple>  skdetsipn005_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  5; Ereco range 2.0, 30.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  5; Ereco range 2.0, 30.0 GeV; numu/numubar CCQE (MultiRmu); MultiRmu  </long>
       <rootex>  f_{5; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  5; $E_{reco}$( 2.0, 30.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  5; $E_{reco}$( 2.0, 30.0 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCQE ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5828,7 +5828,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  CC QE like  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5848,9 +5848,9 @@
   <param>
     <name>
       <simple>  skdetsipn006_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  6; Ereco range 0.0, 0.80 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  6; Ereco range 0.0, 0.80 GeV; numu/numubar CCDIS+CCMpi+CCmisc (MultiRmu); MultiRmu  </long>
       <rootex>  f_{6; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  6; $E_{reco}$( 0.0, 0.80 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  6; $E_{reco}$( 0.0, 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCDIS+CCMpi+CCmisc ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5867,7 +5867,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  t2klegccoth  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5887,9 +5887,9 @@
   <param>
     <name>
       <simple>  skdetsipn007_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  7; Ereco range 0.80, 2.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  7; Ereco range 0.80, 2.0 GeV; numu/numubar CCDIS+CCMpi+CCmisc (MultiRmu); MultiRmu  </long>
       <rootex>  f_{7; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  7; $E_{reco}$( 0.80, 2.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  7; $E_{reco}$( 0.80, 2.0 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCDIS+CCMpi+CCmisc ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5906,7 +5906,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  t2klegccoth  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -5926,9 +5926,9 @@
   <param>
     <name>
       <simple>  skdetsipn008_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  8; Ereco range 2.0, 30.0 GeV; all NC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  8; Ereco range 2.0, 30.0 GeV; numu/numubar CCDIS+CCMpi+CCmisc (MultiRmu); MultiRmu  </long>
       <rootex>  f_{8; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  8; $E_{reco}$( 2.0, 30.0 )GeV; all NC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  8; $E_{reco}$( 2.0, 30.0 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CCDIS+CCMpi+CCmisc ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -5945,7 +5945,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  t2klegccoth  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
@@ -6083,9 +6083,9 @@
   <param>
     <name>
       <simple>  skdetsipn012_MultiRmu  </simple>
-      <long>  SKDet + SI/PN  12; Ereco range 0.0, 30.0 GeV; nue CC (MultiRmu); MultiRmu  </long>
+      <long>  SKDet + SI/PN  12; Ereco range 0.0, 30.0 GeV; nue/nuebar/signue CC (MultiRmu); MultiRmu  </long>
       <rootex>  f_{12; t, r}^{SKDet + SI/PN}MultiRmu  </rootex>
-      <tex>  SKDet + SI/PN  12; $E_{reco}$( 0.0, 30.0 )GeV; nue CC ($MultiR_{\mu}$); MultiRmu  </tex>
+      <tex>  SKDet + SI/PN  12; $E_{reco}$( 0.0, 30.0 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$/sig$\nu_{e}$ CC ($MultiR_{\mu}$); MultiRmu  </tex>
     </name>
 
     <apply_to_range>
@@ -6102,7 +6102,7 @@
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
       <selection>  MultiRmu  </selection>
-      <reac_type>  all NC  </reac_type>
+      <reac_type>  all CC  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
       <target>  all  </target>
