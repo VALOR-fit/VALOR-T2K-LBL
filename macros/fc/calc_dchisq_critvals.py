@@ -38,14 +38,14 @@ _hier_to_index = dict()
 _hier_to_index["normal"]   = 0
 _hier_to_index["inverted"] = 1
 
-_conf_levels = [conv.kCL1Sigma, conv.kCL90, conv.kCL2Sigma]
+_conf_levels = [conv.kCL1Sigma, conv.kCL90, conv.kCL2Sigma, conv.kCL99, conv.kCL3Sigma]
 
 
 #_______________________________________________________________________
 
 def main(output_tag, in_tag,
-         npt_fc_par1, start_pt_fc_par1, min_val_fc_par1, max_val_fc_par1,
-         npt_fc_par2, start_pt_fc_par2, min_val_fc_par2, max_val_fc_par2,
+         npt_fc_par1, start_pt_fc_par1, min_val_fc_par1, max_val_fc_par1, pts_fc_par1,
+         npt_fc_par2, start_pt_fc_par2, min_val_fc_par2, max_val_fc_par2, pts_fc_par2,
          fc_2d):
 
   # Set up TGraphs to hold the critical values
@@ -93,10 +93,10 @@ def main(output_tag, in_tag,
       ntoys = len(dchisq_vals)
 
       # Calculate the grid point value(s) and print
-      fc_grid_p1_val = fc_pt_to_par_value(ifc_p1, npt_fc_par1, min_val_fc_par1, max_val_fc_par1)
+      fc_grid_p1_val = fc_pt_to_par_value(ifc_p1, npt_fc_par1, min_val_fc_par1, max_val_fc_par1, pts_fc_par1)
       fc_grid_p2_val = -999
       if fc_2d:
-        fc_grid_p2_val = fc_pt_to_par_value(ifc_p2, npt_fc_par2, min_val_fc_par2, max_val_fc_par2)
+        fc_grid_p2_val = fc_pt_to_par_value(ifc_p2, npt_fc_par2, min_val_fc_par2, max_val_fc_par2, pts_fc_par2)
 
       print_str = "For x = " + str(fc_grid_p1_val)
       if fc_2d:
@@ -104,7 +104,6 @@ def main(output_tag, in_tag,
       print_str += ":"
       print print_str
 
-      # TODO: copy the cpv -pi value onto the +pi value?
       for conf_level_enum in _conf_levels:
         # Calculate the critical Delta chisq
         conf_level = util.ConfLevelToFrac(conf_level_enum)
@@ -133,6 +132,44 @@ def main(output_tag, in_tag,
       input_file.Close()
       del input_file
       del dchisq_vals
+
+  # If needed, copy the cpv -pi value onto the +pi value, or vice-versa
+  # TODO: Enable this for 2D FC, if needed
+  if not fc_2d and ("cpv" in output_tag or "deltacp" in output_tag):
+    found_mpi = False
+    found_ppi = False
+    ip_copy = None
+    pi = ROOT.TMath.Pi()
+    for ip in range(0, graphs[_conf_levels[0]].GetN()):
+      x = ROOT.Double(-999)
+      y = ROOT.Double(-999)
+      graphs[_conf_levels[0]].GetPoint(ip, x, y)
+      if ROOT.TMath.Abs(x - pi) < 1e-3:
+        found_ppi = True
+        ip_copy = ip
+      elif ROOT.TMath.Abs(x + pi) < 1e-3:
+        found_mpi = True
+        ip_copy = ip
+
+    if ip_copy and not (found_ppi and found_mpi):
+      x    = ROOT.Double(-999)
+      y    = ROOT.Double(-999)
+      y_p1 = ROOT.Double(-999)
+      y_m1 = ROOT.Double(-999)
+      for conf_level_enum in _conf_levels:
+        graphs   [conf_level_enum].GetPoint(ip_copy, x, y   )
+        graphs_p1[conf_level_enum].GetPoint(ip_copy, x, y_p1)
+        graphs_m1[conf_level_enum].GetPoint(ip_copy, x, y_m1)
+        if found_ppi:
+          print "Copying the deltacp = +pi critical values onto deltacp = -pi"
+          graphs   [conf_level_enum].SetPoint( graphs   [conf_level_enum].GetN(), -pi, y    )
+          graphs_p1[conf_level_enum].SetPoint( graphs_p1[conf_level_enum].GetN(), -pi, y_p1 )
+          graphs_m1[conf_level_enum].SetPoint( graphs_m1[conf_level_enum].GetN(), -pi, y_m1 )
+        elif found_mpi:
+          print "Copying the deltacp = -pi critical values onto deltacp = +pi"
+          graphs   [conf_level_enum].SetPoint( graphs   [conf_level_enum].GetN(),  pi, y    )
+          graphs_p1[conf_level_enum].SetPoint( graphs_p1[conf_level_enum].GetN(),  pi, y_p1 )
+          graphs_m1[conf_level_enum].SetPoint( graphs_m1[conf_level_enum].GetN(),  pi, y_m1 )
 
   # Sort 1D graphs only
   for conf_level_enum in _conf_levels:
@@ -185,47 +222,53 @@ def get_critical_dchisq(dchisq_vals, conf_level, sigma):
 
 #_______________________________________________________________________
 # Calculate the parameter value corresponding to the FC grid point
-def fc_pt_to_par_value(ifc, npt_fc, min_val_fc, max_val_fc):
-  step_fc = 0
-  if npt_fc > 1:
-    step_fc = (max_val_fc - min_val_fc) / (npt_fc - 1)
-  if step_fc == 0 and npt_fc > 1:
-    print "ERROR: FC step size is 0 with > 1 FC grid point"
-    sys.exit()
-  return min_val_fc + step_fc * ifc
+def fc_pt_to_par_value(ifc, npt_fc, min_val_fc, max_val_fc, pts_fc_str):
+  if not pts_fc_str:
+    step_fc = 0
+    if npt_fc > 1:
+      step_fc = (max_val_fc - min_val_fc) / (npt_fc - 1)
+    if step_fc == 0 and npt_fc > 1:
+      print "ERROR: FC step size is 0 with > 1 FC grid point"
+      sys.exit()
+    return min_val_fc + step_fc * ifc
+  else:
+    pts_fc_float = [float(i) for i in pts_fc_str]
+    if ifc >= len(pts_fc_float) or ifc < 0:
+      print "ERROR: Tried to access custom FC point #\'{}\', but it was out of range. length = {}".format(ifc, len(pts_fc_float))
+      sys.exit()
+    return pts_fc_float[ifc]
 
 #_______________________________________________________________________
 if __name__=="__main__":
   
-  import optparse
-  parser = optparse.OptionParser(usage="%prog [options]..",description="Calculate FC critical values for a single mass hierarchy")
+  import argparse
+  parser = argparse.ArgumentParser()#usage="%prog [options]..",description="Calculate FC critical values for a single mass hierarchy")  # TODO: why does this break?
 
   # Input/Output
-  parser.add_option('-o', '--out-tag'     , dest='output_tag', default=""     , help="Tag used to name the output file(s)")
-  parser.add_option('-i', '--in-tag'      , dest='in_tag'        ,
+  parser.add_argument('-o', '--out-tag'     , dest='output_tag', default=""     , help="Tag used to name the output file(s)")
+  parser.add_argument('-i', '--in-tag'      , dest='in_tag',
                     default="FC_NH_Dchisq_distribution__FCpt_[FC]__10_toys.root",
                     help="Input file tag, with the FC point no. and no. of toys replaced with "
                          "\'[FC]\' and \'[NTOYS]\', respectively")
 
   # FC grid points
-  parser.add_option('--npt-fc-par1'     , dest='npt_fc_par1'     , type=int  , default=9        , help="For param 1: The number of FC grid points to calculate Delta chisq values at")
-  parser.add_option('--start-pt-fc-par1', dest='start_pt_fc_par1', type=int  , default=0        , help="For param 1: Start at this FC point number")
-  parser.add_option('--min-val-fc-par1' , dest='min_val_fc_par1' , type=float, default=-conv.kpi, help="For param 1: The first FC grid point is at this value")
-  parser.add_option('--max-val-fc-par1' , dest='max_val_fc_par1' , type=float, default= conv.kpi, help="For param 1: The last FC grid point is at this value")
-  parser.add_option('--npt-fc-par2'     , dest='npt_fc_par2'     , type=int  , default=1        , help="For param 2: The number of FC grid points to calculate Delta chisq values at")
-  parser.add_option('--start-pt-fc-par2', dest='start_pt_fc_par2', type=int  , default=0        , help="For param 2: Start at this FC point number")
-  parser.add_option('--min-val-fc-par2' , dest='min_val_fc_par2' , type=float, default=0        , help="For param 2: The first FC point is at this value")
-  parser.add_option('--max-val-fc-par2' , dest='max_val_fc_par2' , type=float, default=0        , help="For param 2: The last FC point is at this value")
+  parser.add_argument('--npt-fc-par1'     , dest='npt_fc_par1'     , type=int  , default=9        , help="For param 1: The number of FC grid points to calculate Delta chisq values at")
+  parser.add_argument('--start-pt-fc-par1', dest='start_pt_fc_par1', type=int  , default=0        , help="For param 1: Start at this FC point number")
+  parser.add_argument('--min-val-fc-par1' , dest='min_val_fc_par1' , type=float, default=-conv.kpi, help="For param 1: The first FC grid point is at this value")
+  parser.add_argument('--max-val-fc-par1' , dest='max_val_fc_par1' , type=float, default= conv.kpi, help="For param 1: The last FC grid point is at this value")
+  parser.add_argument('--pts-fc-par1'     , dest='pts_fc_par1'     , nargs="+" , default=None     , help="For param 1: If the FC grid points aren't evenly spaced, specify them all here instead of using --min... and --max...")
+  parser.add_argument('--npt-fc-par2'     , dest='npt_fc_par2'     , type=int  , default=1        , help="For param 2: The number of FC grid points to calculate Delta chisq values at")
+  parser.add_argument('--start-pt-fc-par2', dest='start_pt_fc_par2', type=int  , default=0        , help="For param 2: Start at this FC point number")
+  parser.add_argument('--min-val-fc-par2' , dest='min_val_fc_par2' , type=float, default=0        , help="For param 2: The first FC point is at this value")
+  parser.add_argument('--max-val-fc-par2' , dest='max_val_fc_par2' , type=float, default=0        , help="For param 2: The last FC point is at this value")
+  parser.add_argument('--pts-fc-par2'     , dest='pts_fc_par2'     , nargs="+" , default=None     , help="For param 2: If the FC grid points aren't evenly spaced, specify them all here instead of using --min... and --max...")
 
   # Other
-  parser.add_option('--fc-2d'       , dest='fc_2d'   , action="store_true"    , help="Specify this flag if you are doing 2D FC")
+  parser.add_argument('--fc-2d'       , dest='fc_2d'   , action="store_true"    , help="Specify this flag if you are doing 2D FC")
 
-  o,other = parser.parse_args()
+  o = parser.parse_args()
 
   main(o.output_tag, o.in_tag,
-       o.npt_fc_par1, o.start_pt_fc_par1, o.min_val_fc_par1, o.max_val_fc_par1,
-       o.npt_fc_par2, o.start_pt_fc_par2, o.min_val_fc_par2, o.max_val_fc_par2,
+       o.npt_fc_par1, o.start_pt_fc_par1, o.min_val_fc_par1, o.max_val_fc_par1, o.pts_fc_par1,
+       o.npt_fc_par2, o.start_pt_fc_par2, o.min_val_fc_par2, o.max_val_fc_par2, o.pts_fc_par2,
        o.fc_2d)
-
-  if other:
-    print "Warning - ignored arguments: ", other

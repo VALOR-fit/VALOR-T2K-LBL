@@ -27,15 +27,6 @@ const char* valor_minidst_name = "valor_t2k_data_mini_dst";
 
 bool print_low_level_info = false;
 
-// At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
-std::vector<conv::BeamConf_t> beams = {conv::kbJPARC_FHC, conv::kbJPARC_RHC};
-
-std::map<conv::BeamConf_t, std::vector<conv::Sample_t>> samples;
-std::vector<Sample_t> vs = {conv::ks1Rmu, conv::ks1Re, conv::ks1Re1dcy};
-samples.insert(std::make_pair(conv::kbJPARC_FHC, vs));
-vs = {conv::ks1Rmu, conv::ks1Re};
-samples.insert(std::make_pair(conv::kbJPARC_RHC, vs));
-
 //___________________________________________________________________________
 // Prototypes
 bool   EventIsMuLike   (int iclass);
@@ -54,6 +45,14 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
 {
   using namespace valor;
   using namespace valor::conv;
+
+  // At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
+  std::vector<BeamConf_t> beams = {kbJPARC_FHC, kbJPARC_RHC};
+  std::map<BeamConf_t, std::vector<Sample_t>> samples;
+  std::vector<Sample_t> vs = {ks1Rmu, ks1Re, ksMultiRe};
+  samples.insert(std::make_pair(kbJPARC_FHC, vs));
+  vs = {ks1Rmu, ks1Re};
+  samples.insert(std::make_pair(kbJPARC_RHC, vs));
 
   // Read in the input SK tree
   TFile * fin = new TFile(input_file,"OPEN");

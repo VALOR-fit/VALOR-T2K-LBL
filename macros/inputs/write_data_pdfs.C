@@ -16,6 +16,8 @@ void write_data_pdfs
  const char* config_file    = ""
  )
 {
+  using namespace valor;
+
   CompoundFitElements* elements = new CompoundFitElements();
   elements->Read(util::CompleteConfigPath(config_file));
   FitDataABC* data = elements->FitData();

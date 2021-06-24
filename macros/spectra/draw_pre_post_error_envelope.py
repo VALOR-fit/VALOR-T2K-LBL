@@ -7,17 +7,16 @@
 #Steve Dennis, October 2013
 
 import ROOT
-import math
-import os
-import glob
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 R = ROOT
 
-max_energy = 10.
+max_energy_mulike = 3.0
+max_energy_elike  = 1.25
+
 linewidth = 2
-title_offset = 1.1
+title_offset = 0.85
 left_margin   = 0.18
 bottom_margin = 0.20
 right_margin  = 0.05
@@ -26,8 +25,9 @@ title_size = 0.08
 label_size = 0.07
 font = 132 # Times Medium, scalable rotatable
 
-prefit_color  = ROOT.kGray+1
-postfit_color = ROOT.kRed
+prefit_color  = 856 #ROOT.kGray+1
+postfit_color = 629 #ROOT.kRed
+fill_opacity = 0.6
 
 #~ prefit_style = 3244 # hatched
 prefit_style = 1001 # hatched
@@ -88,6 +88,10 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
     s = m.GetSample()
     b = m.GetBeam()
     samp_hists = []
+
+    max_energy = max_energy_mulike
+    if util.SampleIsELike(s):
+      max_energy = max_energy_elike
     
     hname_prefix = "env_sb_%s_%s" % (util.BeamConfAsString(b) , util.SampleAsString(s))
     hname_nom = hname_prefix + "_nom"
@@ -112,8 +116,18 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
     hminus_postfit = get_hist(postfit_file,hname_m1)
     
     hists = [prefit_nom, postfit_nom, hplus_prefit,hminus_prefit,hplus_postfit,hminus_postfit]
+
+    title = ROOT.TLatex(0.5, 0.96, "T2K Run 1-10 Preliminary")
+    title.SetTextSize(0.05)
+    title.SetNDC(True)
   
     for h in hists:
+      # Rebin to plot-style binning
+      if s == conv.ks1Rmu and b == conv.kbJPARC_FHC:
+        h.Rebin(2)
+      elif s == conv.ks1Rmu and b == conv.kbJPARC_RHC:
+        h.Rebin(3)
+
       samp_hists.append(h)
       all_hists.append(h)
       h.UseCurrentStyle()
@@ -122,8 +136,8 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
       h.GetYaxis().SetTitleSize(title_size)
       h.GetXaxis().SetLabelSize(label_size)
       h.GetYaxis().SetLabelSize(label_size)
-      h.GetXaxis().SetTitle("E_{reco}")
-      h.GetYaxis().SetTitle("Events per bin")
+      h.GetXaxis().SetTitle("#nu Reconstructed Energy (GeV)")
+      h.GetYaxis().SetTitle("Number of Events")
       h.SetTitle("")
       h.GetXaxis().SetRangeUser(0.,max_energy)
       h.GetYaxis().SetTitleOffset(title_offset)
@@ -138,10 +152,10 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
       h.SetLineStyle(1)
       h.SetLineWidth(0)
       h.GetXaxis().SetRangeUser(0.,max_energy)
-      
-    legend = ROOT.TLegend(0.7,0.7,0.93,0.92);
-    legend.SetFillStyle(0);
-    legend.SetBorderSize(0);
+
+    legend = ROOT.TLegend(0.7,0.7,0.93,0.92)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
     #~ legend.SetTextSize(0.04);
    
     limit = max([abs(h.GetMinimum()) for h in samp_hists] + [abs(h.GetMaximum()) for h in samp_hists])
@@ -191,11 +205,11 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
     #~ hminus_postfit.SetFillStyle(postfit_style)
     
     env_graph_prefit.SetFillStyle(prefit_style)
-    env_graph_prefit.SetFillColor(prefit_color)
+    env_graph_prefit.SetFillColorAlpha(prefit_color, fill_opacity)
     env_graph_prefit.Draw("same2")
     
     env_graph_postfit.SetFillStyle(postfit_style)
-    env_graph_postfit.SetFillColor(postfit_color)
+    env_graph_postfit.SetFillColorAlpha(postfit_color, fill_opacity)
     env_graph_postfit.SetLineWidth(0)
     env_graph_postfit.SetLineStyle(0)
     env_graph_postfit.SetLineWidth(0)
@@ -235,6 +249,7 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
     legend.AddEntry(legend_postfit  ,postfit_label,"FL")
     
     legend.Draw()
+    title.Draw("same")
     envelope_fn = out_prefix+"_envelope."+img_format
     canv.Print(envelope_fn)
     envelope_images.append(envelope_fn)
@@ -274,11 +289,11 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
     else:
       eff_mult = 1.
       
-    fill_ratio_graph_from_hist(ratio_graph_prefit , ratio_minus_prefit , ratio_plus_prefit , 1.)
-    fill_ratio_graph_from_hist(ratio_graph_postfit, ratio_minus_postfit, ratio_plus_postfit, eff_mult)
+    fill_ratio_graph_from_hist(ratio_graph_prefit , ratio_minus_prefit , ratio_plus_prefit , max_energy, 1.)
+    fill_ratio_graph_from_hist(ratio_graph_postfit, ratio_minus_postfit, ratio_plus_postfit, max_energy, eff_mult)
       
-    ratio_graph_prefit .SetFillColor(prefit_color)
-    ratio_graph_postfit.SetFillColor(postfit_color)
+    ratio_graph_prefit .SetFillColorAlpha(prefit_color , fill_opacity)
+    ratio_graph_postfit.SetFillColorAlpha(postfit_color, fill_opacity)
     ratio_graph_prefit .SetLineColor(prefit_color)
     ratio_graph_postfit.SetLineColor(postfit_color)
     
@@ -304,9 +319,9 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
     ratio_graph_postfit.Draw("2")
     canv2.RedrawAxis()
     
-    legend2 = ROOT.TLegend(0.5,0.85,0.93,0.94);
-    legend2.SetFillStyle(0);
-    legend2.SetBorderSize(0);
+    legend2 = ROOT.TLegend(0.5,0.85,0.93,0.94)
+    legend2.SetFillStyle(0)
+    legend2.SetBorderSize(0)
     legend2.SetNColumns(2)
     legend2.AddEntry(ratio_graph_prefit  ,prefit_label ,"F")
     if ratio_mult is not None:
@@ -321,6 +336,8 @@ def pre_and_postfit_envelope(config, prefit_file,postfit_file,prefit_label, post
     line_at_1 = ROOT.TLine(0,1,canv2.GetUxmax(),1)
     line_at_1.SetLineWidth(2)
     line_at_1.Draw("same")
+
+    title.Draw("same")
     
     canv2.Update()
     ratio_fn = out_prefix+"_envelope_ratio."+img_format
@@ -425,7 +442,7 @@ def add_figures_to_tex(f,figure_names,captions,plots_per_row=2):
       f.write("\\end{figure*}\n")
   return
   
-def fill_ratio_graph_from_hist(g,hm,hp,multiplier=1.):
+def fill_ratio_graph_from_hist(g,hm,hp,max_energy,multiplier=1.):
   for i in xrange(hp.GetXaxis().GetNbins()):
     low_edge  = hm.GetBinLowEdge(i+1)
     high_edge = low_edge + hm.GetBinWidth(i+1)
