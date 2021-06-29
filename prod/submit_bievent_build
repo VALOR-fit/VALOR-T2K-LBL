@@ -26,15 +26,15 @@
 #  --mix-param-choice       : sinsq2theta or sinsqtheta
 #  --mix-param-octant       : one or two
 #  --force-untuned          : Force syst parameters at their generated values 
-#  --compare-by-nu-antinu   : Compare by nu/antinu events 
-#  --compare-by-ereco       : Compare by Ereco cut (i.e. Ereco<>500 MeV)
+#  --compare-by             : Compare by nu/antinu (nu-antinu) or by Ereco (ereco) cut (i.e. Ereco<>500 MeV)
+ 
 # Seeds
 #  --seed-syst              : Seed used for randomising systematic parameters
 #  --seed-osc               : Seed used for randomising oscillation parameters
 #  --seed-stat              : Seed used for randomising statistical fluctuations
 #  --seed-other             : Seed used for randomising things that are not parameters
 # N points
-#  --dcp_npt                : The number of points of dcp for throws
+#  --dcp_npt                : The number of points of dcp for throws, it is set to 37 to keep contours smooth
 #  --N23                    : Number of points for theta23
 #  --NMH                    : Number of MH 
 #  --NDCP                   : Number of points for dcp (plot) -- we don't really nee this here 
@@ -138,19 +138,19 @@ foreach (@ARGV) {
 # Set unspecfied arguments to their default values
 #
 
-$resource              = "interactive"                                                             unless defined $resource;
-$cput                  = "24:00:00"                                                          unless defined $cput;
-$mem                   = "5200M"                                                             unless defined $mem ;
+$resource              = "IFIC"                                                              unless defined $resource;
+$cput                  = "50:00:00"                                                          unless defined $cput;
+$mem                   = "3500M"                                                             unless defined $mem ;
 $job_dir               = $ENV{'PWD'}                                                         unless defined $job_dir;
 $softw_dir             = $ENV{'VALOR_EXPT'}                                                  unless defined $softw_dir;
 $fmwk_dir              = $ENV{'VALOR_FMWK'}                                                  unless defined $fmwk_dir;
 $time_command          = 0                                                                   unless defined $time_command;
 
-$ntoys                 = 1                                                                  unless defined $ntoys;
+$ntoys                 = 1                                                                   unless defined $ntoys;
 $tag                   = "bievent_build"                                                     unless defined $tag;
 #config and prior files 
 $config                = "analysis/t2k_analysis_configuration_oa2020_run1-10_v1_postfit.xml" unless defined $config;
-$osc_prior_file        = "priors/t2k_run_1-9d_reactor.xml"                                   unless defined $osc_prior_file;
+$osc_prior_file        = "priors/t2k_run_1-10_reactor.xml"                                   unless defined $osc_prior_file;
 $syst_prior_file       = "priors/t2k_run_1-10_syst_param_priors.xml"                         unless defined $syst_prior_file;
 #FPL and other global options 
 $fit_param_list        = "3f_osc"                                                            unless defined $fit_param_list;
@@ -162,7 +162,7 @@ $hierarchy             = "normal"                                               
 $mix_param_choice      = "sinsqtheta"                                                        unless defined $mix_param_choice;
 $mix_param_octant      = "two"                                                               unless defined $mix_param_octant;
 #$force_untuned         = "-"                                                                 unless defined $force_untuned;
-$compare_by            ="ereco"                                                              unless defined $compare_by;
+$compare_by            = "ereco"                                                             unless defined $compare_by;
 
 #Seeds
 $seed_syst             = 10                                                                  unless defined $seed_syst;
@@ -187,17 +187,11 @@ $input_dm12sq          = 7.53E-5                                                
 $input_dm23sq          = 2.49E-3                                                             unless defined $input_dm23sq;  
 $input_betabar         = -99.                                                                unless defined $input_betabar;  
 $bf_dm23sq             = 0.002488                                                            unless defined $bf_dm23sq;   
-$bf_deltacp            = -2.0106                                                              unless defined $bf_deltacp;  
-$bf_mixing23           =  0.555                                                              unless defined $bf_mixing23; 
+$bf_deltacp            = -2.0106                                                             unless defined $bf_deltacp;  
+$bf_mixing23           = 0.555                                                               unless defined $bf_mixing23; 
 $bf_hier               = "normal"                                                            unless defined $bf_hier;
   # body...
 
-#vectors 
-#@ss12                  = (0.304,0.304);       
-#@ss13                  = (0.02235,0.0226125); 
-#@ss23                  = (0.450,0.500,0.550); 
-#@dm12                  = (7.53E-5,7.53E-5);   
-#@dm23                  = (2.440E-3, 2.410E-3;
 
 
 
@@ -342,7 +336,7 @@ if($resource eq "IFIC") {
   print PBS "#!/bin/bash \n";
   print PBS "#PBS -N $tag \n";
   print PBS "#PBS -l mem=$mem \n";
-  print PBS "#PBS -q long \n"; # Max walltime of for long - 24h, in case of 2D fit use long4
+  print PBS "#PBS -q short \n"; # Max walltime of for long - 24h, in case of 2D fit use long4
   print PBS "#PBS -l nodes=1:ppn=1 \n"; #use only ppn=1 
   print PBS "#PBS -o $job_dir/$tag.pbs.out \n";
   print PBS "#PBS -e $job_dir/$tag.pbs.err \n";

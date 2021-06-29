@@ -38,6 +38,8 @@
 #include "valor/FitCore/FitDataABC.h"
 #include "valor/CmdLine/CmdLnArgList.h"
 #include "valor/Messenger/Messenger.h"
+#include "valor/Utilities/UtlNumStat.h"
+#include "valor/Conventions/ConfLevel.h"
 
 using namespace std;
 using namespace valor;
@@ -150,8 +152,8 @@ void bievent_plot
    TH2D* hEventsSyst;
    TH1D* hFHCEvents;
    TH1D* hRHCEvents;
-   double Nfhc = -999.; //UWAGA:  re-name. as now there are two plotting options 
-   double Nrhc = -999.;
+   double NXaxis = -999.; //UWAGA:  re-name. as now there are two plotting options 
+   double NYaxis = -999.;
    hEvents = static_cast<TH2D*>(file->Get("hEvents"));
    hEventsSyst = static_cast<TH2D*>(file->Get(Form("hEventsSyst")));
    hFHCEvents = static_cast<TH1D*>(file->Get(Form("hEvents_fhc")));
@@ -163,18 +165,18 @@ void bievent_plot
    TGraphAsymmErrors *gN_events_data = new TGraphAsymmErrors();
    if(draw_data && data_file!="-")
    {    
-      double nfhc = 0.0;
-      double nrhc = 0.0;
+      double Nxaxis = 0.0;
+      double Nyaxis = 0.0;
       TFile* dfile = new TFile(data_file.c_str(),"read");
       if (compare_by_nu_antinu){
          // FHC # of events 
-         nfhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"))->GetN();
-         nfhc += static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"))->GetN();
+         Nxaxis = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"))->GetN();
+         Nxaxis += static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"))->GetN();
 
          // RHC1Re # of events 
-         nrhc = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"))->GetN();
+         Nyaxis = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"))->GetN();
     
-         gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
+         gN_events_data->SetPoint(gN_events_data->GetN(), Nxaxis, Nyaxis);
 
          // Setting sqrt(N) as the statistical error on a data point is wrong, as the data has no stat error.
          // Instead calculate an error band showing how far away the prediction can be while still keeping
@@ -185,8 +187,8 @@ void bievent_plot
          TGraph* tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"));
          for (int evt = 0; evt< tmp->GetN(); evt++){
             tmp->GetPoint(evt, x,y);
-            if (x>0.550) nfhc++;
-               else nrhc++;
+            if (x>0.550) Nxaxis++;
+               else Nyaxis++;
 
          }  
          delete tmp; 
@@ -195,33 +197,33 @@ void bievent_plot
          tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"));
          for (int evt = 0; evt< tmp->GetN(); evt++){
             tmp->GetPoint(evt, x,y);
-            if (x>0.550) nfhc++;
-               else nrhc++;
+            if (x>0.550) Nxaxis++;
+               else Nyaxis++;
          }  
          delete tmp;
 
          tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"));
          for (int evt = 0; evt< tmp->GetN(); evt++){
             tmp->GetPoint(evt, x,y);
-            if(x>0.550) nfhc++;
-               else nrhc++;
+            if(x>0.550) Nxaxis++;
+               else Nyaxis++;
          }  
          delete tmp; 
 
 
-         gN_events_data->SetPoint(gN_events_data->GetN(), nfhc, nrhc);
+         gN_events_data->SetPoint(gN_events_data->GetN(), Nxaxis, Nyaxis);
       }
       // Setting sqrt(N) as the statistical error on a data point is wrong, as the data has no stat error.
       // Instead calculate an error band showing how far away the prediction can be while still keeping
       // the data point within its Poisson stat errors.
       const double alpha = 1 - 0.6827;
-      double N = nrhc;
+      double N = Nyaxis;
       double L =  (N==0) ? 0  : (ROOT::Math::gamma_quantile(alpha/2,N,1.));
       double U =  ROOT::Math::gamma_quantile_c(alpha/2,N+1,1) ;
       gN_events_data->SetPointEYlow(gN_events_data->GetN()-1, N-L);
       gN_events_data->SetPointEYhigh(gN_events_data->GetN()-1, U-N);
 
-      N=nfhc;
+      N=Nxaxis;
       L =  (N==0) ? 0  : (ROOT::Math::gamma_quantile(alpha/2,N,1.));
       U =  ROOT::Math::gamma_quantile_c(alpha/2,N+1,1) ;
       gN_events_data->SetPointEXlow(gN_events_data->GetN()-1, N-L);
@@ -244,26 +246,26 @@ void bievent_plot
             double dcp = deltaCP_first + idcp * deltaCP_width;
             // Consider median instead of mean
             TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(idcp * N23 * NMH + iss23 * NMH + imh);
-            Nfhc = nom->GetX();
-            Nrhc = nom->GetY();
+            NXaxis = nom->GetX();
+            NYaxis = nom->GetY();
 
-            gN_events[iss23][imh].SetPoint(gN_events[iss23][imh].GetN(), Nfhc, Nrhc);
+            gN_events[iss23][imh].SetPoint(gN_events[iss23][imh].GetN(), NXaxis, NYaxis);
             // groupinng events to 4 dcp points 
             if(fabs(dcp - (-TMath::Pi() / 2.)) < 1.E-4 ) 
             {  // -pi/2
-               gN_events_1pt[iss23][imh][0].SetPoint(gN_events_1pt[iss23][imh][0].GetN(), Nfhc, Nrhc);
+               gN_events_1pt[iss23][imh][0].SetPoint(gN_events_1pt[iss23][imh][0].GetN(), NXaxis, NYaxis);
             }
             else if(fabs(dcp) < 1.E-4) 
             {  // 0
-               gN_events_1pt[iss23][imh][1].SetPoint(gN_events_1pt[iss23][imh][1].GetN(), Nfhc, Nrhc);
+               gN_events_1pt[iss23][imh][1].SetPoint(gN_events_1pt[iss23][imh][1].GetN(), NXaxis, NYaxis);
             }
             else if(fabs(dcp - TMath::Pi() / 2) < 1.E-4 ) 
             {  // +pi/2
-               gN_events_1pt[iss23][imh][2].SetPoint(gN_events_1pt[iss23][imh][2].GetN(), Nfhc, Nrhc);
+               gN_events_1pt[iss23][imh][2].SetPoint(gN_events_1pt[iss23][imh][2].GetN(), NXaxis, NYaxis);
             }
             else if(fabs(dcp - (-TMath::Pi())) < 1.E-4 )
             {  // +pi
-               gN_events_1pt[iss23][imh][3].SetPoint(gN_events_1pt[iss23][imh][3].GetN(), Nfhc, Nrhc);
+               gN_events_1pt[iss23][imh][3].SetPoint(gN_events_1pt[iss23][imh][3].GetN(), NXaxis, NYaxis);
             }
             
          }
@@ -272,6 +274,10 @@ void bievent_plot
    // create error contours 
    if(display_errors)
    {
+      //const double valtmp1=(util::DeltaChisquare(conv::kCL68, 2));
+      //hEvents->SetContour(1, &valtmp1);
+      //hEventsSyst->SetContour(1, &valtmp1);
+
       double contours[1] = {get_contour_level(hEvents)};
       hEvents->SetContour(1, contours);
       double syst_contours[1] = {get_contour_level(hEventsSyst)};
@@ -407,14 +413,14 @@ void bievent_plot
       hEventsSyst->SetFillColorAlpha(yellow, 0.15);
       hEventsSyst->SetLineColor(yellow);
       hEventsSyst->SetLineStyle(1);
-      //hEventsSyst->Draw("cont same");
+      hEventsSyst->Draw("cont same");
       hEventsSyst->Draw("cont3 same");
       //draw bf 
       int bf_point = ((TObjArray*)filenom->Get("Nominals"))->GetLast();
       TMarker* nom = (TMarker*)((TObjArray*)filenom->Get("Nominals"))->At(bf_point);
-      Nfhc = nom->GetX();
-      Nrhc = nom->GetY();
-      gN_events_bf->SetPoint(gN_events_bf->GetN(), Nfhc, Nrhc);
+      NXaxis = nom->GetX();
+      NYaxis = nom->GetY();
+      gN_events_bf->SetPoint(gN_events_bf->GetN(), NXaxis, NYaxis);
       gN_events_bf->SetMarkerColor(yellow);
       gN_events_bf->SetMarkerSize(1);
       gN_events_bf->SetMarkerStyle(22);
@@ -467,7 +473,23 @@ void bievent_plot
    ldcp_all->AddEntry(&gN_events_1pt[1][0][1],"#delta_{CP} = 0","p");
    ldcp_all->AddEntry(&gN_events_1pt[1][0][0],"#delta_{CP} = -#pi/2","p");
 
-   TLegend *ldcp_pts = new TLegend(0.37,0.19,0.57,0.36);
+   ldcp_all->Draw();
+
+   if (compare_by_nu_antinu){
+      lxmin = 0.37;
+      lxmax = 0.57;
+      lymin = 0.19;
+      lymax = 0.36;
+
+   }
+   else if (compare_by_ereco){
+      lxmin = 0.50;
+      lxmax = 0.70;
+      lymin = 0.19;
+      lymax = 0.36;
+   }
+   TLegend *ldcp_pts = new TLegend(lxmin, lymin, lxmax, lymax);
+
    ldcp_pts->SetFillColor(0);
    ldcp_pts->SetLineColor(0);
    ldcp_pts->SetTextFont(132);
@@ -489,6 +511,7 @@ void bievent_plot
    cEllipse_all->SaveAs(Form("%s.pdf", tag.c_str()));
    cEllipse_all->SaveAs(Form("%s.png", tag.c_str()));
    cEllipse_all->SaveAs(Form("%s.eps", tag.c_str()));
+   cEllipse_all->SaveAs(Form("%s.root", tag.c_str()));
 
    TCanvas *c_fhc_contour = new TCanvas("c_contour","c_contour");
    hFHCEvents->Draw("cont0");
@@ -507,6 +530,10 @@ void bievent_plot
    l_low2->Draw("same");
    l_high2->Draw("same");
    c_rhc_contour->SaveAs("contour_rhc.pdf");
+
+   //TFile *out_file = new TFile(Form("%s.root", tag.c_str()),"recreate");
+   //cEllipse_all->Write();
+   //out_file->Close();
 
    file->Close();
 
