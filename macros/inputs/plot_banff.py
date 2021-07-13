@@ -3,13 +3,12 @@
 import ROOT
 import argparse
 import re
-import sys
 import numpy as np
 
 ROOT.gROOT.SetBatch(1)
 ROOT.gStyle.SetOptStat(0)
 
-def flux_name_map(input, plot_raw):
+def flux_name_map(input, plot_raw, thesis_format):
     m = re.search(r"\d+", input)     # Searches for the last digits in the name
     output = ""
     # Only apply a label to the first parameter of a group
@@ -29,7 +28,7 @@ def flux_name_map(input, plot_raw):
                 output += "#nu_{e}" + " Flux " + m.group()
     else:
         if m.group() == "00":
-            if "bar" in input:
+            if "rhc" in input:
                 output = "RHC "
             else:
                 output = "FHC "
@@ -41,7 +40,26 @@ def flux_name_map(input, plot_raw):
                 output += "#bar{#nu}_{e}" + " Flux " + m.group()[1]
             else:
                 output += "#nu_{e}" + " Flux " + m.group()[1]
+    if thesis_format:
+        if "FHC" in output:
+            output = output.replace("FHC", "#nu-mode")
+        elif "RHC" in output:
+            output = output.replace("RHC", "#bar{#nu}-mode")
     return output
+
+def format_xsec_name(name):
+    if name == "FEFQE":
+        return "FSI_QE_low_P"
+    elif name == "FEFQEH":
+        return "FSI_QE_high_P"
+    elif name == "FEFINEL":
+        return "FSI_Inelastic"
+    elif name == "FEFABS":
+        return "FSI_Absorption"
+    elif name == "FEFCX":
+        return "FSI_charge_exchange"
+    else:
+        return name
 
 def make_palette():
     r = np.array([0.0, 1.0, 1.0])
@@ -53,7 +71,7 @@ def make_palette():
     ROOT.TColor.CreateGradientColorTable(npoints, s, r, g, b, ncontours)
     ROOT.gStyle.SetNumberContours(ncontours)
 
-def plot_flux(filename, matrixname, outputname, plot_raw):
+def plot_flux(filename, matrixname, outputname, plot_raw, thesis_format):
     label_size = 0.03
     lmargin = 0.15
     rmargin = 0.25
@@ -74,35 +92,35 @@ def plot_flux(filename, matrixname, outputname, plot_raw):
     else:
         nominal = file.Get("postfit_params")
     banff_matrix = file.Get(matrixname)
-    fhc_first_index = -1
-    fhc_last_index = -1
+    flux_first_index = -1
+    flux_last_index = -1
     for i,name in enumerate(banff_names):
         if name.GetString().Contains(flux_name_tag):
-            if fhc_first_index == -1:
-                fhc_first_index = i
+            if flux_first_index == -1:
+                flux_first_index = i
             else:
-                fhc_last_index = i
+                flux_last_index = i
 
-    # FHC matrix
-    Nfhc = 1 + fhc_last_index - fhc_first_index
-    flux_fhc_names = ROOT.TObjArray()
-    for i in range(fhc_first_index, fhc_last_index + 1):
-        flux_fhc_names.Add(banff_names[i])
+    # Flux matrix
+    Nflux = 1 + flux_last_index - flux_first_index
+    flux_names = ROOT.TObjArray()
+    for i in range(flux_first_index, flux_last_index + 1):
+        flux_names.Add(banff_names[i])
 
-    flux_fhc_matrix = ROOT.TMatrixD(Nfhc, Nfhc)
-    for x in range(Nfhc):
-        for y in range(Nfhc):
-            flux_fhc_matrix[y][x] = banff_matrix[y + fhc_first_index][x + fhc_first_index]
-    histo = ROOT.TH2D(flux_fhc_matrix)
+    flux_matrix = ROOT.TMatrixD(Nflux, Nflux)
+    for x in range(Nflux):
+        for y in range(Nflux):
+            flux_matrix[y][x] = banff_matrix[y + flux_first_index][x + flux_first_index]
+    histo = ROOT.TH2D(flux_matrix)
     for i in range(1,histo.GetNbinsX() + 1):
         for j in range(1, histo.GetNbinsY() + 1):
             val = histo.GetBinContent(i, j)
             val = np.sqrt(np.abs(val)) * np.sign(val)
             histo.SetBinContent(i, j, val)
-    for i in range(flux_fhc_names.GetEntries()):
-        histo.GetYaxis().SetBinLabel(i + 1, flux_name_map(flux_fhc_names[i].GetName(), plot_raw))
-        histo.GetXaxis().SetBinLabel(i + 1, flux_name_map(flux_fhc_names[i].GetName(), plot_raw))
-        print flux_fhc_names[i], "Nom:", nominal[i + fhc_first_index], "Err:", np.sqrt(flux_fhc_matrix[i][i])
+    for i in range(flux_names.GetEntries()):
+        histo.GetYaxis().SetBinLabel(i + 1, flux_name_map(flux_names[i].GetName(), plot_raw, thesis_format))
+        histo.GetXaxis().SetBinLabel(i + 1, flux_name_map(flux_names[i].GetName(), plot_raw, thesis_format))
+        print flux_names[i], "Nom:", nominal[i + flux_first_index], "Err:", np.sqrt(flux_matrix[i][i])
 
     histo.LabelsOption("v")
     canvas = ROOT.TCanvas("canvas", "canvas", 10, 10, 1000, int(canv_size_y))
@@ -116,7 +134,7 @@ def plot_flux(filename, matrixname, outputname, plot_raw):
     norm = max(abs(minimum), abs(maximum))
     histo.GetZaxis().SetRangeUser(-norm, norm)
     histo.GetZaxis().SetTitle("#sqrt{#left|V_{ij}#right|} x Sign#left(V_{ij}#right)")
-    histo.GetZaxis().SetTitleOffset(1.7)
+    histo.GetZaxis().SetTitleOffset(1.2)
     histo.GetZaxis().CenterTitle()
     histo.GetXaxis().SetLabelSize(label_size)
     histo.GetYaxis().SetLabelSize(label_size)
@@ -154,7 +172,9 @@ def plot_xsec(filename, matrixname, outputname, plot_raw):
     Nremain = banff_names.GetEntries() - start_index
     xsec_names = ROOT.TObjArray(Nremain)
     for i in range(Nremain):
-        xsec_names.Add(banff_names[i + start_index])
+        name = banff_names[i + start_index]
+        name = ROOT.TObjString(format_xsec_name(name))
+        xsec_names.Add(name)
 
     xsec_matrix = ROOT.TMatrixD(Nremain, Nremain)
     for x in range(Nremain):
@@ -184,7 +204,7 @@ def plot_xsec(filename, matrixname, outputname, plot_raw):
     histo.Draw("COLZ")
     histo.GetZaxis().SetRangeUser(-1,1)
     histo.GetZaxis().SetTitle("#sqrt{#left|V_{ij}#right|} x Sign#left(V_{ij}#right)")
-    histo.GetZaxis().SetTitleOffset(1.7)
+    histo.GetZaxis().SetTitleOffset(1.2)
     histo.GetZaxis().CenterTitle()
     histo.GetXaxis().SetLabelSize(label_size)
     histo.GetYaxis().SetLabelSize(label_size)
@@ -193,18 +213,108 @@ def plot_xsec(filename, matrixname, outputname, plot_raw):
     canvas.SaveAs(outputname + ".png")
     file.Close()
 
+
+def plot_both(filename, matrixname, outputname, plot_raw):
+    label_size = 0.03
+    lmargin = 0.25
+    rmargin = 0.25
+    bmargin = lmargin
+    tmargin = 0.10
+    canv_size_x = 1200
+    canv_size_y = canv_size_x * (1.0 - bmargin - tmargin)   # Adjust the canvas size to make the drawn matrix appear approximately square
+
+    file = ROOT.TFile(filename, "READ")
+
+    # Look at the param names to work out the index where the flux params end and the xsec params begin
+    flux_name_tag = "flux"
+    if plot_raw:
+        flux_name_tag = "NuMode"
+    banff_names = file.Get("param_list")
+    last_index = -1
+    for i,name in enumerate(banff_names):
+        if name.GetString().Contains(flux_name_tag):
+            last_index = i
+    start_index = last_index + 1
+
+    # Setup the matrix to draw as a 2D histogram
+    banff_matrix = file.Get(matrixname)
+    histo = ROOT.TH2D(banff_matrix)
+    for i in range(1,histo.GetNbinsX() + 1):
+        for j in range(1, histo.GetNbinsY() + 1):
+            val = histo.GetBinContent(i, j)
+            val = np.sqrt(np.abs(val)) * np.sign(val)
+            histo.SetBinContent(i, j, val)
+
+    canvas = ROOT.TCanvas("canvas", "canvas", 10, 10, 1000, int(canv_size_y))
+    canvas.SetLeftMargin  (lmargin)
+    canvas.SetBottomMargin(bmargin)
+    canvas.SetRightMargin (rmargin)
+    canvas.SetTopMargin   (tmargin)
+    histo.Draw("COLZ")
+    histo.GetZaxis().SetRangeUser(-1,1)
+    histo.GetZaxis().SetTitle("#sqrt{#left|V_{ij}#right|} x Sign#left(V_{ij}#right)")
+    histo.GetZaxis().SetTitleOffset(1.2)
+    histo.GetZaxis().CenterTitle()
+    histo.GetXaxis().SetLabelSize(0)
+    histo.GetYaxis().SetLabelSize(0)
+    canvas.Update()
+
+    # Indicate the regions of flux and xsec params
+    edge  = histo.GetXaxis().GetBinLowEdge(start_index)
+    start = histo.GetXaxis().GetBinLowEdge(1)
+    end   = histo.GetXaxis().GetBinUpEdge( histo.GetNbinsX() )
+    offset = -5.0
+    thickness = 7.5
+    pave_flux_x = ROOT.TPaveText(start           , offset, edge  , offset-thickness)
+    pave_flux_y = ROOT.TPaveText(offset-thickness, start , offset, edge            )
+    pave_xsec_x = ROOT.TPaveText(edge            , offset, end   , offset-thickness)
+    pave_xsec_y = ROOT.TPaveText(offset-thickness, edge  , offset, end             )
+    text_pave_flux_x = pave_flux_x.AddText("Flux")
+    text_pave_flux_y = pave_flux_y.AddText("Flux")
+    text_pave_xsec_x = pave_xsec_x.AddText("Cross-section")
+    text_pave_xsec_y = pave_xsec_y.AddText("Cross-section")
+    format_pave(pave_flux_x, text_pave_flux_x, False)     #pave_flux_x =
+    format_pave(pave_flux_y, text_pave_flux_y, True)     #pave_flux_y =
+    format_pave(pave_xsec_x, text_pave_xsec_x, False)     #pave_xsec_x =
+    format_pave(pave_xsec_y, text_pave_xsec_y, True)     #pave_xsec_y =
+    pave_flux_x.Draw("same")
+    pave_flux_y.Draw("same")
+    pave_xsec_x.Draw("same")
+    pave_xsec_y.Draw("same")
+    canvas.Update()
+
+    canvas.SaveAs(outputname + ".pdf")
+    canvas.SaveAs(outputname + ".eps")
+    canvas.SaveAs(outputname + ".png")
+    file.Close()
+
+
+def format_pave(pave, text, rotate):
+    pave.SetShadowColor(0)
+    pave.SetFillColor(0)
+    pave.SetFillStyle(0)
+    pave.SetLineColor(0)
+    pave.SetTextSize(0.05)
+    pave.SetTextFont(132)
+    if rotate:
+        text.SetTextAngle(270.0)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot the BANFF or xsec matrix")
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-x", "--xsec", action="store_true", help="Option to plot the xsec component of a BANFF matrix")
-    group.add_argument("-f", "--flux", action="store_true", help="Option to plot the flux component of a BANFF matrix")
+
+    parser.add_argument("-x", "--xsec", action="store_true", help="Option to plot the xsec component of a BANFF matrix")
+    parser.add_argument("-f", "--flux", action="store_true", help="Option to plot the flux component of a BANFF matrix")
     parser.add_argument("filename", type=str, help="The name of the file containing the desired matrix")
     parser.add_argument("matrixname", type=str, help="The ROOT object containing the desired matrix")
     parser.add_argument("output", type=str, help="Name of the PDF output")
     parser.add_argument("-r", "--raw", action="store_true", help="Option to plot the raw BANFF matrix rather than the VALOR format BANFF matrix.")
+    parser.add_argument('-t', '--thesis-format', dest='thesis_format', default=False, action="store_true", help="If true, replaces the beam current and sample names with clearer names.")
     args = parser.parse_args()
     make_palette()
     if args.xsec:
         plot_xsec(args.filename, args.matrixname, args.output, args.raw)
     elif args.flux:
-        plot_flux(args.filename, args.matrixname, args.output, args.raw)
+        plot_flux(args.filename, args.matrixname, args.output, args.raw, args.thesis_format)
+    else:
+        plot_both(args.filename, args.matrixname, args.output, args.raw)

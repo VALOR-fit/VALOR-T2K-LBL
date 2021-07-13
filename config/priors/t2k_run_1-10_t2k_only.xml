@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<prior_list name="run1-9d">
+
+  <prior>
+    <params> cpv                      </params>
+    <type>   flat                     </type>
+    <low>    -3.14159265358979312e+00 </low>
+    <high>   +3.14159265358979312e+00 </high>
+    <scheme> delta                    </scheme>
+    <!-- NOTE: The scheme given here is just used to define the prior, i.e. is used when throwing the parameter.
+               Afterwards, the thrown value is converted to the scheme set in Opt::Instance -->
+  </prior>
+
+  <prior>
+    <params> dm23sq </params>
+    <type>   flat   </type>
+    <low>    2.3E-3 </low>
+    <high>   2.7E-3 </high>
+    <scheme> abs23  </scheme>
+  </prior>
+
+  <prior>
+    <params> mixing23    </params>
+    <type>   flat        </type>
+    <low>    0.3         </low>
+    <high>   0.7         </high>
+    <scheme> sinsqtheta  </scheme>
+  </prior>
+
+  <prior>
+    <params> mixing13    </params>
+    <type>   flat        </type>
+    <low>    0.03        </low>
+    <high>   0.2         </high>
+    <scheme> sinsq2theta </scheme>
+  </prior>
+
+  <prior>
+    <params> mixing12    </params>
+    <type>   gaus        </type>
+    <mean>   0.851       </mean>
+    <sigma>  0.020       </sigma>
+    <scheme> sinsq2theta </scheme>
+  </prior>
+
+  <prior>
+    <params> dm12sq  </params>
+    <type>   gaus    </type>
+    <mean>   7.53E-5 </mean>
+    <sigma>  0.18E-5 </sigma>
+    <!-- NOTE: No need to set a scheme for dm12sq, as the mass splitting scheme only applies to dm23sq -->
+  </prior>
+
+</prior_list>

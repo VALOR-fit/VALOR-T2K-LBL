@@ -39,6 +39,7 @@ import sys
 import re
 import copy
 from copy import deepcopy
+from array import *
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
@@ -123,13 +124,15 @@ for suffix in _ptheta_internal_format_suffixes:
 # STUFF THAT CHANGES DEPENDING ON THE HIST NAMES AND FORMATS FOR EACH GROUP (END)
 #==================================================================================
 
-_formats     = None
-_input_files = dict()
-_selecs      = dict()
-_by_mode     = False
-_mode_map    = None
-_n_modes     = None
-_param_map   = None
+_formats          = None
+_input_files      = dict()
+_selecs           = dict()
+_by_mode          = False
+_mode_map         = None
+_n_modes          = None
+_param_map        = None
+_rebin_to_format  = ""
+_binning_ref_axis = None
 
 _line_col = dict()
 _line_col["p3"] = ROOT.kBlue
@@ -160,8 +163,8 @@ _do_sum_cc1pi_modes = False
 _do_sum_ccoth_modes = False
 
 #_______________________________________________________________________
-def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_etrue, compare_sigma, plot_nom_ratio, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
-  setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth)
+def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_etrue, compare_sigma, plot_nom_ratio, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth, rebin_to_format):
+  setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth, rebin_to_format)
 
   # Should we check that each group has evaluated each parameter at the same values?
   compare_counter = 0
@@ -417,7 +420,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
   print "Done!"
 
 #_______________________________________________________________________
-def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
+def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth, rebin_to_format):
   global _input_files
   global _formats
   global _selecs
@@ -428,9 +431,11 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
   global _is_unosc
   global _do_sum_cc1pi_modes
   global _do_sum_ccoth_modes
+  global _rebin_to_format
   _by_mode  = modes_file != ""
   _formats  = formats
   _is_unosc = is_unosc
+  _rebin_to_format = rebin_to_format
 
   # Check that the inputs are valid
   if(len(in_files) != len(formats)):
@@ -647,6 +652,8 @@ def get_tweaked(sigma_var, param_name_dict, mode_name_dict, format):
 
 #_______________________________________________________________________
 def get_hist(get_tweaked_hist, sigma_var, param_name_dict, mode_name_dict, format):
+  global _binning_ref_axis
+  global _rebin_to_format
   hname = None
 
   if get_tweaked_hist:
@@ -686,6 +693,16 @@ def get_hist(get_tweaked_hist, sigma_var, param_name_dict, mode_name_dict, forma
     if h is None:
       print "ERROR: Unrecognised format \'{0}\'".format(format)
       sys.exit()
+
+  if _rebin_to_format:
+    if format == _rebin_to_format:
+      if not _binning_ref_axis:
+        # Store the desired binning
+        buffer = h.GetXaxis().GetXbins().GetArray()
+        _binning_ref_axis = [buffer[i] for i in range(0, h.GetNbinsX()+1)]
+        assert _binning_ref_axis
+    else:
+      h = rebin(h)
 
   if h:
     ROOT.SetOwnership(h, False)       # This stops the object being deleted from memory when it goes out of scope
@@ -956,6 +973,38 @@ def rescale_around_y_eq_one(h, scale_factor):
     h.SetBinContent(i, scaled_content)
 
 #_______________________________________________________________________
+def rebin(h):
+  global _binning_ref_axis
+  global _rebin_to_format
+
+  # Make sure we have the desired binning
+  if not _binning_ref_axis:
+    get_hist(False, None, None, None, _rebin_to_format)
+
+  # The rebin is only possible if the desired bin edges lie on the current bin edges
+  buffer = h.GetXaxis().GetXbins().GetArray()
+  curr_binning = [buffer[i] for i in range(0, h.GetNbinsX()+1)]
+  for edge in _binning_ref_axis:
+    if edge not in curr_binning:
+      print "WARNING: Tried to rebin hist \'{}\'".format(h.GetName()), "but the desired bin edges", \
+            _binning_ref_axis, "don't align with the current binning", curr_binning, ". Will not rebin."
+      return
+
+  new_binning_array = array('d', _binning_ref_axis)
+  hnew = ROOT.TH1D(h)
+  hnew.Reset()
+  hnew.SetBins(len(new_binning_array)-1, new_binning_array)
+
+  for ibin_old in range(1, h.GetNbinsX()+1):
+    centre  = h.GetBinCenter (ibin_old)
+    content = h.GetBinContent(ibin_old)
+    hnew.Fill(centre, content)
+
+  h = copy.deepcopy(hnew)
+  del hnew
+  return h
+
+#_______________________________________________________________________
 if __name__=="__main__":
 
   import argparse
@@ -967,6 +1016,7 @@ if __name__=="__main__":
   parser.add_argument('-s', '--selection'        , dest='selec'          , default=""     , help="The selection name. Choose from: \'FHC1Rmu\', \'FHC1Re\', \'RHC1Rmu\', \RHC1Re\', \'FHCMultiRe\'")
   parser.add_argument('-p', '--params'           , dest='params'         , default=""     , help="File containing a map between param names used by each group. Also used to decide which plots to produce.")
   parser.add_argument('-m', '--modes'            , dest='modes'          , default=""     , help="File containing a map between mode names used by each group. Also used to decide which plots to produce.")
+  parser.add_argument(      '--rebin-to-format'  , dest='rebin_to_format', default=""     , help="If one group has coarser binning than the others, supply the group name here to rebin the hists from the other groups, if possible.")
   parser.add_argument('-x', '--x-max'            , dest='x_max'          , type=float     , default=3.0, help="Maximum Ereco value")
   parser.add_argument('-w', '--suppress-warnings', dest='suppress_warn'  , default=False  , action="store_true", help="Usually warnings are printed if any of the ratio hist bin contents are sufficiently different from that of other groups. Use this option to disable these warnings.")
   parser.add_argument('-c', '--compare-sigma'    , dest='compare_sigma'  , default=False  , action="store_true", help="Print a comparison between the sigma values used by each group for each param.")
@@ -978,4 +1028,4 @@ if __name__=="__main__":
 
   o = parser.parse_args()
 
-  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_etrue, o.compare_sigma, o.plot_nom_ratio, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)
+  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_etrue, o.compare_sigma, o.plot_nom_ratio, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth, o.rebin_to_format)

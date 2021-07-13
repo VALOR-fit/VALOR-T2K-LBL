@@ -12,7 +12,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_run1-10.xml                            </data>
       <mc>           mc/t2k_mc_run1-10_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -24,7 +24,7 @@
       <beam>         JPARC_RHC                                            </beam>
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_run1-10.xml                            </data>
       <mc>           mc/t2k_mc_run1-10_rhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -36,7 +36,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_run1-10.xml                            </data>
       <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -48,7 +48,7 @@
       <beam>         JPARC_RHC                                            </beam>
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_run1-10.xml                            </data>
       <mc>           mc/t2k_mc_run1-10_rhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -60,11 +60,11 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       multire                                              </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_run1-10.xml                            </data>
       <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
-      <binning>      binning/t2k_fhc_elike_run1-10_bins.xml               </binning>
+      <binning>      binning/t2k_fhc_cc1pilike_run1-10_bins.xml           </binning>
     </element>
     
   </element_list>
@@ -85,7 +85,7 @@
       
       <covariance_matrix>
         <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
-        <objname>  prefit_cov    </objname>
+        <objname>  postfit_cov    </objname>
         <objtype>  TMatrixD       </objtype>
       </covariance_matrix>
 
@@ -96,7 +96,7 @@
 
       <initial_values>
         <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
-        <objname>  prefit_params  </objname>
+        <objname>  postfit_params  </objname>
       </initial_values>
     </group>
 

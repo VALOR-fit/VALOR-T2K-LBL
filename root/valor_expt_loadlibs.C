@@ -12,9 +12,6 @@ int valor_expt_loadlibs()
   
   gSystem->SetDynamicPath(expt_libs.Data());
   
-  gSystem->Load("libValorDuneConv.so");
-  gSystem->Load("libValorDuneUtil.so");
-  
   return valor_fmwk_libs_status;
 }
 

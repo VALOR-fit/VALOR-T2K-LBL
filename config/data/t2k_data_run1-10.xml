@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<analysis_inputs analysis="T2K" version="run1-10" detector="SuperK">
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Full run 1-10 SK data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<data>
+  <using_dst_format> 
+     true
+  </using_dst_format>
+
+  <dst>
+    <jparc_fhc>
+       <filename> official/2020/data/SK_data_Run1-10_valor_minidst.root </filename>
+       <objname>  valor_t2k_data_mini_dst </objname>
+       <objtype>  TTree </objtype>
+    </jparc_fhc>
+    <jparc_rhc>
+        <filename> official/2020/data/SK_data_Run1-10_valor_minidst.root </filename>
+        <objname>  valor_t2k_data_mini_dst </objname>
+        <objtype>  TTree </objtype>
+    </jparc_rhc>
+  </dst>
+
+</data>
+
+</analysis_inputs>
+
+

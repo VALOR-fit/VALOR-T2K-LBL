@@ -11,7 +11,7 @@
 import ROOT
 import sys
 import os
-
+import numpy as np
 sys.path.append(os.path.abspath(os.environ["VALOR_FMWK"] + "/src/valor/Utilities/"))
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -27,14 +27,12 @@ util =  valor.util
 conv =  valor.conv
 opt  =  valor.Opt.Instance()
 env  =  valor.Env.Instance()
-arridx = util.ArrIdx.Instance()
 
 python_undefined = 2L*sys.maxint+1
 python_undefined_short = 2**32 -1
 
 _vec_name  = "Dchi2_toy_vec"
 _hist_name = "Dchi2_hist"
-
 #_______________________________________________________________________
 
 def main(in_filenames, out_filename):
@@ -46,31 +44,30 @@ def main(in_filenames, out_filename):
   for filename in in_filenames:
     in_file = ROOT.TFile(filename, "read")
     hist = in_file.Get(_hist_name)
-    lim_low  = min(lim_low , hist.GetXaxis().GetBinLowEdge(1))
-    lim_high = max(lim_high, hist.GetXaxis().GetBinLowEdge(hist.GetNbinsX()) + hist.GetXaxis().GetBinWidth(1))
+    lim_low     = min(lim_low , hist.GetXaxis().GetBinLowEdge(1))
+    lim_high    = max(lim_high, hist.GetXaxis().GetBinLowEdge(hist.GetNbinsX()) + hist.GetXaxis().GetBinWidth(1))
     nbins    = max(nbins, hist.GetNbinsX())
-    in_file.Close()
+    in_file.Close() 
     del in_file
 
   vec_combined = ROOT.vector('double')()
   hist_combined = ROOT.TH1D("hist_combined", "hist_combined", nbins, lim_low, lim_high)
-
+  
+  file_idx = 0 #need this for brazilian arrays reading 
   for filename in in_filenames:
     print "Reading from file", filename
-    in_file = ROOT.TFile(filename, "read")
-
+    in_file = ROOT.TFile(filename, "read")  
     dchisq_vals = list(in_file.Get(_vec_name))
     for dchisq_val in dchisq_vals:
       vec_combined.push_back(dchisq_val)
       hist_combined.Fill(dchisq_val)
 
-    in_file.Close()
-    del in_file
-
   print "Saving to file", out_filename
   outfile = ROOT.TFile(out_filename, "recreate")
   outfile.WriteObject(vec_combined , _vec_name)
   outfile.WriteObject(hist_combined, _hist_name)
+  outfile.WriteObject(br_nh_arr, _vec_br_nh_name)
+  outfile.WriteObject(br_ih_arr, _vec_br_ih_name)
   outfile.Close()
   del outfile
 

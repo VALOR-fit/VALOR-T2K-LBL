@@ -58,12 +58,12 @@ Input MC templates
          TODO: Now that we have a different MC config file for each sample, the MC DST can be split into one tree/file
          TODO: for each sample. This would just be to improve the efficiency of GSSFM::Read, so is not an essential change.
        -->
-       <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v2.root </filename>
+       <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v4.root </filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v2.root </filename>
+        <filename> official/2018/superk/mc/mtuples_v2/valor_format/t2k_skmc14a_neut5.3.2.13a_tunedv1r1_valor_dst_v4.root </filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>
@@ -87,7 +87,7 @@ Input MC templates
 Modelist
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<modelist>        modelists/SuperK.xml            </modelist>
+<modelist>        modelists/SuperK_run9.xml            </modelist>
 <coarse_modelist> modelists/coarse/t2k/SuperK.xml </coarse_modelist>
 
 

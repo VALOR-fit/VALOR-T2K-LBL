@@ -1,6 +1,6 @@
 #!/bin/sh
 if hash ipython 2>/dev/null; then
-    mypy=ipython
+    mypy=ipython2
 else
     mypy=python
 fi

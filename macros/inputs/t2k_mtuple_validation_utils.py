@@ -44,8 +44,11 @@ def compare_trees(file_v, file_p, attributes = ["enu_true", "enu_reco"], maxn = 
                 fname_p = file_p.GetName().rsplit("/")[-1].replace(".root","")  # remove the file path and ".root" from the filename
                 channel_p = ptheta_channel_to_valor_channel[fname_p]
                 mode_p = ptheta_mode_to_valor_mode[val_p]
-                val_p = channel_p +  " "  + mode_p
                 channel_v = util.FlavourAsString(util.ReacModeToInitFlavor(val_v)) + " to " + util.FlavourAsString(util.ReacModeToFinalFlavor(val_v))
+                if "to Nu" in channel_p and "NC" in mode_p:
+                    # osc NC modes don't exist at all in VALOR, so force them to be the same
+                    channel_p = channel_v
+                val_p = channel_p +  " "  + mode_p
                 mode_v = util.ReacTypeAsString(util.ReacModeToType(val_v))
                 if mode_v == "CC1piC" or mode_v == "CC1pi0":
                     mode_v = "CC1pi"

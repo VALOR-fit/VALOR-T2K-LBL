@@ -113,8 +113,8 @@ def check_all_spline_binning():
     import sys
     runs = ["r9", "r10"]
     path = {}
-    path["r9"] = "/hepstore/fbench/software/valor/VALOR-DUNE-LBL/data/official/2018/xsec/splines2018v1/"
-    path["r10"] = "/hepstore/fbench/software/valor/VALOR-DUNE-LBL/data/official/2020/xsec/splines2020v3/"
+    path["r9"] = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2018/xsec/splines2018v1/"
+    path["r10"] = "/hepstore/fbench/software/valor/VALOR-T2K-LBL/data/official/2020/xsec/splines2020v3/"
     tag1 = {}
     tag1["r9"] = "spline2018v1"
     tag1["r10"] = "spline2019splinesfitqunPre"
@@ -187,3 +187,44 @@ def print_nonflat_valor_splines_for_param(tfile, param_name):
         for spl in arr:
             if not is_spline_flat(spl):
                 print name
+
+#________________________________________________________________________________________
+def print_valor_nonflat_spline_params_and_reac_types(tfile):
+    import re
+    import collections
+    import sys
+    params_and_modes = collections.OrderedDict()
+    keys = tfile.GetListOfKeys()
+    for k in keys:
+        name = k.GetName()
+        if not "spl_" in name:
+            continue
+        arr = k.ReadObj()
+        any_nonflat_spline = False
+        for spl in arr:
+            if not is_spline_flat(spl):
+                any_nonflat_spline = True
+                break
+        if not any_nonflat_spline:
+            continue
+        mode_param = re.split("spl_", name)[1]  # discards "spl_"
+        mode  = re.split("_",mode_param)[0]
+        param = mode_param.replace(mode+"_", "")
+        reac_type = ""
+        if "CC" in mode:
+            reac_type = "CC" + re.split("CC",mode)[1]
+        elif "NC" in mode:
+            reac_type = "NC" + re.split("NC",mode)[1]
+        else:
+            "ERROR: could not parse mode named \'{}\'".format(mode)
+            sys.exit()
+
+        if param not in params_and_modes:
+            params_and_modes[param] = [reac_type]
+        if reac_type not in params_and_modes[param]:
+            params_and_modes[param].append(reac_type)
+    for param in params_and_modes:
+        print param
+        for reac_type in params_and_modes[param]:
+            print "   ", reac_type
+        print ""

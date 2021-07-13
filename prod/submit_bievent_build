@@ -1,0 +1,356 @@
+#!/usr/bin/perl
+
+
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit a batch of bievent_build.cxx jobs
+#
+# Inputs
+#  --resource               : Computer resource, <Liverpool_Slurm, cedar, IFIC, RAL, Lancasterinteractive>. Default: interactive
+#  --cpu-time               : Requested CPU time
+#  --mem                    : Requested memory
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`
+#  --softw-dir              : Oscillation code top-level directory. Default: `VALOR_EXPT` environment variable
+#  --fmwk-dir               : SDK top-level directory. Default: `VALOR_FMWK` environment variable
+#  --time-command           : Time the jobs
+
+#  --ntoys                  : The number of toys to build in each job
+#  --tag                    : Naming tag for output files
+#  --config                 : Analysis configuration file from the config/analysis directory
+#  --physics-hypothesis     : Physics hypothesis name (see UtlParam.cxx)
+#  --fit-param-opt          : Options used when setting up the FitParamList
+#  --param-values-option    : Decide how to set the values of physics params used for toy-MC generation
+#  --mesg-thresholds        : Message thresholds config file
+#  --rethrow-unphysical     : Toys that are generated with unphysical parameter values are rethrown
+#  --dmsq-scheme            : abs23 or fogli
+#  --hierarchy              : normal or inverted
+#  --mix-param-choice       : sinsq2theta or sinsqtheta
+#  --mix-param-octant       : one or two
+#  --force-untuned          : Force syst parameters at their generated values 
+#  --compare-by             : Compare by nu/antinu (nu-antinu) or by Ereco (ereco) cut (i.e. Ereco<>500 MeV)
+ 
+# Seeds
+#  --seed-syst              : Seed used for randomising systematic parameters
+#  --seed-osc               : Seed used for randomising oscillation parameters
+#  --seed-stat              : Seed used for randomising statistical fluctuations
+#  --seed-other             : Seed used for randomising things that are not parameters
+# N points
+#  --dcp_npt                : The number of points of dcp for throws, it is set to 37 to keep contours smooth
+#  --N23                    : Number of points for theta23
+#  --NMH                    : Number of MH 
+#  --NDCP                   : Number of points for dcp (plot) -- we don't really nee this here 
+# Vectors of parameters values 
+# --ss12 (size of NMH)
+# --ss13 (size of NMH)
+# --ss23 (size of N23)
+# --dm12 (size of NMH)
+# --dm23 (size of NMH)
+# Osc parameters input values  
+# --input_mixing12
+# --input_mixing13
+# --input_mixing23
+# --input_deltacp
+# --input_dm12sq
+# --input_dm23sq
+# --input_betabar
+
+#--bf-dm23sq  
+#--bf-deltacp 
+#--bf-mixing23
+#data 
+#rootfile -> this can be taken from config file actually 
+#
+#
+# M.Antonova
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+use Cwd 'abs_path';
+
+#
+# Read command line arguments
+#
+
+$iarg=0;
+foreach (@ARGV) {
+  if($iarg % 2 == 1) {$iarg++; next;}
+# job details
+     if($_ eq '--resource'             ) { $resource              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'             ) { $cput                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mem'                  ) { $mem                   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'              ) { $job_dir               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--softw-dir'            ) { $softw_dir             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fmwk-dir'             ) { $fmwk_dir              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--time-command'         ) { $time_command          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--ntoys'                ) { $ntoys                 = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'                  ) { $tag                   = $ARGV[$iarg+1]; }
+# config and  prior
+  elsif($_ eq '--config'               ) { $config                = $ARGV[$iarg+1]; }
+  elsif($_ eq '--prior-file'           ) { $prior_file            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--osc-prior-file'       ) { $osc_prior_file        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--syst-prior-file'      ) { $syst_prior_file       = $ARGV[$iarg+1]; }
+# FPL and other global options 
+  elsif($_ eq '--physics-hypothesis'   ) { $fit_param_list        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fit-param-opt'        ) { $fit_param_opt         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--param-values-option'  ) { $param_values_option   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mesg-thresholds'      ) { $mesg_thresholds       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dmsq-scheme'          ) { $dmsq_scheme           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--hierarchy'            ) { $hierarchy             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-choice'     ) { $mix_param_choice      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mix-param-octant'     ) { $mix_param_octant      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--force-untuned'        ) { $force_untuned         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--compare-by'           ) { $compare_by            = $ARGV[$iarg+1]; }
+# Seeds 
+  elsif($_ eq '--seed-syst'            ) { $seed_syst             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--seed-osc'             ) { $seed_osc              = $ARGV[$iarg+1]; }
+  elsif($_ eq '--seed-stat'            ) { $seed_stat             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--seed-other'           ) { $seed_other            = $ARGV[$iarg+1]; }
+#N points
+  elsif($_ eq '--dcp-npt'              ) { $dcp_npt               = $ARGV[$iarg+1]; }
+  elsif($_ eq '--N23'                  ) { $N23                   = $ARGV[$iarg+1]; }
+  elsif($_ eq '--NMH'                  ) { $NMH                   = $ARGV[$iarg+1]; }
+#Parameters vectors 
+  elsif($_ eq '--ss12'                 ) { $ss12                  = $ARGV[$iarg+1]; } # make these be var by var and then converted to an array 
+  elsif($_ eq '--ss23'                 ) { $ss23                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm12'                 ) { $dm12                  = $ARGV[$iarg+1]; }
+  elsif($_ eq '--dm23'                 ) { $dm23                  = $ARGV[$iarg+1]; }
+#Input values 
+  elsif($_ eq '--input-mixing12'       ) { $input_mixing12        = $ARGV[$iarg+1]; }  
+  elsif($_ eq '--input-mixing13'       ) { $input_mixing13        = $ARGV[$iarg+1]; }
+  elsif($_ eq '--input-mixing23'       ) { $input_mixing23        = $ARGV[$iarg+1]; } 
+  elsif($_ eq '--input-deltacp'        ) { $input_deltacp         = $ARGV[$iarg+1]; }  
+  elsif($_ eq '--input-dm12sq'         ) { $input_dm12sq          = $ARGV[$iarg+1]; }   
+  elsif($_ eq '--input-dm23sq'         ) { $input_dm23sq          = $ARGV[$iarg+1]; }   
+  elsif($_ eq '--input-betabar'        ) { $input_betabar         = $ARGV[$iarg+1]; } 
+  elsif($_ eq '--bf-dm23sq'            ) { $bf_dm23sq             = $ARGV[$iarg+1]; }
+  elsif($_ eq '--bf-deltacp'           ) { $bf_deltacp            = $ARGV[$iarg+1]; }
+  elsif($_ eq '--bf-mixing23'          ) { $bf_mixing23           = $ARGV[$iarg+1]; }
+  elsif($_ eq '--bf-hier'              ) { $bf_hier               = $ARGV[$iarg+1]; }
+
+
+  else {
+      print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+
+#
+# Set unspecfied arguments to their default values
+#
+
+$resource              = "IFIC"                                                              unless defined $resource;
+$cput                  = "50:00:00"                                                          unless defined $cput;
+$mem                   = "3500M"                                                             unless defined $mem ;
+$job_dir               = $ENV{'PWD'}                                                         unless defined $job_dir;
+$softw_dir             = $ENV{'VALOR_EXPT'}                                                  unless defined $softw_dir;
+$fmwk_dir              = $ENV{'VALOR_FMWK'}                                                  unless defined $fmwk_dir;
+$time_command          = 0                                                                   unless defined $time_command;
+
+$ntoys                 = 1                                                                   unless defined $ntoys;
+$tag                   = "bievent_build"                                                     unless defined $tag;
+#config and prior files 
+$config                = "analysis/t2k_analysis_configuration_oa2020_run1-10_v1_postfit.xml" unless defined $config;
+$osc_prior_file        = "priors/t2k_run_1-10_reactor.xml"                                   unless defined $osc_prior_file;
+$syst_prior_file       = "priors/t2k_run_1-10_syst_param_priors.xml"                         unless defined $syst_prior_file;
+#FPL and other global options 
+$fit_param_list        = "3f_osc"                                                            unless defined $fit_param_list;
+$fit_param_opt         = ""                                                                  unless defined $fit_param_opt;
+$param_values_option   = "randomize-all\\;prefit-errors"                                     unless defined $param_values_option;
+$mesg_thresholds       = "verbosity.xml"                                                     unless defined $mesg_thresholds;
+$dmsq_scheme           = "auto"                                                              unless defined $dmsq_scheme;
+$hierarchy             = "normal"                                                            unless defined $hierarchy;
+$mix_param_choice      = "sinsqtheta"                                                        unless defined $mix_param_choice;
+$mix_param_octant      = "two"                                                               unless defined $mix_param_octant;
+#$force_untuned         = "-"                                                                 unless defined $force_untuned;
+$compare_by            = "ereco"                                                             unless defined $compare_by;
+
+#Seeds
+$seed_syst             = 10                                                                  unless defined $seed_syst;
+$seed_osc              = 20                                                                  unless defined $seed_osc;
+$seed_stat             = 0                                                                   unless defined $seed_stat;
+$seed_other            = 30                                                                  unless defined $seed_other;
+#N points 
+$dcp_npt               = 37                                                                   unless defined $dcp_npt;                                                                   
+$N23                   = 4                                                                   unless defined $N23;
+$NMH                   = 2                                                                   unless defined $NMH;
+#vectors 
+$ss12                  = "0.307,0.307"                                                       unless defined $ss12; 
+$ss23                  = "0.450,0.500,0.550,0.600"                                           unless defined $ss23;
+$dm12                  = "7.53E-5,7.53E-5"                                                   unless defined $dm12; 
+$dm23                  = "2.49E-3,2.46E-3"                                                   unless defined $dm23; 
+#input values  (default AsimovA ) not sure though. Originall values were from PDG
+$input_mixing12        = 0.307                                                               unless defined $input_mixing12; 
+$input_mixing13        = 0.0218                                                              unless defined $input_mixing13;
+$input_mixing23        = 0.528                                                               unless defined $input_mixing23; 
+$input_deltacp         = -1.601                                                              unless defined $input_deltacp;  
+$input_dm12sq          = 7.53E-5                                                             unless defined $input_dm12sq; 
+$input_dm23sq          = 2.49E-3                                                             unless defined $input_dm23sq;  
+$input_betabar         = -99.                                                                unless defined $input_betabar;  
+$bf_dm23sq             = 0.002488                                                            unless defined $bf_dm23sq;   
+$bf_deltacp            = -2.0106                                                             unless defined $bf_deltacp;  
+$bf_mixing23           = 0.555                                                               unless defined $bf_mixing23; 
+$bf_hier               = "normal"                                                            unless defined $bf_hier;
+  # body...
+
+
+
+
+# Add the hierarchy and the parameters of interest to the file tag
+$tag = "${tag}_${hierarchy}_${ntoys}";
+
+# Make the job directory
+mkpath ($job_dir, {verbose => 1, mode=>0777});
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+#--ss12 $ss12 --ss12 $ss13 --ss12 $ss23 --dm12 $dm12 --dm23 $dm23
+# Submit job by looping over all point of both parameters of interest
+#
+$program = "valor-bievent_build";
+
+$arguments = "--ntoys $ntoys --tag $tag --osc-prior-file $osc_prior_file --syst-prior-file $syst_prior_file --config $config " .
+                 "--physics-hypothesis $fit_param_list --fit-param-opt $fit_param_opt " .
+		             " --param-values-option $param_values_option --mesg-thresholds $mesg_thresholds " .
+		             " --dmsq-scheme $dmsq_scheme --$hierarchy --$mix_param_choice "  .
+		             " --seed-toys-syst $seed_syst --seed-toys-osc $seed_osc --seed-toys-stat $seed_stat --seed-other $seed_other " .
+		             " --dcp-npt $dcp_npt --N23 $N23 --NMH $NMH " . 
+                 " --ss12 $ss12  --ss23 $ss23 --dm12 $dm12 --dm23 $dm23  --$compare_by " .
+                 " --input-mixing12 $input_mixing12 --input-mixing13 $input_mixing13 --input-mixing23 $input_mixing23 " .
+                 " --input-dm12sq $input_dm12sq --input-dm23sq $input_dm23sq --input-deltacp $input_deltacp " .
+                 " --bf-dm23sq $bf_dm23sq --bf-deltacp $bf_deltacp --bf-mixing23 $bf_mixing23 --bf-hier $bf_hier --input-betabar $input_betabar";
+
+if($mix_param_octant   eq "two")   { $arguments = "$arguments --second-octant"      } else { $arguments = "$arguments --first-octant"       }
+if($force_untuned) {$arguments  = "$arguments --force-untuned"}
+$command = "$program $arguments";
+print "$command \n";
+
+#
+# Liverpool_Slurm
+#
+if($resource eq "Liverpool_Slurm") {
+  open(Slurm, ">$job_dir/$tag.slurm") or die("Can not create the Slurm batch script");
+  print Slurm "#!/bin/bash \n";
+  print Slurm "#SBATCH -J $tag-$irun \n";
+  print Slurm "#SBATCH -o $job_dir/$tag-$irun.slurm.out \n";
+  print Slurm "#SBATCH -e $job_dir/$tag-$irun.slurm.err \n";
+  print Slurm "#SBATCH -t $cput \n";
+  print Slurm "#SBATCH --mem=$mem \n";
+  print Slurm "cd $job_dir \n";
+  print Slurm "source $softw_dir/setup/setup_at_cvmfs_root6.sh $softw_dir $fmwk_dir\n";
+  if($time_command == 1) { print Slurm "/usr/bin/time $command \n"; }
+  else { print Slurm "$command \n"; }
+  close(Slurm);
+  `sbatch -p compute $job_dir/$tag.slurm`;
+}
+
+if($resource eq "cedar") {
+
+  open(Slurm, ">$job_dir/$tag-$irun.slurm") or die("Can not create the Slurm batch script");
+  print Slurm "#!/bin/bash \n";
+  print Slurm "#SBATCH --account=def-blairt2k  \n";		# A larger allocation is available on "rpp-blairt2k", but it's only available on cedar
+  print Slurm "#SBATCH --nodes=1 \n";
+  print Slurm "#SBATCH --time=$cput \n";
+  print Slurm "#SBATCH --mem=$mem \n";
+  print Slurm "#SBATCH --job-name=$tag-$irun \n";
+  print Slurm "#SBATCH -o $job_dir/$tag-$irun.slurm.out \n";
+  print Slurm "#SBATCH -e $job_dir/$tag-$irun.slurm.err \n";
+  print Slurm "cd $job_dir \n";
+  print Slurm "source $softw_dir/setup/setup_at_cedar_root6.sh $softw_dir $fmwk_dir\n";
+  if($time_command == 1) { print Slurm "time $command \n"; }
+  else { print Slurm "$command \n"; }
+  close(Slurm);
+  `sbatch $job_dir/$tag-$irun.slurm`;
+}
+
+#
+# HTCondor @ RAL
+#
+
+if($resource eq "RAL" || $resource eq "RAL_HTC") {
+  $fullprogram = abs_path(`which $program`);
+  chomp($fullprogram);
+
+  $fmwk_setup_script = "$fmwk_dir/setup/setup_at_cvmfs_root6.sh";
+  $dune_setup_script = "$softw_dir/setup/setup_at_cvmfs_root6.sh";
+
+  $jobname = "${tag}-${par1}-${par2}_${jobID}";
+  $shellfn = "$job_dir/${jobname}.sh";
+
+  open(shell,">".$shellfn);
+  print shell "hostname \n";
+  print shell "date \n";
+  print shell "source $fmwk_setup_script \n";
+  print shell "source $dune_setup_script \n";
+  print shell "$command \n";
+  print shell "date \n";
+  close(shell);
+
+  $default_cnd_options =
+  "Executable               = /bin/bash \n".
+  "initialdir               = $job_dir \n".
+  "Universe                 = vanilla \n".
+  "Getenv                   = False \n".
+  "should_transfer_files    = YES \n".
+  "when_to_transfer_output  = ON_EXIT \n".
+  (ncores > 1 ? "request_cpus             = $ncores \n":"").
+  "\nqueue\n";
+  
+  $cndfn = "$job_dir/${jobname}.condor";
+  open(CND, ">".$cndfn) or die("Cannot create the Condor batch script");
+  print CND "Arguments                = $shellfn \n";
+  print CND "Error                    = ${jobname}.err \n";
+  print CND "Output                   = ${jobname}.out \n";
+  print CND $default_cnd_options;
+  close(CND);
+  system("condor_submit",$cndfn);
+		  
+}
+
+#
+# Lancaster
+#
+if($resource eq "Lancaster") {
+   $fullprogram = `which $program`;
+   $fullprogram = `readlink -m $fullprogram`;
+   $arguments =~ s/\"/\\\"/g;        # All double quotes must be escaped for Condor
+   $arguments =~ s/\'//g;            # and apparently single quotes are unnecessary but break it
+   open(JDL, ">$job_dir/$tag-$irun.jdl") or die("Cannot create the JDL script");
+   print JDL "executable     = $fullprogram \n";
+   print JDL "universe       = vanilla \n";
+   print JDL "arguments      = $arguments \n";
+   print JDL "output         = $job_dir/$tag-$irun.out \n";
+   print JDL "error          = $job_dir/$tag-$irun.err \n";
+   print JDL "log            = $job_dir/$tag-$irun.log \n";
+   print JDL "request_memory = 4000 \n";
+   print JDL "getenv         = True \n";
+   print JDL "should_transfer_files    = YES \n";
+   print JDL "when_to_transfer_output  = ON_EXIT \n";
+   print JDL "queue 1 \n";
+   close(JDL);
+   `condor_submit $job_dir/$tag-$irun.jdl`;
+}
+
+# IFIC 
+#
+if($resource eq "IFIC") {
+  open(PBS, ">$job_dir/$tag.pbs") or die("Cannot create the PBS batch script");
+  print PBS "#!/bin/bash \n";
+  print PBS "#PBS -N $tag \n";
+  print PBS "#PBS -l mem=$mem \n";
+  print PBS "#PBS -q short \n"; # Max walltime of for long - 24h, in case of 2D fit use long4
+  print PBS "#PBS -l nodes=1:ppn=1 \n"; #use only ppn=1 
+  print PBS "#PBS -o $job_dir/$tag.pbs.out \n";
+  print PBS "#PBS -e $job_dir/$tag.pbs.err \n";
+  print PBS "cd $job_dir \n";
+  print PBS "source $softw_dir/setup/setup_at_cvmfs_root6.sh $softw_dir $fmwk_dir\n";
+  print PBS "$command \n";
+  close(PBS);
+  `qsub $job_dir/$tag.pbs`;
+}
+
+#
+# interactive
+#
+if($resource eq "interactive") {
+	system($command);
+}
+

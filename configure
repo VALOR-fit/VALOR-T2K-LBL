@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# VALOR/DUNE configuration script
+# VALOR/T2K configuration script
 #
 # For help, type ./configure --help
 #
@@ -205,14 +205,14 @@ if($have_fmwk_requirement) {
 #
 # Create a Conventions package, if none exists
 #
-$conventions_path="$VALOR_EXPT/src/dune/Conventions/";
+$conventions_path="$VALOR_EXPT/src/t2k/Conventions/";
 mkpath ($conventions_path, {verbose => 1, mode=>0777}); 
 die("$conventions_path doesn't exist") unless -d $conventions_path;
 # 
 # Read version info and automatically generate a header file with relevant flags that
 # can be used to make code conditional upon specific version numbers
 #
-$VRS_HEADER_FILENAME = "$VALOR_EXPT/src/dune/Conventions/Version.h";
+$VRS_HEADER_FILENAME = "$VALOR_EXPT/src/t2k/Conventions/Version.h";
 print "Automatically generating file: $VRS_HEADER_FILENAME \n";
 open(VRS_HEADER_FILE, ">$VRS_HEADER_FILENAME") or die("Can not write out the Version.h file!");
 print VRS_HEADER_FILE "#ifndef _VALOR_EXPT_VERSION_H_ \n";
@@ -237,7 +237,7 @@ close(VRS_HEADER_FILE);
 # Automatically generate a header file with relevant build information that
 # can be used to make code conditional upon it
 #
-$BLD_HEADER_FILENAME = "$VALOR_EXPT/src/dune/Conventions/Build.h";
+$BLD_HEADER_FILENAME = "$VALOR_EXPT/src/t2k/Conventions/Build.h";
 print "Automatically generating file: $BLD_HEADER_FILENAME \n";
 open(BLD_HEADER_FILE, ">$BLD_HEADER_FILENAME") or die("Can not write out the Build.h file!");
 print BLD_HEADER_FILE "#ifndef _VALOR_EXPT_BUILD_H_ \n";

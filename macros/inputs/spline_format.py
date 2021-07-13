@@ -28,7 +28,7 @@ python_undefined = 2L*sys.maxint+1
 python_undefined_short =2**32 -1
 
 # File naming convention
-pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_Coulomb_plus_Eb.root"
+pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_coulomb_plus_Eb.root"
 models = dict()
 
 def get_file_suffix(sample):
@@ -186,8 +186,8 @@ def get_new_binning(sample, flavour, mode, true_bin, reco_bin1, reco_bin2=0):
     # receive is the same as the format required
     binning = models[sample].GetBinning()
     reco_binning = binning.XsecRecoBinning()
-    reco_edges1 = reco_binning.BinEdgeArr(0)
-    reco_edges2 = reco_binning.BinEdgeArr(1)
+    reco_edges1 = reco_binning.BinEdgeArr(conv.kvEreco)
+    reco_edges2 = reco_binning.BinEdgeArr(conv.kvThetareco)
     reco_centre1 = 0.5 * (reco_edges1[reco_bin1] + reco_edges1[reco_bin1 + 1])
     # Even the muon samples are 2D internally, so reco_bin2 default value works
     reco_centre2 = 0.5 * (reco_edges2[reco_bin2] + reco_edges2[reco_bin2 + 1])
