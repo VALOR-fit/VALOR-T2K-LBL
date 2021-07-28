@@ -214,9 +214,23 @@ void Bievent_build(CmdLnArgList& arg)
    // - Calculate N_fhc_elike Vs N_rhc_elike point from data and plot it on top of the MC one
    // 
 
-
-   TH2D* hEventsSyst = new TH2D("hEventsSyst", "hEventsSyst", 600, 0, 150, 100, 0, 25);
-   TH2D* hEvents = new TH2D("hEvents", "hEvents", 600, 0, 150, 100, 0, 25);
+   double xmax, xmin, ymax, ymin;
+   if (compare_by_ereco){
+      //Set up histo params
+       xmax = 105;
+       xmin = 30;
+       ymin = 15;
+       ymax = 80;
+   }
+   else if (compare_by_nu_antinu)
+   {
+      xmax = 150.0;
+      xmin = 25.0;
+      ymin = 4.0;
+      ymax = 30.0;
+   } 
+   TH2D* hEventsSyst = new TH2D("hEventsSyst", "hEventsSyst", 600, xmin, xmax, 100, ymin, ymax);
+   TH2D* hEvents = new TH2D("hEvents", "hEvents",600, xmin, xmax, 100, ymin, ymax);
    TObjArray* nominals = new TObjArray(0);
    TH1D* hFHCEvents = new TH1D("hEvents_fhc", "hEvents_fhc", 150, 0, 150);
    TH1D* hRHCEvents = new TH1D("hEvents_rhc", "hEvents_rhc", 150, 0, 150);
@@ -232,22 +246,10 @@ void Bievent_build(CmdLnArgList& arg)
       {
          LOG("bievent", pINFO) <<"Throwing toy " << e;
       } 
-      bool isPhysical = false;
-      while(!isPhysical)
-      {
-        if(disable_banff_tuning) 
-         {
-            model->ForceSystematicsToUntuned(*fp);
-         }
-         
-         model->ResetSystematics(*fp, "all"); 
-         model->RandomizeSystematics(*fp); 
-         
-         RandomizeOsc(fp);
 
-         fp->FromPhysParamList(model->Tweaks(), "current silent");
-         if (util::AllWithinLimits(*fp)) isPhysical = true;
-      }
+      model->ResetSystematics(*fp, "all"); 
+      
+
       //NOTE: write nominal for fixed points 
       
       if(e == 0) 
@@ -301,6 +303,18 @@ void Bievent_build(CmdLnArgList& arg)
          }
       }//end of the loop over all params to fill nominal vals 
 
+      bool isPhysical = false;
+      while(!isPhysical)
+      { 
+        model->ResetSystematics(*fp, "all"); 
+        
+        if(e!=0) {
+          model->RandomizeSystematics(*fp);
+        }
+
+        fp->FromPhysParamList(model->Tweaks(), "current silent");
+        if (util::AllWithinLimits(*fp)) isPhysical = true;
+      }
 
       // throwing toys at data bf to generate syst err contour 
 
@@ -413,32 +427,27 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
          {
             // Nfhc -> ereco>500, Nrhc Ereco<500
             TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());
-            TH1 * curr_pdf = (TH1*) array->FindObject(name.Data());
+            TH2D * curr_pdf = (TH2D*) array->FindObject(name.Data());
             if (!curr_pdf) 
             {
                LOG("bievent", pERROR) << "Couldn't find pdf histogram: " << name;
                   util::Die(-1);
             }
             int cut_bin  = curr_pdf->GetXaxis()->FindBin(0.540);
-            LOG("bievent", pDEBUG) <<"cut bin!!!!!!!!!  "<< cut_bin<<" out of all bins "<<curr_pdf->GetNbinsX();
             LOG("bievent", pDEBUG) <<"x min "<<curr_pdf->GetXaxis()->GetBinCenter(1)<< " x max "<<curr_pdf->GetXaxis()->GetBinCenter(24);
 
             if (Nfhc != -999 && Nrhc!=-999)
             {
-               Nfhc = Nfhc + curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX()); // NB: Maybe +1
-               Nrhc = Nrhc + curr_pdf->Integral(0, cut_bin);
-               LOG("bievent", pDEBUG) << " N evts Ereco< 500 (adding up)"<<Nrhc;
-               LOG("bievent", pDEBUG) << " N evts Ereco> 500 (adding up)"<<Nfhc;
-               LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
+               Nfhc = Nfhc + curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX(), 1, curr_pdf->GetNbinsY());
+               Nrhc = Nrhc + curr_pdf->Integral(1, cut_bin, 1, curr_pdf->GetNbinsY());
+               LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1),1, curr_pdf->GetNbinsY()) + (curr_pdf->Integral(1, cut_bin-1),1, curr_pdf->GetNbinsY()) ;
             }
 
             else 
             {
-              Nfhc = curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX()); 
-              Nrhc = curr_pdf->Integral(0, cut_bin);
-              LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco< 500 "<<Nrhc;
-              LOG("bievent", pDEBUG) << "NEXT EVT N evts Ereco> 500 "<<Nfhc;
-              LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1)) + (curr_pdf->Integral(1, cut_bin-1)) ;
+              Nfhc = curr_pdf->Integral(cut_bin+1, curr_pdf->GetNbinsX(),1, curr_pdf->GetNbinsY()); 
+              Nrhc = curr_pdf->Integral(1, cut_bin,1, curr_pdf->GetNbinsY()); 
+              LOG("bievent", pDEBUG) << " Nevts tot " << curr_pdf->Integral()<< " and summ of both "<< (curr_pdf->Integral(cut_bin, curr_pdf->GetNbinsX()+1),1, curr_pdf->GetNbinsY()) + (curr_pdf->Integral(1, cut_bin-1),1, curr_pdf->GetNbinsY()) ;
             }
          }
       }
@@ -468,54 +477,6 @@ bool OscParamsPhysical(double mix12val, double mix13val, double dm12val)
 
    return true;
 }
-//________________________________________________________________________________________
-void RandomizeOsc(valor::FitParamList *fp)
 
-{
-     const util::NameRegistry * nr = util::NameRegistry::Instance();
-   string prior_scheme_name_mixing13  = fp->GetPriorSchemeName(nr->PhysParamFromString("mixing13"));
-   string prior_scheme_name_mixing12  = fp->GetPriorSchemeName(nr->PhysParamFromString("mixing12"));
-   string target_scheme_name_mixing13 = ""; // Leave this as an empty string to allow util::ConvertOscParamToUsedScheme to set the target scheme according to the values set in Opt::Instance
-   string target_scheme_name_mixing12 = ""; // Leave this as an empty string to allow util::ConvertOscParamToUsedScheme to set the target scheme according to the values set in Opt::Instance
-
-     
-   for( ; ; )
-   { 
-    
-      double mix12val = Rnd::Instance()->RndToyMCosc().Gaus(fp->GetMeanGaus(nr->PhysParamFromString("mixing12")), 
-         fp->GetSigmaGaus(nr->PhysParamFromString("mixing12")));
-      
-      double mix13val = Rnd::Instance()->RndToyMCosc().Gaus(fp->GetMeanGaus(nr->PhysParamFromString("mixing13")), 
-         fp->GetSigmaGaus(nr->PhysParamFromString("mixing13")));
-      
-      double dm12val = Rnd::Instance()->RndToyMCosc().Gaus(fp->GetMeanGaus(nr->PhysParamFromString("dm12sq")), 
-         fp->GetSigmaGaus(nr->PhysParamFromString("dm12sq")));
-
-      LOG("bievent", pDEBUG) << "mixing 12 before correcting to the mixing scheme "<< mix12val;
-      LOG("bievent", pDEBUG) << "mixing 13 before correcting to the mixing scheme "<< mix13val;
-      LOG("bievent", pDEBUG) << "dmsq 12   before correcting to the mixing scheme "<< dm12val;  
-
-      mix12val = util::ConvertOscParamToUsedScheme(nr->PhysParamFromString("mixing12"), mix12val, prior_scheme_name_mixing12, target_scheme_name_mixing12); //util::FromSinsq2thToSinsqth(mix12val);
-      mix13val = util::ConvertOscParamToUsedScheme(nr->PhysParamFromString("mixing13"), mix13val, prior_scheme_name_mixing13, target_scheme_name_mixing13);//util::FromSinsq2thToSinsqth(mix13val);
-
-
-      LOG("bievent", pDEBUG) << "mixing 12 after correcting to the mixing scheme "<< mix12val;
-      LOG("bievent", pDEBUG) << "mixing 13 after correcting to the mixing scheme "<< mix13val;
-      LOG("bievent", pDEBUG) << "dmsq 12 after correcting to the mixing scheme "<< dm12val;     
-      //Update FPL
-      fp->Update(nr->PhysParamFromString("mixing12"),mix12val);
-      fp->Update(nr->PhysParamFromString("mixing13"),mix13val);
-      fp->Update(nr->PhysParamFromString("dm12sq"),dm12val);
-
-
-      // check if all parameters are within the  physics limits 
-      if(OscParamsPhysical(mix12val, mix13val, dm12val))
-      {
-         
-        break;
-      }
-      
-   }
-}
 
 

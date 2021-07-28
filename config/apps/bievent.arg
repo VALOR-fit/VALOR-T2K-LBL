@@ -12,7 +12,7 @@ normal,inverted                      |   boolean_list |  optional   |   normal
 sinsqtheta, sinsq2theta              |   boolean_list |  optional   |   sinsqtheta
 first-octant,second-octant           |   boolean_list |  optional   |   first-octant
 force-untuned                        |   string       |  optional   |   -
-dcp-npt                              |   integer      |  mandatory  |   9
+dcp-npt                              |   integer      |  mandatory  |   37
 N23                                  |   integer      |  mandatory  |   4
 NMH                                  |   integer      |  mandatory  |   2
 input-mixing12                       |   double       |  mandatory  |   0.307

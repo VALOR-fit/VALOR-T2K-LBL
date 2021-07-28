@@ -24,14 +24,17 @@ def get_file_suffix(sample): #Is this even needed in this?
 
 
 def main():
-    beams           = ["fhc", "rhc"]
-    osc_channels    = ["nuebar_x_nuebar", "nue_x_nue", "numubar_x_nuebar", "numubar_x_numubar", "numu_x_nue", "numu_x_numu"]
-    selections      = ["numu", "nue", "cc1pi"]
-    is_selection_2d = {"numu" : True, "nue" : True, "cc1pi" : True}
+    beams           = [ "rhc"] #change all these dicts  "fhc", #TODO: Change
+    osc_channels    = ["numu_x_numu"] #"nuebar_x_nuebar", "nue_x_nue", "numubar_x_nuebar", "numubar_x_numubar", "numu_x_nue",
+    selections      = ["numu", "nue", "cc1pi"]   #"numucc1pi"
+    is_selection_2d = {"numu" : False, "nue" : True, "cc1pi" : True}  #"numucc1pi": False
 
     for beam in beams:
         for channel in osc_channels:
             for selection in selections:
+                if beam =="rhc" and (selection =="numucc1pi"): #skipping rch for multirmu as this is FHC sample
+                   print "skipping ", selection, " in channel ", channel
+                   continue
                 fname_spline = standard_pattern
                 fname_eb     = eb_pattern
                 fname_out    = output_pattern

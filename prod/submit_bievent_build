@@ -170,7 +170,7 @@ $seed_osc              = 20                                                     
 $seed_stat             = 0                                                                   unless defined $seed_stat;
 $seed_other            = 30                                                                  unless defined $seed_other;
 #N points 
-$dcp_npt               = 9                                                                   unless defined $dcp_npt;                                                                   
+$dcp_npt               = 37                                                                   unless defined $dcp_npt;                                                                   
 $N23                   = 4                                                                   unless defined $N23;
 $NMH                   = 2                                                                   unless defined $NMH;
 #vectors 
@@ -187,7 +187,7 @@ $input_dm12sq          = 7.53E-5                                                
 $input_dm23sq          = 2.49E-3                                                             unless defined $input_dm23sq;  
 $input_betabar         = -99.                                                                unless defined $input_betabar;  
 $bf_dm23sq             = 0.002488                                                            unless defined $bf_dm23sq;   
-$bf_deltacp            = -2.0106                                                             unless defined $bf_deltacp;
+$bf_deltacp            = -2.0106                                                              unless defined $bf_deltacp;  
 $bf_mixing23           =  0.555                                                              unless defined $bf_mixing23; 
 $bf_hier               = "normal"                                                            unless defined $bf_hier;
   # body...

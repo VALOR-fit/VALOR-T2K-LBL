@@ -32,7 +32,7 @@ pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_coulomb_plus_E
 models = dict()
 
 def get_file_suffix(sample):
-    if "1Rmu" or "1Re" or "MultiRe" in sample:
+    if "mu" or "Re" in sample:
         return "erectheta"
     else:
         print("No valid sample found. Exiting.")
@@ -111,7 +111,7 @@ def get_param_map():
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
-    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe"]:
+    if sample in ["FHC1Rmu","FHC1Re","FHC1Re1dcy","FHCMultiRmu"]:
         return "fhc"
     elif sample in ["RHC1Rmu","RHC1Re"]:
         return "rhc"
@@ -124,8 +124,10 @@ def get_selection_map(sample):
         return "nueselec"
     elif "1Rmu" in sample:
         return "numuselec"
-    elif "MultiRe" in sample:
+    elif "1Re1dcy" in sample:
         return "cc1piselec"
+    elif "MultiRmu" in sample:
+        return "numucc1piselec"
     else:
         print "Error: Unknown sample ", sample
         sys.exit()
@@ -133,10 +135,16 @@ def get_selection_map(sample):
 def get_sdk_selection(sample):
     if "1Rmu" in sample:
         return "1rmu"
+    elif "1Re1dcy" in sample:
+        return "1re1dcy"
     elif "1Re" in sample:
         return "1re"
+    elif "MultiRmu" in sample:
+        return "multirmu"
     else:
-        return "multire"
+        print "Error: Unknown sample ", sample
+        sys.exit()
+
 
 def get_sdk_beam(sample):
     if "RHC" in sample:
@@ -172,8 +180,10 @@ def set_model_map(model):
         models["FHC1Re"] = model
     elif model.Name() == "superk__JPARC_RHC__1re":
         models["RHC1Re"] = model
-    elif model.Name() == "superk__JPARC_FHC__multire":
-        models["FHCMultiRe"] = model
+    elif model.Name() == "superk__JPARC_FHC__1re1dcy":
+        models["FHC1Re1dcy"] = model
+    elif model.Name() == "superk__JPARC_FHC__multirmu":
+        models["FHCMultiRmu"] = model
     else:
         print "Unrecognised model ", model.Name()
         sys.exit()
@@ -187,24 +197,16 @@ def get_new_binning(sample, flavour, mode, true_bin, reco_bin1, reco_bin2=0):
     # receive is the same as the format required
     binning = models[sample].GetBinning()
     reco_binning = binning.XsecRecoBinning()
-    reco_edges1 = reco_binning.BinEdgeArr(0) #conv.kvEreco TODO: put some explanations
-    reco_edges2 = reco_binning.BinEdgeArr(1) #conv.kvThetareco
+    reco_edges1 = reco_binning.BinEdgeArr(0) #conv.kvEreco      NOTE: Regretfully, python is taking enumerators as numbers,
+    reco_edges2 = reco_binning.BinEdgeArr(1) #conv.kvThetareco  NOTE: that is completely wrong in this case
     reco_centre1 = 0.5 * (reco_edges1[reco_bin1] + reco_edges1[reco_bin1 + 1])
     # Even the muon samples are 2D internally, so reco_bin2 default value works
     reco_centre2 = 0.5 * (reco_edges2[reco_bin2] + reco_edges2[reco_bin2 + 1])
-    #print("reco_centre1: ",reco_centre1, "reco_centre2: ", reco_centre2) #TODO: Bugfix remove
     reco_vec = ROOT.vector('double')()
     reco_vec.push_back(reco_centre1)
     reco_vec.push_back(reco_centre2)
     new_true_bin = true_bin
     new_reco_bin = reco_binning.FindBin(reco_vec)
-   # if new_reco_bin == 615L or 614L: #TODO: Bugfix remove
-   #     print("new reco bin: ", new_reco_bin) #TODO: Bugfix remove
-   #     print("reco bin 1: ", reco_bin1)
-   #     print("reco_edges1: ", reco_edges1[reco_bin1], " & ", reco_edges1[reco_bin1 + 1] )
-   #     print("reco_edges2: ", reco_edges2[reco_bin2], " & ", reco_edges2[reco_bin2 + 1] )
-   #     print("reco bin 2: ", reco_bin2)
-   #     print("reco_centre1: ",reco_centre1, "reco_centre2: ", reco_centre2) #TODO: Bugfix remove
     return new_true_bin, new_reco_bin
 
 def get_new_binning_nbins(sample, flavour, mode):
@@ -216,6 +218,7 @@ def get_new_binning_nbins(sample, flavour, mode):
     if m == conv.kmUndefined or m == python_undefined or m == python_undefined_short:
         print "ERROR: could not convert input mode [", mode, "] into a VALOR mode"
         util.Die(-1)
+    print " sample ", sample
     binning = models[sample].GetBinning()
     reco_binning = binning.XsecRecoBinning()
     true_binning = binning.XsecTrueBinning(m)
@@ -308,14 +311,13 @@ def main(version, path, sample, config):
             # Loop over the splines - rename them and them to the spline array for this param/mode combination.
             for orig_spl_name, spline in spline_dict.iteritems():
                 junk,bins = orig_spl_name.rsplit("_sp_")
-                #print("Bins: ", bins, " orig_spl_name: ", orig_spl_name) #TODO: Bugfix remove
+       
                 all_bins = map(int,bins.split("_"))
                 if len(all_bins) == 2:
                     true_bin, reco_bin = map(int, bins.split("_"))
                     true_bin, reco_bin = get_new_binning(sample, valor_type, mode, true_bin, reco_bin)
                 elif len(all_bins) == 3:
                     true_bin, reco_bin1, reco_bin2 = map(int, bins.split("_"))
-                   # print("Reco bin 1: ", reco_bin1, " Reco bin 2: ", reco_bin2) #TODO:Bugfix remove
                     true_bin, reco_bin = get_new_binning(sample, valor_type, mode, true_bin, reco_bin1, reco_bin2)
                 else:
                     print "Unexpected binning ", bins
@@ -332,17 +334,16 @@ def main(version, path, sample, config):
                 new_spline.SetName(new_spl_name)
 
                 idx = true_bin * nbins_reco + reco_bin
-                #print("True: ",nbins_true, " Reco: ", nbins_reco, " Sum: ", nbins_true*nbins_reco) #TODO:Bugfix remove
                 if idx >= nbins_true * nbins_reco:
                     print "ERROR: Tried to add spline \'{}\'".format(new_spl_name), "to array", \
                         build_spline_array_name(par, valor_type, mode), ", but the index ({})".format(idx), \
                         "is out of range [0, {}]".format(nbins_true * nbins_reco), "; true bin =", true_bin, \
                         "(max = {})".format(nbins_true), "; reco bin =", reco_bin, "(max = {})".format(nbins_reco), \
                         "; input spline bins =", all_bins
-                    sys.exit() #TODO:Uncommon
+                    sys.exit()
                 #if build_spline_array_name(par, valor_type, mode) == "spl_numuCCQE_MAQE":
-               # print "Adding spline", new_spl_name, "to array", build_spline_array_name(par, valor_type, mode), "at idx =", idx #TODO:Comment out, Bugfix
-                spline_array.AddAt(new_spline, idx)#TODO:Uncommon
+                #    print "Adding spline", new_spl_name, "to array", build_spline_array_name(par, valor_type, mode), "at idx =", idx
+                spline_array.AddAt(new_spline, idx)
 
             print "Saving spline array named", build_spline_array_name(par, valor_type, mode), "\n"
             spline_array.Write(build_spline_array_name(par, valor_type, mode), 1)   # The 1 makes the array be written as a single object instead of saving each spline individually
@@ -366,9 +367,9 @@ def main(version, path, sample, config):
   
 if __name__=="__main__":
     import argparse
-    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe"]
+    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHC1Re1dcy", "FHCMultiRmu"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
-    parser.add_argument('-p', '--prefix', default='spline2018v1', help="Spline filename prefix.")
+    parser.add_argument('-p', '--prefix', default='spline2019v1', help="Spline filename prefix.")
     parser.add_argument('-i', '--input', help="Input spline directory.")
     parser.add_argument('-s', '--sample', choices=samples, help="The SK sample.")
     parser.add_argument('-c', '--config', help="Analysis configuration file.")

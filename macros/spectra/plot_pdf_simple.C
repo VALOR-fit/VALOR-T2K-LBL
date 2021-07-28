@@ -55,8 +55,8 @@ void                 save_to_file                 (TCanvas* canv, std::string bo
 TLatex*              make_caveat                  (TH1* hist_to_draw, double y_max);
 TLatex*              make_title                   (TString title_text, double ymax);
 std::string          make_title_text              (conv::BeamConf_t b, conv::Sample_t s, conv::ReacMode_t m = conv::kmUndefined, bool no_tex = false, bool no_spaces = false);
-std::string          get_beam_current_name_simple (conv::BeamConf_t b);
-std::string          get_sample_name_simple       (conv::Sample_t s, conv::BeamConf_t b, bool no_tex = false);
+std::string          get_beam_current_name_simple (conv::BeamConf_t b);                    // TODO: move to BeamConf.h
+std::string          get_sample_name_simple       (conv::Sample_t s, bool no_tex = false); // TODO: move to Sample.h
 void                 rebin                        (TH1D* hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv);
 double               get_max_in_xrange_by_mode    (double xmax, std::vector<TH1D*> hists_by_mode, const int NReacModes);
 double               get_max_in_xrange            (double xmax, TH1D* hist, bool with_error);
@@ -751,7 +751,7 @@ std::string get_sample_name_simple(conv::Sample_t s, conv::BeamConf_t b, bool no
   if(!_thesis_format) {
     if     (s == conv::ks1Rmu   ) { sample_str = "1R#mu";     }
     else if(s == conv::ks1Re    ) { sample_str = "1Re";       }
-    else if(s == conv::ksMultiRe) { sample_str = "1Re 1d.e."; }
+    else if(s == conv::ks1Re1dcy) { sample_str = "1Re 1d.e."; }
     else {
       std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
       vutil::Die(1);

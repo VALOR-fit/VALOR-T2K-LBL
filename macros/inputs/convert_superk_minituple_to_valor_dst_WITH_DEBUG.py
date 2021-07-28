@@ -39,7 +39,7 @@ python_undefined = 2L*sys.maxint+1
 # At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
 beams = [conv.kbJPARC_FHC, conv.kbJPARC_RHC]
 samples = collections.OrderedDict()
-samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe]
+samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ks1Re1dcy]
 samples[conv.kbJPARC_RHC] = [conv.ks1Rmu, conv.ks1Re]
 
 types = ["nuebar_x_nuebar"  ,  # The naming conventions used by the input SK MC files
@@ -277,7 +277,7 @@ def get_scale(file_in):
 def get_selection(file_in_name):
   selection = conv.ksUndefined
   if "cc1piselec" in file_in_name:
-    selection = conv.ksMultiRe
+    selection = conv.ks1Re1dcy
   elif "nueselec" in file_in_name:
     selection = conv.ks1Re
   elif "numuselec" in file_in_name:
@@ -393,7 +393,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
         # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
         ereco_MeV = event.erec
     else:
-        if sample != conv.ksMultiRe:
+        if sample != conv.ks1Re1dcy:
             ereco_MeV  = (mn - Vnuc)*elep - mass*mass/2.
             ereco_MeV += mn*Vnuc - Vnuc*Vnuc/2.
             ereco_MeV += (mp*mp - mn*mn)/2.

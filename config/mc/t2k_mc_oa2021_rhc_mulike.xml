@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+
+<analysis_inputs analysis="T2K" version="run1-10" detector="SuperK">
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Assumed exposure for various beam configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<data>
+  <exposure> 
+    <jparc_fhc>
+      1.9664e+21
+    </jparc_fhc>
+    <jparc_rhc>
+      1.634556e+21
+    </jparc_rhc>
+  </exposure>
+</data>
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Information about the detector configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<!-- This is (real detector fiducial mass) / (simulated fiducial mass) -->
+<fiducial_mass>
+  1.
+</fiducial_mass>
+
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Input MC templates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<mc>
+  <using_dst_format> 
+     true
+  </using_dst_format>
+
+  <!--
+    Loads of T2K events have Ereco values outside of the binning range.
+    This is fine because studies have shown that they're all intrinsic
+    nue so we don't care about them. So we use this flag to suppress
+    warnings about events going outside of this range.
+  -->
+  <suppress_out_of_binning_range_warning>
+      true
+  </suppress_out_of_binning_range_warning>
+
+  <dst>
+    <jparc_fhc>
+       <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_904.root </filename>
+       <objname>  valor_t2k_dst </objname>
+       <objtype>  TTree </objtype>
+    </jparc_fhc>
+    <jparc_rhc>
+        <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_904.root </filename>
+        <objname>  valor_t2k_dst </objname>
+        <objtype>  TTree </objtype>
+    </jparc_rhc>
+  </dst>
+  
+  <template>
+    <filename> nonexistent.root </filename>
+    <tag> pass </tag>
+  </template>
+  
+  <!-- in kg, for calculating CCinc xsec-->
+  <interaction_mass> 
+    -999 
+  </interaction_mass>
+
+</mc>
+
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Modelist
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<modelist>        modelists/SuperK.xml            </modelist>
+<coarse_modelist> modelists/coarse/t2k/SuperK.xml </coarse_modelist>
+
+
+<!--
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Splines
+
+    On T2K we allow splines to go outside of their limits during both the validation and the actual analysis.
+     The spline behaviour slightly outside of the limits has been studied, and the behaviour is sensible.
+     Also, the splines go out to 3 sigma either side of the nominal param values (as of July 2019),
+     therefore any throws outside of the limits will be negligible.
+
+    TODO: By default in VALOR, splines are not allowed to vary outside of their limits. To enable this,
+    TODO: configure the SDK with the enable-spline-stupidity flag as well as setting within_limits to false below.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<splines>
+    <folder>          official/2020/xsec/splines2021/valor_format            </folder>
+    <pattern>         splines_spline2021splinesfitqunPre_[BEAM]_[SAMPLE].root  </pattern>
+    <stored_as>       TObjArray                                                </stored_as>
+    <array_pattern>   spl_[MODE]_[PARAM]                                       </array_pattern>
+    <method>          curr_tweak                                               </method>           <!-- This uses weight = spline->Eval(current - untuned) -->
+    <type>            TSpline3                                                 </type>             <!-- For T2K use ROOT's splines rather than GSL's, as GSL spline can't be evaluated outside the limits -->
+    <sort_knot_order> false                                                    </sort_knot_order>  <!-- For T2K some of the spline knots are out-of-order. These knots appear to be ignored? Setting this to true re-orders the splines so that all the knots are in order, which changes the spline behaviour -->
+    <within_limits>   false                                                    </within_limits>    <!-- Some T2K params have a small spline range, where even a 1 sigma variation takes us beyond a limit. Setting this to false allows extrapolation beyond the spline limits -->
+    <allow_negative>  true                                                     </allow_negative>   <!-- Splines that go negative are no longer replaced with flat splines, but the weight cannot go below 0 -->
+    <set_neg_wght_to> 2e-10                                                    </set_neg_wght_to>
+</splines>
+
+</analysis_inputs>
+
+
