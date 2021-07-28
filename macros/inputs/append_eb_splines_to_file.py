@@ -11,15 +11,15 @@ except:
 ROOT.gROOT.SetBatch(1)
 
 # File naming convention
-output_pattern   = "/data5/users/mantonova/run10_multiring_implement_VALOR/VALOR-T2K-LBL/data/official/2020/xsec/splines2021/spline2019splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
-standard_pattern = "/data5/users/mantonova/new_xsec/XsecResponse/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2021-03-02.root"
-eb_pattern       = "/data5/users/mantonova/new_xsec/XsecResponse/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2021-03-02.root"
+output_pattern   = "$VALOR_EXPT/data/official/2020/xsec/splines2021/spline2019splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
+standard_pattern = "$XsecResponse/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2021-03-02.root"
+eb_pattern       = "$XsecResponse/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2021-03-02.root"
 
 def main():
-    beams           = [ "rhc"] #change all these dicts  "fhc", 
-    osc_channels    = ["numu_x_numu"] #"nuebar_x_nuebar", "nue_x_nue", "numubar_x_nuebar", "numubar_x_numubar", "numu_x_nue", 
-    selections      = ["numu", "nue", "cc1pi"]   #"numucc1pi"
-    is_selection_2d = {"numu" : False, "nue" : True, "cc1pi" : True}  #"numucc1pi": False
+    beams           = ["fhc", "rhc"] 
+    osc_channels    = ["nuebar_x_nuebar", "nue_x_nue", "numubar_x_nuebar", "numubar_x_numubar", "numu_x_nue", "numu_x_numu"]
+    selections      = ["numu", "nue", "cc1pi"]
+    is_selection_2d = {"numu" : False, "nue" : True, "cc1pi" : True, "numucc1pi": False}
 
     for beam in beams:
         for channel in osc_channels:
