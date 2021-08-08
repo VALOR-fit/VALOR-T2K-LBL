@@ -32,7 +32,7 @@ def main(in_files, output_filename):
       "superk__JPARC_RHC__1rmu",
       "superk__JPARC_FHC__1re",
       "superk__JPARC_RHC__1re",
-      "superk__JPARC_FHC__multire"
+      "superk__JPARC_FHC__1re1dcy"
     ]
 
   combined_mean_hists     = dict()  # Mean

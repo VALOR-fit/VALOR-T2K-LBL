@@ -32,7 +32,7 @@ pattern = "[VERSION]_t2ksk19b.fqv4r0.[CURRENT].[TYPE]_[SELECTION]_coulomb_plus_E
 models = dict()
 
 def get_file_suffix(sample):
-    if "1Rmu" in sample:
+    if "mu"  in sample:
         return ""
     else:
         return "erectheta"
@@ -110,7 +110,7 @@ def get_param_map():
     return list(zip(raw_params, valor_params))
 
 def get_beam(sample):
-    if sample in ["FHC1Rmu","FHC1Re","FHCMultiRe"]:
+    if sample in ["FHC1Rmu","FHC1Re","FHC1Re1dcy","FHCMultiRmu"]:
         return "fhc"
     elif sample in ["RHC1Rmu","RHC1Re"]:
         return "rhc"
@@ -123,8 +123,10 @@ def get_selection_map(sample):
         return "nueselec"
     elif "1Rmu" in sample:
         return "numuselec"
-    elif "MultiRe" in sample:
+    elif "1Re1dcy" in sample:
         return "cc1piselec"
+    elif "MultiRmu" in sample: 
+        return "numucc1piselec"        
     else:
         print "Error: Unknown sample ", sample
         sys.exit()
@@ -132,10 +134,16 @@ def get_selection_map(sample):
 def get_sdk_selection(sample):
     if "1Rmu" in sample:
         return "1rmu"
+    elif "1Re1dcy" in sample:
+        return "1re1dcy"
     elif "1Re" in sample:
         return "1re"
+    elif "MultiRmu" in sample:
+        return "multirmu"
     else:
-        return "multire"
+        print "Error: Unknown sample ", sample
+        sys.exit()
+
 
 def get_sdk_beam(sample):
     if "RHC" in sample:
@@ -171,8 +179,10 @@ def set_model_map(model):
         models["FHC1Re"] = model
     elif model.Name() == "superk__JPARC_RHC__1re":
         models["RHC1Re"] = model
-    elif model.Name() == "superk__JPARC_FHC__multire":
-        models["FHCMultiRe"] = model
+    elif model.Name() == "superk__JPARC_FHC__1re1dcy":
+        models["FHC1Re1dcy"] = model
+    elif model.Name() == "superk__JPARC_FHC__multirmu":
+        models["FHCMultiRmu"] = model
     else:
         print "Unrecognised model ", model.Name()
         sys.exit()
@@ -186,8 +196,8 @@ def get_new_binning(sample, flavour, mode, true_bin, reco_bin1, reco_bin2=0):
     # receive is the same as the format required
     binning = models[sample].GetBinning()
     reco_binning = binning.XsecRecoBinning()
-    reco_edges1 = reco_binning.BinEdgeArr(conv.kvEreco)
-    reco_edges2 = reco_binning.BinEdgeArr(conv.kvThetareco)
+    reco_edges1 = reco_binning.BinEdgeArr(0) #conv.kvEreco      NOTE: Regretfully, python is taking enumerators as numbers, 
+    reco_edges2 = reco_binning.BinEdgeArr(1) #conv.kvThetareco  NOTE: that is completely wrong in this case
     reco_centre1 = 0.5 * (reco_edges1[reco_bin1] + reco_edges1[reco_bin1 + 1])
     # Even the muon samples are 2D internally, so reco_bin2 default value works
     reco_centre2 = 0.5 * (reco_edges2[reco_bin2] + reco_edges2[reco_bin2 + 1])
@@ -207,6 +217,7 @@ def get_new_binning_nbins(sample, flavour, mode):
     if m == conv.kmUndefined or m == python_undefined or m == python_undefined_short:
         print "ERROR: could not convert input mode [", mode, "] into a VALOR mode"
         util.Die(-1)
+    print " sample ", sample
     binning = models[sample].GetBinning()
     reco_binning = binning.XsecRecoBinning()
     true_binning = binning.XsecTrueBinning(m)
@@ -355,9 +366,9 @@ def main(version, path, sample, config):
   
 if __name__=="__main__":
     import argparse
-    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHCMultiRe"]
+    samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHC1Re1dcy", "FHCMultiRmu"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
-    parser.add_argument('-p', '--prefix', default='spline2018v1', help="Spline filename prefix.")
+    parser.add_argument('-p', '--prefix', default='spline2019v1', help="Spline filename prefix.")
     parser.add_argument('-i', '--input', help="Input spline directory.")
     parser.add_argument('-s', '--sample', choices=samples, help="The SK sample.")
     parser.add_argument('-c', '--config', help="Analysis configuration file.")

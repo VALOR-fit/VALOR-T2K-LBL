@@ -41,7 +41,7 @@ python_undefined = 2L*sys.maxint+1
 # At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
 beams = [conv.kbJPARC_FHC, conv.kbJPARC_RHC]
 samples = collections.OrderedDict()
-samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ksMultiRe]
+samples[conv.kbJPARC_FHC] = [conv.ks1Rmu, conv.ks1Re, conv.ks1Re1dcy]
 samples[conv.kbJPARC_RHC] = [conv.ks1Rmu, conv.ks1Re]
 
 types = [# The naming conventions used by the input SK MC files
@@ -189,7 +189,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
           nev_input[ifile] -= 1
           continue
 
-      if sample[0] == conv.ksMultiRe:
+      if sample[0] == conv.ks1Re1dcy:
         nev_input[ifile] -= 1
         continue
 
@@ -288,7 +288,7 @@ def get_scale(file_in_name):
 def get_selection(file_in_name):
   selection = conv.ksUndefined
   if "cc1piselec" in file_in_name:
-    selection = conv.ksMultiRe
+    selection = conv.ks1Re1dcy
   elif "nueselec" in file_in_name:
     selection = conv.ks1Re
   elif "numuselec" in file_in_name:

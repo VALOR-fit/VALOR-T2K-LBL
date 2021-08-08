@@ -96,7 +96,7 @@ def compare_all_trees():
     import sys
     valor_beams = ["JPARC_FHC", "JPARC_RHC"]
     ptheta_beams = ["numode", "antinu"]
-    valor_samples = ["1rmu", "1re", "multire"]
+    valor_samples = ["1rmu", "1re", "1re1dcy"]
     ptheta_samples = ["numu", "nue", "cc1pi"]
     valor_channels = ["NuMu_no_osc", "NuMuBar_no_osc", "NuE_no_osc", "NuE_osc", "NuEBar_no_osc", "NuEBar_osc"]
     ptheta_channels = ["numu", "numubar", "nue", "nue_sig", "nuebar", "nuebar_sig"]
@@ -106,7 +106,7 @@ def compare_all_trees():
         for isa in range(0, len(valor_samples)):
             vs = valor_samples[isa]
             ps = ptheta_samples[isa]
-            if vb == "JPARC_RHC" and vs == "multire":
+            if vb == "JPARC_RHC" and vs == "1re1dcy":
                 # We don't use this beam + sample combination in the analysis
                 continue
             for ic in range(0, len(valor_channels)):
@@ -134,7 +134,7 @@ def compare_nevents():
     valor_beams = ["JPARC_FHC", "JPARC_RHC"]
     ptheta_beams = ["numode", "antinu"]
     raw_beams = ["fhc", "rhc"]
-    valor_samples = ["1rmu", "1re", "multire"]
+    valor_samples = ["1rmu", "1re", "1re1dcy"]
     ptheta_samples = ["numu", "nue", "cc1pi"]
     raw_samples = ["numu", "nue", "cc1pi"]
     valor_channels = ["NuMu_no_osc", "NuMuBar_no_osc", "NuE_no_osc", "NuE_osc", "NuEBar_no_osc", "NuEBar_osc"]
@@ -149,7 +149,7 @@ def compare_nevents():
             vs = valor_samples[isa]
             ps = ptheta_samples[isa]
             rs = raw_samples[isa]
-            if vb == "JPARC_RHC" and vs == "multire":
+            if vb == "JPARC_RHC" and vs == "1re1dcy":
                 # We don't use this beam + sample combination in the analysis
                 continue
             for ic in range(0, len(valor_channels)):

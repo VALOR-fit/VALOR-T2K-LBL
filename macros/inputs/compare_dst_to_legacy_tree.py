@@ -212,7 +212,7 @@ def t2k_sample_to_sdk_sample(sample_str):
   elif sample_str == "1Re" or sample_str == "RHC1Re":
     return conv.ks1Re
   elif sample_str == "MultiRe":
-    return conv.ksMultiRe
+    return conv.ks1Re1dcy
   else:
     print "ERROR: could not a convert T2K legacy sample into an SDK sample. Exiting"
     sys.exit()
@@ -315,7 +315,7 @@ def namedtuples_are_equal(nt1, nt2):
 #     file_name += "official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.nueselec.root"
 #   elif sample == conv.ks1Re and beam == conv.kbJPARC_RHC:
 #     file_name += "official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.m250ka.nueselec.root"
-#   elif sample == conv.ksMultiRe and beam == conv.kbJPARC_FHC:
+#   elif sample == conv.ks1Re1dcy and beam == conv.kbJPARC_FHC:
 #     file_name += "official/2018/superk/mc/mtuples_v2/valor_format/t2ksk.14a.neut5.3.2.13a_tuned_v1r1.250ka.cc1piselec.root"
 #   else:
 #     print "Could not get legacy file name. Exiting."
