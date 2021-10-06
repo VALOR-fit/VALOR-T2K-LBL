@@ -3158,13 +3158,59 @@
 
 
 
-  <!-- ==================================================================================== -->
+  <!-- ====================================================================================Updated for OA2021  -->
+
   <param>
     <name>
-      <simple>  CC_BY_MPi                              </simple>
-      <long>    BANFF; Shape; CC Bodek-Yang MPi        </long>
-      <rootex>  f_{Shape_{CC Bodek-Yang MPi}}^{banff}  </rootex>
-      <tex>     BANFF; Shape; CC Bodek-Yang MPi        </tex>
+      <simple>  MultiPi_Multiplicity_TotXSec                     </simple>
+      <long>    BANFF; Shape; MPi Multi TotXSec        </long>
+      <rootex>  f_{Shape_{MPi Multi TotXSec}}^{banff}  </rootex>
+      <tex>     BANFF; Shape; MPi Multi TotXSec        </tex>
+    </name>
+
+    <apply_to_range>
+      <Etrue>  0, inf  </Etrue>
+    </apply_to_range>
+
+    <type>  response  </type>
+
+    <categories>
+      <category>  BANFF  </category>
+      <category>  int    </category>
+    </categories>
+
+    <apply_to>
+      <detector>    SuperK     </detector>
+      <beam>        all        </beam>
+      <selection>   all rings  </selection>
+      <reac_type>   CC Mpi     </reac_type>
+      <flav_init>   all        </flav_init>
+      <flav_final>  all        </flav_final>
+      <target>      all        </target>
+    </apply_to>
+
+    <limits>  0, inf  </limits>
+
+    <update_from_cov_matrix> true  </update_from_cov_matrix>
+    <range_mode>             sigma </range_mode>
+    <range>                  -5, 5 </range>
+    <step_mode>              frac  </step_mode>
+    <step>                   0.01  </step>
+    <init>                   0     </init>
+    <error>                  1     </error>
+  </param>
+
+
+
+  <!-- ==================================================================================== Updated for OA2021 -->
+
+
+  <param>
+    <name>
+      <simple>  MultiPi_Multiplicity_Shape                     </simple>
+      <long>    BANFF; Shape; MultiPi Multiplicity Shape       </long>
+      <rootex>  f_{Shape_{MultiPi Multiplicity Shape}}^{banff}  </rootex>
+      <tex>     BANFF; Shape; MultiPi Multiplicity Shape        </tex>
     </name>
 
     <apply_to_range>
@@ -3202,49 +3248,8 @@
 
 
   <!-- ==================================================================================== -->
-  <param>
-    <name>
-      <simple>  CC_AGKY_Mult                     </simple>
-      <long>    BANFF; Shape; CC AGKY MPi        </long>
-      <rootex>  f_{Shape_{CC AGKY MPi}}^{banff}  </rootex>
-      <tex>     BANFF; Shape; CC AGKY MPi        </tex>
-    </name>
-
-    <apply_to_range>
-      <Etrue>  0, inf  </Etrue>
-    </apply_to_range>
-
-    <type>  response  </type>
-
-    <categories>
-      <category>  BANFF  </category>
-      <category>  int    </category>
-    </categories>
-
-    <apply_to>
-      <detector>    SuperK     </detector>
-      <beam>        all        </beam>
-      <selection>   all rings  </selection>
-      <reac_type>   CC Mpi     </reac_type>
-      <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
-      <target>      all        </target>
-    </apply_to>
-
-    <limits>  0, inf  </limits>
-
-    <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>
-    <range>                  -5, 5 </range>
-    <step_mode>              frac  </step_mode>
-    <step>                   0.01  </step>
-    <init>                   0     </init>
-    <error>                  1     </error>
-  </param>
 
 
-
-  <!-- ==================================================================================== -->
   <param>
     <name>
       <simple>  CC_Misc                     </simple>
@@ -4474,96 +4479,6 @@
     <init>                   0    </init>
     <error>                  0.3  </error>
   </param>
-
-
-
-
-
-  <!-- ==================================================================================== Updated for OA2021 -->
-  <param>
-    <name>
-      <simple>  MultiPi_BY_SeaQFrac                       </simple>
-      <long>    BANFF; Shape;  </long>    <!-- TODO: Describe -->
-      <rootex>  f_{Shape_{}}^{banff}   </rootex> <!-- TODO: Describe -->
-      <tex>     BANFF; Shape;          </tex> <!-- TODO: Describe -->
-    </name>
-
-    <apply_to_range>
-      <Etrue>  0, inf  </Etrue>
-    </apply_to_range>
-
-    <type>  response  </type>
-
-    <categories>
-      <category>  BANFF  </category>
-      <category>  int    </category>
-    </categories>
-
-    <apply_to>
-      <detector>    SuperK     </detector>
-      <beam>        all        </beam>
-      <selection>   all rings  </selection>
-      <reac_type>   CC Mpi   </reac_type>
-      <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
-      <target>      all        </target>
-    </apply_to>
-
-    <limits>  0, inf  </limits>
-
-    <update_from_cov_matrix> true   </update_from_cov_matrix> <!-- TODO: Test removal -->
-    <range_mode>             sigma  </range_mode>
-    <range>                  -5, 5  </range>
-    <step_mode>              frac   </step_mode>
-    <step>                   0.01   </step>
-    <init>                   0    </init>
-    <error>                  0.3  </error>
-  </param>
-
-
-
-
-  <!-- ==================================================================================== Updated for OA2021 -->
-  <param>
-    <name>
-      <simple>  MultiPi_BY_SeaQFrac                       </simple>
-      <long>    BANFF; Shape;  </long>    <!-- TODO: Describe -->
-      <rootex>  f_{Shape_{}}^{banff}   </rootex> <!-- TODO: Describe -->
-      <tex>     BANFF; Shape;          </tex> <!-- TODO: Describe -->
-    </name>
-
-    <apply_to_range>
-      <Etrue>  0, inf  </Etrue>
-    </apply_to_range>
-
-    <type>  response  </type>
-
-    <categories>
-      <category>  BANFF  </category>
-      <category>  int    </category>
-    </categories>
-
-    <apply_to>
-      <detector>    SuperK     </detector>
-      <beam>        all        </beam>
-      <selection>   all rings  </selection>
-      <reac_type>   CC Mpi   </reac_type>
-      <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
-      <target>      all        </target>
-    </apply_to>
-
-    <limits>  0, inf  </limits>
-
-    <update_from_cov_matrix> true   </update_from_cov_matrix> <!-- TODO: Test removal -->
-    <range_mode>             sigma  </range_mode>
-    <range>                  -5, 5  </range>
-    <step_mode>              frac   </step_mode>
-    <step>                   0.01   </step>
-    <init>                   0    </init>
-    <error>                  0.3  </error>
-  </param>
-
 
 
   <!-- ==================================================================================== Updated for OA2021 -->

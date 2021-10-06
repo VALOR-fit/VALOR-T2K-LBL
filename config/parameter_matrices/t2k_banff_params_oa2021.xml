@@ -74,8 +74,6 @@
   <parameter>	nue_numu                  </parameter>
   <parameter>	nuebar_numubar            </parameter>
   <parameter>	CC_BY_DIS                 </parameter>
-  <parameter>	CC_BY_MPi                 </parameter>
-  <parameter>	CC_AGKY_Mult              </parameter>
   <parameter>	CC_Misc                   </parameter>
   <parameter>	CC_DIS_MultPi_Norm_Nu     </parameter>
   <parameter>	CC_DIS_MultPi_Norm_Nubar  </parameter>
@@ -107,6 +105,7 @@
   <parameter>	SPP_Pi0Norm_numubar       </parameter>
   <parameter>	MultiPi_BY_Vector         </parameter>
   <parameter>	MultiPi_BY_Axial          </parameter>
-  <parameter>	MultiPi_BY_SeaQFrac       </parameter>
   <parameter>	MECTwkDial_PNNN_Shape     </parameter>
+  <parameter>	MultiPi_Multiplicity_Shape  </parameter>
+  <parameter>	MultiPi_Multiplicity_TotXSec         </parameter>
 </systematic_list>
