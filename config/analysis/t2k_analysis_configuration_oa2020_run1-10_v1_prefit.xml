@@ -58,7 +58,7 @@
     <element name="sk_fhc_multire">
       <detector>     superk                                               </detector>
       <beam>         JPARC_FHC                                            </beam>
-      <sample>       multire                                              </sample>
+      <sample>       1re1dcy                                              </sample>
       <observable>   Ereco,Thetareco                                      </observable>
       <data>                                                              </data>
       <mc>           mc/t2k_mc_run1-10_fhc_elike.xml                      </mc>

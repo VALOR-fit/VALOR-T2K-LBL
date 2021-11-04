@@ -36,13 +36,13 @@
   <parameter>	skdetfsi015_rhc         </parameter>
   <parameter>	skdetfsi016_rhc         </parameter>
   <parameter>	skdetfsi017_rhc         </parameter>
-  <parameter>	skdetfsi007_multiring   </parameter>
-  <parameter>	skdetfsi008_multiring   </parameter>
-  <parameter>	skdetfsi010_multiring   </parameter>
-  <parameter>	skdetfsi011_multiring   </parameter>
-  <parameter>	skdetfsi013_multiring   </parameter>
-  <parameter>	skdetfsi014_multiring   </parameter>
-  <parameter>	skdetfsi016_multiring   </parameter>
-  <parameter>	skdetfsi017_multiring   </parameter>
+  <parameter>	skdetfsi007_1Re1dcy   </parameter>
+  <parameter>	skdetfsi008_1Re1dcy   </parameter>
+  <parameter>	skdetfsi010_1Re1dcy   </parameter>
+  <parameter>	skdetfsi011_1Re1dcy   </parameter>
+  <parameter>	skdetfsi013_1Re1dcy   </parameter>
+  <parameter>	skdetfsi014_1Re1dcy   </parameter>
+  <parameter>	skdetfsi016_1Re1dcy   </parameter>
+  <parameter>	skdetfsi017_1Re1dcy   </parameter>
   <parameter>	sk_e_scale              </parameter>
 </systematic_list>

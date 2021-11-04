@@ -5296,9 +5296,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi007_multiring  </simple>
-      <long>  SKDet+SI+PN  0; Ereco range 0.30 - 0.80 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{0; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi007_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  0; Ereco range 0.30 - 0.80 GeV; oscillated nue CC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{0; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  0; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; Osc. $\nu_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
 
@@ -5315,7 +5315,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all CC  </reac_type>
       <flav_init>  numu any  </flav_init>
       <flav_final>  nue any  </flav_final>
@@ -5336,9 +5336,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi008_multiring  </simple>
-      <long>  SKDet+SI+PN  1; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{1; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi008_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  1; Ereco range 0.80 - 1.25 GeV; oscillated nue CC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{1; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  1; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; Osc. $\nu_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
 
@@ -5355,7 +5355,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all CC  </reac_type>
       <flav_init>  numu any  </flav_init>
       <flav_final>  nue any  </flav_final>
@@ -5376,9 +5376,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi010_multiring  </simple>
-      <long>  SKDet+SI+PN  2; Ereco range 0.30 - 0.80 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{2; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi010_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  2; Ereco range 0.30 - 0.80 GeV; numu/numubar CC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{2; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  2; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
 
@@ -5395,7 +5395,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all CC  </reac_type>
       <flav_init>  numu any  </flav_init>
       <flav_final>  numu any  </flav_final>
@@ -5416,9 +5416,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi011_multiring  </simple>
-      <long>  SKDet+SI+PN  3; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{3; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi011_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  3; Ereco range 0.80 - 1.25 GeV; numu/numubar CC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{3; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  3; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
 
@@ -5435,7 +5435,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all CC  </reac_type>
       <flav_init>  numu any  </flav_init>
       <flav_final>  numu any  </flav_final>
@@ -5456,9 +5456,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi013_multiring  </simple>
-      <long>  SKDet+SI+PN  4; Ereco range 0.30 - 0.80 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{4; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi013_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  4; Ereco range 0.30 - 0.80 GeV; nue/nuebar CC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{4; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  4; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
 
@@ -5475,7 +5475,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all CC  </reac_type>
       <flav_init>  nue any  </flav_init>
       <flav_final>  nue any  </flav_final>
@@ -5496,9 +5496,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi014_multiring  </simple>
-      <long>  SKDet+SI+PN  5; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{5; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi014_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  5; Ereco range 0.80 - 1.25 GeV; nue/nuebar CC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{5; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  5; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
 
@@ -5515,7 +5515,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all CC  </reac_type>
       <flav_init>  nue any  </flav_init>
       <flav_final>  nue any  </flav_final>
@@ -5536,9 +5536,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi016_multiring  </simple>
-      <long>  SKDet+SI+PN  6; Ereco range 0.30 - 0.80 GeV; all NC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{6; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi016_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  6; Ereco range 0.30 - 0.80 GeV; all NC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{6; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  6; $E_{\text{rec}} =$ 0.30 - 0.80  GeV; all NC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
 
@@ -5555,7 +5555,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all NC  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
@@ -5576,9 +5576,9 @@
   <!-- ==================================================================================== -->
   <param>
     <name>
-      <simple>  skdetfsi017_multiring  </simple>
-      <long>  SKDet+SI+PN  7; Ereco range 0.80 - 1.25 GeV; all NC (MultiRe); MultiRing  </long>
-      <rootex>  $f_{7; t, r}^{SK}MultiRing  $ </rootex>
+      <simple>  skdetfsi017_1Re1dcy  </simple>
+      <long>  SKDet+SI+PN  7; Ereco range 0.80 - 1.25 GeV; all NC (1Re1dcy); 1Re1dcy  </long>
+      <rootex>  $f_{7; t, r}^{SK}1Re1dcy  $ </rootex>
       <tex>  SKDet+SI+PN  7; $E_{\text{rec}} =$ 0.80 - 1.25  GeV; all NC; FHC 1R$_e$ + 1d.e.  </tex>
     </name>
     
@@ -5595,7 +5595,7 @@
     <apply_to>
       <detector>  SuperK  </detector>
       <beam>  FHC  </beam>
-      <selection>  MultiRe  </selection>
+      <selection>  1Re1dcy  </selection>
       <reac_type>  all NC  </reac_type>
       <flav_init>  all  </flav_init>
       <flav_final>  all  </flav_final>
