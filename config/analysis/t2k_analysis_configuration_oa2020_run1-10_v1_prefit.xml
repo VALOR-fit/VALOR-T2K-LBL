@@ -66,11 +66,11 @@
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_cc1pilike_run1-10_bins.xml           </binning>
     </element>
-
+    
     <element name="sk_fhc_multirmu">
       <detector>     superk                                               </detector>
       <beam>         JPARC_FHC                                            </beam>
-      <sample>       multirmu                                         </sample>
+      <sample>       multirmu                                          </sample>
       <observable>   Ereco                                                </observable><!-- In perspective add Thetareco, but first tests on Ereco only  -->
       <data>                                                              </data>
       <mc>           mc/t2k_mc_run1-10_fhc_mulike.xml                     </mc>
@@ -78,9 +78,8 @@
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
       <binning>      binning/t2k_fhc_mulike_run1-10_bins.xml              </binning>
     </element>
-  </element_list>
-    
 
+  </element_list>
 
   <parameter_definitions>
     <!-- Make sure that any config file containing default values is read first! -->
@@ -95,20 +94,20 @@
       <!-- This is the list of param names (to be read by AsStringSimple or AsString) in the input matrix.
            The order of params in this list must be the same as the order of params in the matrix.-->
       <format> t2k_banff_params_run1-10.xml </format>
-      
+      <!-- natural_units/valor_format/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root  natural_units/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root-->
       <covariance_matrix>
-        <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
+        <filename> official/2020/banff/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root</filename>
         <objname>  prefit_cov    </objname>
         <objtype>  TMatrixD       </objtype>
       </covariance_matrix>
 
       <untuned_values>
-        <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
+        <filename> official/2020/banff/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root</filename>
         <objname>  banff_untuned_central_values  </objname>
       </untuned_values>
 
       <initial_values>
-        <filename> official/2020/banff/postfit_data_20200409/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_valor_order_all.root </filename>
+        <filename> official/2020/banff/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root</filename>
         <objname>  prefit_params  </objname>
       </initial_values>
     </group>

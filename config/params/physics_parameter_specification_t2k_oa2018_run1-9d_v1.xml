@@ -49,7 +49,7 @@
     <range_mode>  value  </range_mode>
     <range>  0.0, 1.0  </range>
 
-    <init>  0.0212  </init>  <!-- Asimov A run1-9d, from PDG2018 reactor-only -->
+    <init>  0.0218  </init>  <!--0.0212 Asimov A run1-9d, from PDG2018 reactor-only, now it is Asimov A run10 -->
   </param>
   
 

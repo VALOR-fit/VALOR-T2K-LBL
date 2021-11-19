@@ -54,12 +54,12 @@ Input MC templates
 
   <dst>
     <jparc_fhc>
-       <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_26_01.root </filename>
+       <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_904.root </filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_26_01.root</filename>
+        <filename> official/2020/superk/mc/minituples_procv5/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_v5_904.root</filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>
@@ -99,14 +99,14 @@ Splines
     TODO: By default in VALOR, splines are not allowed to vary outside of their limits. To enable this,
     TODO: configure the SDK with the enable-spline-stupidity flag as well as setting within_limits to false below.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--->
+natural_units-->
 
 <splines>
-    <folder>          official/2020/xsec/splines2021/valor_format                    </folder>
+    <folder>          official/2020/xsec/splines2021/natural_units/valor_format                    </folder>
     <pattern>         splines_spline2019splinesfitqunPreerectheta_[BEAM]_[SAMPLE].root </pattern>
     <stored_as>       TObjArray                                                        </stored_as>
     <array_pattern>   spl_[MODE]_[PARAM]                                               </array_pattern>
-    <method>          curr_tweak                                                       </method>           <!-- This uses weight = spline->Eval(current - untuned) -->
+    <method>          curr_val                                                       </method>           <!-- This uses weight = spline->Eval(current - untuned) -->
     <type>            TSpline3                                                         </type>             <!-- For T2K use ROOT's splines rather than GSL's, as GSL spline can't be evaluated outside the limits -->
     <sort_knot_order> false                                                            </sort_knot_order>  <!-- For T2K some of the spline knots are out-of-order. These knots appear to be ignored? Setting this to true re-orders the splines so that all the knots are in order, which changes the spline behaviour -->
     <within_limits>   false                                                            </within_limits>    <!-- Some T2K params have a small spline range, where even a 1 sigma variation takes us beyond a limit. Setting this to false allows extrapolation beyond the spline limits -->

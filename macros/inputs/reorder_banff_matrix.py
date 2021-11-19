@@ -52,14 +52,24 @@ abnormal_untuned_central_values = {
     "CC_BY_DIS"                : 0.0,
     "CC_BY_MPi"                : 0.0,
     "CC_AGKY_Mult"             : 0.0,
-    "Q2_norm_0"                : 0.0,
-    "Q2_norm_1"                : 0.0,
-    "Q2_norm_2"                : 0.0,
-    "Q2_norm_3"                : 0.0,
-    "Q2_norm_4"                : 0.0,
-    "Q2_norm_5"                : 0.0,
-    "Q2_norm_6"                : 0.0,
-    "Q2_norm_7"                : 0.0
+    #"Q2_norm_0"                : 0.0,
+    #"Q2_norm_1"                : 0.0,
+    #"Q2_norm_2"                : 0.0,
+    #"Q2_norm_3"                : 0.0,
+    "Q2_norm_4"                : 1.0,
+    "Q2_norm_5"                : 1.0,
+    "Q2_norm_6"                : 1.0,
+    "Q2_norm_7"                : 1.0,
+    "MAQE"                     : 1.21,
+    "CA5"                      :1.01, 
+    "MARES"                    :0.95, 
+    "ISO_BKG_LowPPi"           :1.3, 
+    "ISO_BKG"                  :1.3, 
+    "FEFQE"                    :1.069, 
+    "FEFQEH"                   :1.824,
+    "FEFINEL"                  :1.002, 
+    "FEFABS"                   :1.404, 
+    "FEFCX"                    :0.697
 }
 
 shifted_nom_params = [
@@ -72,6 +82,19 @@ shifted_nom_params = [
   "Q2_norm_6",
   "Q2_norm_7"
 ]
+#UWAGA: this is added due to no Pre BANFF values in natural units in converted OA2020 BANFF matrix 
+natural_units_prebanff_values ={
+    "MAQE"                     :1.03,
+    "CA5"                      :0.96, 
+    "MARES"                    :1.07, 
+    "ISO_BKG_LowPPi"           :0.96, 
+    "ISO_BKG"                  :0.96, 
+    "FEFQE"                    :1.069, 
+    "FEFQEH"                   :1.824,
+    "FEFINEL"                  :1.002, 
+    "FEFABS"                   :1.404, 
+    "FEFCX"                    :0.697
+}
 
 
 def main(infile_name, parameter_config_filename, parameter_list_filename, del_not_in_list):
@@ -179,10 +202,12 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
       reordered_cov    = ROOT.TMatrixD(n_elements,n_elements) # This is the pre/postfit covariance matrix 
       reordered_params = ROOT.TVectorD(n_elements)            # These are the pre/postfit nominal values
       for i,orig_i in enumerate(param_order_list):
-        if str(output_names.At(i)) in shifted_nom_params:
+        #if str(output_names.At(i)) in shifted_nom_params:
           # Special handling to account for the Q2_norm params as they're
           # proper normalisation params in NIWG, but spline params in VALOR
-          reordered_params[i] = orig_params[orig_i] - 1
+         # reordered_params[i] = orig_params[orig_i] - 1
+        if str(output_names.At(i)) in natural_units_prebanff_values:
+          reordered_params[i] = natural_units_prebanff_values[str(output_names.At(i))]
         else:
           reordered_params[i] = orig_params[orig_i]
 
