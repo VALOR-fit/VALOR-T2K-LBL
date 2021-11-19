@@ -2793,7 +2793,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -2836,7 +2836,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -2879,7 +2879,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -2923,7 +2923,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
