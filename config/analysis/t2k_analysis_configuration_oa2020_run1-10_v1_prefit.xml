@@ -97,18 +97,18 @@
       <format> t2k_banff_params_run1-10.xml </format>
       
       <covariance_matrix>
-        <filename> official/2020/banff/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root </filename>
+        <filename> official/2020/banff/valor_format/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root </filename>
         <objname>  prefit_cov    </objname>
         <objtype>  TMatrixD       </objtype>
       </covariance_matrix>
 
       <untuned_values>
-        <filename> official/2020/banff/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root </filename>
+        <filename> official/2020/banff/valor_format/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root </filename>
         <objname>  banff_untuned_central_values  </objname>
       </untuned_values>
 
       <initial_values>
-        <filename> official/2020/banff/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root </filename>
+        <filename> official/2020/banff/valor_format/BANFF_postfit_OA2020_fixed2p2h_fixedIHalfLowPPi_20200409_NatUnits_valor_order_all.root </filename>
         <objname>  prefit_params  </objname>
       </initial_values>
     </group>
