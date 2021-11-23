@@ -30,9 +30,9 @@ try:
   ROOT.valor
 except:
   ROOT.gROOT.ProcessLine(".x $VALOR_EXPT/root/valor_expt.C")
-  
+
 ROOT.gROOT.SetBatch(1)
-  
+
 valor = ROOT.valor
 util =  valor.util
 conv =  valor.conv
@@ -46,32 +46,27 @@ python_undefined_short = 2**32 -1
 # List strange untuned central values. Will assume 1 for all others.
 # Want to grab these from the TVector of untuned values instead
 abnormal_untuned_central_values = {
-    "2p2h_shape_O"             : 0.0,
-    "EB_dial_O_nu"             : 0.0,
-    "EB_dial_O_nubar"          : 0.0,
-    "CC_BY_DIS"                : 0.0,
-    "CC_BY_MPi"                : 0.0,
-    "CC_AGKY_Mult"             : 0.0,
-    "Q2_norm_0"                : 0.0,
-    "Q2_norm_1"                : 0.0,
-    "Q2_norm_2"                : 0.0,
-    "Q2_norm_3"                : 0.0,
-    "Q2_norm_4"                : 0.0,
-    "Q2_norm_5"                : 0.0,
-    "Q2_norm_6"                : 0.0,
-    "Q2_norm_7"                : 0.0
+  "2p2h_shape_O"             : 0.0,
+  "EB_dial_O_nu"             : 0.0,
+  "EB_dial_O_nubar"          : 0.0,
+  "CC_BY_DIS"                : 0.0,
+  "CC_BY_MPi"                : 0.0,
+  "CC_AGKY_Mult"             : 0.0,
+  "Q2_norm_4"                : 1.0,
+  "Q2_norm_5"                : 1.0,
+  "Q2_norm_6"                : 1.0,
+  "Q2_norm_7"                : 1.0,
+  "MAQE"                     : 1.21,
+  "CA5"                      :1.01,
+  "MARES"                    :0.95,
+  "ISO_BKG_LowPPi"           :1.3,
+  "ISO_BKG"                  :1.3,
+  "FEFQE"                    :1.069,
+  "FEFQEH"                   :1.824,
+  "FEFINEL"                  :1.002,
+  "FEFABS"                   :1.404,
+  "FEFCX"                    :0.697
 }
-
-shifted_nom_params = [
-  "Q2_norm_0",
-  "Q2_norm_1",
-  "Q2_norm_2",
-  "Q2_norm_3",
-  "Q2_norm_4",
-  "Q2_norm_5",
-  "Q2_norm_6",
-  "Q2_norm_7"
-]
 
 
 def main(infile_name, parameter_config_filename, parameter_list_filename, del_not_in_list):
@@ -166,8 +161,8 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
         print "Making central values - failed to set value of ",name
 
     xsec_vec.Write("banff_xsec_untuned_central_values")
-    
-    
+
+
     reordered_covs_d = dict()
     reordered_params_d = dict()
 
@@ -176,15 +171,10 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
       orig_cov    = infile.Get(fit+"_cov")
       orig_params = infile.Get(fit+"_params")
 
-      reordered_cov    = ROOT.TMatrixD(n_elements,n_elements) # This is the pre/postfit covariance matrix 
+      reordered_cov    = ROOT.TMatrixD(n_elements,n_elements) # This is the pre/postfit covariance matrix
       reordered_params = ROOT.TVectorD(n_elements)            # These are the pre/postfit nominal values
       for i,orig_i in enumerate(param_order_list):
-        if str(output_names.At(i)) in shifted_nom_params:
-          # Special handling to account for the Q2_norm params as they're
-          # proper normalisation params in NIWG, but spline params in VALOR
-          reordered_params[i] = orig_params[orig_i] - 1
-        else:
-          reordered_params[i] = orig_params[orig_i]
+        reordered_params[i] = orig_params[orig_i]
 
         for j,orig_j in enumerate(param_order_list):
           reordered_cov[i][j] = orig_cov[orig_i][orig_j]
@@ -271,7 +261,7 @@ def check_param_list(ordered_param_name_dict, input_banff_param_list, n_banff_pa
   # Does our input XML list have the right total number of params?
   if not del_not_in_list and n_banff_params != len(ordered_param_name_dict):
     print "ERROR: The number of parameters in the input XML param list (", len(ordered_param_name_dict), ") " \
-          "does not match the number of parameters in the input matrix (", n_banff_params, ")"
+                                                                                                         "does not match the number of parameters in the input matrix (", n_banff_params, ")"
     print "input XML params:\n", ordered_param_name_dict.keys()
     print "input matrix params:\n", input_banff_param_list
     sys.exit()
