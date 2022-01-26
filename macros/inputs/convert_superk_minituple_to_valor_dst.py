@@ -47,7 +47,7 @@ types = ["nuebar_x_nuebar"  ,  # The naming conventions used by the input SK MC 
          "numubar_x_numubar",
          "numu_x_nue"       ,
          "numu_x_numu"      ,
-        ]
+         ]
 
 true_int_flav = dict()    # Map of the input file name conventions to their corresponding true nu flavour (at interaction time)
 true_int_flav["nuebar_x_nuebar"]   = conv.kNuEBar
@@ -133,8 +133,8 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   # Loop over the input files and fill the output tree
   iev = 0
   nev_input = [0 for i in appropriate_files]
-  nev_rej_erec_neg = [0 for i in appropriate_files] # this will count # of  rejkected events below energy cut 
-  nev_rej_erec_big = [0 for i in appropriate_files] # and this one for above the cut 
+  nev_rej_erec_neg = [0 for i in appropriate_files] # this will count # of  rejkected events below energy cut
+  nev_rej_erec_big = [0 for i in appropriate_files] # and this one for above the cut
   entries_per_beam_sample_mode = [[[0 for i in range(0, conv.kmOther)] for j in range(0, conv.kMaxNSamples)] for k in range(0, conv.kNBeamsDefined)]
   files_found_selected_mode_in = dict()
   for ifile in range(0, len(appropriate_files)):
@@ -166,10 +166,10 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       wght[0]       = group_misc_weights(event, neut_mode, sample[0]) # Group all of the standard multiplicative NIWG weights into a single weight
 
       if plep_reco < 0. or enu_reco[0] < 0. or enu_reco[0]>30 \
-         or (is_oscillated and not util.ModeIsCC(reac_mode[0])):
+              or (is_oscillated and not util.ModeIsCC(reac_mode[0])):
         # Skip oscillated NC events, because NC is always just the sum of events in numu, nue, nutau. So the oscillation
         # is already accounted for.
-        # MA:Also plep_reco<0 cut is crucial from OA2021, as from now on mtuples are without momentum cut 
+        # MA:Also plep_reco<0 cut is crucial from OA2021, as from now on mtuples are without momentum cut
         nev_input[ifile] -= 1
         if enu_reco[0] < 0.:
           nev_rej_erec_neg[ifile] += 1
@@ -193,7 +193,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       #     "\n is 2p2h?"      , str(NeutIs2p2h(neut_mode)) + \
       #     "\n  True:", str(enu_true[0]) + \
       #     "\n  Reco:", str(enu_reco[0]), ",", str(Theta_reco[0]) +\
-      #     "\n  Mom: ", str(plep_reco), "\n\n" 
+      #     "\n  Mom: ", str(plep_reco), "\n\n"
 
       entries_per_beam_sample_mode[beam[0]][sample[0]][reac_mode[0]] += 1
       iev += 1
@@ -220,7 +220,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
         tot_entries_sample += nevents
         print "    " + util.ModeAsString(mode) + ": " + str(nevents)
       print "Total", util.BeamConfAsString(beam), util.SampleAsString(sample), \
-        " number of events across all modes =", tot_entries_sample
+            " number of events across all modes =", tot_entries_sample
 
   print "The number of events in each input file are (minus any events with Erec < 0):"
   nev_input_tot = 0
@@ -231,8 +231,8 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
     print " ", appropriate_files[ifile], ":", nev_input[ifile]
     nev_rej_erec_neg_tot+=nev_rej_erec_neg[ifile]
     nev_rej_erec_big_tot+=nev_rej_erec_big[ifile]
-    print " rejected Ereco<0: ", nev_rej_erec_neg[ifile] 
-    print " rejected Ereco>30: ", nev_rej_erec_big[ifile] 
+    print " rejected Ereco<0: ", nev_rej_erec_neg[ifile]
+    print " rejected Ereco>30: ", nev_rej_erec_big[ifile]
   print "The total number of events across all input files is = ", nev_input_tot
   print "The total number of events in the output DST = ", nev_output_tot
   print "The total number of rejected events Erec<0 =", nev_rej_erec_neg_tot
@@ -269,14 +269,14 @@ def get_scale(file_in):
 # Get the selection corresponding to the input file
 def get_selection(file_in_name):
   selection = conv.ksUndefined
-  if "numucc1piselec"  in file_in_name:  
-    selection = conv.ksMultiRmu 
-  elif "cc1piselec" in file_in_name: 
+  if "numucc1piselec"  in file_in_name:
+    selection = conv.ksMultiRmu
+  elif "cc1piselec" in file_in_name:
     selection = conv.ks1Re1dcy
   elif "nueselec" in file_in_name:
     selection = conv.ks1Re
   elif "numuselec" in file_in_name:
-    selection = conv.ks1Rmu 
+    selection = conv.ks1Rmu
   else:
     print "FATAL: Could not determine the selection for input file", file_in_name
     util.Die(-1)
@@ -334,7 +334,7 @@ def calc_theta_degrees(event, sample):
       idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
     else:
       idx_mu = 0
-    costheta = t2k_beam_dir[0] * lep_dir[event.ipp][idx_mu][0] + t2k_beam_dir[1] * lep_dir[event.ipp][idx_mu][1] + t2k_beam_dir[2] * lep_dir[event.ipp][idx_mu][2]   
+    costheta = t2k_beam_dir[0] * lep_dir[event.ipp][idx_mu][0] + t2k_beam_dir[1] * lep_dir[event.ipp][idx_mu][1] + t2k_beam_dir[2] * lep_dir[event.ipp][idx_mu][2]
   else:
     lep_dir = c_to_pyroot_array_hack(event.fq1rdir, event.fqnse, 7, 3)
     if util.SampleIsELike(sample):
@@ -381,10 +381,10 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
     mass = mpi #Muon momentum taken from a 2Ring PiPi fit so use pion mass to take this into account
     mrmom = c_to_pyroot_array_hack(event.fqmrmom, 200, 6)
     if (mrmom[event.ipp][0] <mrmom[event.ipp][1]):
-    	idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
+      idx_mu = 1 #muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
     else:
-    	idx_mu = 0
-    mom = mrmom[event.ipp][idx_mu] 
+      idx_mu = 0
+    mom = mrmom[event.ipp][idx_mu]
 
   else:
     mass = mm
@@ -407,9 +407,9 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
   shifted_mom = ROOT.Double(mom + mom_shift)
   elep = ROOT.Double(ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom))
   theta_reco_rads = ROOT.Double(Theta_reco * (ROOT.TMath.Pi() / 180.0))   # Theta_reco is input in degrees, so convert to radians here
-  
+
   if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
-   # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
+    # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
     ereco_MeV = event.erec
   else:
     if sample != conv.ks1Re1dcy and sample!=conv.ksMultiRmu:
@@ -429,7 +429,7 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
   #OLD: return [ROOT.Double(ROOT.TMath.Min(ereco_MeV / 1000., 29.9)), shifted_mom / 1000.]
 
   return [ROOT.Double(ereco_MeV/1000.), shifted_mom/1000.]
-  
+
 
 #_______________________________________________________________________
 # Group all of the standard multiplicative NIWG and flux weights etc. into a single weight
@@ -488,19 +488,19 @@ def NeutIsCCmisc(neut_reaction_mode):
   return (neut_reaction_mode == 15 or
           neut_reaction_mode == 17 or
           neut_reaction_mode == 22 or
-          neut_reaction_mode == 23 )   
+          neut_reaction_mode == 23 )
 
 # this function is not used anymore, though can be put back in case of need
 #___________________________________________________________________________
 #def NeutIsCCoth(neut_reaction_mode):
-  #this is a catch all for everything CC that is not QE, 1pi, or coh
-  # needs to be updated if another subcategory is added
- # neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
-  #return ( neut_reaction_mode == 17 or
-   #        neut_reaction_mode == 21 or
-    #       neut_reaction_mode == 22 or
-     #      neut_reaction_mode == 23 or
-      #     neut_reaction_mode == 26 )
+#this is a catch all for everything CC that is not QE, 1pi, or coh
+# needs to be updated if another subcategory is added
+# neut_reaction_mode = ROOT.TMath.Abs(neut_reaction_mode)
+#return ( neut_reaction_mode == 17 or
+#        neut_reaction_mode == 21 or
+#       neut_reaction_mode == 22 or
+#      neut_reaction_mode == 23 or
+#     neut_reaction_mode == 26 )
 
 #___________________________________________________________________________
 def NeutIsNC1pi0(neut_reaction_mode):
@@ -691,10 +691,10 @@ def NeutModeToValorMode(neut_mode, flav,  is_oscillated):
 
 #_______________________________________________________________________
 if __name__=="__main__":
-  
+
   import optparse
   parser = optparse.OptionParser(usage="%prog [options]..",description="Reformat and optionally reduce input SK MC trees")
-  
+
   parser.add_option('-o', '--out-file' , dest='output_filename', default="", help="Name for output MC DST file.")
   parser.add_option('-f', '--fhc-dir'  , dest='fhc_dir'        , default="", help="Directory containing all FHC input files")
   parser.add_option('-r', '--rhc-dir'  , dest='rhc_dir'        , default="", help="Directory containing all RHC input files")
