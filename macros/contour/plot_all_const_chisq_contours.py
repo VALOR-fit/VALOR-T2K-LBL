@@ -17,7 +17,8 @@ from datetime import datetime
 
 #________________________________________________________________________________________________________
 # HARDCODED STUFF HERE!
-fit_params    = ["cpv", "mixing13", "mixing23", "dm23sq", "mixing13_cpv", "mixing23_cpv", "mixing23_dm23sq"]
+#fit_params    = ["cpv", "mixing13", "mixing23", "dm23sq", "mixing13_cpv", "mixing23_cpv", "mixing23_dm23sq"]
+fit_params    = ["dm23sq", "mixing23_dm23sq"]
 fit_datasets  = ["AsimovA", "AsimovB", "data"]
 #fit_datasets  = ["AsimovA", "AsimovB"]
 fit_reactors  = ["reactor", "t2k"]
@@ -425,7 +426,7 @@ def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg,
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -448,8 +449,8 @@ def plot_group_comparison_2d(base_dir, params, dataset, conf_levels, prelim_arg,
                     dataset_ptheta = "run1to10-data"
                     some_mysterious_number = "02"
                 # p-theta stores both NO and IO fits in the same file, so no need to include the MO in the filename
-                filename_ptheta = base_dir +"/ptheta/cont-20200511-01-02-eETh/contour_" + \
-                                  fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-" +some_mysterious_number +"-eETh-" +dataset_ptheta +".root"
+                filename_ptheta = base_dir +"/ptheta/cont-20200511-01-02-eETh-sm8/contour_" + \
+                                  fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-" +some_mysterious_number +"-eETh-" +dataset_ptheta +"_sm8.root"
                 colours_ptheta = (" " +str(colours[2]))*ncl
                 args_ptheta = " --compare-ptheta " +filename_ptheta +" --ptheta-label \"p-theta (E-#theta)\" --ptheta-colour" +colours_ptheta +" --ptheta-style" +styles +" "
                 if not os.path.isfile(filename_ptheta):
@@ -524,7 +525,7 @@ def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg,
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -547,8 +548,8 @@ def plot_group_comparison_1d(base_dir, params, dataset, conf_levels, prelim_arg,
             if dataset == "data":
                 dataset_ptheta = "run1to10-data"
                 some_mysterious_number = "02"
-            filename_ptheta = base_dir +"/ptheta/cont-20200511-01-02-eETh/contour_" + \
-                              fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-" +some_mysterious_number +"-eETh-" +dataset_ptheta +".root"
+            filename_ptheta = base_dir +"/ptheta/cont-20200511-01-02-eETh-sm8/contour_" + \
+                              fit_params_ptheta[params] +reac_ptheta[reactor] +"_20200511-" +some_mysterious_number +"-eETh-" +dataset_ptheta +"_sm8.root"
             colours_ptheta = (" " +str(colours[2]))*2
             args_ptheta = " --compare-ptheta " +filename_ptheta +" --ptheta-label \"p-theta (E-#theta)\" --ptheta-colour" +colours_ptheta +" --ptheta-style 1 2 "
             if not os.path.isfile(filename_ptheta):
@@ -631,7 +632,7 @@ def plot_valor_2d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -707,7 +708,7 @@ def plot_valor_1d_fixed_rc(base_dir, params, dataset, conf_levels, prelim_arg, t
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -787,7 +788,7 @@ def plot_valor_2d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -855,7 +856,7 @@ def plot_valor_1d_fixed_mo(base_dir, params, dataset, conf_levels, prelim_arg, t
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -922,7 +923,7 @@ def plot_valor_1d(base_dir, params, dataset, conf_levels, prelim_arg, tex_output
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -998,7 +999,7 @@ def plot_valor_data_vs_asimov_2d(base_dir, params, dataset, asimov_dataset, conf
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
@@ -1077,7 +1078,7 @@ def plot_valor_data_vs_asimov_1d(base_dir, params, dataset, asimov_dataset, conf
 
     smear_arg = ""
     if "dm23sq" in params:
-        smear_arg = "_smeared"
+        smear_arg = "_smeared_03_11_2021"
 
     reac_band_arg = ""
     if "mixing13" in params:
