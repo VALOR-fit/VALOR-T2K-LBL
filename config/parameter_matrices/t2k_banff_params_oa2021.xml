@@ -63,8 +63,8 @@
   <parameter>   Q2_norm_5                 </parameter>
   <parameter>   Q2_norm_6                 </parameter>
   <parameter>   Q2_norm_7                 </parameter>
-  <parameter>	EB_dial_O_nu              </parameter>
-  <parameter>	EB_dial_O_nubar           </parameter>
+ <!-- <parameter>	EB_dial_O_nu              </parameter>
+  <parameter>	EB_dial_O_nubar           </parameter> -->
   <parameter>	CA5                       </parameter>
   <parameter>	MARES                     </parameter>
   <parameter>	ISO_BKG_LowPPi            </parameter>
@@ -103,9 +103,9 @@
   <parameter>	RS_Delta_Decay            </parameter>
   <parameter>	SPP_Pi0Norm_numu          </parameter>
   <parameter>	SPP_Pi0Norm_numubar       </parameter>
-  <parameter>	MultiPi_BY_Vector         </parameter>
-  <parameter>	MultiPi_BY_Axial          </parameter>
-  <parameter>	MECTwkDial_PNNN_Shape     </parameter>
-  <parameter>	MultiPi_Multiplicity_Shape  </parameter>
-  <parameter>	MultiPi_Multiplicity_TotXSec         </parameter>
+  <parameter>	MPi_BY_Vector             </parameter>
+  <parameter>	MPi_BY_Axial              </parameter>
+  <parameter>	PNNN_Shape     </parameter>
+  <parameter>	MPi_Multi_Shape           </parameter>
+  <parameter>	MPi_Multi_TotXSec         </parameter>
 </systematic_list>

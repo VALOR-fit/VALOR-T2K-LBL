@@ -2956,7 +2956,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  response  </type>
+    <type>  disabled  </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -2999,7 +2999,7 @@
       <Etrue>  0, inf  </Etrue>
     </apply_to_range>
 
-    <type> response </type>
+    <type> disabled </type>
 
     <categories>
       <category>  BANFF  </category>
@@ -3162,7 +3162,7 @@
 
   <param>
     <name>
-      <simple>  MultiPi_Multiplicity_TotXSec                     </simple>
+      <simple>  MPi_Multi_TotXSec                     </simple>
       <long>    BANFF; Shape; MPi Multi TotXSec        </long>
       <rootex>  f_{Shape_{MPi Multi TotXSec}}^{banff}  </rootex>
       <tex>     BANFF; Shape; MPi Multi TotXSec        </tex>
@@ -3207,7 +3207,7 @@
 
   <param>
     <name>
-      <simple>  MultiPi_Multiplicity_Shape                     </simple>
+      <simple>  MPi_Multi_Shape                     </simple>
       <long>    BANFF; Shape; MultiPi Multiplicity Shape       </long>
       <rootex>  f_{Shape_{MultiPi Multiplicity Shape}}^{banff}  </rootex>
       <tex>     BANFF; Shape; MultiPi Multiplicity Shape        </tex>
@@ -4399,7 +4399,7 @@
   <!-- ==================================================================================== Updated for OA2021 -->
   <param>
     <name>
-      <simple>  MultiPi_BY_Vector                       </simple>
+      <simple>  MPi_BY_Vector                       </simple>
       <long>    BANFF; Shape;  </long>    <!-- TODO: Describe -->
       <rootex>  f_{Shape_{}}^{banff}   </rootex> <!-- TODO: Describe -->
       <tex>     BANFF; Shape;          </tex> <!-- TODO: Describe -->
@@ -4442,7 +4442,7 @@
   <!-- ==================================================================================== Updated for OA2021 -->
   <param>
     <name>
-      <simple>  MultiPi_BY_Axial                       </simple>
+      <simple>  MPi_BY_Axial                       </simple>
       <long>    BANFF; Shape;  </long>    <!-- TODO: Describe -->
       <rootex>  f_{Shape_{}}^{banff}   </rootex> <!-- TODO: Describe -->
       <tex>     BANFF; Shape;          </tex> <!-- TODO: Describe -->
@@ -4484,7 +4484,7 @@
   <!-- ==================================================================================== Updated for OA2021 -->
   <param>
     <name>
-      <simple>  MECTwkDial_PNNN_Shape                       </simple>
+      <simple>  PNNN_Shape                       </simple>
       <long>    BANFF; Shape;  </long>    <!-- TODO: Describe -->
       <rootex>  f_{Shape_{}}^{banff}   </rootex> <!-- TODO: Describe -->
       <tex>     BANFF; Shape;          </tex> <!-- TODO: Describe -->
