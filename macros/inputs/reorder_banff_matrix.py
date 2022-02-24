@@ -15,6 +15,8 @@
 # Sept. 2019
 
 
+#TODO: add some loop for the parameters with 0.0 central value
+
 import sys
 import ROOT
 import re
@@ -30,9 +32,9 @@ try:
   ROOT.valor
 except:
   ROOT.gROOT.ProcessLine(".x $VALOR_EXPT/root/valor_expt.C")
-  
+
 ROOT.gROOT.SetBatch(1)
-  
+
 valor = ROOT.valor
 util =  valor.util
 conv =  valor.conv
@@ -46,32 +48,69 @@ python_undefined_short = 2**32 -1
 # List strange untuned central values. Will assume 1 for all others.
 # Want to grab these from the TVector of untuned values instead
 abnormal_untuned_central_values = {
-    "2p2h_shape_O"             : 0.0,
-    "EB_dial_O_nu"             : 0.0,
-    "EB_dial_O_nubar"          : 0.0,
-    "CC_BY_DIS"                : 0.0,
-    "CC_BY_MPi"                : 0.0,
-    "CC_AGKY_Mult"             : 0.0,
-    "Q2_norm_0"                : 0.0,
-    "Q2_norm_1"                : 0.0,
-    "Q2_norm_2"                : 0.0,
-    "Q2_norm_3"                : 0.0,
-    "Q2_norm_4"                : 0.0,
-    "Q2_norm_5"                : 0.0,
-    "Q2_norm_6"                : 0.0,
-    "Q2_norm_7"                : 0.0
-}
+  #"2p2h_shape_O"             : 0.0,  # removed for OA2021
+  "EB_dial_O_nu"             : 0.0,
+  "EB_dial_O_nubar"          : 0.0,
+  "CC_BY_DIS"                : 0.0,
+  #"CC_BY_MPi"                : 0.0, # changed in oa2021
+  #"CC_AGKY_Mult"             : 0.0,# changed in oa2021
+  "Q2_norm_4"                : 1.0, #TODO: check if we need to keep Q2 parameters here after all
+  "Q2_norm_5"                : 1.0, #as they have 1.0 untuned central value
+  "Q2_norm_6"                : 1.0,
+  "Q2_norm_7"                : 1.0,
+  "MAQE"                     : 1.21, #OA2021
 
-shifted_nom_params = [
-  "Q2_norm_0",
-  "Q2_norm_1",
-  "Q2_norm_2",
-  "Q2_norm_3",
-  "Q2_norm_4",
-  "Q2_norm_5",
-  "Q2_norm_6",
-  "Q2_norm_7"
-]
+  #single pion parameters (oa2021)
+  "CA5"                      :1.01,
+  "MARES"                    :0.95,
+  "ISO_BKG_LowPPi"           :1.3,
+  "ISO_BKG"                  :1.3,
+
+  # SK FSI
+  "FEFQE"                    :1.069,
+  "FEFQEH"                   :1.824,
+  "FEFINEL"                  :1.002,
+  "FEFABS"                   :1.404,
+  "FEFCX"                    :0.697,
+  "FEFCXH"                   :1.8, #OA2021
+  "Nucleon_FSI"              :0.0, #OA2021
+
+  #new OA2021 parameters
+
+  #Spectral function parameters
+  "P1_2Shell_MF_Norm_O"       :0.0,
+  "P3_2Shell_MF_Norm_O"       :0.0,
+  "SShell_MF_Norm_O"          :0.0,
+  "SRC_Norm_O"                :1.0,
+  "P1_2Shell_MF_PMissShape_O" :0.0,
+  "P3_2Shell_MF_PMissShape_O" :0.0,
+  "SShell_MF_PMissShape_O"    :0.0,
+
+  #Pauli blocking dials
+  "Pauli_Blocking_O_nu"       :0.0,
+  "Pauli_Blocking_O_nubar"    :0.0,
+
+  #Optical Potential Dials
+  "Optical Potential Dials"   :0.0,
+
+  #MEC shape dials with pn/nn split
+  "PNNN_Shape"                :0.0,
+  "2p2h_shape_O_np"           :0.0,
+  "2p2h_shape_O_NN"           :0.0,
+
+  #1pi dials
+  "RES_Eb_O_numu"             :0.0,
+  "RES_Eb_O_numubar"          :0.0,
+
+  #CC Multi Pi dials
+  "MPi_Multi_TotXSec"         :0.0,
+  "MPi_BY_Vector"             :0.0,
+  "MPi_BY_Axial"              :0.0,
+  "MPi_Multi_Shape"           :0.0,
+
+
+
+}
 
 
 def main(infile_name, parameter_config_filename, parameter_list_filename, del_not_in_list):
@@ -166,8 +205,8 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
         print "Making central values - failed to set value of ",name
 
     xsec_vec.Write("banff_xsec_untuned_central_values")
-    
-    
+
+
     reordered_covs_d = dict()
     reordered_params_d = dict()
 
@@ -176,15 +215,10 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
       orig_cov    = infile.Get(fit+"_cov")
       orig_params = infile.Get(fit+"_params")
 
-      reordered_cov    = ROOT.TMatrixD(n_elements,n_elements) # This is the pre/postfit covariance matrix 
+      reordered_cov    = ROOT.TMatrixD(n_elements,n_elements) # This is the pre/postfit covariance matrix
       reordered_params = ROOT.TVectorD(n_elements)            # These are the pre/postfit nominal values
       for i,orig_i in enumerate(param_order_list):
-        if str(output_names.At(i)) in shifted_nom_params:
-          # Special handling to account for the Q2_norm params as they're
-          # proper normalisation params in NIWG, but spline params in VALOR
-          reordered_params[i] = orig_params[orig_i] - 1
-        else:
-          reordered_params[i] = orig_params[orig_i]
+        reordered_params[i] = orig_params[orig_i]
 
         for j,orig_j in enumerate(param_order_list):
           reordered_cov[i][j] = orig_cov[orig_i][orig_j]
@@ -198,6 +232,7 @@ def main(infile_name, parameter_config_filename, parameter_list_filename, del_no
 
     infile.Close()
     outfile.Close()
+    print("done!")
 
 
 #_______________________________________________________________________
@@ -215,6 +250,9 @@ def get_ordered_param_names(parameter_list_filename):
     p = util.NameRegistry.Instance().PhysParamFromString(content)
     if p == python_undefined or p == python_undefined_short:
       print "ERROR: Could not recognise parameter with name", content, "in the input parameter list", parameter_list_filename
+      sys.exit()
+    if p == -1:
+      print"ERROR: Parameter (", content ,") enumerator is returning from list as -1 (undefined), this is most likely due to the parameter not being contained in analysis config file."
       sys.exit()
     param = valor.ParameterPool.Instance().GetParam(p)
     valor_name = param.GetName()
@@ -271,7 +309,7 @@ def check_param_list(ordered_param_name_dict, input_banff_param_list, n_banff_pa
   # Does our input XML list have the right total number of params?
   if not del_not_in_list and n_banff_params != len(ordered_param_name_dict):
     print "ERROR: The number of parameters in the input XML param list (", len(ordered_param_name_dict), ") " \
-          "does not match the number of parameters in the input matrix (", n_banff_params, ")"
+                                                                                                         "does not match the number of parameters in the input matrix (", n_banff_params, ")"
     print "input XML params:\n", ordered_param_name_dict.keys()
     print "input matrix params:\n", input_banff_param_list
     sys.exit()
