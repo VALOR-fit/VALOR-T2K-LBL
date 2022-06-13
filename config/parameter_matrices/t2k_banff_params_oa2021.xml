@@ -105,7 +105,7 @@
   <parameter>	SPP_Pi0Norm_numubar       </parameter>
   <parameter>	MPi_BY_Vector             </parameter>
   <parameter>	MPi_BY_Axial              </parameter>
-  <parameter>	PNNN_Shape     </parameter>
+  <parameter>	PNNN_Shape                </parameter>
   <parameter>	MPi_Multi_Shape           </parameter>
   <parameter>	MPi_Multi_TotXSec         </parameter>
 </systematic_list>

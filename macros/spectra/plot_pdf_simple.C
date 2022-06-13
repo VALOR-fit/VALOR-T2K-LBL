@@ -56,7 +56,7 @@ TLatex*              make_caveat                  (TH1* hist_to_draw, double y_m
 TLatex*              make_title                   (TString title_text, double ymax);
 std::string          make_title_text              (conv::BeamConf_t b, conv::Sample_t s, conv::ReacMode_t m = conv::kmUndefined, bool no_tex = false, bool no_spaces = false);
 std::string          get_beam_current_name_simple (conv::BeamConf_t b);                    // TODO: move to BeamConf.h
-std::string          get_sample_name_simple       (conv::Sample_t s, bool no_tex = false); // TODO: move to Sample.h
+std::string          get_sample_name_simple       (conv::Sample_t s, conv::BeamConf_t b, bool no_tex = false); // TODO: move to Sample.h
 void                 rebin                        (TH1D* hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv);
 double               get_max_in_xrange_by_mode    (double xmax, std::vector<TH1D*> hists_by_mode, const int NReacModes);
 double               get_max_in_xrange            (double xmax, TH1D* hist, bool with_error);
@@ -752,6 +752,7 @@ std::string get_sample_name_simple(conv::Sample_t s, conv::BeamConf_t b, bool no
     if     (s == conv::ks1Rmu   ) { sample_str = "1R#mu";     }
     else if(s == conv::ks1Re    ) { sample_str = "1Re";       }
     else if(s == conv::ks1Re1dcy) { sample_str = "1Re 1d.e."; }
+    else if(s == conv::ksMultiRmu) {sample_str = "MultiR#mu"; }
     else {
       std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
       vutil::Die(1);
@@ -761,7 +762,7 @@ std::string get_sample_name_simple(conv::Sample_t s, conv::BeamConf_t b, bool no
     bool rhc = (b == conv::kbJPARC_RHC);
     if     (s == conv::ks1Rmu   ) { sample_str = (rhc) ? "#bar{#nu}_{#mu}CCQE-like" : "#nu_{#mu}CCQE-like"; }
     else if(s == conv::ks1Re    ) { sample_str = (rhc) ? "#bar{#nu}_{e}CCQE-like"   : "#nu_{e}CCQE-like";   }
-    else if(s == conv::ksMultiRe) { sample_str = "#nu_{e}CC1#pi^{+}-like"; }
+    else if(s == conv::ks1Re1dcy) { sample_str = "#nu_{e}CC1#pi^{+}-like"; }
     else {
       std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
       vutil::Die(1);
