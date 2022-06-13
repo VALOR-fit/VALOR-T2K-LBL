@@ -16,9 +16,12 @@ standard_pattern = "$RUN/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]
 eb_pattern       = "$RUN/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2021_12_02.root"
 
 def main():
-    beams           = ["fhc", "rhc"]
+   # beams           = ["fhc", "rhc"]
+   # beams           = ["fhc"]
+    beams           = ["rhc"]
     osc_channels    = ["nuebar_x_nuebar", "nue_x_nue", "numubar_x_nuebar", "numubar_x_numubar", "numu_x_nue", "numu_x_numu"]
-    selections      = ["numu", "nue", "cc1pi", "numucc1pi"]
+    selections      = ["numu", "nue"]
+    #selections      = ["numu", "nue", "cc1pi", "numucc1pi"]
     is_selection_2d = {"numu" : False, "nue" : True, "cc1pi" : True, "numucc1pi": False}
 
     for beam in beams:
