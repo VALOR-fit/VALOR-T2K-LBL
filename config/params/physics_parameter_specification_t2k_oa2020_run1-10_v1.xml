@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<param_list name="t2k_physics_param_values_run1-9d">
+
+  <!--
+    EXPLANATION: This file specifies values for physics parameters which are read when
+    populating the fit parameter list. Note that the values and ranges specified here
+    do NOT specify the priors, as priors are specified in config files of a different
+    format (see config/priors/).
+    For a explanation of what each node is, see Parameter.h
+  -->
+
+  <!--
+     NOTE: The values specified for any physics parameters in this file must correspond to these schemes,
+     which must also match the schemes set in Opt::Instance()
+  -->
+  <schemes>
+    <mixing> sinsqtheta </mixing>
+    <phase>  delta      </phase>
+    <Dmsq>   abs23      </Dmsq>
+  </schemes>
+
+
+  <param>
+    <name>
+      <simple>  mixing23  </simple>   <!-- The simple name is used to match up each XML param to the relevant PhysParamId_t -->
+    </name>
+    
+    <type>  special  </type>
+
+    <!-- The range is not to be confused with the physical limits, this is
+    an optimised range used for searching a narrower area than the physical
+    limits. Internally, this is combined with the physical limits so that
+    both ranges are used and the parameter never takes unphysical values -->
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <init>  0.528  </init>     <!-- Asimov A run1-9d, from the T2K run1-5 Bayesian analysis -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing13  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+
+    <init>  0.0218  </init>  <!-- Asimov A run1-10, from PDG2019 reactor-only -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  mixing12  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.0, 1.0  </range>
+    
+    <init>  0.307  </init>     <!--  Asimov A run1-10, from PDG2018 -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  cpv  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <range_mode>  value  </range_mode>
+    <range>  -3.1416, 3.1416  </range>
+    
+    <init>  -1.601  </init>  <!--  Asimov A run1-9d, from the T2K run1-5 Bayesian analysis -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm23sq  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <range_mode>  value  </range_mode>
+    <range>  0.001, 0.005  </range>
+    
+    <init>  0.002509  </init>     <!--  Asimov A run1-9d, from the T2K run1-5 Bayesian analysis? -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  dm12sq  </simple>
+    </name>
+    
+    <type>  special  </type>
+    
+    <range_mode>  value  </range_mode>
+    <range>  1e-05, 0.00015  </range>
+    
+    <init>  7.53e-05  </init>     <!--  Asimov A run1-9d, from PDG2018 (same as PDG2016) -->
+  </param>
+  
+
+
+  <param>
+    <name>
+      <simple>  betabar  </simple>
+    </name>
+
+    <type>  special  </type>
+
+    <range_mode>  value  </range_mode>
+    <range>  0, 1  </range>
+
+    <init>  1  </init>          <!--  Asimov A run1-9d, from the PMNS prediction of beta = 1 -->
+  </param>
+
+</param_list>
