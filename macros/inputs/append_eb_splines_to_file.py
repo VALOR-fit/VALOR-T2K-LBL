@@ -12,8 +12,8 @@ ROOT.gROOT.SetBatch(1)
 
 # File naming convention
 output_pattern   = "$VALOR_EXPT/data/official/2021/xsec/splines2021/spline2021splinesfitqunPre[NDIM]_t2ksk19b.fqv4r0.21bv2.[CURRENT].[TYPE]_[SELECTION]selec_coulomb_plus_Eb.root"
-standard_pattern = "$RUN/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2021_12_02.root"
-eb_pattern       = "$RUN/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2021_12_02.root"
+standard_pattern = "$RUN/xsec_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2022_10_12.root"
+eb_pattern       = "$RUN/eb_splines[NDIM]_coulomb_[TYPE]_[CURRENT]_[SELECTION]selec_2022_10_12.root"
 
 def main():
    # beams           = ["fhc", "rhc"]
@@ -21,7 +21,7 @@ def main():
     beams           = ["rhc"]
     osc_channels    = ["nuebar_x_nuebar", "nue_x_nue", "numubar_x_nuebar", "numubar_x_numubar", "numu_x_nue", "numu_x_numu"]
     selections      = ["numu", "nue"]
-    #selections      = ["numu", "nue", "cc1pi", "numucc1pi"]
+   # selections      = ["numu", "nue", "cc1pi", "numucc1pi"]
     is_selection_2d = {"numu" : False, "nue" : True, "cc1pi" : True, "numucc1pi": False}
 
     for beam in beams:

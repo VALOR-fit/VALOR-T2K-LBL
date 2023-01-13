@@ -91,7 +91,7 @@ abnormal_untuned_central_values = {
   "Pauli_Blocking_O_nubar"    :0.0,
 
   #Optical Potential Dials
-  "Optical Potential Dials"   :0.0,
+  "Optical_Potential_O"       :0.0,
 
   #MEC shape dials with pn/nn split
   "PNNN_Shape"                :0.0,

@@ -68,7 +68,7 @@ _hist_nom_name_patterns["VALOR_legacy"] = None
 # keeping the others at their nominal values
 _hist_tweaked_name_patterns = dict()
 _hist_tweaked_name_patterns["VALOR"]        = "env_sb_[SAMPLE][MODE]_[PARAM]_[VAR]"
-_hist_tweaked_name_patterns["MaCh3"]        = "[SAMPLE]_[PARAM][MODE]_sig_[VAR]"
+_hist_tweaked_name_patterns["MaCh3"]        = "[SAMPLE][MODE]_[PARAM]_sig_[VAR]"
 _hist_tweaked_name_patterns["p-theta"]      = "[SAMPLE]_[PARAM][MODE]_[VAR]sig_[OSC]"
 _hist_tweaked_name_patterns["VALOR_legacy"] = "Ratio_[SAMPLE][MODE]_[PARAM]_[VAR]"
 
