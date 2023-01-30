@@ -11,7 +11,7 @@ import ROOT
 ROOT.gROOT.SetBatch(1)
 #______________________________________________________________________________________________________________________________
 
-def main(skdet_file, output_file="skdetsipn.root", analysis_version= "oa2020"):
+def main(skdet_file, output_file="skdetsipn.root", analysis_version= "oa2020", replace_scale= ""):
   print "Reading", skdet_file 
   skdet_tf  = ROOT.TFile(skdet_file)
   if analysis_version == "oa2020":
@@ -31,6 +31,11 @@ def main(skdet_file, output_file="skdetsipn.root", analysis_version= "oa2020"):
     reordered_range = range(12,18)+range(0,12)+range(30,36)+range(18,30)+range(36,44)+range(44,57)+range(57,58) # FHC 1Rmu, FHC 1Re, RHC 1Rmu, RHC 1Re, FHC 1Re1dcy, FHC 2Rmu, SK P-scale
 
   sk_reordered = reorder_tmatrix(sk_matrix, reordered_range)
+
+  if replace_scale != "": # Because SK currently provides p-scale, use this to replace with old value of E-scale where relevant! Currently using 0.0004537 (24/01/23).
+    sk_reordered[n-1][n-1]= float(replace_scale)
+    print("Replaced final value in matrix with: "+ replace_scale)
+
   if analysis_version == "oa2020":
     sk_reordered.Write("skdetfsi")
   elif analysis_version == "oa2021":
@@ -67,11 +72,13 @@ if __name__=="__main__":
 
   parser.add_option('-v', '--analysis_version', dest='analysis_version', default="oa2020", help="Version of T2K analysis")
 
+  parser.add_option('-r', '--replace_scale', dest='replace_scale', default="", help="Replacing final matrix index of SKDet matrix with an inputed value.")
+
   o,other = parser.parse_args()
 
 
   
-  main(other[0],o.output_file,o.analysis_version)
+  main(other[0],o.output_file,o.analysis_version,o.replace_scale)
   
-  if other[3:]:
-    print "Warning - ignored arguments: ",other[3:]
+  if other[1:]:
+    print "Warning - ignored arguments: ",other[1:]
