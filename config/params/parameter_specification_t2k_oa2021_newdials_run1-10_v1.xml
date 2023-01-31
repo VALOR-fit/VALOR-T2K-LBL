@@ -4334,7 +4334,7 @@
       <selection>   all rings  </selection>
       <reac_type>   CC 1pi0   </reac_type>
       <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
+      <flav_final>  numu        </flav_final>
       <target>      all        </target>
     </apply_to>
 
@@ -4378,7 +4378,7 @@
       <selection>   all rings  </selection>
       <reac_type>   CC 1pi0   </reac_type>
       <flav_init>   all        </flav_init>
-      <flav_final>  all        </flav_final>
+      <flav_final>  numubar        </flav_final>
       <target>      all        </target>
     </apply_to>
 
@@ -5974,13 +5974,13 @@
   <param>
     <name>
       <simple>  skdetsipn007_1Re1dcy  </simple>
-      <long>  SKDet + SI/PN  0; Ereco range 0.30 - 0.80 GeV; oscillated nue CC (1Re1dcy); 1Re1dcy  </long>
+      <long>  SKDet + SI/PN  0; Ereco range 0.35 - 0.80 GeV; oscillated nue CC (1Re1dcy); 1Re1dcy  </long>
       <rootex>  f_{0; t, r}^{SKDet + SI/PN}1Re1dcy  </rootex>
-      <tex>  SKDet + SI/PN  0; $E_{reco}$( 0.30 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}1dcy$); 1Re1dcy  </tex>
+      <tex>  SKDet + SI/PN  0; $E_{reco}$( 0.35 - 0.80 )GeV; Osc. $\nu_{e}$ CC ($1R_{e}1dcy$); 1Re1dcy  </tex>
     </name>
     
     <apply_to_range>
-      <Ereco>  0.3, 0.8  </Ereco>
+      <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
     
     <type>  normalisation  </type>
@@ -6054,13 +6054,13 @@
   <param>
     <name>
       <simple>  skdetsipn010_1Re1dcy  </simple>
-      <long>  SKDet + SI/PN  2; Ereco range 0.30 - 0.80 GeV; numu/numubar CC (1Re1dcy); 1Re1dcy  </long>
+      <long>  SKDet + SI/PN  2; Ereco range 0.35 - 0.80 GeV; numu/numubar CC (1Re1dcy); 1Re1dcy  </long>
       <rootex>  f_{2; t, r}^{SKDet + SI/PN}1Re1dcy  </rootex>
-      <tex>  SKDet + SI/PN  2; $E_{reco}$( 0.30 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}1dcy$); 1Re1dcy  </tex>
+      <tex>  SKDet + SI/PN  2; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{\mu}$/$\bar{\nu}_{\mu}$ CC ($1R_{e}1dcy$); 1Re1dcy  </tex>
     </name>
     
     <apply_to_range>
-      <Ereco>  0.3, 0.8  </Ereco>
+      <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
     
     <type>  normalisation  </type>
@@ -6134,13 +6134,13 @@
   <param>
     <name>
       <simple>  skdetsipn013_1Re1dcy  </simple>
-      <long>  SKDet + SI/PN  4; Ereco range 0.30 - 0.80 GeV; nue/nuebar CC (1Re1dcy); 1Re1dcy  </long>
+      <long>  SKDet + SI/PN  4; Ereco range 0.35 - 0.80 GeV; nue/nuebar CC (1Re1dcy); 1Re1dcy  </long>
       <rootex>  f_{4; t, r}^{SKDet + SI/PN}1Re1dcy  </rootex>
-      <tex>  SKDet + SI/PN  4; $E_{reco}$( 0.30 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}1dcy$); 1Re1dcy  </tex>
+      <tex>  SKDet + SI/PN  4; $E_{reco}$( 0.35 - 0.80 )GeV; $\nu_{e}$/$\bar{\nu}_{e}$ CC ($1R_{e}1dcy$); 1Re1dcy  </tex>
     </name>
     
     <apply_to_range>
-      <Ereco>  0.3, 0.8  </Ereco>
+      <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
     
     <type>  normalisation  </type>
@@ -6214,13 +6214,13 @@
   <param>
     <name>
       <simple>  skdetsipn016_1Re1dcy  </simple>
-      <long>  SKDet + SI/PN  6; Ereco range 0.30 - 0.80 GeV; all NC (1Re1dcy); 1Re1dcy  </long>
+      <long>  SKDet + SI/PN  6; Ereco range 0.35 - 0.80 GeV; all NC (1Re1dcy); 1Re1dcy  </long>
       <rootex>  f_{6; t, r}^{SKDet + SI/PN}1Re1dcy  </rootex>
-      <tex>  SKDet + SI/PN  6; $E_{reco}$( 0.30 - 0.80 )GeV; all NC ($1R_{e}1dcy$); 1Re1dcy  </tex>
+      <tex>  SKDet + SI/PN  6; $E_{reco}$( 0.35 - 0.80 )GeV; all NC ($1R_{e}1dcy$); 1Re1dcy  </tex>
     </name>
     
     <apply_to_range>
-      <Ereco>  0.3, 0.8  </Ereco>
+      <Ereco>  0.35, 0.8  </Ereco>
     </apply_to_range>
     
     <type>  normalisation  </type>
