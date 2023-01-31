@@ -3039,7 +3039,7 @@
     </name>
 
     <apply_to_range>
-      <Etrue>  0.4, 0.6  </Etrue>
+      <Etrue>  0.3, 0.6  </Etrue>
     </apply_to_range>
 
     <type>  normalisation  </type>
@@ -3082,7 +3082,7 @@
     </name>
 
     <apply_to_range>
-      <Etrue>  0.4, 0.6  </Etrue>
+      <Etrue>  0.3, 0.6  </Etrue>
     </apply_to_range>
 
     <type>  normalisation  </type>
@@ -6805,43 +6805,43 @@
       <rootex>  f_{E; r}^{SK}  </rootex>
       <tex>  SK energy scale  </tex>
     </name>
-    
+
     <apply_to_range>
       <Ereco>  0, inf  </Ereco>
     </apply_to_range>
-    
-    <!--<type>  lateral_post_osc  </type>-->
-    <type>  disabled  </type>
 
-    <categories>
-      <category>  SKDetSIPN  </category>
-    </categories>
-    
-    <apply_to>
-      <detector>  SuperK  </detector>
-      <beam>  all  </beam>
-      <selection>  all  </selection>
-      <reac_type>  all  </reac_type>
-      <flav_init>  all  </flav_init>
-      <flav_final>  all  </flav_final>
-      <target>  all  </target>
-    </apply_to>
-    
-    <limits>  -inf, inf  </limits>
-    
-    <update_from_cov_matrix> true  </update_from_cov_matrix>
-    <range_mode>             sigma </range_mode>            
-    <range>                  -5, 5 </range>                 
-    <step_mode>              frac  </step_mode>             
-    <step>                   0.01  </step>
-  </param>
-  
+    <type>  lateral_post_osc  </type>
+    <!--<type>  disabled  </type>-->
 
+  <categories>
+    <category>  SKDetSIPN  </category>
+  </categories>
+
+  <apply_to>
+    <detector>  SuperK  </detector>
+    <beam>  all  </beam>
+    <selection>  all  </selection>
+    <reac_type>  all  </reac_type>
+    <flav_init>  all  </flav_init>
+    <flav_final>  all  </flav_final>
+    <target>  all  </target>
+  </apply_to>
+
+  <limits>  -inf, inf  </limits>
+
+  <update_from_cov_matrix> true  </update_from_cov_matrix>
+  <range_mode>             sigma </range_mode>
+  <range>                  -5, 5 </range>
+  <step_mode>              frac  </step_mode>
+  <step>                   0.01  </step>
+</param>
 
 
 
 
-        <!-- ==================================================================================== -->
+
+
+      <!-- ==================================================================================== -->
 
 
   <param>
