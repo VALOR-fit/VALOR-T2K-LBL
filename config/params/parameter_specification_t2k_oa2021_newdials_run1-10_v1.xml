@@ -6782,7 +6782,7 @@
       <selection>  MultiRmu  </selection>
       <reac_type>  all CC  </reac_type>
       <flav_init>  all  </flav_init>
-      <flav_final>  nue all  </flav_final>
+      <flav_final>  nue any  </flav_final>
       <target>  all  </target>
     </apply_to>
 
