@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<prior_list name="syst_parameters_priors_run_10">
+<prior_list name="syst_parameters_priors_oa2021">
 
     <!-- Here goes systematic parameters priors. In particular 2p2h_Edep -->
   <prior>
@@ -34,5 +34,5 @@
     <high>   1.0                  </high>
     <scheme>                      </scheme>
   </prior>
-  
+
 </prior_list>
