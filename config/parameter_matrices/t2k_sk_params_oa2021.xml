@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<systematic_list name="sk_Run1-9">
+<systematic_list name="sk_OA2021">
   <parameter>	skdetsipn000             </parameter>
   <parameter>	skdetsipn001             </parameter>
   <parameter>	skdetsipn002             </parameter>
@@ -57,5 +57,5 @@
   <parameter>	skdetsipn010_MultiRmu   </parameter>
   <parameter>	skdetsipn011_MultiRmu   </parameter>
   <parameter>	skdetsipn012_MultiRmu   </parameter>
-  <parameter>	sk_p_scale              </parameter>
+  <parameter>	sk_e_scale              </parameter>
 </systematic_list>
