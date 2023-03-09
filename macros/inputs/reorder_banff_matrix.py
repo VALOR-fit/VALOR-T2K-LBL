@@ -54,7 +54,7 @@ abnormal_untuned_central_values = {
   "CC_BY_DIS"                : 0.0,
   #"CC_BY_MPi"                : 0.0, # changed in oa2021
   #"CC_AGKY_Mult"             : 0.0,# changed in oa2021
-  "Q2_norm_4"                : 1.0, #TODO: check if we need to keep Q2 parameters here after all
+  #"Q2_norm_4"                : 1.0, #TODO: check if we need to keep Q2 parameters here after all
   "Q2_norm_5"                : 1.0, #as they have 1.0 untuned central value
   "Q2_norm_6"                : 1.0,
   "Q2_norm_7"                : 1.0,

@@ -1,4 +1,4 @@
-# Usage: python extract_group_spline_diff.py OutputFile.txt (--mode_option)
+# Usage: python extract_group_sigma_var_diff.py OutputFile.txt (--mode_option)
 # A simple python script that takes a txt output file from 'plot_sigma_var_all_groups.py" and returns all params (+modes) that show difference to command line.
 # Getting an output.txt file from this can be done by running: Script | tee Output.txt
 # Any complaints, send to Jaiden
@@ -6,7 +6,7 @@
 #
 import argparse
 
-def extract_string(sentence, mode_option):
+def extract_string(sentence, mode_option, no_param):
     # Define the start of the "mode" and "param" substrings
     start_mode = "mode = "
     start_param = "For param = "
@@ -36,23 +36,30 @@ def extract_string(sentence, mode_option):
     # Extract the "param" value
     param = sentence[start_index_param:end_index_param]
 
-    # Return either the "param" value only, or the combined "param" and "mode" values
-    return param if not mode_option else mode + " " + param
+    # Return either the "param" or "mode" value only, or the combined "param" and "mode" values
+    if no_param:
+        return mode
+    elif mode_option:
+        return mode + " " + param
+    else:
+        return param
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('filename', help='Input file name')
-    parser.add_argument('--mode_option', action='store_true', help='Boolean flag to return only "param" if False')
+    parser.add_argument('--mode_option', action='store_true', help='Boolean flag to return modes + params')
+    parser.add_argument('--no_param', action='store_true', help='Boolean flag to turn off param printing')
     args = parser.parse_args()
     filename = args.filename
     mode_option = args.mode_option
+    no_param = args.no_param
     strings_seen = set()
     # Open the input file
     with open(filename) as f:
         # Read all the lines in the file
         lines = f.readlines()
         for line in lines:
-            result = extract_string(line, mode_option)
+            result = extract_string(line, mode_option, no_param)
             # If a string was extracted and it hasn't been seen before
             if result and result not in strings_seen:
                 strings_seen.add(result)
