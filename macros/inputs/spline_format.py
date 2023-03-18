@@ -102,8 +102,8 @@ def get_systematics():
    ]
 
 def get_mode_map():
-    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCmisc","CC1piC","NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
-    raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","cc1pi" ,"nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
+    valor_modes = ["CCQE","CCcoh","CCMEC","CCDIS","CCMpi","CCmisc","CC1piC","CC1pi0", "NCcoh","NCoth","NC1piC","NC1pi0","NC1Gamma"]
+    raw_modes   = ["ccqe","cccoh","mec"  ,"ccdis","ccmpi","ccmisc","ccpipm", "ccpi0", "nccoh","ncoth","ncpipm","ncpiz" ,"nc1gamma"]
     return list(zip(raw_modes, valor_modes))
 
 def get_flavour_map():
