@@ -129,6 +129,18 @@ def get_param_map():
     # careful and rearrange if it ever matters.
     raw_params   = ["CA5RES", "bgsclbar"      , "bgscl"  , "MaCCQE", "MaRES",  "PionFSIAbs", "PionFSICExLow", "PionFSIQELow", "PionFSIInel", "PionFSIQEHigh", "DISBY"    , "MPiTotXsec"          , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "HighQ2Weight1"    , "HighQ2Weight2"    , "HighQ2Weight3"    , "Eb_dial_O_nu", "Eb_dial_O_nubar", "PionFSICExHigh", "TwkDialFateNucleonFSI", "SFP12ShellMeanFNormO", "SFP32ShellMeanFNormO", "SFSShellMeanFNormO", "SFSRCNormO", "SFP12ShellMeanFPMissShapeO", "SFP32ShellMeanFPMissShapeO", "SFSShellMeanFPMissShapeO", "SFPBTwkDialHybridO16nu", "SFPBTwkDialHybridO16nubar", "SFOptPotTwkDialO16" , "RESEbOnumu"   , "RESEbOnumubar"   , "MDLSPiEj"      , "MultiPiBYVector"  , "MultiPiBYAxial"  , "MECTwkDialPNNNShape"  , "MECTwkDialPDDWeightO16np", "MECTwkDialPDDWeightO16NN", "MultiPiMultiplicityShape"]
     valor_params = ["CA5",    "ISO_BKG_LowPPi", "ISO_BKG", "MAQE",   "MARES",  "FEFABS"  , "FEFCX"        , "FEFQE"       , "FEFINEL"    , "FEFQEH"       , "CC_BY_DIS", "MPi_Multi_TotXSec"   , "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_5"        , "Q2_norm_6"        , "Q2_norm_7"        , "Eb_dial_O_nu", "Eb_dial_O_nubar", "FEFCXH"        , "Nucleon_FSI"          , "P1_2Shell_MF_Norm_O" , "P3_2Shell_MF_Norm_O" , "SShell_MF_Norm_O"  , "SRC_Norm_O", "P1_2Shell_MF_PMissShape_O" , "P3_2Shell_MF_PMissShape_O" , "SShell_MF_PMissShape_O"  , "Pauli_Blocking_O_nu"   , "Pauli_Blocking_O_nubar"   , "Optical_Potential_O", "RES_Eb_O_numu", "RES_Eb_O_numubar", "RS_Delta_Decay", "MPi_BY_Vector"    , "MPi_BY_Axial"    , "PNNN_Shape", "2p2h_shape_O_np"         , "2p2h_shape_O_NN"         , "MPi_Multi_Shape" ]
+    for i, raw_param_i in enumerate(raw_params):
+        for j, raw_param_j in enumerate(raw_params):
+            if i == j:
+                continue
+            if raw_param_i in raw_param_j:
+                print "Then param ", raw_param_i, " is a subset of ", raw_param_j
+    for i, valor_param_i in enumerate(valor_params):
+        for j, valor_param_j in enumerate(valor_params):
+            if i == j:
+                continue
+            if valor_param_i in valor_param_j:
+                print "Then param ", valor_param_i, " is a subset of ", valor_param_j
     return list(zip(raw_params, valor_params))                                                                                                                                                                                                                                                                                                                                           #,Above this are new parameters.
 
 def get_beam(sample):
@@ -371,8 +383,8 @@ def main(version, path, sample, config):
 
             # The legacy T2K analysis did not distinguish between CC1piC and CC1pi0, but we do in the SDK. So
             # copy the newly made CC1piC spline into CC1pi0 as well (use the same spline for both modes)
-            if mode == "CC1piC":
-                spline_array.Write(build_spline_array_name(par, valor_type, "CC1pi0"), 1)
+            #if mode == "CC1piC":
+            #    spline_array.Write(build_spline_array_name(par, valor_type, "CC1pi0"), 1)
 
         tf.Close()
     output_file.Close()
