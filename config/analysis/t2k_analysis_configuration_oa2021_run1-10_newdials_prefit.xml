@@ -120,7 +120,7 @@
       <format> t2k_sk_params_oa2021.xml </format>
 
       <covariance_matrix>
-        <filename> official/2021/skdetfsi/SKDetErrorMatrixFrankenstein_20210928_valor_order.root </filename>
+        <filename> official/2021/skdetfsi/SKDetErrorMatrixFrankenstein_20210928_valor_order_Escale_test.root </filename>
         <objname>  skdetsipn    </objname>
         <objtype>  TMatrixD    </objtype>
       </covariance_matrix>

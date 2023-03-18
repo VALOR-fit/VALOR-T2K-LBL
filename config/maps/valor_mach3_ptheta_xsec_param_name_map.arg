@@ -56,6 +56,6 @@
    ( 'CC_norm_nu'                 , 'xsec_par_66' , 'CC_norm_nu'                ),
    ( 'CC_norm_nubar'              , 'xsec_par_67' , 'CC_norm_nubar'             ),
    ( 'nue_numu'                   , 'xsec_par_68' , 'nue_numu_xsec'             ),
-   ( 'nuebar_numubar'             , 'xsec_par_69' , 'nuebar_numu_xsec'          ),
+   ( 'nuebar_numubar'             , 'xsec_par_69' , 'nuebar_numu_xsec'          )
    #( 'EB_dial_O_nu'               , 'xsec_par_72' , 'Eb_dial_O_nu'              ),
    #( 'EB_dial_O_nubar'            , 'xsec_par_73' , 'Eb_dial_O_nubar'           ),

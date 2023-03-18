@@ -40,7 +40,8 @@ def extract_string(sentence, mode_option, no_param):
     if no_param:
         return mode
     elif mode_option:
-        return mode + " " + param
+        #return mode + " " + param
+        return param  + "_" +  mode
     else:
         return param
 
