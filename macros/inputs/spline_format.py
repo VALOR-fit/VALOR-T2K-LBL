@@ -31,6 +31,7 @@ python_undefined_short =2**32 -1
 pattern = "[VERSION]_t2ksk19b.fqv4r0.21bv2.[CURRENT].[TYPE]_[SELECTION]_coulomb_plus_Eb.root"
 models = dict()
 
+
 def get_file_suffix(sample):
     if "mu"  in sample:
         return ""
@@ -46,9 +47,9 @@ def get_systematics():
         "2p2hedephienubar_mec",
         "2p2hedeplowenu_mec",
         "2p2hedeplowenubar_mec",
-        "bgscl_cc1pi", "bgscl_ncpipm", "bgscl_ncpiz",
-        "bgsclbar_cc1pi", "bgsclbar_ncpipm", "bgsclbar_ncpiz",
-        "CA5RES_cc1pi", "CA5RES_ncpipm", "CA5RES_ncpiz",
+        "bgscl_ccpi0", "bgscl_ccpipm", "bgscl_ncpipm", "bgscl_ncpiz",
+        "bgsclbar_ccpi0", "bgsclbar_ccpipm", "bgsclbar_ncpipm", "bgsclbar_ncpiz",
+        "CA5RES_ccpi0", "CA5RES_ccpipm", "CA5RES_ncpipm", "CA5RES_ncpiz",
         "DISBY_ccdis",
         "EB_dial_O_nu_ccqe",
         "EB_dial_O_nubar_ccqe",
@@ -56,8 +57,8 @@ def get_systematics():
         "HighQ2Weight2_ccqe",
         "HighQ2Weight3_ccqe",
         "MaCCQE_ccqe",
-        "MaRES_cc1pi", "MaRES_ncpipm", "MaRES_ncpiz",
-        "MDLSPiEj_cc1pi", "MDLSPiEj_ncpipm", "MDLSPiEj_ncpiz",
+        "MaRES_ccpi0", "MaRES_ccpipm", "MaRES_ncpipm", "MaRES_ncpiz",
+        "MDLSPiEj_ccpi0", "MDLSPiEj_ccpipm", "MDLSPiEj_ncpipm", "MDLSPiEj_ncpiz",
         "MECTwkDialPDDWeightO16NN_mec",
         "MECTwkDialPDDWeightO16np_mec",
         "MECTwkDialPNNNShape_mec",
@@ -66,26 +67,26 @@ def get_systematics():
         "MultiPiBYAxial_ccmpi",
         "MultiPiBYVector_ccmpi",
         "MultiPiMultiplicityShape_ccmpi",
-        "PionFSIAbs_cc1pi", "PionFSIAbs_cccoh", "PionFSIAbs_ccdis", "PionFSIAbs_ccmisc",
+        "PionFSIAbs_ccpi0", "PionFSIAbs_ccpipm", "PionFSIAbs_cccoh", "PionFSIAbs_ccdis", "PionFSIAbs_ccmisc",
             "PionFSIAbs_ccmpi", "PionFSIAbs_ccqe", "PionFSIAbs_mec", "PionFSIAbs_nc1gamma",
             "PionFSIAbs_nccoh", "PionFSIAbs_ncoth", "PionFSIAbs_ncpipm", "PionFSIAbs_ncpiz",
-        "PionFSICExHigh_cc1pi", "PionFSICExHigh_cccoh", "PionFSICExHigh_ccdis", "PionFSICExHigh_ccmisc",
+        "PionFSICExHigh_ccpi0", "PionFSICExHigh_ccpipm", "PionFSICExHigh_cccoh", "PionFSICExHigh_ccdis", "PionFSICExHigh_ccmisc",
             "PionFSICExHigh_ccmpi", "PionFSICExHigh_ccqe", "PionFSICExHigh_mec", "PionFSICExHigh_nc1gamma",
             "PionFSICExHigh_nccoh", "PionFSICExHigh_ncoth", "PionFSICExHigh_ncpipm", "PionFSICExHigh_ncpiz",
-        "PionFSICExLow_cc1pi", "PionFSICExLow_cccoh", "PionFSICExLow_ccdis", "PionFSICExLow_ccmisc",
+        "PionFSICExLow_ccpi0", "PionFSICExLow_ccpipm", "PionFSICExLow_cccoh", "PionFSICExLow_ccdis", "PionFSICExLow_ccmisc",
             "PionFSICExLow_ccmpi", "PionFSICExLow_ccqe", "PionFSICExLow_mec", "PionFSICExLow_nc1gamma",
             "PionFSICExLow_nccoh", "PionFSICExLow_ncoth", "PionFSICExLow_ncpipm", "PionFSICExLow_ncpiz",
-        "PionFSIInel_cc1pi", "PionFSIInel_cccoh", "PionFSIInel_ccdis", "PionFSIInel_ccmisc",
+        "PionFSIInel_ccpi0", "PionFSIInel_ccpipm", "PionFSIInel_cccoh", "PionFSIInel_ccdis", "PionFSIInel_ccmisc",
             "PionFSIInel_ccmpi", "PionFSIInel_ccqe", "PionFSIInel_mec", "PionFSIInel_nc1gamma",
             "PionFSIInel_nccoh", "PionFSIInel_ncoth", "PionFSIInel_ncpipm", "PionFSIInel_ncpiz",
-        "PionFSIQEHigh_cc1pi", "PionFSIQEHigh_cccoh", "PionFSIQEHigh_ccdis", "PionFSIQEHigh_ccmisc",
+        "PionFSIQEHigh_ccpi0", "PionFSIQEHigh_ccpipm", "PionFSIQEHigh_cccoh", "PionFSIQEHigh_ccdis", "PionFSIQEHigh_ccmisc",
             "PionFSIQEHigh_ccmpi", "PionFSIQEHigh_ccqe", "PionFSIQEHigh_mec", "PionFSIQEHigh_nc1gamma",
             "PionFSIQEHigh_nccoh", "PionFSIQEHigh_ncoth", "PionFSIQEHigh_ncpipm", "PionFSIQEHigh_ncpiz",
-        "PionFSIQELow_cc1pi", "PionFSIQELow_cccoh", "PionFSIQELow_ccdis", "PionFSIQELow_ccmisc",
+        "PionFSIQELow_ccpi0", "PionFSIQELow_ccpipm", "PionFSIQELow_cccoh", "PionFSIQELow_ccdis", "PionFSIQELow_ccmisc",
             "PionFSIQELow_ccmpi", "PionFSIQELow_ccqe", "PionFSIQELow_mec", "PionFSIQELow_nc1gamma",
             "PionFSIQELow_nccoh", "PionFSIQELow_ncoth", "PionFSIQELow_ncpipm", "PionFSIQELow_ncpiz",
-        "RESEbOnumu_cc1pi", "RESEbOnumu_ncpipm", "RESEbOnumu_ncpiz",
-        "RESEbOnumubar_cc1pi", "RESEbOnumubar_ncpipm", "RESEbOnumubar_ncpiz",
+        "RESEbOnumu_ccpi0", "RESEbOnumu_ccpipm", "RESEbOnumu_ncpipm", "RESEbOnumu_ncpiz",
+        "RESEbOnumubar_ccpi0", "RESEbOnumubar_ccpipm", "RESEbOnumubar_ncpipm", "RESEbOnumubar_ncpiz",
         "SFOptPotTwkDialO16_ccqe",
         "SFP12ShellMeanFNormO_ccqe",
         "SFP12ShellMeanFPMissShapeO_ccqe",
@@ -96,9 +97,9 @@ def get_systematics():
         "SFSRCNormO_ccqe",
         "SFSShellMeanFNormO_ccqe",
         "SFSShellMeanFPMissShapeO_ccqe",
-        "TwkDialFateNucleonFSI_cc1pi", "TwkDialFateNucleonFSI_cccoh", "TwkDialFateNucleonFSI_ccdis", "TwkDialFateNucleonFSI_ccmisc",
+        "TwkDialFateNucleonFSI_ccpi0", "TwkDialFateNucleonFSI_ccpipm", "TwkDialFateNucleonFSI_cccoh", "TwkDialFateNucleonFSI_ccdis", "TwkDialFateNucleonFSI_ccmisc",
             "TwkDialFateNucleonFSI_ccmpi", "TwkDialFateNucleonFSI_ccqe", "TwkDialFateNucleonFSI_mec", "TwkDialFateNucleonFSI_nc1gamma",
-            "TwkDialFateNucleonFSI_nccoh", "TwkDialFateNucleonFSI_ncoth", "TwkDialFateNucleonFSI_ncpipm", "TwkDialFateNucleonFSI_ncpiz",
+            "TwkDialFateNucleonFSI_nccoh", "TwkDialFateNucleonFSI_ncoth", "TwkDialFateNucleonFSI_ncpipm", "TwkDialFateNucleonFSI_ncpiz"
    ]
 
 def get_mode_map():
@@ -127,20 +128,43 @@ def get_param_map():
     # NOTE NOTE: Jaiden (16/02/2022), I  am not sure about the previous statement as ISO_BKG and 2p2hedep seem to be in
     # different orders despite it. It may be because we're not parsing anything that this doesn't matter- please be
     # careful and rearrange if it ever matters.
+    #Original Order#
+    # raw_params   = ["CA5RES", "bgsclbar"      , "bgscl"  , "MaCCQE", "MaRES",  "PionFSIAbs", "PionFSICExLow", "PionFSIQELow", "PionFSIInel", "PionFSIQEHigh", "DISBY"    , "MPiTotXsec"          , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "HighQ2Weight1"    , "HighQ2Weight2"    , "HighQ2Weight3"    , "Eb_dial_O_nu", "Eb_dial_O_nubar", "PionFSICExHigh", "TwkDialFateNucleonFSI", "SFP12ShellMeanFNormO", "SFP32ShellMeanFNormO", "SFSShellMeanFNormO", "SFSRCNormO", "SFP12ShellMeanFPMissShapeO", "SFP32ShellMeanFPMissShapeO", "SFSShellMeanFPMissShapeO", "SFPBTwkDialHybridO16nu", "SFPBTwkDialHybridO16nubar", "SFOptPotTwkDialO16" , "RESEbOnumu"   , "RESEbOnumubar"   , "MDLSPiEj"      , "MultiPiBYVector"  , "MultiPiBYAxial"  , "MECTwkDialPNNNShape"  , "MECTwkDialPDDWeightO16np", "MECTwkDialPDDWeightO16NN", "MultiPiMultiplicityShape"]
+
+    #Subset after Order#
     raw_params   = ["CA5RES", "bgsclbar"      , "bgscl"  , "MaCCQE", "MaRES",  "PionFSIAbs", "PionFSICExLow", "PionFSIQELow", "PionFSIInel", "PionFSIQEHigh", "DISBY"    , "MPiTotXsec"          , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "HighQ2Weight1"    , "HighQ2Weight2"    , "HighQ2Weight3"    , "Eb_dial_O_nu", "Eb_dial_O_nubar", "PionFSICExHigh", "TwkDialFateNucleonFSI", "SFP12ShellMeanFNormO", "SFP32ShellMeanFNormO", "SFSShellMeanFNormO", "SFSRCNormO", "SFP12ShellMeanFPMissShapeO", "SFP32ShellMeanFPMissShapeO", "SFSShellMeanFPMissShapeO", "SFPBTwkDialHybridO16nu", "SFPBTwkDialHybridO16nubar", "SFOptPotTwkDialO16" , "RESEbOnumu"   , "RESEbOnumubar"   , "MDLSPiEj"      , "MultiPiBYVector"  , "MultiPiBYAxial"  , "MECTwkDialPNNNShape"  , "MECTwkDialPDDWeightO16np", "MECTwkDialPDDWeightO16NN", "MultiPiMultiplicityShape"]
+
+    #Subset before Order#
+    #raw_params   = ["CA5RES", "bgsclbar"      , "bgscl"  , "MaCCQE", "MaRES",  "PionFSIAbs", "PionFSICExLow", "PionFSIQELow", "PionFSIInel", "PionFSIQEHigh", "DISBY"    , "MPiTotXsec"          , "2p2hedeplowenu"  , "2p2hedephienu"    , "2p2hedeplowenubar"  , "2p2hedephienubar"    , "HighQ2Weight1"    , "HighQ2Weight2"    , "HighQ2Weight3"    , "Eb_dial_O_nu", "Eb_dial_O_nubar", "PionFSICExHigh", "TwkDialFateNucleonFSI", "SFP12ShellMeanFNormO", "SFP32ShellMeanFNormO", "SFSShellMeanFNormO", "SFSRCNormO", "SFP12ShellMeanFPMissShapeO", "SFP32ShellMeanFPMissShapeO", "SFSShellMeanFPMissShapeO", "SFPBTwkDialHybridO16nu", "SFPBTwkDialHybridO16nubar", "SFOptPotTwkDialO16" , "RESEbOnumu"   , "RESEbOnumubar"   , "MDLSPiEj"      , "MultiPiBYVector"  , "MultiPiBYAxial"  , "MECTwkDialPNNNShape"  , "MECTwkDialPDDWeightO16np", "MECTwkDialPDDWeightO16NN", "MultiPiMultiplicityShape"]
+
+    #Original Order#
+    #valor_params = ["CA5",    "ISO_BKG_LowPPi", "ISO_BKG", "MAQE",   "MARES",  "FEFABS"  , "FEFCX"        , "FEFQE"       , "FEFINEL"    , "FEFQEH"       , "CC_BY_DIS", "MPi_Multi_TotXSec"   , "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_5"        , "Q2_norm_6"        , "Q2_norm_7"        , "Eb_dial_O_nu", "Eb_dial_O_nubar", "FEFCXH"        , "Nucleon_FSI"          , "P1_2Shell_MF_Norm_O" , "P3_2Shell_MF_Norm_O" , "SShell_MF_Norm_O"  , "SRC_Norm_O", "P1_2Shell_MF_PMissShape_O" , "P3_2Shell_MF_PMissShape_O" , "SShell_MF_PMissShape_O"  , "Pauli_Blocking_O_nu"   , "Pauli_Blocking_O_nubar"   , "Optical_Potential_O", "RES_Eb_O_numu", "RES_Eb_O_numubar", "RS_Delta_Decay", "MPi_BY_Vector"    , "MPi_BY_Axial"    , "PNNN_Shape", "2p2h_shape_O_np"         , "2p2h_shape_O_NN"         , "MPi_Multi_Shape" ]
+
+    #Subset after Order#
+    #valor_params = ["CA5",    "ISO_BKG_LowPPi", "ISO_BKG", "MAQE",   "MARES",  "FEFABS"  , "FEFCX"        , "FEFQE"       , "FEFINEL"    , "FEFQEH"       , "CC_BY_DIS", "MPi_Multi_TotXSec"   , "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_5"        , "Q2_norm_6"        , "Q2_norm_7"        , "Eb_dial_O_nu", "Eb_dial_O_nubar", "FEFCXH"        , "Nucleon_FSI"          , "P1_2Shell_MF_Norm_O" , "P3_2Shell_MF_Norm_O" , "SShell_MF_Norm_O"  , "SRC_Norm_O", "P1_2Shell_MF_PMissShape_O" , "P3_2Shell_MF_PMissShape_O" , "SShell_MF_PMissShape_O"  , "Pauli_Blocking_O_nu"   , "Pauli_Blocking_O_nubar"   , "Optical_Potential_O", "RES_Eb_O_numu", "RES_Eb_O_numubar", "RS_Delta_Decay", "MPi_BY_Vector"    , "MPi_BY_Axial"    , "PNNN_Shape", "2p2h_shape_O_np"         , "2p2h_shape_O_NN"         , "MPi_Multi_Shape" ]
+
+    #subset before order#
     valor_params = ["CA5",    "ISO_BKG_LowPPi", "ISO_BKG", "MAQE",   "MARES",  "FEFABS"  , "FEFCX"        , "FEFQE"       , "FEFINEL"    , "FEFQEH"       , "CC_BY_DIS", "MPi_Multi_TotXSec"   , "2p2h_Edep_lowEnu", "2p2h_Edep_highEnu", "2p2h_Edep_lowEnubar", "2p2h_Edep_highEnubar", "Q2_norm_5"        , "Q2_norm_6"        , "Q2_norm_7"        , "Eb_dial_O_nu", "Eb_dial_O_nubar", "FEFCXH"        , "Nucleon_FSI"          , "P1_2Shell_MF_Norm_O" , "P3_2Shell_MF_Norm_O" , "SShell_MF_Norm_O"  , "SRC_Norm_O", "P1_2Shell_MF_PMissShape_O" , "P3_2Shell_MF_PMissShape_O" , "SShell_MF_PMissShape_O"  , "Pauli_Blocking_O_nu"   , "Pauli_Blocking_O_nubar"   , "Optical_Potential_O", "RES_Eb_O_numu", "RES_Eb_O_numubar", "RS_Delta_Decay", "MPi_BY_Vector"    , "MPi_BY_Axial"    , "PNNN_Shape", "2p2h_shape_O_np"         , "2p2h_shape_O_NN"         , "MPi_Multi_Shape" ]
-    for i, raw_param_i in enumerate(raw_params):
-        for j, raw_param_j in enumerate(raw_params):
-            if i == j:
-                continue
-            if raw_param_i in raw_param_j:
-                print "Then param ", raw_param_i, " is a subset of ", raw_param_j
-    for i, valor_param_i in enumerate(valor_params):
-        for j, valor_param_j in enumerate(valor_params):
-            if i == j:
-                continue
-            if valor_param_i in valor_param_j:
-                print "Then param ", valor_param_i, " is a subset of ", valor_param_j
+
+    global ShownDebug
+    if not ShownDebug:
+        for i, raw_param_i in enumerate(raw_params):
+            for j, raw_param_j in enumerate(raw_params):
+                if i == j:
+                    continue
+                if i < j:
+                    continue
+                if raw_param_i in raw_param_j:
+                    print "Then raw param ", raw_param_i, " is a subset of ", raw_param_j
+        for i, valor_param_i in enumerate(valor_params):
+            for j, valor_param_j in enumerate(valor_params):
+                if i == j:
+                    continue
+                if i < j:
+                    continue
+                if valor_param_i in valor_param_j:
+                    print "Then valor param ", valor_param_i, " is a subset of ", valor_param_j
+    ShownDebug = True
     return list(zip(raw_params, valor_params))                                                                                                                                                                                                                                                                                                                                           #,Above this are new parameters.
 
 def get_beam(sample):
@@ -400,6 +424,7 @@ def main(version, path, sample, config):
   
 if __name__=="__main__":
     import argparse
+    ShownDebug = False
     samples = ["FHC1Rmu", "RHC1Rmu", "FHC1Re", "RHC1Re", "FHC1Re1dcy", "FHCMultiRmu"]
     parser = argparse.ArgumentParser(usage="%prog [options]..",description="Reformat splines")
     parser.add_argument('-p', '--prefix', default='spline2019v1', help="Spline filename prefix.")
