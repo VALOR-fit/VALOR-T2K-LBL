@@ -155,15 +155,29 @@ def check_all_spline_binning():
                 print current, flav, selec, "\n    run9 bins:", bins["r9"], "\n    run10 bins:", bins["r10"]
 
 #________________________________________________________________________________________
-def is_spline_flat(spline):
+def is_spline_flat(spline, printknots = False):
     nk = spline.GetNp()
     for ik in range(0, nk):
         kx = ROOT.Double(-999)
         ky = ROOT.Double(-999)
         spline.GetKnot(ik, kx, ky)
+        if printknots:
+            print("x value of kx " + str(kx))
+            print("x value of ky " + str(ky))
         if ROOT.TMath.Abs(ky - 1.0) > 1E-10:
             return False
     return True
+
+#________________________________________________________________________________________
+def printknots(spline):
+    nk = spline.GetNp()
+    for ik in range(0, nk):
+        kx = ROOT.Double(-999)
+        ky = ROOT.Double(-999)
+        spline.GetKnot(ik, kx, ky)
+        if printknots:
+            print("x value of kx " + str(kx))
+            print("x value of ky " + str(ky))
 
 #________________________________________________________________________________________
 def print_nonflat_spline_names(tfile, param = ""):
@@ -176,6 +190,19 @@ def print_nonflat_spline_names(tfile, param = ""):
             continue
         if not is_spline_flat(tfile.Get(name)):
             print name
+
+#________________________________________________________________________________________
+def print_flat_spline_names(tfile, param = ""):
+    keys = tfile.GetListOfKeys()
+    for k in keys:
+        name = k.GetName()
+        if not "_sp_" in name:
+            continue
+        if param and not param in name:
+            continue
+        if is_spline_flat(tfile.Get(name)):
+            print name
+
 
 #________________________________________________________________________________________
 def print_nonflat_valor_splines_for_param(tfile, param_name):
@@ -228,3 +255,34 @@ def print_valor_nonflat_spline_params_and_reac_types(tfile):
         for reac_type in params_and_modes[param]:
             print "   ", reac_type
         print ""
+#--------------------copy_tgraph(_file0, "Output.root", "dev_MaCCQE_ccqe_gr_3_15")-----------------------------
+def copy_tgraph(tfile, output_filename, spline):
+    # Open input file and get TGraph
+    input_graph = tfile.Get(spline)
+
+    # Create output file and copy TGraph
+    output_file = ROOT.TFile(output_filename, "RECREATE")
+    output_file.cd()
+    output_graph = input_graph.Clone(spline)
+    output_graph.Write()
+
+    # Clean up
+    output_file.Close()
+
+#---------------------------------------------------------------------
+def copy_matching_graphs(tfile, output_filename, pattern, patterntwo=""):
+    # Create output file and loop over all objects in input file
+    output_file = ROOT.TFile(output_filename, "RECREATE")
+    for key in tfile.GetListOfKeys():
+        obj = key.ReadObj()
+        # Check if object is a TGraph and matches the pattern
+        if isinstance(obj, ROOT.TGraph) and pattern in key.GetName() and patterntwo in key.GetName():
+            print("Found graph called %s" % key.GetName())
+            # Copy TGraph to output file
+            output_file.cd()
+            output_graph = obj.Clone(key.GetName())
+            output_graph.Write()
+
+    # Clean up
+    print("Now closing file %s" % output_filename)
+    output_file.Close()

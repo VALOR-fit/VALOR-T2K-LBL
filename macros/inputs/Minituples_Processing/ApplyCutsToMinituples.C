@@ -41,7 +41,7 @@ void ApplyCutsToMinituples(TString in_file_name, TString out_file_name) {
     mtuple->SetBranchAddress("fqmreloss", fqmreloss);
     mtuple->SetBranchAddress("ipp", &ipp);
     //copying+cutting code here
-    double re_cuts=0, multire_cuts=0, rmu_cuts=0, multirmu_cuts_1de=0, multirmu_cuts_2de = 0;
+    double re_cuts=0, multire_cuts=0, rmu_cuts=0, multirmu_cuts_1de=0, multirmu_cuts_2de = 0, under_limits = 0, beyond_limits = 0;
 
     for(int ientry; ientry<mtuple->GetEntries(); ientry++) {
         mtuple->GetEntry(ientry);
@@ -59,8 +59,13 @@ void ApplyCutsToMinituples(TString in_file_name, TString out_file_name) {
            // std::cout << "Discarding event " << ientry << " due to multirmu_cuts_1de cut." << std::endl;
         } else if (evisible < 30 && iclass == 32) {
             multirmu_cuts_2de++;
-           // std::cout << "Discarding event " << ientry << " due to multirmu_cuts_2de cut." << std::endl;
-        } else {
+            // std::cout << "Discarding event " << ientry << " due to multirmu_cuts_2de cut." << std::endl;
+        } else if (erec<0){
+            under_limits++;
+        } else if (erec>30000){
+            beyond_limits++;
+        }
+         else {
             out_tree->Fill();
         }
     }
@@ -71,9 +76,11 @@ void ApplyCutsToMinituples(TString in_file_name, TString out_file_name) {
     std::cout << "    1Rmu           : " << rmu_cuts << std::endl;
     std::cout << "    numucc1pi, 1de : " << multirmu_cuts_1de << std::endl;
     std::cout << "    numucc1pi, 2de : " << multirmu_cuts_2de << std::endl;
+    std::cout << "    <0 Gev : " << under_limits << std::endl;
+    std::cout << "    >30 GeV : " << beyond_limits << std::endl;
 
     double event_loss = mtuple->GetEntries() - out_tree->GetEntries();
-    if (event_loss != (re_cuts + multire_cuts + rmu_cuts + multirmu_cuts_1de + multirmu_cuts_2de)){
+    if (event_loss != (re_cuts + multire_cuts + rmu_cuts + multirmu_cuts_1de + multirmu_cuts_2de + under_limits + beyond_limits)){
         std::cerr << "ERROR: Events cut vs event difference does not match!" << std::endl;
     }
 
