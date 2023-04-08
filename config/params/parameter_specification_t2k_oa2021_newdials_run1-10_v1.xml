@@ -2216,7 +2216,7 @@
       <selection>   all rings  </selection>
       <reac_type>   all 1pi    </reac_type>
       <flav_init>   all   </flav_init>
-      <flav_final>  nubarany   </flav_final>
+      <flav_final>  all   </flav_final>
       <target>      all        </target>
     </apply_to>
 
