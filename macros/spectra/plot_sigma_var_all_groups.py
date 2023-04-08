@@ -26,7 +26,7 @@
 #      p-theta_file.root \
 #      mach3_file.root \
 #    --formats p-theta MaCh3 \
-#    --selection FHCMultiRe \
+#    --selection FHC1Re1dcy \
 #    --x-max 1.25 \
 #    --params maps/valor_mach3_ptheta_xsec_param_name_map.arg \
 #    --modes $VALOR_EXPT/config/maps/valor_mach3_ptheta_mode_name_map.arg
@@ -46,7 +46,7 @@ ROOT.gStyle.SetOptTitle(0)
 
 # Names used internally within this macro
 _valid_formats    = ["VALOR", "MaCh3", "p-theta", "VALOR_legacy"]
-_valid_selections = ["FHC1Rmu", "FHC1Re", "RHC1Rmu", "RHC1Re", "FHCMultiRe", "FHCMultiRmu"]
+_valid_selections = ["FHC1Rmu", "FHC1Re", "RHC1Rmu", "RHC1Re", "FHC1Re1dcy", "FHCMultiRmu"]
 _variations       = ["p3", "p1", "m1", "m3"]
 
 #===================================================================================
@@ -88,11 +88,11 @@ _var_names["VALOR_legacy"]  = { "m3":"m3", "m1":"m1", "p1":"p1", "p3":"p3" }
 
 # Beam mode + event topology
 _selecs_all = dict()
-_selecs_all["VALOR"       ] = { "FHC1Rmu":"superk__JPARC_FHC__1rmu", "FHC1Re":"superk__JPARC_FHC__1re", "RHC1Rmu":"superk__JPARC_RHC__1rmu", "RHC1Re":"superk__JPARC_RHC__1re", "FHCMultiRe":"superk__JPARC_FHC__multire", "FHCMultiRmu":"superk__JPARC_FHC__multirmu"}
-#_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"anu_sknumubar"          , "RHC1Re":"anu_sknuebar"          , "FHCMultiRe":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
-_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"sknumubar"          , "RHC1Re":"sknuebar"          , "FHCMultiRe":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
-_selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHCMultiRe":"nue1RD"                    , "FHCMultiRmu":"numucc1pi"                  }
-_selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHCMultiRe":"MultiRe"                    }
+_selecs_all["VALOR"       ] = { "FHC1Rmu":"superk__JPARC_FHC__1rmu", "FHC1Re":"superk__JPARC_FHC__1re", "RHC1Rmu":"superk__JPARC_RHC__1rmu", "RHC1Re":"superk__JPARC_RHC__1re", "FHC1Re1dcy":"superk__JPARC_FHC__1re1dcy", "FHCMultiRmu":"superk__JPARC_FHC__multirmu"}
+#_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"anu_sknumubar"          , "RHC1Re":"anu_sknuebar"          , "FHC1Re1dcy":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
+_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"sknumubar"          , "RHC1Re":"sknuebar"          , "FHC1Re1dcy":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
+_selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHC1Re1dcy":"nue1RD"                    , "FHCMultiRmu":"numucc1pi"                  }
+_selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHC1Re1dcy":"1Re1dcy"                    }
 
 # Whether or not to compare the tweaked parameter values between groups
 _compare_param_values = dict()
@@ -1029,7 +1029,7 @@ if __name__=="__main__":
   parser.add_argument('-o', '--out-file'         , dest='output_filename', default=""     , help="Name of the output image file")
   parser.add_argument('-i', '--in-files'         , dest='in_files'       , nargs="+"      , help="Input file names containing spectra to plot. One file per group")
   parser.add_argument('-f', '--formats'          , dest='formats'        , nargs="+"      , help="Name used to identify the format used for hist naming. Choose from: \'VALOR\', \'MaCh3\', \'p-theta\', \'VALOR_legacy\'")
-  parser.add_argument('-s', '--selection'        , dest='selec'          , default=""     , help="The selection name. Choose from: \'FHC1Rmu\', \'FHC1Re\', \'RHC1Rmu\', \'RHC1Re\', \'FHCMultiRe\', \'FHCMultiRmu\'")
+  parser.add_argument('-s', '--selection'        , dest='selec'          , default=""     , help="The selection name. Choose from: \'FHC1Rmu\', \'FHC1Re\', \'RHC1Rmu\', \'RHC1Re\', \'FHC1Re1dcy\', \'FHCMultiRmu\'")
   parser.add_argument('-p', '--params'           , dest='params'         , default=""     , help="File containing a map between param names used by each group. Also used to decide which plots to produce.")
   parser.add_argument('-m', '--modes'            , dest='modes'          , default=""     , help="File containing a map between mode names used by each group. Also used to decide which plots to produce.")
   parser.add_argument('-x', '--x-max'            , dest='x_max'          , type=float     , default=3.0, help="Maximum Ereco value")
