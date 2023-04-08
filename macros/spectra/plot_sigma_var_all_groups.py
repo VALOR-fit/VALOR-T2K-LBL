@@ -26,7 +26,7 @@
 #      p-theta_file.root \
 #      mach3_file.root \
 #    --formats p-theta MaCh3 \
-#    --selection FHC1Re1dcy \
+#    --selection FHCMultiRe \
 #    --x-max 1.25 \
 #    --params maps/valor_mach3_ptheta_xsec_param_name_map.arg \
 #    --modes $VALOR_EXPT/config/maps/valor_mach3_ptheta_mode_name_map.arg
@@ -39,7 +39,6 @@ import sys
 import re
 import copy
 from copy import deepcopy
-from array import *
 
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(1)
@@ -47,7 +46,7 @@ ROOT.gStyle.SetOptTitle(0)
 
 # Names used internally within this macro
 _valid_formats    = ["VALOR", "MaCh3", "p-theta", "VALOR_legacy"]
-_valid_selections = ["FHC1Rmu", "FHC1Re", "RHC1Rmu", "RHC1Re", "FHC1Re1dcy", "FHCMultiRmu"]
+_valid_selections = ["FHC1Rmu", "FHC1Re", "RHC1Rmu", "RHC1Re", "FHCMultiRe", "FHCMultiRmu"]
 _variations       = ["p3", "p1", "m1", "m3"]
 
 #===================================================================================
@@ -89,10 +88,11 @@ _var_names["VALOR_legacy"]  = { "m3":"m3", "m1":"m1", "p1":"p1", "p3":"p3" }
 
 # Beam mode + event topology
 _selecs_all = dict()
-_selecs_all["VALOR"       ] = { "FHC1Rmu":"superk__JPARC_FHC__1rmu", "FHC1Re":"superk__JPARC_FHC__1re", "RHC1Rmu":"superk__JPARC_RHC__1rmu", "RHC1Re":"superk__JPARC_RHC__1re", "FHC1Re1dcy":"superk__JPARC_FHC__1re1dcy", "FHCMultiRmu":"superk__JPARC_FHC__multirmu"}
-_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"anu_sknumubar"          , "RHC1Re":"anu_sknuebar"          , "FHC1Re1dcy":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
-_selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHC1Re1dcy":"nue1RD"                    , "FHCMultiRmu":"numucc1pi"                  }
-_selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHC1Re1dcy":"1Re1dcy"                    }
+_selecs_all["VALOR"       ] = { "FHC1Rmu":"superk__JPARC_FHC__1rmu", "FHC1Re":"superk__JPARC_FHC__1re", "RHC1Rmu":"superk__JPARC_RHC__1rmu", "RHC1Re":"superk__JPARC_RHC__1re", "FHCMultiRe":"superk__JPARC_FHC__multire", "FHCMultiRmu":"superk__JPARC_FHC__multirmu"}
+#_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"anu_sknumubar"          , "RHC1Re":"anu_sknuebar"          , "FHCMultiRe":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
+_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"sknumubar"          , "RHC1Re":"sknuebar"          , "FHCMultiRe":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
+_selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHCMultiRe":"nue1RD"                    , "FHCMultiRmu":"numucc1pi"                  }
+_selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHCMultiRe":"MultiRe"                    }
 
 # Whether or not to compare the tweaked parameter values between groups
 _compare_param_values = dict()
@@ -112,27 +112,25 @@ _param_value_array_patterns["VALOR_legacy"] = None
 # the Erec is obviously the default, but adding here for clarity in plots
 _ptheta_internal_format_suffixes = ["_Erec", "_ETheta", "_PTheta", "_old", "_new"]
 for suffix in _ptheta_internal_format_suffixes:
-  _valid_formats += ["p-theta"+suffix]
-  _hist_nom_name_patterns    ["p-theta"+suffix] = _hist_nom_name_patterns    ["p-theta"]
-  _hist_tweaked_name_patterns["p-theta"+suffix] = _hist_tweaked_name_patterns["p-theta"]
-  _ratio_already_taken       ["p-theta"+suffix] = _ratio_already_taken       ["p-theta"]
-  _var_names                 ["p-theta"+suffix] = _var_names                 ["p-theta"]
-  _selecs_all                ["p-theta"+suffix] = _selecs_all                ["p-theta"]
+    _valid_formats += ["p-theta"+suffix]
+    _hist_nom_name_patterns    ["p-theta"+suffix] = _hist_nom_name_patterns    ["p-theta"]
+    _hist_tweaked_name_patterns["p-theta"+suffix] = _hist_tweaked_name_patterns["p-theta"]
+    _ratio_already_taken       ["p-theta"+suffix] = _ratio_already_taken       ["p-theta"]
+    _var_names                 ["p-theta"+suffix] = _var_names                 ["p-theta"]
+    _selecs_all                ["p-theta"+suffix] = _selecs_all                ["p-theta"]
 
 
 #==================================================================================
 # STUFF THAT CHANGES DEPENDING ON THE HIST NAMES AND FORMATS FOR EACH GROUP (END)
 #==================================================================================
 
-_formats          = None
-_input_files      = dict()
-_selecs           = dict()
-_by_mode          = False
-_mode_map         = None
-_n_modes          = None
-_param_map        = None
-_rebin_to_format  = ""
-_binning_ref_axis = None
+_formats     = None
+_input_files = dict()
+_selecs      = dict()
+_by_mode     = False
+_mode_map    = None
+_n_modes     = None
+_param_map   = None
 
 _line_col = dict()
 _line_col["p3"] = ROOT.kBlue
@@ -163,11 +161,12 @@ _do_sum_cc1pi_modes = False
 _do_sum_ccoth_modes = False
 
 #_______________________________________________________________________
-def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_etrue, compare_sigma, plot_nom_ratio, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth, rebin_to_format):
-  setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth, rebin_to_format)
+def main(output_filename, in_files, formats, selec, params_file, modes_file, x_max, suppress_warn, is_etrue, compare_sigma, plot_nom_ratio, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
+  setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth)
 
   # Should we check that each group has evaluated each parameter at the same values?
   compare_counter = 0
+
   for format in _formats:
     if _compare_param_values[format] and _param_value_array_patterns[format]:
       compare_counter += 1
@@ -189,7 +188,8 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           continue
         nom_ratio_format_pairs.append([fi, fj])
 
-  for ip in range(-1, len(_param_map)):
+  for ip in range(-1, len(_param_map)):    
+    result = True
     plot_nominal = (ip == -1)
     param_name_dict = get_param_name_dict(ip if not plot_nominal else 0)
     for im in range(0, _n_modes):
@@ -204,7 +204,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
         canv_name += "_" + mode_name_dict[_formats[0]]
       if is_etrue:
         canv_ereco = ROOT.TCanvas(canv_name + "_Etrue", canv_name + "_Etrue", 800, 600)
-      else:
+      else: 
         canv_ereco = ROOT.TCanvas(canv_name + "_Ereco", canv_name + "_Ereco", 800, 600)
       canv_binno = ROOT.TCanvas(canv_name + "_binno", canv_name + "_binno", 800, 600)
       canv_ereco.SetMargin(_margin_l, _margin_r, _margin_t, _margin_b)
@@ -213,13 +213,14 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
       leg = ROOT.TLegend(1.0-_margin_r, 0.65 - (0.25 * int(plot_nom_ratio and not plot_nominal)), 0.995, 1.0-_margin_t)
       if not plot_nominal:
-        leg.AddEntry(None, "Variations", "")
+        leg.AddEntry("", "Variations", "")
       h_list       = []
       h_list_binno = []
       hist_max_var = -999
 
       # Get the +/- 1 and 3 sigma variations and take the ratio to the nominal
       first_drawn_var = True
+
       for ivar, sigma_var in enumerate(_variations):
         comparison_dict = dict()
         first_drawn_format = True
@@ -232,6 +233,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
           if not h:
             # Skip any hists that we couldn't read from the input file
             continue
+
           h.SetName(canv_name + ("_" + sigma_var if not plot_nominal else "") + "_" + f)
           h_binno = hist_to_bin_number(h)   # Also plot with the bin number on the x-axis
 
@@ -253,8 +255,8 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
             # Label for each group
             if first_drawn_format:
               if not plot_nominal:
-                leg.AddEntry(None, "", "")  # Blank line
-              leg.AddEntry(None, "Groups", "")
+                leg.AddEntry("", "", "")  # Blank line
+              leg.AddEntry("", "Groups", "")
             h_copy = ROOT.TH1D(h)
             h_copy.SetLineColor(1)  # Keep the group labels in black, so the focus is just on the line style
             leg.AddEntry(h_copy, f, "l")
@@ -269,7 +271,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
         # Throw a warning if any of the ratio hists have a difference greater than some threshold
         if not suppress_warn and not plot_nominal:
-          compare_ratio_hists(param_name_dict, mode_name_dict, sigma_var, comparison_dict)
+          result = compare_ratio_hists(param_name_dict, mode_name_dict, sigma_var, comparison_dict)
         del comparison_dict
 
       if not plot_nominal:
@@ -306,8 +308,8 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
 
         for i, format_pair in enumerate(nom_ratio_format_pairs):
           if i == 0:
-            leg.AddEntry(None, "", "")
-            leg.AddEntry(None, "#splitline{Ratio of}{nominal spectra}", "")
+            leg.AddEntry("", "", "")
+            leg.AddEntry("", "#splitline{Ratio of}{nominal spectra}", "")
 
           h_ratio_of_nominals = h_list_nom_ratio[i]
           scale_factor = 1.0
@@ -389,25 +391,38 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
       title_box.Draw("SAME")
       leg.Draw("SAME")
 
-      canv_ereco.cd()
-      canv_ereco.Update()
       print_opt = ""
       if plot_nominal:
         if _by_mode:
-          print_opt = "Title:Nominal_" + mode_name_dict[_formats[0]]
+            print_opt = "Title:Nominal_" + mode_name_dict[_formats[0]]
         else:
-          print_opt = "Title:Nominal"
+            print_opt = "Title:Nominal"
       else:
         if _by_mode:
-          print_opt = "Title:" + param_name_dict[_formats[0]] + "_" + mode_name_dict[_formats[0]]
+            print_opt = "Title:" + param_name_dict[_formats[0]] + "_" + mode_name_dict[_formats[0]]
         else:
-          print_opt = "Title:" + param_name_dict[_formats[0]]
-      canv_ereco.Print(get_output_name(output_filename, selec, ip, im, False, is_etrue), print_opt)
-      canv_binno.cd()
-      canv_binno.Update()
-      canv_binno.Print(get_output_name(output_filename, selec, ip, im, True, is_etrue), print_opt)
+            print_opt = "Title:" + param_name_dict[_formats[0]]
 
-      # Free up memory
+      print "parameter = " , ip, " ", im, " ", ivar, " ", result, 
+
+      #if not result:
+      #if result:
+      canv_ereco.cd()
+      canv_ereco.Update()
+      if(_by_mode):
+          canv_ereco.Print(get_output_name(output_filename, selec, ip, im, False, is_etrue, result, param_name_dict[_formats[0]], mode_name_dict[_formats[0]]), print_opt)
+          #canv_ereco.cd()
+          #canv_ereco.Update()
+          #canv_ereco.Print(get_output_name_default(output_filename, selec, ip, im, False, is_etrue, True), print_opt)
+
+      else:
+          #canv_ereco.Print(get_output_name(output_filename, selec, ip, im, False, is_etrue, result, param_name_dict[_formats[0]], "allmodes"), print_opt)
+      
+          canv_ereco.cd()
+          canv_ereco.Update()
+          canv_ereco.Print(get_output_name_default(output_filename, selec, ip, im, False, is_etrue, True), print_opt)
+    
+      # Free up memory       
       del canv_ereco
       del canv_binno
       del h_list[:]
@@ -420,7 +435,7 @@ def main(output_filename, in_files, formats, selec, params_file, modes_file, x_m
   print "Done!"
 
 #_______________________________________________________________________
-def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth, rebin_to_format):
+def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_cc1pi, sum_t2k_ccoth):
   global _input_files
   global _formats
   global _selecs
@@ -431,11 +446,9 @@ def setup(in_files, formats, selec, params_file, modes_file, is_unosc, sum_t2k_c
   global _is_unosc
   global _do_sum_cc1pi_modes
   global _do_sum_ccoth_modes
-  global _rebin_to_format
   _by_mode  = modes_file != ""
   _formats  = formats
   _is_unosc = is_unosc
-  _rebin_to_format = rebin_to_format
 
   # Check that the inputs are valid
   if(len(in_files) != len(formats)):
@@ -652,23 +665,30 @@ def get_tweaked(sigma_var, param_name_dict, mode_name_dict, format):
 
 #_______________________________________________________________________
 def get_hist(get_tweaked_hist, sigma_var, param_name_dict, mode_name_dict, format):
-  global _binning_ref_axis
-  global _rebin_to_format
   hname = None
+  machname = None
 
   if get_tweaked_hist:
     hname = _hist_tweaked_name_patterns[format]
+    machname = _hist_tweaked_name_patterns[format]
   else:
     hname = _hist_nom_name_patterns[format]
+    machname = _hist_nom_name_patterns[format]
 
   hname = hname.replace("[SAMPLE]", _selecs[format])
+  machname = hname.replace("[SAMPLE]", _selecs[format])
 
   if get_tweaked_hist:
     hname = hname.replace("[PARAM]" , param_name_dict[format])
     hname = hname.replace("[VAR]"   , _var_names[format][sigma_var])
 
+    machname = hname.replace("[PARAM]" , param_name_dict[format])
+    machname = hname.replace("[VAR]"   , _var_names[format][sigma_var])
+
   if mode_name_dict:
     hname = hname.replace("[MODE]", "_" + mode_name_dict[format])
+    machname = machname.replace("[MODE]", "")
+    
   else:
     hname = hname.replace("[MODE]", "")
 
@@ -682,27 +702,20 @@ def get_hist(get_tweaked_hist, sigma_var, param_name_dict, mode_name_dict, forma
     h = get_valor_hist(hname)
   elif format == "MaCh3":
     h = get_mach3_hist(hname)
+    print "mach3 hist = " , hname
+    #h = get_mach3_hist(machname)
   elif format == "p-theta":
     h = get_ptheta_hist(hname, format)
+    print "ptheta hist = " , hname
   elif format == "VALOR_legacy":
     h = get_t2k_legacy_hist(hname)
   else:
     for suffix in _ptheta_internal_format_suffixes:
-      if format == "p-theta"+suffix:
-        h = get_ptheta_hist(hname, format)
+        if format == "p-theta"+suffix:
+            h = get_ptheta_hist(hname, format)
     if h is None:
-      print "ERROR: Unrecognised format \'{0}\'".format(format)
-      sys.exit()
-
-  if _rebin_to_format:
-    if format == _rebin_to_format:
-      if not _binning_ref_axis:
-        # Store the desired binning
-        buffer = h.GetXaxis().GetXbins().GetArray()
-        _binning_ref_axis = [buffer[i] for i in range(0, h.GetNbinsX()+1)]
-        assert _binning_ref_axis
-    else:
-      h = rebin(h)
+        print "ERROR: Unrecognised format \'{0}\'".format(format)
+        sys.exit()
 
   if h:
     ROOT.SetOwnership(h, False)       # This stops the object being deleted from memory when it goes out of scope
@@ -803,20 +816,20 @@ def list_of_tuples(filename):
 
 #_______________________________________________________________________
 def add_entries_for_internal_formats(tuples, matchFormat, suffixes):
-  formats = tuples[0]
-  newtuples = []
-  for i,f in enumerate(formats):
-    if f == matchFormat:
-      iorg = i
-      for row,tup in enumerate(tuples):
-        newtup = tup
-        for suffix in suffixes:
-          if row == 0:
-            newtup += (matchFormat+suffix,)
-          else:
-            newtup += (tup[iorg],) # copy the value for matchFormat
-        newtuples.append(newtup)
-  return newtuples
+    formats = tuples[0]
+    newtuples = []
+    for i,f in enumerate(formats):
+        if f == matchFormat:
+            iorg = i
+            for row,tup in enumerate(tuples):
+                newtup = tup
+                for suffix in suffixes:
+                    if row == 0:
+                        newtup += (matchFormat+suffix,)
+                    else:
+                        newtup += (tup[iorg],) # copy the value for matchFormat
+                newtuples.append(newtup)
+    return newtuples
 
 #_______________________________________________________________________
 def sort_map(old_list_in, new_order):
@@ -892,9 +905,9 @@ def make_title_box(title):
   return title_box
 
 #_______________________________________________________________________
-def get_output_name(output_filename, selec, ip, im, is_binno, is_etrue):
+def get_output_name(output_filename, selec, ip, im, is_binno, is_etrue, result, param_name, mode_name):
   save_name = output_filename
-  save_name += "_" + selec
+  save_name += "_" + selec + "_" + str(ip) + "_" + param_name + "_" + mode_name
   if is_binno:
     save_name += "_binno"
   elif is_etrue:
@@ -903,6 +916,10 @@ def get_output_name(output_filename, selec, ip, im, is_binno, is_etrue):
     save_name += "_ereco"
   if _by_mode:
     save_name += "_mode"
+  if result:
+    save_name += "_true"
+  else:
+    save_name += "_false"
   save_name += ".pdf"
   start_pdf = (ip == -1) and (im == 0)
   end_pdf   = (ip == len(_param_map) - 1) and (im == _n_modes - 1)
@@ -913,6 +930,33 @@ def get_output_name(output_filename, selec, ip, im, is_binno, is_etrue):
   return save_name
 
 #_______________________________________________________________________
+
+#_______________________________________________________________________
+def get_output_name_default(output_filename, selec, ip, im, is_binno, is_etrue, result):
+  save_name = output_filename
+  #save_name += "_" + selec + "_" + str(ip)
+  if is_binno:
+    save_name += "_binno"
+  elif is_etrue:
+    save_name += "_etrue"
+  else:
+    save_name += "_ereco"
+  if _by_mode:
+    save_name += "_mode"
+  if result:
+    save_name += "_true"
+  else:
+    save_name += "_false"
+  save_name += ".pdf"
+  start_pdf = (ip == -1) and (im == 0)
+  end_pdf   = (ip == len(_param_map) - 1) and (im == _n_modes - 1)
+  if start_pdf:
+    save_name += "("
+  elif end_pdf:
+    save_name += ")"
+  return save_name
+
+#____________________________________________________________________
 def hist_to_bin_number(h):
   nbins = h.GetXaxis().GetNbins()
   hnew = ROOT.TH1D(h.GetName()+"_binno",h.GetTitle()+" by bins",nbins,0,nbins)
@@ -926,6 +970,7 @@ def hist_to_bin_number(h):
 
 #_______________________________________________________________________
 def compare_ratio_hists(param_name_dict, mode_name_dict, sigma_var, comparison_dict):
+  theresult = True
   already_compared = []
   for iformat, fi in enumerate(_formats):
     for jformat, fj in enumerate(_formats):
@@ -937,15 +982,18 @@ def compare_ratio_hists(param_name_dict, mode_name_dict, sigma_var, comparison_d
       for ibin in range(1, comparison_dict[fi].GetNbinsX()):
         diff = 100 * ROOT.TMath.Abs(1.0 - (comparison_dict[fj].GetBinContent(ibin) / comparison_dict[fi].GetBinContent(ibin)))
         if diff > _ratio_diff_warn_threshold_percent:
+          theresult = False
           if _by_mode:
             print "WARNING: For param =", param_name_dict[fi], "; sample =", _selecs[fi], "; mode =", \
                   mode_name_dict[fi], "; Ereco =", comparison_dict[fi].GetBinCenter(ibin), "; variation =", \
-                  sigma_var, "; difference of", diff, "% in the ratios of input and comparison hist"
+                  sigma_var, "; difference of", diff, "% in the ratios of input and comparison hist", \
+                  "mach3 = ", comparison_dict[fj].GetBinContent(ibin),  " ptheta = ", comparison_dict[fi].GetBinContent(ibin)
           else:
             print "WARNING: For param =", param_name_dict[fi], "; sample =", _selecs[fi], "; Ereco =", \
                   comparison_dict[fi].GetBinCenter(ibin), "; variation =", sigma_var, "; difference of", diff, \
-                  "% in the ratios of input and comparison hist"
+                  "% in the ratios of input and comparison hist", "mach3 = ", comparison_dict[fj].GetBinContent(ibin), " ptheta = ", comparison_dict[fi].GetBinContent(ibin)
       already_compared.append([iformat, jformat])
+  return theresult
 
 #_______________________________________________________________________
 def compare_sigma_between_groups():
@@ -973,50 +1021,17 @@ def rescale_around_y_eq_one(h, scale_factor):
     h.SetBinContent(i, scaled_content)
 
 #_______________________________________________________________________
-def rebin(h):
-  global _binning_ref_axis
-  global _rebin_to_format
-
-  # Make sure we have the desired binning
-  if not _binning_ref_axis:
-    get_hist(False, None, None, None, _rebin_to_format)
-
-  # The rebin is only possible if the desired bin edges lie on the current bin edges
-  buffer = h.GetXaxis().GetXbins().GetArray()
-  curr_binning = [buffer[i] for i in range(0, h.GetNbinsX()+1)]
-  for edge in _binning_ref_axis:
-    if edge not in curr_binning:
-      print "WARNING: Tried to rebin hist \'{}\'".format(h.GetName()), "but the desired bin edges", \
-            _binning_ref_axis, "don't align with the current binning", curr_binning, ". Will not rebin."
-      return
-
-  new_binning_array = array('d', _binning_ref_axis)
-  hnew = ROOT.TH1D(h)
-  hnew.Reset()
-  hnew.SetBins(len(new_binning_array)-1, new_binning_array)
-
-  for ibin_old in range(1, h.GetNbinsX()+1):
-    centre  = h.GetBinCenter (ibin_old)
-    content = h.GetBinContent(ibin_old)
-    hnew.Fill(centre, content)
-
-  h = copy.deepcopy(hnew)
-  del hnew
-  return h
-
-#_______________________________________________________________________
 if __name__=="__main__":
-
+  
   import argparse
   parser = argparse.ArgumentParser(description="Plot single-sample +/- 1 and 3 sigma variations and compare between groups")
-
+  
   parser.add_argument('-o', '--out-file'         , dest='output_filename', default=""     , help="Name of the output image file")
   parser.add_argument('-i', '--in-files'         , dest='in_files'       , nargs="+"      , help="Input file names containing spectra to plot. One file per group")
   parser.add_argument('-f', '--formats'          , dest='formats'        , nargs="+"      , help="Name used to identify the format used for hist naming. Choose from: \'VALOR\', \'MaCh3\', \'p-theta\', \'VALOR_legacy\'")
-  parser.add_argument('-s', '--selection'        , dest='selec'          , default=""     , help="The selection name. Choose from: \'FHC1Rmu\', \'FHC1Re\', \'RHC1Rmu\', \'RHC1Re\', \'FHC1Re1dcy\', \'FHCMultiRmu\'")
+  parser.add_argument('-s', '--selection'        , dest='selec'          , default=""     , help="The selection name. Choose from: \'FHC1Rmu\', \'FHC1Re\', \'RHC1Rmu\', \'RHC1Re\', \'FHCMultiRe\', \'FHCMultiRmu\'")
   parser.add_argument('-p', '--params'           , dest='params'         , default=""     , help="File containing a map between param names used by each group. Also used to decide which plots to produce.")
   parser.add_argument('-m', '--modes'            , dest='modes'          , default=""     , help="File containing a map between mode names used by each group. Also used to decide which plots to produce.")
-  parser.add_argument(      '--rebin-to-format'  , dest='rebin_to_format', default=""     , help="If one group has coarser binning than the others, supply the group name here to rebin the hists from the other groups, if possible.")
   parser.add_argument('-x', '--x-max'            , dest='x_max'          , type=float     , default=3.0, help="Maximum Ereco value")
   parser.add_argument('-w', '--suppress-warnings', dest='suppress_warn'  , default=False  , action="store_true", help="Usually warnings are printed if any of the ratio hist bin contents are sufficiently different from that of other groups. Use this option to disable these warnings.")
   parser.add_argument('-c', '--compare-sigma'    , dest='compare_sigma'  , default=False  , action="store_true", help="Print a comparison between the sigma values used by each group for each param.")
@@ -1028,4 +1043,4 @@ if __name__=="__main__":
 
   o = parser.parse_args()
 
-  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_etrue, o.compare_sigma, o.plot_nom_ratio, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth, o.rebin_to_format)
+  main(o.output_filename, o.in_files, o.formats, o.selec, o.params, o.modes, o.x_max, o.suppress_warn, o.is_etrue, o.compare_sigma, o.plot_nom_ratio, o.is_unosc, o.sum_t2k_cc1pi, o.sum_t2k_ccoth)
