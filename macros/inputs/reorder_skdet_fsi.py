@@ -18,6 +18,8 @@ def main(skdet_file, output_file="skdetsipn.root", analysis_version= "oa2020", r
     sk_matrix = skdet_tf.Get("SKJointError_Erec_Total")
   elif analysis_version == "oa2021":
     sk_matrix = skdet_tf.Get("Covariance_Matrix_Erec")
+  elif analysis_version == "oa2021_total":
+    sk_matrix = skdet_tf.Get("SKJointError_Erec_Total")
 
   n = sk_matrix.GetNrows()
   for i in range(0,n):
@@ -27,7 +29,7 @@ def main(skdet_file, output_file="skdetsipn.root", analysis_version= "oa2020", r
   out_tf = ROOT.TFile(output_file,"RECREATE")
   if analysis_version == "oa2020":
     reordered_range = range(12,18)+range(0,12)+range(30,36)+range(18,30)+range(36,44)+range(44,45) # FHC 1Rmu, FHC 1Re, RHC 1Rmu, RHC 1Re, FHC 1Re1dcy, SK E-scale
-  elif analysis_version == "oa2021":
+  elif analysis_version == "oa2021" or analysis_version == "oa2021_total":
     reordered_range = range(12,18)+range(0,12)+range(30,36)+range(18,30)+range(36,44)+range(44,57)+range(57,58) # FHC 1Rmu, FHC 1Re, RHC 1Rmu, RHC 1Re, FHC 1Re1dcy, FHC 2Rmu, SK P-scale
 
   sk_reordered = reorder_tmatrix(sk_matrix, reordered_range)
@@ -38,7 +40,7 @@ def main(skdet_file, output_file="skdetsipn.root", analysis_version= "oa2020", r
 
   if analysis_version == "oa2020":
     sk_reordered.Write("skdetfsi")
-  elif analysis_version == "oa2021":
+  elif analysis_version == "oa2021" or analysis_version == "oa2021_total":
     sk_reordered.Write("skdetsipn")
 
   print "reordered matrix"
