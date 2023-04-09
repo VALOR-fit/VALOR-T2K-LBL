@@ -301,6 +301,13 @@ def get_banff_name(param):
       sys.exit()
     banff_name += str(int(param_number[0]))
 
+  if "EB_dial_O_nubar" in valor_name:
+    print("VALOR name converting:" + valor_name)
+    banff_name = "EB_bin_O_nubar"
+  elif "EB_dial_O_nu" in valor_name:
+    print("VALOR name converting:" + valor_name)
+    banff_name = "EB_bin_O_nu"
+
   return banff_name
 
 

@@ -2956,7 +2956,8 @@
       <Etrue>  0.0, inf  </Etrue>
     </apply_to_range>
 
-    <type>  disabled  </type>
+    <type>  response  </type>
+   <!-- <type>  disabled  </type> -->
 
     <categories>
       <category>  BANFF  </category>
@@ -2999,7 +3000,8 @@
       <Etrue>  0.0, inf  </Etrue>
     </apply_to_range>
 
-    <type> disabled </type>
+    <type>  response  </type>
+    <!-- <type>  disabled  </type> -->
 
     <categories>
       <category>  BANFF  </category>
