@@ -90,7 +90,8 @@ _var_names["VALOR_legacy"]  = { "m3":"m3", "m1":"m1", "p1":"p1", "p3":"p3" }
 # Beam mode + event topology
 _selecs_all = dict()
 _selecs_all["VALOR"       ] = { "FHC1Rmu":"superk__JPARC_FHC__1rmu", "FHC1Re":"superk__JPARC_FHC__1re", "RHC1Rmu":"superk__JPARC_RHC__1rmu", "RHC1Re":"superk__JPARC_RHC__1re", "FHC1Re1dcy":"superk__JPARC_FHC__1re1dcy", "FHCMultiRmu":"superk__JPARC_FHC__multirmu"}
-_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"anu_sknumubar"          , "RHC1Re":"anu_sknuebar"          , "FHC1Re1dcy":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
+#_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"anu_sknumubar"          , "RHC1Re":"anu_sknuebar"          , "FHCMultiRe":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
+_selecs_all["MaCh3"       ] = { "FHC1Rmu":"sknumu"                 , "FHC1Re":"sknue"                 , "RHC1Rmu":"sknumubar"          , "RHC1Re":"sknuebar"          , "FHC1Re1dcy":"sknue1pi"                  , "FHCMultiRmu":"sknumucc1pi"                }
 _selecs_all["p-theta"     ] = { "FHC1Rmu":"numu1R"                 , "FHC1Re":"nue1R"                 , "RHC1Rmu":"numubar1R"              , "RHC1Re":"nuebar1R"              , "FHC1Re1dcy":"nue1RD"                    , "FHCMultiRmu":"numucc1pi"                  }
 _selecs_all["VALOR_legacy"] = { "FHC1Rmu":"1Rmu"                   , "FHC1Re":"1Re"                   , "RHC1Rmu":"RHC1Rmu"                , "RHC1Re":"RHC1Re"                , "FHC1Re1dcy":"1Re1dcy"                    }
 
