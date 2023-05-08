@@ -132,9 +132,18 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
 
   # Loop over the input files and fill the output tree
   iev = 0
+  ievent = 0
+  reject_counter_total = 0
   nev_input = [0 for i in appropriate_files]
   nev_rej_erec_neg = [0 for i in appropriate_files] # this will count # of  rejkected events below energy cut
   nev_rej_erec_big = [0 for i in appropriate_files] # and this one for above the cut
+  nev_rej_plep = [0 for i in appropriate_files] # and this is for reconstructed lepton momentum cut
+  nev_rej_NC_osc = [0 for i in appropriate_files] # and this one for skipped oscillated NC events
+  nev_rej_1Re = [0 for i in appropriate_files] # and this one for 1Re cuts
+  nev_rej_1Re1dcy = [0 for i in appropriate_files] # and this one for 1Re cuts
+  nev_rej_1Rmu = [0 for i in appropriate_files] # and this one for 1Re cuts
+  nev_rej_multirmu_cuts_1de = [0 for i in appropriate_files] # and this one for 1Re cuts
+  nev_rej_multirmu_cuts_2de = [0 for i in appropriate_files] # and this one for 1Re cuts
   entries_per_beam_sample_mode = [[[0 for i in range(0, conv.kmOther)] for j in range(0, conv.kMaxNSamples)] for k in range(0, conv.kNBeamsDefined)]
   files_found_selected_mode_in = dict()
   for ifile in range(0, len(appropriate_files)):
@@ -144,6 +153,13 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
     nev_input[ifile] += in_tree.GetEntries()
     nev_rej_erec_neg[ifile] = 0
     nev_rej_erec_big[ifile] = 0
+    nev_rej_plep[ifile] = 0
+    nev_rej_NC_osc[ifile] = 0
+    nev_rej_1Re[ifile] = 0
+    nev_rej_1Re1dcy[ifile] = 0
+    nev_rej_1Rmu[ifile] = 0
+    nev_rej_multirmu_cuts_1de[ifile] = 0
+    nev_rej_multirmu_cuts_2de[ifile] = 0
 
     sample[0]       = get_selection(file_in_name)
     detector[0]     = conv.kdSuperK
@@ -155,6 +171,7 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
     wght_pot[0]     = get_pot_weight(this_scale)
 
     for event in in_tree:
+      ievent += 1
       temp_enu_reco = ROOT.Double(-999)
       plep_reco     = ROOT.Double(-999)
       neut_mode     = event.mode
@@ -170,12 +187,76 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
         # Skip oscillated NC events, because NC is always just the sum of events in numu, nue, nutau. So the oscillation
         # is already accounted for.
         # MA:Also plep_reco<0 cut is crucial from OA2021, as from now on mtuples are without momentum cut
-        nev_input[ifile] -= 1
+        #nev_input[ifile] -= 1
+        reject_counter = 0
         if enu_reco[0] < 0.:
           nev_rej_erec_neg[ifile] += 1
+          reject_counter += 1
         if enu_reco[0]>30.:
           nev_rej_erec_big[ifile] += 1
+          reject_counter += 1
+        if plep_reco < 0.:
+          nev_rej_plep[ifile] += 1
+          reject_counter += 1
+        if (is_oscillated and not util.ModeIsCC(reac_mode[0])):
+          nev_rej_NC_osc[ifile] += 1
+          reject_counter += 1
+        if reject_counter > 1:
+          reject_counter_total += 1
         continue
+
+      if ((event.fqevis < 100 or enu_reco[0] > 1.250) and event.iclass == 11): #1Re Cut
+        #if not util.ModeIsCC(reac_mode[0]) and event.erec != enu_reco[0]*1000:
+        #  print "NC event! event.erec is: ", event.erec, " enu_reco[0] is ", enu_reco[0]
+        nev_rej_1Re[ifile] += 1
+        continue
+      if ((event.fqevis < 100 or enu_reco[0] > 1.250) and event.iclass == 14): #1Re1dcy cut
+        #if not util.ModeIsCC(reac_mode[0]) and event.erec != enu_reco[0]*1000:
+        #  print "NC event! event.erec is: ", event.erec, " enu_reco[0] is ", enu_reco[0]
+        nev_rej_1Re1dcy[ifile] += 1
+        continue
+      #if (event.fqmomm < 200 and event.iclass == 13): #1Rmu cut
+      if (plep_reco < 0.2 and event.iclass == 13): #1Rmu cut
+        #if not util.ModeIsCC(reac_mode[0]) and event.fqmomm != plep_reco*1000:
+        #  print "NC event! fqmomm is: ", event.fqmomm, " plep_reco is ", plep_reco
+        #if(nev_rej_1Rmu[ifile] < 10):
+          #print "Rejecting event with: "
+          #print "iclass ", event.iclass
+          #print "fqmomm ", event.fqmomm
+          #print "plep_reco ", plep_reco
+        nev_rej_1Rmu[ifile] += 1
+        continue
+      fqmreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
+      if ((event.evisible < 30 or (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1]) < 300) and event.iclass == 31): #multirmu_cuts_1de cut
+      #if ((event.evisible < 30 or (event.elosssum_pipi < 300)) and event.iclass == 31): #multirmu_cuts_1de cut
+        #print "fqmreloss sum ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1])
+        #if (event.elosssum_pipi > 300):
+         # print "eloss does not match! ", event.elosssum_pipi, " manual ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1])
+        nev_rej_multirmu_cuts_1de[ifile] += 1
+        continue
+      if (event.evisible < 30 and event.iclass == 32): #multirmu_cuts_2de
+        nev_rej_multirmu_cuts_2de[ifile] += 1
+        continue
+      #print "iclass of event ", event.iclass
+      #print "fqevis of event ", event.fqevis
+      #print "evisible of event ", event.evisible
+      #fqmreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
+      #print "fqmreloss[ipp][0] of event ", fqmreloss[event.ipp][0]
+      #print "fqmreloss[ipp][1] of event ", fqmreloss[event.ipp][1]
+      #print "enu_reco[0] of event ", enu_reco[0]
+      #print "erec of event ", event.erec
+      #if(enu_reco[0] != event.erec/1000 and event.iclass != 11):
+      #  print "Erecos don't match"
+      #  print "iclass of event ", event.iclass
+      #  print "enu_reco[0] of event ", enu_reco[0]
+      #  print "erec of event ", event.erec
+      #if(enu_reco[0] == event.erec/1000):
+      #  print "Erecos match"
+      #  print "iclass of event ", event.iclass
+      #  print "enu_reco[0] of event ", enu_reco[0]
+      #  print "erec of event ", event.erec
+
+
       #Debug selected events
       #f sample[0] == conv.ksMultiRmu and beam[0] == conv.kbJPARC_FHC:
       # if reac_mode[0] == (conv.kmNuMuNC1piC or conv.kmNuMuBarNC1piC or kmNuENC1piC or kmNuEBarNC1piC):
@@ -204,7 +285,6 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   tree_out.Write("valor_t2k_dst")
   output_file.Close()
   print "Written the MC DST to the output file", output_filename
-
   # Print debug info
   print "The number of events in each mode are:"
   for beam in beams:
@@ -226,21 +306,53 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
   nev_input_tot = 0
   nev_rej_erec_neg_tot = 0
   nev_rej_erec_big_tot = 0
+  nev_rej_plep_tot = 0
+  nev_rej_NC_osc_tot = 0
+  nev_rej_1Re_tot = 0
+  nev_rej_1Re1dcy_tot = 0
+  nev_rej_1Rmu_tot = 0
+  nev_rej_multirmu_cuts_1de_tot = 0
+  nev_rej_multirmu_cuts_2de_tot = 0
   for ifile in range(0, len(appropriate_files)):
     nev_input_tot += nev_input[ifile]
     print " ", appropriate_files[ifile], ":", nev_input[ifile]
     nev_rej_erec_neg_tot+=nev_rej_erec_neg[ifile]
     nev_rej_erec_big_tot+=nev_rej_erec_big[ifile]
+    nev_rej_plep_tot+=nev_rej_plep[ifile]
+    nev_rej_NC_osc_tot+=nev_rej_NC_osc[ifile]
+    nev_rej_1Re_tot += nev_rej_1Re[ifile]
+    nev_rej_1Re1dcy_tot += nev_rej_1Re1dcy[ifile]
+    nev_rej_1Rmu_tot += nev_rej_1Rmu[ifile]
+    nev_rej_multirmu_cuts_1de_tot += nev_rej_multirmu_cuts_1de[ifile]
+    nev_rej_multirmu_cuts_2de_tot += nev_rej_multirmu_cuts_2de[ifile]
     print " rejected Ereco<0: ", nev_rej_erec_neg[ifile]
     print " rejected Ereco>30: ", nev_rej_erec_big[ifile]
+    print " rejected plep<0: ", nev_rej_plep[ifile]
+    print " rejected NC oscillated: ", nev_rej_NC_osc[ifile]
+    print " rejected 1Re cut: ", nev_rej_1Re[ifile]
+    print " rejected 1Re1dcy cut: ", nev_rej_1Re1dcy[ifile]
+    print " rejected 1Rmu cut: ", nev_rej_1Rmu[ifile]
+    print " rejected multirmu_cuts_1de cut: ", nev_rej_multirmu_cuts_1de[ifile]
+    print " rejected multirmu_cuts_2de cut: ", nev_rej_multirmu_cuts_2de[ifile]
+    print ""
   print "The total number of events across all input files is = ", nev_input_tot
   print "The total number of events in the output DST = ", nev_output_tot
   print "The total number of rejected events Erec<0 =", nev_rej_erec_neg_tot
   print "The total number of rejected events Erec>30 =", nev_rej_erec_big_tot
-
+  print "The total number of rejected events plep<0 =", nev_rej_plep_tot
+  print "The total number of rejected NC oscillated =", nev_rej_NC_osc_tot
+  print "The total number of events with two or more rejection criteria =", reject_counter_total
+  print "Total rejected due to 1Re cut: ", nev_rej_1Re_tot
+  print "Total rejected due to 1Re1dcy cut: ", nev_rej_1Re1dcy_tot
+  print "Total rejected due to 1Rmu cut: ", nev_rej_1Rmu_tot
+  print "Total rejected due to multirmu_cuts_1de cut: ", nev_rej_multirmu_cuts_1de_tot
+  print "Total rejected due to multirmu_cuts_2de cut: ", nev_rej_multirmu_cuts_2de_tot
+  total_rejected = nev_rej_erec_neg_tot + nev_rej_erec_big_tot + nev_rej_plep_tot + nev_rej_NC_osc_tot + nev_rej_1Re_tot + nev_rej_1Re1dcy_tot + nev_rej_1Rmu_tot + nev_rej_multirmu_cuts_1de_tot + nev_rej_multirmu_cuts_2de_tot - reject_counter_total
+  print "The total number of rejected events=", total_rejected
+  if(total_rejected != (nev_input_tot - nev_output_tot) ):
+    print "WARNING: Rejected events do not match difference between input and output ", (nev_input_tot - nev_output_tot)
   if len(files_found_selected_mode_in) > 0:
     print "The selected mode/sample/beam combination was found in events from the following files:\n", files_found_selected_mode_in
-
   print "Done!"
 
 
@@ -404,14 +516,16 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
   else:
     mom_shift = mom_shift_nu
 
-  shifted_mom = ROOT.Double(mom + mom_shift)
-  elep = ROOT.Double(ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom))
-  theta_reco_rads = ROOT.Double(Theta_reco * (ROOT.TMath.Pi() / 180.0))   # Theta_reco is input in degrees, so convert to radians here
+
 
   if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
     # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
     ereco_MeV = event.erec
+    shifted_mom = ROOT.Double(mom)
   else:
+    shifted_mom = ROOT.Double(mom + mom_shift)
+    elep = ROOT.Double(ROOT.TMath.Sqrt(mass*mass +shifted_mom*shifted_mom))
+    theta_reco_rads = ROOT.Double(Theta_reco * (ROOT.TMath.Pi() / 180.0))   # Theta_reco is input in degrees, so convert to radians here
     if sample != conv.ks1Re1dcy and sample!=conv.ksMultiRmu:
       ereco_MeV  = (mn - Vnuc)*elep - mass*mass/2.
       ereco_MeV += mn*Vnuc - Vnuc*Vnuc/2.
