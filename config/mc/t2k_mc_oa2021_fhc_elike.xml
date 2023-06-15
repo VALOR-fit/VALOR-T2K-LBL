@@ -54,12 +54,12 @@ Input MC templates
 
   <dst>
     <jparc_fhc>
-       <filename> official/2021/superk/mc/Minituples_21b_031221_withHardCuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_21bv2_valor_dst_03_12_2021_hardcuts.root </filename>
+       <filename> official/2021/superk/mc/Minituples_21b_031221_EMiss_withcuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_21bv2_valor_dst_14_06_2023_DSTCUTS.root </filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2021/superk/mc/Minituples_21b_031221_withHardCuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_21bv2_valor_dst_03_12_2021_hardcuts.root </filename>
+        <filename> official/2021/superk/mc/Minituples_21b_031221_EMiss_withcuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_21bv2_valor_dst_14_06_2023_DSTCUTS.root </filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>
@@ -102,7 +102,7 @@ Splines
 -->
 
 <splines>
-    <folder>          official/2021/xsec/splines2023_softcuts/valor_format                     </folder>
+    <folder>          official/2021/xsec/splines2023_05_13/valor_format                     </folder>
     <pattern>         splines_spline2021splinesfitqunPreerectheta_[BEAM]_[SAMPLE].root  </pattern>
     <stored_as>       TObjArray                                                         </stored_as>
     <array_pattern>   spl_[MODE]_[PARAM]                                                </array_pattern>

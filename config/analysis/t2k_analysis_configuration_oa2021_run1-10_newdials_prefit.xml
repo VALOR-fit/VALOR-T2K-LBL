@@ -97,18 +97,18 @@
       <format> t2k_banff_params_oa2021.xml </format>
       
       <covariance_matrix>
-        <filename> official/2021/banff/dummy_matrix_v1/BANFF_Asimov_dummymatrix_v1_fit-with-PB-OP-fixed-and-noEB_dummyEBadded_valor_order_all.root </filename>
+        <filename> official/2021/banff/datafit_mirror2p2h/BANFF_datafit_linearInterpolationEB_EBalphaFixed_mirror2p2hShapeCnp_valor_order_all.root </filename>
         <objname>  prefit_cov    </objname>
         <objtype>  TMatrixD       </objtype>
       </covariance_matrix>
 
       <untuned_values>
-        <filename> official/2021/banff/dummy_matrix_v1/BANFF_Asimov_dummymatrix_v1_fit-with-PB-OP-fixed-and-noEB_dummyEBadded_valor_order_all.root </filename>
+        <filename> official/2021/banff/datafit_mirror2p2h/BANFF_datafit_linearInterpolationEB_EBalphaFixed_mirror2p2hShapeCnp_valor_order_all.root </filename>
         <objname>  banff_untuned_central_values  </objname>
       </untuned_values>
 
       <initial_values>
-        <filename> official/2021/banff/dummy_matrix_v1/BANFF_Asimov_dummymatrix_v1_fit-with-PB-OP-fixed-and-noEB_dummyEBadded_valor_order_all.root </filename>
+        <filename> official/2021/banff/datafit_mirror2p2h/BANFF_datafit_linearInterpolationEB_EBalphaFixed_mirror2p2hShapeCnp_valor_order_all.root </filename>
         <objname>  prefit_params  </objname>
       </initial_values>
     </group>
@@ -120,7 +120,7 @@
       <format> t2k_sk_params_oa2021.xml </format>
 
       <covariance_matrix>
-        <filename> official/2021/skdetfsi/SKDetErrorMatrixFrankenstein_20210928_valor_order_Escale_test.root </filename>
+        <filename> official/2021/skdetfsi/SKJointErrorMatrix_Total_more_throws_OA2021_310122_erec_valor_order.root </filename>
         <objname>  skdetsipn    </objname>
         <objtype>  TMatrixD    </objtype>
       </covariance_matrix>

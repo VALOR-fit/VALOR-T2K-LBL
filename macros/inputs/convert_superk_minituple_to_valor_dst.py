@@ -230,8 +230,8 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       if ((event.evisible < 30 or (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1]) < 300) and event.iclass == 31): #multirmu_cuts_1de cut
       #if ((event.evisible < 30 or (event.elosssum_pipi < 300)) and event.iclass == 31): #multirmu_cuts_1de cut
         #print "fqmreloss sum ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1])
-        #if (event.elosssum_pipi > 300):
-         # print "eloss does not match! ", event.elosssum_pipi, " manual ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1])
+        if (event.elosssum_pipi > 300):
+          print "eloss does not match! ", event.elosssum_pipi, " manual ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1])
         nev_rej_multirmu_cuts_1de[ifile] += 1
         continue
       if (event.evisible < 30 and event.iclass == 32): #multirmu_cuts_2de
