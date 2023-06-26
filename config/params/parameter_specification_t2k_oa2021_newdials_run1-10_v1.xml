@@ -6843,7 +6843,7 @@
 
 
 
-      <!-- ==================================================================================== -->
+      <!-- ====================================================================================
 
 
   <param>
@@ -6858,7 +6858,7 @@
     <Ereco>  0.0, inf  </Ereco>
   </apply_to_range>
 
-  <!--<type>  lateral_post_osc  </type>-->
+  <type>  lateral_post_osc  </type>
   <type>  disabled  </type>
 
   <categories>
@@ -6883,6 +6883,6 @@
   <step_mode>              frac  </step_mode>
   <step>                   0.01  </step>
   </param>
-
+        -->
 
   </param_list>
