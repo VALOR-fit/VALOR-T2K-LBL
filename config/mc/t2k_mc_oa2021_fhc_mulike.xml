@@ -58,12 +58,12 @@ Input MC templates
          TODO: Now that we have a different MC config file for each sample, the MC DST can be split into one tree/file
          TODO: for each sample. This would just be to improve the efficiency of GSSFM::Read, so is not an essential change.
        -->
-       <filename> official/2021/superk/mc/Minituples_21b_031221_EMiss_withcuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_21bv2_with_cuts_06_26.root</filename>
+       <filename> official/2021/superk/mc/Minituples_21b_031221_EMiss_withcuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_21bv2_with_cuts_CHANGEDVISIBLESCALE.root</filename>
        <objname>  valor_t2k_dst </objname>
        <objtype>  TTree </objtype>
     </jparc_fhc>
     <jparc_rhc>
-        <filename> official/2021/superk/mc/Minituples_21b_031221_EMiss_withcuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_21bv2_with_cuts_06_26.root</filename>
+        <filename> official/2021/superk/mc/Minituples_21b_031221_EMiss_withcuts/valor_format/t2k_skmc19b_fqv4r0_neut5.4_valor_dst_21bv2_with_cuts_CHANGEDVISIBLESCALE.root</filename>
         <objname>  valor_t2k_dst </objname>
         <objtype>  TTree </objtype>
     </jparc_rhc>
