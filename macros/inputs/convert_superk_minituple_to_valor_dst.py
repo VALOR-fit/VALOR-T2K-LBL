@@ -79,6 +79,13 @@ t2k_beam_dir = [0.669764, -0.742179, 0.024223]  # This is a direct copy of kBeam
 # TODO: the int from the tree, use the lookup table (map<int,string>?) to convert this to a string, and then call
 # TODO: FromString(string) to get the current VALOR enumeration.
 
+mn   = ROOT.Double(conv.kNeutronMassGeV  * 1000.) # MeV
+mp   = ROOT.Double(conv.kProtonMassGeV   * 1000.) # MeV
+me   = ROOT.Double(conv.kElectronMassGeV * 1000.) # MeV
+mm   = ROOT.Double(conv.kMuonMassGeV     * 1000.) # MeV
+md   = ROOT.Double(conv.kDeltaMassGeV    * 1000.) # MeV
+mpi  = ROOT.Double(139.57) #MeV
+
 #_______________________________________________________________________
 
 def main(fhc_dir, rhc_dir, output_filename, modelist_file):
@@ -178,7 +185,9 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
       reac_mode[0]  = NeutModeToValorMode(neut_mode, true_nu_flavour, is_oscillated)
       enu_true[0]   = event.pnu[0]  # Already in GeV/c
       Theta_reco[0] = calc_theta_degrees(event, sample[0])
-      temp_enu_reco, plep_reco = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])
+      temp_enu_reco, plep_reco, visiblescale = calc_enu_reco(event, sample[0], reac_mode[0], Theta_reco[0])
+      #print "VisibleScale is ", visiblescale
+
       enu_reco[0]   = temp_enu_reco   # Already in GeV
       wght[0]       = group_misc_weights(event, neut_mode, sample[0]) # Group all of the standard multiplicative NIWG weights into a single weight
 
@@ -205,12 +214,12 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
           reject_counter_total += 1
         continue
 
-      if ((event.fqevis < 100 or enu_reco[0] > 1.250) and event.iclass == 11): #1Re Cut
+      if ((event.fqevis < (100/visiblescale) or enu_reco[0] > 1.250) and event.iclass == 11): #1Re Cut
         #if not util.ModeIsCC(reac_mode[0]) and event.erec != enu_reco[0]*1000:
         #  print "NC event! event.erec is: ", event.erec, " enu_reco[0] is ", enu_reco[0]
         nev_rej_1Re[ifile] += 1
         continue
-      if ((event.fqevis < 100 or enu_reco[0] > 1.250) and event.iclass == 14): #1Re1dcy cut
+      if ((event.fqevis < (100/visiblescale) or enu_reco[0] > 1.250) and event.iclass == 14): #1Re1dcy cut
         #if not util.ModeIsCC(reac_mode[0]) and event.erec != enu_reco[0]*1000:
         #  print "NC event! event.erec is: ", event.erec, " enu_reco[0] is ", enu_reco[0]
         nev_rej_1Re1dcy[ifile] += 1
@@ -227,14 +236,14 @@ def main(fhc_dir, rhc_dir, output_filename, modelist_file):
         nev_rej_1Rmu[ifile] += 1
         continue
       fqmreloss = c_to_pyroot_array_hack(event.fqmreloss,200,6)
-      if ((event.evisible < 30 or (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1]) < 300) and event.iclass == 31): #multirmu_cuts_1de cut
+      if ((event.evisible < (30/visiblescale) or (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1]) < (300/visiblescale)) and event.iclass == 31): #multirmu_cuts_1de cut
       #if ((event.evisible < 30 or (event.elosssum_pipi < 300)) and event.iclass == 31): #multirmu_cuts_1de cut
         #print "fqmreloss sum ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1])
-        if (event.elosssum_pipi > 300):
-          print "eloss does not match! ", event.elosssum_pipi, " manual ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1])
+        if (event.elosssum_pipi > (300/visiblescale)):
+          print "eloss does not match! ", event.elosssum_pipi, " manual ", (fqmreloss[event.ipp][0] + fqmreloss[event.ipp][1]), " visible scale is ", visiblescale
         nev_rej_multirmu_cuts_1de[ifile] += 1
         continue
-      if (event.evisible < 30 and event.iclass == 32): #multirmu_cuts_2de
+      if (event.evisible < (30/visiblescale) and event.iclass == 32): #multirmu_cuts_2de
         nev_rej_multirmu_cuts_2de[ifile] += 1
         continue
       #print "iclass of event ", event.iclass
@@ -474,12 +483,12 @@ def calc_theta_degrees(event, sample):
 def calc_enu_reco(event, sample, reac_mode, Theta_reco):
   ereco_MeV = ROOT.Double(-999)
   Vnuc = ROOT.Double(27.0)                          # Nominal binding energy, MeV
-  mn   = ROOT.Double(conv.kNeutronMassGeV  * 1000.) # MeV
-  mp   = ROOT.Double(conv.kProtonMassGeV   * 1000.) # MeV
-  me   = ROOT.Double(conv.kElectronMassGeV * 1000.) # MeV
-  mm   = ROOT.Double(conv.kMuonMassGeV     * 1000.) # MeV
-  md   = ROOT.Double(conv.kDeltaMassGeV    * 1000.) # MeV
-  mpi  = ROOT.Double(139.57) #MeV
+ # mn   = ROOT.Double(conv.kNeutronMassGeV  * 1000.) # MeV
+ # mp   = ROOT.Double(conv.kProtonMassGeV   * 1000.) # MeV
+ # me   = ROOT.Double(conv.kElectronMassGeV * 1000.) # MeV
+ # mm   = ROOT.Double(conv.kMuonMassGeV     * 1000.) # MeV
+ # md   = ROOT.Double(conv.kDeltaMassGeV    * 1000.) # MeV
+ # mpi  = ROOT.Double(139.57) #MeV
 
   mass = ROOT.Double(0)
   mom  = ROOT.Double(0)
@@ -520,6 +529,10 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
 
   if not (util.ModeIsCC(reac_mode) and event.Ibound != 0):
     # Don't apply the Coulomb shift to NC events or events on Hydrogen (i.e. Ibound == 0)
+   # if not util.ModeIsCC(reac_mode):
+   #  print "Not applying CC due to NC event"
+   # if event.Ibound != 0:
+   #   print "Not applying CC due to Oxygen"
     ereco_MeV = event.erec
     shifted_mom = ROOT.Double(mom)
   else:
@@ -542,9 +555,30 @@ def calc_enu_reco(event, sample, reac_mode, Theta_reco):
   #OLD: Convert from MeV to GeV and set any overflow events with Erec > 29.9GeV to Erec = 29.9GeV
   #OLD: return [ROOT.Double(ROOT.TMath.Min(ereco_MeV / 1000., 29.9)), shifted_mom / 1000.]
 
-  return [ROOT.Double(ereco_MeV/1000.), shifted_mom/1000.]
+  visiblescale = ScaleVisbleFactor(mass, mom, shifted_mom)
+  #print "Momentum ", mom, " Shifted momentum ", shifted_mom
+
+  return [ROOT.Double(ereco_MeV/1000.), shifted_mom/1000., visiblescale]
 
 
+#----------------------------------------------------------------------
+def ScaleVisbleFactor(mass, mom, shifted_mom):
+
+
+  momentumThreshold = returnCherenkovThresholdMomentum(mass)
+
+  visiblescale = 0
+  if mom > momentumThreshold:
+    visiblescale = (shifted_mom - momentumThreshold) / (mom - momentumThreshold)
+
+  return visiblescale
+
+
+#---------------------------------------------------------------
+def returnCherenkovThresholdMomentum(mass):
+  refractiveIndex = 1.334 #From https://github.com/fiTQun/fiTQun/blob/646cf9c8ba3d4f7400bcbbde029d5ca15513a3bf/fiTQun_shared.cc#L757
+  momentumThreshold = ROOT.Double(mass/ROOT.TMath.Sqrt(refractiveIndex*refractiveIndex-1.))
+  return momentumThreshold
 #_______________________________________________________________________
 # Group all of the standard multiplicative NIWG and flux weights etc. into a single weight
 def group_misc_weights(event, neut_mode, sample):

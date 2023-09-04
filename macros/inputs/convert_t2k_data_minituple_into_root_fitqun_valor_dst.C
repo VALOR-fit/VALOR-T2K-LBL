@@ -22,23 +22,26 @@ double dir_nu[3] = {0.669764, -0.742179, 0.024223};
 int sk_code_1re     = 11;
 int sk_code_1rmu    = 13;
 int sk_code_1re1dcy = 14;
+int sk_code_multirmu_1de = 31;
+int sk_code_multirmu_2de = 32;
 
 const char* valor_minidst_name = "valor_t2k_data_mini_dst";
 
-bool print_low_level_info = false;
+bool print_low_level_info = true;
 
 //___________________________________________________________________________
 // Prototypes
 bool   EventIsMuLike   (int iclass);
 bool   EventIsELike    (int iclass);
+bool   EventIsMultiRmuLike    (int iclass);
 bool   EventIsFHC      (int horn_current);
-double CalcThetaDegrees(float dir[][7][3], int iclass);
+double CalcThetaDegrees(float fq1rdir[][7][3], int iclass);
 
 
 //___________________________________________________________________________
 void convert_t2k_data_minituple_into_root_fitqun_valor_dst
 (
- const char* output_tag     = "SK_data_Run1-9d_valor_minidst",
+ const char* output_tag     = "SK_data_oa2021_valor_minidst",
  const char* input_file     = "$VALOR_EXPT/data/official/2018/data/t2ksk.14c.fqv4r0.full_run1-9.data.minituple_cuts_applied.root",
  const char* input_treename = "minituple"
  )
@@ -49,7 +52,7 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
   // At this point, we don't have an MC, so can't load in the config files to read the beam and sample lists, so hard-code them here
   std::vector<BeamConf_t> beams = {kbJPARC_FHC, kbJPARC_RHC};
   std::map<BeamConf_t, std::vector<Sample_t>> samples;
-  std::vector<Sample_t> vs = {ks1Rmu, ks1Re, ksMultiRe};
+  std::vector<Sample_t> vs = {ks1Rmu, ks1Re, ks1Re1dcy, ksMultiRmu};
   samples.insert(std::make_pair(kbJPARC_FHC, vs));
   vs = {ks1Rmu, ks1Re};
   samples.insert(std::make_pair(kbJPARC_RHC, vs));
@@ -58,17 +61,26 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
   TFile * fin = new TFile(input_file,"OPEN");
   assert(fin);
   TTree * tree = (TTree*) fin->Get(input_treename);
+  std::cout << input_treename << std::endl;
   assert(tree);
 
   // Set up the input tree branches
   double erec;          // Neutrino reconstructed energy
-  int    iclass;        // SK selection code. 11 is single-ring e-like, 13 is single-ring mu-like, 14 is 1Re1dcy (i.e. e CC1pi-like)
-  float  dir[2][7][3];  // Array containing the direction of the outgoing lepton
+  int    iclass, ipp;        // SK selection code. 11 is single-ring e-like, 13 is single-ring mu-like, 14 is 1Re1dcy (i.e. e CC1pi-like)
+  // NOTE:
+  float  fq1rdir[10][7][3], fqmrdir[200][6][3], fqmomm, fqmrmom[200][6], evisible, fqevis, fqmreloss[200][6];  // Array containing the direction of the outgoing lepton
   double horn_current;  // FHC (>0) or RHC (<0)
   tree->SetBranchAddress("erec"        , &erec);
   tree->SetBranchAddress("iclass"      , &iclass);
   tree->SetBranchAddress("horn_current", &horn_current);
-  tree->SetBranchAddress("fq1rdir"     , &dir);
+  tree->SetBranchAddress("fq1rdir"     , &fq1rdir);
+  tree->SetBranchAddress("fqmrdir"     , &fqmrdir);
+  tree->SetBranchAddress("ipp"     , &ipp);
+  tree->SetBranchAddress("fqmomm"     , &fqmomm);
+  tree->SetBranchAddress("fqmreloss"     , &fqmreloss);
+  tree->SetBranchAddress("fqevis", &fqevis);
+  tree->SetBranchAddress("evisible", &evisible);
+
 
   // Set up the output file and VALOR miniDST tree
   TString out_file_name = TString::Format("%s.root", output_tag);
@@ -97,29 +109,58 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
   }
 
   // Loop over the input tree to determine the kinematics, sample, beam and weights of each event and fill the output tree
-  int n_fhc_mu=0,n_rhc_mu=0,n_fhc_e=0,n_rhc_e=0,n_multie=0;
+  int n_fhc_mu=0,n_rhc_mu=0,n_fhc_e=0,n_rhc_e=0,n_multie=0, n_multimu=0;
   int nentries = tree->GetEntriesFast();
   int nev_survived_cuts = 0;
   for(int i = 0; i < nentries; i++) {
-    tree->GetEntry(i);
+      std::cout << "i is " << i << std::endl;
+      std::cout << tree->GetEntry(i) << std::endl;
+      std::cout << tree << std::endl;
+      tree->GetEntry(i);
+      std::cout << erec << std::endl;
 
     // Apply unit conversions
     erec /= 1000.;  // In the input tree, Erec is in Mev, but VALOR uses GeV
 
     // Calculate theta
     double costheta = 0.0;
-    if(EventIsELike(iclass)) {
-       costheta = dir_nu[0] * dir[0][1][0] + dir_nu[1] * dir[0][1][1] + dir_nu[2] * dir[0][1][2];
+    int idx_mu = 0;
+    if(EventIsMultiRmuLike(iclass)){
+        if(print_low_level_info){ std::cout << "EventIsMultiRmuLike" << std::endl; }
+        if (fqmrmom[ipp][0] < fqmrmom[ipp][1]) {
+            idx_mu = 1; //muon and pion like rings look very similar so we have to use some other variables to PID a muon from a pion
+        }
+        else{
+            idx_mu = 0;
+        }
+
+        costheta = dir_nu[0] * fqmrdir[ipp][idx_mu][0] + dir_nu[1] * fqmrdir[ipp][idx_mu][1] + dir_nu[2] * fqmrdir[ipp][idx_mu][2];
+    }
+    else if(EventIsELike(iclass)) {
+        if(print_low_level_info){ std::cout << "EventIsELike" << std::endl; }
+       costheta = dir_nu[0] * fq1rdir[0][1][0] + dir_nu[1] * fq1rdir[0][1][1] + dir_nu[2] * fq1rdir[0][1][2];
     }
     else if(EventIsMuLike(iclass)) {
-       costheta = dir_nu[0] * dir[0][2][0] + dir_nu[1] * dir[0][2][1] + dir_nu[2] * dir[0][2][2];
+        if(print_low_level_info){ std::cout << "EventIsMuLike" << std::endl; }
+       costheta = dir_nu[0] * fq1rdir[0][2][0] + dir_nu[1] * fq1rdir[0][2][1] + dir_nu[2] * fq1rdir[0][2][2];
     }
+    if( costheta<-1.00001 || costheta>+1.00001 ){
+        std::cerr << std::endl;
+        std::cerr << std::setprecision(10);
+        std::cerr << "costheta = " << costheta << " --> outside allowed range" << std::endl;
+        std::cerr << std::endl;
+        exit(1);
+    }
+
     double LepTheta = TMath::ACos(costheta);          // radians
     double theta    = LepTheta / TMath::Pi() * 180.;  // degrees
 
     // Apply cuts
     if(erec < 0.) { continue; }
-    if(EventIsELike(iclass) && erec > 1.25) { continue; }
+    if(EventIsELike(iclass) && (erec > 1.25 || fqevis < 100)) { std::cout << "Rejected on line 152" << std::endl; continue; }
+    if(EventIsMuLike(iclass) && (fqmomm < 200)) { std::cout << "Rejected on lin 153" << std::endl; continue; }
+    if(iclass == 31 && (evisible < 30 || (fqmreloss[ipp][0] + fqmreloss[ipp][1]) < 300)) { continue; }
+    if(iclass == 32 && (evisible < 30)) { continue; }
     if(theta < 0.) { continue; }
     nev_survived_cuts++;
 
@@ -134,9 +175,17 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
       selection = (int) conv::ks1Re1dcy;
       if(EventIsFHC(horn_current)){ n_multie++; }
       else {
-        std::cerr << "ERROR: An RHC 1Re1dcy event. This shouldn't happen!" << std::endl;
-        exit(1);
+          if(print_low_level_info){std::cout << "An RHC 1Re1dcy event." << std::endl;}
+        continue;
       }
+    }
+    else if(iclass == sk_code_multirmu_1de || iclass == sk_code_multirmu_2de) {
+        selection = (int) conv::ksMultiRmu;
+        if(EventIsFHC(horn_current)){ n_multimu++; }
+        else {
+            if(print_low_level_info){std::cout << "An RHC MultiRmu event." << std::endl;}
+            continue;
+        }
     }
     else if(iclass == sk_code_1rmu) {
       selection = (int) conv::ks1Rmu;
@@ -171,7 +220,7 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
     valor_minidst_wght       = 1.; // The data has no weights, so set the weight branch to 1
     valor_minidst->Fill();
 
-    if(i < 10 || print_low_level_info){
+    if(print_low_level_info){
       std::cout << "\nInformation copied to VALOR T2K data Mini-DST: "
                 << "\n Beam          = " << util::AsString(util::BeamConfFromInt(valor_minidst_beam))
                 << "\n Sample        = " << util::AsString(util::SampleFromInt(valor_minidst_sample))
@@ -189,7 +238,8 @@ void convert_t2k_data_minituple_into_root_fitqun_valor_dst
   std::cout << " RHC 1Rmu: " << n_rhc_mu << std::endl;
   std::cout << " RHC 1Re:  " << n_rhc_e  << std::endl;
   std::cout << " 1Re1dcy:  " << n_multie << std::endl;
-  
+  std::cout << " MultiRmu:  " << n_multimu << std::endl;
+
   fin->Close();
   
   // Write the output tree
@@ -238,6 +288,11 @@ bool EventIsELike(int iclass)
   return (iclass == sk_code_1re || iclass == sk_code_1re1dcy);
 }
 //___________________________________________________________________________
+bool EventIsMultiRmuLike(int iclass)
+{
+    return (iclass == sk_code_multirmu_1de || iclass == sk_code_multirmu_2de);
+}
+//___________________________________________________________________________
 bool EventIsFHC(int horn_current)
 {
   if (horn_current == 0) {
@@ -248,14 +303,14 @@ bool EventIsFHC(int horn_current)
 }
 //___________________________________________________________________________
 // Takes the scalar product between the beam and lepton directions
-double CalcThetaDegrees(float dir[][7][3], int iclass)
+double CalcThetaDegrees(float fq1rdir[][7][3], int iclass)
 {
   double costheta = 0.0;
   if(EventIsELike(iclass)) {
-     costheta = dir_nu[0] * dir[0][1][0] + dir_nu[1] * dir[0][1][1] + dir_nu[2] * dir[0][1][2];
+     costheta = dir_nu[0] * fq1rdir[0][1][0] + dir_nu[1] * fq1rdir[0][1][1] + dir_nu[2] * fq1rdir[0][1][2];
   }
   else if(EventIsMuLike(iclass)) {
-     costheta = dir_nu[0] * dir[0][2][0] + dir_nu[1] * dir[0][2][1] + dir_nu[2] * dir[0][2][2];
+     costheta = dir_nu[0] * fq1rdir[0][2][0] + dir_nu[1] * fq1rdir[0][2][1] + dir_nu[2] * fq1rdir[0][2][2];
   }
   else {
     std::cerr << "ERROR: Event was neither mu-like nor e-like. Shouldn't be here!" << std::endl;
