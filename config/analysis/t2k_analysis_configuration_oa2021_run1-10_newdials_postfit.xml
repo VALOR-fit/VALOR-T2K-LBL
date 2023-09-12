@@ -12,7 +12,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_oa2021.xml                             </data>
       <mc>           mc/t2k_mc_oa2021_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -24,7 +24,7 @@
       <beam>         JPARC_RHC                                            </beam>
       <sample>       1rmu                                                 </sample>
       <observable>   Ereco                                                </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_oa2021.xml                             </data>
       <mc>           mc/t2k_mc_oa2021_rhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -36,7 +36,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_oa2021.xml                             </data>
       <mc>           mc/t2k_mc_oa2021_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -48,7 +48,7 @@
       <beam>         JPARC_RHC                                            </beam>
       <sample>       1re                                                  </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_oa2021.xml                             </data>
       <mc>           mc/t2k_mc_oa2021_rhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -60,7 +60,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       1re1dcy                                              </sample>
       <observable>   Ereco,Thetareco                                      </observable>
-      <data>                                                              </data>
+      <data>         data/t2k_data_oa2021.xml                             </data>
       <mc>           mc/t2k_mc_oa2021_fhc_elike.xml                      </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
@@ -72,7 +72,7 @@
       <beam>         JPARC_FHC                                            </beam>
       <sample>       multirmu                                             </sample>
       <observable>   Ereco                                                </observable><!-- In perspective add Thetareco, but first tests on Ereco only  -->
-      <data>                                                              </data>
+      <data>         data/t2k_data_oa2021.xml                             </data>
       <mc>           mc/t2k_mc_oa2021_fhc_mulike.xml                     </mc>
       <data_class>   valor::GenericSingleSampleFitData                    </data_class>
       <model_class>  valor::GenericSingleSampleFitModel                   </model_class>
