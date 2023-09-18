@@ -391,7 +391,7 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
       conv::KineSpace_t ks = util::KineSpaceFromKineVars(reco_vars); 
       if (compare_by_nu_antinu)
       {
-         if ((b == util::BeamConfFromString("JPARC_FHC")) && (s == util::SampleFromString("1Re") || s == util::SampleFromString("MultiRe")))
+         if ((b == util::BeamConfFromString("JPARC_FHC")) && (s == util::SampleFromString("1Re") || s == util::SampleFromString("1Re1dcy")))
          {
             TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());
             TH1 * curr_pdf = (TH1*) array->FindObject(name.Data());
@@ -423,7 +423,7 @@ void Get_events( TObjArray* array, valor::FitModelABC* model, double& Nfhc, doub
          }
       }
       else if (compare_by_ereco){
-         if ( s == util::SampleFromString("1Re") || s == util::SampleFromString("MultiRe"))
+         if ( s == util::SampleFromString("1Re") || s == util::SampleFromString("1Re1dcy"))
          {
             // Nfhc -> ereco>500, Nrhc Ereco<500
             TString name = TString::Format("curr_pdft_sb_rf_%s_%s", this_model->Name().c_str(), util::AsString(ks).c_str());

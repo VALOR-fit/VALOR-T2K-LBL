@@ -171,7 +171,7 @@ void bievent_plot
       if (compare_by_nu_antinu){
          // FHC # of events 
          Nxaxis = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re"))->GetN();
-         Nxaxis += static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"))->GetN();
+         Nxaxis += static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re1dcy"))->GetN();
 
          // RHC1Re # of events 
          Nyaxis = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_RHC_1re"))->GetN();
@@ -194,7 +194,7 @@ void bievent_plot
          delete tmp; 
 
 
-         tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_multire"));
+         tmp = static_cast<TGraph*>(dfile->Get("g_kinematics_data_superk_JPARC_FHC_1re1dcy"));
          for (int evt = 0; evt< tmp->GetN(); evt++){
             tmp->GetPoint(evt, x,y);
             if (x>0.550) Nxaxis++;
