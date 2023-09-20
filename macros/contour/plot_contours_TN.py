@@ -77,9 +77,9 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
     breactors = None
     breactors_label = None
     if "mixing13" in pdf_filename:
-        sinsqth13_nom = util.DoubleAngleToSingleAngle(0.0853)
-        sinsqth13_err = util.DoubleAngleSigmaToSingleAngleSigma(0.0853, 0.0027)
-        breactors_label = "PDG 2019"
+        sinsqth13_nom = 0.0220
+        sinsqth13_err = 0.0007
+        breactors_label = "PDG 2022"
         X1 = sinsqth13_nom - sinsqth13_err
         X2 = sinsqth13_nom + sinsqth13_err
         breactors = ROOT.TBox(X1,min_val,X2,max_val)
@@ -424,9 +424,9 @@ def plot_contours_2d(dchisq_objs, labels, theta23, dm23, pdf_filename, colours, 
     dchisq_objs[-1].Draw("axis")
 
     # Draw the reactor constraint used in T2K, as a vertical yellow band
-    sinsqth13_nom = util.DoubleAngleToSingleAngle(0.0853)
-    sinsqth13_err = util.DoubleAngleSigmaToSingleAngleSigma(0.0853, 0.0027)
-    breactors_label = "PDG 2019"
+    sinsqth13_nom = 0.0220
+    sinsqth13_err = 0.0007
+    breactors_label = "PDG 2022"
     X1 = sinsqth13_nom + sinsqth13_err
     X2 = sinsqth13_nom - sinsqth13_err
     Y1 = dchisq_objs[-1].GetYaxis().GetXmin()
@@ -951,32 +951,30 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
                     print "ERROR: Could not get MaCh3 hist named \'{}\'".format(hname),  "from file \'{}\'".format(filename_other_MH)
                     sys.exit()
 
-                if "dm23" in mach3_filename or "th23" in mach3_filename:
-                    # The single MH posterior prob hists have been normalised by the posterior prob of each MO, so we can't
-                    # directly extract the NO-IO chisq separation from them. To get this, we need to calculate the
-                    # posterior prob of each MO from the given information (and that PNO + PIO = 1).
-                    # This can be calculated using a single bin, but the bin content must be non-zero
-                    # Try a bin in the middle of the posterior prob hist, as the middle is the least likely region to be empty
-                    hist_posterior_both_MH = get_single_mach3_hist(file_both_MH, hname, num_var)
-                    if not hist_posterior_both_MH:
-                        print "ERROR: Could not get MaCh3 hist named \'{}\'".format(hname),  "from file \'{}\'".format(filename_both_MH)
-                        sys.exit()
-
-                    test_bin = hist_posterior.GetMaximumBin()
-                    test_bin_IO = test_bin
-                    if "dm23" in mach3_filename:
-                        dm12sq = 7.53e-5
-                        IO_cent = hist_posterior.GetBinCenter(test_bin) + dm12sq
-                        test_bin_IO = hist_posterior_other_MH.FindBin(IO_cent)
-                    assert(hist_posterior         .GetBinContent(test_bin) > 0.0)
-                    assert(hist_posterior_other_MH.GetBinContent(test_bin_IO) > 0.0)
-                    assert(hist_posterior_both_MH .GetBinContent(test_bin) > 0.0)
-
-                    # TODO: I don't think this will work if hist_posterior corresponds to IO - check this
-                    assert("NH" in mach3_filename or "nh" in mach3_filename)
-                    PNO = (hist_posterior_both_MH.GetBinContent(test_bin) - hist_posterior_other_MH.GetBinContent(test_bin_IO)) / (hist_posterior.GetBinContent(test_bin) - hist_posterior_other_MH.GetBinContent(test_bin_IO))
-                    hist_posterior         .Scale(PNO)
-                    hist_posterior_other_MH.Scale(1.0 - PNO)
+                #if "dm23" in mach3_filename or "th23" in mach3_filename:
+                # The single MH posterior prob hists have been normalised by the posterior prob of each MO, so we can't
+                # directly extract the NO-IO chisq separation from them. To get this, we need to calculate the
+                # posterior prob of each MO from the given information (and that PNO + PIO = 1).
+                # This can be calculated using a single bin, but the bin content must be non-zero
+                # Try a bin in the middle of the posterior prob hist, as the middle is the least likely region to be empty
+                hist_posterior_both_MH = get_single_mach3_hist(file_both_MH, hname, num_var)
+                if not hist_posterior_both_MH:
+                    print "ERROR: Could not get MaCh3 hist named \'{}\'".format(hname),  "from file \'{}\'".format(filename_both_MH)
+                    sys.exit()
+                test_bin = hist_posterior.GetMaximumBin()
+                test_bin_IO = test_bin
+                if "dm32" in mach3_filename:
+                    dm12sq = 7.53e-5
+                    IO_cent = hist_posterior.GetBinCenter(test_bin) + dm12sq
+                    test_bin_IO = hist_posterior_other_MH.FindBin(IO_cent)
+                assert(hist_posterior         .GetBinContent(test_bin) > 0.0)
+                assert(hist_posterior_other_MH.GetBinContent(test_bin_IO) > 0.0)
+                assert(hist_posterior_both_MH .GetBinContent(test_bin) > 0.0)
+                # TODO: I don't think this will work if hist_posterior corresponds to IO - check this
+                assert("NH" in mach3_filename or "nh" in mach3_filename)
+                PNO = (hist_posterior_both_MH.GetBinContent(test_bin) - hist_posterior_other_MH.GetBinContent(test_bin_IO)) / (hist_posterior.GetBinContent(test_bin) - hist_posterior_other_MH.GetBinContent(test_bin_IO))
+                hist_posterior         .Scale(PNO)
+                hist_posterior_other_MH.Scale(1.0 - PNO)
 
                 hist_chisq = convert_posterior_prob_to_chisq(hist_posterior, num_var, file_mach3.GetName())
                 hist_chisq.SetLineColor(mach3_colours[0])
@@ -1029,7 +1027,7 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
                         if file_mach3.GetListOfKeys().Contains(mach3_contour_name):
                             contour = file_mach3.Get(mach3_contour_name)
 
-                            if "dm23" in file_mach3.GetName() and ("IH" in file_mach3.GetName() or "ih" in file_mach3.GetName()):
+                            if "dm32" in file_mach3.GetName() and ("IH" in file_mach3.GetName() or "ih" in file_mach3.GetName()):
                                 # Then this is really Dm31sq, which is negative. We need this to be directly comparable to Dm23sq,
                                 # so we want to convert to |Dm31sq|
                                 contour = convert_mach3_Dm31sq_to_absDm31sq(contour)
@@ -1093,7 +1091,7 @@ def get_single_mach3_hist(file, hist_name, ndim):
         print "ERROR: Read MaCh3 hist with", get_ndims(hist_posterior), "dimensions. Expected", ndim
         sys.exit()
 
-    if "dm23" in file.GetName() and ("IH" in file.GetName() or "ih" in file.GetName()):
+    if "dm32" in file.GetName() and ("IH" in file.GetName() or "ih" in file.GetName()):
         # Then this is really Dm31sq, which is negative. We need this to be directly comparable to Dm23sq,
         # so we want to convert to |Dm31sq|
         hist_posterior = convert_mach3_Dm31sq_to_absDm31sq(hist_posterior)
