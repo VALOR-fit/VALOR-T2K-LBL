@@ -43,6 +43,7 @@ def plot_contours_1d(dchisq_objects, labels, pdf_filename, is_t2k_only, colours,
         for dchisq_obj in ptheta_objects:
             max_val = max(max_val, dchisq_obj.GetMaximum())
             min_val = min(min_val, dchisq_obj.GetMinimum())
+
     if mach3_objects:
         for dchisq_obj in mach3_objects:
             max_val = max(max_val, dchisq_obj.GetMaximum())
@@ -780,6 +781,21 @@ def get_ptheta_objects(ptheta_filename, num_var, ptheta_labels, ptheta_colours, 
     objects = []
 
     ptheta_potential_chisq_hist_names = ["SA_dcp", "SA_dcp_IH"]
+
+    print "Plotting ptheta comparison file \'{}\'".format(ptheta_filename)
+    for fn in valor_filenames:
+        if "cpv" in fn:
+            ptheta_potential_chisq_hist_names = ["SA_dcp", "SA_dcp_IH"]
+        elif "mixing23" in fn:
+            ptheta_potential_chisq_hist_names = ["SA_sin223", "SA_sin223_IH"]
+        elif "dm23sq" in fn:
+            ptheta_potential_chisq_hist_names = ["SA_dm2", "SA_dm2_IH"]
+        elif "mixing13" in fn:
+            ptheta_potential_chisq_hist_names = ["SA_sin213", "SA_sin213_IH"]
+        else:
+            if num_var ==1:
+                print "Cannot find valid ptheta hist in \'{}\'".format(ptheta_filename)
+                sys.exit()
     ptheta_potential_contour_graph_names = "cont_like_all_conv[IS_IH]_[CL]_[ICONT]"   # e.g. cont_like_all_conv_68_0, cont_like_all_conv_90_1, or cont_like_all_conv_IH_997_0
     ptheta_bf_pt_name = "BestFit_Point_All_conv[IS_IH]" # e.g. BestFit_Point_All_conv or BestFit_Point_All_conv_IH
 
@@ -893,6 +909,7 @@ def get_mach3_objects(mach3_filename, num_var, conf_levels, mach3_labels, mach3_
     objects = []
 
     # The contours drawn in MaCh3's graphs are just the same 2D posterior probability hist drawn multiple times with different CLs
+    print "Plotting mach3 comparison file \'{}\'".format(mach3_filename)
     mach3_potential_chisq_hist_names = ["h_dcp", "h_dm32", "h_th13", "h_th23"]
     mach3_potential_contour_graph_names = "g[CL]_conf_[ICONT]"   # e.g. g68_conf_0, g90_conf_0, or g_90_conf_1 etc.
     mach3_bf_pt_name = "Bestfit"
@@ -1133,6 +1150,7 @@ def convert_mach3_Dm31sq_to_absDm31sq(obj_posterior):
 #________________________________________________________________________________________________________
 def convert_posterior_prob_to_chisq(hist_posterior, ndim, filename):
     apply_penalty_to_mach3_hist = False # This shouldn't be needed, as I'm told that the MaCh3 posterior prob should be directly equivalent to our likelihood... somehow...
+    # I believe this is due to Mach3 including it as a prior so generates wrc fits as well.
     hist_chisq = None
 
     # Convert from posterior probability to Delta chisq, with min = min of this chisq hist only
@@ -1457,6 +1475,9 @@ if __name__=="__main__":
         ptheta_styles  = [int(c) for c in args.ptheta_styles]
         ptheta_objects = get_ptheta_objects(args.compare_ptheta, num_var, args.ptheta_labels, ptheta_colours,
                                             ptheta_styles, args.chisq_calc, args.in_filenames, conf_levels)
+        if not ptheta_objects:
+            print "ERROR: Cannot find ptheta object: \'{}\', exiting".format(ptheta_objects)
+            sys.exit()
 
     mach3_objects = None
     if args.compare_mach3:
