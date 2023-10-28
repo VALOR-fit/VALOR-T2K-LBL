@@ -19,6 +19,7 @@ double      _title_text_size        = 0.04;
 std::string _caveat_text_str        = "T2K Run1-10 Preliminary";
 bool        _mark_empty_bins_2d     = true;
 double      _erec_max_mulike        = 3.;
+double      _erec_max_multimulike   = 6.;
 double      _erec_max_elike         = 1.25;
 double      _theta_max_elike        = 180.;
 std::string _title_x                = "#nu Reconstructed Energy (GeV)";
@@ -57,7 +58,7 @@ TLatex*              make_title                   (TString title_text, double ym
 std::string          make_title_text              (conv::BeamConf_t b, conv::Sample_t s, conv::ReacMode_t m = conv::kmUndefined, bool no_tex = false, bool no_spaces = false);
 std::string          get_beam_current_name_simple (conv::BeamConf_t b);                    // TODO: move to BeamConf.h
 std::string          get_sample_name_simple       (conv::Sample_t s, conv::BeamConf_t b, bool no_tex = false); // TODO: move to Sample.h
-void                 rebin                        (TH1D* hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv);
+void                 rebin                        (TH1D*& hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv);
 double               get_max_in_xrange_by_mode    (double xmax, std::vector<TH1D*> hists_by_mode, const int NReacModes);
 double               get_max_in_xrange            (double xmax, TH1D* hist, bool with_error);
 double               get_max_in_xrange_asymm_err  (double xmax, TGraphAsymmErrors* graph);
@@ -367,6 +368,9 @@ TGraphAsymmErrors* GetDataGraph1D(GenericSingleSampleFitData& subdata, TH1D* bin
   // the data point within its Poisson stat errors.
   const double alpha = 1 - _error_bar_significance;
   for (int ibin = 1 ; ibin <= data_hist->GetXaxis()->GetNbins(); ibin++) {
+      if (binning_hist->GetBinContent(ibin) == 0) {
+          continue;
+      }
     double center  = data_hist->GetXaxis()->GetBinCenter(ibin);
     double content = data_hist->GetBinContent(ibin);
     double width   = data_hist->GetXaxis()->GetBinWidth(ibin);
@@ -375,8 +379,10 @@ TGraphAsymmErrors* GetDataGraph1D(GenericSingleSampleFitData& subdata, TH1D* bin
     double err_yhigh = ROOT::Math::gamma_quantile_c(alpha/2, content+1, 1) - content;
     double err_x     = width*0.5;
 
-    data_graph_draw->SetPoint(ibin-1, center, content);
-    data_graph_draw->SetPointError(ibin-1, err_x, err_x, err_ylow, err_yhigh);
+    data_graph_draw->SetPoint(data_graph_draw->GetN(), center, content);
+    data_graph_draw->SetPointError(data_graph_draw->GetN() - 1, err_x, err_x, err_ylow, err_yhigh);
+    //data_graph_draw->SetPoint(ibin-1, center, content);
+    //data_graph_draw->SetPointError(ibin-1, err_x, err_x, err_ylow, err_yhigh);
   }
   
   data_graph_draw->SetLineStyle(0);
@@ -763,6 +769,7 @@ std::string get_sample_name_simple(conv::Sample_t s, conv::BeamConf_t b, bool no
     if     (s == conv::ks1Rmu   ) { sample_str = (rhc) ? "#bar{#nu}_{#mu}CCQE-like" : "#nu_{#mu}CCQE-like"; }
     else if(s == conv::ks1Re    ) { sample_str = (rhc) ? "#bar{#nu}_{e}CCQE-like"   : "#nu_{e}CCQE-like";   }
     else if(s == conv::ks1Re1dcy) { sample_str = "#nu_{e}CC1#pi^{+}-like"; }
+    else if(s == conv::ksMultiRmu) { sample_str = "#nu_{#mu}CC1#pi^{+}-like"; }
     else {
       std::cerr << "ERROR: Unrecogised sample \'" << vutil::AsString(s) << "\'" << std::endl;
       vutil::Die(1);
@@ -777,7 +784,7 @@ std::string get_sample_name_simple(conv::Sample_t s, conv::BeamConf_t b, bool no
 }
 
 //______________________________________________________________________________________________________________________
-void rebin(TH1D* hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv)
+void rebin(TH1D*& hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv)
 {
   if(_rebin_mulike && vutil::AsString(kv) == "Ereco") {
     // For T2K, the binning used in the FHC1Rmu and RHC1Rmu plots are coarser than the fit binning.
@@ -788,6 +795,14 @@ void rebin(TH1D* hist, conv::BeamConf_t b, conv::Sample_t s, conv::KineVar_t kv)
     }
     else if(s == conv::ks1Rmu && b == conv::kbJPARC_RHC) {
       hist->Rebin(3);
+    }
+    else if(s == conv::ksMultiRmu && b == conv::kbJPARC_FHC) {
+        Double_t xbins[29] = {0.000,  0.200,  0.400,  0.600,   0.800,
+                              1.000,  1.200,  1.400,  1.600,  1.800,
+                              2.000,  2.200,  2.400,  2.600,  2.800,
+                              3.000,  3.250,  3.500,  3.750,  4.000,  4.500,  5.000,  5.500,  6.000,  7.000,
+                              8.000,  9.000, 10.000, 30.000};
+       hist = (TH1D*)hist->Rebin(sizeof(xbins) / sizeof(Double_t) - 1, "newname", xbins);
     }
   }
 }
@@ -850,6 +865,8 @@ double get_kinevar_max(conv::Sample_t s, conv::KineVar_t kv)
   double max = -999;
   if(kv == conv::kvEreco) {
     if(s == conv::ks1Rmu) { max = _erec_max_mulike; }
+    else if(s== conv::ksMultiRmu) { max = _erec_max_multimulike;
+    std::cout << "Setting MultiRingMu Max" << std::endl;}
     else                  { max = _erec_max_elike;  }
   }
   else if(kv == conv::kvThetareco) {
