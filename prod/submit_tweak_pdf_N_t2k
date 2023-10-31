@@ -1,0 +1,165 @@
+#!/usr/bin/perl
+
+
+#-------------------------------------------------------------------------------------------------------------------------------
+# Submit a batch of make_table_systematic_effects.cxx jobs, using a set of hardcoded standard arguments and
+# just changing the sets of params the app is allowed to vary.
+#
+# Inputs
+#  --resource               : Computer resource, <Liverpool_Slurm, cedar, interactive>. Default: interactive
+#  --cpu-time               : Requested CPU time
+#  --mem                    : Requested memory
+#  --job-dir                : Directory for job scripts and outputs. Default: `pwd`
+#  --softw-dir              : Oscillation code top-level directory. Default: `VALOR_EXPT` environment variable
+#  --fmwk-dir               : SDK top-level directory. Default: `VALOR_FMWK` environment variable
+#  --time-command           : Time the jobs
+#
+# F.Bench
+#-------------------------------------------------------------------------------------------------------------------------------
+#
+
+use File::Path;
+use Cwd 'abs_path';
+
+#
+# Read command line arguments
+#
+
+$iarg=0;
+foreach (@ARGV) {
+  if($iarg % 2 == 1) {$iarg++; next;}
+
+     if($_ eq '--resource'     ) { $resource     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--cpu-time'     ) { $cput         = $ARGV[$iarg+1]; }
+  elsif($_ eq '--mem'          ) { $mem          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--job-dir'      ) { $job_dir      = $ARGV[$iarg+1]; }
+  elsif($_ eq '--softw-dir'    ) { $softw_dir    = $ARGV[$iarg+1]; }
+  elsif($_ eq '--fmwk-dir'     ) { $fmwk_dir     = $ARGV[$iarg+1]; }
+  elsif($_ eq '--time-command' ) { $time_command = $ARGV[$iarg+1]; }
+  elsif($_ eq '--tag'          ) { $tag          = $ARGV[$iarg+1]; }
+  elsif($_ eq '--config'       ) { $config       = $ARGV[$iarg+1]; }
+  elsif($_ eq '--ntoys'       ) { $ntoys       = $ARGV[$iarg+1]; }
+
+  else {
+      print "Unrecognised argument ".$_."\n"; exit;
+  }
+  $iarg++;
+}
+
+#
+# Set unspecfied arguments to their default values
+#
+
+$resource              = "interactive"              unless defined $resource;
+$cput                  = "12:00:00"                 unless (defined $cput);
+$mem                   = "3500M"                    unless (defined $mem);
+$job_dir               = $ENV{'PWD'}                unless defined $job_dir;
+$softw_dir             = $ENV{'VALOR_EXPT'}         unless defined $softw_dir;
+$fmwk_dir              = $ENV{'VALOR_FMWK'}         unless defined $fmwk_dir;
+$time_command          = 1                          unless defined $time_command;
+$ntoys                 = 10                      unless (defined $ntoys);
+$tag                   = "syst_table_run10_AsimovA" unless (defined $tag);
+$config                = "analysis/t2k_analysis_configuration_oa2021_run1-10_newdials_postfit.xml" unless (defined $config);
+
+
+
+# Make the job directory
+mkpath ($job_dir, {verbose => 1, mode=>0777});
+die("$job_dir doesn't exist") unless -d $job_dir;
+
+
+$program = "valor-tweak_pdf_N_t2k";
+$std_args =  "--config $config --physics-hypothesis 3f_osc " .
+             "--input-mixing12 0.307 --input-mixing13 0.0220 --input-mixing23 0.561 --input-cpv -1.601 " .
+             "--input-dm12sq 7.53E-5 --input-dm23sq 2.494E-3 --normal --rethrow-unphysical --ntoys $ntoys " .
+             "--osc-prior-file priors/t2k_oa2021_reactor.xml --syst-prior-file priors/t2k_run_1-10_syst_param_priors.xml ";
+
+#$std_args =  "--config analysis/t2k_analysis_configuration_oa2021_run1-10_newdials_postfit.xml --physics-hypothesis 3f_osc " .
+#             "--input-mixing12 0.307 --input-mixing13 0.0220 --input-mixing23 0.561 --input-cpv -1.601 " .
+#             "--input-dm12sq 7.53E-5 --input-dm23sq 2.494E-3 --normal --rethrow-unphysical --ntoys 100 " .
+#             "--osc-prior-file priors/t2k_oa2021_reactor.xml --syst-prior-file priors/t2k_NOFLAT_param_priors.xml ";
+
+# This array determines the following for each param set:
+#		1) the name(s) of the param set(s) to vary;
+#   2) the name(s) any params to exclude from 1)
+my @param_sets = (
+                 # ["SKDetSIPN"                                                                                                                                 , "NONE"],	# All SK
+                 # ["flux"                                                                                                                                     , "NONE"],	# All flux
+                 # ["int"                                                                                                                                      , "nue_numu,nuebar_numubar,NC_1gamma,NC_other_far,2p2h_Edep_lowEnu,2p2h_Edep_highEnu,2p2h_Edep_lowEnubar,2p2h_Edep_highEnubar,ISO_BKG_LowPPi,P1_2Shell_MF_PMissShape_O,P3_2Shell_MF_PMissShape_O,SShell_MF_PMissShape_O"],		# xsec; Include run 10 BANFF constrained params only
+                 #  ["BANFF"                                                                                                                                    , "nue_numu,nuebar_numubar,NC_1gamma,NC_other_far,2p2h_Edep_lowEnu,2p2h_Edep_highEnu,2p2h_Edep_lowEnubar,2p2h_Edep_highEnubar,ISO_BKG_LowPPi,P1_2Shell_MF_PMissShape_O,P3_2Shell_MF_PMissShape_O,SShell_MF_PMissShape_O"],		# flux + xsec; Include run 10 BANFF constrained params only
+                 # ["int"                                                                                                                                      , "NONE"],	# All xsec
+                 # ["BANFF"                                                                                                                                    , "NONE"],	# All flux + xsec
+                 # ["nue_numu,nuebar_numubar,NC_1gamma,NC_other_far,2p2h_Edep_lowEnu,2p2h_Edep_highEnu,2p2h_Edep_lowEnubar,2p2h_Edep_highEnubar,ISO_BKG_LowPPi,P1_2Shell_MF_PMissShape_O,P3_2Shell_MF_PMissShape_O,SShell_MF_PMissShape_O", "NONE"],	# Unconstrained params only
+                 # ["nue_numu,nuebar_numubar"                                                                                                                  , "NONE"],	# Now do each set of unconstrained params
+                 # ["NC_1gamma"                                                                                                                                , "NONE"],
+                 # ["NC_other_far"                                                                                                                             , "NONE"],
+                 # ["ISO_BKG_LowPPi"                                                                                                                           , "NONE"],
+                 # ["2p2h_Edep_lowEnu,2p2h_Edep_highEnu,2p2h_Edep_lowEnubar,2p2h_Edep_highEnubar"                                                              , "NONE"],
+                 # ["mixing12,dm12sq"                                                                                                                          , "NONE"],  # Now osc params
+                 # ["mixing13"                                                                                                                                 , "NONE"],
+                 # ["mixing23,dm23sq"                                                                                                                          , "NONE"],
+                 # ["cpv"                                                                                                                                      , "NONE"],
+                 # ["3fosc"                                                                                                                                    , "mixing23,dm23sq"],
+                 # ["3fosc"                                                                                                                                    , "NONE"],  # All
+                   ["allsyst"                                                                                                                                  , "NONE"],
+                 # ["allsyst,3fosc"                                                                                                                            , "NONE"]
+								 );
+
+#
+# Submit jobs by looping over all param sets
+#
+for(my $i = 0; $i <= $#param_sets; $i++)
+{
+	$params  = $param_sets[$i][0];
+	$exclude = $param_sets[$i][1];
+
+	if($params eq "nue_numu,nuebar_numubar,NC_1gamma,NC_other_far,2p2h_Edep_lowEnu,2p2h_Edep_highEnu,2p2h_Edep_lowEnubar,2p2h_Edep_highEnubar,ISO_BKG_LowPPi,P1_2Shell_MF_PMissShape_O,P3_2Shell_MF_PMissShape_O,SShell_MF_PMissShape_O") {
+	    $output  = "${tag}_UNCONSTRAINED";
+	}
+	else {
+	    $output  = "${tag}_${params}";
+	}
+
+	if($exclude ne "NONE") {
+	    if($exclude eq "nue_numu,nuebar_numubar,NC_1gamma,NC_other_far,2p2h_Edep_lowEnu,2p2h_Edep_highEnu,2p2h_Edep_lowEnubar,2p2h_Edep_highEnubar,ISO_BKG_LowPPi,P1_2Shell_MF_PMissShape_O,P3_2Shell_MF_PMissShape_O,SShell_MF_PMissShape_O") {
+		    $output = "${output}_excluding_UNCONSTRAINED";
+		}
+		else {
+		    $output = "${output}_excluding_${exclude}";
+		}
+		$exclude = "--params-exclude ${exclude}";
+	}
+	else {
+		$exclude = "";
+	}
+	$command = "$program $std_args --params $params --output ${output}.root $exclude";
+	print "$command \n\n\n";
+
+	#
+	# Liverpool_Slurm
+	#
+	if($resource eq "Liverpool_Slurm") {
+		open(Slurm, ">$job_dir/$output.slurm") or die("Can not create the Slurm batch script");
+		print Slurm "#!/bin/bash \n";
+		print Slurm "#SBATCH -J $output \n";
+		print Slurm "#SBATCH -o $job_dir/$output.slurm.out \n";
+		print Slurm "#SBATCH -e $job_dir/$output.slurm.err \n";
+		print Slurm "#SBATCH -t $cput \n";
+		print Slurm "#SBATCH --mem=$mem \n";
+		print Slurm "cd $job_dir \n";
+		print Slurm "source $softw_dir/setup/setup_at_cvmfs_root6.sh $softw_dir $fmwk_dir\n";
+		if($time_command == 1) { print Slurm "/usr/bin/time $command \n"; }
+		else { print Slurm "$command \n"; }
+		close(Slurm);
+		`sbatch -p compute $job_dir/$output.slurm`;
+	}
+
+	#
+	# interactive
+	#
+	if($resource eq "interactive") {
+		system($command);
+	}
+	
+}	#i
+
