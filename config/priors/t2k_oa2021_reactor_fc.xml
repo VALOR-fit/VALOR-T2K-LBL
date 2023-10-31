@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<prior_list name="oa2021_reactor">
+
+  <prior>
+    <params> cpv                      </params>
+    <type>   flat                     </type>
+    <low>    -3.14159265358979312e+00 </low>
+    <high>   +3.14159265358979312e+00 </high>
+    <scheme> delta                    </scheme>
+    <!-- NOTE: The scheme given here is just used to define the prior, i.e. is used when throwing the parameter.
+               Afterwards, the thrown value is converted to the scheme set in Opt::Instance -->
+  </prior>
+
+  <prior>
+    <params> dm23sq </params>
+    <type>   flat   </type>
+    <low>    2.3E-3 </low>
+    <high>   2.7E-3 </high>
+    <scheme> abs23  </scheme>
+  </prior>
+
+  <prior>
+    <params>    mixing23, dm23sq                                                                                       </params>       <!-- NOTE: The first param must correspond to the x-axis of the prior hist, and the second param is the y-axis. -->
+    <type>      user                                                                                                   </type>
+    <file_nh>   $OA2022FinalFits/mixing23_dm23sq/data_Asimov/fit_dataAsimov_oa2022_normal_mixing23_dm23sq_reactor_0_1_result_smeared.root   </file_nh>
+    <file_ih>   $OA2022FinalFits/mixing23_dm23sq/data_Asimov/fit_dataAsimov_oa2022_inverted_mixing23_dm23sq_reactor_0_1_result_smeared.root </file_ih>
+    <hist_name> likelihood                                                                                             </hist_name>
+    <scheme>    sinsqtheta, abs23                                                                                      </scheme>
+  </prior>
+
+  <prior>
+    <params> mixing13    </params>
+    <type>   gaus        </type>
+    <mean>   0.0220      </mean>
+    <sigma>  0.0007      </sigma>
+    <scheme> sinsqtheta </scheme>
+  </prior>
+
+  <prior>
+    <params> mixing12    </params>
+    <type>   gaus        </type>
+    <mean>   0.307       </mean>
+    <sigma>  0.013       </sigma>
+    <scheme> sinsqtheta </scheme>
+  </prior>
+
+  <prior>
+    <params> dm12sq  </params>
+    <type>   gaus    </type>
+    <mean>   7.53E-5 </mean>
+    <sigma>  0.18E-5 </sigma>
+    <!-- NOTE: No need to set a scheme for dm12sq, as the mass splitting scheme only applies to dm23sq -->
+  </prior>
+
+  <penalty>
+    <params> mixing13    </params>
+    <type>   gaus        </type>
+    <mean>   0.0220      </mean>
+    <sigma>  0.0007      </sigma>
+    <scheme> sinsqtheta </scheme>
+  </penalty>
+</prior_list>
