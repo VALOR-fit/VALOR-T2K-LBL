@@ -2,7 +2,7 @@
 
 The VALOR-T2K-LBL repository includes T2K-specific codes and configurations for the VALOR T2K oscillation fit and related analysis workflows. This analysis is built on top of the common and experiment-agnostic [VALOR *Software Development Kit (SDK)*](https://github.com/VALOR-fit/VALOR-SDK/) which includes the bulk of the VALOR analysis code.
 
-**Copyright (c) 2010-2020**, The VALOR Fitting Group. All Rights Reserved.
+**Copyright (c) 2010-2020**, The VALOR group. All Rights Reserved.
 
 **Authors (VALOR/T2K):** 
 * Costas Andreopoulos (*University of Liverpool & STFC/RAL*)
@@ -18,7 +18,7 @@ The VALOR-T2K-LBL repository includes T2K-specific codes and configurations for 
 * Davide Sgalaberna (*CERN; Geneva; ETHZ*)
 * Raj Shah (*University of Oxford & STFC/RAL*)
 
-For a full list of VALOR SDK authors, see [here](https://valor.pp.rl.ac.uk/).
+For a full list of VALOR SDK authors, see [here](https://valor-fit.github.io/).
 
 
 ## T2K LBL oscillation analysis releases 
